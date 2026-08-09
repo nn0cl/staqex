@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); Fake-exec wire complete (LISS-0383, amended by LISS-0386); reuse/reset demand inference complete (ADR 0199 / LISS-0385); Host auto-attach of inferred demand complete (LISS-0386); real mid-circuit Kernel execution complete (ADR 0200 / LISS-0387, root-cause fix); live/provider execution still gated** |
+| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); Fake-exec wire complete (LISS-0383, amended by LISS-0386 and LISS-0388); reuse/reset demand inference complete (ADR 0199 / LISS-0385); Host auto-attach of inferred demand complete (LISS-0386); real mid-circuit Kernel execution complete (ADR 0200 / LISS-0387, root-cause fix); reuse capability law repurposed for simulator-class profiles (LISS-0388); live/provider execution still gated** |
 | Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Option B declined); real execution [ADR 0200](../architecture/adr/0200-dynamic-lane-real-kernel-execution.md) (**Accepted**) |
-| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md); [LISS-0387](../issues/LISS-0387-dynamic-real-mid-circuit-measure.md) |
+| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md); [LISS-0387](../issues/LISS-0387-dynamic-real-mid-circuit-measure.md); [LISS-0388](../issues/LISS-0388-dynamic-reuse-capability-followup2.md) |
 
 This lane is intentionally separate from the Static Hilbert Kernel.
 
@@ -238,6 +238,11 @@ Normative for Feature Path Phase 1–3 on LISS-0383. Plan-locked (2026-08-09).
 scenario's fixture no longer reuses the measured wire in its `match` arms —
 see [LISS-0386](#acceptance-scenarios--host-auto-attach-inferred-capability-demand-liss-0386)
 below for the repurposed reuse-demand regression.
+**Amended again 2026-08-09 under LISS-0388 (ADR 0200 Decision 3):** reuse
+demanded on a simulator-class profile (SIM0_EXACT / CH1_DIGITAL_RESEARCH)
+now succeeds instead of failing closed, since a real local simulator
+(LISS-0387) has no physical constraint against it. Reset is unaffected and
+still fails closed on every profile.
 
 - Fake gate: Host `settings["dynamic_fake_profile"]` ∈
   `{SIM0_EXACT, CH1_DIGITAL_RESEARCH}` (absent / unknown → fail closed;
@@ -274,12 +279,19 @@ Feature: Fake-gated dynamic execution under supplied outcomes
       physical_execution_claimed False
     And controller bindings appear only on dynamic_trace, not measurements
 
-  Scenario: Fake gate present but reset/reuse demanded still fails closed
+  Scenario: Fake gate present and reuse demanded now succeeds (LISS-0388 amendment)
     Given a Fake-gated request whose capability_demand.needs_reuse is true
-      (or needs_reset true) on a P0 feedback-only profile
+      on a simulator-class profile (SIM0_EXACT or CH1_DIGITAL_RESEARCH)
+    When FakeDynamicExecutor / verify_dynamic_request runs
+    Then the result is accepted
+    And physical_execution_claimed remains False
+
+  Scenario: Fake gate present but reset demanded still fails closed (unchanged)
+    Given a Fake-gated request whose capability_demand.needs_reset is true
+      on a P0 feedback-only profile
     When FakeDynamicExecutor / verify_dynamic_request runs
     Then the result is rejected
-    And diagnostics include DYN_CAPABILITY_REUSE or DYN_CAPABILITY_RESET
+    And diagnostics include DYN_CAPABILITY_RESET
     And physical_execution_claimed remains False
 ```
 

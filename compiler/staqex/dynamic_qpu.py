@@ -78,7 +78,12 @@ class DynamicExecResult:
     selected_alternative: str | None
 
 
-# P0 Fake profiles: feedback-only. Reset/reuse/latency remain reject-on-demand.
+# P0 Fake profiles: feedback-only. Reset/latency remain reject-on-demand.
+# LISS-0388 (ADR 0200 Decision 3): "feedback-only" no longer means
+# "no reuse" -- these are simulator-class profiles with no live hardware
+# and no physical qubit-recycling constraint, so reuse is honestly
+# supported once real Kernel execution (LISS-0387) exists. Reset stays
+# rejected: reset execution is still unimplemented.
 _FEEDBACK_ONLY_PROFILES = frozenset({"SIM0_EXACT", "CH1_DIGITAL_RESEARCH"})
 
 
@@ -166,13 +171,10 @@ def _capability_diagnostics(request: DynamicExecRequest) -> list[DynamicDiagnost
                 "reset is unsupported on the P0 feedback-only Fake profiles",
             )
         )
-    if demand.needs_reuse:
-        diagnostics.append(
-            _diag(
-                "DYN_CAPABILITY_REUSE",
-                "reuse is unsupported on the P0 feedback-only Fake profiles",
-            )
-        )
+    # LISS-0388 (ADR 0200 Decision 3): reuse is no longer rejected on
+    # simulator-class profiles (every profile in _FEEDBACK_ONLY_PROFILES
+    # today) -- a real local simulator has no physical constraint against
+    # continuing to evolve a measured wire. Reset above is unaffected.
     if demand.needs_latency:
         diagnostics.append(
             _diag(
