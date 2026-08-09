@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); reuse/reset law Accepted (ADR 0199); LISS-0383 + LISS-0385 Plan approved (Red pending); execution still gated** |
+| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); Fake-exec wire complete (LISS-0383); reuse/reset demand inference complete (ADR 0199 / LISS-0385); live/provider execution still gated** |
 | Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Option B declined) |
 | Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md) |
 

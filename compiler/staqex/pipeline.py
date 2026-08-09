@@ -60,6 +60,7 @@ from .quantum_semantic_ir import (
 )
 from .typecheck import TypeChecker
 from .unitarity_check import check_unitarity
+from .dynamic_capability import reuse_demand_diagnostics
 
 HARD_CODES = {
     "FORBIDDEN_KEYWORD",
@@ -769,6 +770,9 @@ def _analyze_unit(unit: CompilationUnit, diags: list[dict[str, Any]]) -> Compile
 
     checker = TypeChecker()
     diags.extend(checker.check_unit(unit))
+    # LISS-0385: soft compile-time reuse demand (not HARD_CODES; Fake-verify
+    # still rejects when a Fake request carries needs_reuse).
+    diags.extend(reuse_demand_diagnostics(unit))
     scope_decls = tuple(
         declaration
         for declaration in unit.decls
