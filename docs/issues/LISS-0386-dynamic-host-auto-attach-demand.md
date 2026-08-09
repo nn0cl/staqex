@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0386
-- Status/phase: **Green/Refactor complete** (2026-08-09) — awaiting Completion
-  approval; PR not yet opened
+- Status/phase: **complete** (2026-08-09) — Adjudicator Completion approval;
+  PR [#484](https://github.com/nn0cl/staqex/pull/484)
 - Type: Feature Path (Kernel/Host — wire LISS-0385 inference into the Fake
   request builder; no new surface, no profile enablement)
 - Priority: P1
@@ -21,7 +21,7 @@
   `compiler/staqex/dynamic_fake_wire.py`; `compiler/staqex/host.py`
 - Blocks: none
 - Branch: `feature/liss-0386-host-auto-attach-plan`
-- GitHub Issue / PR: none yet
+- GitHub Issue / PR: [#484](https://github.com/nn0cl/staqex/pull/484)
 
 ## Intent
 
@@ -172,4 +172,4 @@ Feature: Host auto-attaches inferred reuse demand into the Fake-exec request
       amended in place.
 - [x] Full regression sweep re-run: **1373 passed** (2026-08-09), up from the
       1372-passed baseline at PR #483 by exactly the one new test.
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-09); PR [#484](https://github.com/nn0cl/staqex/pull/484).
