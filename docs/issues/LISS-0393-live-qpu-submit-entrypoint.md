@@ -3,9 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0393
-- Status/phase: **Green/Refactor complete** (2026-08-10) — proceeding
-  without a mid-work pause per Adjudicator "続けて", following ADR 0203
-  Accept; awaiting Completion approval
+- Status/phase: **complete** (2026-08-10) — Adjudicator Completion
+  approval; PR [#501](https://github.com/nn0cl/staqex/pull/501)
 - Type: Feature Path (Host orchestration — no Kernel change, no new
   external dependency, no real submission)
 - Priority: P2
@@ -20,7 +19,7 @@
   `BraketClientPort`-fake test double here — never the real client)
 - Blocks: none
 - Branch: `feature/liss-0393-live-qpu-submit-entrypoint`
-- GitHub Issue / PR: none yet
+- GitHub Issue / PR: [#501](https://github.com/nn0cl/staqex/pull/501)
 
 ## Intent
 
@@ -88,4 +87,4 @@ a new spec file for this scope.
 - [x] Phase 3 Refactor: reviewed the new file — clean, no changes needed.
 - [x] Full regression sweep re-run: **1402 passed** (2026-08-10), up from
       1396 by exactly the 6 new tests.
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-10); PR [#501](https://github.com/nn0cl/staqex/pull/501).
