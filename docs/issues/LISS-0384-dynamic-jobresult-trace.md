@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0384
 - Status/phase: **complete** (2026-08-09) — Adjudicator Completion
-  approved; PR pending
+  approved; PR [#482](https://github.com/nn0cl/staqex/pull/482)
 - Type: Feature Path (Host DTO — additive `JobResult.dynamic_trace`;
   projection from `DynamicExecResult` / Fake path)
 - Priority: P1
@@ -21,7 +21,7 @@
   Fake-only first); [LISS-0028](LISS-0028-dynamic-qpu-lane.md)
 - Blocks: none strictly
 - Branch: `feature/liss-0384-dynamic-jobresult-trace`
-- GitHub Issue / PR: pending (this Completion)
+- GitHub Issue / PR: [#482](https://github.com/nn0cl/staqex/pull/482)
 
 ## Intent
 
