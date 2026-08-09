@@ -3,9 +3,10 @@
 ## Metadata
 
 - Local issue ID: LISS-0391
-- Status/phase: **Green/Refactor complete** (2026-08-10) — proceeding to
-  completion without a mid-work pause per Adjudicator direction
-  ("完成まで止めないので", given together with the Decision 4 choice)
+- Status/phase: **complete** (2026-08-10) — proceeding to completion
+  without a mid-work pause per Adjudicator direction ("完成まで止めない
+  ので", given together with the Decision 4 choice); PR
+  [#497](https://github.com/nn0cl/staqex/pull/497)
 - Type: Feature Path (Kernel — new QASM lowering path; no language
   surface change, no Kernel execution semantics change)
 - Priority: P2
@@ -23,7 +24,7 @@
   decision 1)
 - Blocks: none
 - Branch: `feature/liss-0391-openqasm-dynamic-emission`
-- GitHub Issue / PR: none yet
+- GitHub Issue / PR: [#497](https://github.com/nn0cl/staqex/pull/497)
 
 ## Intent
 
@@ -115,4 +116,4 @@ LISS-0391)".
       1387 by exactly the 4 new tests. Static QPU `QASM3Emitter` /
       `lower_unit_to_circuit` / `Circuit` confirmed untouched (no diff to
       those files).
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-10, Adjudicator "完成まで止めないので"); PR [#497](https://github.com/nn0cl/staqex/pull/497).
