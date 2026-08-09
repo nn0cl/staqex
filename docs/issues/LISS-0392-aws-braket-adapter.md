@@ -3,9 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0392
-- Status/phase: **Green/Refactor complete** (2026-08-10) — proceeding
-  without a mid-work pause per Adjudicator "続ける" (2026-08-10),
-  following ADR 0202 Accept; awaiting Completion approval
+- Status/phase: **complete** (2026-08-10) — Adjudicator Completion
+  approval; PR [#499](https://github.com/nn0cl/staqex/pull/499)
 - Type: Feature Path (Host adapter — new external optional dependency;
   no Kernel change)
 - Priority: P2
@@ -18,7 +17,7 @@
   (shipped) — reused unchanged.
 - Blocks: none
 - Branch: `feature/liss-0392-aws-braket-adapter`
-- GitHub Issue / PR: none yet
+- GitHub Issue / PR: [#499](https://github.com/nn0cl/staqex/pull/499)
 
 ## Intent
 
@@ -129,4 +128,4 @@ Green:
       `CredentialGatedMockSubmit`'s shape; no changes needed.
 - [x] Full regression sweep re-run: **1396 passed** (2026-08-10), up
       from 1391 by exactly the 5 new tests.
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-10); PR [#499](https://github.com/nn0cl/staqex/pull/499).
