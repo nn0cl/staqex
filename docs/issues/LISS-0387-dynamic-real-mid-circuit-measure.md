@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0387
-- Status/phase: **Green/Refactor complete** (2026-08-09) — awaiting
-  Completion approval; PR not yet opened
+- Status/phase: **complete** (2026-08-09) — Adjudicator Completion approval;
+  PR [#486](https://github.com/nn0cl/staqex/pull/486)
 - Type: Feature Path (Kernel — real evaluator execution of `dynamic qpu`
   blocks; root-cause fix, not bookkeeping)
 - Priority: P1
@@ -23,7 +23,7 @@
 - Blocks: ADR 0200 Follow-up #2 (amending LISS-0385/0386 simulator-profile
   reject-on-demand tests) — that Issue depends on this one shipping first
 - Branch: `feature/liss-0387-dynamic-real-mid-circuit-measure`
-- GitHub Issue / PR: none yet
+- GitHub Issue / PR: [#486](https://github.com/nn0cl/staqex/pull/486)
 
 ## Intent
 
@@ -232,7 +232,7 @@ Feature: Dynamic-lane mid-circuit measure genuinely collapses and continues
 - [x] Full regression sweep re-run: **1377 passed** (2026-08-09); Static
       Kernel behavior outside `dynamic qpu` confirmed unaffected (no
       Static-path test changed or newly failed).
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-09); PR [#486](https://github.com/nn0cl/staqex/pull/486).
 
 ## Refactor note: residual gap disclosed, not fixed
 
