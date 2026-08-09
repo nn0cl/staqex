@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0384
-- Status/phase: **proposed** / `phase-0-design` — awaiting Plan approval
-  (Architecture Accept of ADR 0198 done 2026-08-09; no Red until Plan)
+- Status/phase: **ready** / Plan approved (2026-08-09) — awaiting
+  Phase 1 Red approval
 - Type: Feature Path (Host DTO — additive `JobResult.dynamic_trace`;
   projection from `DynamicExecResult` / Fake path)
 - Priority: P1
@@ -17,12 +17,13 @@
   (**Accepted** 2026-08-09)
 - Depends on: ADR 0198 (Accepted); LISS-0022 / LISS-0046 Host JobResult
   additive precedent; LISS-0077 `DynamicExecResult` vocabulary
-- Related: [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md) (Fake-exec
-  Plan — may soft-depend on this Issue for JobResult projection);
-  [LISS-0028](LISS-0028-dynamic-qpu-lane.md)
-- Blocks: none strictly (Fake-exec can ship `DynamicExecResult`-only first)
-- Branch: TBD at Plan approval
+- Related: [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md) (may ship
+  Fake-only first); [LISS-0028](LISS-0028-dynamic-qpu-lane.md)
+- Blocks: none strictly
+- Branch: `feature/liss-0384-dynamic-jobresult-trace` (create at Phase 1)
 - GitHub Issue / PR: none yet
+- Plan-locked shape: `dynamic_trace: DynamicTraceReport | None = None`
+  trailing after `observations`; see acceptance spec
 
 ## Intent
 
@@ -30,48 +31,47 @@ Implement ADR 0198 Decisions 1–4 on the Host boundary:
 
 1. Mid-circuit Controllers / tokens must **not** appear as
    `JobResult.measurements` / `MeasurementEnvelope`.
-2. Add additive field **`dynamic_trace`** (last-field / keyword-friendly)
-   carrying structured dynamic-run report data.
+2. Add additive field **`dynamic_trace`** (trailing after `observations`)
+   typed as **`DynamicTraceReport | None`**.
 3. Sibling composition with Static terminal `measurements` when both exist.
 4. Preserve `physical_execution_claimed` honesty for Fake.
 
 ## Explicitly out of scope
 
-- FakeDynamicExecutor AST wire (LISS-0383) unless Plan merges a thin
-  projection-only slice.
-- Qubit reuse/reset (ADR 0199).
-- WorkflowReport / CLI pretty-print (optional follow-up).
+- FakeDynamicExecutor AST wire (LISS-0383) unless a thin projection-only
+  helper is needed for Red fixtures.
+- Qubit reuse/reset (ADR 0199 / LISS-0385).
+- WorkflowReport / CLI pretty-print.
 - Live provider result mapping.
 - Removing `DYNAMIC_*` compile rejection.
 
 ## Acceptance reference
 
-[ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md)
-Decisions 1–4; Gherkin to be added under Plan approval (Host-facing
-scenarios: Static-only unchanged; Fake/dynamic report on `dynamic_trace`
-only; sibling channels).
+[`staqex-dynamic-jobresult-trace.md`](../specs/staqex-dynamic-jobresult-trace.md)
+(Plan-locked 2026-08-09).
+
+## Plan-locked decisions (Adjudicator 2026-08-09)
+
+1. **Nested type:** single frozen dataclass `DynamicTraceReport` (not a
+   bare tuple of ad-hoc reports).
+2. **LISS-0383:** may ship Fake-only (`DynamicExecResult`) first; need not
+   wait for this Issue's Green before Plan/Red on Fake wire.
+3. **Default for Static Jobs:** `dynamic_trace is None`.
 
 ## AI planning record (size M)
 
-- Status: proposed, pre-Plan-approval
+- Status: Plan approved; awaiting Phase 1 Red
 - Authoring environment: Cursor (Grok 4.5), 2026-08-09
-- Size: `M` — Host DTO + projection + Red tests; bounded by Accepted ADR;
-  no language surface change.
-- Route: AT-TDD after Plan + Phase approvals.
-- Assumptions: nested report DTO can mirror LISS-0077 fields without
-  importing Semantic IR builders into Host.
-- Confidence: high on separation law; medium on exact nested type shape.
+- Size: `M` — Host DTO + projection helper + Red tests; no language surface
+  change.
+- Route: AT-TDD Phase 1 Red after explicit phase approval.
+- Assumptions: projection helper can live beside `host.py` / Fake module
+  without Semantic IR imports.
+- Confidence: high after Plan lock.
 - Revision links: none yet.
 
 ## Exit criteria
 
-- [ ] Plan approval + Host Gherkin locked.
+- [x] Plan approval + Host Gherkin locked.
 - [ ] Phase 1 Red / Phase 2 Green / Phase 3 Refactor.
 - [ ] Completion approval before merge.
-
-## Adjudicator decision points (Plan)
-
-1. Nested type name(s) for `dynamic_trace` payload (single frozen dataclass
-   vs tuple of smaller reports).
-2. Whether LISS-0383 Plan must wait for this Issue's Green before claiming
-   JobResult completeness, or may ship Fake-only first.
