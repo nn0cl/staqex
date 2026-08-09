@@ -168,6 +168,10 @@ class EvalResult:
     last_poly_fusion: tuple[float, ...] | None = None
     # ADR 0159: CPU data-parallel world workers used for this run (1 = sequential).
     data_parallel_workers: int = 1
+    # LISS-0389 (ADR 0198 Amendment): False when a dynamic-lane mid-circuit
+    # collapse found a recorded controller binding physically unreachable
+    # (the run vacuumed). True (default) when unchecked or all confirmed.
+    dynamic_outcomes_confirmed: bool = True
 
 
 class KernelError(Exception):
@@ -285,6 +289,9 @@ class Evaluator:
         self.operator_spaces: dict[str, int] = {}
         self.mixed_state_measured = False
         self.execution_lane = None
+        # LISS-0389: True until a dynamic-lane mid-circuit collapse finds a
+        # recorded controller binding physically unreachable (vacuumed).
+        self._dynamic_outcomes_confirmed = True
         self._this = None
         self._unit = unit
         self.operators = {
@@ -646,6 +653,7 @@ class Evaluator:
             last_algebraic_fusion=self.last_algebraic_fusion,
             last_poly_fusion=self.last_poly_fusion,
             data_parallel_workers=self.data_parallel_workers,
+            dynamic_outcomes_confirmed=self._dynamic_outcomes_confirmed,
         )
 
     @staticmethod
@@ -1284,11 +1292,14 @@ class Evaluator:
         label: Any = int(outcome) if outcome in {"0", "1"} else outcome
         projected = joint.project_coord(wire, lambda v: v == label)
         if projected.is_vacuum():
+            # LISS-0389: the recorded outcome was physically unreachable.
+            self._dynamic_outcomes_confirmed = False
             return Joint.empty()
         from .joint import World, _coalesce
 
         total = sum(abs(w.amp) ** 2 for w in projected.worlds)
         if total <= EPS:
+            self._dynamic_outcomes_confirmed = False
             return Joint.empty()
         scale = 1.0 / cmath.sqrt(total)
         out = [
