@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); Fake-exec wire complete (LISS-0383, amended by LISS-0386); reuse/reset demand inference complete (ADR 0199 / LISS-0385); Host auto-attach of inferred demand complete (LISS-0386); live/provider execution still gated** |
-| Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Option B declined) |
-| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md) |
+| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); Fake-exec wire complete (LISS-0383, amended by LISS-0386); reuse/reset demand inference complete (ADR 0199 / LISS-0385); Host auto-attach of inferred demand complete (LISS-0386); real mid-circuit Kernel execution complete (ADR 0200 / LISS-0387, root-cause fix); live/provider execution still gated** |
+| Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Option B declined); real execution [ADR 0200](../architecture/adr/0200-dynamic-lane-real-kernel-execution.md) (**Accepted**) |
+| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md); [LISS-0387](../issues/LISS-0387-dynamic-real-mid-circuit-measure.md) |
 
 This lane is intentionally separate from the Static Hilbert Kernel.
 
@@ -281,6 +281,69 @@ Feature: Fake-gated dynamic execution under supplied outcomes
     Then the result is rejected
     And diagnostics include DYN_CAPABILITY_REUSE or DYN_CAPABILITY_RESET
     And physical_execution_claimed remains False
+```
+
+## Acceptance scenarios — real mid-circuit execution (ADR 0200, LISS-0387)
+
+Normative for Feature Path Phase 1–3 on LISS-0387. Plan-locked (Adjudicator
+root-cause direction, 2026-08-09): the evaluator's unconditional
+`DynamicQpuStmt` skip is replaced with real execution. Mid-circuit
+`Controller<T> = measure wire` performs a genuine Lüders projection +
+renormalize (`Joint.project_coord`, the same primitive `project(psi, k)`
+already uses) instead of a bookkeeping label; the matching `match` arm then
+executes for real against the collapsed joint. Supplied-outcome only (no
+RNG sampling in this Issue) — routed via the existing `HostInputPort` (ADR
+0194). `needs_reset` / reset execution, RNG-sampled outcomes, and any
+`JobResult`/`dynamic_trace` DTO change stay out of scope. The Host-level
+`FakeDynamicExecutor` accept/reject bookkeeping path (LISS-0383/0385/0386)
+is unchanged by this Issue — it still independently decides
+`DynamicExecResult`/`dynamic_trace`; this Issue only makes the **evaluator**
+genuinely execute the block once Host has allowed the run.
+
+**Known residual gap (disclosed, not fixed by this Issue):** since the Host
+bookkeeping layer and the evaluator's real execution are independent, a
+program whose Host-supplied outcome is inconsistent with the real prepared
+state (e.g. supplying `"1"` for a wire prepared as `|0>`) is still
+Host-accepted (bookkeeping never checks amplitudes) while the real
+evaluator legitimately vacuums the run (Born-rule zero-probability
+outcome). `JobResult.status` stays `"succeeded"` either way (a vacuum
+Static terminal measurement is not a Kernel error). Unifying Host
+bookkeeping with real physics is a candidate for the ADR 0200 Follow-up #2
+Issue, not resolved here.
+
+```gherkin
+Feature: Dynamic-lane mid-circuit measure genuinely collapses and continues
+
+  Scenario: measure-only program, consistent outcome runs to completion
+    Given a dynamic qpu block with `state q = |0>` then
+      `Controller<Bit> bit = measure q`
+    And a Host-supplied outcome of "0" for controller `bit` (consistent
+      with the prepared |0>)
+    When the Evaluator runs the compiled unit
+    Then the Static terminal measure after the block still produces a
+      real (non-vacuum) sample
+
+  Scenario: measure-only program, inconsistent outcome vacuums the run
+    Given the same program
+    And a Host-supplied outcome of "1" for controller `bit` (zero
+      probability against the prepared |0>)
+    When the Evaluator runs the compiled unit
+    Then the run vacuums (Static terminal measure is vacuum=True) --
+      evidencing a real project_coord collapse, not an accepted label
+    And no LINEAR_IMPLICIT_DISCARD diagnostic is emitted for `q`
+
+  Scenario: post-measure reuse inside a match arm actually evolves state
+    Given `match bit { 0 => { apply(X, q) } }` with a consistent outcome
+    When the matching arm executes
+    Then apply(X, q) runs against the real post-measure joint via the
+      normal Call-statement dispatch (verified at the Evaluator/Joint
+      boundary directly, since block-end trace-out removes q from the
+      publicly observable JobResult)
+
+  Scenario: Static Kernel programs outside dynamic qpu are unaffected
+    Given a Static-only program with a bare `measure` statement
+    When it is compiled and evaluated
+    Then behavior is byte-for-byte identical to before this Issue
 ```
 
 ## Acceptance scenarios — Host auto-attach inferred capability demand (LISS-0386)
