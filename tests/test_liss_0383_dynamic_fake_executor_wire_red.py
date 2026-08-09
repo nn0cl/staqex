@@ -111,9 +111,8 @@ def test_with_fake_gate_and_supplied_outcomes_accepts_without_physical_claim() -
     )
 
 
-def test_fake_gate_present_but_reuse_demanded_still_fails_closed() -> None:
-    """Scenario: Fake gate present but reset/reuse demanded still fails closed."""
-    request = DynamicExecRequest(
+def _dynamic_exec_request(*, needs_reset: bool, needs_reuse: bool) -> DynamicExecRequest:
+    return DynamicExecRequest(
         lane="dynamic",
         profile_id="SIM0_EXACT",
         tokens=(
@@ -131,8 +130,8 @@ def test_fake_gate_present_but_reuse_demanded_still_fails_closed() -> None:
             recorded_merges=1,
         ),
         capability_demand=DynamicCapabilityDemand(
-            needs_reset=False,
-            needs_reuse=True,
+            needs_reset=needs_reset,
+            needs_reuse=needs_reuse,
             needs_latency=False,
         ),
         supplied_outcomes=MappingProxyType({"tok-0": "1"}),
@@ -140,35 +139,56 @@ def test_fake_gate_present_but_reuse_demanded_still_fails_closed() -> None:
         controls_shape=False,
         selects_deployment=False,
     )
+
+
+def test_fake_gate_present_and_reuse_demanded_now_succeeds() -> None:
+    """LISS-0388 (ADR 0200 Decision 3): reuse is repurposed for
+    simulator-class profiles -- SIM0_EXACT has no live hardware and no
+    physical qubit-recycling constraint, so a reuse-demanding request is
+    accepted, not rejected (unlike before LISS-0387/0388).
+    """
+    request = _dynamic_exec_request(needs_reset=False, needs_reuse=True)
+    outcome = FakeDynamicExecutor().execute(request)
+
+    assert outcome.status == "accepted"
+    assert outcome.physical_execution_claimed is False
+
+
+def test_fake_gate_present_but_reset_demanded_still_fails_closed() -> None:
+    """LISS-0388 regression guard: reset stays reject-on-demand -- only
+    reuse was repurposed by ADR 0200 Decision 3. Reset execution remains
+    unimplemented (ADR 0199 Decision 3 / ADR 0200 Decision 4 boundary).
+    """
+    request = _dynamic_exec_request(needs_reset=True, needs_reuse=False)
     outcome = FakeDynamicExecutor().execute(request)
     codes = {d.code for d in outcome.diagnostics}
 
     assert outcome.status == "rejected"
-    assert "DYN_CAPABILITY_REUSE" in codes
+    assert "DYN_CAPABILITY_RESET" in codes
     assert outcome.physical_execution_claimed is False
 
 
-def test_host_auto_attach_reuse_demand_fails_closed_end_to_end() -> None:
-    """LISS-0386: post-measure reuse in match arms now fails closed via the
-    Fake-gated Host path itself (build_dynamic_exec_request must attach
-    infer_dynamic_capability_demand), not only when a request is hand-built.
-
-    Prior to LISS-0386, build_dynamic_exec_request hardcoded
-    needs_reuse=False, so this exact program (_SOURCE_MATCH) silently
-    accepted despite demanding an unsupported capability. Red: currently
-    fails because the Host wiring does not yet call
-    infer_dynamic_capability_demand.
+def test_host_auto_attach_reuse_demand_now_succeeds_end_to_end() -> None:
+    """LISS-0386 auto-attach still wires infer_dynamic_capability_demand
+    into the Host path -- LISS-0388 (ADR 0200 Decision 3) changes what
+    happens with that demand for simulator-class profiles: it now
+    succeeds instead of failing closed. `_SOURCE_MATCH`'s prepared |0>
+    plus supplied outcome "0" is physically consistent, so the real
+    evaluator (LISS-0387) genuinely applies the matching arm's gate --
+    proven directly at the Evaluator/Joint boundary by
+    test_match_arm_reuse_applies_gate_for_real in
+    test_liss_0387_dynamic_real_mid_circuit_measure_red.py (q is traced
+    out at block end, so it is not observable via this JobResult).
     """
     job = submit_source(
         _SOURCE_MATCH,
         settings={
             "dynamic_fake_profile": "SIM0_EXACT",
-            "dynamic_supplied_outcomes": {"bit": "1"},
+            "dynamic_supplied_outcomes": {"bit": "0"},
         },
     )
     result = job.result()
-    codes = _codes(result.diagnostics)
 
-    assert result.status == "failed"
-    assert "DYN_CAPABILITY_REUSE" in codes
-    assert result.dynamic_trace is None
+    assert result.status == "succeeded"
+    assert result.dynamic_trace is not None
+    assert result.dynamic_trace.physical_execution_claimed is False

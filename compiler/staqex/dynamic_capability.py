@@ -56,7 +56,9 @@ def reuse_demand_diagnostics(unit: CompilationUnit) -> list[dict[str, object]]:
             "col": span.col,
             "message": (
                 "post-measure quantum use of a mid-circuit-measured wire "
-                "demands reuse; unsupported on P0 feedback-only profiles"
+                "demands reuse capability (LISS-0388: supported on "
+                "simulator-class Fake profiles; a hardware-constrained or "
+                "live profile may still reject at verify time)"
             ),
         }
     ]
