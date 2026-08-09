@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult (ADR 0198) and reuse/reset (ADR 0199) Proposed; Fake-exec Plan drafted (LISS-0383); execution still gated** |
-| Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Proposed**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Proposed**) |
-| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md) (timing); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md) (mid-circuit Kernel); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md) (Fake-exec Plan draft) |
+| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult law Accepted (ADR 0198 / LISS-0384 Plan pending); reuse/reset (ADR 0199) Proposed; Fake-exec Plan drafted (LISS-0383); execution still gated** |
+| Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted** 2026-08-09); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Proposed**) |
+| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md) (timing); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md) (mid-circuit Kernel); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md) (`dynamic_trace` Host DTO); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md) (Fake-exec Plan draft) |
 
 This lane is intentionally separate from the Static Hilbert Kernel.
 

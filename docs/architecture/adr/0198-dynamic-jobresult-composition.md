@@ -2,10 +2,11 @@
 
 ## Status
 
-**Proposed** (2026-08-09) — Architecture Path draft for Adjudicator review.
+**Accepted** (2026-08-09) — Architecture approval by the Adjudicator.
 Implements [ADR 0197](0197-dynamic-mid-circuit-feed-forward.md) Follow-up #2 /
-Decision 5 principle. This draft is **not** Architecture acceptance and does
-**not** authorize Host or Kernel implementation.
+Decision 5 principle. Acceptance approves Decisions 1–4 below; it does
+**not** by itself authorize Host or Kernel implementation — see
+"Acceptance boundary" and "Follow-up work required".
 
 ## Design check
 
@@ -21,10 +22,10 @@ Decision 5 principle. This draft is **not** Architecture acceptance and does
   (`DynamicExecResult`, `physical_execution_claimed`); vision §2.2 / §3.1;
   ADR 0071 fail-closed Host honesty.
 - **Component boundaries, ports/adapters, VO/DTO candidates:** Host DTO /
-  Job boundary only. Candidate additive field (name TBD under Accept):
-  e.g. `dynamic_trace` / `dynamic_controller_bindings` as an immutable
-  tuple or structured report, **not** folded into `measurements`. No new
-  provider SDK. No Fake-exec wire in this ADR (that is Follow-up #4 /
+  Job boundary only. Accepted preferred additive field name:
+  `dynamic_trace` (immutable structured report, **not** folded into
+  `measurements`). Nested report DTO shape is Feature Issue Plan detail.
+  No new provider SDK. No Fake-exec wire in this ADR (Follow-up #4 /
   LISS-0383).
 - **Applicable constraints:** Additive DTO evolution (positional
   constructors for pre-observation fields remain stable — LISS-0046
@@ -32,12 +33,10 @@ Decision 5 principle. This draft is **not** Architecture acceptance and does
   (ADR 0197 Decision 5). Fake / live paths must not claim physical
   feed-forward unless an accepted live-provider ADR says so. Static Kernel
   JobResult behavior for ordinary `measure` unchanged.
-- **Decisions, assumptions, unresolved ambiguities:** Exact field name and
-  whether dynamic runs may also carry a terminal `MeasurementEnvelope` when
-  the program ends with a Static-style terminal measure after the dynamic
-  block; whether WorkflowReport composition is in or out of this ADR's
-  first Accept. This draft **recommends** additive Host fields + explicit
-  lane metadata, and defers WorkflowReport redesign.
+- **Decisions, assumptions, unresolved ambiguities:** Nested DTO types and
+  CLI/WorkflowReport display remain Feature Issue / follow-up. WorkflowReport
+  redesign is deferred. Field name preference locked at Accept:
+  `dynamic_trace`.
 - **Included and omitted AI context:** Included Host DTO and ADR 0197/0028
   reads. Omitted vendor result schemas, Braket/IBM payloads, credential
   ports beyond existing CredentialPort honesty.
@@ -84,11 +83,11 @@ Terminal `MeasurementEnvelope` remains the Host report for **terminal**
 collapse (Static `measure`, or an explicitly designated dynamic-lane
 terminal outcome if a future Accept adds one — not invented here).
 
-### 2. Additive Host channel for dynamic run reports (recommended)
+### 2. Additive Host channel `dynamic_trace` (Accepted)
 
-Extend `JobResult` with an **additive** immutable field (exact identifier
-chosen at Accept / Feature Issue Plan) that carries a structured dynamic
-run report, for example:
+Extend `JobResult` with an **additive** immutable field named
+**`dynamic_trace`** that carries a structured dynamic run report, for
+example:
 
 - lane id / profile id;
 - controller bindings (name → classical tag);
@@ -98,9 +97,11 @@ run report, for example:
   `diagnostics` when useful;
 - `physical_execution_claimed: bool` (must remain `False` for Fake).
 
-Prefer **additive last-field** placement so existing positional
-construction of pre-observation fields stays compatible (LISS-0046
-precedent). Keyword-only adoption is acceptable for the new field.
+Nested report type(s) are Feature Issue Plan detail under
+[LISS-0384](../../issues/LISS-0384-dynamic-jobresult-trace.md). Prefer
+**additive last-field** placement so existing positional construction of
+pre-observation fields stays compatible (LISS-0046 precedent). Keyword-only
+adoption is acceptable for the new field.
 
 ### 3. Composition with Static terminal measure in the same program
 
@@ -121,8 +122,7 @@ defines the **envelope meaning**, not execution authorization.
 
 `JobResult.metadata` may record lane/profile keys for Host tooling, but
 must not be the sole structured home for controller bindings if that would
-encourage ad-hoc string protocols. Prefer the typed additive field once
-named.
+encourage ad-hoc string protocols. Prefer the typed `dynamic_trace` field.
 
 ### 5. Out of scope for this ADR
 
@@ -142,8 +142,8 @@ Positive:
 
 Negative / residual open:
 
-- Exact Python field name and nested DTO types remain Feature Issue detail
-  under Accept.
+- Nested `dynamic_trace` DTO types and projection from `DynamicExecResult`
+  remain Feature Issue detail ([LISS-0384](../../issues/LISS-0384-dynamic-jobresult-trace.md)).
 - WorkflowReport / CLI pretty-print of the new channel is follow-up.
 
 ## Rejected alternatives
@@ -164,12 +164,15 @@ Rejected — breaks LISS-0022/0046 additive contract without necessity.
 
 ## Follow-up work required after acceptance
 
-1. Feature Path Local Issue: additive Host DTO + projection from
-   `DynamicExecResult` (or Fake path) into `JobResult`, with Red tests for
-   separation from `measurements`.
+1. Feature Path Local Issue: additive Host DTO `dynamic_trace` + projection
+   from `DynamicExecResult` (or Fake path) into `JobResult`, with Red tests
+   for separation from `measurements`.
+   **Filed:**
+   [LISS-0384](../../issues/LISS-0384-dynamic-jobresult-trace.md)
+   (awaiting Plan approval; no Red yet).
 2. Coordinate with [LISS-0383](../../issues/LISS-0383-dynamic-fake-executor-wire.md)
-   so Fake-exec Plan either depends on this ADR's Accept or explicitly
-   ships `DynamicExecResult`-only until the JobResult field lands.
+   so Fake-exec Plan either projects into `dynamic_trace` or keeps
+   `DynamicExecResult`-only until LISS-0384 lands.
 3. Optional CLI/REPL display Issue for the additive channel.
 
 ## Acceptance boundary

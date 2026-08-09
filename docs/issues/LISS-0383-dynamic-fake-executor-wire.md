@@ -17,8 +17,10 @@
   (complete)
 - Depends on: ADR 0197 / LISS-0382 (**complete**); LISS-0077 Fake module
   (shipped). Soft-depends on [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md)
-  (Proposed) for JobResult envelope — see Plan defaults if 0198 not yet
-  Accepted. Soft-depends on [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md)
+  (**Accepted**) / [LISS-0384](LISS-0384-dynamic-jobresult-trace.md) for
+  `JobResult.dynamic_trace` projection — Plan may still ship
+  `DynamicExecResult`-only first. Soft-depends on
+  [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md)
   (Proposed) for reset/reuse — retain reject-on-demand until 0199 Accept
   + profile Issue.
 - Related: LISS-0028; ADR 0071; `compiler/staqex/dynamic_qpu.py`
@@ -45,8 +47,8 @@ outcomes), never as a silent default for all targets.
 
 - Live QPU provider submit / credentials / network (LISS-0100 lineage).
 - OpenQASM dynamic emission (LISS-0097-E).
-- Inventing JobResult field names if ADR 0198 is still Proposed — use
-  Plan default below.
+- Inventing alternate JobResult field names — ADR 0198 locks
+  `dynamic_trace`; nested types are LISS-0384 Plan detail.
 - Enabling reset/reuse on Fake profiles unless ADR 0199 Accept + a
   profile Issue say so (keep P0 reject-on-demand).
 - Weakening Static NLTS; reviving `observe` / classical `branch`.
@@ -66,12 +68,13 @@ outcomes), never as a silent default for all targets.
 4. Reset/reuse/latency demands continue to reject on P0 feedback-only
    profiles.
 
-### JobResult default if ADR 0198 not yet Accepted
+### JobResult / `dynamic_trace` (ADR 0198 Accepted)
 
-Ship Fake results primarily as `DynamicExecResult` (and/or diagnostics)
-without inventing a permanent `JobResult` field. When ADR 0198 is
-Accepted, a follow-on slice (same Issue or child) projects into the
-additive JobResult channel.
+Prefer projecting Fake results into `JobResult.dynamic_trace` when
+[LISS-0384](LISS-0384-dynamic-jobresult-trace.md) is in scope or already
+Green. Plan may still ship `DynamicExecResult` (and/or diagnostics) first
+without waiting on LISS-0384 Green, then add projection in a follow-on
+slice.
 
 ### Non-goals inside Plan
 
@@ -112,6 +115,7 @@ demands still fail closed on P0 profiles.
 ## Adjudicator decision points (before Plan approval)
 
 1. Exact Fake gate spelling (CLI flag vs settings key vs Host API).
-2. Whether Plan requires ADR 0198 Accept before any JobResult touch.
+2. Whether Plan projects into `dynamic_trace` in the same Issue as Fake
+   wire, or defers that to LISS-0384.
 3. Whether unconditional `DYNAMIC_UNSUPPORTED_FEATURE_ERROR` is replaced
    by profile-gated diagnostics or kept in addition to Fake success path.

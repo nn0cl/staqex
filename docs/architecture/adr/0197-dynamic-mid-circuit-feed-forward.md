@@ -252,8 +252,11 @@ orthogonal to mid-circuit collapse laws.
    (`feature/liss-0382-dynamic-mid-circuit-feed-forward`).
 2. Separate ADR/Issue for JobResult composition of dynamic runs
    (LISS-0028 remaining item).
-   **Drafted (Proposed):**
-   [ADR 0198](0198-dynamic-jobresult-composition.md).
+   **Accepted + Feature Issue filed:**
+   [ADR 0198](0198-dynamic-jobresult-composition.md) (**Accepted**
+   2026-08-09);
+   [LISS-0384](../../issues/LISS-0384-dynamic-jobresult-trace.md)
+   (Plan pending).
 3. Separate ADR/Issue for qubit reuse / reset model beyond capability
    reject flags.
    **Drafted (Proposed):**
