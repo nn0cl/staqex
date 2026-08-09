@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Host DTO shipped** (LISS-0384 Phase 3); Fake-exec wire still gated (LISS-0383) |
+| Status | **Host DTO shipped** (LISS-0384); Fake-exec Host wire **shipped** (LISS-0383) |
 | Decision | [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**) |
 | Issue | [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md) |
 

@@ -25,6 +25,7 @@ from ..ast_nodes import (
     Coin,
     CompilationUnit,
     Dirac,
+    DynamicQpuStmt,
     EnumDecl,
     EvolveExpr,
     Expr,
@@ -365,6 +366,9 @@ class Evaluator:
         for stmt_i, stmt in enumerate(stmts):
             if isinstance(stmt, ReturnStmt):
                 raise KernelError("`main` cannot return; use terminal `measure`")
+            if isinstance(stmt, DynamicQpuStmt):
+                # LISS-0383: Dynamic lane is Host/Fake-gated; Static Kernel skips.
+                continue
             if isinstance(stmt, ForEachStmt):
                 joint = self._run_foreach(joint, stmt)
                 continue

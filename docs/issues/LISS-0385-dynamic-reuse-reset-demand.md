@@ -3,8 +3,9 @@
 ## Metadata
 
 - Local issue ID: LISS-0385
-- Status/phase: **in_progress** / `phase-1-red` complete — awaiting
-  Phase 2 Green approval (Plan approved 2026-08-09; Option B declined)
+- Status/phase: **complete** (2026-08-09) — Adjudicator Continuation /
+  Completion; PR pending on branch
+  `feature/liss-0383-0385-fake-demand-green`
 - Type: Feature Path (Kernel/Fake — demand inference + fail-closed
   diagnostics; no new `reset` keyword)
 - Priority: P1
@@ -19,8 +20,8 @@
   mid-circuit witnesses (complete)
 - Related: [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md); [LISS-0028](LISS-0028-dynamic-qpu-lane.md)
 - Blocks: none (profile-enable Issue is separate)
-- Branch: `feature/liss-0384-dynamic-jobresult-trace` (stacked with #482)
-- GitHub Issue / PR: [#482](https://github.com/nn0cl/staqex/pull/482)
+- Branch: `feature/liss-0383-0385-fake-demand-green`
+- GitHub Issue / PR: (fill after `gh pr create`)
 
 ## Intent
 
@@ -67,5 +68,7 @@ profiles.
 - [x] Phase 1 Red: `tests/test_liss_0385_dynamic_reuse_reset_demand_red.py`
       (**collection ImportError**, 2026-08-09): missing
       `compiler.staqex.dynamic_capability.infer_dynamic_capability_demand`.
-- [ ] Phase 2 Green / Phase 3 Refactor.
-- [ ] Completion approval before merge.
+- [x] Phase 2 Green / Phase 3 light Refactor (2026-08-09):
+      `dynamic_capability.infer_dynamic_capability_demand` + soft compile
+      `DYN_CAPABILITY_REUSE` via `reuse_demand_diagnostics`.
+- [x] Completion approval (2026-08-09 Continuation); regression 1372 passed.

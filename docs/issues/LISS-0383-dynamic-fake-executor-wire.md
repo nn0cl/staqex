@@ -3,8 +3,9 @@
 ## Metadata
 
 - Local issue ID: LISS-0383
-- Status/phase: **in_progress** / `phase-1-red` complete — awaiting
-  Phase 2 Green approval (Plan approved 2026-08-09)
+- Status/phase: **complete** (2026-08-09) — Adjudicator Continuation /
+  Completion; PR pending on branch
+  `feature/liss-0383-0385-fake-demand-green`
 - Type: Feature Path (Kernel — Fake-exec wire under supplied outcomes;
   `physical_execution_claimed=False`)
 - Priority: P1
@@ -21,13 +22,14 @@
   `dynamic_trace` projection. Soft-depends on
   [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) /
   [LISS-0385](LISS-0385-dynamic-reuse-reset-demand.md) — retain P0
-  reject-on-demand.
-- Related: LISS-0028; ADR 0071; `compiler/staqex/dynamic_qpu.py`
+  reject-on-demand when Fake request carries demand; Host Fake AST builder
+  does not yet auto-attach inferred reuse (0385 compile/infer separate).
+- Related: LISS-0028; ADR 0071; `compiler/staqex/dynamic_qpu.py`;
+  `compiler/staqex/dynamic_fake_wire.py`
 - Blocks: live provider feed-forward; OpenQASM dynamic emission (still
   separate)
-- Branch: `feature/liss-0384-dynamic-jobresult-trace` (Red landed on stacked PR;
-  dedicated `feature/liss-0383-…` optional after #482 merges)
-- GitHub Issue / PR: [#482](https://github.com/nn0cl/staqex/pull/482)
+- Branch: `feature/liss-0383-0385-fake-demand-green`
+- GitHub Issue / PR: (fill after `gh pr create`)
 
 ## Intent
 
@@ -76,5 +78,7 @@ to `FakeDynamicExecutor` under **supplied outcomes**, project into
 - [x] Phase 1 Red: `tests/test_liss_0383_dynamic_fake_executor_wire_red.py`
       (**1 failed / 2 passed**, 2026-08-09): Fake-gated Host path fails;
       gate-absent reject and Fake `DYN_CAPABILITY_REUSE` already pass.
-- [ ] Phase 2 Green / Phase 3 Refactor.
-- [ ] Completion approval before merge.
+- [x] Phase 2 Green / Phase 3 light Refactor (2026-08-09): Host Fake gate +
+      `dynamic_fake_wire` → `FakeDynamicExecutor` → `project_dynamic_trace`;
+      evaluator skips `DynamicQpuStmt`.
+- [x] Completion approval (2026-08-09 Continuation); regression 1372 passed.

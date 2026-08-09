@@ -6,6 +6,9 @@ not receive the evaluator's Joint, AST, or provider-specific objects.
 ADR 0198 / LISS-0384 adds an additive ``dynamic_trace`` channel for Dynamic
 QPU mid-circuit controller reports; those must not appear as
 ``MeasurementEnvelope`` entries.
+
+LISS-0383 wires Fake-gated Host submit under ``dynamic_fake_profile`` +
+supplied outcomes into ``dynamic_trace`` without claiming physical execution.
 """
 
 from __future__ import annotations
@@ -17,13 +20,18 @@ from uuid import uuid4
 
 from .backend.qasm.emitter import QASM3Emitter
 from .parametric_binding import (
-    CircuitParameter,
     extract_circuit_parameters,
     validate_parameter_bindings,
 )
-from .dynamic_qpu import DynamicExecResult
+from .dynamic_fake_wire import (
+    FAKE_BYPASS_HARD_CODES,
+    build_dynamic_exec_request,
+    resolve_fake_dynamic_profile,
+    unit_has_dynamic_qpu,
+)
+from .dynamic_qpu import DynamicExecResult, FakeDynamicExecutor
 from .host_input_port import MappingHostInputAdapter
-from .pipeline import CompileResult, compile_path, compile_source
+from .pipeline import HARD_CODES, CompileResult, compile_path, compile_source
 from .runtime.evaluator import EvalResult, Evaluator, KernelDiagnosticError, KernelError
 from .observation import ObservationReport
 
@@ -138,6 +146,23 @@ def submit_path(
     )
 
 
+def _submit_allows_execution(
+    compiled: CompileResult,
+    *,
+    fake_profile: str | None,
+) -> bool:
+    """Whether Host may run Local/Fake evaluation for this compile result."""
+
+    if compiled.unit is None:
+        return False
+    if fake_profile is not None and unit_has_dynamic_qpu(compiled.unit):
+        return not any(
+            d.get("code") in HARD_CODES and d.get("code") not in FAKE_BYPASS_HARD_CODES
+            for d in compiled.diagnostics
+        )
+    return compiled.ok
+
+
 def _submit_compiled(
     compiled: CompileResult,
     *,
@@ -145,7 +170,8 @@ def _submit_compiled(
     stdout: TextIO | None,
     job_id: str,
 ) -> Job:
-    if compiled.unit is None or not compiled.ok:
+    fake_profile = resolve_fake_dynamic_profile(settings)
+    if not _submit_allows_execution(compiled, fake_profile=fake_profile):
         return Job(
             job_id,
             JobResult(
@@ -153,6 +179,69 @@ def _submit_compiled(
                 diagnostics=tuple(compiled.diagnostics),
                 metadata={"target": settings.get("target", "local")},
             ),
+        )
+
+    assert compiled.unit is not None
+    dynamic_trace: DynamicTraceReport | None = None
+
+    if fake_profile is not None and unit_has_dynamic_qpu(compiled.unit):
+        outcomes = settings.get("dynamic_supplied_outcomes") or {}
+        if not isinstance(outcomes, Mapping):
+            outcomes = {}
+        request = build_dynamic_exec_request(
+            compiled.unit,
+            profile_id=fake_profile,
+            supplied_outcomes_by_controller=outcomes,
+        )
+        if request is None:
+            return Job(
+                job_id,
+                JobResult(
+                    status="failed",
+                    diagnostics=tuple(compiled.diagnostics)
+                    + (
+                        {
+                            "code": "DYN_FAKE_REQUEST_BUILD_FAILED",
+                            "message": "Fake gate present but no mid-circuit tokens",
+                        },
+                    ),
+                    metadata={"target": settings.get("target", "local")},
+                ),
+            )
+        try:
+            fake_result = FakeDynamicExecutor().execute(request)
+        except KeyError as exc:
+            return Job(
+                job_id,
+                JobResult(
+                    status="failed",
+                    diagnostics=tuple(compiled.diagnostics)
+                    + (
+                        {
+                            "code": "DYN_SUPPLIED_OUTCOME_MISSING",
+                            "message": f"missing supplied outcome for token {exc}",
+                        },
+                    ),
+                    metadata={"target": settings.get("target", "local")},
+                ),
+            )
+        if fake_result.status != "accepted":
+            fake_diagnostics = [
+                {"code": d.code, "message": d.message} for d in fake_result.diagnostics
+            ]
+            return Job(
+                job_id,
+                JobResult(
+                    status="failed",
+                    diagnostics=tuple(compiled.diagnostics) + tuple(fake_diagnostics),
+                    metadata={"target": settings.get("target", "local")},
+                    dynamic_trace=None,
+                ),
+            )
+        dynamic_trace = project_dynamic_trace(
+            fake_result,
+            lane=request.lane,
+            profile_id=fake_profile,
         )
 
     try:
@@ -179,6 +268,7 @@ def _submit_compiled(
                     },
                 ),
                 metadata={"target": settings.get("target", "local")},
+                dynamic_trace=dynamic_trace,
             ),
         )
     except KernelError as exc:
@@ -188,6 +278,7 @@ def _submit_compiled(
                 status="failed",
                 diagnostics=({"code": "RUNTIME_ERROR", "message": str(exc)},),
                 metadata={"target": settings.get("target", "local")},
+                dynamic_trace=dynamic_trace,
             ),
         )
 
@@ -206,6 +297,7 @@ def _submit_compiled(
             measurements=measurements,
             diagnostics=tuple(compiled.diagnostics),
             metadata=metadata,
+            dynamic_trace=dynamic_trace,
         ),
     )
 
