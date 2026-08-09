@@ -184,3 +184,119 @@ or removal of dynamic-lane capability rejection.
 ## Dependency Adoption Evidence
 
 N/A — no new external dependency.
+
+## Amendment (Accepted, 2026-08-09): physical outcome confirmation
+
+**Status: Accepted** — Architecture approval by the Adjudicator. Approves
+the field addition and its meaning below, **including Option 1** (default
+`True` when unchecked) for the previously-open default-value question.
+Does not itself authorize implementation; a Feature Path Issue is required
+per this ADR's own Acceptance boundary.
+
+### Design check
+
+- **Scope and expected behavior:** [ADR 0200](0200-dynamic-lane-real-kernel-execution.md)
+  / [LISS-0387](../../issues/LISS-0387-dynamic-real-mid-circuit-measure.md)
+  shipped real Kernel execution for mid-circuit `measure`, and disclosed a
+  gap this Amendment addresses: Host's `FakeDynamicExecutor` bookkeeping
+  (still deciding accept/reject and building `dynamic_trace` from the
+  **supplied** outcome, unchanged since LISS-0383) runs independently of,
+  and before, the real evaluator's genuine collapse. A supplied outcome
+  that is physically impossible against the real prepared state (zero
+  Born-rule probability) makes the real run vacuum, while
+  `dynamic_trace.controller_bindings` still reports the supplied label as
+  if it were achieved — an outcome that never physically happened is
+  reported as if it had. `JobResult.status` staying `"succeeded"` for a
+  vacuum run is **not** the defect (a Static Kernel program measuring a
+  zero-probability branch vacuums honestly today too, per axiom 5) — the
+  defect is narrower: `dynamic_trace` claiming a specific controller
+  binding as fact when the real run shows it was never achievable.
+- **Specifications and files inspected:** this ADR's Decision 2
+  (`dynamic_trace` is additive, illustrative-not-closed field list, Nested
+  DTO shape left to Feature Issue Plan detail); ADR 0200 Decisions 1-2, 6;
+  LISS-0387's disclosed residual gap (Refactor note); `compiler/staqex/host.py`
+  `_submit_compiled` (Fake bookkeeping via `FakeDynamicExecutor.execute`
+  runs strictly before `evaluator.run_unit`, with no channel back from the
+  real run's outcome into `dynamic_trace`); `compiler/staqex/runtime/evaluator.py`
+  `_run_dynamic_qpu_block` / `_collapse_dynamic_wire` (the only place that
+  currently knows whether a given mid-circuit collapse vacuumed --
+  `EvalResult` does not yet surface this).
+- **Component boundaries, ports/adapters, VO/DTO candidates:** Host DTO
+  only (`DynamicTraceReport`, this ADR's own surface) plus one internal,
+  non-public `Evaluator`/`EvalResult` signal (not Host-facing, not itself
+  governed by this ADR) needed to detect the vacuum and thread it through
+  `host.py` into the additive `dynamic_trace` field this Decision adds. No
+  new port; no provider SDK; no change to `JobResult.measurements` or the
+  separation law (Decisions 1, 3).
+- **Applicable constraints:** Additive-only (this ADR's own Decision 2
+  constraint) — existing `dynamic_trace` consumers reading today's fields
+  are unaffected; the new field must default to a value that does not
+  retroactively assert honesty guarantees earlier Fake-exec Issues
+  (LISS-0383/0385/0386/0387/0388) never claimed. Must not change
+  `JobResult.status` semantics (a vacuum run is a legitimate "succeeded"
+  outcome, matching Static Kernel precedent -- not touched by this
+  Amendment). Must not claim `physical_execution_claimed=True` anywhere.
+- **Decisions, assumptions, unresolved ambiguities:** Field name and
+  exact default-value semantics for the non-dynamic-lane / live-provider
+  case (where Host cannot yet check anything) are the open question below
+  -- flagged for Adjudicator choice, not resolved unilaterally.
+- **Included and omitted AI context:** Included direct reads of `host.py`,
+  `evaluator.py`'s LISS-0387 additions, and this ADR's own Decision 2 text.
+  Omitted live-provider result schemas (unaffected; they do not yet exist).
+- **Task routing:** Architecture proposal; deterministic source inspection.
+- **Evidence contract:** N/A -- no AI runtime output.
+- **Verification plan (after Accept + Feature Issue):** (a) a
+  physically-consistent supplied outcome still reports
+  `dynamic_trace.controller_bindings` exactly as today (no field-value
+  change for the already-shipped honest case); (b) a physically-impossible
+  supplied outcome (the LISS-0387 vacuum test's own fixture, run through
+  the full Host path) surfaces the new field as `False` /
+  not-confirmed, distinguishably from today's silent claim; (c) no
+  existing `dynamic_trace` consumer test breaks from the additive change.
+
+### Proposed decision
+
+Add one additive field to `DynamicTraceReport` --
+**`physical_outcome_confirmed: bool`** -- populated by threading a new,
+Kernel-internal (non-public, not itself part of this ADR's Host surface)
+signal from `Evaluator`'s real mid-circuit collapse
+(`_collapse_dynamic_wire` / `_run_dynamic_qpu_block`, LISS-0387) back
+through `host.py` into the `dynamic_trace` Host builds:
+
+- `True` when the real local evaluator ran the dynamic block and every
+  mid-circuit collapse it performed matched the outcome recorded in
+  `controller_bindings` (the ordinary, already-shipped honest case).
+- `False` when the real local evaluator determined at least one recorded
+  controller binding was physically unreachable (the run vacuumed) --
+  `controller_bindings` still shows the supplied label for audit /
+  debugging, but consumers must treat it as **not confirmed**, not as an
+  achieved physical outcome.
+
+**Resolved (Adjudicator, 2026-08-09): Option 1.** Default `True` when
+unchecked -- matches every existing shipped test's expectation (none of
+them assert this field, so the additive default must not silently flip
+their meaning) and reads as "nothing contradicted this outcome," not as a
+false positive claim of confirmation, since Host genuinely has no
+contradicting evidence in that case. (Option 2 -- default `False` when
+unchecked -- was considered and not chosen: it would have marked every
+already-shipped, physically-honest Fake-exec test result as "unconfirmed,"
+reading as a false regression signal despite nothing being wrong with
+those results.)
+
+### Out of scope for this Amendment
+
+- Changing `JobResult.status` for vacuum runs (stays `"succeeded"`,
+  matching Static Kernel precedent -- not a defect).
+- `needs_reset` / reset execution (unrelated, ADR 0199/0200 boundary
+  unchanged).
+- Live provider result schemas (do not exist yet).
+- Any change to `measurements`, the separation law (Decision 1), or
+  existing `dynamic_trace` field meanings.
+
+### Amendment acceptance boundary
+
+Accepting this Amendment approves the **field addition and its meaning**
+above (including the Adjudicator's choice on the open default-value
+question). It does not itself authorize Kernel/Host implementation -- a
+Feature Path Issue is required per this ADR's own process, citing this
+Amendment.
