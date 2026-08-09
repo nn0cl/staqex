@@ -154,17 +154,17 @@ def test_fake_gate_present_and_reuse_demanded_now_succeeds() -> None:
     assert outcome.physical_execution_claimed is False
 
 
-def test_fake_gate_present_but_reset_demanded_still_fails_closed() -> None:
-    """LISS-0388 regression guard: reset stays reject-on-demand -- only
-    reuse was repurposed by ADR 0200 Decision 3. Reset execution remains
-    unimplemented (ADR 0199 Decision 3 / ADR 0200 Decision 4 boundary).
+def test_fake_gate_present_and_reset_demanded_now_succeeds() -> None:
+    """LISS-0390 (ADR 0199 Amendment): reset is repurposed for
+    simulator-class profiles, symmetric to LISS-0388's reuse treatment --
+    SIM0_EXACT has no physical constraint against trace-out-then-reprepare
+    either. Supersedes the LISS-0388 guard that asserted reset still
+    rejected (reset execution is now implemented, LISS-0390).
     """
     request = _dynamic_exec_request(needs_reset=True, needs_reuse=False)
     outcome = FakeDynamicExecutor().execute(request)
-    codes = {d.code for d in outcome.diagnostics}
 
-    assert outcome.status == "rejected"
-    assert "DYN_CAPABILITY_RESET" in codes
+    assert outcome.status == "accepted"
     assert outcome.physical_execution_claimed is False
 
 

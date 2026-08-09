@@ -585,6 +585,20 @@ class MatchStmt:
     span: Span
 
 
+@dataclass
+class ResetStmt:
+    """Lane-local `reset wire` (ADR 0199 Amendment, LISS-0390).
+
+    `reset` is a contextual soft keyword (not a global hard keyword),
+    mirroring `match`. Re-prepares `target` as |0> after tracing it out --
+    a genuinely different operation from the Static Kernel's same-name
+    `state x = |0>` idiom, which verifies rather than forces.
+    """
+
+    target: str
+    span: Span
+
+
 Stmt = Union[
     StateBind,
     Measure,

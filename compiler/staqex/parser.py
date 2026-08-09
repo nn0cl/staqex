@@ -20,6 +20,7 @@ from .ast_nodes import (
     EnumDecl,
     MatchArm,
     MatchStmt,
+    ResetStmt,
     ExperimentDecl,
     EvolveBody,
     EvolveExpr,
@@ -1721,6 +1722,9 @@ class Parser:
         # ADR 0197 / LISS-0382: contextual soft `match <ctrl> { … }`.
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "match":
             return self._match_stmt()
+        # ADR 0199 Amendment / LISS-0390: contextual soft `reset <wire>`.
+        if self._check(TokenKind.IDENT) and self._peek().lexeme == "reset":
+            return self._reset_stmt()
         # ADR 0180: inferred local bind `name = expr` (no type annotation).
         if self._check(TokenKind.IDENT) and self._peek_at_kind(1) == TokenKind.EQ:
             return self._inferred_bind()
@@ -1866,6 +1870,15 @@ class Parser:
                 sp.col,
             )
         return MatchStmt(scrutinee=scrutinee, arms=arms, span=sp)
+
+    def _reset_stmt(self) -> ResetStmt:
+        """Parse soft `reset <wire>` (ADR 0199 Amendment, LISS-0390)."""
+        sp = self._span()
+        reset_tok = self._advance()
+        if reset_tok.lexeme != "reset":
+            raise ParseError("expected `reset`", reset_tok.line, reset_tok.col)
+        target = self._expect_ident_like()
+        return ResetStmt(target=target, span=sp)
 
     def _optional_dynamic_timing_intent(self) -> str | None:
         """Parse optional `within <name>`; fail closed on malformed forms."""

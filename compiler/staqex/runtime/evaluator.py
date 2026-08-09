@@ -59,8 +59,10 @@ from ..ast_nodes import (
     OpIdentity,
     OpCall,
     Pipe,
+    ResetStmt,
     ReturnStmt,
     Snapshot,
+    Span,
     StateBind,
     StructDecl,
     TensorExpr,
@@ -1238,6 +1240,14 @@ class Evaluator:
                 if arm is not None:
                     joint = self._run_dynamic_arm_body(joint, arm.body.stmts)
                 continue
+            if isinstance(body_stmt, ResetStmt):
+                # LISS-0390 (ADR 0199 Amendment Decision 7): reuses
+                # trace_out (ADR 0173) + KetLit |0> re-preparation -- no
+                # new Joint primitive. Tracked for block-end disposal like
+                # a measured wire, in case the wire is never touched again.
+                joint = self._reset_dynamic_wire(joint, body_stmt.target, body_stmt.span)
+                dynamically_measured.append(body_stmt.target)
+                continue
             if isinstance(body_stmt, StateBind):
                 joint = self._bind_names(
                     joint,
@@ -1259,10 +1269,26 @@ class Evaluator:
             joint = joint.trace_out(wire)
         return joint
 
+    def _reset_dynamic_wire(self, joint: Joint, wire: str, span: Span) -> Joint:
+        """LISS-0390: trace_out(wire) then re-prepare wire as |0>.
+
+        Reuses the two already-shipped primitives LISS-0387 (KetLit |0>
+        preparation) and ADR 0173 (Joint.trace_out) established -- no new
+        Joint math. Deliberately distinct from the Static Kernel's
+        same-name `state x = |0>` idiom (LISS-0114 F verification).
+        """
+        joint = joint.trace_out(wire)
+        return self._bind_names(
+            joint, [wire], KetLit(label="0", span=span), logs=[], inspect_out=None
+        )
+
     def _run_dynamic_arm_body(self, joint: Joint, stmts: list[Any]) -> Joint:
         for body_stmt in stmts:
             if isinstance(body_stmt, ExprStmt) and isinstance(body_stmt.expr, Call):
                 joint = self._bind_call(joint, "__dynamic_expr_stmt", body_stmt.expr)
+                continue
+            if isinstance(body_stmt, ResetStmt):
+                joint = self._reset_dynamic_wire(joint, body_stmt.target, body_stmt.span)
                 continue
             if isinstance(body_stmt, StateBind):
                 joint = self._bind_names(
