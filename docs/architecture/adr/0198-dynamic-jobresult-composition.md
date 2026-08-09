@@ -167,9 +167,9 @@ Rejected — breaks LISS-0022/0046 additive contract without necessity.
 1. Feature Path Local Issue: additive Host DTO `dynamic_trace` + projection
    from `DynamicExecResult` (or Fake path) into `JobResult`, with Red tests
    for separation from `measurements`.
-   **Filed:**
+   **Filed / Host channel complete:**
    [LISS-0384](../../issues/LISS-0384-dynamic-jobresult-trace.md)
-   (awaiting Plan approval; no Red yet).
+   (**complete** 2026-08-09).
 2. Coordinate with [LISS-0383](../../issues/LISS-0383-dynamic-fake-executor-wire.md)
    so Fake-exec Plan either projects into `dynamic_trace` or keeps
    `DynamicExecResult`-only until LISS-0384 lands.

@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0384
-- Status/phase: **in_progress** / `phase-3-refactor` complete — awaiting
-  Completion approval (Plan + Phase 1–3 approved 2026-08-09)
+- Status/phase: **complete** (2026-08-09) — Adjudicator Completion
+  approved; PR pending
 - Type: Feature Path (Host DTO — additive `JobResult.dynamic_trace`;
   projection from `DynamicExecResult` / Fake path)
 - Priority: P1
@@ -21,9 +21,7 @@
   Fake-only first); [LISS-0028](LISS-0028-dynamic-qpu-lane.md)
 - Blocks: none strictly
 - Branch: `feature/liss-0384-dynamic-jobresult-trace`
-- GitHub Issue / PR: none yet
-- Plan-locked shape: `dynamic_trace: DynamicTraceReport | None = None`
-  trailing after `observations`; see acceptance spec
+- GitHub Issue / PR: pending (this Completion)
 
 ## Intent
 
@@ -60,7 +58,7 @@ Implement ADR 0198 Decisions 1–4 on the Host boundary:
 
 ## AI planning record (size M)
 
-- Status: Plan + Phase 1–3 complete; awaiting Completion approval
+- Status: **complete** (Completion approved 2026-08-09)
 - Authoring environment: Cursor (Grok 4.5), 2026-08-09
 - Size: `M` — Host DTO + projection helper + Red tests; no language surface
   change.
@@ -82,4 +80,4 @@ Implement ADR 0198 Decisions 1–4 on the Host boundary:
 - [x] Phase 3 Refactor: immutable `MappingProxyType` bindings; module
       docstring; spec status sync. Behavior unchanged.
       Full suite (2026-08-09): `.venv/bin/pytest tests/` → **1366 passed**.
-- [ ] Completion approval before merge.
+- [x] Completion approval before merge (Adjudicator 2026-08-09).
