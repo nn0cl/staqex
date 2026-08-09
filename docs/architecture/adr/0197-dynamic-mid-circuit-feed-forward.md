@@ -252,11 +252,18 @@ orthogonal to mid-circuit collapse laws.
    (`feature/liss-0382-dynamic-mid-circuit-feed-forward`).
 2. Separate ADR/Issue for JobResult composition of dynamic runs
    (LISS-0028 remaining item).
+   **Drafted (Proposed):**
+   [ADR 0198](0198-dynamic-jobresult-composition.md).
 3. Separate ADR/Issue for qubit reuse / reset model beyond capability
    reject flags.
+   **Drafted (Proposed):**
+   [ADR 0199](0199-dynamic-qubit-reuse-reset.md).
 4. Later: AST → FakeDynamicExecutor under supplied outcomes (still
    `physical_execution_claimed=False`); OpenQASM dynamic emission;
    live provider (LISS-0097-E / LISS-0100).
+   **Fake-exec Plan drafted:**
+   [LISS-0383](../../issues/LISS-0383-dynamic-fake-executor-wire.md)
+   (awaiting Plan approval; no Red yet).
 
 ## Acceptance boundary
 

@@ -7,7 +7,7 @@
 - Phase: Architecture Path → Feature Path boundary slice complete
 - Type: language semantics / dynamic circuit boundary
 - Priority: P1
-- Related: ADR 0065, ADR 0069, ADR 0071, [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md) (Accepted 2026-08-05), [LISS-0381](LISS-0381-dynamic-qpu-timing-region-intent.md) (timing-intent Kernel slice), [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md) (**Accepted** 2026-08-09), [LISS-0382](LISS-0382-dynamic-mid-circuit-feed-forward.md) (mid-circuit Kernel slice), LISS-0016, LISS-0019
+- Related: ADR 0065, ADR 0069, ADR 0071, [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md) (Accepted 2026-08-05), [LISS-0381](LISS-0381-dynamic-qpu-timing-region-intent.md) (timing-intent Kernel slice), [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md) (**Accepted** 2026-08-09), [LISS-0382](LISS-0382-dynamic-mid-circuit-feed-forward.md) (mid-circuit Kernel **complete**), [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Proposed**), [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Proposed**), [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md) (Fake-exec Plan draft), LISS-0016, LISS-0019
 
 ## Acceptance specification
 
@@ -24,13 +24,13 @@
 - [x] A target capability profile is required before submission.
 - [x] Unsupported dynamic features fail explicitly; no hidden Host fallback.
 - [ ] Timing, qubit reuse, controller values, and JobResult composition are
-      specified. **Partial:** timing's grammar/IR shape (`dynamic qpu
-      within <name>`, a `TimingRegion` witness) is Accepted via ADR 0193
-      and Kernel-shipped by
-      [LISS-0381](LISS-0381-dynamic-qpu-timing-region-intent.md)
-      (**complete**). Controller/match surface + QSem markers shipped by
-      LISS-0382 (**complete**). Qubit reuse / JobResult composition remain
-      fully open.
+      specified. **Partial:** timing shipped (ADR 0193 / LISS-0381);
+      controllers / mid-circuit shipped (ADR 0197 / LISS-0382). JobResult
+      composition drafted as [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md)
+      (**Proposed**). Qubit reuse/reset drafted as
+      [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md)
+      (**Proposed**). Fake-exec wire Plan drafted as
+      [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md).
 - [ ] CPU simulator and QPU lowering share an observable semantic contract.
 
 ## Non-goals
@@ -58,9 +58,11 @@
 - Status: **Complete for the rejection/capability boundary; follow-up open**.
 - Added explicit dynamic-lane teaching documentation and preserved the
   terminal-measure/static-Kernel separation.
-- Remaining: JobResult composition, qubit reuse / reset model, Fake-exec /
-  OpenQASM dynamic / live provider. Mid-circuit Kernel IR+diagnostics are
-  **complete** (LISS-0382); timing intent shipped (LISS-0381).
+- Remaining: Accept ADR 0198 (JobResult) and ADR 0199 (reuse/reset);
+  Plan-approve and execute [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md)
+  Fake-exec; later OpenQASM dynamic / live provider. Mid-circuit Kernel
+  IR+diagnostics **complete** (LISS-0382); timing intent shipped
+  (LISS-0381).
 
 ## Phase 3 review record
 
