@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0390
-- Status/phase: **Green/Refactor complete** (2026-08-10) — awaiting
-  Completion approval; PR not yet opened
+- Status/phase: **complete** (2026-08-10) — Adjudicator Completion approval;
+  PR [#495](https://github.com/nn0cl/staqex/pull/495)
 - Type: Feature Path (Kernel — new contextual keyword; parser, AST,
   linear-use, capability law, evaluator dispatch)
 - Priority: P1
@@ -23,7 +23,7 @@
   `compiler/staqex/runtime/evaluator.py` (`_run_dynamic_qpu_block`)
 - Blocks: none
 - Branch: `feature/liss-0390-dynamic-reset-keyword`
-- GitHub Issue / PR: none yet
+- GitHub Issue / PR: [#495](https://github.com/nn0cl/staqex/pull/495)
 
 ## Intent
 
@@ -198,4 +198,4 @@ Feature: Dynamic-lane reset genuinely reinitializes a measured wire
       (the two LISS-0388 guard renames are 1:1 replacements). Static
       Kernel and pre-existing Dynamic-lane behavior outside this Issue's
       scope confirmed unaffected.
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-10); PR [#495](https://github.com/nn0cl/staqex/pull/495).
