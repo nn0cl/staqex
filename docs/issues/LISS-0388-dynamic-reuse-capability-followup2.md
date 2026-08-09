@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0388
-- Status/phase: **Green/Refactor complete** (2026-08-09) — awaiting
-  Completion approval; PR not yet opened
+- Status/phase: **complete** (2026-08-09) — Adjudicator Completion approval;
+  PR [#488](https://github.com/nn0cl/staqex/pull/488)
 - Type: Feature Path (Kernel/Fake — capability law repurposing; no new
   surface, no profile addition)
 - Priority: P1
@@ -23,7 +23,7 @@
   `compiler/staqex/dynamic_capability.py` (`reuse_demand_diagnostics`)
 - Blocks: none
 - Branch: `feature/liss-0388-dynamic-reuse-capability-followup2`
-- GitHub Issue / PR: none yet
+- GitHub Issue / PR: [#488](https://github.com/nn0cl/staqex/pull/488)
 
 ## Intent
 
@@ -175,4 +175,4 @@ Feature: Reuse capability law is repurposed for simulator-class profiles
       1377 by the 2 net-new tests (reset-regression guard +
       CH1-reuse-accept guard; the flipped/renamed tests are 1:1
       replacements).
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-09); PR [#488](https://github.com/nn0cl/staqex/pull/488).
