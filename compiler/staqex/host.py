@@ -245,7 +245,16 @@ def _submit_compiled(
         )
 
     try:
-        inputs = settings.get("inputs")
+        inputs = dict(settings.get("inputs") or {})
+        if fake_profile is not None and unit_has_dynamic_qpu(compiled.unit):
+            # LISS-0387 (ADR 0200 Decision 2): route the same supplied
+            # outcomes Host already verified via FakeDynamicExecutor above
+            # into the Kernel's HostInputPort channel (ADR 0194), so the
+            # evaluator's real mid-circuit collapse uses the identical data.
+            supplied_by_controller = settings.get("dynamic_supplied_outcomes") or {}
+            if isinstance(supplied_by_controller, Mapping):
+                for controller_name, outcome in supplied_by_controller.items():
+                    inputs[f"dynamic:{controller_name}"] = outcome
         host_input = MappingHostInputAdapter(inputs) if inputs else None
         evaluator = Evaluator(
             seed=settings.get("seed"),

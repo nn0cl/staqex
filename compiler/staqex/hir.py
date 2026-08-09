@@ -25,6 +25,7 @@ from .ast_nodes import (
     KetLit,
     ListExpr,
     Measure,
+    MeasureExpr,
     Pipe,
     ReturnStmt,
     ScientificScopeContract,
@@ -389,6 +390,26 @@ def _analyze_block(
     diags: list[dict] = []
 
     for stmt in block.stmts:
+        if (
+            isinstance(stmt, StateBind)
+            and stmt.ty is not None
+            and stmt.ty.name == "Controller"
+            and isinstance(stmt.expr, MeasureExpr)
+            and isinstance(stmt.expr.expr, Var)
+        ):
+            # LISS-0387 (ADR 0200 Decision 4): `Controller<T> = measure wire`
+            # inside a dynamic qpu block consumes `wire` for linear-use
+            # purposes, unlike Static `state` bindings which stay
+            # unconsumed until an explicit `measure` statement. Unlike
+            # Static terminal `measure`, the wire is not physically dead
+            # (ADR 0197 Decision 2) — it may still be gated/applied to
+            # inside `match` arms — but `MatchStmt`/bare `ExprStmt` bodies
+            # are not yet visited by this checker (pre-existing gap, not
+            # introduced here), so marking the root consumed here is safe:
+            # nothing later in this pass re-inspects it for duplicate use.
+            wire_root = _linear_root(stmt.expr.expr.name, state.aliases)
+            state.consumed.add(wire_root)
+            continue
         if isinstance(stmt, StateBind):
             diag = _check_state_bind(stmt, module_symbols, state)
             if diag is not None:

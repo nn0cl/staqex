@@ -41,7 +41,9 @@ from ..ast_nodes import (
     LitInt,
     LitString,
     ListExpr,
+    MatchStmt,
     Measure,
+    MeasureExpr,
     OpBin,
     OpHop,
     OpLit,
@@ -367,7 +369,12 @@ class Evaluator:
             if isinstance(stmt, ReturnStmt):
                 raise KernelError("`main` cannot return; use terminal `measure`")
             if isinstance(stmt, DynamicQpuStmt):
-                # LISS-0383: Dynamic lane is Host/Fake-gated; Static Kernel skips.
+                # LISS-0387 (ADR 0200): Host has already Fake-gated this run
+                # by the time the evaluator is reached (unchanged from
+                # LISS-0383) — real execution proceeds unconditionally here.
+                joint = self._run_dynamic_qpu_block(
+                    joint, stmt, logs=logs, inspect_out=inspect_out
+                )
                 continue
             if isinstance(stmt, ForEachStmt):
                 joint = self._run_foreach(joint, stmt)
@@ -1176,6 +1183,123 @@ class Evaluator:
                 )
                 joint = self._bind_call(joint, wire, expanded)
         return joint
+
+    def _run_dynamic_qpu_block(
+        self,
+        joint: Joint,
+        stmt: DynamicQpuStmt,
+        *,
+        logs: list[str],
+        inspect_out: MeasureSinkPort | None,
+    ) -> Joint:
+        """LISS-0387 (ADR 0200 Decisions 1-3, 6): real dynamic qpu execution.
+
+        Mid-circuit `Controller<T> = measure wire` performs a genuine
+        Lueders projection + renormalize -- the same `project_coord`
+        primitive `project(psi, k)` already uses in the Static Kernel, not a
+        bookkeeping label. The matching `match` arm then runs against the
+        real post-measure joint via the existing Call-statement dispatch.
+        Host has already Fake-gated this run by the time this is reached
+        (unchanged from LISS-0383); `physical_execution_claimed` semantics
+        live entirely in the Host layer and are untouched here.
+        """
+        controller_values: dict[str, str] = {}
+        dynamically_measured: list[str] = []
+
+        for body_stmt in stmt.body.stmts:
+            if (
+                isinstance(body_stmt, StateBind)
+                and body_stmt.ty is not None
+                and body_stmt.ty.name == "Controller"
+                and isinstance(body_stmt.expr, MeasureExpr)
+                and isinstance(body_stmt.expr.expr, Var)
+                and len(body_stmt.names) == 1
+            ):
+                wire = body_stmt.expr.expr.name
+                controller_name = body_stmt.names[0]
+                outcome = self._resolve_dynamic_outcome(controller_name)
+                joint = self._collapse_dynamic_wire(joint, wire, outcome)
+                controller_values[controller_name] = outcome
+                dynamically_measured.append(wire)
+                continue
+            if isinstance(body_stmt, MatchStmt):
+                value = controller_values.get(body_stmt.scrutinee)
+                arm = next(
+                    (a for a in body_stmt.arms if a.pattern == value), None
+                )
+                if arm is not None:
+                    joint = self._run_dynamic_arm_body(joint, arm.body.stmts)
+                continue
+            if isinstance(body_stmt, StateBind):
+                joint = self._bind_names(
+                    joint,
+                    body_stmt.names,
+                    body_stmt.expr,
+                    logs=logs,
+                    inspect_out=inspect_out,
+                )
+                continue
+            if isinstance(body_stmt, ExprStmt) and isinstance(body_stmt.expr, Call):
+                joint = self._bind_call(joint, "__dynamic_expr_stmt", body_stmt.expr)
+                continue
+
+        # LISS-0387 Decision 5: dynamically-measured wires are local to the
+        # block (never referenced by the surrounding Static `main`); trace
+        # them out here via the already-shipped ADR 0173 primitive instead
+        # of relying on Host's LINEAR_IMPLICIT_DISCARD bypass.
+        for wire in dynamically_measured:
+            joint = joint.trace_out(wire)
+        return joint
+
+    def _run_dynamic_arm_body(self, joint: Joint, stmts: list[Any]) -> Joint:
+        for body_stmt in stmts:
+            if isinstance(body_stmt, ExprStmt) and isinstance(body_stmt.expr, Call):
+                joint = self._bind_call(joint, "__dynamic_expr_stmt", body_stmt.expr)
+                continue
+            if isinstance(body_stmt, StateBind):
+                joint = self._bind_names(
+                    joint, body_stmt.names, body_stmt.expr, logs=[], inspect_out=None
+                )
+                continue
+        return joint
+
+    def _resolve_dynamic_outcome(self, controller_name: str) -> str:
+        """LISS-0387 Decision 2: supplied-outcome only (no RNG sampling yet)."""
+        if self.host_input is not None:
+            supplied = self.host_input.get(f"dynamic:{controller_name}")
+            if supplied is not None:
+                return str(supplied)
+        raise KernelError(
+            "DYN_SUPPLIED_OUTCOME_MISSING: no Host-supplied outcome for "
+            f"controller `{controller_name}` (RNG-sampled dynamic execution "
+            "is out of scope for LISS-0387)"
+        )
+
+    def _collapse_dynamic_wire(self, joint: Joint, wire: str, outcome: str) -> Joint:
+        """LISS-0387 Decision 1: Lueders projection + renormalize on `wire`.
+
+        Identical operation to the Static Kernel's `project(psi, k)` --
+        reuses `Joint.project_coord`, no new Joint math.
+        """
+        label: Any = int(outcome) if outcome in {"0", "1"} else outcome
+        projected = joint.project_coord(wire, lambda v: v == label)
+        if projected.is_vacuum():
+            return Joint.empty()
+        from .joint import World, _coalesce
+
+        total = sum(abs(w.amp) ** 2 for w in projected.worlds)
+        if total <= EPS:
+            return Joint.empty()
+        scale = 1.0 / cmath.sqrt(total)
+        out = [
+            World(
+                assign=dict(w.assign),
+                amp=w.amp * scale,
+                coord_phase=dict(w.coord_phase),
+            )
+            for w in projected.worlds
+        ]
+        return Joint(worlds=_coalesce(out))
 
     def _require_uncompute_zero(self, joint: Joint, name: str) -> None:
         """LISS-0114 F: simulator-equivalence check for ≈ computational |0⟩."""
