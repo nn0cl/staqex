@@ -267,9 +267,9 @@ orthogonal to mid-circuit collapse laws.
 4. Later: AST → FakeDynamicExecutor under supplied outcomes (still
    `physical_execution_claimed=False`); OpenQASM dynamic emission;
    live provider (LISS-0097-E / LISS-0100).
-   **Fake-exec Plan drafted:**
+   **Fake-exec Plan approved:**
    [LISS-0383](../../issues/LISS-0383-dynamic-fake-executor-wire.md)
-   (awaiting Plan approval; no Red yet).
+   (2026-08-09; awaiting Phase 1 Red).
 
 ## Acceptance boundary
 

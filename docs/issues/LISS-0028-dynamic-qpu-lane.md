@@ -62,12 +62,12 @@
 - Status: **Complete for the rejection/capability boundary; follow-up open**.
 - Added explicit dynamic-lane teaching documentation and preserved the
   terminal-measure/static-Kernel separation.
-- Remaining: Plan-approve and execute
-  [LISS-0385](LISS-0385-dynamic-reuse-reset-demand.md) and
-  [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md); later OpenQASM
-  dynamic / live provider. Mid-circuit Kernel **complete** (LISS-0382);
-  JobResult Host channel **complete** (LISS-0384); reuse/reset law
-  Accepted (ADR 0199); timing shipped (LISS-0381).
+- Remaining: Phase 1+ on [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md)
+  and [LISS-0385](LISS-0385-dynamic-reuse-reset-demand.md) (both Plan
+  approved 2026-08-09); later OpenQASM dynamic / live provider.
+  Mid-circuit Kernel **complete** (LISS-0382); JobResult Host channel
+  **complete** (LISS-0384); reuse/reset law Accepted (ADR 0199); timing
+  shipped (LISS-0381).
 
 ## Phase 3 review record
 

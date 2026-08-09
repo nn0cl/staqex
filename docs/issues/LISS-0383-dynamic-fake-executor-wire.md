@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0383
-- Status/phase: **proposed** / `phase-0-design` — Plan drafted; awaiting
-  Plan approval (no Red until approved)
+- Status/phase: **ready** / Plan approved (2026-08-09) — awaiting
+  Phase 1 Red approval
 - Type: Feature Path (Kernel — Fake-exec wire under supplied outcomes;
   `physical_execution_claimed=False`)
 - Priority: P1
@@ -16,107 +16,61 @@
 - Parent: ADR 0197 (Accepted); Fake vocabulary [LISS-0077](../architecture/documentation-compression-map.md)
   (complete)
 - Depends on: ADR 0197 / LISS-0382 (**complete**); LISS-0077 Fake module
-  (shipped). Soft-depends on [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md)
-  (**Accepted**) / [LISS-0384](LISS-0384-dynamic-jobresult-trace.md) for
-  `JobResult.dynamic_trace` projection — Plan may still ship
-  `DynamicExecResult`-only first.   Soft-depends on
-  [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md)
-  (**Accepted**; Option B declined) /
+  (shipped); [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md)
+  / [LISS-0384](LISS-0384-dynamic-jobresult-trace.md) (**complete**) for
+  `dynamic_trace` projection. Soft-depends on
+  [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) /
   [LISS-0385](LISS-0385-dynamic-reuse-reset-demand.md) — retain P0
-  reject-on-demand until a profile-enable Issue lands.
+  reject-on-demand.
 - Related: LISS-0028; ADR 0071; `compiler/staqex/dynamic_qpu.py`
 - Blocks: live provider feed-forward; OpenQASM dynamic emission (still
   separate)
-- Branch: TBD at Plan approval (`feature/liss-0383-…`)
+- Branch: `feature/liss-0383-dynamic-fake-executor-wire` (create at Phase 1)
 - GitHub Issue / PR: none yet
 
 ## Intent
 
-Connect **source-derived** dynamic mid-circuit / match programs (already
-parsed and witnessed by LISS-0382) to the existing
-`FakeDynamicExecutor` under **supplied outcomes**, without claiming
-physical execution, and without silently Host-emulating missing reset /
-reuse / latency capabilities.
-
-This is ADR 0197 Decision 7's optional Fake path: a dedicated Feature
-Issue may change today's unconditional
-`DYNAMIC_UNSUPPORTED_FEATURE_ERROR` / capability rejection **only** under
-an explicit, reviewable Plan (e.g. gated Fake profile + supplied
-outcomes), never as a silent default for all targets.
+Connect **source-derived** dynamic mid-circuit / match programs (LISS-0382)
+to `FakeDynamicExecutor` under **supplied outcomes**, project into
+`JobResult.dynamic_trace`, without claiming physical execution.
 
 ## Explicitly out of scope
 
-- Live QPU provider submit / credentials / network (LISS-0100 lineage).
-- OpenQASM dynamic emission (LISS-0097-E).
-- Inventing alternate JobResult field names — ADR 0198 locks
-  `dynamic_trace`; nested types are LISS-0384 Plan detail.
-- Enabling reset/reuse on Fake profiles unless ADR 0199 Accept + a
-  profile Issue say so (keep P0 reject-on-demand).
+- Live QPU provider submit / credentials / network.
+- OpenQASM dynamic emission.
+- Enabling reset/reuse on Fake profiles (LISS-0385 + future profile Issue).
 - Weakening Static NLTS; reviving `observe` / classical `branch`.
 
-## Plan (draft — awaiting Adjudicator Plan approval)
+## Plan-locked decisions (Adjudicator 2026-08-09)
 
-### Surface / behavior
+1. **Fake gate:** Host `settings["dynamic_fake_profile"]` ∈
+   `{SIM0_EXACT, CH1_DIGITAL_RESEARCH}`. Absent/unknown → fail closed;
+   compile/submit without gate keeps today's
+   `DYNAMIC_CAPABILITY_REQUIRED_ERROR` /
+   `DYNAMIC_UNSUPPORTED_FEATURE_ERROR`.
+2. **Supplied outcomes:** `settings["dynamic_supplied_outcomes"]` map.
+3. **JobResult:** same Issue projects accepted Fake results into
+   `dynamic_trace` via `project_dynamic_trace` (LISS-0384).
+4. **`DYNAMIC_*`:** retained when Fake gate absent; Fake success path does
+   not claim physical execution and must not silent-emulate reset/reuse.
 
-1. Programs with `dynamic qpu { Controller = measure …; match … }` that
-   today compile to QSem witnesses + `DYNAMIC_*` rejection become
-   **optionally** Fake-executable when an explicit Host/settings gate
-   selects a Fake dynamic profile (exact flag/API named at Red; must be
-   fail-closed if absent).
-2. Outcomes for mid-circuit tokens are **supplied** (fixture / Host
-   input), matching LISS-0077 honesty — not sampled as live hardware.
-3. `DynamicExecResult.physical_execution_claimed` remains `False`.
-4. Reset/reuse/latency demands continue to reject on P0 feedback-only
-   profiles.
+## Acceptance reference
 
-### JobResult / `dynamic_trace` (ADR 0198 Accepted)
-
-Prefer projecting Fake results into `JobResult.dynamic_trace` when
-[LISS-0384](LISS-0384-dynamic-jobresult-trace.md) is in scope or already
-Green. Plan may still ship `DynamicExecResult` (and/or diagnostics) first
-without waiting on LISS-0384 Green, then add projection in a follow-on
-slice.
-
-### Non-goals inside Plan
-
-- Removing capability rejection for non-Fake targets.
-- Claiming SIM0/CH1 runs are physical feed-forward.
-
-## Acceptance reference (to lock at Plan approval)
-
-Extend [`staqex-dynamic-qpu-lane.md`](../specs/staqex-dynamic-qpu-lane.md)
-with Gherkin for Fake-gated execution vs continued rejection without the
-gate; assert `physical_execution_claimed is False`; assert reset/reuse
-demands still fail closed on P0 profiles.
+[`staqex-dynamic-qpu-lane.md`](../specs/staqex-dynamic-qpu-lane.md)
+§ "Acceptance scenarios — Fake-exec wire (… LISS-0383)".
 
 ## AI planning record (size L)
 
-- Status: proposed Plan draft (batch A–D, 2026-08-09)
-- Authoring environment: Cursor (Grok 4.5)
-- Size: `L` — touches typecheck rejection gating, Host/settings seam,
-  Fake executor wire from AST/QSem, tests across Kernel + Host; high
-  risk of over-claiming execution.
-- Route: AT-TDD after Plan + Phase approvals; Architecture Accept of
-  ADR 0198/0199 preferred before JobResult/reset slices but not required
-  for a FakeExecResult-only MVP per Plan default above.
-- Assumptions: LISS-0382 witnesses remain the source of measurement /
-  control correlation; LISS-0077 verifier stays authoritative for match /
-  merge / escape rules.
-- Confidence: medium — gate spelling and JobResult timing vs ADR 0198
-  Accept are Adjudicator choices.
+- Status: Plan approved; awaiting Phase 1 Red
+- Authoring environment: Cursor (Grok 4.5), 2026-08-09
+- Size: `L` — Host settings gate, AST/QSem → Fake request build, Fake exec,
+  `dynamic_trace` projection, tests.
+- Route: AT-TDD after Phase 1 Red approval.
+- Confidence: high after Plan lock.
 - Revision links: none yet.
 
 ## Exit criteria
 
-- [ ] Plan approval (this document).
-- [ ] Spec Gherkin locked under Plan approval.
-- [ ] Phase 1 Red / Phase 2 Green / Phase 3 Refactor (only after Plan).
+- [x] Plan approval + Spec Gherkin locked.
+- [ ] Phase 1 Red / Phase 2 Green / Phase 3 Refactor.
 - [ ] Completion approval before merge.
-
-## Adjudicator decision points (before Plan approval)
-
-1. Exact Fake gate spelling (CLI flag vs settings key vs Host API).
-2. Whether Plan projects into `dynamic_trace` in the same Issue as Fake
-   wire, or defers that to LISS-0384.
-3. Whether unconditional `DYNAMIC_UNSUPPORTED_FEATURE_ERROR` is replaced
-   by profile-gated diagnostics or kept in addition to Fake success path.

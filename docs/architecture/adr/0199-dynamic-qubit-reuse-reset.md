@@ -156,9 +156,9 @@ honestly exercise it; revisit as a separate Accept.
 1. Feature Path Issue: diagnostics + demand inference without enabling
    unsupported profiles (no new `reset` keyword in that Issue's default
    Plan).
-   **Filed:**
+   **Filed / Plan approved:**
    [LISS-0385](../../issues/LISS-0385-dynamic-reuse-reset-demand.md)
-   (awaiting Plan approval; no Red yet).
+   (2026-08-09; awaiting Phase 1 Red).
 2. Optional profile extension Issue for Fake reset/reuse under supplied
    outcomes (`physical_execution_claimed=False`).
 3. Coordinate with [LISS-0383](../../issues/LISS-0383-dynamic-fake-executor-wire.md)

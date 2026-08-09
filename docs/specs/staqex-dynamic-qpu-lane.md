@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); reuse/reset law Accepted (ADR 0199); LISS-0385/0383 Plan pending; execution still gated** |
+| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); reuse/reset law Accepted (ADR 0199); LISS-0383 + LISS-0385 Plan approved (Red pending); execution still gated** |
 | Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Option B declined) |
 | Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md) |
 
@@ -229,4 +229,100 @@ Feature: Dynamic-lane mid-circuit measure and finite feed-forward
     Then no DynamicMeasurementRegion is present
     And no DynamicControlRegion is present
     And the program is not rejected solely for DYNAMIC_UNSUPPORTED_FEATURE_ERROR
+```
+
+## Acceptance scenarios — Fake-exec wire (ADR 0197 Decision 7, LISS-0383)
+
+Normative for Feature Path Phase 1–3 on LISS-0383. Plan-locked (2026-08-09):
+
+- Fake gate: Host `settings["dynamic_fake_profile"]` ∈
+  `{SIM0_EXACT, CH1_DIGITAL_RESEARCH}` (absent / unknown → fail closed;
+  compile-only path without the gate keeps today's
+  `DYNAMIC_CAPABILITY_REQUIRED_ERROR` /
+  `DYNAMIC_UNSUPPORTED_FEATURE_ERROR`).
+- Supplied outcomes: `settings["dynamic_supplied_outcomes"]` maps token id
+  → classical tag (LISS-0077 honesty; not hardware sampling).
+- Same Issue projects accepted Fake results into
+  `JobResult.dynamic_trace` via `project_dynamic_trace` (LISS-0384 complete).
+- `physical_execution_claimed` remains `False`.
+- P0 profiles still reject `needs_reset` / `needs_reuse` / `needs_latency`.
+
+```gherkin
+Feature: Fake-gated dynamic execution under supplied outcomes
+
+  Scenario: without Fake gate, compile still rejects dynamic lane
+    Given a mid-circuit dynamic program as in LISS-0382
+    And Host settings omit dynamic_fake_profile
+    When the program is compiled (or submitted without the Fake gate)
+    Then diagnostics include DYNAMIC_CAPABILITY_REQUIRED_ERROR
+    And diagnostics include DYNAMIC_UNSUPPORTED_FEATURE_ERROR
+    And no JobResult.dynamic_trace is produced from Fake execution
+
+  Scenario: with Fake gate and supplied outcomes, Fake accepts without physical claim
+    Given the same mid-circuit dynamic program with match arms
+    And settings.dynamic_fake_profile is SIM0_EXACT
+    And settings.dynamic_supplied_outcomes supplies each mid-circuit token
+    When the Job is submitted through the Fake-gated Host path
+    Then DynamicExecResult.status is accepted (or equivalent Host success)
+    And DynamicExecResult.physical_execution_claimed is False
+    And JobResult.dynamic_trace is a DynamicTraceReport with
+      physical_execution_claimed False
+    And controller bindings appear only on dynamic_trace, not measurements
+
+  Scenario: Fake gate present but reset/reuse demanded still fails closed
+    Given a Fake-gated request whose capability_demand.needs_reuse is true
+      (or needs_reset true) on a P0 feedback-only profile
+    When FakeDynamicExecutor / verify_dynamic_request runs
+    Then the result is rejected
+    And diagnostics include DYN_CAPABILITY_REUSE or DYN_CAPABILITY_RESET
+    And physical_execution_claimed remains False
+```
+
+## Acceptance scenarios — reuse/reset demand inference (ADR 0199, LISS-0385)
+
+Normative for Feature Path Phase 1–3 on LISS-0385. Plan-locked (2026-08-09):
+
+- **No new `reset` keyword** (Option B declined).
+- **`needs_reset`:** never auto-inferred from source in this Issue.
+- **`needs_reuse`:** inferred when, inside `dynamic qpu`, a wire that was
+  mid-circuit measured (`Controller<…> = measure <wire>`) is later used as
+  a quantum target in the same block (e.g. `apply(..., wire)`), including
+  inside `match` arms. Mid-circuit measure alone, or `match` alone without
+  further ops on that wire, does **not** set `needs_reuse`.
+- **`within` timing** does not set reuse/reset demands.
+- Diagnostics: **both** compile-time (when demand inferred against P0 /
+  unsupported profile path) **and** Fake-verify (`DYN_CAPABILITY_*`) when
+  a Fake request carries the demand. Host must not silent-emulate.
+
+```gherkin
+Feature: Dynamic reuse/reset demand inference without reset keyword
+
+  Scenario: mid-circuit measure alone does not demand reuse
+    Given dynamic qpu body with only Controller bind from measure
+      and no later ops on that wire
+    When demand inference runs
+    Then needs_reuse is false
+    And needs_reset is false
+
+  Scenario: post-measure apply on the measured wire demands reuse
+    Given dynamic qpu body
+      """
+      Controller<Bit> bit = measure q
+      match bit {
+        0 => { apply(X, q) }
+        1 => { apply(Z, q) }
+      }
+      """
+    When demand inference runs
+    Then needs_reuse is true
+    And needs_reset is false
+    And on P0 Fake / unsupported profile the demand fails closed with
+      DYN_CAPABILITY_REUSE (or compile-time equivalent)
+    And no Host silent re-init occurs
+
+  Scenario: within timing does not imply reuse
+    Given dynamic qpu within coherent_window with mid-circuit measure only
+    When demand inference runs
+    Then needs_reuse is false
+    And TimingRegion remains independent
 ```

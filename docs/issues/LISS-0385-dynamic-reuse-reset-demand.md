@@ -3,9 +3,9 @@
 ## Metadata
 
 - Local issue ID: LISS-0385
-- Status/phase: **proposed** / `phase-0-design` — awaiting Plan approval
-  (Architecture Accept of ADR 0199 done 2026-08-09; Option B declined;
-  no Red until Plan)
+- Status/phase: **ready** / Plan approved (2026-08-09) — awaiting
+  Phase 1 Red approval (Architecture Accept of ADR 0199 done; Option B
+  declined)
 - Type: Feature Path (Kernel/Fake — demand inference + fail-closed
   diagnostics; no new `reset` keyword)
 - Priority: P1
@@ -21,59 +21,50 @@
 - Related: [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md) (must keep
   P0 reject-on-demand); [LISS-0028](LISS-0028-dynamic-qpu-lane.md)
 - Blocks: none (profile-enable Issue is separate)
-- Branch: TBD at Plan approval
+- Branch: `feature/liss-0385-dynamic-reuse-reset-demand` (create at Phase 1)
 - GitHub Issue / PR: none yet
 
 ## Intent
 
-Implement ADR 0199 Decisions 1–5 boundary in Kernel/Fake diagnostics:
-
-1. Reset/reuse demands are Dynamic-lane only.
-2. Unsupported profile demands fail closed (no Host silent emulate).
-3. No new `reset` keyword (Option B declined).
-4. `within` timing does not imply reuse.
-5. Mid-circuit `measure` / `match` do not by themselves set reuse as
-   satisfied preparation.
-
-Default Plan: infer or record `needs_reset` / `needs_reuse` where source
-or lowering would demand them, emit stable diagnostics on P0
-feedback-only profiles, and leave profiles unchanged (still reject).
+Implement ADR 0199 Decisions 1–5 boundary: infer `needs_reuse` /
+`needs_reset` honestly without a `reset` keyword, and fail closed on P0
+profiles.
 
 ## Explicitly out of scope
 
-- Lane-local `reset q` surface (needs future Architecture Accept).
+- Lane-local `reset q` surface (future Architecture Accept).
 - Enabling Fake profiles that actually perform reset/reuse.
-- Fake-exec AST wire (LISS-0383) beyond coordination.
-- JobResult `dynamic_trace` (LISS-0384).
+- Fake-exec AST wire beyond coordination (LISS-0383).
+- JobResult `dynamic_trace` (LISS-0384 complete).
 - OpenQASM `reset` emission; live provider.
+
+## Plan-locked decisions (Adjudicator 2026-08-09)
+
+1. **`needs_reset`:** never auto-inferred from source in this Issue.
+2. **`needs_reuse`:** inferred when a mid-circuit-measured wire is later
+   used as a quantum target in the same `dynamic qpu` block (including
+   inside `match` arms). Measure alone / match without further ops on that
+   wire → `needs_reuse=false`.
+3. **`within`:** does not set reuse/reset demands.
+4. **Diagnostics:** both compile-time (when inferred demand meets
+   unsupported profile / P0 path) and Fake-verify (`DYN_CAPABILITY_*`).
 
 ## Acceptance reference
 
-[ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md)
-Decisions 1–5; Gherkin to be locked under Plan approval.
+[`staqex-dynamic-qpu-lane.md`](../specs/staqex-dynamic-qpu-lane.md)
+§ "Acceptance scenarios — reuse/reset demand inference (… LISS-0385)".
 
 ## AI planning record (size M)
 
-- Status: proposed, pre-Plan-approval
+- Status: Plan approved; awaiting Phase 1 Red
 - Authoring environment: Cursor (Grok 4.5), 2026-08-09
-- Size: `M` — demand inference rules + diagnostics; bounded by Accepted
-  ADR; no new keyword.
-- Route: AT-TDD after Plan + Phase approvals.
-- Assumptions: first slice needs no new QSem Region type.
-- Confidence: medium-high — inference triggers from source forms need Plan
-  lock (what counts as a reuse demand without `reset` syntax).
+- Size: `M` — demand inference + diagnostics; no new keyword.
+- Route: AT-TDD after Phase 1 Red approval.
+- Confidence: high after Plan lock.
 - Revision links: none yet.
 
 ## Exit criteria
 
-- [ ] Plan approval + Gherkin locked (especially: what source shapes set
-      `needs_reuse` / `needs_reset` without Option B).
+- [x] Plan approval + Gherkin locked.
 - [ ] Phase 1 Red / Phase 2 Green / Phase 3 Refactor.
 - [ ] Completion approval before merge.
-
-## Adjudicator decision points (Plan)
-
-1. Which source/IR patterns set `needs_reuse` vs `needs_reset` in the
-   absence of a `reset` keyword (conservative: only explicit future
-   annotations vs heuristic from post-measure apply).
-2. Whether diagnostics are compile-time only, Fake-verify only, or both.
