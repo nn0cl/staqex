@@ -3,9 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0385
-- Status/phase: **ready** / Plan approved (2026-08-09) — awaiting
-  Phase 1 Red approval (Architecture Accept of ADR 0199 done; Option B
-  declined)
+- Status/phase: **in_progress** / `phase-1-red` complete — awaiting
+  Phase 2 Green approval (Plan approved 2026-08-09; Option B declined)
 - Type: Feature Path (Kernel/Fake — demand inference + fail-closed
   diagnostics; no new `reset` keyword)
 - Priority: P1
@@ -18,11 +17,10 @@
   (**Accepted** 2026-08-09; Option B declined)
 - Depends on: ADR 0199 (Accepted); LISS-0077 Fake demand flags; LISS-0382
   mid-circuit witnesses (complete)
-- Related: [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md) (must keep
-  P0 reject-on-demand); [LISS-0028](LISS-0028-dynamic-qpu-lane.md)
+- Related: [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md); [LISS-0028](LISS-0028-dynamic-qpu-lane.md)
 - Blocks: none (profile-enable Issue is separate)
-- Branch: `feature/liss-0385-dynamic-reuse-reset-demand` (create at Phase 1)
-- GitHub Issue / PR: none yet
+- Branch: `feature/liss-0384-dynamic-jobresult-trace` (stacked with #482)
+- GitHub Issue / PR: [#482](https://github.com/nn0cl/staqex/pull/482)
 
 ## Intent
 
@@ -66,5 +64,8 @@ profiles.
 ## Exit criteria
 
 - [x] Plan approval + Gherkin locked.
-- [ ] Phase 1 Red / Phase 2 Green / Phase 3 Refactor.
+- [x] Phase 1 Red: `tests/test_liss_0385_dynamic_reuse_reset_demand_red.py`
+      (**collection ImportError**, 2026-08-09): missing
+      `compiler.staqex.dynamic_capability.infer_dynamic_capability_demand`.
+- [ ] Phase 2 Green / Phase 3 Refactor.
 - [ ] Completion approval before merge.

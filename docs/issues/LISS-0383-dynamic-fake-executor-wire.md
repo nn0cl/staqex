@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0383
-- Status/phase: **ready** / Plan approved (2026-08-09) — awaiting
-  Phase 1 Red approval
+- Status/phase: **in_progress** / `phase-1-red` complete — awaiting
+  Phase 2 Green approval (Plan approved 2026-08-09)
 - Type: Feature Path (Kernel — Fake-exec wire under supplied outcomes;
   `physical_execution_claimed=False`)
 - Priority: P1
@@ -25,8 +25,9 @@
 - Related: LISS-0028; ADR 0071; `compiler/staqex/dynamic_qpu.py`
 - Blocks: live provider feed-forward; OpenQASM dynamic emission (still
   separate)
-- Branch: `feature/liss-0383-dynamic-fake-executor-wire` (create at Phase 1)
-- GitHub Issue / PR: none yet
+- Branch: `feature/liss-0384-dynamic-jobresult-trace` (Red landed on stacked PR;
+  dedicated `feature/liss-0383-…` optional after #482 merges)
+- GitHub Issue / PR: [#482](https://github.com/nn0cl/staqex/pull/482)
 
 ## Intent
 
@@ -72,5 +73,8 @@ to `FakeDynamicExecutor` under **supplied outcomes**, project into
 ## Exit criteria
 
 - [x] Plan approval + Spec Gherkin locked.
-- [ ] Phase 1 Red / Phase 2 Green / Phase 3 Refactor.
+- [x] Phase 1 Red: `tests/test_liss_0383_dynamic_fake_executor_wire_red.py`
+      (**1 failed / 2 passed**, 2026-08-09): Fake-gated Host path fails;
+      gate-absent reject and Fake `DYN_CAPABILITY_REUSE` already pass.
+- [ ] Phase 2 Green / Phase 3 Refactor.
 - [ ] Completion approval before merge.
