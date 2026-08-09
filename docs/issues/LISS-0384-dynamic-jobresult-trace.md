@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0384
-- Status/phase: **in_progress** / `phase-2-green` complete — awaiting
-  Phase 3 Refactor approval (Plan + Phase 1–2 approved 2026-08-09)
+- Status/phase: **in_progress** / `phase-3-refactor` complete — awaiting
+  Completion approval (Plan + Phase 1–3 approved 2026-08-09)
 - Type: Feature Path (Host DTO — additive `JobResult.dynamic_trace`;
   projection from `DynamicExecResult` / Fake path)
 - Priority: P1
@@ -60,7 +60,7 @@ Implement ADR 0198 Decisions 1–4 on the Host boundary:
 
 ## AI planning record (size M)
 
-- Status: Plan + Phase 1–2 complete; awaiting Phase 3 Refactor
+- Status: Plan + Phase 1–3 complete; awaiting Completion approval
 - Authoring environment: Cursor (Grok 4.5), 2026-08-09
 - Size: `M` — Host DTO + projection helper + Red tests; no language surface
   change.
@@ -79,5 +79,7 @@ Implement ADR 0198 Decisions 1–4 on the Host boundary:
       `project_dynamic_trace` / `JobResult.dynamic_trace`).
 - [x] Phase 2 Green: Host DTO + `project_dynamic_trace`; Red tests pass
       without editing assertions (2026-08-09).
-- [ ] Phase 3 Refactor.
+- [x] Phase 3 Refactor: immutable `MappingProxyType` bindings; module
+      docstring; spec status sync. Behavior unchanged.
+      Full suite (2026-08-09): `.venv/bin/pytest tests/` → **1366 passed**.
 - [ ] Completion approval before merge.

@@ -2,11 +2,16 @@
 
 This module deliberately converts Kernel results into host DTOs.  Callers do
 not receive the evaluator's Joint, AST, or provider-specific objects.
+
+ADR 0198 / LISS-0384 adds an additive ``dynamic_trace`` channel for Dynamic
+QPU mid-circuit controller reports; those must not appear as
+``MeasurementEnvelope`` entries.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from types import MappingProxyType
 from typing import Any, Mapping, TextIO
 from uuid import uuid4
 
@@ -74,7 +79,7 @@ def project_dynamic_trace(
     return DynamicTraceReport(
         lane=lane,
         profile_id=profile_id,
-        controller_bindings=dict(exec_result.controller_bindings),
+        controller_bindings=MappingProxyType(dict(exec_result.controller_bindings)),
         consumed_token_ids=tuple(exec_result.consumed_tokens),
         selected_arm=exec_result.selected_arm,
         physical_execution_claimed=bool(exec_result.physical_execution_claimed),

@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Plan-locked** for LISS-0384 (2026-08-09); Host DTO not yet shipped |
+| Status | **Host DTO shipped** (LISS-0384 Phase 3); Fake-exec wire still gated (LISS-0383) |
 | Decision | [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**) |
 | Issue | [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md) |
 
