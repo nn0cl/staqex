@@ -2,9 +2,11 @@
 
 from .codegen_qasm import OpenQASM3Generator, StaqexCompiler
 from .host import (
+    DynamicTraceReport,
     Job,
     JobResult,
     MeasurementEnvelope,
+    project_dynamic_trace,
     run_path,
     run_source,
     submit_path,
@@ -77,7 +79,9 @@ __all__ = [
     "compile_source",
     "Job",
     "JobResult",
+    "DynamicTraceReport",
     "MeasurementEnvelope",
+    "project_dynamic_trace",
     "run_path",
     "run_source",
     "submit_path",

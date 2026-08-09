@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0384
-- Status/phase: **in_progress** / `phase-1-red` complete — awaiting
-  Phase 2 Green approval (Plan approved 2026-08-09)
+- Status/phase: **in_progress** / `phase-2-green` complete — awaiting
+  Phase 3 Refactor approval (Plan + Phase 1–2 approved 2026-08-09)
 - Type: Feature Path (Host DTO — additive `JobResult.dynamic_trace`;
   projection from `DynamicExecResult` / Fake path)
 - Priority: P1
@@ -60,7 +60,7 @@ Implement ADR 0198 Decisions 1–4 on the Host boundary:
 
 ## AI planning record (size M)
 
-- Status: Plan approved; Phase 1 Red complete; awaiting Phase 2 Green
+- Status: Plan + Phase 1–2 complete; awaiting Phase 3 Refactor
 - Authoring environment: Cursor (Grok 4.5), 2026-08-09
 - Size: `M` — Host DTO + projection helper + Red tests; no language surface
   change.
@@ -77,5 +77,7 @@ Implement ADR 0198 Decisions 1–4 on the Host boundary:
       File: `tests/test_liss_0384_dynamic_jobresult_trace_red.py`
       (expected Red: missing `DynamicTraceReport` /
       `project_dynamic_trace` / `JobResult.dynamic_trace`).
-- [ ] Phase 2 Green / Phase 3 Refactor.
+- [x] Phase 2 Green: Host DTO + `project_dynamic_trace`; Red tests pass
+      without editing assertions (2026-08-09).
+- [ ] Phase 3 Refactor.
 - [ ] Completion approval before merge.

@@ -7,7 +7,7 @@ not receive the evaluator's Joint, AST, or provider-specific objects.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, TextIO
+from typing import Any, Mapping, TextIO
 from uuid import uuid4
 
 from .backend.qasm.emitter import QASM3Emitter
@@ -16,6 +16,7 @@ from .parametric_binding import (
     extract_circuit_parameters,
     validate_parameter_bindings,
 )
+from .dynamic_qpu import DynamicExecResult
 from .host_input_port import MappingHostInputAdapter
 from .pipeline import CompileResult, compile_path, compile_source
 from .runtime.evaluator import EvalResult, Evaluator, KernelDiagnosticError, KernelError
@@ -34,6 +35,21 @@ class MeasurementEnvelope:
 
 
 @dataclass(frozen=True)
+class DynamicTraceReport:
+    """Host report for one Dynamic QPU run (ADR 0198 / LISS-0384).
+
+    Mid-circuit controller bindings live here — never as MeasurementEnvelope.
+    """
+
+    lane: str
+    profile_id: str
+    controller_bindings: Mapping[str, str]
+    consumed_token_ids: tuple[str, ...]
+    selected_arm: str | None
+    physical_execution_claimed: bool
+
+
+@dataclass(frozen=True)
 class JobResult:
     """Provider-neutral result returned after a Job reaches a terminal state."""
 
@@ -41,9 +57,28 @@ class JobResult:
     measurements: tuple[MeasurementEnvelope, ...] = ()
     diagnostics: tuple[dict[str, Any], ...] = ()
     metadata: dict[str, Any] = field(default_factory=dict)
-    # Keep this additive field last so existing positional DTO construction
-    # retains the pre-observation argument order.
+    # Keep observations before dynamic_trace so pre-observation positional
+    # construction (LISS-0046) remains valid; dynamic_trace is trailing.
     observations: tuple[ObservationReport, ...] = ()
+    dynamic_trace: DynamicTraceReport | None = None
+
+
+def project_dynamic_trace(
+    exec_result: DynamicExecResult,
+    *,
+    lane: str,
+    profile_id: str,
+) -> DynamicTraceReport:
+    """Project a Fake/dynamic exec result into the Host dynamic_trace channel."""
+
+    return DynamicTraceReport(
+        lane=lane,
+        profile_id=profile_id,
+        controller_bindings=dict(exec_result.controller_bindings),
+        consumed_token_ids=tuple(exec_result.consumed_tokens),
+        selected_arm=exec_result.selected_arm,
+        physical_execution_claimed=bool(exec_result.physical_execution_claimed),
+    )
 
 
 class Job:
