@@ -1,8 +1,9 @@
 """Build Fake DynamicExecRequest from Kernel AST (LISS-0383).
 
 Host settings key mid-circuit outcomes by controller name. Capability demand
-inference (LISS-0385) is not attached here — Fake retain reject-on-demand when
-a request already carries demand flags (see FakeDynamicExecutor tests).
+is auto-attached via `infer_dynamic_capability_demand` (LISS-0385/LISS-0386):
+Fake retains reject-on-demand when the inferred demand is unsupported (see
+FakeDynamicExecutor tests).
 """
 
 from __future__ import annotations
@@ -18,9 +19,9 @@ from .ast_nodes import (
     StateBind,
     Var,
 )
+from .dynamic_capability import infer_dynamic_capability_demand
 from .dynamic_qpu import (
     ControllerValue,
-    DynamicCapabilityDemand,
     DynamicExecRequest,
     MatchPlan,
     MergeObligation,
@@ -141,11 +142,7 @@ def build_dynamic_exec_request(
         controllers=tuple(controllers),
         match_plan=match_plan,
         merge_obligation=merge,
-        capability_demand=DynamicCapabilityDemand(
-            needs_reset=False,
-            needs_reuse=False,
-            needs_latency=False,
-        ),
+        capability_demand=infer_dynamic_capability_demand(unit),
         supplied_outcomes=MappingProxyType(supplied),
         escapes_to_theory=False,
         controls_shape=False,

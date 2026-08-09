@@ -1,6 +1,15 @@
 """AT-TDD Phase 1 Red: LISS-0383 Fake-gated dynamic Host path (ADR 0197).
 
 Target: docs/specs/staqex-dynamic-qpu-lane.md § Fake-exec wire (LISS-0383).
+
+Amended under LISS-0386 (Adjudicator 案C, 2026-08-09): the original success
+fixture below (`_SOURCE_MATCH`) reuses the measured wire `q` inside its
+`match` arms, which LISS-0385's `infer_dynamic_capability_demand` flags as
+`needs_reuse=True`. Once LISS-0386 wires that inference into
+`build_dynamic_exec_request`, this fixture must fail closed instead of
+accept. The former "accepts" assertion now runs against a measure-only
+fixture (`_SOURCE_MATCH_NO_REUSE`); `_SOURCE_MATCH` is repurposed below as
+the "now fails closed end-to-end" regression.
 """
 
 from __future__ import annotations
@@ -42,6 +51,22 @@ pub fn main() -> Unit {
 }
 """
 
+_SOURCE_MATCH_NO_REUSE = """
+package t
+pub fn main() -> Unit {
+    dynamic qpu {
+        state q = |0>
+        Controller<Bit> bit = measure q
+        match bit {
+            0 => { }
+            1 => { }
+        }
+    }
+    State<Int> observed = coin()
+    measure observed
+}
+"""
+
 
 def _codes(diagnostics: list[dict] | tuple[dict, ...]) -> set[str]:
     return {str(d.get("code", "")) for d in diagnostics}
@@ -59,9 +84,14 @@ def test_without_fake_gate_compile_still_rejects_dynamic_lane() -> None:
 
 
 def test_with_fake_gate_and_supplied_outcomes_accepts_without_physical_claim() -> None:
-    """Scenario: with Fake gate and supplied outcomes, Fake accepts without physical claim."""
+    """Scenario: with Fake gate and supplied outcomes, Fake accepts without physical claim.
+
+    LISS-0386 amendment: uses the measure-only fixture (no post-measure
+    reuse of the measured wire) so this scenario stays true once inferred
+    capability demand is auto-attached.
+    """
     job = submit_source(
-        _SOURCE_MATCH,
+        _SOURCE_MATCH_NO_REUSE,
         settings={
             "dynamic_fake_profile": "SIM0_EXACT",
             # Host settings key mid-circuit tokens by controller name (Plan lock).
@@ -116,3 +146,29 @@ def test_fake_gate_present_but_reuse_demanded_still_fails_closed() -> None:
     assert outcome.status == "rejected"
     assert "DYN_CAPABILITY_REUSE" in codes
     assert outcome.physical_execution_claimed is False
+
+
+def test_host_auto_attach_reuse_demand_fails_closed_end_to_end() -> None:
+    """LISS-0386: post-measure reuse in match arms now fails closed via the
+    Fake-gated Host path itself (build_dynamic_exec_request must attach
+    infer_dynamic_capability_demand), not only when a request is hand-built.
+
+    Prior to LISS-0386, build_dynamic_exec_request hardcoded
+    needs_reuse=False, so this exact program (_SOURCE_MATCH) silently
+    accepted despite demanding an unsupported capability. Red: currently
+    fails because the Host wiring does not yet call
+    infer_dynamic_capability_demand.
+    """
+    job = submit_source(
+        _SOURCE_MATCH,
+        settings={
+            "dynamic_fake_profile": "SIM0_EXACT",
+            "dynamic_supplied_outcomes": {"bit": "1"},
+        },
+    )
+    result = job.result()
+    codes = _codes(result.diagnostics)
+
+    assert result.status == "failed"
+    assert "DYN_CAPABILITY_REUSE" in codes
+    assert result.dynamic_trace is None
