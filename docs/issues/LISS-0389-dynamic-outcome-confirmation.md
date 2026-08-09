@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0389
-- Status/phase: **Green/Refactor complete** (2026-08-09) — awaiting
-  Completion approval; PR not yet opened
+- Status/phase: **complete** (2026-08-09) — Adjudicator Completion approval;
+  PR [#492](https://github.com/nn0cl/staqex/pull/492)
 - Type: Feature Path (Kernel/Host — additive DTO field + internal signal
   threading; no new surface, no capability-law change)
 - Priority: P2
@@ -20,7 +20,7 @@
   (`DynamicTraceReport`, `project_dynamic_trace`, `_submit_compiled`)
 - Blocks: none
 - Branch: `feature/liss-0389-dynamic-outcome-confirmation`
-- GitHub Issue / PR: none yet
+- GitHub Issue / PR: [#492](https://github.com/nn0cl/staqex/pull/492)
 
 ## Intent
 
@@ -136,4 +136,4 @@ Feature: dynamic_trace confirms whether the reported outcome was physically real
 - [x] Full regression sweep re-run: **1381 passed** (2026-08-09), up from
       1379 by exactly the 2 new tests — confirmed additive-only (no
       existing `dynamic_trace` assertion broke).
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-09); PR [#492](https://github.com/nn0cl/staqex/pull/492).
