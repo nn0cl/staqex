@@ -13,7 +13,7 @@ supplied outcomes into ``dynamic_trace`` without claiming physical execution.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from types import MappingProxyType
 from typing import Any, Mapping, TextIO
 from uuid import uuid4
@@ -60,6 +60,11 @@ class DynamicTraceReport:
     consumed_token_ids: tuple[str, ...]
     selected_arm: str | None
     physical_execution_claimed: bool
+    # LISS-0389 (ADR 0198 Amendment): False only when the real local
+    # evaluator positively determined a recorded controller binding was
+    # physically unreachable (the run vacuumed). True (default) otherwise,
+    # including when nothing has checked yet (e.g. no live provider today).
+    physical_outcome_confirmed: bool = True
 
 
 @dataclass(frozen=True)
@@ -263,6 +268,13 @@ def _submit_compiled(
             host_input=host_input,
         )
         evaluated = evaluator.run_unit(compiled.unit, stdout=stdout)
+        if dynamic_trace is not None:
+            # LISS-0389 (ADR 0198 Amendment): reconcile Host's bookkeeping
+            # dynamic_trace with what the real evaluator actually found.
+            dynamic_trace = replace(
+                dynamic_trace,
+                physical_outcome_confirmed=evaluated.dynamic_outcomes_confirmed,
+            )
     except KernelDiagnosticError as exc:
         return Job(
             job_id,

@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); Fake-exec wire complete (LISS-0383, amended by LISS-0386 and LISS-0388); reuse/reset demand inference complete (ADR 0199 / LISS-0385); Host auto-attach of inferred demand complete (LISS-0386); real mid-circuit Kernel execution complete (ADR 0200 / LISS-0387, root-cause fix); reuse capability law repurposed for simulator-class profiles (LISS-0388); live/provider execution still gated** |
-| Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Option B declined); real execution [ADR 0200](../architecture/adr/0200-dynamic-lane-real-kernel-execution.md) (**Accepted**) |
-| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md); [LISS-0387](../issues/LISS-0387-dynamic-real-mid-circuit-measure.md); [LISS-0388](../issues/LISS-0388-dynamic-reuse-capability-followup2.md) |
+| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); Fake-exec wire complete (LISS-0383, amended by LISS-0386 and LISS-0388); reuse/reset demand inference complete (ADR 0199 / LISS-0385); Host auto-attach of inferred demand complete (LISS-0386); real mid-circuit Kernel execution complete (ADR 0200 / LISS-0387, root-cause fix); reuse capability law repurposed for simulator-class profiles (LISS-0388); dynamic_trace physical outcome confirmation complete (ADR 0198 Amendment / LISS-0389); live/provider execution still gated** |
+| Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**; Amendment **Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Option B declined); real execution [ADR 0200](../architecture/adr/0200-dynamic-lane-real-kernel-execution.md) (**Accepted**) |
+| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md); [LISS-0387](../issues/LISS-0387-dynamic-real-mid-circuit-measure.md); [LISS-0388](../issues/LISS-0388-dynamic-reuse-capability-followup2.md); [LISS-0389](../issues/LISS-0389-dynamic-outcome-confirmation.md) |
 
 This lane is intentionally separate from the Static Hilbert Kernel.
 
@@ -356,6 +356,35 @@ Feature: Dynamic-lane mid-circuit measure genuinely collapses and continues
     Given a Static-only program with a bare `measure` statement
     When it is compiled and evaluated
     Then behavior is byte-for-byte identical to before this Issue
+```
+
+## Acceptance scenarios — physical outcome confirmation (ADR 0198 Amendment, LISS-0389)
+
+Normative for Feature Path Phase 1–3 on LISS-0389. Plan-locked (Adjudicator,
+ADR 0198 Amendment, 2026-08-09): `DynamicTraceReport` gains an additive
+`physical_outcome_confirmed: bool` field (default `True`), reconciled from
+the real evaluator's (LISS-0387) mid-circuit collapse outcome after
+`Evaluator.run_unit` completes. `JobResult.status` is unaffected — a vacuum
+dynamic run still reports `"succeeded"` (matching Static Kernel precedent
+for a zero-probability measurement branch; not a defect).
+
+```gherkin
+Feature: dynamic_trace confirms whether the reported outcome was physically real
+
+  Scenario: consistent supplied outcome is confirmed
+    Given the LISS-0383 measure-only fixture with a Host-supplied outcome
+      consistent with the prepared state
+    When the Job is submitted through the Fake-gated Host path
+    Then JobResult.dynamic_trace.physical_outcome_confirmed is True
+
+  Scenario: inconsistent supplied outcome is not confirmed
+    Given the same fixture with a Host-supplied outcome that is physically
+      impossible against the prepared state (the run vacuums)
+    When the Job is submitted through the Fake-gated Host path
+    Then JobResult.status is still "succeeded" (unchanged; not a defect)
+    And JobResult.dynamic_trace.physical_outcome_confirmed is False
+    And dynamic_trace.controller_bindings still shows the supplied label
+      (audit trail), now clearly marked as not confirmed
 ```
 
 ## Acceptance scenarios — Host auto-attach inferred capability demand (LISS-0386)
