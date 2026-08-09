@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0384
-- Status/phase: **ready** / Plan approved (2026-08-09) — awaiting
-  Phase 1 Red approval
+- Status/phase: **in_progress** / `phase-1-red` complete — awaiting
+  Phase 2 Green approval (Plan approved 2026-08-09)
 - Type: Feature Path (Host DTO — additive `JobResult.dynamic_trace`;
   projection from `DynamicExecResult` / Fake path)
 - Priority: P1
@@ -20,7 +20,7 @@
 - Related: [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md) (may ship
   Fake-only first); [LISS-0028](LISS-0028-dynamic-qpu-lane.md)
 - Blocks: none strictly
-- Branch: `feature/liss-0384-dynamic-jobresult-trace` (create at Phase 1)
+- Branch: `feature/liss-0384-dynamic-jobresult-trace`
 - GitHub Issue / PR: none yet
 - Plan-locked shape: `dynamic_trace: DynamicTraceReport | None = None`
   trailing after `observations`; see acceptance spec
@@ -60,7 +60,7 @@ Implement ADR 0198 Decisions 1–4 on the Host boundary:
 
 ## AI planning record (size M)
 
-- Status: Plan approved; awaiting Phase 1 Red
+- Status: Plan approved; Phase 1 Red complete; awaiting Phase 2 Green
 - Authoring environment: Cursor (Grok 4.5), 2026-08-09
 - Size: `M` — Host DTO + projection helper + Red tests; no language surface
   change.
@@ -73,5 +73,9 @@ Implement ADR 0198 Decisions 1–4 on the Host boundary:
 ## Exit criteria
 
 - [x] Plan approval + Host Gherkin locked.
-- [ ] Phase 1 Red / Phase 2 Green / Phase 3 Refactor.
+- [x] Phase 1 Red: failing tests for Plan-locked scenarios.
+      File: `tests/test_liss_0384_dynamic_jobresult_trace_red.py`
+      (expected Red: missing `DynamicTraceReport` /
+      `project_dynamic_trace` / `JobResult.dynamic_trace`).
+- [ ] Phase 2 Green / Phase 3 Refactor.
 - [ ] Completion approval before merge.
