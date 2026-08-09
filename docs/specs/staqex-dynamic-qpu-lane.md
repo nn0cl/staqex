@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted rejection/capability boundary; timing + mid-circuit + JobResult Host channel + Fake-exec wire + reuse/reset demand inference + Host auto-attach + real mid-circuit execution + reuse capability repurposing + outcome confirmation + reset keyword all complete; live/provider execution still gated** |
-| Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**; Amendment **Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Amendment **Accepted** — `reset` keyword); real execution [ADR 0200](../architecture/adr/0200-dynamic-lane-real-kernel-execution.md) (**Accepted**) |
-| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md); [LISS-0387](../issues/LISS-0387-dynamic-real-mid-circuit-measure.md); [LISS-0388](../issues/LISS-0388-dynamic-reuse-capability-followup2.md); [LISS-0389](../issues/LISS-0389-dynamic-outcome-confirmation.md); [LISS-0390](../issues/LISS-0390-dynamic-reset-keyword.md) |
+| Status | **Accepted rejection/capability boundary; timing + mid-circuit + JobResult Host channel + Fake-exec wire + reuse/reset demand inference + Host auto-attach + real mid-circuit execution + reuse capability repurposing + outcome confirmation + reset keyword + OpenQASM dynamic-lane emission all complete; live/provider execution still gated** |
+| Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**; Amendment **Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Amendment **Accepted** — `reset` keyword); real execution [ADR 0200](../architecture/adr/0200-dynamic-lane-real-kernel-execution.md) (**Accepted**); QASM emission [ADR 0201](../architecture/adr/0201-openqasm-dynamic-lane-emission.md) (**Accepted**) |
+| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md); [LISS-0387](../issues/LISS-0387-dynamic-real-mid-circuit-measure.md); [LISS-0388](../issues/LISS-0388-dynamic-reuse-capability-followup2.md); [LISS-0389](../issues/LISS-0389-dynamic-outcome-confirmation.md); [LISS-0390](../issues/LISS-0390-dynamic-reset-keyword.md); [LISS-0391](../issues/LISS-0391-openqasm-dynamic-emission.md) |
 
 This lane is intentionally separate from the Static Hilbert Kernel.
 
@@ -439,6 +439,47 @@ Feature: Dynamic-lane reset genuinely reinitializes a measured wire
       introduced in the same block
     When it is compiled
     Then diagnostics include DYN_RESET_UNKNOWN_WIRE
+```
+
+## Acceptance scenarios — OpenQASM dynamic-lane emission (ADR 0201, LISS-0391)
+
+Normative for Feature Path Phase 1–3 on LISS-0391. Plan-locked (ADR 0201,
+2026-08-10): a separate lowering path (`compiler/staqex/backend/qasm/dynamic_emitter.py`)
+emits QASM3 text for a `dynamic qpu` block directly from the AST — not
+through the Static QPU `Circuit`/`Gate`/`route_circuit` pipeline, which is
+structurally Static-only. Available whenever the program compiles,
+independent of any `dynamic_fake_profile` Host gate. Makes no
+`physical_execution_claimed` claim of any kind — this is a text
+transformation, not a submission.
+
+```gherkin
+Feature: OpenQASM 3 emission for the Dynamic QPU lane
+
+  Scenario: emission is available without any Fake profile setting
+    Given a compiled dynamic qpu program with measure, match, and reset
+    When emit_dynamic_qpu_qasm3 runs
+    Then the result is ok
+    And no dynamic_fake_profile setting was involved
+
+  Scenario: measure/match/reset map to QASM3's own native vocabulary
+    Given the same program
+    When emit_dynamic_qpu_qasm3 runs
+    Then the emitted text declares `qubit q;` and `bit bit;`
+    And it contains `bit = measure q;`
+    And it contains one `if (bit == <pattern>) { … }` block per match arm
+    And it contains a native `reset q;` statement -- not an invented
+      dialect
+
+  Scenario: emission makes no physical execution claim
+    Given the same program
+    When emit_dynamic_qpu_qasm3 runs
+    Then the result carries no physical_execution_claimed field of any
+      kind -- only OPENQASM 3 header text
+
+  Scenario: the Static QPU QASM3Emitter is unaffected
+    Given a Static QPU forEach/apply program
+    When QASM3Emitter().emit_unit runs
+    Then it succeeds exactly as before this Issue
 ```
 
 ## Acceptance scenarios — Host auto-attach inferred capability demand (LISS-0386)
