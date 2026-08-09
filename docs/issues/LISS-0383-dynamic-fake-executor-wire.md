@@ -19,10 +19,11 @@
   (shipped). Soft-depends on [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md)
   (**Accepted**) / [LISS-0384](LISS-0384-dynamic-jobresult-trace.md) for
   `JobResult.dynamic_trace` projection — Plan may still ship
-  `DynamicExecResult`-only first. Soft-depends on
+  `DynamicExecResult`-only first.   Soft-depends on
   [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md)
-  (Proposed) for reset/reuse — retain reject-on-demand until 0199 Accept
-  + profile Issue.
+  (**Accepted**; Option B declined) /
+  [LISS-0385](LISS-0385-dynamic-reuse-reset-demand.md) — retain P0
+  reject-on-demand until a profile-enable Issue lands.
 - Related: LISS-0028; ADR 0071; `compiler/staqex/dynamic_qpu.py`
 - Blocks: live provider feed-forward; OpenQASM dynamic emission (still
   separate)

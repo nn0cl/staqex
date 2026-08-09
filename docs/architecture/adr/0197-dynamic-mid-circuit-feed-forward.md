@@ -259,8 +259,11 @@ orthogonal to mid-circuit collapse laws.
    (Plan pending).
 3. Separate ADR/Issue for qubit reuse / reset model beyond capability
    reject flags.
-   **Drafted (Proposed):**
-   [ADR 0199](0199-dynamic-qubit-reuse-reset.md).
+   **Accepted + Feature Issue filed:**
+   [ADR 0199](0199-dynamic-qubit-reuse-reset.md) (**Accepted** 2026-08-09;
+   Option B declined);
+   [LISS-0385](../../issues/LISS-0385-dynamic-reuse-reset-demand.md)
+   (Plan pending).
 4. Later: AST → FakeDynamicExecutor under supplied outcomes (still
    `physical_execution_claimed=False`); OpenQASM dynamic emission;
    live provider (LISS-0097-E / LISS-0100).

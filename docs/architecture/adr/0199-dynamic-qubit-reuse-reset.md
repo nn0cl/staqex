@@ -2,13 +2,15 @@
 
 ## Status
 
-**Proposed** (2026-08-09) — Architecture Path draft for Adjudicator review.
+**Accepted** (2026-08-09) — Architecture approval by the Adjudicator.
 Implements [ADR 0197](0197-dynamic-mid-circuit-feed-forward.md) Follow-up #3
 and the remaining reuse portion of [LISS-0028](../../issues/LISS-0028-dynamic-qpu-lane.md)'s
 "Timing, qubit reuse, controller values, and JobResult composition"
 acceptance item (timing already shipped via ADR 0193 / LISS-0381;
-controllers via ADR 0197 / LISS-0382). This draft is **not** Architecture
-acceptance and does **not** authorize Kernel implementation.
+controllers via ADR 0197 / LISS-0382). Acceptance approves Decisions 1–5
+below with **Option B declined** (no new `reset` keyword in this Accept).
+It does **not** by itself authorize Kernel implementation — see
+"Acceptance boundary" and "Follow-up work required".
 
 ## Design check
 
@@ -23,21 +25,17 @@ acceptance and does **not** authorize Kernel implementation.
   ADR 0071 fail-closed.
 - **Component boundaries, ports/adapters, VO/DTO candidates:** Language
   surface meaning + capability demand vocabulary (align with existing Fake
-  DTO flags). Optional future QSem witness (e.g. reuse/reset region marker)
-  is a Feature Issue detail after Accept — this ADR may recommend whether a
-  distinct Region is required or whether demand flags + diagnostics suffice
-  for the first Kernel slice.
+  DTO flags). First Kernel slice: demand flags + stable diagnostics suffice;
+  a distinct QSem Region is **not** required by this Accept (optional later).
 - **Applicable constraints:** P0 Fake profiles today reject reset/reuse
   demands. No Host silent re-initialization of wires. Physicist-first:
   reuse/reset must read as physics operations (or explicit capability
   gaps), not as hidden allocator tricks. Timing-intent vocabulary remains
   ADR 0193 Follow-up #2 (closed names deferred).
-- **Decisions, assumptions, unresolved ambiguities:** Surface spelling for
-  reset (keyword vs library `fn` vs capability-only demand with no new
-  syntax until a profile exists); whether reuse after mid-circuit measure
-  is automatic, opt-in, or forbidden until Accept chooses. This draft
-  **recommends** fail-closed capability law first, with **no new surface
-  keyword** until a Fake/profile Issue is approved to exercise it.
+- **Decisions locked at Accept:** Fail-closed capability law; reuse after
+  mid-circuit measure is **not** automatic (`match` alone does not prepare
+  the wire); **no new surface keyword** (Option B declined). Future
+  blackboard `reset` spelling needs a separate Accept / Issue.
 - **Included and omitted AI context:** Included Fake demand flags and
   ADR 0197/0028. Omitted vendor reset pulse schedules, OpenQASM `reset`
   emission details (LISS-0097-E), live provider quirks.
@@ -46,8 +44,8 @@ acceptance and does **not** authorize Kernel implementation.
 - **Verification plan (after Accept + Feature Issue):** (a) programs that
   demand reset/reuse against feedback-only profiles still fail closed with
   stable diagnostics; (b) Static programs gain no mid-program reset escape;
-  (c) if a surface form is Accepted later, QSem/capability demand is
-  inspectable and not silently dropped.
+  (c) demand inference / diagnostics remain inspectable and not silently
+  dropped.
 
 ## Context
 
@@ -63,7 +61,7 @@ Architecture decision, Feature Path must not invent:
 - a new `reset` keyword or method-chain; or
 - Host-side state scrubbing that pretends to be hardware reset.
 
-## Decision proposal
+## Decisions
 
 ### 1. Reuse/reset are Dynamic-lane capability demands, not Static escapes
 
@@ -85,9 +83,9 @@ reset/reuse (ADR 0071).
 P0 Fake feedback-only profiles remain reject-on-demand until a later
 Accept or Feature Issue extends a profile.
 
-### 3. No new surface keyword in this ADR (recommended default)
+### 3. No new surface keyword (Accepted; Option B declined)
 
-This ADR **does not** introduce a new hard keyword (e.g. `reset`) or
+This Accept **does not** introduce a new hard keyword (e.g. `reset`) or
 revive retired forms. Until a Fake/profile Issue is approved to **exercise**
 supported reset/reuse:
 
@@ -96,13 +94,9 @@ supported reset/reuse:
 - the absence of a physicist-facing reset spelling is an honesty gap
   recorded here, not permission to invent Host scrubbing.
 
-If the Adjudicator prefers an explicit blackboard spelling in the same
-Accept, Option B below may replace this default.
-
-**Option B (Adjudicator choice):** Introduce a lane-local reset form
-(recommended shape TBD: statement `reset q` inside `dynamic qpu`, not a
-method-chain) whose meaning is “return wire to a designated prepared
-state / vacuum per profile,” still capability-gated.
+**Option B (declined at this Accept):** lane-local `reset q` inside
+`dynamic qpu`. A future Architecture Accept may revisit Option B without
+reopening Decisions 1–2 / 4–5.
 
 ### 4. Timing intent remains orthogonal
 
@@ -119,7 +113,7 @@ by itself authorize treating the wire as freshly prepared.
 
 ### 6. Out of scope
 
-- JobResult composition (ADR 0198).
+- JobResult composition (ADR 0198 / LISS-0384).
 - Fake-exec AST wire (LISS-0383) beyond preserving reject-on-demand.
 - OpenQASM `reset` emission; live provider reset semantics.
 - Closed timing-intent vocabulary (ADR 0193 Follow-up #2).
@@ -133,8 +127,8 @@ Positive:
 
 Negative / residual open:
 
-- Physicists still lack a writeable reset spelling until Option B or a
-  later surface ADR/Issue.
+- Physicists still lack a writeable reset spelling until a future Option B
+  Accept or surface Issue.
 - Profile matrices for which targets support reset/reuse remain future
   adapter work.
 
@@ -152,20 +146,29 @@ Rejected — destroys Static terminal-measure law.
 
 Rejected — orthogonal concerns; timing names are still opaque (ADR 0193).
 
+### Accept Option B (`reset q`) in this same Accept
+
+Declined — keep capability law without new surface until a profile can
+honestly exercise it; revisit as a separate Accept.
+
 ## Follow-up work required after acceptance
 
-1. Feature Path Issue: diagnostics + demand inference (and, if Option B
-   Accepted, parser/AST for lane-local reset) without enabling unsupported
-   profiles.
+1. Feature Path Issue: diagnostics + demand inference without enabling
+   unsupported profiles (no new `reset` keyword in that Issue's default
+   Plan).
+   **Filed:**
+   [LISS-0385](../../issues/LISS-0385-dynamic-reuse-reset-demand.md)
+   (awaiting Plan approval; no Red yet).
 2. Optional profile extension Issue for Fake reset/reuse under supplied
    outcomes (`physical_execution_claimed=False`).
-3. Coordinate with LISS-0383 so Fake-exec retains reject-on-demand unless
-   a profile Issue lands first.
+3. Coordinate with [LISS-0383](../../issues/LISS-0383-dynamic-fake-executor-wire.md)
+   so Fake-exec retains reject-on-demand unless a profile Issue lands first.
+4. Optional later Architecture Accept for Option B surface spelling.
 
 ## Acceptance boundary
 
-Acceptance approves the **capability / lane law** (and optionally Option B
-surface). It does **not** authorize Kernel Red by itself, does not make
+Acceptance approves the **capability / lane law** (Decisions 1–5; Option B
+declined). It does **not** authorize Kernel Red by itself, does not make
 the dynamic lane executable, and does not select live QPU reset semantics.
 
 ## Dependency Adoption Evidence
