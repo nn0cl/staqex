@@ -81,3 +81,27 @@ to `FakeDynamicExecutor` under **supplied outcomes**, project into
       `dynamic_fake_wire` → `FakeDynamicExecutor` → `project_dynamic_trace`;
       evaluator skips `DynamicQpuStmt`.
 - [x] Completion approval (2026-08-09 Continuation); regression 1372 passed.
+
+## Addendum (2026-08-09, amended by LISS-0386)
+
+The "with Fake gate and supplied outcomes, Fake accepts without physical
+claim" success scenario's fixture reused the measured wire `q` inside its
+`match` arms (`apply(X, q)` / `apply(Z, q)`), which is exactly the shape
+LISS-0385's `infer_dynamic_capability_demand` flags as `needs_reuse=True`.
+This Issue's Fake wire never called that inference (recorded above as a
+soft-depend gap against LISS-0385), so the scenario passed without exposing
+the demand.
+
+[LISS-0386](LISS-0386-dynamic-host-auto-attach-demand.md) (Plan approved and
+Green complete, Adjudicator 案C 2026-08-09) wired
+`infer_dynamic_capability_demand` into `build_dynamic_exec_request`, which
+flips this fixture's outcome to rejected. This Issue's success scenario
+`Given` (here and in `staqex-dynamic-qpu-lane.md`) is now amended to a
+measure-only match (no post-measure reuse of the measured wire); the
+original fixture is kept in
+`tests/test_liss_0383_dynamic_fake_executor_wire_red.py` as a new regression
+scenario proving the same program now fails closed end-to-end. This closed
+an honesty gap — the prior "accept" silently hid an unsupported-capability
+demand behind a hardcoded `False` — rather than introducing a defect. Exit
+criteria above are left
+unedited as the historical record of what Completion approved at the time.

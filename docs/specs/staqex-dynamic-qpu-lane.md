@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); Fake-exec wire complete (LISS-0383); reuse/reset demand inference complete (ADR 0199 / LISS-0385); live/provider execution still gated** |
+| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); Fake-exec wire complete (LISS-0383, amended by LISS-0386); reuse/reset demand inference complete (ADR 0199 / LISS-0385); Host auto-attach of inferred demand complete (LISS-0386); live/provider execution still gated** |
 | Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Option B declined) |
-| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md) |
+| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md) |
 
 This lane is intentionally separate from the Static Hilbert Kernel.
 
@@ -233,7 +233,11 @@ Feature: Dynamic-lane mid-circuit measure and finite feed-forward
 
 ## Acceptance scenarios — Fake-exec wire (ADR 0197 Decision 7, LISS-0383)
 
-Normative for Feature Path Phase 1–3 on LISS-0383. Plan-locked (2026-08-09):
+Normative for Feature Path Phase 1–3 on LISS-0383. Plan-locked (2026-08-09).
+**Amended 2026-08-09 under LISS-0386 (Adjudicator 案C):** the "accepts"
+scenario's fixture no longer reuses the measured wire in its `match` arms —
+see [LISS-0386](#acceptance-scenarios--host-auto-attach-inferred-capability-demand-liss-0386)
+below for the repurposed reuse-demand regression.
 
 - Fake gate: Host `settings["dynamic_fake_profile"]` ∈
   `{SIM0_EXACT, CH1_DIGITAL_RESEARCH}` (absent / unknown → fail closed;
@@ -259,7 +263,8 @@ Feature: Fake-gated dynamic execution under supplied outcomes
     And no JobResult.dynamic_trace is produced from Fake execution
 
   Scenario: with Fake gate and supplied outcomes, Fake accepts without physical claim
-    Given the same mid-circuit dynamic program with match arms
+    Given a mid-circuit dynamic program with match arms that do not reuse
+      the measured wire (measure-only arms; LISS-0386 amendment)
     And settings.dynamic_fake_profile is SIM0_EXACT
     And settings.dynamic_supplied_outcomes supplies each mid-circuit token
     When the Job is submitted through the Fake-gated Host path
@@ -276,6 +281,57 @@ Feature: Fake-gated dynamic execution under supplied outcomes
     Then the result is rejected
     And diagnostics include DYN_CAPABILITY_REUSE or DYN_CAPABILITY_RESET
     And physical_execution_claimed remains False
+```
+
+## Acceptance scenarios — Host auto-attach inferred capability demand (LISS-0386)
+
+Normative for Feature Path Phase 1–3 on LISS-0386. Plan-locked (Adjudicator
+案C, 2026-08-09): `build_dynamic_exec_request`
+(`compiler/staqex/dynamic_fake_wire.py`) auto-attaches
+`infer_dynamic_capability_demand` (LISS-0385) instead of hardcoding
+`needs_reuse=False`. `needs_reset` stays never-inferred per LISS-0385. This
+closes the honesty gap LISS-0383 recorded as a soft-depend: a program that
+demands an unsupported capability must fail closed through the Fake-gated
+Host path itself, not only when a `DynamicExecRequest` is hand-built with
+the demand already set.
+
+```gherkin
+Feature: Host auto-attaches inferred reuse demand into the Fake-exec request
+
+  Scenario: measure-only match without wire reuse still accepts (regression guard)
+    Given a mid-circuit dynamic program
+      """
+      Controller<Bit> bit = measure q
+      match bit {
+          0 => { }
+          1 => { }
+      }
+      """
+    And settings.dynamic_fake_profile is SIM0_EXACT
+    And settings.dynamic_supplied_outcomes supplies each mid-circuit token
+    When the Job is submitted through the Fake-gated Host path
+    Then DynamicExecResult.status is accepted
+    And DynamicExecResult.physical_execution_claimed is False
+    And JobResult.dynamic_trace is a DynamicTraceReport with
+      physical_execution_claimed False
+
+  Scenario: post-measure reuse in match arms now fails closed end-to-end
+    Given a mid-circuit dynamic program
+      """
+      Controller<Bit> bit = measure q
+      match bit {
+          0 => { apply(X, q) }
+          1 => { apply(Z, q) }
+      }
+      """
+      (the former LISS-0383 "accepts" fixture, before this amendment)
+    And settings.dynamic_fake_profile is SIM0_EXACT
+    And settings.dynamic_supplied_outcomes supplies each mid-circuit token
+    When the Job is submitted through the Fake-gated Host path
+    Then DynamicExecResult.status is rejected
+    And diagnostics include DYN_CAPABILITY_REUSE
+    And DynamicExecResult.physical_execution_claimed is False
+    And no JobResult.dynamic_trace claims physical execution
 ```
 
 ## Acceptance scenarios — reuse/reset demand inference (ADR 0199, LISS-0385)
