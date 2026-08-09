@@ -1,8 +1,10 @@
-"""Dynamic reuse/reset capability demand inference (ADR 0199 / LISS-0385).
+"""Dynamic reuse/reset capability demand inference (ADR 0199 / LISS-0385;
+reset spelling and inference added by the ADR 0199 Amendment / LISS-0390).
 
-``needs_reset`` is never auto-inferred. ``needs_reuse`` is true when a
-mid-circuit-measured wire is later used as a quantum target in the same
-``dynamic qpu`` block (including ``match`` arms). Timing ``within`` is ignored.
+``needs_reuse`` is true when a mid-circuit-measured wire is later used as a
+quantum target in the same ``dynamic qpu`` block (including ``match``
+arms). ``needs_reset`` is true when the block contains a ``reset``
+statement (including inside ``match`` arms). Timing ``within`` is ignored.
 """
 
 from __future__ import annotations
@@ -15,6 +17,7 @@ from .ast_nodes import (
     ExprStmt,
     MatchStmt,
     MeasureExpr,
+    ResetStmt,
     StateBind,
     Var,
 )
@@ -25,17 +28,32 @@ def infer_dynamic_capability_demand(unit: CompilationUnit) -> DynamicCapabilityD
     """Infer P0 capability demand flags from source AST."""
 
     needs_reuse = False
+    needs_reset = False
     if unit.main is not None:
         for statement in unit.main.body.stmts:
             if isinstance(statement, DynamicQpuStmt):
                 if _block_demands_reuse(statement.body):
                     needs_reuse = True
+                if _block_demands_reset(statement.body):
+                    needs_reset = True
+                if needs_reuse and needs_reset:
                     break
     return DynamicCapabilityDemand(
-        needs_reset=False,
+        needs_reset=needs_reset,
         needs_reuse=needs_reuse,
         needs_latency=False,
     )
+
+
+def _block_demands_reset(block: Block) -> bool:
+    for statement in block.stmts:
+        if isinstance(statement, ResetStmt):
+            return True
+        if isinstance(statement, MatchStmt):
+            for arm in statement.arms:
+                if _block_demands_reset(arm.body):
+                    return True
+    return False
 
 
 def reuse_demand_diagnostics(unit: CompilationUnit) -> list[dict[str, object]]:

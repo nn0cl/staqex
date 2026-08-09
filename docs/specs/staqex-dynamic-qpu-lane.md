@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted rejection/capability boundary; timing + mid-circuit Kernel complete; JobResult Host channel complete (ADR 0198 / LISS-0384); Fake-exec wire complete (LISS-0383, amended by LISS-0386 and LISS-0388); reuse/reset demand inference complete (ADR 0199 / LISS-0385); Host auto-attach of inferred demand complete (LISS-0386); real mid-circuit Kernel execution complete (ADR 0200 / LISS-0387, root-cause fix); reuse capability law repurposed for simulator-class profiles (LISS-0388); dynamic_trace physical outcome confirmation complete (ADR 0198 Amendment / LISS-0389); live/provider execution still gated** |
-| Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**; Amendment **Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Option B declined); real execution [ADR 0200](../architecture/adr/0200-dynamic-lane-real-kernel-execution.md) (**Accepted**) |
-| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md); [LISS-0387](../issues/LISS-0387-dynamic-real-mid-circuit-measure.md); [LISS-0388](../issues/LISS-0388-dynamic-reuse-capability-followup2.md); [LISS-0389](../issues/LISS-0389-dynamic-outcome-confirmation.md) |
+| Status | **Accepted rejection/capability boundary; timing + mid-circuit + JobResult Host channel + Fake-exec wire + reuse/reset demand inference + Host auto-attach + real mid-circuit execution + reuse capability repurposing + outcome confirmation + reset keyword all complete; live/provider execution still gated** |
+| Decision | [ADR 0071](../architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md); timing [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md); mid-circuit [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md); JobResult [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**; Amendment **Accepted**); reuse/reset [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Amendment **Accepted** — `reset` keyword); real execution [ADR 0200](../architecture/adr/0200-dynamic-lane-real-kernel-execution.md) (**Accepted**) |
+| Issue | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md); [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md); [LISS-0387](../issues/LISS-0387-dynamic-real-mid-circuit-measure.md); [LISS-0388](../issues/LISS-0388-dynamic-reuse-capability-followup2.md); [LISS-0389](../issues/LISS-0389-dynamic-outcome-confirmation.md); [LISS-0390](../issues/LISS-0390-dynamic-reset-keyword.md) |
 
 This lane is intentionally separate from the Static Hilbert Kernel.
 
@@ -385,6 +385,60 @@ Feature: dynamic_trace confirms whether the reported outcome was physically real
     And JobResult.dynamic_trace.physical_outcome_confirmed is False
     And dynamic_trace.controller_bindings still shows the supplied label
       (audit trail), now clearly marked as not confirmed
+```
+
+## Acceptance scenarios — reset keyword (ADR 0199 Amendment, LISS-0390)
+
+Normative for Feature Path Phase 1–3 on LISS-0390. Plan-locked (Adjudicator,
+ADR 0199 Amendment, 2026-08-10): a new contextual keyword `reset`, lane-local
+to `dynamic qpu` (same precedent as `match`). `reset wire` performs
+`Joint.trace_out(wire)` then re-prepares `wire` as `|0⟩` — reusing the two
+already-shipped primitives LISS-0387 and ADR 0173 established, no new Joint
+math. Deliberately distinct from the Static Kernel's same-name
+`state x = |0>` idiom (LISS-0114 F verification) — the two mean different
+physics and are not unified. `needs_reset` is now inferred from source and
+no longer rejected on simulator-class profiles, symmetric to LISS-0388's
+reuse treatment.
+
+```gherkin
+Feature: Dynamic-lane reset genuinely reinitializes a measured wire
+
+  Scenario: reset outside dynamic qpu fails closed
+    Given a Static-only program with a bare `reset q` statement
+    When it is compiled and evaluated
+    Then the run fails (mirrors `match`'s existing, unchanged fail-closed
+      behavior outside the dynamic lane — no new dedicated diagnostic was
+      needed)
+
+  Scenario: reset inside dynamic qpu genuinely reinitializes the wire
+    Given a dynamic qpu block that flips a wire away from |0> (e.g.
+      apply(X, q)) then resets it
+    When the Evaluator runs the block's statements
+    Then the wire's joint coordinate is a definite 0 again (verified at
+      the Evaluator/Joint boundary, since block-end trace-out removes it
+      from the public JobResult, per LISS-0387 Decision 7's precedent)
+
+  Scenario: reset wire is usable again after reset
+    Given a dynamic qpu block that measures a wire, flips it, resets it,
+      then measures it again with a Host-supplied outcome consistent with
+      the reset |0> state
+    When the Job is submitted through the Fake-gated Host path
+    Then JobResult.dynamic_trace.physical_outcome_confirmed is True
+      (LISS-0389) -- a False result would mean reset did not genuinely
+      reinitialize the wire
+
+  Scenario: needs_reset is inferred and accepted on simulator-class profiles
+    Given a dynamic qpu block containing a reset statement
+    When demand inference runs
+    Then needs_reset is true
+    And FakeDynamicExecutor / verify_dynamic_request accepts the request
+      on SIM0_EXACT / CH1_DIGITAL_RESEARCH
+
+  Scenario: resetting an unknown wire fails closed
+    Given a dynamic qpu block with `reset ghost` where `ghost` was never
+      introduced in the same block
+    When it is compiled
+    Then diagnostics include DYN_RESET_UNKNOWN_WIRE
 ```
 
 ## Acceptance scenarios — Host auto-attach inferred capability demand (LISS-0386)

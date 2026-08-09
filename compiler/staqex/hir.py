@@ -27,6 +27,7 @@ from .ast_nodes import (
     Measure,
     MeasureExpr,
     Pipe,
+    ResetStmt,
     ReturnStmt,
     ScientificScopeContract,
     Span,
@@ -409,6 +410,29 @@ def _analyze_block(
             # nothing later in this pass re-inspects it for duplicate use.
             wire_root = _linear_root(stmt.expr.expr.name, state.aliases)
             state.consumed.add(wire_root)
+            continue
+        if isinstance(stmt, ResetStmt):
+            # LISS-0390 (ADR 0199 Amendment): `reset wire` requires `wire`
+            # to already be a known local root in this dynamic-lane scope
+            # (introduced or aliased earlier); resetting an unknown name
+            # fails closed. Marking consumed (mirroring the Controller-
+            # measure treatment above) is safe for the same reason: this
+            # checker does not yet re-inspect consumed roots for duplicate
+            # use, so a later measure/reset/apply of the same wire is not
+            # spuriously rejected -- the wire is genuinely usable again
+            # (the evaluator physically reinitializes it, LISS-0390
+            # Decision 7).
+            root = _linear_root(stmt.target, state.aliases)
+            if root not in state.introduced and stmt.target not in state.aliases:
+                diags.append(
+                    _linear_diag(
+                        "DYN_RESET_UNKNOWN_WIRE",
+                        stmt.span,
+                        f"reset of unknown wire `{stmt.target}`",
+                    )
+                )
+            else:
+                state.consumed.add(root)
             continue
         if isinstance(stmt, StateBind):
             diag = _check_state_bind(stmt, module_symbols, state)
