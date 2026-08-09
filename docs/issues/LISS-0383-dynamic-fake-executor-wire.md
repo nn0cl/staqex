@@ -4,8 +4,7 @@
 
 - Local issue ID: LISS-0383
 - Status/phase: **complete** (2026-08-09) — Adjudicator Continuation /
-  Completion; PR pending on branch
-  `feature/liss-0383-0385-fake-demand-green`
+  Completion; PR [#483](https://github.com/nn0cl/staqex/pull/483)
 - Type: Feature Path (Kernel — Fake-exec wire under supplied outcomes;
   `physical_execution_claimed=False`)
 - Priority: P1
@@ -29,7 +28,7 @@
 - Blocks: live provider feed-forward; OpenQASM dynamic emission (still
   separate)
 - Branch: `feature/liss-0383-0385-fake-demand-green`
-- GitHub Issue / PR: (fill after `gh pr create`)
+- GitHub Issue / PR: [#483](https://github.com/nn0cl/staqex/pull/483)
 
 ## Intent
 

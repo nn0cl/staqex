@@ -4,8 +4,7 @@
 
 - Local issue ID: LISS-0385
 - Status/phase: **complete** (2026-08-09) — Adjudicator Continuation /
-  Completion; PR pending on branch
-  `feature/liss-0383-0385-fake-demand-green`
+  Completion; PR [#483](https://github.com/nn0cl/staqex/pull/483)
 - Type: Feature Path (Kernel/Fake — demand inference + fail-closed
   diagnostics; no new `reset` keyword)
 - Priority: P1
@@ -21,7 +20,7 @@
 - Related: [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md); [LISS-0028](LISS-0028-dynamic-qpu-lane.md)
 - Blocks: none (profile-enable Issue is separate)
 - Branch: `feature/liss-0383-0385-fake-demand-green`
-- GitHub Issue / PR: (fill after `gh pr create`)
+- GitHub Issue / PR: [#483](https://github.com/nn0cl/staqex/pull/483)
 
 ## Intent
 
