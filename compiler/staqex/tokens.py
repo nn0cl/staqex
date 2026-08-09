@@ -89,6 +89,7 @@ class TokenKind(Enum):
     GT = auto()
     GE = auto()
     ARROW = auto()  # ->
+    FAT_ARROW = auto()  # => — match arms (ADR 0197 / LISS-0382)
 
     LPAREN = auto()
     RPAREN = auto()

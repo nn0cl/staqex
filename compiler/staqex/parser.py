@@ -18,6 +18,8 @@ from .ast_nodes import (
     DiscretizationDecl,
     DynamicQpuStmt,
     EnumDecl,
+    MatchArm,
+    MatchStmt,
     ExperimentDecl,
     EvolveBody,
     EvolveExpr,
@@ -1716,6 +1718,9 @@ class Parser:
             return self._tuple_bind()
         if self._is_type_first_start():
             return self._type_first_bind()
+        # ADR 0197 / LISS-0382: contextual soft `match <ctrl> { … }`.
+        if self._check(TokenKind.IDENT) and self._peek().lexeme == "match":
+            return self._match_stmt()
         # ADR 0180: inferred local bind `name = expr` (no type annotation).
         if self._check(TokenKind.IDENT) and self._peek_at_kind(1) == TokenKind.EQ:
             return self._inferred_bind()
@@ -1823,6 +1828,44 @@ class Parser:
             span=sp,
             timing_intent=timing_intent,
         )
+
+    def _match_stmt(self) -> MatchStmt:
+        """Parse soft `match <scrutinee> { <pat> => {…} … }` (ADR 0197)."""
+        sp = self._span()
+        match_tok = self._advance()
+        if match_tok.lexeme != "match":
+            raise ParseError(
+                "expected `match`",
+                match_tok.line,
+                match_tok.col,
+            )
+        scrutinee = self._expect_ident_like()
+        self._expect(TokenKind.LBRACE)
+        arms: list[MatchArm] = []
+        while not self._check(TokenKind.RBRACE) and not self._check(TokenKind.EOF):
+            arm_sp = self._span()
+            pat_tok = self._peek()
+            if pat_tok.kind == TokenKind.INT:
+                pattern = self._advance().lexeme
+            elif pat_tok.kind == TokenKind.IDENT:
+                pattern = self._expect_ident_like()
+            else:
+                raise ParseError(
+                    "match arm expects an integer or identifier pattern",
+                    pat_tok.line,
+                    pat_tok.col,
+                )
+            self._expect(TokenKind.FAT_ARROW)
+            body = self._block()
+            arms.append(MatchArm(pattern=pattern, body=body, span=arm_sp))
+        self._expect(TokenKind.RBRACE)
+        if not arms:
+            raise ParseError(
+                "`match` requires at least one finite arm",
+                sp.line,
+                sp.col,
+            )
+        return MatchStmt(scrutinee=scrutinee, arms=arms, span=sp)
 
     def _optional_dynamic_timing_intent(self) -> str | None:
         """Parse optional `within <name>`; fail closed on malformed forms."""

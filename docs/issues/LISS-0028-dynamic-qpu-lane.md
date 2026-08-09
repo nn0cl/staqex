@@ -7,12 +7,18 @@
 - Phase: Architecture Path → Feature Path boundary slice complete
 - Type: language semantics / dynamic circuit boundary
 - Priority: P1
-- Related: ADR 0065, ADR 0069, ADR 0071, [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md) (Accepted 2026-08-05), [LISS-0381](LISS-0381-dynamic-qpu-timing-region-intent.md) (timing-intent Kernel slice), LISS-0016, LISS-0019
+- Related: ADR 0065, ADR 0069, ADR 0071, [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md) (Accepted 2026-08-05), [LISS-0381](LISS-0381-dynamic-qpu-timing-region-intent.md) (timing-intent Kernel slice), [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md) (**Accepted** 2026-08-09), [LISS-0382](LISS-0382-dynamic-mid-circuit-feed-forward.md) (mid-circuit Kernel slice), LISS-0016, LISS-0019
 
 ## Acceptance specification
 
-- [ ] Mid-circuit measurement and classical feed-forward have explicit
+- [x] Mid-circuit measurement and classical feed-forward have explicit
       semantics distinct from terminal `measure`.
+      Meaning Accepted via
+      [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md)
+      (2026-08-09); Kernel surface + QSem witnesses shipped by
+      [LISS-0382](LISS-0382-dynamic-mid-circuit-feed-forward.md)
+      (**complete** 2026-08-09). Fake-exec / physical execution remain out
+      of scope (ADR 0197 Decision 7).
 - [x] Dynamic control is syntactically and semantically separate from static
       `forEach`.
 - [x] A target capability profile is required before submission.
@@ -22,8 +28,9 @@
       within <name>`, a `TimingRegion` witness) is Accepted via ADR 0193
       and Kernel-shipped by
       [LISS-0381](LISS-0381-dynamic-qpu-timing-region-intent.md)
-      (**complete**). Qubit reuse / controller values / JobResult
-      composition remain fully open.
+      (**complete**). Controller/match surface + QSem markers shipped by
+      LISS-0382 (**complete**). Qubit reuse / JobResult composition remain
+      fully open.
 - [ ] CPU simulator and QPU lowering share an observable semantic contract.
 
 ## Non-goals
@@ -51,8 +58,9 @@
 - Status: **Complete for the rejection/capability boundary; follow-up open**.
 - Added explicit dynamic-lane teaching documentation and preserved the
   terminal-measure/static-Kernel separation.
-- Remaining: mid-circuit semantics, timing, qubit reuse, capability DTO, and
-  observable JobResult contract.
+- Remaining: JobResult composition, qubit reuse / reset model, Fake-exec /
+  OpenQASM dynamic / live provider. Mid-circuit Kernel IR+diagnostics are
+  **complete** (LISS-0382); timing intent shipped (LISS-0381).
 
 ## Phase 3 review record
 

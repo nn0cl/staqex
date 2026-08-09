@@ -564,6 +564,27 @@ class DynamicQpuStmt:
     timing_intent: str | None = None
 
 
+@dataclass
+class MatchArm:
+    """One finite feed-forward arm: `<pattern> => { … }` (ADR 0197)."""
+
+    pattern: str
+    body: "Block"
+    span: Span
+
+
+@dataclass
+class MatchStmt:
+    """Lane-local finite `match` over a Controller token (ADR 0197 / LISS-0382).
+
+    `match` is a contextual soft keyword (not a global hard keyword).
+    """
+
+    scrutinee: str
+    arms: list[MatchArm]
+    span: Span
+
+
 Stmt = Union[
     StateBind,
     Measure,
@@ -572,6 +593,7 @@ Stmt = Union[
     ExprStmt,
     ForEachStmt,
     DynamicQpuStmt,
+    MatchStmt,
 ]
 
 

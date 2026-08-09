@@ -15,7 +15,9 @@ from .ast_nodes import (
     DiscretizationDecl,
     DynamicQpuStmt,
     ExprStmt,
+    MatchStmt,
     Measure,
+    MeasureExpr,
     StateBind,
     WhenExpr,
     ScientificScopeDecl,
@@ -47,6 +49,8 @@ from .quantum_semantic_ir import (
     QuantumSemanticModule,
     ProjectorRegion,
     TimingRegion,
+    DynamicMeasurementRegion,
+    DynamicControlRegion,
     ActingFactor,
     ActingSpace,
     RegionValidity,
@@ -496,6 +500,174 @@ def _make_timing_region_witness(
     return space, region, origin
 
 
+def _append_dynamic_mid_circuit_regions(
+    unit: CompilationUnit,
+    module: QuantumSemanticModule,
+) -> QuantumSemanticModule:
+    """Retain ADR 0197 mid-circuit / feed-forward QSem witnesses.
+
+    Source form inside `dynamic qpu`:
+      Controller<Bit> bit = measure q
+      match bit { 0 => { … } 1 => { … } }
+
+    Emits DynamicMeasurementRegion and (when match is present)
+    DynamicControlRegion paired by measurement_region_id. Capability
+    rejection remains in typecheck; this is inspectable provenance only.
+    """
+    if unit.main is None:
+        return module
+
+    added_regions: list[DynamicMeasurementRegion | DynamicControlRegion] = []
+    added_spaces: list[ActingSpace] = []
+    added_origins: list[SemanticOrigin] = []
+    added_roots: list[SemanticId] = []
+    next_region = len(module.regions)
+    next_space = len(module.acting_spaces)
+    next_value = len(module.values)
+    next_token = 0
+
+    for statement in unit.main.body.stmts:
+        if not isinstance(statement, DynamicQpuStmt):
+            continue
+        controller_measurements: dict[str, DynamicMeasurementRegion] = {}
+        for body_stmt in statement.body.stmts:
+            bind_name = _controller_measure_bind_name(body_stmt)
+            if bind_name is not None:
+                space, measurement, origin = _make_dynamic_measurement_witness(
+                    span_line=body_stmt.span.line,
+                    span_col=body_stmt.span.col,
+                    region_index=next_region,
+                    space_index=next_space,
+                    value_index=next_value,
+                    token_index=next_token,
+                )
+                controller_measurements[bind_name] = measurement
+                added_regions.append(measurement)
+                added_spaces.append(space)
+                added_origins.append(origin)
+                added_roots.append(measurement.region_id)
+                next_region += 1
+                next_space += 1
+                next_value += 2
+                next_token += 1
+                continue
+
+            if not isinstance(body_stmt, MatchStmt):
+                continue
+            measurement = controller_measurements.get(body_stmt.scrutinee)
+            if measurement is None:
+                continue
+            control, control_origin = _make_dynamic_control_witness(
+                measurement=measurement,
+                span_line=body_stmt.span.line,
+                span_col=body_stmt.span.col,
+                region_index=next_region,
+                value_index=next_value,
+            )
+            added_regions.append(control)
+            added_origins.append(control_origin)
+            added_roots.append(control.region_id)
+            next_region += 1
+            next_value += 1
+
+    if not added_regions:
+        return module
+
+    return replace(
+        module,
+        roots=module.roots + tuple(added_roots),
+        region_roots=module.region_roots + tuple(added_roots),
+        origins=module.origins + tuple(added_origins),
+        acting_spaces=module.acting_spaces + tuple(added_spaces),
+        regions=module.regions + tuple(added_regions),
+    )
+
+
+def _controller_measure_bind_name(statement: object) -> str | None:
+    """Return the Controller name for `Controller<…> name = measure …`, else None."""
+    if not isinstance(statement, StateBind):
+        return None
+    if statement.ty is None or statement.ty.name != "Controller":
+        return None
+    if not isinstance(statement.expr, MeasureExpr):
+        return None
+    if not statement.names:
+        return None
+    return statement.names[0]
+
+
+def _make_dynamic_measurement_witness(
+    *,
+    span_line: int,
+    span_col: int,
+    region_index: int,
+    space_index: int,
+    value_index: int,
+    token_index: int,
+) -> tuple[ActingSpace, DynamicMeasurementRegion, SemanticOrigin]:
+    """Build one DynamicMeasurementRegion + placeholder acting space."""
+    origin = SemanticOrigin(source_id="sqx", line=span_line, col=span_col)
+    space_id = SemanticId("space", "dyn_mid", space_index)
+    input_id = SemanticId("value", "dyn_mid", value_index)
+    post_id = SemanticId("value", "dyn_mid", value_index + 1)
+    region_id = SemanticId("region", "dyn_mid", region_index)
+    token_id = SemanticId("dynamic_token", "dyn_mid", token_index)
+    # Placeholder branch slots kept finite for correlation metadata.
+    branch_ids = (
+        SemanticId("region", "dyn_mid_branch", region_index * 2),
+        SemanticId("region", "dyn_mid_branch", region_index * 2 + 1),
+    )
+    space = ActingSpace(
+        space_id=space_id,
+        factors=(
+            ActingFactor(
+                factor_id=SemanticId("factor", "dyn_mid", space_index),
+                dimension=2,
+                label="dynamic_mid_circuit",
+            ),
+        ),
+        total_dimension=2,
+        origin=origin,
+    )
+    region = DynamicMeasurementRegion(
+        region_id=region_id,
+        input_value_id=input_id,
+        post_measure_value_id=post_id,
+        input_space_id=space_id,
+        output_space_id=space_id,
+        token_id=token_id,
+        outcome_domain=("0", "1"),
+        branch_region_ids=branch_ids,
+        required_capability="DynamicMeasurementFeedback",
+        origin=origin,
+    )
+    return space, region, origin
+
+
+def _make_dynamic_control_witness(
+    *,
+    measurement: DynamicMeasurementRegion,
+    span_line: int,
+    span_col: int,
+    region_index: int,
+    value_index: int,
+) -> tuple[DynamicControlRegion, SemanticOrigin]:
+    """Build one DynamicControlRegion paired to a measurement witness."""
+    origin = SemanticOrigin(source_id="sqx", line=span_line, col=span_col)
+    # Reuse the measurement's branch ids so the pair stays correlated.
+    control = DynamicControlRegion(
+        region_id=SemanticId("region", "dyn_mid", region_index),
+        measurement_region_id=measurement.region_id,
+        post_measure_value_id=measurement.post_measure_value_id,
+        token_id=measurement.token_id,
+        branch_region_ids=measurement.branch_region_ids,
+        merge_region_id=SemanticId("region", "dyn_mid_merge", region_index),
+        output_value_id=SemanticId("value", "dyn_mid", value_index),
+        origin=origin,
+    )
+    return control, origin
+
+
 def _collect_feasible_predicates(
     target: Any,
     diagnostics: list[dict[str, Any]],
@@ -669,6 +841,9 @@ def _analyze_unit(unit: CompilationUnit, diags: list[dict[str, Any]]) -> Compile
     )
     diags.extend(projector_diags)
     quantum_semantic_ir = _append_dynamic_timing_regions(unit, quantum_semantic_ir)
+    quantum_semantic_ir = _append_dynamic_mid_circuit_regions(
+        unit, quantum_semantic_ir
+    )
 
     return CompileResult(
         unit=unit,

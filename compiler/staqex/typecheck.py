@@ -501,6 +501,18 @@ class TypeChecker:
                             kind = "Struct" if tname in struct_names else "Object"
                             self.env[n] = Ty(kind, tname, DIMLESS)
                         continue
+                    if tname == "Controller":
+                        # ADR 0197 / LISS-0382: Controller bind from `measure`
+                        # is mid-circuit only inside `dynamic qpu`. Outside the
+                        # lane, MeasureExpr must emit EARLY_COLLAPSE_ERROR via
+                        # `_infer`. Do not take the capitalized-Object shortcut.
+                        self._infer(stmt.expr)
+                        carrier = (
+                            stmt.ty.args[0].name if stmt.ty.args else "Bit"
+                        )
+                        for n in stmt.names:
+                            self.env[n] = Ty("Controller", carrier, DIMLESS)
+                        continue
                     if tname in self.interface_names:
                         self._infer(stmt.expr)
                         for n in stmt.names:
