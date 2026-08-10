@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0396
 - Status/phase: **complete** (2026-08-10) — Adjudicator Completion
-  approval; PR (recorded below once opened)
+  approval; PR [#506](https://github.com/nn0cl/staqex/pull/506)
 - Type: Feature Path (Delivery — new `cli.py` subcommand wiring the
   already-shipped `submit_live_qpu` UseCase entrypoint; no Kernel change,
   no new port, no ADR)
@@ -23,7 +23,7 @@
 - Related: `compiler/staqex/cli.py`
 - Blocks: none
 - Branch: `feature/liss-0396-live-qpu-submit-cli`
-- GitHub Issue / PR: (opened at Completion)
+- GitHub Issue / PR: [#506](https://github.com/nn0cl/staqex/pull/506)
 
 ## Intent
 
