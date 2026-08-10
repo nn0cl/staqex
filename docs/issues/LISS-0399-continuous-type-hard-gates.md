@@ -23,7 +23,7 @@
   `compiler/staqex/adapters/continuous_field_*.py` (test/fake adapter)
 - Branch: `feature/liss-0399-continuous-type-hard-gates` (opened only after
   batch approval or Issue-level Plan approval)
-- GitHub Issue / PR: (opened at Completion)
+- GitHub Issue / PR: [#514](https://github.com/nn0cl/staqex/pull/514) (batch)
 
 ## Scope
 

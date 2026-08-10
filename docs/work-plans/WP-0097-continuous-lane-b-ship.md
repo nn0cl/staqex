@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **complete** (2026-08-10) — LISS-0399/0400/0401 all Green/Refactor complete; full regression 1440 passed; awaiting post-review |
+| Status | **complete** + **post_reviewed** (2026-08-10) — Adjudicator「承認」; LISS-0399/0400/0401 all Green/Refactor complete; full regression 1440 passed; batch [execution-batch-wp-0097.json](../collaboration/reviews/execution-batch-wp-0097.json) `post_reviewed` |
 | Purpose | Implement the Lane B ship shape [ADR 0204](../architecture/adr/0204-continuous-lane-b-type-world.md) (Accepted 2026-08-10) authorized: `Continuous<T>` type + hard gates, `ContinuousFieldPort`, `weight`/`mask` ops, `finiteize` Continuous-argument overload |
 | Parent program | Reopened backlog — "Continuous PDF / Monte Carlo" (`CLAUDE.md` Current Open Topics); Adjudicator selected this item first (2026-08-10), "上から" ordering for the remaining reopened-backlog items |
 | Prior wave | ADR 0126 (design boundary) → ADR 0162 (Host/Bridge-first) → ADR 0185 / LISS-0313 (Lane A `finiteize`, shipped) → Lane B expressiveness scenarios (LISS-0315–0319, frozen baseline) → ADR 0204 (this ADR, ship shape, Accepted) |

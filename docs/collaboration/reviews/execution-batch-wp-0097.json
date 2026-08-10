@@ -2,7 +2,7 @@
   "schema_version": 1,
   "batch_id": "wp-0097-continuous-lane-b-ship",
   "work_plan_id": "WP-0097",
-  "status": "awaiting_post_review",
+  "status": "post_reviewed",
   "approval_type": "bounded-batch",
   "approved_by": "Adjudicator",
   "approved_at": "2026-08-10T12:34:00Z",
@@ -72,9 +72,9 @@
     "editing compiler/staqex/host_monte_carlo.py's existing bucketing behavior"
   ],
   "post_review_required": true,
-  "post_reviewed_by": null,
-  "post_reviewed_at": null,
-  "post_review_notes": null,
+  "post_reviewed_by": "Adjudicator",
+  "post_reviewed_at": "2026-08-10T13:29:24Z",
+  "post_review_notes": "Adjudicator「承認」 — WP-0097 LISS-0399/0400/0401 complete on batch/wp-0097-continuous-lane-b-ship; full regression 1440 passed; PR #514.",
   "draft_notes": {
     "created_at": "2026-08-10",
     "created_on_branch": "docs/wp-continuous-lane-b-batch-investigation",

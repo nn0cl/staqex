@@ -19,7 +19,7 @@
 - Related: `compiler/staqex/runtime/evaluator.py`
 - Branch: `feature/liss-0400-continuous-weight-mask-ops` (opened only after
   batch approval or Issue-level Plan approval)
-- GitHub Issue / PR: (opened at Completion)
+- GitHub Issue / PR: [#514](https://github.com/nn0cl/staqex/pull/514) (batch)
 
 ## Scope
 
