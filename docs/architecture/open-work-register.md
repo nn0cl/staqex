@@ -210,7 +210,13 @@ Issue gives them a concrete scope:
   [LISS-0196](documentation-compression-map.md) —
   **complete** (Adjudicator 採択 2026-08-03: examples accepted, **no ship ADR**)
   ([examples](../specs/staqex-v1-trait-effect-surface-examples.md)); no Kernel Red
-  until a future ship ADR is Accepted separately.
+  until a future ship ADR is Accepted separately. **Reconfirmed 2026-08-10**:
+  Architecture Path re-investigation (reopened-backlog review) found no new
+  friction evidence since 2026-08-03 — the friction ledger's trait/effect
+  entry is unchanged, and this session's own Kernel work (Dynamic QPU lane,
+  Continuous Lane B) never needed specialization or effect-row expansion.
+  "Not now" stands; revisit only if sample friction reappears, per the
+  spec's own condition.
 - Whether numeric literals are sugar for `dirac`.
 - **Kernel External Resources ports (ADR 0166) — shipped:**
   `RngPort` (WP-0082 / LISS-0235 / ADR 0170),
