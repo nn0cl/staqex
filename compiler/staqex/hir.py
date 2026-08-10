@@ -24,6 +24,7 @@ from .ast_nodes import (
     Inspect,
     KetLit,
     ListExpr,
+    MatchStmt,
     Measure,
     MeasureExpr,
     Pipe,
@@ -343,6 +344,75 @@ def _linear_root(name: str, aliases: Mapping[str, str]) -> str:
     return root
 
 
+def _check_reset_stmt(stmt: ResetStmt, state: _LinearUseState) -> dict | None:
+    """LISS-0390 (ADR 0199 Amendment): `reset wire` requires `wire` to
+    already be a known local root in this dynamic-lane scope (introduced
+    or aliased earlier); resetting an unknown name fails closed. Marking
+    consumed (mirroring the Controller-measure treatment) is safe for the
+    same reason: this checker does not yet re-inspect consumed roots for
+    duplicate use, so a later measure/reset/apply of the same wire is not
+    spuriously rejected -- the wire is genuinely usable again (the
+    evaluator physically reinitializes it, LISS-0390 Decision 7).
+
+    Extracted (LISS-0394) so the same check applies verbatim whether
+    `reset` appears at the top level of a dynamic-lane scope or inside a
+    `match` arm of that same scope.
+    """
+    root = _linear_root(stmt.target, state.aliases)
+    if root not in state.introduced and stmt.target not in state.aliases:
+        return _linear_diag(
+            "DYN_RESET_UNKNOWN_WIRE",
+            stmt.span,
+            f"reset of unknown wire `{stmt.target}`",
+        )
+    state.consumed.add(root)
+    return None
+
+
+def _analyze_dynamic_lane_match(stmt: MatchStmt, state: _LinearUseState) -> list[dict]:
+    """LISS-0394: check every arm of a dynamic-lane `match` against the
+    shared enclosing `state` (arms are mutually-exclusive continuations
+    of the same scope, not independent nested scopes -- see this
+    function's caller in `_analyze_block` for why a seeded-recursion
+    design was rejected).
+    """
+    diags: list[dict] = []
+    for arm in stmt.arms:
+        diags.extend(_analyze_dynamic_lane_arm_stmts(arm.body.stmts, state))
+    return diags
+
+
+def _analyze_dynamic_lane_arm_stmts(
+    stmts: list[object], state: _LinearUseState
+) -> list[dict]:
+    """LISS-0394: process one `match` arm's statements against the shared
+    `state`. Mirrors exactly the statement kinds
+    `evaluator.py::_run_dynamic_arm_body` executes for arm bodies today:
+    bare `ExprStmt`/`Call` (untracked here, same as everywhere else in
+    this checker) and `ResetStmt` (dedicated), plus nested `MatchStmt`
+    (recursion, for completeness beyond what the evaluator currently
+    runs). A `StateBind` inside an arm -- including one shaped like a
+    Controller-measure -- is intentionally left unhandled: the evaluator
+    itself does not run a dedicated mid-circuit-collapse path for a
+    `StateBind` found inside an arm (it falls through to the generic
+    `_bind_names`/`_bind` path there), so this checker does not invent
+    hir.py behavior for an evaluator path that does not exist. This is a
+    disclosed limitation (LISS-0394 Plan, Explicitly out of scope), not a
+    silently-identical gap.
+    """
+    diags: list[dict] = []
+    for stmt in stmts:
+        if isinstance(stmt, ResetStmt):
+            diag = _check_reset_stmt(stmt, state)
+            if diag is not None:
+                diags.append(diag)
+            continue
+        if isinstance(stmt, MatchStmt):
+            diags.extend(_analyze_dynamic_lane_match(stmt, state))
+            continue
+    return diags
+
+
 def _linear_scopes(
     unit: CompilationUnit,
 ) -> list[tuple[str, Block, Mapping[str, Span]]]:
@@ -412,27 +482,21 @@ def _analyze_block(
             state.consumed.add(wire_root)
             continue
         if isinstance(stmt, ResetStmt):
-            # LISS-0390 (ADR 0199 Amendment): `reset wire` requires `wire`
-            # to already be a known local root in this dynamic-lane scope
-            # (introduced or aliased earlier); resetting an unknown name
-            # fails closed. Marking consumed (mirroring the Controller-
-            # measure treatment above) is safe for the same reason: this
-            # checker does not yet re-inspect consumed roots for duplicate
-            # use, so a later measure/reset/apply of the same wire is not
-            # spuriously rejected -- the wire is genuinely usable again
-            # (the evaluator physically reinitializes it, LISS-0390
-            # Decision 7).
-            root = _linear_root(stmt.target, state.aliases)
-            if root not in state.introduced and stmt.target not in state.aliases:
-                diags.append(
-                    _linear_diag(
-                        "DYN_RESET_UNKNOWN_WIRE",
-                        stmt.span,
-                        f"reset of unknown wire `{stmt.target}`",
-                    )
-                )
-            else:
-                state.consumed.add(root)
+            diag = _check_reset_stmt(stmt, state)
+            if diag is not None:
+                diags.append(diag)
+            continue
+        if isinstance(stmt, MatchStmt):
+            # LISS-0394: match arms are mutually-exclusive continuations
+            # of this same enclosing scope, not a separate nested scope
+            # (unlike ForEachStmt/DynamicQpuStmt below) -- processed
+            # against this same `state` object directly, no new
+            # _LinearUseState, no seed_linear, no independent discard
+            # check. See LISS-0394 Plan "Design verification" for why a
+            # seeded-recursion design was traced and rejected (it would
+            # false-positive LINEAR_IMPLICIT_DISCARD on every wire
+            # already consumed before the match).
+            diags.extend(_analyze_dynamic_lane_match(stmt, state))
             continue
         if isinstance(stmt, StateBind):
             diag = _check_state_bind(stmt, module_symbols, state)
