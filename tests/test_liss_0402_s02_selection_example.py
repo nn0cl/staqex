@@ -69,15 +69,12 @@ def test_main_selection_runs_and_respects_feasibility() -> None:
 def test_classical_baseline_agrees_on_feasible_set() -> None:
     sys.path.insert(0, str(_HOST_DIR))
     try:
-        from run_selection import N, build_predicate_matrices
-        from classical_baseline import is_feasible
+        from classical_baseline import EXACTLY_SELECTED, exact_feasible_patterns
+        from run_selection import build_predicate_matrices
 
         pairwise, diversity = build_predicate_matrices()
-        feasible = [
-            p
-            for p in __import__("itertools").product((0, 1), repeat=N)
-            if is_feasible(p, pairwise, diversity)
-        ]
+        feasible = exact_feasible_patterns(pairwise, diversity)
         assert feasible, "baseline must find at least one feasible pattern"
+        assert all(sum(p) == EXACTLY_SELECTED for p in feasible)
     finally:
         sys.path.remove(str(_HOST_DIR))

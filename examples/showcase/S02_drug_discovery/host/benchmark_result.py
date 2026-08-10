@@ -1,13 +1,19 @@
-"""S02 Host-side BenchmarkResult DTO and builder (LISS-0323, WP-0093 work
-unit D).
+"""S02 Host-side BenchmarkResult DTO and builder (LISS-0323 / LISS-0403,
+WP-0093 work units D and E).
 
 Maps S02's classical/quantum boundary onto already-shipped Kernel
 primitives -- terminal `measure` and `MeasurementEnvelope.vacuum` -- into
 the accepted S02 spec's Result contract. Does not define
 `Observable<T>`/`Projection<T>`/`Observation<T>` as Kernel types (WP-0092's
-own open decision) and does not compute real scores or classical baselines
-(deferred to work unit E; no S02 `.sqx` program exists yet to produce
-them).
+own open decision).
+
+`baseline_score`/`objective_score`/`reranked_score`/`quality_metrics`
+were deferred by LISS-0323 ("no S02 `.sqx` program exists yet to produce
+them") and are now populated by `benchmark_report.py` (LISS-0403), which
+runs `main_selection.sqx` for real and scores its output against the
+exact classical baseline -- `build_benchmark_result` below stays as the
+single-shot, no-scoring builder LISS-0323 shipped, unchanged, for callers
+that only need the terminal-measurement mapping.
 """
 
 from __future__ import annotations
@@ -31,6 +37,13 @@ class BenchmarkResult:
     terminal_selection: Any | None
     resource_metadata: dict[str, Any] = field(default_factory=dict)
     optimality_claim: str = "none"
+    # LISS-0403: populated by benchmark_report.py; None/empty when only the
+    # single-shot build_benchmark_result builder below was used.
+    baseline_score: float | None = None
+    objective_score: float | None = None
+    reranked_score: float | None = None
+    quality_metrics: dict[str, Any] = field(default_factory=dict)
+    warnings: tuple[str, ...] = ()
 
 
 def build_benchmark_result(job_result: JobResult) -> BenchmarkResult:
