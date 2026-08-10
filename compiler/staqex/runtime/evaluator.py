@@ -1212,11 +1212,75 @@ class Evaluator:
         Host has already Fake-gated this run by the time this is reached
         (unchanged from LISS-0383); `physical_execution_claimed` semantics
         live entirely in the Host layer and are untouched here.
+
+        LISS-0395: the block body is executed via `_run_dynamic_arm_body`
+        (the top level is "the outermost arm body") instead of a second,
+        hand-maintained copy of the same statement dispatch -- this is what
+        makes a Controller-measure or a wire touched only inside a nested
+        `match` arm reach the same real-collapse / block-end trace-out
+        treatment as a top-level one, at any nesting depth.
         """
         controller_values: dict[str, str] = {}
         dynamically_measured: list[str] = []
 
-        for body_stmt in stmt.body.stmts:
+        joint = self._run_dynamic_arm_body(
+            joint,
+            stmt.body.stmts,
+            controller_values,
+            dynamically_measured,
+            logs=logs,
+            inspect_out=inspect_out,
+        )
+
+        # LISS-0387 Decision 5: dynamically-measured wires are local to the
+        # block (never referenced by the surrounding Static `main`); trace
+        # them out here via the already-shipped ADR 0173 primitive instead
+        # of relying on Host's LINEAR_IMPLICIT_DISCARD bypass. LISS-0395:
+        # `dynamically_measured` is now populated at any nesting depth
+        # (including wires only ever touched inside a match arm), since
+        # `_run_dynamic_arm_body` mutates this same list by reference.
+        for wire in dynamically_measured:
+            joint = joint.trace_out(wire)
+        return joint
+
+    def _reset_dynamic_wire(self, joint: Joint, wire: str, span: Span) -> Joint:
+        """LISS-0390: trace_out(wire) then re-prepare wire as |0>.
+
+        Reuses the two already-shipped primitives LISS-0387 (KetLit |0>
+        preparation) and ADR 0173 (Joint.trace_out) established -- no new
+        Joint math. Deliberately distinct from the Static Kernel's
+        same-name `state x = |0>` idiom (LISS-0114 F verification).
+        """
+        joint = joint.trace_out(wire)
+        return self._bind_names(
+            joint, [wire], KetLit(label="0", span=span), logs=[], inspect_out=None
+        )
+
+    def _run_dynamic_arm_body(
+        self,
+        joint: Joint,
+        stmts: list[Any],
+        controller_values: dict[str, str] | None = None,
+        dynamically_measured: list[str] | None = None,
+        *,
+        logs: list[str] | None = None,
+        inspect_out: MeasureSinkPort | None = None,
+    ) -> Joint:
+        """LISS-0395: single recursive statement dispatcher for dynamic-lane
+        bodies, used both for the top-level `dynamic qpu` block (via
+        `_run_dynamic_qpu_block`) and for `match` arm bodies (including
+        arms nested inside arms). `controller_values` and
+        `dynamically_measured` are threaded by reference so a
+        Controller-measure or a reset performed at any nesting depth is
+        visible to sibling/descendant statements and to the caller's
+        block-end trace-out accounting, exactly as if it had happened at
+        the top level.
+        """
+        if controller_values is None:
+            controller_values = {}
+        if dynamically_measured is None:
+            dynamically_measured = []
+        for body_stmt in stmts:
             if (
                 isinstance(body_stmt, StateBind)
                 and body_stmt.ty is not None
@@ -1238,7 +1302,14 @@ class Evaluator:
                     (a for a in body_stmt.arms if a.pattern == value), None
                 )
                 if arm is not None:
-                    joint = self._run_dynamic_arm_body(joint, arm.body.stmts)
+                    joint = self._run_dynamic_arm_body(
+                        joint,
+                        arm.body.stmts,
+                        controller_values,
+                        dynamically_measured,
+                        logs=logs,
+                        inspect_out=inspect_out,
+                    )
                 continue
             if isinstance(body_stmt, ResetStmt):
                 # LISS-0390 (ADR 0199 Amendment Decision 7): reuses
@@ -1259,41 +1330,6 @@ class Evaluator:
                 continue
             if isinstance(body_stmt, ExprStmt) and isinstance(body_stmt.expr, Call):
                 joint = self._bind_call(joint, "__dynamic_expr_stmt", body_stmt.expr)
-                continue
-
-        # LISS-0387 Decision 5: dynamically-measured wires are local to the
-        # block (never referenced by the surrounding Static `main`); trace
-        # them out here via the already-shipped ADR 0173 primitive instead
-        # of relying on Host's LINEAR_IMPLICIT_DISCARD bypass.
-        for wire in dynamically_measured:
-            joint = joint.trace_out(wire)
-        return joint
-
-    def _reset_dynamic_wire(self, joint: Joint, wire: str, span: Span) -> Joint:
-        """LISS-0390: trace_out(wire) then re-prepare wire as |0>.
-
-        Reuses the two already-shipped primitives LISS-0387 (KetLit |0>
-        preparation) and ADR 0173 (Joint.trace_out) established -- no new
-        Joint math. Deliberately distinct from the Static Kernel's
-        same-name `state x = |0>` idiom (LISS-0114 F verification).
-        """
-        joint = joint.trace_out(wire)
-        return self._bind_names(
-            joint, [wire], KetLit(label="0", span=span), logs=[], inspect_out=None
-        )
-
-    def _run_dynamic_arm_body(self, joint: Joint, stmts: list[Any]) -> Joint:
-        for body_stmt in stmts:
-            if isinstance(body_stmt, ExprStmt) and isinstance(body_stmt.expr, Call):
-                joint = self._bind_call(joint, "__dynamic_expr_stmt", body_stmt.expr)
-                continue
-            if isinstance(body_stmt, ResetStmt):
-                joint = self._reset_dynamic_wire(joint, body_stmt.target, body_stmt.span)
-                continue
-            if isinstance(body_stmt, StateBind):
-                joint = self._bind_names(
-                    joint, body_stmt.names, body_stmt.expr, logs=[], inspect_out=None
-                )
                 continue
         return joint
 
