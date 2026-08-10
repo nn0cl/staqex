@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "batch_id": "wp-0097-continuous-lane-b-ship",
+  "work_plan_id": "WP-0097",
+  "status": "draft",
+  "approval_type": "bounded-batch",
+  "approved_by": null,
+  "approved_at": null,
+  "expires_at": null,
+  "execution_branch": "batch/wp-0097-continuous-lane-b-ship",
+  "approval_commit": null,
+  "issue_ids": [
+    "LISS-0399",
+    "LISS-0400",
+    "LISS-0401"
+  ],
+  "issue_order": [
+    "LISS-0399",
+    "LISS-0400",
+    "LISS-0401"
+  ],
+  "approved_scope": null,
+  "proposed_scope": "WP-0097 Continuous Lane B ship under ADR 0204 (Accepted 2026-08-10): (1) Continuous<T> type + ContinuousFieldPort + hard gates (measure/evolve/Joint/QPU rejection) + LINEAR introduce/discard, (2) weight/mask continuous ops, (3) finiteize Continuous-argument overload closing the LINEAR consumption story. Strictly sequential, no parallel-eligible pair. CH-field-fork, CH-field-theory, S01 spine changes, live QPU, Joint rational mode, trait specialization, and CUDA workers are all explicitly out of scope.",
+  "allowed_paths": [
+    "compiler/staqex/typecheck.py",
+    "compiler/staqex/hir.py",
+    "compiler/staqex/runtime/evaluator.py",
+    "compiler/staqex/continuous_field.py",
+    "compiler/staqex/adapters/continuous_field_*.py",
+    "tests/test_liss_0399*",
+    "tests/test_liss_0400*",
+    "tests/test_liss_0401*",
+    "docs/issues/LISS-0399*",
+    "docs/issues/LISS-0400*",
+    "docs/issues/LISS-0401*",
+    "docs/work-plans/WP-0097*",
+    "docs/specs/staqex-v1-continuous-lane-b-expressiveness-scenarios.md",
+    "docs/architecture/adr/0204-continuous-lane-b-type-world.md",
+    "docs/architecture/open-work-register.md",
+    "docs/collaboration/reviews/**",
+    "docs/collaboration/traces/**"
+  ],
+  "disallowed_paths_notes": [
+    "examples/showcase/S01_quantum_disaster_response/** intentionally omitted -- spine/example wiring is a separate, later Issue per WP-0097's own verification checklist, not part of this batch",
+    "compiler/staqex/host_monte_carlo.py reused unchanged -- edits there invalidate this batch (open a new batch/ADR amendment if the Lane A backend genuinely needs to change)",
+    "CH-field-fork / CH-field-theory scope not in allowed_paths -- any change touching dual-finiteize or Theory continuous_operator unification invalidates this batch"
+  ],
+  "allowed_phases": [
+    "phase-1-red",
+    "phase-2-green",
+    "phase-3-refactor"
+  ],
+  "allowed_operations": [
+    "edit-documentation",
+    "edit-tests",
+    "edit-implementation",
+    "run-verification"
+  ],
+  "operation_notes": {
+    "LISS-0399": "Feature Path; TypeChecker + hir.py + new port + fake adapter",
+    "LISS-0400": "Feature Path; evaluator.py Call dispatch only",
+    "LISS-0401": "Feature Path; evaluator.py + reuse of ADR 0163 Host bucketing, no new numerics"
+  },
+  "invalidating_triggers": [
+    "CH-field-fork or CH-field-theory scope (dual finiteize, Theory vocabulary unification)",
+    "any S01 spine or other shipped-example edit",
+    "live QPU SDK or provider technology selection",
+    "Kernel Joint rational masses or trait specialization scope",
+    "new continuous op beyond weight/mask (e.g. clip/normalize_field/support_restrict)",
+    "a Continuous value reaching measure/evolve/Joint/QPU without producing CONTINUOUS_ESCAPE_ERROR",
+    "changing Lane A finiteize's existing (lo,hi,n_bins,n_samples[,seed]) grammar in a breaking way",
+    "editing compiler/staqex/host_monte_carlo.py's existing bucketing behavior"
+  ],
+  "post_review_required": true,
+  "post_reviewed_by": null,
+  "post_reviewed_at": null,
+  "post_review_notes": null,
+  "draft_notes": {
+    "created_at": "2026-08-10",
+    "created_on_branch": "docs/wp-continuous-lane-b-batch-investigation",
+    "proposal": "docs/collaboration/reviews/2026-08-10-wp-0097-batch-proposal.md",
+    "work_plan": "docs/work-plans/WP-0097-continuous-lane-b-ship.md"
+  }
+}
