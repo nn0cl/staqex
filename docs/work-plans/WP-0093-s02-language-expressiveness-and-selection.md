@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **Work units A, B, C, D complete (PR #337, #349, #352, #354 merged; ADR 0192 Accepted); work unit E first slice complete ([LISS-0324](../issues/LISS-0324-s02-prepare-selection.md), `prepare_selection`, PR #363 merged); remaining work unit E scope open** |
+| Status | **Work units A–E complete.** A, B, C, D (PR #337, #349, #352, #354 merged; ADR 0192 Accepted); E first slice ([LISS-0324](../issues/LISS-0324-s02-prepare-selection.md), `prepare_selection`, PR #363); E `HostInputPort`/predicate execution ([LISS-0327](../issues/LISS-0327-host-input-port-foundation.md)/[LISS-0328](../issues/LISS-0328-selection-projector-predicate-execution.md), PR #366/#368); E remaining scope (classical baseline + end-to-end `.sqx`) closed by [LISS-0402](../issues/LISS-0402-s02-selection-example.md) (`main_selection.sqx`, PR pending) |
 | Scope | S02 drug-discovery benchmark and the language boundaries it exposes |
 | Parent direction | [State-transformer language review](../architecture/staqex-state-transformer-language-review.md) |
 | Representative-program lineage | [Rebaseline §7](../specs/staqex-v1-representative-program-rebaseline.md#7-examplesshowcase-two-phase-benchmark-role-and-the-s02-lineage-2026-08-05) (2026-08-05) — S02 is that document's anticipated "S2+" successor; subject to the two-phase examples/showcase benchmark role (current language-coverage validation, future real-hardware gap discovery) |
 | Related plan | [WP-0092](WP-0092-quantum-mental-model-follow-up.md) |
 | Target design | [S02 benchmark design](../specs/staqex-v1-drug-discovery-benchmark-design.md) |
 | Acceptance specification | [S02 benchmark specification](../specs/staqex-v1-s02-drug-discovery-benchmark.md) |
-| Implementation | Work unit A (`mix`/`controlled`/`when` language surface) shipped (PR #337). Work unit B (Host domain records + finite boundary, LISS-0321) shipped (PR #349). Work unit C (`Projector<Selection>` region semantics, ADR 0192 + LISS-0322) shipped (PR #352). Work unit D (observation matrix + `BenchmarkResult`, LISS-0323) shipped (PR #354). Work unit E first slice (real `prepare_selection(n: Int)` Kernel op, LISS-0324) shipped (PR #363). Classical baselines, real `project ... onto feasible(...)` runtime execution, and an end-to-end runnable `.sqx` example remain open work unit E scope |
+| Implementation | Work unit A (`mix`/`controlled`/`when` language surface) shipped (PR #337). Work unit B (Host domain records + finite boundary, LISS-0321) shipped (PR #349). Work unit C (`Projector<Selection>` region semantics, ADR 0192 + LISS-0322) shipped (PR #352). Work unit D (observation matrix + `BenchmarkResult`, LISS-0323) shipped (PR #354). Work unit E: `prepare_selection(n: Int)` (LISS-0324, PR #363); `HostInputPort` + real predicate execution (LISS-0327/0328, PR #366/#368); classical baseline + end-to-end `.sqx` example (LISS-0402, `examples/showcase/S02_drug_discovery/main_selection.sqx` + `host/run_selection.py` + `host/classical_baseline.py`). **Work unit E now closed.** |
 
 ## Goal
 
