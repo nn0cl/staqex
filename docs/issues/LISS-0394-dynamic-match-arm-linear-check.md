@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0394
-- Status/phase: **Green/Refactor complete** (2026-08-10) — awaiting
-  Completion approval; PR not yet opened
+- Status/phase: **complete** (2026-08-10) — Adjudicator Completion
+  approval; PR [#503](https://github.com/nn0cl/staqex/pull/503)
 - Type: Feature Path (Kernel — `hir.py` linear-use checker soundness
   fix; no language surface change, no evaluator change)
 - Priority: P2
@@ -24,7 +24,7 @@
   investigated, not modified)
 - Blocks: none
 - Branch: `feature/liss-0394-dynamic-match-arm-linear-check`
-- GitHub Issue / PR: none yet
+- GitHub Issue / PR: [#503](https://github.com/nn0cl/staqex/pull/503)
 
 ## Intent
 
@@ -198,4 +198,4 @@ with no single owning spec.
       1402 by exactly the 5 new tests. Confirmed LISS-0390's own
       dedicated top-level-reset tests still pass unchanged (proves the
       `_check_reset_stmt` extraction was behavior-preserving).
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-10); PR [#503](https://github.com/nn0cl/staqex/pull/503).
