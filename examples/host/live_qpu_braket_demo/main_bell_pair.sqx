@@ -1,0 +1,13 @@
+// staqex-lane: circuit
+// Minimal 2-qubit Bell pair — small and cheap enough for a first real-QPU
+// submission via `staqex submit-live-qpu` (see ../README.md).
+package examples.host.live_qpu_braket_demo
+
+pub fn main() -> Unit {
+    state compute = |+>
+    state anc = |0>
+    state anc = cnot(compute, anc)
+
+    // cnot already moved `compute`; terminal measure on the Bell ancilla.
+    measure anc
+}
