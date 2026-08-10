@@ -348,7 +348,21 @@ Issue gives them a concrete scope:
   Kernel-visible finite-witness surface gap (P1 finding) remains open,
   not opened as a new Architecture Path item without demonstrated need,
   per this session's own precedent; S01 disaster-response showcase is
-  unchanged.
+  unchanged. **Real benchmark report 2026-08-10**:
+  [LISS-0403](../issues/LISS-0403-s02-benchmark-report.md) (PR
+  [#521](https://github.com/nn0cl/staqex/pull/521)) closes the gap
+  between "runs" and "reports like a benchmark" — `host/benchmark_report.py`
+  computes real baseline/objective/reranked scores and quality metrics
+  (feasibility_rate, objective gap, top-k overlap, reproducibility)
+  instead of LISS-0323's original deferred stub. Caught and fixed a
+  degenerate-scoring bug during design (a symmetric spin-sum formula
+  scored every feasible pattern identically once `exactly_selected` fixed
+  the bit count — a combinatorial identity, not a corner case).
+  `top_k_overlap` measuring ~0 **empirically confirms** the
+  hard-constraint/soft-objective independence LISS-0402 already
+  disclosed — the benchmark now demonstrates the gap it was designed to
+  expose, per the S02 design doc's own stated purpose. Full regression
+  1446 passed.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the
