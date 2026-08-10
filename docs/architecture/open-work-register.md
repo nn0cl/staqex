@@ -201,7 +201,22 @@ Issue gives them a concrete scope:
   / [LISS-0315](documentation-compression-map.md);
   **CH-field-compose baseline frozen weak** (Ideal §2A + Host 0317 + H→E 0318;
   [LISS-0319](documentation-compression-map.md));
-  Joint rational mode still ADR 0125 (classical path: ADR 0160 shipped);
+  Joint rational mode still ADR 0125 (classical path: ADR 0160 shipped).
+  **Closed 2026-08-10** (Architecture Path re-investigation of the
+  reopened-backlog item, Adjudicator confirmed): ADR 0097's own
+  verification contract rejects a rational/symbolic Kernel numeric mode
+  "unless it comes with the concrete requirement and semantics ADR
+  0076/0097 say such a change needs," and its own reasoning is that exact
+  rationals would not make Staqex exact — the coefficients that actually
+  dominate quantum computing ($1/\sqrt{2}$, $e^{i\theta}$, Trotter steps,
+  molecular integrals) are not rational. Unlike its 2026-07-31
+  permanent-out-reopen siblings (SI dims, Continuous PDF, live QPU —
+  see [staqex-v1-open-topics-permanent-out.md](../specs/staqex-v1-open-topics-permanent-out.md)),
+  which found real unseal paths and shipped, this item's own design
+  investigation concluded against it; no new concrete requirement has
+  surfaced since. ADR 0125/0076/0097 design boundary stands; do not
+  re-propose without a concrete requirement per ADR 0097's verification
+  contract;
   numeric literal lifting: [LISS-0018](documentation-compression-map.md).
 - Concrete live QPU provider **SDK** after honesty ports (ADR 0127);
   CredentialPort shipped ADR 0161: [LISS-0019](documentation-compression-map.md),
