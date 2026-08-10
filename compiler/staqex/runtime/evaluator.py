@@ -1962,6 +1962,35 @@ class Evaluator:
             ]
             return Joint(worlds=_coalesce(out_w))
 
+        # ADR 0205 / LISS-0404: a single tuple-valued coordinate (e.g. from
+        # prepare_selection) stands in for nq separate qubit wires -- same
+        # Hamiltonian, same compile_sparse_pauli/expm_ih_apply primitives,
+        # verified by direct execution to give physically identical
+        # results to the nq-separate-names path below (ADR 0205 Context).
+        if len(names) == 1:
+            src = names[0]
+            sample = next(
+                (w.assign.get(src) for w in joint.worlds if src in w.assign), None
+            )
+            if isinstance(sample, tuple):
+                if len(sample) != nq:
+                    raise KernelError(
+                        f"Operator needs {nq} qubit positions, tuple coordinate "
+                        f"`{src}` has {len(sample)}"
+                    )
+                from .sparse_pauli import compile_sparse_pauli
+
+                try:
+                    terms = compile_sparse_pauli(
+                        op_ast,
+                        env=self.operators,
+                        scalars=self.scalars,
+                        n_qubits=nq,
+                    )
+                except ValueError as e:
+                    raise KernelError(str(e)) from e
+                return self._hamiltonian_evolve_tuple_coordinate(joint, src, nq, terms, t)
+
         # Multi-qubit Pauli H on names[0..nq) — sparse Pauli-sum + Taylor e^{-iHt}
         if len(names) < nq:
             raise KernelError(
@@ -2035,6 +2064,60 @@ class Evaluator:
                         amp=amp,
                         coord_phase=phases.get(idx, {}),
                     )
+                )
+        return Joint(worlds=_coalesce(out_worlds))
+
+    def _hamiltonian_evolve_tuple_coordinate(
+        self,
+        joint: Joint,
+        src: str,
+        nq: int,
+        terms: Any,
+        t: float,
+    ) -> Joint:
+        """ADR 0205 / LISS-0404: same Pauli-sum evolution as the
+        nq-separate-names path above, reading/writing one tuple-valued
+        coordinate's `nq` positions instead of `nq` separate coordinate
+        names. Verified by direct execution to give physically identical
+        results to that path (ADR 0205 Context point 3).
+        """
+        from collections import defaultdict
+
+        from .joint import World, _coalesce
+        from .sparse_pauli import expm_ih_apply
+
+        dim = 2**nq
+        groups: dict[tuple, list[World]] = defaultdict(list)
+        for w in joint.worlds:
+            key = tuple(sorted((k, v) for k, v in w.assign.items() if k != src))
+            groups[key].append(w)
+
+        out_worlds: list[World] = []
+        for key, ws in groups.items():
+            vec = [0j] * dim
+            phases: dict[int, dict[str, complex]] = {}
+            for w in ws:
+                pattern = w.assign[src]
+                idx = 0
+                for b in pattern:
+                    idx = (idx << 1) | int(b)
+                vec[idx] += w.amp
+                phases[idx] = dict(w.coord_phase)
+            outv = expm_ih_apply(terms, t, vec)
+            base_assign = dict(key)
+            for idx, amp in enumerate(outv):
+                if abs(amp) ** 2 <= EPS:
+                    continue
+                x = idx
+                bits = []
+                for _ in range(nq):
+                    bits.append(x & 1)
+                    x >>= 1
+                bits.reverse()
+                assign = dict(base_assign)
+                assign[src] = tuple(bits)
+                out_worlds.append(
+                    World(assign=assign, amp=amp, coord_phase=phases.get(idx, {}))
                 )
         return Joint(worlds=_coalesce(out_worlds))
 
