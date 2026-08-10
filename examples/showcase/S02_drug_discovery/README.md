@@ -48,6 +48,12 @@ python3 examples/showcase/S02_drug_discovery/host/run_selection.py
 # design doc §7 "Baseline discipline"; cross-checks the same feasible-set
 # definition the Kernel program uses):
 python3 examples/showcase/S02_drug_discovery/host/classical_baseline.py
+
+# Full multi-shot benchmark report (LISS-0403) -- real baseline/objective/
+# reranked scores, resource metadata, and quality metrics (feasibility
+# rate, objective gap to the exact baseline, top-k overlap,
+# reproducibility), per the S02 acceptance spec's Result contract:
+python3 examples/showcase/S02_drug_discovery/host/benchmark_report.py
 ```
 
 ## Honesty notes
@@ -61,3 +67,15 @@ python3 examples/showcase/S02_drug_discovery/host/classical_baseline.py
 - Candidate identity (descriptors, scores, tags) never crosses into the
   Kernel — only the finite width `n` and the Host-computed predicate
   matrices do, per the S02 acceptance spec's own boundary contract.
+- **Disclosed architecture finding (LISS-0403):** `benchmark_report.py`'s
+  `top_k_overlap` metric measures near-zero. This is real, not a bug: the
+  hard-constraint selection (`prepare_selection` + `project onto
+  feasible(...)`) and the soft-objective evolution (`H_obj` on a separate
+  qubit pair) are two independent coordinates — `H_obj`'s evolution
+  currently has no channel through which to bias *which* feasible
+  selection gets sampled, because candidate identity never reaches the
+  Kernel and `prepare_selection`'s tuple-valued coordinate cannot itself
+  be evolved under an ordinary Pauli-term `Operator` (LISS-0402 finding).
+  Closing this is a real Staqex expressiveness gap, deliberately left
+  open pending Architecture Path review rather than worked around with
+  new Kernel surface invented ahead of that review.
