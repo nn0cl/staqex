@@ -183,7 +183,14 @@ Issue gives them a concrete scope:
   [WP-0068](documentation-compression-map.md) (**complete**);
   **finiteize surface shipped** [ADR 0185](decision-themes/dec-0004-type-first-scientific-model.md)
   Lane A / [LISS-0313](documentation-compression-map.md) **complete**
-  (`finiteize` + B18); mid-program Continuous still deferred — **expressiveness
+  (`finiteize` + B18); mid-program Continuous (Lane B) — **ship-ADR gate
+  satisfied** [ADR 0204](adr/0204-continuous-lane-b-type-world.md)
+  **Accepted** (2026-08-10: `Continuous<T>` type + hard gates,
+  `ContinuousFieldPort`, MVP `weight`/`mask` ops lifted from LISS-0317's
+  Host-proven semantics, `finiteize` Continuous-arg overload; `CH-field-fork`
+  explicitly deferred by the LINEAR single-consumption rule) — **Feature
+  Plan investigation and Red not yet started**; seat scoring stays **weak**
+  until Green — **expressiveness
   seats** [scenarios](../specs/staqex-v1-continuous-lane-b-expressiveness-scenarios.md)
   / [LISS-0315](documentation-compression-map.md);
   **CH-field-compose baseline frozen weak** (Ideal §2A + Host 0317 + H→E 0318;
