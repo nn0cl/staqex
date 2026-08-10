@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **investigation** (2026-08-10) — Issues drafted, batch record drafted; awaiting Adjudicator batch approval |
+| Status | **approved_for_execution** (2026-08-10) — Adjudicator Investigation approval + Batch approval both granted; batch [execution-batch-wp-0097.json](../collaboration/reviews/execution-batch-wp-0097.json) `approved_for_execution`, `approval_commit` 3eb342f, `expires_at` 2026-08-24 |
 | Purpose | Implement the Lane B ship shape [ADR 0204](../architecture/adr/0204-continuous-lane-b-type-world.md) (Accepted 2026-08-10) authorized: `Continuous<T>` type + hard gates, `ContinuousFieldPort`, `weight`/`mask` ops, `finiteize` Continuous-argument overload |
 | Parent program | Reopened backlog — "Continuous PDF / Monte Carlo" (`CLAUDE.md` Current Open Topics); Adjudicator selected this item first (2026-08-10), "上から" ordering for the remaining reopened-backlog items |
 | Prior wave | ADR 0126 (design boundary) → ADR 0162 (Host/Bridge-first) → ADR 0185 / LISS-0313 (Lane A `finiteize`, shipped) → Lane B expressiveness scenarios (LISS-0315–0319, frozen baseline) → ADR 0204 (this ADR, ship shape, Accepted) |
 | Review input | ADR 0204's own Consequences section ("likely a multi-Issue batch... a Feature Plan investigation... would do that separately") |
 | Branch (docs intake) | `docs/wp-continuous-lane-b-batch-investigation` |
 | Execution branch (when approved) | `batch/wp-0097-continuous-lane-b-ship` (or per-Issue feature branches, per Adjudicator preference at approval time) |
-| Batch record (draft) | [execution-batch-wp-0097.json](../collaboration/reviews/execution-batch-wp-0097.json) — **`status: draft`** |
+| Batch record | [execution-batch-wp-0097.json](../collaboration/reviews/execution-batch-wp-0097.json) — **`status: approved_for_execution`** |
 | Batch proposal | [2026-08-10-wp-0097-batch-proposal.md](../collaboration/reviews/2026-08-10-wp-0097-batch-proposal.md) |
 
 ## One-line goal
@@ -104,8 +104,8 @@ python3 -m pytest -q -k "finiteize or 0313"
 | Step | Approval |
 |---|---|
 | ADR 0204 | Architecture approval — **granted** 2026-08-10 |
-| This WP + Issue files | Investigation intake (this PR) |
-| Batch execution of LISS-0399–0401 | Promote [execution-batch-wp-0097.json](../collaboration/reviews/execution-batch-wp-0097.json) from `draft` → `approved_for_execution` (see proposal §4) |
+| This WP + Issue files | Investigation approval — **granted** 2026-08-10 |
+| Batch execution of LISS-0399–0401 | Batch approval — **granted** 2026-08-10; [execution-batch-wp-0097.json](../collaboration/reviews/execution-batch-wp-0097.json) `approved_for_execution` |
 | Per-Issue Feature Red/Green | Covered by batch approval once granted; otherwise per-Issue Plan/Completion approval |
 
 **This planning PR does not authorize implementation.**

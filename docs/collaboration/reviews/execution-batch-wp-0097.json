@@ -2,13 +2,13 @@
   "schema_version": 1,
   "batch_id": "wp-0097-continuous-lane-b-ship",
   "work_plan_id": "WP-0097",
-  "status": "draft",
+  "status": "approved_for_execution",
   "approval_type": "bounded-batch",
-  "approved_by": null,
-  "approved_at": null,
-  "expires_at": null,
+  "approved_by": "Adjudicator",
+  "approved_at": "2026-08-10T12:34:00Z",
+  "expires_at": "2026-08-24T00:00:00Z",
   "execution_branch": "batch/wp-0097-continuous-lane-b-ship",
-  "approval_commit": null,
+  "approval_commit": "3eb342f72ad684be072148a8753f2bb2fcae238c",
   "issue_ids": [
     "LISS-0399",
     "LISS-0400",
@@ -19,7 +19,7 @@
     "LISS-0400",
     "LISS-0401"
   ],
-  "approved_scope": null,
+  "approved_scope": "WP-0097 Continuous Lane B ship under ADR 0204 (Accepted 2026-08-10): (1) Continuous<T> type + ContinuousFieldPort + hard gates (measure/evolve/Joint/QPU rejection) + LINEAR introduce/discard, (2) weight/mask continuous ops, (3) finiteize Continuous-argument overload closing the LINEAR consumption story. Strictly sequential, no parallel-eligible pair. CH-field-fork, CH-field-theory, S01 spine changes, live QPU, Joint rational mode, trait specialization, and CUDA workers are all explicitly out of scope.",
   "proposed_scope": "WP-0097 Continuous Lane B ship under ADR 0204 (Accepted 2026-08-10): (1) Continuous<T> type + ContinuousFieldPort + hard gates (measure/evolve/Joint/QPU rejection) + LINEAR introduce/discard, (2) weight/mask continuous ops, (3) finiteize Continuous-argument overload closing the LINEAR consumption story. Strictly sequential, no parallel-eligible pair. CH-field-fork, CH-field-theory, S01 spine changes, live QPU, Joint rational mode, trait specialization, and CUDA workers are all explicitly out of scope.",
   "allowed_paths": [
     "compiler/staqex/typecheck.py",

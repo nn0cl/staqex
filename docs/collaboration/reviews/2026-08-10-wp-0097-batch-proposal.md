@@ -5,9 +5,9 @@
 | Date | 2026-08-10 |
 | Work plan | [WP-0097](../../work-plans/WP-0097-continuous-lane-b-ship.md) |
 | Batch record | [execution-batch-wp-0097.json](execution-batch-wp-0097.json) |
-| Status | **draft** — awaiting Adjudicator batch approval |
-| Requested approval | bounded-batch |
-| Implementation allowed by this doc alone | no |
+| Status | **approved_for_execution** (Adjudicator「承認」2026-08-10) — see [execution-batch-wp-0097.json](execution-batch-wp-0097.json) |
+| Requested approval | ~~bounded-batch~~ **granted** |
+| Implementation allowed by this doc alone | historical draft: no; **now closed, see JSON record** |
 
 ```markdown
 [DESIGN CHECK]
