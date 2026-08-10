@@ -1,0 +1,60 @@
+// CH-selection-spine — S02 finite candidate-selection experiment (LISS-0402).
+// Hard constraints (Projector) and soft objective (Hamiltonian evolution)
+// are deliberately two separate quantum coordinates, not one forced thread
+// -- prepare_selection's tuple-valued coordinate cannot itself be evolved
+// under an ordinary Pauli-term Operator (confirmed by direct execution,
+// LISS-0402 Design verification point 3); this mirrors S01's own pattern
+// where classical domain data feeds a Hamiltonian's coefficients but never
+// becomes the evolved state itself.
+// Host owns the candidate manifest, HostInputPort predicate matrices, and
+// the classical baseline (host/run_selection.py, host/classical_baseline.py).
+// SIM-only; not a chemistry, clinical, or quantum-advantage claim.
+
+package examples.showcase.s02_drug_discovery
+
+struct ObjectiveWeights {
+    activity: Float,
+    selectivity: Float,
+    diversity: Float
+}
+
+// Named weighted objective terms (S02 expressiveness review P1 finding,
+// closed here with existing Operator algebra -- no new Kernel syntax).
+fn objective_hamiltonian(w: ObjectiveWeights) -> Operator {
+    return w.activity * Z + w.selectivity * X + w.diversity * (Z * Z)
+}
+
+pub fn main() -> Unit {
+    // --- Hard-constraint selection subspace ---
+    // Fixture: 8 candidates (spec "Fixture limits" minimum), select exactly 3.
+    // pairwise_compatible / diversity_at_least matrices are Host-supplied via
+    // HostInputPort (ADR 0194) -- see host/run_selection.py.
+    Int n = 8
+    state psi_sel = prepare_selection(n)
+    state psi_sel = project psi_sel onto feasible(
+        exactly_selected = 3,
+        pairwise_compatible = true,
+        diversity_at_least = 0.3
+    )
+
+    // --- Soft-objective evolution (separate qubit pair; ADR 0195 energy scale) ---
+    ObjectiveWeights weights = ObjectiveWeights {
+        activity: 0.45, selectivity: 0.30, diversity: 0.20
+    }
+    Operator H_obj_raw = objective_hamiltonian(weights)
+    Energy scale = 1.0.eV to J
+    Operator H_obj = scale * H_obj_raw
+
+    state obj0 = |0>
+    state obj1 = |+>
+    Time dur = 0.6.fs
+    state (obj0, obj1) = evolve (obj0, obj1) under H_obj for dur
+        using Suzuki(order = 2, steps = 4)
+
+    // Non-destructive objective diagnostic (Result contract "no fabricated
+    // score" -- this is a real expectation value, not a stand-in).
+    state zz = expect(ZZ, obj0, obj1)
+
+    // ADR 0173: leftovers leave via Born partial trace, same idiom as S01.
+    measure psi_sel tracing_out obj0, obj1
+}
