@@ -369,6 +369,31 @@ def _check_reset_stmt(stmt: ResetStmt, state: _LinearUseState) -> dict | None:
     return None
 
 
+def _is_controller_measure_stmt(stmt: object) -> bool:
+    """LISS-0387 (ADR 0200 Decision 4) shape: `Controller<T> = measure
+    wire`. Extracted (LISS-0395) so the same recognition applies verbatim
+    whether the bind appears at the top level of a dynamic-lane scope or
+    inside a `match` arm of that same scope.
+    """
+    return (
+        isinstance(stmt, StateBind)
+        and stmt.ty is not None
+        and stmt.ty.name == "Controller"
+        and isinstance(stmt.expr, MeasureExpr)
+        and isinstance(stmt.expr.expr, Var)
+    )
+
+
+def _consume_controller_measure_wire(stmt: StateBind, state: _LinearUseState) -> None:
+    """Marks the measured wire consumed (LISS-0387 Decision 4 rationale:
+    the wire is not physically dead -- it may still be gated/applied to
+    inside `match` arms -- but nothing later in this pass re-inspects a
+    consumed root for duplicate use, so marking it here is safe).
+    """
+    wire_root = _linear_root(stmt.expr.expr.name, state.aliases)
+    state.consumed.add(wire_root)
+
+
 def _analyze_dynamic_lane_match(stmt: MatchStmt, state: _LinearUseState) -> list[dict]:
     """LISS-0394: check every arm of a dynamic-lane `match` against the
     shared enclosing `state` (arms are mutually-exclusive continuations
@@ -385,23 +410,26 @@ def _analyze_dynamic_lane_match(stmt: MatchStmt, state: _LinearUseState) -> list
 def _analyze_dynamic_lane_arm_stmts(
     stmts: list[object], state: _LinearUseState
 ) -> list[dict]:
-    """LISS-0394: process one `match` arm's statements against the shared
-    `state`. Mirrors exactly the statement kinds
-    `evaluator.py::_run_dynamic_arm_body` executes for arm bodies today:
-    bare `ExprStmt`/`Call` (untracked here, same as everywhere else in
-    this checker) and `ResetStmt` (dedicated), plus nested `MatchStmt`
-    (recursion, for completeness beyond what the evaluator currently
-    runs). A `StateBind` inside an arm -- including one shaped like a
-    Controller-measure -- is intentionally left unhandled: the evaluator
-    itself does not run a dedicated mid-circuit-collapse path for a
-    `StateBind` found inside an arm (it falls through to the generic
-    `_bind_names`/`_bind` path there), so this checker does not invent
-    hir.py behavior for an evaluator path that does not exist. This is a
-    disclosed limitation (LISS-0394 Plan, Explicitly out of scope), not a
-    silently-identical gap.
+    """Process one `match` arm's statements against the shared `state`.
+    Mirrors exactly the statement kinds
+    `evaluator.py::_run_dynamic_arm_body` executes for arm bodies (LISS-0395
+    unified that function with the top-level dynamic-qpu-block dispatcher,
+    so arm bodies now run the same vocabulary as the block top level, at
+    any nesting depth): Controller-measure (LISS-0395, dedicated -- mirrors
+    the top-level `_analyze_block` treatment exactly), `ResetStmt`
+    (LISS-0390, dedicated), nested `MatchStmt` (recursion). Bare
+    `ExprStmt`/`Call` stays untracked here, same as everywhere else in this
+    checker. A generic `StateBind` that is *not* Controller-measure-shaped
+    is intentionally left unhandled, matching the top-level
+    `_analyze_block`'s own scope (this checker does not track arbitrary
+    quantum-carrier binds inside dynamic-lane scopes at all, top level
+    included).
     """
     diags: list[dict] = []
     for stmt in stmts:
+        if _is_controller_measure_stmt(stmt):
+            _consume_controller_measure_wire(stmt, state)
+            continue
         if isinstance(stmt, ResetStmt):
             diag = _check_reset_stmt(stmt, state)
             if diag is not None:
@@ -461,25 +489,17 @@ def _analyze_block(
     diags: list[dict] = []
 
     for stmt in block.stmts:
-        if (
-            isinstance(stmt, StateBind)
-            and stmt.ty is not None
-            and stmt.ty.name == "Controller"
-            and isinstance(stmt.expr, MeasureExpr)
-            and isinstance(stmt.expr.expr, Var)
-        ):
+        if _is_controller_measure_stmt(stmt):
             # LISS-0387 (ADR 0200 Decision 4): `Controller<T> = measure wire`
             # inside a dynamic qpu block consumes `wire` for linear-use
             # purposes, unlike Static `state` bindings which stay
             # unconsumed until an explicit `measure` statement. Unlike
             # Static terminal `measure`, the wire is not physically dead
             # (ADR 0197 Decision 2) — it may still be gated/applied to
-            # inside `match` arms — but `MatchStmt`/bare `ExprStmt` bodies
-            # are not yet visited by this checker (pre-existing gap, not
-            # introduced here), so marking the root consumed here is safe:
-            # nothing later in this pass re-inspects it for duplicate use.
-            wire_root = _linear_root(stmt.expr.expr.name, state.aliases)
-            state.consumed.add(wire_root)
+            # inside `match` arms, including nested Controller-measures
+            # (LISS-0395) — nothing later in this pass re-inspects a
+            # consumed root for duplicate use.
+            _consume_controller_measure_wire(stmt, state)
             continue
         if isinstance(stmt, ResetStmt):
             diag = _check_reset_stmt(stmt, state)

@@ -358,6 +358,61 @@ Feature: Dynamic-lane mid-circuit measure genuinely collapses and continues
     Then behavior is byte-for-byte identical to before this Issue
 ```
 
+## Acceptance scenarios — arm-body statement unification (ADR 0200, LISS-0395)
+
+Normative for Feature Path Phase 1–3 on LISS-0395. Extends ADR 0200 Decision
+4's own disclosed gap ("`MatchStmt`/bare `ExprStmt` bodies are not yet
+visited") on the **evaluator** side (LISS-0394 already closed the `hir.py`
+side for `ResetStmt`/nested `MatchStmt`). `_run_dynamic_arm_body` and
+`_run_dynamic_qpu_block`'s top-level loop are unified into one recursive
+statement dispatcher, closing two confirmed defects at once: a silent wire
+leak (a wire only ever touched inside a `match` arm was never traced out at
+block end) and an unsupported chained mid-circuit measurement (`Controller<T>
+= measure wire` written inside an arm raised `KernelError` instead of
+performing a real collapse).
+
+```gherkin
+Feature: Dynamic-lane arm bodies execute the same statement vocabulary as the block top level
+
+  Scenario: a wire only ever touched inside a match arm is still traced out
+    Given `state q = |0>`, `state r = |0>`, `Controller<Bit> bit = measure q`
+    And `match bit { 0 => { reset r } 1 => { } }` with a consistent outcome
+      for `bit`
+    When the Evaluator runs the dynamic qpu block
+    Then `r` is not present in any world's assignment after the block
+      returns (block-end trace-out now covers arm-only wires)
+
+  Scenario: a second mid-circuit measure inside a match arm genuinely collapses
+    Given a dynamic qpu block whose first arm contains
+      `Controller<Bit> bit2 = measure q2` followed by a nested
+      `match bit2 { ... }`
+    And Host-supplied outcomes for both `bit` and `bit2`
+    When the Evaluator runs the compiled unit
+    Then no KernelError is raised
+    And the nested match dispatches to the arm matching the supplied `bit2`
+      outcome
+
+  Scenario: the chained measure is a real collapse, not a bookkeeping label
+    Given the same program
+    And a Host-supplied outcome for `bit2` that is physically impossible
+      given the real post-`bit`-collapse state
+    When the Evaluator runs the compiled unit
+    Then the run vacuums and dynamic_trace.physical_outcome_confirmed is
+      False
+
+  Scenario: hir.py does not false-positive a discard for an arm-measured wire
+    Given a Controller-measure inside a match arm with nothing after it
+    When the unit is compiled
+    Then no LINEAR_IMPLICIT_DISCARD diagnostic is emitted for the measured
+      wire
+
+  Scenario: existing top-level dynamic-lane behavior is unaffected
+    Given the LISS-0387/0389/0390 fixtures (top-level measure, top-level
+      reset, arm-level reset of a top-level-known wire)
+    When they are compiled and evaluated
+    Then behavior is byte-for-byte identical to before this Issue
+```
+
 ## Acceptance scenarios — physical outcome confirmation (ADR 0198 Amendment, LISS-0389)
 
 Normative for Feature Path Phase 1–3 on LISS-0389. Plan-locked (Adjudicator,
