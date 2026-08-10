@@ -139,4 +139,4 @@ Architecture approval:
       one unnecessary import alias for readability, no behavior change.
 - [x] Full regression sweep re-run: **1450 passed** (2026-08-11), up from
       1446 by exactly the 4 new tests.
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-11).
