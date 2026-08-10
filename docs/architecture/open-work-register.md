@@ -362,7 +362,24 @@ Issue gives them a concrete scope:
   hard-constraint/soft-objective independence LISS-0402 already
   disclosed — the benchmark now demonstrates the gap it was designed to
   expose, per the S02 design doc's own stated purpose. Full regression
-  1446 passed.
+  1446 passed. **Architecture fix shipped 2026-08-11**:
+  [ADR 0205](adr/0205-tuple-coordinate-register-bridge.md) (Accepted) /
+  [LISS-0404](../issues/LISS-0404-tuple-coordinate-hamiltonian-evolve.md)
+  (PR [#524](https://github.com/nn0cl/staqex/pull/524)) closes the
+  `top_k_overlap≈0` root cause for real: `evolve psi under H` now accepts
+  a single tuple-valued coordinate (as `prepare_selection` produces), not
+  only `nq` separate named coordinates — no new op, no new syntax (`Z[i]`
+  indexed Pauli already shipped), `prepare_selection`/`project`/`measure`
+  untouched. Verified against the existing path to float precision.
+  Chosen over an initially-proposed `unpack_bits`/`pack_bits` bridge and
+  over a fuller `prepare_selection` redesign (found to require inventing
+  multi-coordinate joint measurement — bigger and riskier) after the
+  Adjudicator asked for the fundamentally correct fix regardless of size.
+  A separate, disclosed bug in `main_selection.sqx` itself (bare `Z*Z`
+  collapses to identity via same-site multiplication) remains open,
+  fixable independently with already-shipped `Z[i]` syntax; rewriting
+  `main_selection.sqx` to use the new unified single-coordinate form is a
+  separate, not-yet-scheduled follow-on. Full regression 1450 passed.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the
