@@ -1,13 +1,21 @@
-# ADR 0205: Tuple-coordinate ↔ register bridge (`unpack_bits` / `pack_bits`)
+# ADR 0205: Pauli-term Hamiltonian evolution on tuple-valued coordinates
 
 ## Status
 
 **Proposed** (2026-08-11) — Architecture Path investigation, presented for
 Adjudicator Architecture approval. **Not Accepted.** Acceptance would
-authorize the type/gate/op decisions below as an architecture boundary;
-it would **not** itself authorize Feature Path Red — a separate Feature
-Plan and Issue-level Plan approval remain required, same as every other
+authorize the decision below as an architecture boundary; it would
+**not** itself authorize Feature Path Red — a separate Feature Plan and
+Issue-level Plan approval remain required, same as every other
 Architecture Path ADR this session.
+
+Revision note: this ADR originally proposed an `unpack_bits`/`pack_bits`
+bridge (Option C in the rejected-alternatives list below). The Adjudicator
+asked for the fundamentally correct fix, "将来的な負債にならないほう"
+(the one that does not become future debt), even at greater implementation
+size. Direct investigation found a smaller **and** more correct answer
+than either the original bridge or the first-considered full
+`prepare_selection` redesign — see Decision below.
 
 Companions: [LISS-0402](../../issues/LISS-0402-s02-selection-example.md)
 (discovered the incompatibility this ADR addresses, by direct execution);
@@ -20,162 +28,162 @@ ADR).
 ## Context
 
 Building S02's first real example (LISS-0402) surfaced a genuine, load-
-bearing architecture gap, not a corner case: **Staqex has two mutually
-incompatible representations of "an n-qubit register" today.**
+bearing architecture gap: `prepare_selection(n)` binds **one** Joint
+coordinate whose value is an `n`-tuple; `evolve psi under H` (Pauli-term
+`H`) rejects it — confirmed by direct execution:
+`evolve psi1 under Z` raises `hamiltonian \`Z\` expects qubit support
+{0,1}, got [(0, 1), (1, 0)]`. S02's shipped `main_selection.sqx` works
+around this by evolving a **separate**, disconnected qubit pair for the
+soft objective, which LISS-0403's benchmark report empirically confirmed
+cannot influence which feasible selection is sampled (`top_k_overlap ≈
+0`).
 
-| Representation | Produced by | Supports | Does not support |
-|---|---|---|---|
-| N separate named coordinates | `QubitRegister<N>` + `forEach` (`__foreach_{element}_{index}` wires, `evaluator.py::_run_foreach`) | Individual `apply`, Pauli-term `evolve under H` | No aggregate "restrict to a feasible subset" predicate — nothing gathers the N wires back into one collective handle after `forEach` completes |
-| One tuple-valued coordinate | `prepare_selection(n)` (`evaluator.py::_bind_prepare_selection`, `Joint.bind_split(name, {pattern: weight ...})`) | `project ... onto feasible(...)` (ADR 0192/0194, filters by inspecting the tuple) | `evolve under H` with an ordinary Pauli-term Hamiltonian — confirmed by direct execution: `evolve psi1 under Z` raises `hamiltonian \`Z\` expects qubit support {0,1}, got [(0, 1), (1, 0)]` |
+### What direct investigation found (not assumed)
 
-On the blackboard, "prepare n qubits, restrict to a feasible subspace,
-evolve under a weighted Hamiltonian, observe" is **one** continuous
-physical process on **one** object. S02's shipped `main_selection.sqx`
-(LISS-0402) can only express this today by splitting it into two
-*independent* Joint coordinates — the hard-constraint selection and the
-soft-objective evolution never interact. LISS-0403's benchmark report
-empirically measured the consequence: `top_k_overlap ≈ 0` across 20 shots
-— the objective evolution has no channel through which to influence which
-feasible selection gets sampled, purely because of this representational
-split, not because of any physics the language intends to forbid.
-
-This is exactly the "小手先の転用で表現力に制約を掛けたくない" pattern
-this project has rejected before (ADR 0199 Amendment `reset` keyword):
-the fix should not paper over the split with a workaround inside `project`
-or `evolve`'s existing dispatch; it should give physicists an honest,
-explicit way to cross between the two representations when they need to.
+1. **Indexed Pauli-term syntax already ships.** `Z[0]`, `X[1]`, `Z[0] *
+   Z[1]` already parse (`parser.py:3112-3120`, `OpIndexed`) and already
+   compile correctly to genuine multi-site Pauli strings
+   (`sparse_pauli.py::_eval`, `hamiltonian.py::_eval_qubits`) — confirmed
+   by compiling `Z[0] * Z[1]` and inspecting the resulting
+   `PauliTerm(kinds=('Z','Z'))`. **A real, separate, previously-unknown
+   bug was found in the process**: `main_selection.sqx`'s own
+   `objective_hamiltonian` used bare, unindexed `Z * Z` for its
+   "diversity" term — since unindexed Pauli atoms default to site 0
+   (`hamiltonian.py:288`: `site = 0 if op.site is None else op.site`),
+   `Z * Z` on the *same* site multiplies to the identity (`Z² = I`),
+   silently contributing nothing. This ADR's fix, once shipped, corrects
+   this alongside closing the architecture gap (see Consequences).
+2. **The multi-qubit evolve path already does almost exactly what a
+   tuple-coordinate version would need** (`evaluator.py::_hamiltonian_evolve_one_step`,
+   the "Multi-qubit Pauli H on names[0..nq)" branch, lines ~1965-2039):
+   for each World, it reads `nq` separate named coordinates' 0/1 bits,
+   packs them MSB-first into a computational-basis index, applies
+   `expm_ih_apply` (already-shipped sparse Pauli-sum Taylor evolution,
+   unchanged), then unpacks the result back into `nq` separate
+   coordinate assignments.
+3. **Confirmed by direct execution that reading/writing one tuple's
+   positions instead of `nq` separate coordinate names produces
+   physically identical results to the shipped path**, to floating-point
+   precision: evolved `|0⟩⊗|+⟩` under `H = Z[0] + X[0] + Z[0]*Z[1]`
+   (energy-scaled) two ways — (a) via the existing shipped `evolve (q0,
+   q1) under H` path, (b) via a hand-written prototype reading/writing a
+   single tuple-valued coordinate's two positions using the *same*
+   `compile_sparse_pauli`/`expm_ih_apply` primitives. Both gave `q0`
+   marginal `{0: 0.6078963648762783, 1: 0.39210363512372154}` — identical
+   to full float precision. This is the same physics, only a different
+   coordinate storage shape; nothing about the Hamiltonian machinery
+   itself needs to change.
 
 ## Decision
 
-### 1. Two new Kernel ops: `unpack_bits` and `pack_bits`
+### Extend `_hamiltonian_evolve_one_step`'s multi-qubit Pauli path to accept a single tuple-valued coordinate, in addition to `nq` separate named coordinates
 
-- `unpack_bits(psi, n)` — where `psi` is a tuple-valued Joint coordinate
-  (e.g. from `prepare_selection`) and `n` is its known width — binds `n`
-  new ordinary qubit-valued coordinates from `psi`'s tuple, one per
-  position, preserving each World's amplitude exactly (a per-World
-  pushforward: `assign[q_i] = assign[psi][i]`, no new probability mass
-  introduced or removed). Bound as a multi-name `state (q0, q1, …, qn-1)
-  = unpack_bits(psi, n)` — reuses the existing multi-name `StateBind`
-  shape (`LISS-0228`/`ADR 0228`-style), no new binding grammar.
-- `pack_bits(q0, q1, …, qn-1)` — the inverse: binds one new tuple-valued
-  coordinate from `n` ordinary qubit coordinates, same per-World identity
-  (`assign[psi][i] = assign[q_i]`). Bound as an ordinary single-name
-  `state psi = pack_bits(q0, …, qn-1)`.
-- Both are **honest, explicit, physically inert relabelings** — they
-  change which coordinate names index the same underlying World
-  information, not the amplitudes or the Born distribution. No new Joint
-  primitive is needed; both lower to existing `bind_pushforward`/
-  `bind_multi`-shaped per-World transforms already used throughout
-  `evaluator.py`.
-- After `unpack_bits`, the `n` qubit coordinates are ordinary — they
-  accept `apply`, Pauli-term `evolve under H`, and (per this ADR's own
-  Non-goals) are *not* automatically re-gathered for `project onto
-  feasible(...)`; a physicist who needs the projector again after
-  evolving calls `pack_bits` first.
+1. When `evolve psi under H` is called with **one** bind name whose
+   Joint-assigned values are tuples of length `nq` (`nq` = the
+   Hamiltonian's own inferred qubit count, `op_n_qubits`), dispatch to a
+   new code path that reads/writes that one coordinate's tuple positions
+   using the *exact same* `compile_sparse_pauli`/`expm_ih_apply`
+   primitives the existing `nq`-separate-names path already uses —
+   confirmed physically identical by direct execution (Context point 3).
+   The existing `nq`-separate-names path is **completely unchanged**.
+2. **No new Kernel op, no new syntax, no change to `prepare_selection`,
+   `project onto feasible(...)`, or `measure`.** A physicist writes
+   exactly the natural single-coordinate form:
+   `state psi = project psi0 onto feasible(...); state psi = evolve psi
+   under H_obj for t; measure psi`. `Z[i]`/`X[i]`/`Z[i]*Z[j]` (already
+   shipped) name which selection position the Hamiltonian acts on.
+3. **LINEAR treatment is unaffected** — `evolve` already consumes/moves
+   its bound name under the existing generic Call/rebind machinery
+   regardless of whether the underlying value happens to be a tuple; no
+   `hir.py` change is needed (same "already generic" finding this
+   session made repeatedly for LISS-0400/0401).
+4. **Disambiguation rule**: if `len(names) == 1` and that coordinate's
+   sampled value is an `int` (0/1), the existing single-qubit "legacy"
+   path applies unchanged (unaffected by this ADR). If it is a `tuple`,
+   the new path applies. If `len(names) > 1`, the existing `nq`-separate-
+   names path applies unchanged. No source-level ambiguity: the dispatch
+   is entirely determined by what is already bound to the name, which the
+   evaluator already inspects for other purposes (e.g. `project`'s own
+   `isinstance(..., tuple)` check, ADR 0192).
 
-### 2. `prepare_selection` / `project onto feasible(...)` remain unchanged
+## Rejected / superseded alternatives
 
-ADR 0192/ADR 0194's shipped predicate semantics, grammar, and runtime
-behavior are untouched. This ADR is additive: it does not redesign
-`prepare_selection` into N separate coordinates (Option A, considered and
-rejected below) or touch already-shipped, tested Kernel code
-(LISS-0324/0327/0328).
+### (Superseded) `unpack_bits` / `pack_bits` bridge — this ADR's own original proposal
 
-### 3. LINEAR treatment
+Superseded after the Adjudicator asked for the fundamentally correct fix.
+A bridge would have left two representations permanently coexisting,
+connected by explicit conversion statements a physicist must remember to
+insert — exactly the kind of adapter-shaped debt the Adjudicator flagged.
+The Decision above needs no bridge at all: one representation (a
+tuple-valued coordinate) becomes usable everywhere a physicist would
+naturally reach for it, including Pauli-term evolution.
 
-`unpack_bits`/`pack_bits` consume their input root(s) and introduce their
-output root(s), using exactly the existing generic Call-consumption
-machinery (`hir.py`'s `_mark_linear_var_use`/multi-name bind handling) —
-confirmed by this session's own LISS-0400 precedent that ordinary Call
-consumption already covers a new Call form with no special-case hir.py
-code, as long as the bound names are recognized linear carriers (already
-true for `State`-typed binds; no `Continuous`-style new `Ty.kind` is
-needed here since both sides of the bridge are ordinary `State` values).
+### Redesign `prepare_selection` to bind `N` separate coordinates directly
 
-## Rejected / deferred alternatives
+Rejected — found to be **larger**, not smaller, than first assumed:
+Staqex's terminal `measure` reports exactly **one** coordinate
+(`Measure.expr: Expr`, singular) with all others discarded via
+`tracing_out` (Born partial trace) — there is no "joint measure of
+several coordinates as one combined outcome" today. Redesigning
+`prepare_selection` into `N` separate coordinates would then require
+*also* inventing multi-coordinate joint measurement to recover a single
+reportable `n`-bit selection outcome — a change to the terminal-measure/
+NLTS core, the highest-risk part of the language to touch, for a problem
+this ADR's actual Decision solves without going near it. Left as a
+possible **future** ADR only if the Decision above proves insufficient in
+practice — not attempted now, and not needed for the S02 gap.
 
-### Option A: Redesign `prepare_selection` to bind N separate coordinates directly
+### New per-position addressing syntax
 
-Rejected for this ADR's scope, not rejected as wrong forever. This would
-be the more complete unification (one representation, not two) — a
-physicist would never need to know a bridge exists. But it requires
-either (a) changing `prepare_selection`'s and `project onto
-feasible(...)`'s already-shipped, tested representation
-(LISS-0324/0327/0328), risking regression in accepted behavior, or (b)
-inventing a persistent "Register" value that both `forEach`-expanded
-wires and `project`'s predicate logic can address collectively — a
-capability `QubitRegister<N>`/`forEach` does not have today either
-(`forEach`'s wires are compiler-internal synthetic names, `__foreach_*`,
-with no runtime handle gathering them back into one collective object
-after the loop ends). Either path is a materially larger, riskier change
-than this ADR's bridge. Left as a possible **future** ADR if the bridge
-proves too indirect in practice — not foreclosed, not attempted now.
-
-### Option B: Teach `evolve`/Pauli Hamiltonians to act on tuple-valued coordinates directly
-
-Rejected — would need new per-position addressing syntax inside Operator
-expressions (e.g. `Z[2]` to mean "Z on tuple position 2"), a genuinely
-new piece of Operator-algebra grammar, not an additive Call. Larger
-surface than Option C's plain data-shape conversion; deferred, not ruled
-out permanently.
-
-### Do nothing (leave the split as the only option)
-
-Rejected — this is the status quo LISS-0402/0403 already found and
-disclosed as a real, load-bearing expressiveness gap; the Adjudicator
-explicitly asked for a fix plan, not a re-confirmation of the finding
-(unlike Joint rational mode / trait-effect, which had no concrete
-requirement behind them, this gap has one: S02 itself).
+Not needed — `Z[i]` already ships (Context point 1); there is no syntax
+gap to close, only an evolution-path gap.
 
 ## Non-goals
 
-- Redesigning `prepare_selection` or `project onto feasible(...)`
-  (Option A).
-- New Operator-algebra addressing syntax (Option B).
-- Automatic/implicit conversion between the two representations —
-  `unpack_bits`/`pack_bits` are always explicit statements, never
-  inferred.
+- Redesigning `prepare_selection` or `project onto feasible(...)`.
+- Multi-coordinate joint measurement.
+- Rewriting `main_selection.sqx` — a follow-on Feature Issue may adopt
+  the unified single-coordinate form once this ships; not required by
+  this ADR. (The `objective_hamiltonian` bare-`Z*Z` bug found in Context
+  point 1 should be fixed in that same follow-on, using `Z[i]` syntax
+  that already ships today, independent of whether this ADR is accepted.)
 - Any change to `QubitRegister<N>`/`forEach`.
-- Rewriting `main_selection.sqx` — a follow-on Feature Issue may use the
-  bridge once shipped; not required by this ADR.
 
 ## Consequences
 
-- Once shipped, S02's `main_selection.sqx` (or a successor version) could
-  write the hard-constraint/soft-objective workflow as a **single**
-  coordinate lineage: `prepare_selection` → `project onto feasible(...)`
-  → `unpack_bits` → `evolve under H_obj` (now addressing the *actual*
-  selected candidates' qubits, not a disconnected pair) → `pack_bits` →
-  `measure`. This would let `top_k_overlap` become a meaningful, non-zero
-  metric for the first time, because the objective evolution could
-  finally influence which feasible pattern the terminal `measure`
-  reports.
-- Two new Kernel ops means two new Feature Path Issues at minimum
-  (`unpack_bits`, `pack_bits`) — sizing/ordering is Feature Plan
-  investigation work, not decided here, matching this ADR's own
-  Acceptance boundary below.
-- Does not resolve Option A's more complete unification; a future ADR may
-  still revisit that if the bridge proves awkward in practice (e.g. if
-  most programs end up unpacking immediately after every
-  `prepare_selection`, suggesting the split should never have existed).
+- Once shipped, S02's selection example (or a successor) can express the
+  full hard-constraint/soft-objective workflow as **one** coordinate
+  lineage: `prepare_selection` → `project onto feasible(...)` → `evolve
+  under H_obj` (now addressing the *actual* selected candidates'
+  positions) → `measure` — no separate, disconnected objective pair.
+  `top_k_overlap` could become a meaningful, non-zero metric for the
+  first time.
+- Closes the gap with strictly **less** new surface than either
+  previously-considered option: no new op, no new grammar, no touched
+  already-shipped Issue's behavior (LISS-0324/0327/0328 unchanged; only
+  `_hamiltonian_evolve_one_step`, already-generalizeable internal
+  dispatch, gains one more accepted input shape).
+- The disclosed `main_selection.sqx` `Z*Z`-site-collision bug (Context
+  point 1) is independent of this ADR's acceptance and can be fixed
+  separately at any time using already-shipped `Z[i]` syntax.
 
 ## Acceptance boundary
 
-Acceptance of this ADR authorizes the `unpack_bits`/`pack_bits` op
-shapes, their LINEAR treatment, and the Option A/B rejection reasoning
-above as an architecture boundary. It does **not** authorize:
+Acceptance of this ADR authorizes the tuple-coordinate evolution dispatch
+described in Decision as an architecture boundary. It does **not**
+authorize:
 
 - Feature Path Red or any Kernel code change.
-- A decision on Option A (full `prepare_selection` unification) — left
-  open, not decided either way.
-- Rewriting `main_selection.sqx` to use the new ops.
+- Multi-coordinate joint measurement or any `prepare_selection`/`project`
+  redesign (explicitly rejected above, not merely deferred).
+- Rewriting `main_selection.sqx`.
 
-A Feature Plan investigation (new `LISS-*`, work-plan investigation
-process) is required before any Red, exactly as ADR 0204 required for
-Continuous Lane B.
+A Feature Plan investigation (new `LISS-*`) is required before any Red,
+exactly as ADR 0204 required for Continuous Lane B.
 
 ## Decision history
 
 | Date | Event |
 |---|---|
-| 2026-08-11 | Proposed — Architecture Path investigation following the Adjudicator's request for a fix plan after the S02 physicist/veteran-engineer expressiveness analysis |
+| 2026-08-11 | Proposed (as an `unpack_bits`/`pack_bits` bridge) |
+| 2026-08-11 | Adjudicator requested the fundamentally correct fix regardless of size; investigation found a smaller, more correct design (tuple-coordinate Hamiltonian evolution, no new syntax) — this revision |
