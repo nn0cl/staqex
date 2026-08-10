@@ -1,17 +1,16 @@
-# ADR 0204: Mid-program `Continuous` type — Lane B ship shape (Proposed)
+# ADR 0204: Mid-program `Continuous` type — Lane B ship shape
 
 ## Status
 
-**Proposed** (2026-08-10) — Architecture Path investigation, presented for
-Adjudicator Architecture approval. **Not Accepted.** Per
+**Accepted** (2026-08-10) — Adjudicator Architecture approval. Per
 [staqex-v1-continuous-lane-b-expressiveness-scenarios.md](../../specs/staqex-v1-continuous-lane-b-expressiveness-scenarios.md)
-§7 ("Next gates (not authorized by this doc)"): opening Lane B is
-"Architecture Path + ship ADR only." Acceptance of this ADR would authorize
-the type/gate/op/port/LINEAR decisions below as an architecture boundary.
-**It would not itself authorize Feature Path Red** — a separate Feature Plan
-(new `LISS-*`) and Issue-Level Plan approval remain required per `CLAUDE.md`
-"Claude Code Issue-Level and Work-Plan Autonomy," same as ADR 0185 required
-LISS-0313 before any Lane A Kernel code.
+§7 ("Next gates (not authorized by this doc)"): opening Lane B required
+"Architecture Path + ship ADR only" — this ADR is that gate. Acceptance
+authorizes the type/gate/op/port/LINEAR decisions below as an architecture
+boundary. **It does not itself authorize Feature Path Red** — a separate
+Feature Plan (new `LISS-*`) and Issue-Level Plan approval remain required
+per `CLAUDE.md` "Claude Code Issue-Level and Work-Plan Autonomy," same as
+ADR 0185 required LISS-0313 before any Lane A Kernel code.
 
 Companions:
 
@@ -245,3 +244,19 @@ Decisions 1–6 above as an architecture boundary, and authorizes the ADR
 A Feature Plan investigation (new `LISS-*`, produced under this session's
 Issue-Level Autonomy work-plan-investigation process) is required before any
 Red, exactly as ADR 0185 required LISS-0313.
+
+## Implementation permission
+
+| Item | Status after Accept |
+|---|---|
+| Architecture (type/gate/op/port/LINEAR shape) | **granted** 2026-08-10 |
+| Technology selection | not required |
+| Feature Plan (work-plan investigation) | **requested separately** |
+| Phase 1 Red / Kernel code | **forbidden** until Feature Plan investigation + batch or Issue-level Plan approval |
+
+## Decision history
+
+| Date | Event |
+|---|---|
+| 2026-08-10 | Proposed — Architecture Path investigation into the Continuous PDF Lane B reopened-backlog item |
+| 2026-08-10 | Adjudicator Architecture approval → **Accepted** |
