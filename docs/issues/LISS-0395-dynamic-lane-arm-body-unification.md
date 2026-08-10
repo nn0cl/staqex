@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0395
-- Status/phase: Green/Refactor complete (2026-08-10); awaiting Completion
-  approval
+- Status/phase: **complete** (2026-08-10) — Adjudicator Completion approval;
+  PR (recorded below once opened)
 - Type: Feature Path (Kernel — `evaluator.py` runtime fix/extension +
   matching `hir.py` linear-use checker extension; extends ADR 0200's
   already-decided mechanism, no new Architecture decision)
@@ -206,7 +206,7 @@ it.
 
 ## AI planning record (size M)
 
-- Status: Green/Refactor complete; awaiting Completion approval.
+- Status: Green/Refactor complete; Completion approval granted (2026-08-10).
 - Confidence: high — both defects were confirmed by direct execution
   (printed evaluator output), not by reading code and assuming; the
   unification design was checked against the one existing direct-call test
@@ -240,4 +240,4 @@ it.
       needed.
 - [x] Full regression sweep re-run: **1412 passed** (2026-08-10), up from
       1407 by exactly the 5 new tests.
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-10).
