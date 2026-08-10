@@ -307,7 +307,11 @@ def _stmt_binds_state(
     # it is declared and used as `Operator`), so it must not override a
     # declaration.
     if stmt.ty is not None:
-        return stmt.ty.name in {"State", "DensityState"}
+        # ADR 0204 / LISS-0399: Continuous roots use the same
+        # introduced/consumed LINEAR machinery as State roots -- consumed
+        # only by finiteize (LISS-0401); an untouched root discards the
+        # same as an unmeasured State.
+        return stmt.ty.name in {"State", "DensityState", "Continuous"}
     if stmt.via_state_keyword:
         bound_ty = state.expr_types.get(id(stmt.expr))
         if bound_ty is not None:
@@ -342,6 +346,36 @@ def _linear_root(name: str, aliases: Mapping[str, str]) -> str:
     while root in aliases and aliases[root] != root:
         root = aliases[root]
     return root
+
+
+def _check_finiteize_continuous_reuse(
+    stmt: StateBind, state: _LinearUseState
+) -> dict | None:
+    """ADR 0204 Decision 5 / LISS-0401: a `Continuous` root may be consumed
+    by `finiteize` at most once (`CH-field-fork` deferred). The generic
+    Call-argument consumption path (`_mark_linear_var_use`) does not
+    detect reuse of an already-consumed root by design -- it only adds to
+    a set, silently on duplicates -- so this dedicated check closes that
+    gap specifically for `finiteize`'s first argument, mirroring
+    `_check_reset_stmt`'s pattern of a small pre-check ahead of the
+    generic consumption call.
+    """
+    expr = stmt.expr
+    if not isinstance(expr, Call) or not expr.args:
+        return None
+    if not isinstance(expr.callee, Var) or expr.callee.name != "finiteize":
+        return None
+    first = expr.args[0]
+    if not isinstance(first, Var):
+        return None
+    root = _linear_root(first.name, state.aliases)
+    if root in state.consumed:
+        return _linear_diag(
+            _LINEAR_DUPLICATE_USE,
+            stmt.span,
+            f"`finiteize` reuses already-consumed Continuous root `{root}`",
+        )
+    return None
 
 
 def _check_reset_stmt(stmt: ResetStmt, state: _LinearUseState) -> dict | None:
@@ -522,6 +556,9 @@ def _analyze_block(
             diag = _check_state_bind(stmt, module_symbols, state)
             if diag is not None:
                 diags.append(diag)
+            reuse_diag = _check_finiteize_continuous_reuse(stmt, state)
+            if reuse_diag is not None:
+                diags.append(reuse_diag)
             # LISS-0114 Slice E: when / inspect uses consume outer roots.
             _consume_when_linear_uses(stmt.expr, state)
             _consume_inspect_linear_uses(stmt.expr, state)

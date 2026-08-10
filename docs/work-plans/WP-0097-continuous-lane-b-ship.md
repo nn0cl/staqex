@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **approved_for_execution** (2026-08-10) — Adjudicator Investigation approval + Batch approval both granted; batch [execution-batch-wp-0097.json](../collaboration/reviews/execution-batch-wp-0097.json) `approved_for_execution`, `approval_commit` 3eb342f, `expires_at` 2026-08-24 |
+| Status | **complete** + **post_reviewed** (2026-08-10) — Adjudicator「承認」; LISS-0399/0400/0401 all Green/Refactor complete; full regression 1440 passed; batch [execution-batch-wp-0097.json](../collaboration/reviews/execution-batch-wp-0097.json) `post_reviewed` |
 | Purpose | Implement the Lane B ship shape [ADR 0204](../architecture/adr/0204-continuous-lane-b-type-world.md) (Accepted 2026-08-10) authorized: `Continuous<T>` type + hard gates, `ContinuousFieldPort`, `weight`/`mask` ops, `finiteize` Continuous-argument overload |
 | Parent program | Reopened backlog — "Continuous PDF / Monte Carlo" (`CLAUDE.md` Current Open Topics); Adjudicator selected this item first (2026-08-10), "上から" ordering for the remaining reopened-backlog items |
 | Prior wave | ADR 0126 (design boundary) → ADR 0162 (Host/Bridge-first) → ADR 0185 / LISS-0313 (Lane A `finiteize`, shipped) → Lane B expressiveness scenarios (LISS-0315–0319, frozen baseline) → ADR 0204 (this ADR, ship shape, Accepted) |
@@ -34,9 +34,9 @@
 
 | Order | ID | Title | Path | Depends | Status |
 |---|---|---|---|---|---|
-| 1 | [LISS-0399](../issues/LISS-0399-continuous-type-hard-gates.md) | `Continuous<T>` type + `ContinuousFieldPort` + hard gates | Feature | ADR 0204 | proposed |
-| 2 | [LISS-0400](../issues/LISS-0400-continuous-weight-mask-ops.md) | `weight` / `mask` continuous ops | Feature | LISS-0399 | proposed |
-| 3 | [LISS-0401](../issues/LISS-0401-finiteize-continuous-overload.md) | `finiteize` Continuous-argument overload | Feature | LISS-0399, LISS-0400 | proposed |
+| 1 | [LISS-0399](../issues/LISS-0399-continuous-type-hard-gates.md) | `Continuous<T>` type + `ContinuousFieldPort` + hard gates | Feature | ADR 0204 | **complete** |
+| 2 | [LISS-0400](../issues/LISS-0400-continuous-weight-mask-ops.md) | `weight` / `mask` continuous ops | Feature | LISS-0399 | **complete** |
+| 3 | [LISS-0401](../issues/LISS-0401-finiteize-continuous-overload.md) | `finiteize` Continuous-argument overload | Feature | LISS-0399, LISS-0400 | **complete** |
 
 ## Execution order and rationale
 
@@ -91,13 +91,17 @@ python3 -m pytest -q -k "finiteize or 0313"
 
 **Expressiveness check (manual / review, after LISS-0401 Green):**
 
-- [ ] `CH-field-compose` (Lane B expressiveness scenarios doc §2A) can be
-  written in real Staqex source close to the Ideal form (§2A.6), modulo
-  exact keyword-argument spelling settled in LISS-0401's own Red.
+- [x] `CH-field-compose` (Lane B expressiveness scenarios doc §2A) can now
+  be written in real Staqex source close to the Ideal form (§2A.6) — the
+  shipped grammar is positional
+  (`finiteize(continuous, lo, hi, n_bins[, seed])`), not the Ideal's
+  named-argument sketch; the field/weight/mask chain itself matches §2A.6
+  closely (`field_from_host`/`weight`/`mask` names and arities match the
+  Ideal chalk exactly).
 - [ ] Seat scoring in
   `docs/specs/staqex-v1-continuous-lane-b-expressiveness-scenarios.md` is
-  updated in a follow-up docs-only Issue (not part of this batch) once
-  Green.
+  updated in a follow-up docs-only Issue (not part of this batch) —
+  intentionally not done here, per this WP's own scope boundary.
 
 ## Approval model
 
@@ -108,9 +112,10 @@ python3 -m pytest -q -k "finiteize or 0313"
 | Batch execution of LISS-0399–0401 | Batch approval — **granted** 2026-08-10; [execution-batch-wp-0097.json](../collaboration/reviews/execution-batch-wp-0097.json) `approved_for_execution` |
 | Per-Issue Feature Red/Green | Covered by batch approval once granted; otherwise per-Issue Plan/Completion approval |
 
-**This planning PR does not authorize implementation.**
-**Draft batch JSON does not authorize implementation** until Adjudicator
-sets `approved_for_execution` and fills `approval_commit` / `expires_at`.
+Historical note: the planning PR alone did not authorize implementation;
+implementation began only after both Investigation approval and Batch
+approval were granted and the JSON record was promoted to
+`approved_for_execution` with a real `approval_commit`/`expires_at`.
 
 ## Success definition
 

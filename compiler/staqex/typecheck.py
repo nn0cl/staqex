@@ -109,6 +109,8 @@ class Ty:
             return self.payload
         elif self.kind == "DiagnosticView":
             base = f"DiagnosticView<{self.payload}>"
+        elif self.kind == "Continuous":
+            base = f"Continuous<{self.payload}>"
         elif self.dim.is_dimensionless():
             base = f"State<{self.payload}>"
         else:
@@ -120,6 +122,14 @@ class Ty:
 
 ARITH = {"+", "-", "*", "/"}
 TRIG_AND_TRANS = frozenset({"sin", "cos", "tan", "exp", "log", "cis"})
+# ADR 0204 / LISS-0399: the only Call forms a Continuous value may ever
+# flow into (Decision 1 hard gate) -- field_from_host never takes a
+# Continuous arg itself but is listed for clarity; weight/mask/finiteize
+# are LISS-0400/0401 surfaces, named here ahead of their own Issues so
+# this gate does not need to be revisited when they ship.
+_CONTINUOUS_COMPATIBLE_OPS = frozenset(
+    {"field_from_host", "weight", "mask", "finiteize"}
+)
 
 
 @dataclass
@@ -500,6 +510,18 @@ class TypeChecker:
                         for n in stmt.names:
                             kind = "Struct" if tname in struct_names else "Object"
                             self.env[n] = Ty(kind, tname, DIMLESS)
+                        continue
+                    if tname == "Continuous":
+                        # ADR 0204 / LISS-0399: Continuous<Field> Host-backed
+                        # opaque carrier -- never Joint-compatible. Hard gates
+                        # against measure/evolve/gate-Call use live elsewhere
+                        # in this loop and in `_infer_evolve` / `_infer`.
+                        self._infer(stmt.expr)
+                        payload = (
+                            stmt.ty.args[0].name if stmt.ty.args else "Field"
+                        )
+                        for n in stmt.names:
+                            self.env[n] = Ty("Continuous", payload, DIMLESS)
                         continue
                     if tname == "Controller":
                         # ADR 0197 / LISS-0382: Controller bind from `measure`
@@ -3654,6 +3676,19 @@ class TypeChecker:
             if isinstance(a, Hole):
                 continue
             at = self._infer(a)
+            if at.kind == "Continuous" and op_name not in _CONTINUOUS_COMPATIBLE_OPS:
+                self.diagnostics.append(
+                    {
+                        "code": "CONTINUOUS_ESCAPE_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": (
+                            f"`{op_name}` cannot take a Continuous argument "
+                            "(Continuous values may only reach "
+                            "weight/mask/finiteize)"
+                        ),
+                    }
+                )
             if op_name in TRIG_AND_TRANS and not at.dim.is_dimensionless():
                 self.diagnostics.append(
                     {
