@@ -4452,6 +4452,12 @@ class Evaluator:
             # ADR 0204 / LISS-0399: Continuous injection -- never touches the
             # Joint; the Kernel only ever holds an opaque handle.
             return self._bind_field_from_host(joint, name, expr)
+        if op == "weight":
+            # ADR 0204 / LISS-0400: pointwise composition -- Kernel-side
+            # bookkeeping only, no math evaluated here.
+            return self._bind_continuous_compose(joint, name, expr, op_name="weight", arity=(2, 3))
+        if op == "mask":
+            return self._bind_continuous_compose(joint, name, expr, op_name="mask", arity=(2, 2))
         if op == "prepare_selection":
             # LISS-0324: prepare_selection(n) -- equal superposition over all
             # 2**n n-candidate selection patterns. Candidate identity never
@@ -4691,6 +4697,41 @@ class Evaluator:
             )
         host_ref = self.continuous_field.field(source, domain)
         self.objects[name] = ContinuousFieldValue(op="field_from_host", host_ref=host_ref)
+        return joint
+
+    def _bind_continuous_compose(
+        self,
+        joint: Joint,
+        name: str,
+        expr: Call,
+        *,
+        op_name: str,
+        arity: tuple[int, int],
+    ) -> Joint:
+        """weight/mask — ADR 0204 / LISS-0400.
+
+        Composes a new opaque `ContinuousFieldValue` referencing its input
+        handles; no pointwise math runs here (deferred to `finiteize`,
+        LISS-0401). Never touches the Joint.
+        """
+        lo, hi = arity
+        if not (lo <= len(expr.args) <= hi):
+            raise KernelError(
+                f"{op_name} requires {lo}-{hi} Continuous arguments"
+                if lo != hi
+                else f"{op_name} requires {lo} Continuous arguments"
+            )
+        inputs: list[ContinuousFieldValue] = []
+        for arg in expr.args:
+            if not isinstance(arg, Var):
+                raise KernelError(f"{op_name} arguments must be Continuous-bound names")
+            value = self.objects.get(arg.name)
+            if not isinstance(value, ContinuousFieldValue):
+                raise KernelError(
+                    f"{op_name} argument `{arg.name}` is not a Continuous value"
+                )
+            inputs.append(value)
+        self.objects[name] = ContinuousFieldValue(op=op_name, inputs=tuple(inputs))
         return joint
 
     def _bind_inner(self, joint: Joint, name: str, expr: Call) -> Joint:

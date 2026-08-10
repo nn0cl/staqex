@@ -3,8 +3,9 @@
 ## Metadata
 
 - Local issue ID: LISS-0400
-- Status: proposed
-- Phase: phase-0-design (Investigation stage; Red not authorized)
+- Status: complete
+- Phase: phase-3-refactor (Green/Refactor complete under batch approval
+  `execution-batch-wp-0097.json`)
 - Type: Feature Path (Kernel — `evaluator.py` Call dispatch)
 - Priority: P1
 - Initial planning size: `S`
@@ -43,15 +44,23 @@ later additive ADR, not this batch).
 
 ## Exit condition
 
-- [ ] `weight`/`mask` recognized as Call forms over `Continuous` operands;
-  reject non-`Continuous` operands with a clear diagnostic.
-- [ ] Result is a new `Continuous` handle carrying the input handles + op
-  name for later provenance assembly.
-- [ ] Input roots are ordinary linear moves under `hir.py` (consumed by
-  the `weight`/`mask` call, same as any other Call whose result is bound
-  to a new name) — no special-case LINEAR logic beyond LISS-0399's
-  `introduced`/`consumed` machinery.
-- [ ] Full regression sweep unaffected outside new/targeted assertions.
+- [x] `weight`/`mask` recognized as Call forms over `Continuous` operands;
+  non-`Continuous` operands rejected with a clear `KernelError` at
+  evaluation time (`_bind_continuous_compose`); no new compile-time
+  diagnostic added, matching this Issue's own runtime-validation scope
+  (confirmed the declared-type `Continuous` bind mechanism from LISS-0399
+  does not deeply validate RHS shape at compile time, and building that
+  was not required by ADR 0204 Decision 3).
+- [x] Result is a new `Continuous` handle carrying the input handles + op
+  name (`ContinuousFieldValue.inputs`), confirmed directly against the
+  evaluator (`risk.inputs == (damage_handle, flood_handle)`, etc.).
+- [x] Input roots are ordinary linear moves under `hir.py` — confirmed
+  **free**: no new hir.py code was needed at all; LISS-0399's
+  `_stmt_binds_state` extension already made `Continuous` roots linear
+  carriers, and the existing generic Call-consumption machinery handled
+  `weight`/`mask` like any other Call whose result is bound to a new name.
+- [x] Full regression sweep unaffected outside new/targeted assertions:
+  **1435 passed**, up from 1431 by exactly the 4 new tests.
 
 ## Explicitly out of scope
 
