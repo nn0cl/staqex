@@ -296,7 +296,8 @@ Re-run when Kernel changes; do not treat this table as eternal.
    ([LISS-0196](documentation-compression-map.md)
    **complete**;
    [examples](../specs/staqex-v1-trait-effect-surface-examples.md)). No Kernel
-   Red under ADR 0128 until a future ship ADR.
+   Red under ADR 0128 until a future ship ADR. **Reconfirmed 2026-08-10** —
+   no new friction row added since 2026-08-03; "not now" stands.
 3. Optional: further Operator free-fn edge cases (class receivers without intermediate Float, multi-level Attr).
 4. **Pedagogy north star (Accepted 2026-08-02):**
    [physicist-minimal-dialect.md](physicist-minimal-dialect.md) gates example
