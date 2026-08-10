@@ -307,7 +307,11 @@ def _stmt_binds_state(
     # it is declared and used as `Operator`), so it must not override a
     # declaration.
     if stmt.ty is not None:
-        return stmt.ty.name in {"State", "DensityState"}
+        # ADR 0204 / LISS-0399: Continuous roots use the same
+        # introduced/consumed LINEAR machinery as State roots -- consumed
+        # only by finiteize (LISS-0401); an untouched root discards the
+        # same as an unmeasured State.
+        return stmt.ty.name in {"State", "DensityState", "Continuous"}
     if stmt.via_state_keyword:
         bound_ty = state.expr_types.get(id(stmt.expr))
         if bound_ty is not None:

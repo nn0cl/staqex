@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 from typing import Any, Callable, TextIO
 
+from ..continuous_field import ContinuousFieldPort, ContinuousFieldValue
 from ..host_input_port import HostInputPort
 from ..measure_sink_port import (
     MeasureSinkPort,
@@ -213,6 +214,7 @@ class Evaluator:
         grid_hamiltonians: dict[str, GridHamiltonian] | None = None,
         data_parallel_workers: int = 1,
         host_input: HostInputPort | None = None,
+        continuous_field: ContinuousFieldPort | None = None,
     ) -> None:
         # ADR 0170: entropy comes from RngPort; StdlibRngAdapter owns Random.
         if rng_port is not None:
@@ -232,6 +234,8 @@ class Evaluator:
         self.inspect_sink = inspect_sink
         # ADR 0194: optional Host-computed structured classical input port.
         self.host_input = host_input
+        # ADR 0204: optional Continuous-field Host injection port.
+        self.continuous_field = continuous_field
         self.data_parallel_workers = max(1, int(data_parallel_workers))
         self.operators: dict[str, Any] = {}
         # Typed second-quantized locals (FermionOperator/BosonOperator/...)
@@ -4444,6 +4448,10 @@ class Evaluator:
             # Host equal-width histogram of uniform continuous draws on [lo, hi).
             # Result is ordinary finite State (no mid-program Continuous type).
             return self._bind_finiteize(joint, name, expr)
+        if op == "field_from_host":
+            # ADR 0204 / LISS-0399: Continuous injection -- never touches the
+            # Joint; the Kernel only ever holds an opaque handle.
+            return self._bind_field_from_host(joint, name, expr)
         if op == "prepare_selection":
             # LISS-0324: prepare_selection(n) -- equal superposition over all
             # 2**n n-candidate selection patterns. Candidate identity never
@@ -4662,6 +4670,28 @@ class Evaluator:
         self.objects[f"__finiteize_prov_{name}"] = dict(inject.provenance)
         dist = {label: float(mass) for label, mass in inject.atoms}
         return joint.bind_split(name, dist)
+
+    def _bind_field_from_host(self, joint: Joint, name: str, expr: Call) -> Joint:
+        """field_from_host(source, domain) — ADR 0204 / LISS-0399.
+
+        Routes through the injected `ContinuousFieldPort`; the Kernel never
+        evaluates the underlying continuous function. Binds an opaque
+        `ContinuousFieldValue` handle in `self.objects` -- the Joint is
+        never touched (Continuous values are never Joint-compatible).
+        """
+        if len(expr.args) != 2:
+            raise KernelError("field_from_host requires (source, domain)")
+        source = self._eval_value(expr.args[0], {})
+        domain = self._eval_value(expr.args[1], {})
+        if not isinstance(source, str) or not isinstance(domain, str):
+            raise KernelError("field_from_host requires string (source, domain)")
+        if self.continuous_field is None:
+            raise KernelError(
+                "CONTINUOUS_FIELD_PORT_MISSING: no ContinuousFieldPort configured"
+            )
+        host_ref = self.continuous_field.field(source, domain)
+        self.objects[name] = ContinuousFieldValue(op="field_from_host", host_ref=host_ref)
+        return joint
 
     def _bind_inner(self, joint: Joint, name: str, expr: Call) -> Joint:
         """inner(phi, psi) → Classical Float on ``name`` (LISS-0229)."""
