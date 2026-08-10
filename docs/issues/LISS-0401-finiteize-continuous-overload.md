@@ -3,8 +3,9 @@
 ## Metadata
 
 - Local issue ID: LISS-0401
-- Status: proposed
-- Phase: phase-0-design (Investigation stage; Red not authorized)
+- Status: complete
+- Phase: phase-3-refactor (Green/Refactor complete under batch approval
+  `execution-batch-wp-0097.json`)
 - Type: Feature Path (Kernel — `evaluator.py`; reuses Host
   `EqualWidthHistogramMonteCarlo` bucketing, ADR 0163)
 - Priority: P1
@@ -56,22 +57,43 @@ material (ADR 0204 explicitly does not fix it).
 
 ## Exit condition
 
-- [ ] Lane A `finiteize(lo, hi, n_bins, n_samples[, seed])` unchanged,
-  full existing regression (LISS-0313) passes unmodified.
-- [ ] New overload accepts a `Continuous` value; rejects non-`Continuous`
-  first-argument shapes that aren't the Lane A numeric form with a clear
-  diagnostic (no silent misparse between the two overloads).
-- [ ] Result is an ordinary finite `State`, indistinguishable downstream
-  from a Lane A `finiteize` result.
-- [ ] Provenance carries `discretization` + `continuous_pipeline`.
-- [ ] `hir.py`: a `Continuous` root consumed by `finiteize` does not
-  produce `LINEAR_IMPLICIT_DISCARD`; an un-finiteized root still does
-  (regression guard against LISS-0399's own case).
-- [ ] A second `finiteize` call on an already-consumed `Continuous` root
-  is rejected (or at minimum not silently accepted as a second free
-  consumption) — exact diagnostic shape is Red material.
-- [ ] Full regression sweep, including LISS-0313's existing finiteize
-  tests, unaffected outside new/targeted assertions.
+- [x] Lane A `finiteize(lo, hi, n_bins, n_samples[, seed])` unchanged,
+  full existing regression (LISS-0313, 9 tests) passes unmodified.
+- [x] New overload `finiteize(continuous, lo, hi, n_bins[, seed])` —
+  **positional grammar chosen** (mirrors Lane A's own positional style
+  instead of introducing kwargs parsing, which nothing else in this
+  batch uses); discriminated at evaluation time by whether the first
+  argument's currently-bound value is a `ContinuousFieldValue`, not by
+  arity (both forms take 4-5 args) — no silent misparse, confirmed by
+  the Lane A regression guard passing unchanged.
+- [x] **New `ContinuousFieldPort.discretize(value, lo, hi, n_bins, seed) ->
+  Mapping[label, mass]` port method** (extends the LISS-0399 port rather
+  than reusing `HostMonteCarloPort`, per this Issue's own dependency —
+  the Kernel passes the *whole* composed handle tree to the Host, which
+  is the only party able to actually evaluate it; the Kernel never runs
+  `EqualWidthHistogramMonteCarlo` itself for this path, since that
+  requires a real Python callable draw function the Kernel does not
+  have — a real (non-fake) adapter would reuse it internally, matching
+  every other Host-port precedent in this project of shipping the port +
+  a fake, not a real adapter, in the Feature Issue).
+- [x] Result is an ordinary finite `State`, indistinguishable downstream
+  from a Lane A `finiteize` result (`joint.bind_split`, same as Lane A).
+- [x] Provenance carries `discretization` (ADR 0074 shape) +
+  `continuous_pipeline` (built by a new pure Kernel-side tree walk,
+  `continuous_field.continuous_pipeline_ops`, no Host call).
+- [x] `hir.py`: a `Continuous` root consumed by `finiteize` does not
+  produce `LINEAR_IMPLICIT_DISCARD`; an un-finiteized root still does.
+- [x] A second `finiteize` call on an already-consumed `Continuous` root
+  is rejected with `LINEAR_DUPLICATE_USE` — **new dedicated check**
+  (`_check_finiteize_continuous_reuse`, mirrors `_check_reset_stmt`'s
+  pattern) was required: discovered during Red that the generic
+  Call-argument consumption path (`_mark_linear_var_use`) silently
+  no-ops on an already-consumed root (it is a plain set add), so
+  `weight`/`mask`'s "free" LINEAR handling in LISS-0400 does not extend
+  to duplicate-use detection — a real, narrow gap, not assumed away.
+- [x] Full regression sweep, including LISS-0313's existing finiteize
+  tests, unaffected outside new/targeted assertions: **1440 passed**, up
+  from 1435 by exactly the 5 new tests.
 
 ## Explicitly out of scope
 

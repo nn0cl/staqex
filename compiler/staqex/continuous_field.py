@@ -9,14 +9,30 @@ handle, used for provenance / linear-use bookkeeping.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Any, Mapping, Protocol
 
 
 class ContinuousFieldPort(Protocol):
-    """Host boundary for injecting a named continuous field description."""
+    """Host boundary for injecting and discretizing continuous fields."""
 
     def field(self, source: str, domain: str) -> str:
         """Return an opaque Host-side reference token for (source, domain)."""
+        ...
+
+    def discretize(
+        self,
+        value: "ContinuousFieldValue",
+        *,
+        lo: float,
+        hi: float,
+        n_bins: int,
+        seed: int | None,
+    ) -> Mapping[Any, float]:
+        """Evaluate the composed handle tree Host-side and bucket it
+        (ADR 0163 equal-width histogram lineage) into `n_bins` over
+        `[lo, hi)`. Returns bin label -> probability mass -- the Kernel
+        never evaluates the underlying continuous function itself (LISS-0401).
+        """
         ...
 
 
@@ -35,4 +51,25 @@ class ContinuousFieldValue:
     inputs: tuple["ContinuousFieldValue", ...] = ()
 
 
-__all__ = ["ContinuousFieldPort", "ContinuousFieldValue"]
+def continuous_pipeline_ops(value: ContinuousFieldValue) -> tuple[str, ...]:
+    """Flatten a composed handle tree into an ordered op-name provenance
+    list (ADR 0204 Decision 4 `continuous_pipeline`) -- leaves
+    (`field_from_host`) excluded, composition ops in application order,
+    de-duplicated. Pure Kernel-side bookkeeping; no Host call.
+    """
+    if not value.inputs:
+        return ()
+    ops: list[str] = []
+    for child in value.inputs:
+        ops.extend(continuous_pipeline_ops(child))
+    ops.append(value.op)
+    seen: set[str] = set()
+    out: list[str] = []
+    for op in ops:
+        if op not in seen:
+            seen.add(op)
+            out.append(op)
+    return tuple(out)
+
+
+__all__ = ["ContinuousFieldPort", "ContinuousFieldValue", "continuous_pipeline_ops"]

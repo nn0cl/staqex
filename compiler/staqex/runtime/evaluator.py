@@ -8,7 +8,11 @@ from dataclasses import dataclass, field
 from fractions import Fraction
 from typing import Any, Callable, TextIO
 
-from ..continuous_field import ContinuousFieldPort, ContinuousFieldValue
+from ..continuous_field import (
+    ContinuousFieldPort,
+    ContinuousFieldValue,
+    continuous_pipeline_ops,
+)
 from ..host_input_port import HostInputPort
 from ..measure_sink_port import (
     MeasureSinkPort,
@@ -4447,6 +4451,15 @@ class Evaluator:
             # ADR 0185 Lane A: finiteize(lo, hi, n_bins, n_samples[, seed])
             # Host equal-width histogram of uniform continuous draws on [lo, hi).
             # Result is ordinary finite State (no mid-program Continuous type).
+            # ADR 0204 / LISS-0401: a Continuous first argument dispatches to
+            # the second overload instead -- discriminated by the first
+            # arg's bound value, not by arity (both forms take 4-5 args).
+            if (
+                expr.args
+                and isinstance(expr.args[0], Var)
+                and isinstance(self.objects.get(expr.args[0].name), ContinuousFieldValue)
+            ):
+                return self._bind_finiteize_continuous(joint, name, expr)
             return self._bind_finiteize(joint, name, expr)
         if op == "field_from_host":
             # ADR 0204 / LISS-0399: Continuous injection -- never touches the
@@ -4676,6 +4689,59 @@ class Evaluator:
         self.objects[f"__finiteize_prov_{name}"] = dict(inject.provenance)
         dist = {label: float(mass) for label, mass in inject.atoms}
         return joint.bind_split(name, dist)
+
+    def _bind_finiteize_continuous(self, joint: Joint, name: str, expr: Call) -> Joint:
+        """finiteize(continuous, lo, hi, n_bins[, seed]) — ADR 0204 / LISS-0401.
+
+        Delegates the actual discretization to `ContinuousFieldPort.discretize`
+        -- the Kernel never evaluates the composed handle tree itself, only
+        assembles provenance (ADR 0074 `discretization` block +
+        `continuous_pipeline`) from it.
+        """
+        if len(expr.args) not in (4, 5):
+            raise KernelError(
+                "finiteize(Continuous, lo, hi, n_bins[, seed]) requires 4-5 arguments"
+            )
+        continuous_value = self.objects[expr.args[0].name]  # type: ignore[union-attr]
+        lo = float(self._eval_value(expr.args[1], {}))
+        hi = float(self._eval_value(expr.args[2], {}))
+        n_bins_raw = self._eval_value(expr.args[3], {})
+        if type(n_bins_raw) is not int:
+            raise KernelError("finiteize n_bins must be Int")
+        n_bins = n_bins_raw
+        seed: int | None = self.seed
+        if len(expr.args) == 5:
+            seed_raw = self._eval_value(expr.args[4], {})
+            if type(seed_raw) is not int:
+                raise KernelError("finiteize seed must be Int")
+            seed = seed_raw
+        if hi <= lo:
+            raise KernelError("finiteize requires hi > lo")
+        if n_bins < 1:
+            raise KernelError("finiteize requires n_bins >= 1")
+        if self.continuous_field is None:
+            raise KernelError(
+                "CONTINUOUS_FIELD_PORT_MISSING: no ContinuousFieldPort configured"
+            )
+
+        dist = self.continuous_field.discretize(
+            continuous_value, lo=lo, hi=hi, n_bins=n_bins, seed=seed
+        )
+        self.objects[f"__finiteize_prov_{name}"] = {
+            "surface": "finiteize",
+            "source": "continuous",
+            "interval": [lo, hi],
+            "n_bins": n_bins,
+            "discretization": {
+                "domain": name,
+                "basis": "EqualWidthHistogram",
+                "resolution": n_bins,
+            },
+            "continuous_pipeline": continuous_pipeline_ops(continuous_value),
+            "finite_approximation": True,
+            "note": "finite histogram approximation of a Continuous value; not the continuous field",
+        }
+        return joint.bind_split(name, {label: float(mass) for label, mass in dist.items()})
 
     def _bind_field_from_host(self, joint: Joint, name: str, expr: Call) -> Joint:
         """field_from_host(source, domain) — ADR 0204 / LISS-0399.
