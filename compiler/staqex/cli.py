@@ -7,9 +7,17 @@ import sys
 from pathlib import Path
 from typing import TextIO
 
+from .adapters.aws_braket import (
+    AwsBraketAdapter,
+    BraketCredentialError,
+    BraketDependencyError,
+    RealAwsBraketClient,
+)
 from .codegen.openqasm import emit_openqasm3
+from .credentials import EnvCredentialAdapter
 from .format import format_source
 from .ir.dag import lower_source_ast
+from .live_submit import submit_live_qpu
 from .migrate_unicode_math import migrate_unicode_math_source
 from .pipeline import HARD_CODES, compile_path, compile_source
 from .host import run_path as host_run_path, run_source as host_run_source
@@ -247,6 +255,58 @@ def cmd_emit_qasm(args: argparse.Namespace) -> int:
     return 0
 
 
+def _build_live_qpu_adapter(device_arn: str) -> AwsBraketAdapter:
+    """LISS-0396: real client + env credentials, both already-shipped
+    (ADR 0202/LISS-0194). Never called by this module's own test suite in
+    its real (non-mocked) form except to exercise the deliberate
+    fail-closed path when amazon-braket-sdk is absent (RealAwsBraketClient
+    itself never touches the network on that path).
+    """
+    return AwsBraketAdapter(
+        client=RealAwsBraketClient(),
+        device_arn=device_arn,
+        credentials=EnvCredentialAdapter(),
+    )
+
+
+def cmd_submit_live_qpu(args: argparse.Namespace) -> int:
+    """LISS-0396 (ADR 0203 named CLI follow-up): wires the already-shipped
+    `submit_live_qpu` entrypoint to a real `AwsBraketAdapter`. This agent
+    never invokes this command against a real device (ADR 0202 Decision
+    5) -- it is the human Adjudicator's own terminal, own AWS credentials,
+    own explicit invocation.
+    """
+    if args.provider != "aws-braket":
+        print(
+            f"submit-live-qpu: unsupported --provider {args.provider!r} "
+            "(only aws-braket is available)",
+            file=sys.stderr,
+        )
+        return 1
+    source = _load_source(args)
+    execution_settings: dict[str, object] = {}
+    if getattr(args, "shots", None) is not None:
+        execution_settings["shots"] = args.shots
+    print(
+        f"submit-live-qpu: submitting to AWS Braket device {args.device_arn} "
+        "-- this may incur real cost on real hardware",
+        file=sys.stderr,
+    )
+    try:
+        adapter = _build_live_qpu_adapter(args.device_arn)
+        job_id, diagnostics = submit_live_qpu(
+            source, adapter=adapter, execution_settings=execution_settings
+        )
+    except (BraketDependencyError, BraketCredentialError) as exc:
+        print(f"submit-live-qpu: {exc}", file=sys.stderr)
+        return 1
+    if job_id is None:
+        _print_diags(list(diagnostics))
+        return 1
+    print(f"provider={job_id.provider} id={job_id.opaque_id}")
+    return 0
+
+
 def _migrate_read_source(path: Path) -> str | None:
     """Read UTF-8 source for migrate; print stderr and return None on failure."""
     try:
@@ -417,6 +477,20 @@ def build_parser() -> argparse.ArgumentParser:
     pe.add_argument("-o", "--output", help="write QASM to file")
     pe.set_defaults(func=cmd_emit_qasm)
 
+    psl = sub.add_parser(
+        "submit-live-qpu",
+        help="submit compiled QASM3 to a real QPU provider (ADR 0203; real cost)",
+    )
+    add_src(psl)
+    psl.add_argument(
+        "--device-arn", required=True, help="provider device identifier (e.g. AWS Braket ARN)"
+    )
+    psl.add_argument("--shots", type=int, default=None, help="default: adapter's own default")
+    psl.add_argument(
+        "--provider", default="aws-braket", help="only aws-braket is currently available"
+    )
+    psl.set_defaults(func=cmd_submit_live_qpu)
+
     prepl = sub.add_parser("repl", help="interactive shell")
     prepl.add_argument("--seed", type=int, default=None)
     prepl.set_defaults(func=cmd_repl)
@@ -478,6 +552,7 @@ def main(argv: list[str] | None = None) -> int:
         "inspect",
         "dag",
         "emit-qasm",
+        "submit-live-qpu",
         "repl",
         "migrate",
         "format",
