@@ -561,6 +561,25 @@ CPTP.
 - CPU data-parallel Deferred workers — ADR 0159 / LISS-0192.
 - Classical Fraction literals → f64 at State — ADR 0160 / LISS-0193.
 - CredentialPort + Env adapter + mock submit — ADR 0161 / LISS-0194.
+- Dynamic-lane root-cause real Kernel execution (mid-circuit `measure` via
+  `Joint.project_coord`, match dispatch via normal Call dispatch) —
+  ADR 0200 / LISS-0387.
+- Dynamic-lane reuse capability law repurposed for simulator-class
+  profiles — LISS-0388 (ADR 0200 Decision 3 consequence).
+- `dynamic_trace.physical_outcome_confirmed` (reconciles Host bookkeeping
+  with real evaluator collapse) — ADR 0198 Amendment / LISS-0389.
+- Dynamic-lane `reset` keyword (Option B revisited; `reset wire` =
+  `Joint.trace_out` + re-prepare `|0>`, distinct from Static Kernel's
+  same-name `state x = |0>` uncompute-verify idiom) — ADR 0199 Amendment /
+  LISS-0390.
+- OpenQASM 3 emission for the Dynamic QPU lane (separate lowering path,
+  native `bit`/`if`/`reset` vocabulary, no `physical_execution_claimed`
+  claim) — ADR 0201 / LISS-0391.
+- AWS Braket Host adapter (`QpuSubmitPort`/`QpuJobPort`; version-gated
+  against CVE-2026-9291; real submission never performed autonomously) —
+  ADR 0202 / LISS-0392.
+- `submit_live_qpu` async entrypoint (`submit_source` untouched; returns
+  `ProviderJobId`, never `Job`/`JobResult`) — ADR 0203 / LISS-0393.
 
 ### Reopened backlog (Architecture / Feature Path allowed)
 
@@ -586,8 +605,15 @@ CPTP.
   — no Kernel Red until a future ship ADR.
 - Joint rational mode — design boundary ADR 0125 (classical path unsealed by
   ADR 0160; Joint masses remain f64 per ADR 0076/0097).
-- Concrete live QPU provider SDK — design boundary ADR 0127 (CredentialPort
-  shipped by ADR 0161; technology selection separate). See
+- Concrete live QPU provider SDK — design boundary ADR 0127 satisfied:
+  Adjudicator technology approval selected **AWS Braket**, adapter +
+  async `submit_live_qpu` entrypoint **shipped** (ADR 0202 / LISS-0392,
+  ADR 0203 / LISS-0393). Reopened-backlog listing kept only because real
+  submission has never been performed (by design — no agent may invoke
+  the real, non-mock path autonomously; requires the user's own AWS
+  credentials and explicit real-time confirmation) and end-to-end wiring
+  into a showcase/example remains unscheduled. Do not re-run the
+  provider-selection decision without a new Architecture Path reason. See
   [`staqex-v1-qpu-capability-honesty.md`](docs/specs/staqex-v1-qpu-capability-honesty.md).
 - Display-unit restore **shipped** [ADR 0186](docs/architecture/decision-themes/dec-0004-type-first-scientific-model.md)
   / [LISS-0314](docs/issues/LISS-0314-display-unit-restore.md) (LHS unit after
