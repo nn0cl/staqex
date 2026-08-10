@@ -2,10 +2,10 @@
 
 | Field | Value |
 |---|---|
-| Status | **Scoring baseline frozen** (2026-08-03, LISS-0319) — compose closed as weak+Host/H→E; Ideal §2A remains law for Ideal Y |
+| Status | **Scoring baseline frozen** (2026-08-03, LISS-0319) — compose closed as weak+Host/H→E; Ideal §2A remains law for Ideal Y. §7's "Architecture Accept Lane B ship shape" gate is now satisfied: [ADR 0204](../architecture/adr/0204-continuous-lane-b-type-world.md) **Accepted** (2026-08-10). Feature Plan investigation not yet started — seat scoring stays **weak** until Green. |
 | Issue | [LISS-0315](../architecture/documentation-compression-map.md) (seats); [LISS-0316](../architecture/documentation-compression-map.md) (Ideal); [LISS-0317](../architecture/documentation-compression-map.md) / [LISS-0318](../architecture/documentation-compression-map.md) (Runtime H); [LISS-0319](../architecture/documentation-compression-map.md) (score sync) |
 | Review | [2026-08-03-continuous-lane-b-expressiveness-intake.md](../collaboration/reviews/2026-08-03-continuous-lane-b-expressiveness-intake.md) |
-| Ship law | Mid-program `Continuous` **not** shipped — [ADR 0185](../architecture/decision-themes/dec-0004-type-first-scientific-model.md) Lane A only; Lane B needs a **future** ship ADR |
+| Ship law | Mid-program `Continuous` **not yet Green** — [ADR 0204](../architecture/adr/0204-continuous-lane-b-type-world.md) Accepted as architecture boundary; Feature Path Red still requires a separate Feature Plan + Issue-level Plan approval before any Kernel code |
 | Companions | ADR 0126, 0162, 0163, 0164; Lane A surface LISS-0313; S01 [locked scenario](staqex-v1-s01-locked-scenario.md) §Field continuous |
 | Pedagogy | [physicist-minimal-dialect](../architecture/physicist-minimal-dialect.md); Ideal form first (ADR 0095) |
 
@@ -535,11 +535,11 @@ proper demand.
 
 ## 7. Next gates (not authorized by this doc)
 
-| Gate | Artifact |
-|---|---|
-| Architecture Accept Lane B ship shape | Future ADR (beyond 0185) |
-| Feature Red Continuous type | Future LISS after ship ADR |
-| Finiteize Continuous-valued args | Feature after or with B |
-| S01 chapter `.sqx` for CH-field-* | Only after Runtime surface exists — until then Host demos + Ideal chalk |
+| Gate | Artifact | Status |
+|---|---|---|
+| Architecture Accept Lane B ship shape | [ADR 0204](../architecture/adr/0204-continuous-lane-b-type-world.md) | **done** (Accepted 2026-08-10) |
+| Feature Plan investigation + Red Continuous type | Future LISS batch under ADR 0204 | not started |
+| Finiteize Continuous-valued args | Feature after or with B (ADR 0204 Decision 4) | not started |
+| S01 chapter `.sqx` for CH-field-* | Only after Runtime surface exists — until then Host demos + Ideal chalk | not started |
 
 This document **authorizes documentation seats and expressiveness scoring only**.
