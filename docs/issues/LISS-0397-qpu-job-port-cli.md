@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0397
 - Status/phase: **complete** (2026-08-10) — Adjudicator Completion
-  approval; PR (recorded below once opened)
+  approval; PR [#508](https://github.com/nn0cl/staqex/pull/508)
 - Type: Feature Path (Delivery — new `cli.py` subcommands wiring the
   already-shipped `QpuJobPort` protocol via `AwsBraketAdapter`; no Kernel
   change, no new port, no ADR)
@@ -26,7 +26,7 @@
 - Related: `compiler/staqex/cli.py`
 - Blocks: none
 - Branch: `feature/liss-0397-qpu-job-port-cli`
-- GitHub Issue / PR: (opened at Completion)
+- GitHub Issue / PR: [#508](https://github.com/nn0cl/staqex/pull/508)
 
 ## Intent
 
