@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import functools
+import json
 import sys
 from pathlib import Path
 from typing import TextIO
@@ -21,6 +23,7 @@ from .live_submit import submit_live_qpu
 from .migrate_unicode_math import migrate_unicode_math_source
 from .pipeline import HARD_CODES, compile_path, compile_source
 from .host import run_path as host_run_path, run_source as host_run_source
+from .qpu_submit import ProviderJobId
 from .runtime.evaluator import Evaluator
 from .stdlib.io_ops import format_marginal_table
 from .stdlib.prelude import PRELUDE_NAMES
@@ -307,6 +310,38 @@ def cmd_submit_live_qpu(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_qpu_job(args: argparse.Namespace, *, action: str) -> int:
+    """LISS-0397 (ADR 0203/0202 follow-up): shared dispatcher for the four
+    `qpu-job-*` commands, wiring the already-shipped `QpuJobPort.status`/
+    `wait`/`result`/`cancel` (all implemented, unchanged, by
+    `AwsBraketAdapter`). `--device-arn` is still required to construct the
+    adapter even though none of these four operations read it (disclosed
+    LISS-0397 Plan wrinkle, not fixed here).
+    """
+    if args.provider != "aws-braket":
+        print(
+            f"qpu-job-{action}: unsupported --provider {args.provider!r} "
+            "(only aws-braket is available)",
+            file=sys.stderr,
+        )
+        return 1
+    job_id = ProviderJobId(provider=args.provider, opaque_id=args.id)
+    try:
+        adapter = _build_live_qpu_adapter(args.device_arn)
+        outcome = getattr(adapter, action)(job_id)
+    except (BraketDependencyError, BraketCredentialError) as exc:
+        print(f"qpu-job-{action}: {exc}", file=sys.stderr)
+        return 1
+    if action == "result":
+        try:
+            print(json.dumps(outcome, indent=2))
+        except TypeError:
+            print(outcome)
+    else:
+        print(outcome.value)
+    return 0
+
+
 def _migrate_read_source(path: Path) -> str | None:
     """Read UTF-8 source for migrate; print stderr and return None on failure."""
     try:
@@ -491,6 +526,24 @@ def build_parser() -> argparse.ArgumentParser:
     )
     psl.set_defaults(func=cmd_submit_live_qpu)
 
+    def add_qpu_job_parser(name: str, action: str, help_text: str) -> None:
+        pj = sub.add_parser(name, help=help_text)
+        pj.add_argument("--id", required=True, help="provider opaque job id")
+        pj.add_argument(
+            "--device-arn",
+            required=True,
+            help="required to construct the adapter (unused by this operation)",
+        )
+        pj.add_argument(
+            "--provider", default="aws-braket", help="only aws-braket is currently available"
+        )
+        pj.set_defaults(func=functools.partial(_cmd_qpu_job, action=action))
+
+    add_qpu_job_parser("qpu-job-status", "status", "query a live QPU job's status")
+    add_qpu_job_parser("qpu-job-wait", "wait", "wait for a live QPU job's terminal status")
+    add_qpu_job_parser("qpu-job-result", "result", "fetch a live QPU job's result")
+    add_qpu_job_parser("qpu-job-cancel", "cancel", "cancel a live QPU job")
+
     prepl = sub.add_parser("repl", help="interactive shell")
     prepl.add_argument("--seed", type=int, default=None)
     prepl.set_defaults(func=cmd_repl)
@@ -553,6 +606,10 @@ def main(argv: list[str] | None = None) -> int:
         "dag",
         "emit-qasm",
         "submit-live-qpu",
+        "qpu-job-status",
+        "qpu-job-wait",
+        "qpu-job-result",
+        "qpu-job-cancel",
         "repl",
         "migrate",
         "format",
