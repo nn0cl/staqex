@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0396
-- Status/phase: Green/Refactor complete (2026-08-10); awaiting Completion
-  approval
+- Status/phase: **complete** (2026-08-10) — Adjudicator Completion
+  approval; PR (recorded below once opened)
 - Type: Feature Path (Delivery — new `cli.py` subcommand wiring the
   already-shipped `submit_live_qpu` UseCase entrypoint; no Kernel change,
   no new port, no ADR)
@@ -164,7 +164,7 @@ full job-lifecycle CLI is a separably-scoped, larger surface.
 
 ## AI planning record (size S)
 
-- Status: Green/Refactor complete; awaiting Completion approval.
+- Status: Green/Refactor complete; Completion approval granted (2026-08-10).
 - Confidence: high — every behavior this Issue depends on
   (`submit_live_qpu`'s return shape, `AwsBraketAdapter`'s credential-check
   timing, `RealAwsBraketClient`'s version-gate safety, this environment's
@@ -194,4 +194,4 @@ full job-lifecycle CLI is a separably-scoped, larger surface.
       (`cli.py` +75 lines, additive only); no further changes needed.
 - [x] Full regression sweep re-run: **1417 passed** (2026-08-10), up from
       1412 by exactly the 5 new tests.
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-10).
