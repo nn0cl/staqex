@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0397
-- Status/phase: Green/Refactor complete (2026-08-10); awaiting Completion
-  approval
+- Status/phase: **complete** (2026-08-10) — Adjudicator Completion
+  approval; PR (recorded below once opened)
 - Type: Feature Path (Delivery — new `cli.py` subcommands wiring the
   already-shipped `QpuJobPort` protocol via `AwsBraketAdapter`; no Kernel
   change, no new port, no ADR)
@@ -140,7 +140,7 @@ change, no port/adapter change, no ADR.
 
 ## AI planning record (size S)
 
-- Status: Plan drafted, awaiting Plan approval.
+- Status: Green/Refactor complete; Completion approval granted (2026-08-10).
 - Confidence: high — `QpuJobPort`'s shape, `AwsBraketAdapter`'s existing
   implementation, and the error-propagation precedent were all confirmed
   by reading the already-shipped source, not assumed. The one open
@@ -173,4 +173,4 @@ change, no port/adapter change, no ADR.
       (`cli.py` +57 lines, additive only); no further changes needed.
 - [x] Full regression sweep re-run: **1424 passed** (2026-08-10), up from
       1417 by exactly the 7 new tests.
-- [ ] Completion approval.
+- [x] Completion approval (2026-08-10).
