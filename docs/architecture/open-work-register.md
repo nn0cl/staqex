@@ -332,7 +332,15 @@ Issue gives them a concrete scope:
   scope (conformance scenarios, classical baselines, and the first
   actually-runnable S02 `.sqx` program) remains open — no S02 example
   program exists yet; S01 disaster-response
-  showcase is unchanged.
+  showcase is unchanged. **Full expressiveness re-review 2026-08-10**
+  (Adjudicator-requested, S01-style): [staqex-v1-s02-expressiveness-review.md](../specs/staqex-v1-s02-expressiveness-review.md)
+  — confirms `prepare_selection`/`project onto feasible(...)` are already
+  Runtime-real (not "mostly plumbing left" as the summary above might
+  suggest); identifies the Ideal sketch's `finiteize(candidates, witness=
+  C16)` step as having no Kernel-visible form (Host-only
+  `FiniteManifestWitness`, LISS-0321) and named weighted objective terms
+  as unproven for S02 specifically — both Class B, real paths exist, no
+  new Architecture Path opened without a demonstrated concrete need.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the
