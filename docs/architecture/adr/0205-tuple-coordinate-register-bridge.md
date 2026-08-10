@@ -2,12 +2,11 @@
 
 ## Status
 
-**Proposed** (2026-08-11) — Architecture Path investigation, presented for
-Adjudicator Architecture approval. **Not Accepted.** Acceptance would
-authorize the decision below as an architecture boundary; it would
-**not** itself authorize Feature Path Red — a separate Feature Plan and
-Issue-level Plan approval remain required, same as every other
-Architecture Path ADR this session.
+**Accepted** (2026-08-11) — Adjudicator Architecture approval. Authorizes
+the tuple-coordinate evolution dispatch described in Decision as an
+architecture boundary. **It does not itself authorize Feature Path Red**
+— a separate Feature Plan and Issue-level Plan approval remain required,
+same as every other Architecture Path ADR this session.
 
 Revision note: this ADR originally proposed an `unpack_bits`/`pack_bits`
 bridge (Option C in the rejected-alternatives list below). The Adjudicator
@@ -181,9 +180,19 @@ authorize:
 A Feature Plan investigation (new `LISS-*`) is required before any Red,
 exactly as ADR 0204 required for Continuous Lane B.
 
+## Implementation permission
+
+| Item | Status after Accept |
+|---|---|
+| Architecture (tuple-coordinate evolution dispatch) | **granted** 2026-08-11 |
+| Technology selection | not required |
+| Feature Plan (Issue-level Plan) | **requested separately** |
+| Phase 1 Red / Kernel code | **forbidden** until Feature Plan + Plan approval |
+
 ## Decision history
 
 | Date | Event |
 |---|---|
 | 2026-08-11 | Proposed (as an `unpack_bits`/`pack_bits` bridge) |
 | 2026-08-11 | Adjudicator requested the fundamentally correct fix regardless of size; investigation found a smaller, more correct design (tuple-coordinate Hamiltonian evolution, no new syntax) — this revision |
+| 2026-08-11 | Adjudicator Architecture approval → **Accepted** |
