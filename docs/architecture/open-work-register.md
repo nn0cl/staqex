@@ -380,6 +380,27 @@ Issue gives them a concrete scope:
   fixable independently with already-shipped `Z[i]` syntax; rewriting
   `main_selection.sqx` to use the new unified single-coordinate form is a
   separate, not-yet-scheduled follow-on. Full regression 1450 passed.
+  **Applied to the example 2026-08-11**:
+  [LISS-0405](../issues/LISS-0405-s02-unified-selection-evolve.md)
+  rewrites `main_selection.sqx` to evolve `psi_sel` directly
+  (`objective_hamiltonian` now uses `sum (i in Index<0..7>) { Z[i] }` /
+  `{ X[i] }` field terms plus all-28-pairs `Z[i]*Z[j]` coupling, fixing
+  the same-site bug in the same pass); removes the disconnected
+  `obj0`/`obj1` pair. Verified: the terminal distribution is genuinely
+  non-uniform over the 25 feasible patterns (`~1.4e-11`–`~0.0399`, not
+  uniform `1/25`) — the architectural half of the `top_k_overlap≈0`
+  finding is closed in practice, not only in principle. **However**
+  `top_k_overlap` itself is still measured at `0.0`, for a newly
+  identified and disclosed reason distinct from the one LISS-0403 named:
+  `objective_hamiltonian`'s field terms weight every candidate position
+  identically (no per-candidate value crosses into the Kernel), so the
+  bias it produces has no per-candidate structure to correlate against
+  `scoring.py`'s independent per-candidate `baseline_top_k` proxy.
+  Closing that would need a further, unshipped mechanism for
+  Host-computed per-position weights (not candidate identity) to enter
+  an `Operator`'s field terms — disclosed as an open follow-on question,
+  not filed as a new Issue without further direction. Full regression
+  1450 passed.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the

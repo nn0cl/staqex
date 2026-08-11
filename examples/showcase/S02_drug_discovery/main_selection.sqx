@@ -1,11 +1,10 @@
-// CH-selection-spine — S02 finite candidate-selection experiment (LISS-0402).
+// CH-selection-spine — S02 finite candidate-selection experiment (LISS-0405).
 // Hard constraints (Projector) and soft objective (Hamiltonian evolution)
-// are deliberately two separate quantum coordinates, not one forced thread
-// -- prepare_selection's tuple-valued coordinate cannot itself be evolved
-// under an ordinary Pauli-term Operator (confirmed by direct execution,
-// LISS-0402 Design verification point 3); this mirrors S01's own pattern
-// where classical domain data feeds a Hamiltonian's coefficients but never
-// becomes the evolved state itself.
+// now act on the SAME quantum coordinate: LISS-0404 (ADR 0205) shipped
+// Pauli-term Hamiltonian evolution on tuple-valued coordinates, so
+// psi_sel (from prepare_selection) can itself be evolved directly --
+// no separate, disconnected objective qubit pair needed (superseding
+// LISS-0402's original two-coordinate design).
 // Host owns the candidate manifest, HostInputPort predicate matrices, and
 // the classical baseline (host/run_selection.py, host/classical_baseline.py).
 // SIM-only; not a chemistry, clinical, or quantum-advantage claim.
@@ -18,10 +17,19 @@ struct ObjectiveWeights {
     diversity: Float
 }
 
-// Named weighted objective terms (S02 expressiveness review P1 finding,
-// closed here with existing Operator algebra -- no new Kernel syntax).
+// Named weighted objective terms (S02 expressiveness review P1 finding),
+// acting on every one of the 8 selection positions directly (LISS-0405) --
+// `sum (i in Index<0..7>) { Z[i] }` already shipped (LISS-0230/0232, S01's
+// grid/block_costs.sqx). Weights are re-tuned for this larger 44-term
+// acting space (ADR 0195 evolution step budget; see LISS-0405 Design
+// verification).
 fn objective_hamiltonian(w: ObjectiveWeights) -> Operator {
-    return w.activity * Z + w.selectivity * X + w.diversity * (Z * Z)
+    Operator z_field = sum (i in Index<0..7>) { Z[i] }
+    Operator x_field = sum (i in Index<0..7>) { X[i] }
+    Operator coupling = sum (i in Index<0..7>, j in Index<0..7>) where i < j {
+        Z[i] * Z[j]
+    }
+    return w.activity * z_field + w.selectivity * x_field + w.diversity * coupling
 }
 
 pub fn main() -> Unit {
@@ -37,24 +45,16 @@ pub fn main() -> Unit {
         diversity_at_least = 0.3
     )
 
-    // --- Soft-objective evolution (separate qubit pair; ADR 0195 energy scale) ---
+    // --- Soft-objective evolution, directly on psi_sel (LISS-0404 / ADR 0205) ---
     ObjectiveWeights weights = ObjectiveWeights {
-        activity: 0.45, selectivity: 0.30, diversity: 0.20
+        activity: 0.02, selectivity: 0.01, diversity: 0.01
     }
     Operator H_obj_raw = objective_hamiltonian(weights)
     Energy scale = 1.0.eV to J
     Operator H_obj = scale * H_obj_raw
-
-    state obj0 = |0>
-    state obj1 = |+>
     Time dur = 0.6.fs
-    state (obj0, obj1) = evolve (obj0, obj1) under H_obj for dur
-        using Suzuki(order = 2, steps = 4)
+    state psi_sel = evolve psi_sel under H_obj for dur
 
-    // Non-destructive objective diagnostic (Result contract "no fabricated
-    // score" -- this is a real expectation value, not a stand-in).
-    state zz = expect(ZZ, obj0, obj1)
-
-    // ADR 0173: leftovers leave via Born partial trace, same idiom as S01.
-    measure psi_sel tracing_out obj0, obj1
+    // ADR 0173: no leftovers to trace out -- psi_sel is the only coordinate.
+    measure psi_sel
 }

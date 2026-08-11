@@ -43,12 +43,13 @@ from compiler.staqex.host_input_port import MappingHostInputAdapter  # noqa: E40
 
 DEFAULT_SHOTS = 20
 TOP_K = 3
-# Suzuki(order=2, steps=4) applied to a 2-qubit H_obj, per main_selection.sqx.
-# Known from the .sqx source itself (not introspected from a Kernel API --
-# no such resource-accounting API exists today; disclosed, not invented).
-SUZUKI_STEPS = 4
-SUZUKI_ORDER = 2
-LOGICAL_WIDTH = N + 2  # n selection coordinates' bit-width + 2 objective qubits
+# LISS-0405: H_obj now acts directly on psi_sel's own n=8 positions (ADR
+# 0205 / LISS-0404 tuple-coordinate evolve) -- no separate objective
+# qubit pair. Term count known from the .sqx source itself (not
+# introspected from a Kernel API -- no such resource-accounting API
+# exists today; disclosed, not invented): 8 Z[i] + 8 X[i] + 28 Z[i]*Z[j].
+LOGICAL_WIDTH = N  # psi_sel's own width; no separate objective coordinate
+HAMILTONIAN_TERM_COUNT = N + N + (N * (N - 1)) // 2
 
 
 def _manifest_id(pairwise: list[list[bool]], diversity: list[list[float]]) -> str:
@@ -139,12 +140,17 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
     )
     if top_k_overlap < 0.5:
         warnings.append(
-            "top_k_overlap low: project onto feasible(...) samples uniformly "
-            "over the feasible subspace; the soft-objective evolution (H_obj) "
-            "acts on a separate qubit pair and does not currently bias which "
-            "feasible selection is sampled -- a real, disclosed Staqex "
-            "expressiveness gap (see LISS-0403 Design verification), not a "
-            "benchmark or scoring bug"
+            "top_k_overlap low: H_obj now evolves psi_sel directly and "
+            "measurably biases the terminal distribution away from uniform "
+            "(LISS-0404/ADR 0205), but its Z[i]/X[i] field terms carry the "
+            "SAME scalar weight for every candidate position i -- no "
+            "per-candidate quality value crosses into the Kernel, so the "
+            "bias this Hamiltonian produces has no reason to correlate with "
+            "scoring.py's independent per-candidate build_candidate_scores "
+            "proxy used for baseline_top_k. This is a real, disclosed "
+            "Staqex expressiveness gap (no channel today for per-position "
+            "Host-computed weights to enter an Operator's field terms; see "
+            "LISS-0405 Design verification), not a benchmark or scoring bug"
         )
 
     reproducible = check_reproducibility(base_seed)
@@ -178,9 +184,7 @@ def _resource_metadata() -> dict[str, Any]:
     return {
         "logical_width": LOGICAL_WIDTH,
         "candidate_count": N,
-        "objective_qubits": 2,
-        "suzuki_order": SUZUKI_ORDER,
-        "suzuki_steps": SUZUKI_STEPS,
+        "hamiltonian_term_count": HAMILTONIAN_TERM_COUNT,
         "simulator": "cpu-joint",
         "lane": "static",
     }
