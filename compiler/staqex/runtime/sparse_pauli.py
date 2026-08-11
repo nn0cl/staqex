@@ -119,7 +119,14 @@ def expm_ih_apply(
         raise ValueError(
             f"evolve magnitude |H*t/hbar| ~= 2**{s} exceeds the sparse "
             f"evolution step budget (2**{max_s}) -- H and/or t are not "
-            "physically plausible real-unit values"
+            "physically plausible real-unit values. ADR 0195 requires H's "
+            "coefficients to already be in real Joules and t in real "
+            "seconds by the time they reach `evolve`: if H was built from "
+            "dimensionless/natural-unit weights, scale it explicitly first, "
+            "e.g. `Energy scale = 1.0.eV to J; Operator H = scale * H_raw` "
+            "(the `to` unit-conversion operator), matching the shipped "
+            "energy/time unit surface (see any `examples/showcase/*` "
+            "program's own H_raw/H two-step pattern)"
         )
     steps = 2**s
     step_tt = tt / steps

@@ -620,6 +620,15 @@ Issue gives them a concrete scope:
   this file running end-to-end) flipped from failing to passing.
   **WP-0095 is now complete** — every ADR 0195-affected `.sqx` example
   is confirmed migrated. See the "Repository health" note below.
+  **Discoverability fix 2026-08-12** (S02 P1 finding, LISS-0402): the
+  energy-scale requirement was undiscoverable without reading a shipped
+  example's source — the sparse-evolution step-budget overflow error
+  (`compiler/staqex/runtime/sparse_pauli.py::expm_ih_apply`) now names
+  the actionable fix directly (`Energy scale = ...to J` two-step
+  pattern) instead of only stating the bare magnitude, and
+  `QUICKSTART.md`'s B08 mention now explains why its `Energy J`/`Energy
+  h` lines are required, not decorative. No behavior change — same
+  condition fails closed as before, only the message improved.
 - Living backlog: WP-0062–0068 shipped; next free WP-0096+ / LISS-0331+.
 
 ## Repository health (2026-08-02; regression note added 2026-08-05)

@@ -27,6 +27,15 @@ python3 -m compiler.staqex run examples/applied/A06_topological_edge_memory/main
 **Teaching face (WP-0089 / LISS-0303):** single-file basics use the **default**
 experiment profile (ADR **0182**) — no package / `main` wrapper required.
 B08 is the chalk north star (`evolve under H`, `measure … tracing_out …`).
+**`evolve` needs real physical units (ADR 0195):** `H`'s coefficients
+must already be real Joules and the duration real seconds by the time
+they reach `evolve` — B08's own `Energy J = 1.0.eV to J` /
+`Energy h = 0.5.eV to J` lines aren't decoration, they're required.
+Skipping them and using bare dimensionless weights instead overflows
+the evolution step budget with a
+`evolve magnitude |H*t/hbar| ~= 2**N exceeds ...` error; scale any raw
+weights with the same `Energy scale = <value>.eV to J; Operator H =
+scale * H_raw` two-step pattern before evolving.
 Bind forms (`state` / bare / Type-First):
 [bind-decision-tree](docs/architecture/bind-decision-tree.md).
 Official sample style (constructors, free-fn vs class, package depth):
