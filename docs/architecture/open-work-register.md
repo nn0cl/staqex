@@ -380,8 +380,9 @@ Issue gives them a concrete scope:
   fixable independently with already-shipped `Z[i]` syntax; rewriting
   `main_selection.sqx` to use the new unified single-coordinate form is a
   separate, not-yet-scheduled follow-on. Full regression 1450 passed.
-  **Applied to the example 2026-08-11**:
-  [LISS-0405](../issues/LISS-0405-s02-unified-selection-evolve.md)
+  **Applied to the example 2026-08-11 — merged**:
+  [LISS-0405](../issues/LISS-0405-s02-unified-selection-evolve.md) (PR
+  [#526](https://github.com/nn0cl/staqex/pull/526))
   rewrites `main_selection.sqx` to evolve `psi_sel` directly
   (`objective_hamiltonian` now uses `sum (i in Index<0..7>) { Z[i] }` /
   `{ X[i] }` field terms plus all-28-pairs `Z[i]*Z[j]` coupling, fixing
