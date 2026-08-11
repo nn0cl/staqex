@@ -11,10 +11,10 @@ import ..physics.ops_energy_scale.{ops_energy_scale}
 
 pub fn main() -> Unit {
     Energy scale = ops_energy_scale()
-    Operator H_raw = damage_hamiltonian_four()
-    Operator H = scale * H_raw
-    Operator H_basis_raw = basis_zone_sum()
-    Operator H_basis = scale * H_basis_raw
+    // LISS-0407 (ADR 0206): Operator-returning calls can now be used
+    // inline while scaling, no *_raw intermediates needed.
+    Operator H = scale * damage_hamiltonian_four()
+    Operator H_basis = scale * basis_zone_sum()
     Time dur_h = 0.15.fs
     Time dur_basis = 0.1.fs
 
