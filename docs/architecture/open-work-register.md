@@ -401,8 +401,9 @@ Issue gives them a concrete scope:
   Host-computed per-position weights (not candidate identity) to enter
   an `Operator`'s field terms — disclosed as an open follow-on question,
   not filed as a new Issue without further direction. Full regression
-  1450 passed. **Per-candidate weight channel wired 2026-08-11**:
+  1450 passed. **Per-candidate weight channel wired 2026-08-11 — merged**:
   [LISS-0406](../issues/LISS-0406-host-coefficient-tensor-evaluator-wiring.md)
+  (PR [#528](https://github.com/nn0cl/staqex/pull/528))
   found the disclosed gap above was not fully accurate — the
   `Float[N]… = host("key")` coefficient-tensor surface (ADR 0119,
   `sum (i in Index<0..N>) { w[i] * Z[i] }`) already existed and was
