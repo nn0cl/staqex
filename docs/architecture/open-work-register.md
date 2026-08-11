@@ -448,6 +448,7 @@ Issue gives them a concrete scope:
   found it still had the `H_raw`/`H` two-step idiom LISS-0407 obsoleted
   — S01 originally established that idiom, LISS-0402 copied it rather
   than inventing a new workaround): [LISS-0409](../issues/LISS-0409-s01-natural-operator-form.md)
+  (PR [#537](https://github.com/nn0cl/staqex/pull/537))
   removes eight now-unnecessary `*_raw` intermediates across
   `main_day2_recovery.sqx`, `main_disaster_response.sqx` (four),
   `main_lattice_four.sqx` (two), and `main_morning_collect.sqx` (the
