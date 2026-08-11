@@ -431,7 +431,18 @@ Issue gives them a concrete scope:
   metric: **0.33**, up from `0.0`, confirmed reproducible across an
   independent weight/duration sweep — real and partial, not claimed as
   solved (real-time unitary evolution under a fixed duration is not a
-  tuned ranking algorithm). Full regression 1454 passed. **Kernel-visible
+  tuned ranking algorithm). Full regression 1454 passed. **Rewritten in
+  its natural physicist form 2026-08-12** (Adjudicator-requested
+  review/polish, after LISS-0407 shipped): [LISS-0408](../issues/LISS-0408-s02-natural-objective-form.md)
+  reintroduces a named `ObjectiveWeights` struct and a reusable
+  `objective_hamiltonian(w, activity_w, selectivity_w) -> Operator`
+  factory, called inline while scaling
+  (`scale * objective_hamiltonian(...)`) — exercising all three
+  combinations LISS-0407 closed in the same real program that motivated
+  it. Confirmed byte-identical terminal measurement and benchmark report
+  (feasibility_rate, infeasible_shots, top_k_overlap, mean_objective_score,
+  manifest_id all unchanged) before/after the rewrite. Full regression
+  1459 passed; spec verification 100.00% (161/161). **Kernel-visible
   finite-witness surface gap reconfirmed closed 2026-08-12** (Adjudicator
   requested review of remaining S02 items): the P1 finding above
   (`finiteize(candidates, witness=C16)` has no Kernel-visible form) has
