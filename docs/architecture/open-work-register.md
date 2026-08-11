@@ -443,7 +443,19 @@ Issue gives them a concrete scope:
   it. Confirmed byte-identical terminal measurement and benchmark report
   (feasibility_rate, infeasible_shots, top_k_overlap, mean_objective_score,
   manifest_id all unchanged) before/after the rewrite. Full regression
-  1459 passed; spec verification 100.00% (161/161). **Kernel-visible
+  1459 passed; spec verification 100.00% (161/161). **S01 brushed up the
+  same way 2026-08-12** (Adjudicator asked whether S01 was updated;
+  found it still had the `H_raw`/`H` two-step idiom LISS-0407 obsoleted
+  — S01 originally established that idiom, LISS-0402 copied it rather
+  than inventing a new workaround): [LISS-0409](../issues/LISS-0409-s01-natural-operator-form.md)
+  removes eight now-unnecessary `*_raw` intermediates across
+  `main_day2_recovery.sqx`, `main_disaster_response.sqx` (four),
+  `main_lattice_four.sqx` (two), and `main_morning_collect.sqx` (the
+  last one was never actually blocked by the OpCall gap — a bare `Z`
+  literal — simplified for consistency only). Confirmed byte-identical
+  `staqex run --seed 0` output for all four files before/after; full
+  regression 1459 passed; spec verification 100.00% (161/161); all
+  17 S01-specific tests pass. **Kernel-visible
   finite-witness surface gap reconfirmed closed 2026-08-12** (Adjudicator
   requested review of remaining S02 items): the P1 finding above
   (`finiteize(candidates, witness=C16)` has no Kernel-visible form) has

@@ -144,8 +144,7 @@ pub fn main() -> Unit {
     // Shake: phase() on a morning observation wire (B05 surface).
     state status = phase(status, 0.2)
     Energy scale = ops_energy_scale()
-    Operator H_raw = Z
-    Operator H = scale * H_raw
+    Operator H = scale * Z
     Time dur = 0.4.fs
     state status = evolve status under H for dur
     state peeked = expect(Z, status)

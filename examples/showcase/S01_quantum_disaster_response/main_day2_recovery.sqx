@@ -86,8 +86,9 @@ pub fn main() -> Unit {
 
     ConstraintCoeffs coeffs = ConstraintCoeffs(0.6, 0.5, 0.0)
     Energy scale = ops_energy_scale()
-    Operator H_raw = recovery_hamiltonian(coeffs)
-    Operator H = scale * H_raw
+    // LISS-0407 (ADR 0206): the Operator-returning call can now be used
+    // inline while scaling, no H_raw intermediate needed.
+    Operator H = scale * recovery_hamiltonian(coeffs)
     Float coeff_sum = named_coeff_sum(coeffs)
     // Suzuki order is the evolve clause itself (no fake suzuki_*_tag).
     Float suzuki_order = 4.0
