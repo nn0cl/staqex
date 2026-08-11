@@ -434,6 +434,7 @@ Issue gives them a concrete scope:
   tuned ranking algorithm). Full regression 1454 passed. **Rewritten in
   its natural physicist form 2026-08-12** (Adjudicator-requested
   review/polish, after LISS-0407 shipped): [LISS-0408](../issues/LISS-0408-s02-natural-objective-form.md)
+  (PR [#535](https://github.com/nn0cl/staqex/pull/535))
   reintroduces a named `ObjectiveWeights` struct and a reusable
   `objective_hamiltonian(w, activity_w, selectivity_w) -> Operator`
   factory, called inline while scaling
