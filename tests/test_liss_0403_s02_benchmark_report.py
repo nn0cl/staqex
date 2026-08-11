@@ -60,10 +60,14 @@ def test_benchmark_report_shape_and_honesty() -> None:
 
     qm = report.quality_metrics
     assert qm["shots"] == 6
-    assert qm["feasibility_rate"] == 1.0, (
-        "project onto feasible(...) restricts to the feasible subspace before "
-        "measurement -- feasibility_rate must be exactly 1.0 by construction"
-    )
+    # LISS-0406 finding: H_obj's X[i] terms don't commute with `project
+    # onto feasible(...)`'s projector (X changes Hamming weight), so a
+    # non-vacuum terminal measurement is not automatically feasible --
+    # feasibility_rate is verified per shot (scoring.is_feasible), not
+    # assumed to be 1.0 "by construction" (that assumption held only for
+    # LISS-0402/0403's original disconnected-qubit-pair design).
+    assert 0.0 <= qm["feasibility_rate"] <= 1.0
+    assert qm["infeasible_shots"] >= 0
     assert qm["reproducibility_verified"] is True
     assert 0.0 <= qm["top_k_overlap"] <= 1.0
 
@@ -73,3 +77,46 @@ def test_benchmark_report_reproducibility_check_detects_real_reruns() -> None:
     from benchmark_report import check_reproducibility
 
     assert check_reproducibility(seed=0) is True
+
+
+def test_feasibility_leak_is_detected_and_excluded_from_scoring() -> None:
+    """LISS-0406 finding, regression guard: H_obj's X[i] field terms do
+    not commute with `project onto feasible(...)`'s projector, so real
+    unitary evolution under it can leak probability outside the feasible
+    subspace -- a non-vacuum terminal measurement is not automatically
+    feasible. `build_report` must (a) detect this via `scoring.is_feasible`
+    rather than assuming every non-vacuum shot is feasible, (b) exclude
+    infeasible shots from objective/top-k scoring so they don't corrupt
+    the comparison against `baseline_score`/`baseline_top_k` (which are
+    themselves computed only over genuinely feasible patterns), and (c)
+    warn about it. At the shipped weights (LISS-0406), seeds 0-19 are
+    known to include real leakage (confirmed by direct execution)."""
+    _with_host_dir()
+    from benchmark_report import build_report
+    from classical_baseline import (
+        DIVERSITY_AT_LEAST,
+        EXACTLY_SELECTED,
+        build_predicate_matrices,
+    )
+    from scoring import is_feasible
+
+    report = build_report(shots=20, base_seed=0)
+    qm = report.quality_metrics
+    assert qm["infeasible_shots"] > 0, (
+        "expected the shipped weights/duration to exhibit real feasibility "
+        "leakage at seeds 0-19 (confirmed by direct execution during "
+        "LISS-0406 design) -- if this no longer reproduces, the leakage "
+        "may have been fixed for real (update this test to reflect that) "
+        "rather than merely stop showing up by chance"
+    )
+    assert qm["feasibility_rate"] < 1.0
+    assert any("outside the hard-constraint feasible subspace" in w for w in report.warnings)
+
+    pairwise, diversity = build_predicate_matrices()
+    assert is_feasible(
+        report.terminal_selection,
+        pairwise,
+        diversity,
+        exactly_selected=EXACTLY_SELECTED,
+        diversity_at_least=DIVERSITY_AT_LEAST,
+    ), "the reported terminal_selection itself must be genuinely feasible"

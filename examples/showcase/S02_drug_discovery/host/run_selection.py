@@ -16,6 +16,7 @@ if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
 from compiler.staqex.host import submit_path  # noqa: E402
+from scoring import build_candidate_scores  # noqa: E402
 
 _SQX = Path(__file__).resolve().parents[1] / "main_selection.sqx"
 
@@ -34,8 +35,21 @@ def build_predicate_matrices() -> tuple[list[list[bool]], list[list[float]]]:
     return pairwise, diversity
 
 
+def build_objective_weight_arrays() -> tuple[list[float], list[float]]:
+    """LISS-0406: the same per-candidate (activity, selectivity) proxy
+    values scoring.py's classical baseline scores against, now also
+    supplied to the Kernel's objective_hamiltonian via HostInputPort so
+    the field terms carry genuine per-candidate weight instead of one
+    scalar shared by every position (LISS-0405's disclosed gap)."""
+    candidate_scores = build_candidate_scores(N)
+    activity_w = [a for a, _s in candidate_scores]
+    selectivity_w = [s for _a, s in candidate_scores]
+    return activity_w, selectivity_w
+
+
 def main() -> int:
     pairwise, diversity = build_predicate_matrices()
+    activity_w, selectivity_w = build_objective_weight_arrays()
     job = submit_path(
         str(_SQX),
         settings={
@@ -43,6 +57,8 @@ def main() -> int:
             "inputs": {
                 "pairwise_compatible": pairwise,
                 "diversity_at_least": diversity,
+                "activity_weights": activity_w,
+                "selectivity_weights": selectivity_w,
             },
         },
     )

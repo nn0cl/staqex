@@ -401,7 +401,36 @@ Issue gives them a concrete scope:
   Host-computed per-position weights (not candidate identity) to enter
   an `Operator`'s field terms — disclosed as an open follow-on question,
   not filed as a new Issue without further direction. Full regression
-  1450 passed.
+  1450 passed. **Per-candidate weight channel wired 2026-08-11**:
+  [LISS-0406](../issues/LISS-0406-host-coefficient-tensor-evaluator-wiring.md)
+  found the disclosed gap above was not fully accurate — the
+  `Float[N]… = host("key")` coefficient-tensor surface (ADR 0119,
+  `sum (i in Index<0..N>) { w[i] * Z[i] }`) already existed and was
+  already typechecked/tested, but was never reachable from a real
+  `Evaluator` run: `_run_unit_body` never built `host_arrays` from
+  `self.host_input`, and (a second gap found during Green) generic
+  per-statement execution had never been taught to skip `Float[N]…`
+  StateBinds at all, host-sourced or literal. Both wired/fixed —
+  `evaluator.py` only, no new port/type/syntax, no ADR needed (reuses
+  ADR 0119/ADR 0194, both already "accepted current surface").
+  `main_selection.sqx` now weights its `Z[i]`/`X[i]` field terms with the
+  same per-candidate values `scoring.py`'s classical baseline scores
+  against. **Also surfaced and fixed a real correctness gap**: `H_obj`'s
+  `X[i]` terms don't commute with `project onto feasible(...)`'s
+  projector (X changes Hamming weight), so evolution under it can leak
+  probability outside the feasible subspace — a non-vacuum terminal
+  measurement was never unconditionally feasible once LISS-0405 made
+  `H_obj` act on `psi_sel` directly, but `benchmark_report.py` still
+  assumed `feasibility_rate == 1.0` "by construction" (true only for the
+  pre-LISS-0405 disconnected-pair design). Per the S02 spec's own
+  "penalty Hamiltonian… must not claim… guarantees feasibility" contract,
+  `benchmark_report.py` now verifies every shot against the real
+  predicates and excludes infeasible ones from scoring (6/20 seeds leak
+  at the shipped weights). `top_k_overlap` re-measured on the corrected
+  metric: **0.33**, up from `0.0`, confirmed reproducible across an
+  independent weight/duration sweep — real and partial, not claimed as
+  solved (real-time unitary evolution under a fixed duration is not a
+  tuned ranking algorithm). Full regression 1454 passed.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the

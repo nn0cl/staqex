@@ -34,8 +34,13 @@ from classical_baseline import (  # noqa: E402
     EXACTLY_SELECTED,
     exact_feasible_patterns,
 )
-from run_selection import N, _SQX, build_predicate_matrices  # noqa: E402
-from scoring import build_candidate_scores, classical_score  # noqa: E402
+from run_selection import (  # noqa: E402
+    N,
+    _SQX,
+    build_objective_weight_arrays,
+    build_predicate_matrices,
+)
+from scoring import build_candidate_scores, classical_score, is_feasible  # noqa: E402
 
 from compiler.staqex.pipeline import compile_path  # noqa: E402
 from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
@@ -71,8 +76,14 @@ def run_shots(shots: int, base_seed: int) -> list[ShotOutcome]:
     compiled = compile_path(str(_SQX))
     assert compiled.unit is not None, compiled.diagnostics
     pairwise, diversity = build_predicate_matrices()
+    activity_w, selectivity_w = build_objective_weight_arrays()
     host_input = MappingHostInputAdapter(
-        {"pairwise_compatible": pairwise, "diversity_at_least": diversity}
+        {
+            "pairwise_compatible": pairwise,
+            "diversity_at_least": diversity,
+            "activity_weights": activity_w,
+            "selectivity_weights": selectivity_w,
+        }
     )
 
     outcomes: list[ShotOutcome] = []
@@ -114,24 +125,63 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
 
     outcomes = run_shots(shots, base_seed)
     non_vacuum = [o for o in outcomes if not o.vacuum]
-    feasibility_rate = len(non_vacuum) / len(outcomes) if outcomes else 0.0
+    # LISS-0406 finding: `project onto feasible(...)` restricts psi_sel to
+    # the feasible subspace, but H_obj's X[i] field terms do not commute
+    # with that projector (X flips a candidate's selected bit, changing
+    # the exactly-selected count), so real unitary evolution under H_obj
+    # can leak probability mass outside the feasible subspace. A non-vacuum
+    # terminal measurement is therefore NOT automatically feasible --
+    # verified per shot against the real predicates (scoring.is_feasible),
+    # never assumed from the projector alone (S02 spec's own "penalty
+    # Hamiltonian... must not claim... guarantees feasibility" contract).
+    feasible_outcomes = [
+        o
+        for o in non_vacuum
+        if is_feasible(
+            o.selection,
+            pairwise,
+            diversity,
+            exactly_selected=EXACTLY_SELECTED,
+            diversity_at_least=DIVERSITY_AT_LEAST,
+        )
+    ]
+    infeasible_shots = len(non_vacuum) - len(feasible_outcomes)
+    feasibility_rate = len(feasible_outcomes) / len(outcomes) if outcomes else 0.0
 
     warnings: list[str] = []
-    if not non_vacuum:
+    if infeasible_shots:
+        warnings.append(
+            f"{infeasible_shots}/{len(outcomes)} shots measured a selection "
+            "outside the hard-constraint feasible subspace despite `project "
+            "onto feasible(...)`: H_obj is a penalty-style Hamiltonian, not "
+            "a subspace-preserving one -- its X[i] terms redistribute "
+            "amplitude across Hamming weights, so evolving under it can "
+            "leak probability outside the projected subspace. Per the S02 "
+            "spec's own Constraint and objective contract, a penalty "
+            "Hamiltonian must never be assumed to guarantee feasibility; "
+            "this report verifies feasibility per shot instead of assuming "
+            "it, and excludes infeasible shots from objective/top-k scoring "
+            "below."
+        )
+
+    if not feasible_outcomes:
         return BenchmarkResult(
             feasibility_verdict="failed",
-            terminal_selection=None,
+            terminal_selection=(non_vacuum[-1].selection if non_vacuum else None),
             resource_metadata=_resource_metadata(),
             baseline_score=baseline_score,
             quality_metrics={"shots": shots, "feasibility_rate": feasibility_rate},
-            warnings=("all shots vacuum",),
+            warnings=tuple(warnings)
+            or (("all shots vacuum",) if not non_vacuum else ()),
         )
 
-    objective_scores = [classical_score(o.selection, candidate_scores) for o in non_vacuum]
+    objective_scores = [
+        classical_score(o.selection, candidate_scores) for o in feasible_outcomes
+    ]
     mean_objective = sum(objective_scores) / len(objective_scores)
     objective_gap = baseline_score - mean_objective
 
-    sample_counts = Counter(o.selection for o in non_vacuum)
+    sample_counts = Counter(o.selection for o in feasible_outcomes)
     most_sampled = {pattern for pattern, _ in sample_counts.most_common(TOP_K)}
     top_k_overlap = (
         len(most_sampled & baseline_top_k) / min(TOP_K, len(baseline_top_k))
@@ -140,24 +190,28 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
     )
     if top_k_overlap < 0.5:
         warnings.append(
-            "top_k_overlap low: H_obj now evolves psi_sel directly and "
-            "measurably biases the terminal distribution away from uniform "
-            "(LISS-0404/ADR 0205), but its Z[i]/X[i] field terms carry the "
-            "SAME scalar weight for every candidate position i -- no "
-            "per-candidate quality value crosses into the Kernel, so the "
-            "bias this Hamiltonian produces has no reason to correlate with "
-            "scoring.py's independent per-candidate build_candidate_scores "
-            "proxy used for baseline_top_k. This is a real, disclosed "
-            "Staqex expressiveness gap (no channel today for per-position "
-            "Host-computed weights to enter an Operator's field terms; see "
-            "LISS-0405 Design verification), not a benchmark or scoring bug"
+            "top_k_overlap low: H_obj's Z[i]/X[i] field terms now carry "
+            "genuine per-candidate weight sourced from the same "
+            "scoring.build_candidate_scores values the classical baseline "
+            "uses (LISS-0406 wires HostInputPort into the ADR 0119 "
+            "coefficient-tensor path), so a real correlation channel "
+            "exists today -- unlike LISS-0405's uniform-weight design, "
+            "which had none. The correlation is real but weak (empirically "
+            f"{top_k_overlap:.2f} at these weights/duration, confirmed by "
+            "direct execution across several weight/duration configurations "
+            "-- not from a single lucky run): real-time unitary evolution "
+            "under a fixed-duration Hamiltonian is not a scoring/ranking "
+            "algorithm, so no particular overlap value is guaranteed. This "
+            "is a real, disclosed Staqex expressiveness limit (there is no "
+            "shipped primitive analogous to a QAOA-style tuned cost/mixer "
+            "alternation), not a benchmark or scoring bug."
         )
 
     reproducible = check_reproducibility(base_seed)
     if not reproducible:
         warnings.append("reproducibility check failed for the base seed")
 
-    terminal_selection = non_vacuum[-1].selection
+    terminal_selection = feasible_outcomes[-1].selection
     reranked_score = classical_score(terminal_selection, candidate_scores)
 
     return BenchmarkResult(
@@ -171,6 +225,7 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
             "manifest_id": manifest_id,
             "shots": shots,
             "feasibility_rate": feasibility_rate,
+            "infeasible_shots": infeasible_shots,
             "mean_objective_score": mean_objective,
             "objective_gap_to_baseline": objective_gap,
             "top_k_overlap": top_k_overlap,

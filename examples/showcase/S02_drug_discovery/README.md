@@ -74,18 +74,37 @@ python3 examples/showcase/S02_drug_discovery/host/benchmark_report.py
   (verified: per-pattern probabilities range `~1.4e-11`–`~0.0399` across
   the 25 feasible patterns, not the old design's implicit uniform
   `1/25`).
-- **Disclosed expressiveness finding (LISS-0405), superseding the old
-  LISS-0403 note:** `benchmark_report.py`'s `top_k_overlap` metric still
-  measures `0.0` even after the architecture fix above. This is real,
-  not a bug, and not the same gap as before: `objective_hamiltonian`
-  gives every one of the 8 candidate positions the *same* scalar weight
-  (`activity`/`selectivity`/`diversity` are per-run constants, not
-  per-candidate), so the bias it produces has no per-candidate structure
-  to correlate against `scoring.py`'s independent per-candidate
-  `build_candidate_scores` proxy used for `baseline_top_k`. Making the
-  two agree would need a further, unshipped mechanism for Host-computed
-  *per-position weights* (not candidate identity — the existing boundary
-  contract above is unaffected) to enter an `Operator`'s field terms,
-  e.g. a `Float[]` bound via `HostInputPort` and indexed into
-  `sum (i in Index<0..7>) { w[i] * Z[i] }`. Left open pending direction,
-  not worked around ahead of review.
+- **Per-candidate weight channel shipped (LISS-0406):** `main_selection.sqx`'s
+  `H_obj` field terms (`activity_w[i] * Z[i]`, `selectivity_w[i] * X[i]`)
+  now carry genuine per-candidate weight, sourced from the exact same
+  `scoring.build_candidate_scores` values the classical baseline scores
+  against, via a Host-computed `Float[8]` coefficient tensor
+  (`host("activity_weights")`/`host("selectivity_weights")`) — LISS-0406
+  wired `HostInputPort` into the already-Accepted ADR 0119
+  coefficient-tensor path (`Float[N]… = host("key")`), which existed but
+  was unreachable from any real `Evaluator` run before this Issue.
+  `top_k_overlap` is now **0.33** (up from LISS-0405's `0.0`), confirmed
+  reproducible across an independent weight/duration sweep — a real,
+  partial improvement, not a strong one: real-time unitary evolution
+  under a fixed-duration Hamiltonian is not a scoring/ranking algorithm
+  (no QAOA-style tuned cost/mixer alternation is shipped), so no
+  particular overlap value was ever guaranteed.
+- **Feasibility-leakage finding (LISS-0406), fixed, not just disclosed:**
+  `H_obj`'s `X[i]` field terms do not commute with `project onto
+  feasible(...)`'s projector — `X` flips a candidate's selected bit,
+  changing Hamming weight, so real unitary evolution under a Hamiltonian
+  containing `X` terms can leak probability mass outside the 25-pattern
+  feasible subspace (a `Z`/`ZZ`-only Hamiltonian leaks nothing, being
+  diagonal, but also provably cannot change the measurement distribution
+  at all — diagonal evolution only adds phases). A non-vacuum terminal
+  measurement is therefore **not** unconditionally feasible; the earlier
+  assumption that it was held only for LISS-0402/0403's original
+  disconnected-objective-qubit-pair design. This is exactly the case the
+  S02 acceptance spec's own Constraint and objective contract anticipates
+  ("If a penalty Hamiltonian is used, the report must identify it as a
+  penalty profile and must not claim that a low penalty guarantees
+  feasibility"). `benchmark_report.py` now verifies every non-vacuum shot
+  against the real predicates (`scoring.is_feasible`) instead of assuming
+  feasibility, reports a real `feasibility_rate`/`infeasible_shots`, and
+  excludes infeasible shots from objective/top-k scoring. At the shipped
+  weights, 6/20 seeds (0-19) leak.
