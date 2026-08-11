@@ -431,7 +431,17 @@ Issue gives them a concrete scope:
   metric: **0.33**, up from `0.0`, confirmed reproducible across an
   independent weight/duration sweep — real and partial, not claimed as
   solved (real-time unitary evolution under a fixed duration is not a
-  tuned ranking algorithm). Full regression 1454 passed.
+  tuned ranking algorithm). Full regression 1454 passed. **Kernel-visible
+  finite-witness surface gap reconfirmed closed 2026-08-12** (Adjudicator
+  requested review of remaining S02 items): the P1 finding above
+  (`finiteize(candidates, witness=C16)` has no Kernel-visible form) has
+  now gone through three Issues (LISS-0402, LISS-0405, LISS-0406) that
+  each needed the finite-candidate width for real — every one used the
+  bare-`Int` form successfully; none needed a source-visible witness
+  step. Matches this session's own precedent for Joint rational mode and
+  trait/effect: do not open new Kernel surface ahead of a demonstrated
+  need. `FiniteManifestWitness` (Host-only, LISS-0321) remains the real
+  shipped mechanism; do not re-open without a concrete requirement.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the
