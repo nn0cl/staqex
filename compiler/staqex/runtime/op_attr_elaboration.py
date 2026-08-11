@@ -26,11 +26,39 @@ class OpAttrElaborationError(ValueError):
     """Struct field could not be elaborated as a numeric Operator coefficient."""
 
 
-def materialize_op_attrs(op: OpExpr, objects: Mapping[str, Any]) -> OpExpr:
-    """Rewrite ``OpAttr`` nodes to ``OpLit`` using runtime struct field values."""
+def materialize_op_attrs(
+    op: OpExpr,
+    objects: Mapping[str, Any],
+    *,
+    operators: Mapping[str, OpExpr] | None = None,
+    _seen: frozenset[str] = frozenset(),
+) -> OpExpr:
+    """Rewrite ``OpAttr`` nodes to ``OpLit`` using runtime struct field values.
+
+    LISS-0407: when ``operators`` is given, also recurses through an
+    ``OpVar`` naming another bound Operator (e.g. ``Operator H = G +
+    X[0]`` where ``G``'s own tree still has a raw ``OpAttr`` leaf) --
+    closes the indirection gap where a struct-field coefficient hidden
+    behind an intermediate named Operator variable never got elaborated.
+    ``_seen`` guards against a self-referential Operator name cycle.
+    """
     if isinstance(op, OpAttr):
         return OpLit(value=float(_op_attr_float(op, objects)), span=op.span)
-    return _map_op_tree(op, lambda child: materialize_op_attrs(child, objects))
+    if (
+        isinstance(op, OpVar)
+        and operators is not None
+        and op.name in operators
+        and op.name not in _seen
+    ):
+        return materialize_op_attrs(
+            operators[op.name],
+            objects,
+            operators=operators,
+            _seen=_seen | {op.name},
+        )
+    return _map_op_tree(
+        op, lambda child: materialize_op_attrs(child, objects, operators=operators, _seen=_seen)
+    )
 
 
 def materialize_op_scalar_vars(

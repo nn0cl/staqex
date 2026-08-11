@@ -444,25 +444,35 @@ Issue gives them a concrete scope:
   shipped mechanism; do not re-open without a concrete requirement.
 - **Operator coefficient/binder resolution unification:**
   [ADR 0206](adr/0206-operator-coefficient-resolution-unification.md)
-  (**Proposed**, 2026-08-12) — investigation only, no implementation
-  authorized. S02 work (LISS-0402/0405/0406) surfaced three separate,
-  incrementally-shipped Operator-coefficient resolution mechanisms
-  (function-call return-position inlining, `finite_binder.py`'s
+  (**Accepted**, 2026-08-12) / [LISS-0407](../issues/LISS-0407-operator-resolution-unification.md)
+  (**complete**) — S02 work (LISS-0402/0405/0406) surfaced three
+  separate, incrementally-shipped Operator-coefficient resolution
+  mechanisms (function-call return-position inlining, `finite_binder.py`'s
   top-level-only array lowering, and a third pass fired from `evolve`'s
-  own call site) that don't compose — a `Float[N]` array threaded as a
-  function parameter into a `sum` binder still fails
-  (`cannot compile sparse Pauli for OpBinder`), and the real diagnostic
-  explaining why is silently discarded (`evaluator.py:3220-3221`).
-  git/Issue lineage (LISS-0052→0136→0137→0139→0224→0297→0306) shows six
-  narrow patches to the same underlying question, not one design.
-  Investigation sized full unification as multi-week, ~1,000+ lines
-  across 6 files (`evaluator.py`, `op_attr_elaboration.py`,
-  `finite_binder.py`, `sparse_pauli.py`, plus the parallel
-  `hamiltonian.py`/`typecheck.py` walkers), with real regression risk —
-  proposed as an Architecture Path direction, not decided. The narrower,
-  independently-fixable parameter-array gap and swallowed diagnostic may
-  proceed as an ordinary Feature Path bug fix regardless of this ADR's
-  outcome, matching ADR 0205's own treatment of the disclosed `Z*Z` bug.
+  own call site) that didn't compose. git/Issue lineage
+  (LISS-0052→0136→0137→0139→0224→0297→0306) showed six narrow patches to
+  the same underlying question, not one design. Investigation sized full
+  unification (including folding in `hamiltonian.py`'s dense path and
+  `typecheck.py`'s diagnostics walker) as multi-week with real regression
+  risk; Adjudicator asked which was "physically correct" (unification —
+  the three-way split is an implementation accident, not physics, per
+  the language vision's own "source must denote the same thing as the
+  blackboard"), then approved proceeding with a bounded slice in the same
+  round: one recursive resolver (`Evaluator._resolve_operator_tree`),
+  invoked from the same points the three old mechanisms fired from
+  (lazy, not eager — preserves LISS-0297's load-bearing per-call
+  scoping), closing all three confirmed-broken combinations — a `Float[N]`
+  array threaded through a function parameter into a `sum` binder; a
+  struct-field coefficient hidden behind an intermediate named Operator
+  variable; a nested Operator-returning call inside a larger expression
+  (`scale * f(weights)`, the original LISS-0402 finding) — plus the
+  silently-discarded diagnostic (`evaluator.py:3220-3221`), now a specific
+  `KernelError` instead of a vague, much-later `cannot compile sparse
+  Pauli for OpBinder`. `hamiltonian.py`/`typecheck.py` confirmed
+  unnecessary to change (they already consume the resolver's literal
+  output correctly). Full regression 1459 passed (up from 1455); spec
+  verification 100.00% (161/161); S02's own example confirmed
+  byte-identical before/after.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the

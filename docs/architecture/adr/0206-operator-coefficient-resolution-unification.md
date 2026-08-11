@@ -2,12 +2,21 @@
 
 ## Status
 
-**Proposed** — Architecture Path investigation only. This document does
-**not** authorize implementation, technology selection, or Feature Path
-Red of any kind. It requests Architecture approval for a *direction*;
-even after acceptance, a full Work-Plan Investigation (multi-Issue batch,
-matching the ADR 0204/ADR 0205 precedent) would still be required before
-any Kernel code change.
+**Accepted** (2026-08-12) — Adjudicator Architecture approval for the
+unification direction, with explicit authorization in the same round to
+resolve the three open design questions and implement (superseding the
+ADR 0204/ADR 0205-style "Architecture approval, then separate Feature
+Plan" precedent for this specific ADR, by the Adjudicator's own explicit
+instruction: "統合で進める。この回でドキュメントも含めてすべて設計して
+修正する" — proceed with unification, design and fix everything,
+including documentation, in this round).
+
+Implemented as [LISS-0407](../../issues/LISS-0407-operator-resolution-unification.md).
+See "Design questions — resolved" and "Consequences" below for what was
+actually built, which is a deliberately **bounded** slice of the full
+unification sketched in the original Decision proposal — see "Scope
+actually implemented" for the honest boundary between what shipped and
+what remains future work.
 
 Companions: [LISS-0402](../../issues/LISS-0402-s02-selection-example.md),
 [LISS-0405](../../issues/LISS-0405-s02-unified-selection-evolve.md),
@@ -114,7 +123,7 @@ reshaping chalk so the compiler is happier" (the vision's own words for
 what the design explicitly should not do): flattening structs into bare
 scalars, avoiding function wrapping, restructuring at `main()` level.
 
-## Decision proposal (not yet accepted)
+## Decision
 
 A single resolution entry point,
 
@@ -142,28 +151,76 @@ closing over the union of what mechanisms 1-3 each see today, that:
 and is the **only** place any of these four substitutions happen,
 replacing the three current call sites.
 
-This document does not decide the following, each a real design
-question the investigation surfaced and any implementation would need to
-resolve first:
+### Design questions — resolved
 
-1. **Eager vs. lazy resolution timing.** Mechanism 2 runs once, eagerly,
-   over the whole unit at `_run_unit_body` start. Mechanism 1 runs
-   lazily, per-call, with a freshly-scoped local context — this scoping
-   is load-bearing for recursive/re-entrant factory calls with
-   differently-named arguments (LISS-0297's entire point). A unified
-   pass must either become fully lazy (resolved on first use, memoized)
-   or thread a call-context stack through the eager pass.
-2. **Error-reporting contract.** The current silent
-   `except (IndexError, ValueError): return expr` exists so a
-   binder-lowering failure doesn't break factory calls whose return
-   value doesn't actually contain a binder — but it also discards real,
-   actionable errors (see "confirmed broken" above). Any unification
-   needs an explicit contract for when resolution failure is a hard
-   diagnostic versus a legitimate "this pass doesn't apply here" no-op.
-3. **Scope of the dense-path (`hamiltonian.py`) and diagnostics-path
-   (`typecheck.py`) walkers.** Whether they fold into the same unified
-   pass, stay separately maintained but required to track it in a test,
-   or are explicitly out of scope for this effort.
+1. **Eager vs. lazy resolution timing → lazy, at the existing
+   consumption points.** Mechanism 1's per-call scoping (load-bearing for
+   LISS-0297's recursive/re-entrant factory calls) is preserved exactly:
+   resolution still happens at `Operator` StateBind time and at
+   `evolve`'s call site, not eagerly over the whole unit. The unified
+   resolver (`Evaluator._resolve_operator_tree`, `runtime/evaluator.py`)
+   is invoked from the same points mechanisms 1-3 already fired from —
+   it replaces *what* they call, not *when* they're called.
+2. **Error-reporting contract → resolution failure inside a node the
+   resolver recognizes (a binder that needs an array, a struct field
+   that doesn't exist) is always a `KernelError`; a node kind the
+   resolver doesn't touch (already-literal Pauli algebra, unresolved
+   `next`/`wrap` binder-internal calls) passes through unchanged.** The
+   `except (IndexError, ValueError): return expr` silent swallow is
+   removed from the binder-lowering step; genuine binder-lowering
+   failures now surface as `KernelError(f"cannot lower Operator binder:
+   {exc}")` instead of a much later, vaguer `cannot compile sparse Pauli
+   for OpBinder`.
+3. **Scope of `hamiltonian.py` (dense path) and `typecheck.py`
+   (diagnostics) → explicitly out of scope, confirmed safe to leave
+   untouched.** Both already consume fully-literal `OpExpr` trees
+   correctly; the unified resolver's job is only to *produce* that
+   literal form before either walker sees it. Verified by the full
+   regression sweep and 100% spec-verification pass rate after
+   implementation — neither file needed a change.
+
+### Scope actually implemented
+
+`Evaluator._resolve_operator_tree` (`runtime/evaluator.py`) is the new
+single recursive entry point, invoked via `_lower_operator_value` from
+the same three call sites mechanisms 1-3 used before. It handles, in one
+pass:
+
+- **`OpCall` anywhere in the tree** (not only as the entire
+  right-hand side) — inlines a call to a known Operator-returning
+  function via `_resolve_op_call`, which converts the `OpExpr` call
+  arguments back into the generic `Expr` shape
+  `_resolve_operator_factory_call` already understands and reuses that
+  existing, tested arg-binding logic unchanged. Closes the LISS-0402
+  "Operator-Call-inline" gap (`scale * f(weights)`).
+- **`OpBinder`**, lowered against a merged array context
+  (`Evaluator._operator_array_context`: top-level literal arrays +
+  Host-resolved arrays, ADR 0119/LISS-0406) that now also includes any
+  `Float[N]` array bound to the *current function call's own
+  parameters* (`_resolve_operator_factory_call`'s new `local_arrays`).
+  Closes the confirmed-broken parameter-array case.
+- **`OpBin`/`OpPow`**, recursed structurally, preserving object identity
+  when a subtree needs no change (avoids reconstructing unchanged trees).
+- **`OpAttr`**, via the existing `materialize_op_attrs`
+  (`op_attr_elaboration.py`), now also given an `operators` context so
+  it recurses through an `OpVar` naming another bound Operator whose own
+  tree still has an unresolved `OpAttr` leaf. Closes the struct-field-
+  behind-an-intermediate-Operator-variable indirection case.
+
+**Not implemented, deliberately** (matches "Scope of `hamiltonian.py`/
+`typecheck.py`" above, and keeps this within what was directly
+demonstrated as needed):
+
+- `OpCall` support for binder-internal helpers other than Operator-
+  returning user functions (e.g. anything beyond the already-working
+  `next`/`wrap`, LISS-0373) — untouched, out of scope.
+- Operator-typed function parameters in `_resolve_operator_factory_call`
+  (a pre-existing, separate, narrower gap noticed but not one of the
+  three confirmed cases this ADR targets) — left as documented future
+  work, not attempted.
+- Any change to `finite_binder.py`'s or `sparse_pauli.py`'s internals —
+  reused exactly as they were; only the *context* passed into them
+  changed.
 
 ## Rejected / alternative considered
 
@@ -187,53 +244,60 @@ will very likely need its own seventh patch.
 
 ## Non-goals
 
-- Any implementation, in this document.
-- Deciding eager/lazy timing, the error-reporting contract, or the
-  dense/diagnostics-walker scope (open design questions above, for a
-  later Feature Plan investigation if this ADR is accepted).
-- Redesigning `finite_binder.py`'s or `sparse_pauli.py`'s public
-  contracts beyond what unification requires.
+- Folding `hamiltonian.py`'s dense-matrix walker or `typecheck.py`'s
+  diagnostics walker into the unified resolver — confirmed unnecessary
+  (Design questions, resolved, item 3).
+- `OpCall` support for anything other than Operator-returning user
+  functions, and Operator-typed factory parameters (Scope actually
+  implemented, above) — real, narrower, separate gaps, not attempted.
+- Redesigning `finite_binder.py`'s or `sparse_pauli.py`'s internals.
 
-## Consequences (if accepted and later implemented)
+## Consequences
 
-- A physicist could combine per-candidate Host arrays, struct-typed
-  named weights, and function parameters in an Operator expression in
-  any combination, without needing to know which of three independent
-  mechanisms currently covers that specific shape.
-- Real regression risk against the existing LISS-0121/0136/0137/0139/
-  0224/0297/0306 test suite, and against `hamiltonian.py`'s dense path
-  if that is folded in — sized at investigation time as multi-week,
-  ~1,000+ lines across 6 files, not a contained refactor.
-- If accepted, still requires a separate Work-Plan Investigation (spec/
-  ADR-linked Local Issues, granularity rationale, execution order, draft
-  batch record) before any Red, per CLAUDE.md's Work-Plan Investigation
-  requirement for broad grants.
+- A physicist can now combine per-candidate Host arrays, struct-typed
+  named weights, function parameters, and nested Operator-returning
+  function calls in an Operator expression in the natural combinations
+  that previously required knowing which of three independent
+  mechanisms happened to cover that specific shape.
+- Three confirmed-broken combinations (Float[N] array threaded through a
+  function parameter into a `sum` binder; a struct-field coefficient
+  hidden behind an intermediate named Operator variable; a nested
+  Operator-returning call inside a larger Operator expression, e.g.
+  `scale * f(weights)` — the original LISS-0402 finding) now work,
+  each locked in by a dedicated regression test
+  (`tests/test_liss_0407_operator_resolution_unification_red.py`).
+  A fourth test confirms a genuinely missing Host array still fails
+  closed with a specific diagnostic, not the old generic
+  `cannot compile sparse Pauli for OpBinder`.
+- Full regression sweep: 1459 passed (up from 1455 before this Issue).
+  Spec verification: 100.00% (161/161). S02's own example
+  (`main_selection.sqx`, `run_selection.py`, `benchmark_report.py`)
+  produces byte-identical output before and after this change,
+  confirming no behavior change for already-working programs.
+- The scope actually shipped is bounded, not the full sketch in the
+  original Decision proposal — `hamiltonian.py`/`typecheck.py` unchanged,
+  Operator-typed factory parameters and non-Operator `OpCall` targets
+  unchanged. If a further concrete gap surfaces in either of those,
+  it is new, separate scope, not something this ADR already covers.
 
 ## Acceptance boundary
 
-Acceptance of this ADR authorizes the unification *direction* described
-in Decision proposal as a future architecture boundary. It does **not**
-authorize:
-
-- Any Kernel code change.
-- A decision on eager/lazy timing, the error contract, or dense/
-  diagnostics-walker scope — each remains open pending a Feature Plan
-  investigation.
-- The independently-fixable parameter-array gap and swallowed
-  diagnostic (Rejected/alternative considered, above) as a separate
-  Feature Path bug fix — that may proceed under normal bug-triage rules
-  regardless of this ADR's status, exactly as the S02 `Z*Z` bug did
-  under ADR 0205.
+Acceptance of this ADR authorized the unification described in Decision,
+implemented as [LISS-0407](../../issues/LISS-0407-operator-resolution-unification.md)
+in the same round. It does **not** authorize folding `hamiltonian.py`/
+`typecheck.py` into the same resolver, or extending `OpCall`/factory-
+parameter support beyond what "Scope actually implemented" describes —
+either would be new scope requiring its own investigation.
 
 ## Implementation permission
 
-| Item | Status after Accept |
+| Item | Status |
 |---|---|
-| Architecture (unification direction) | granted only if Accepted |
-| Eager/lazy timing, error contract, walker scope | not decided — future Feature Plan |
+| Architecture (unification direction) | **granted** 2026-08-12 |
+| Design questions (timing, error contract, walker scope) | **resolved** 2026-08-12 (Design questions — resolved, above) |
 | Technology selection | not applicable |
-| Feature Plan (Issue-level Plan) | required separately, not requested by this document |
-| Phase 1 Red / Kernel code | forbidden until a Feature Plan and Plan approval exist |
+| Feature Plan (Issue-level Plan) | [LISS-0407](../../issues/LISS-0407-operator-resolution-unification.md), same-round Plan+Completion approval (Adjudicator's explicit "この回で…修正する" instruction) |
+| Phase 1 Red / Kernel code | **complete** — `runtime/evaluator.py`, `runtime/op_attr_elaboration.py` |
 
 ## Decision history
 
@@ -241,3 +305,5 @@ authorize:
 |---|---|
 | 2026-08-12 | Investigation requested (Adjudicator, S02 remaining-items review) |
 | 2026-08-12 | Investigation complete; this document proposed |
+| 2026-08-12 | Adjudicator asked "physically correct" framing; recommendation given (unification is philosophically correct per the language vision; engineering risk was a separate, sequencing question) |
+| 2026-08-12 | Adjudicator Architecture approval + explicit same-round design-and-fix instruction → **Accepted**; implemented as LISS-0407 |

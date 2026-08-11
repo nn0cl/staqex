@@ -6,7 +6,7 @@ import cmath
 import random
 from dataclasses import dataclass, field
 from fractions import Fraction
-from typing import Any, Callable, TextIO
+from typing import Any, Callable, Mapping, TextIO
 
 from ..continuous_field import (
     ContinuousFieldPort,
@@ -349,6 +349,7 @@ class Evaluator:
         from ..finite_binder import lower_finite_binder_operators
 
         host_arrays = self._resolve_host_coefficient_arrays(unit)
+        self._resolved_host_arrays = host_arrays
         lowered_binders, _ = lower_finite_binder_operators(unit, host_arrays=host_arrays)
         for stmt in unit.main.body.stmts:
             if (
@@ -1931,7 +1932,9 @@ class Evaluator:
             raise KernelError("hamiltonian must be Operator name or Pauli literal")
 
         try:
-            op_ast = materialize_op_attrs(op_ast, self.objects)
+            op_ast = materialize_op_attrs(
+                op_ast, self.objects, operators=self.operators
+            )
         except OpAttrElaborationError as exc:
             raise KernelError(str(exc)) from exc
 
@@ -3196,29 +3199,111 @@ class Evaluator:
             return self._resolve_operator_method_call(expr)
         return self._lower_operator_value(expr)
 
-    def _lower_operator_value(self, expr: Any) -> Any:
-        """Lower finite binders in an Operator AST (LISS-0224).
+    def _operator_array_context(self) -> dict[str, Any]:
+        """Merged Float[N]… coefficient arrays (literal + Host-resolved,
+        ADR 0119/LISS-0406) visible at `main` level, for binder lowering
+        anywhere an Operator AST needs it (LISS-0407)."""
+        from ..finite_binder import _collect_float_arrays
 
-        Top-level `Operator H = sum …` is lowered via
-        ``lower_finite_binder_operators``. Method / free-fn returns historically
-        stored raw ``OpBinder`` nodes; evolve then fails sparse-Pauli compile.
-        """
-        from ..finite_binder import _contains_binder, _lower_operator_expr
-
-        if expr is None or isinstance(expr, (GridHamiltonianRef, str)):
-            return expr
-        try:
-            if not _contains_binder(expr):
-                return expr
-        except TypeError:
-            return expr
         unit = getattr(self, "_unit", None)
         if unit is None:
+            return {}
+        arrays = dict(_collect_float_arrays(unit))
+        arrays.update(getattr(self, "_resolved_host_arrays", None) or {})
+        return arrays
+
+    def _op_expr_arg_to_source_expr(self, arg: Any, call_name: str) -> Any:
+        """Convert an OpExpr Call argument (OpVar/OpLit) into the generic
+        Expr shape `_resolve_operator_factory_call` already understands,
+        so a nested Operator-returning call found anywhere inside a
+        larger Operator expression (LISS-0407) can reuse that existing,
+        tested arg-binding logic unchanged."""
+        if isinstance(arg, OpVar):
+            return Var(name=arg.name, span=arg.span)
+        if isinstance(arg, OpLit):
+            return LitFloat(value=arg.value, span=arg.span)
+        raise KernelError(
+            f"unsupported argument shape `{type(arg).__name__}` in "
+            f"nested Operator call `{call_name}`"
+        )
+
+    def _resolve_op_call(self, call: "OpCall") -> Any:
+        """Inline a call to a known Operator-returning function found
+        anywhere inside an Operator expression tree, not only when it is
+        the entire right-hand side (LISS-0407, closes the LISS-0402
+        "Operator-Call-inline" gap: `scale * f(weights)` previously
+        raised `cannot compile sparse Pauli for OpCall`).
+
+        A call to anything else (e.g. binder-internal `next`/`wrap`
+        helpers, LISS-0373) is left untouched -- those are resolved by a
+        separate, unrelated mechanism inside binder lowering."""
+        fun = self.funs.get(call.name)
+        if fun is None or fun.return_type is None or fun.return_type.name != "Operator":
+            return call
+        call_args = [
+            self._op_expr_arg_to_source_expr(a, call.name) for a in call.args
+        ]
+        synthetic = Call(
+            callee=Var(name=call.name, span=call.span),
+            args=call_args,
+            span=call.span,
+        )
+        return self._resolve_operator_factory_call(synthetic, fun)
+
+    def _resolve_operator_tree(
+        self, expr: Any, *, arrays: Mapping[str, Any]
+    ) -> Any:
+        """Single recursive resolution pass over an Operator AST
+        (LISS-0407 / ADR 0206): inlines Operator-returning function
+        calls found anywhere in the tree, then lowers any remaining
+        finite binder against the merged array context. Preserves
+        object identity when a subtree needs no change."""
+        from ..finite_binder import _contains_binder, _lower_operator_expr
+
+        if isinstance(expr, OpCall):
+            resolved = self._resolve_op_call(expr)
+            if resolved is expr:
+                return expr
+            return self._resolve_operator_tree(resolved, arrays=arrays)
+        if isinstance(expr, OpBin):
+            new_lhs = self._resolve_operator_tree(expr.lhs, arrays=arrays)
+            new_rhs = self._resolve_operator_tree(expr.rhs, arrays=arrays)
+            if new_lhs is expr.lhs and new_rhs is expr.rhs:
+                return expr
+            return OpBin(op=expr.op, lhs=new_lhs, rhs=new_rhs, span=expr.span)
+        if isinstance(expr, OpPow):
+            new_base = self._resolve_operator_tree(expr.base, arrays=arrays)
+            if new_base is expr.base:
+                return expr
+            return OpPow(base=new_base, exp=expr.exp, span=expr.span)
+        if isinstance(expr, OpBinder):
+            unit = getattr(self, "_unit", None)
+            if unit is None:
+                return expr
+            try:
+                if not _contains_binder(expr):
+                    return expr
+            except TypeError:
+                return expr
+            try:
+                return _lower_operator_expr(expr, unit, arrays=arrays)
+            except (IndexError, ValueError) as exc:
+                raise KernelError(f"cannot lower Operator binder: {exc}") from exc
+        return expr
+
+    def _lower_operator_value(
+        self, expr: Any, *, extra_arrays: Mapping[str, Any] | None = None
+    ) -> Any:
+        """Resolve an Operator AST's remaining non-literal nodes (nested
+        Operator-returning calls, finite binders) via
+        `_resolve_operator_tree` (LISS-0407 unifies what used to be a
+        binder-only pass, LISS-0224, into one recursive resolver)."""
+        if expr is None or isinstance(expr, (GridHamiltonianRef, str)):
             return expr
-        try:
-            return _lower_operator_expr(expr, unit)
-        except (IndexError, ValueError):
-            return expr
+        arrays = self._operator_array_context()
+        if extra_arrays:
+            arrays.update(extra_arrays)
+        return self._resolve_operator_tree(expr, arrays=arrays)
 
     def _resolve_operator_factory_call(self, expr: Call, fun: FunDecl) -> Any:
         """Evaluate a `fn … -> Operator` Call into a materialized OpExpr.
@@ -3231,6 +3316,12 @@ class Evaluator:
         local_ops: dict[str, Any] = {}
         # Param-name → ClassInstance | StructValue for OpAttr elaboration.
         local_objects: dict[str, Any] = {}
+        # Param-name → Float[N]… array (LISS-0407): closes the gap where a
+        # Float[N] array threaded as a function parameter and indexed
+        # inside that function's own `sum` binder body never reached the
+        # binder-lowering pass (`cannot compile sparse Pauli for OpBinder`).
+        local_arrays: dict[str, Any] = {}
+        caller_arrays = self._operator_array_context()
         if len(expr.args) != len(fun.params):
             raise KernelError(
                 f"`{fun.name}` expects {len(fun.params)} args, "
@@ -3238,6 +3329,15 @@ class Evaluator:
             )
         for param, arg in zip(fun.params, expr.args):
             if param.ty is not None and param.ty.name == "Operator":
+                continue
+            if (
+                param.ty is not None
+                and param.ty.name == "Float"
+                and len(param.ty.args) >= 1
+                and isinstance(arg, Var)
+                and arg.name in caller_arrays
+            ):
+                local_arrays[param.name] = caller_arrays[arg.name]
                 continue
             # Object params (struct/class) — map under the parameter name.
             if isinstance(arg, Var) and arg.name in self.objects:
@@ -3261,10 +3361,12 @@ class Evaluator:
                 local_operators=local_ops,
             )
             try:
-                folded = materialize_op_attrs(folded, attr_objects)
+                folded = materialize_op_attrs(
+                    folded, attr_objects, operators=self.operators
+                )
             except OpAttrElaborationError as exc:
                 raise KernelError(str(exc)) from exc
-            return self._lower_operator_value(folded)
+            return self._lower_operator_value(folded, extra_arrays=local_arrays)
 
         for stmt in fun.body.stmts:
             if not isinstance(stmt, StateBind) or stmt.ty is None:
