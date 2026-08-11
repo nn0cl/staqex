@@ -1,4 +1,4 @@
-// CH-selection-spine — S02 finite candidate-selection experiment (LISS-0406).
+// CH-selection-spine — S02 finite candidate-selection experiment (LISS-0408).
 // Hard constraints (Projector) and soft objective (Hamiltonian evolution)
 // act on the SAME quantum coordinate: LISS-0404 (ADR 0205) shipped
 // Pauli-term Hamiltonian evolution on tuple-valued coordinates, so
@@ -7,26 +7,45 @@
 // two-coordinate design, superseded by LISS-0405).
 // Field terms carry genuine per-candidate weight (LISS-0406): activity_w/
 // selectivity_w are Host-computed per-candidate arrays (ADR 0119
-// coefficient tensor, wired to HostInputPort/ADR 0194 by LISS-0406) --
-// the SAME values host/scoring.py's classical baseline scores against,
-// not one scalar shared by every position (LISS-0405's disclosed gap).
+// coefficient tensor, wired to HostInputPort/ADR 0194) -- the SAME
+// values host/scoring.py's classical baseline scores against, not one
+// scalar shared by every position (LISS-0405's disclosed gap).
 // Host owns the candidate manifest, HostInputPort predicate/weight
 // arrays, and the classical baseline (host/run_selection.py,
 // host/classical_baseline.py, host/scoring.py).
 // SIM-only; not a chemistry, clinical, or quantum-advantage claim.
 //
-// Disclosed compiler limitations found while writing this (out of scope
-// here, not worked around with less-honest source shape): a `Float[N]`
-// array cannot be threaded through a free-function parameter into a
-// `sum` binder body ("cannot compile sparse Pauli for OpBinder"), and a
-// struct-field access (e.g. `weights.activity`) cannot be used directly
-// as an Operator coefficient outside a function-call return position
-// ("cannot compile sparse Pauli for OpAttr") -- both are why the field
-// terms and scalar multipliers below are built with plain local
-// variables at `main` level instead of a separate `objective_hamiltonian`
-// function taking a weights struct and array parameters.
+// Written in its natural physicist form (LISS-0408, using LISS-0407 /
+// ADR 0206's unified Operator resolution): a named ObjectiveWeights
+// struct, a reusable objective_hamiltonian(...) factory taking both the
+// struct and the per-candidate Host arrays as parameters, called inline
+// while scaling (`scale * objective_hamiltonian(...)`). Each of these
+// three combinations previously failed to compile before LISS-0407
+// closed the gap -- this file no longer needs to work around any of
+// them. Confirmed byte-identical terminal distribution to the earlier,
+// flattened main()-level form.
 
 package examples.showcase.s02_drug_discovery
+
+struct ObjectiveWeights {
+    activity: Float,
+    selectivity: Float,
+    diversity: Float
+}
+
+// Named weighted objective terms (S02 expressiveness review P1 finding),
+// with genuine per-candidate field weights (LISS-0406) and a reusable
+// factory shape (LISS-0408) -- the form a physicist would naturally
+// reach for: a struct of named weights, an array of per-candidate
+// values, combined inside one function.
+fn objective_hamiltonian(w: ObjectiveWeights, activity_w: Float[8], selectivity_w: Float[8]) -> Operator {
+    Operator z_field = sum (i in Index<0..7>) { activity_w[i] * Z[i] }
+    Operator x_field = sum (i in Index<0..7>) { selectivity_w[i] * X[i] }
+    Operator coupling = sum (i in Index<0..7>, j in Index<0..7>) where i < j {
+        Z[i] * Z[j]
+    }
+    return w.activity * z_field + w.selectivity * x_field + w.diversity * coupling
+}
 
 pub fn main() -> Unit {
     // --- Hard-constraint selection subspace ---
@@ -42,10 +61,6 @@ pub fn main() -> Unit {
     )
 
     // --- Soft-objective evolution, directly on psi_sel (LISS-0404 / ADR 0205) ---
-    // Per-candidate field weights (LISS-0406): `sum (i in Index<0..7>) {
-    // w[i] * Z[i] }` already-shipped Index/sum/host("key") surface
-    // (LISS-0230/0232, ADR 0119) -- only the Evaluator-side HostInputPort
-    // wiring was missing before this Issue.
     Float[8] activity_w = host("activity_weights")
     Float[8] selectivity_w = host("selectivity_weights")
     // Re-tuned from LISS-0405's 0.02/0.01/0.01 (empirical sweep, LISS-0406
@@ -54,17 +69,11 @@ pub fn main() -> Unit {
     // the projector/evolution structure to actually shift which feasible
     // pattern gets sampled -- confirmed by direct execution across
     // several weight/duration combinations, not guessed.
-    Float w_activity = 2.0
-    Float w_selectivity = 1.0
-    Float w_diversity = 1.0
-    Operator z_field = sum (i in Index<0..7>) { activity_w[i] * Z[i] }
-    Operator x_field = sum (i in Index<0..7>) { selectivity_w[i] * X[i] }
-    Operator coupling = sum (i in Index<0..7>, j in Index<0..7>) where i < j {
-        Z[i] * Z[j]
+    ObjectiveWeights weights = ObjectiveWeights {
+        activity: 2.0, selectivity: 1.0, diversity: 1.0
     }
-    Operator H_obj_raw = w_activity * z_field + w_selectivity * x_field + w_diversity * coupling
     Energy scale = 1.0.eV to J
-    Operator H_obj = scale * H_obj_raw
+    Operator H_obj = scale * objective_hamiltonian(weights, activity_w, selectivity_w)
     Time dur = 0.6.fs
     state psi_sel = evolve psi_sel under H_obj for dur
 
