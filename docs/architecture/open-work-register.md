@@ -442,6 +442,27 @@ Issue gives them a concrete scope:
   trait/effect: do not open new Kernel surface ahead of a demonstrated
   need. `FiniteManifestWitness` (Host-only, LISS-0321) remains the real
   shipped mechanism; do not re-open without a concrete requirement.
+- **Operator coefficient/binder resolution unification:**
+  [ADR 0206](adr/0206-operator-coefficient-resolution-unification.md)
+  (**Proposed**, 2026-08-12) — investigation only, no implementation
+  authorized. S02 work (LISS-0402/0405/0406) surfaced three separate,
+  incrementally-shipped Operator-coefficient resolution mechanisms
+  (function-call return-position inlining, `finite_binder.py`'s
+  top-level-only array lowering, and a third pass fired from `evolve`'s
+  own call site) that don't compose — a `Float[N]` array threaded as a
+  function parameter into a `sum` binder still fails
+  (`cannot compile sparse Pauli for OpBinder`), and the real diagnostic
+  explaining why is silently discarded (`evaluator.py:3220-3221`).
+  git/Issue lineage (LISS-0052→0136→0137→0139→0224→0297→0306) shows six
+  narrow patches to the same underlying question, not one design.
+  Investigation sized full unification as multi-week, ~1,000+ lines
+  across 6 files (`evaluator.py`, `op_attr_elaboration.py`,
+  `finite_binder.py`, `sparse_pauli.py`, plus the parallel
+  `hamiltonian.py`/`typecheck.py` walkers), with real regression risk —
+  proposed as an Architecture Path direction, not decided. The narrower,
+  independently-fixable parameter-array gap and swallowed diagnostic may
+  proceed as an ordinary Feature Path bug fix regardless of this ADR's
+  outcome, matching ADR 0205's own treatment of the disclosed `Z*Z` bug.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the
