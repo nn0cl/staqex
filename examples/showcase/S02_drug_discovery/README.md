@@ -61,21 +61,31 @@ python3 examples/showcase/S02_drug_discovery/host/benchmark_report.py
 - SIM-only; no live QPU, no optimality claim.
 - The classical baseline and the Kernel program are cross-checked to
   agree on the *feasible set* (same predicates, same manifest) — they are
-  not required to pick the same terminal pattern, since the Kernel
-  program samples uniformly over the feasible subspace at terminal
-  `measure` rather than maximizing the objective before sampling.
+  not required to pick the same terminal pattern.
 - Candidate identity (descriptors, scores, tags) never crosses into the
   Kernel — only the finite width `n` and the Host-computed predicate
   matrices do, per the S02 acceptance spec's own boundary contract.
-- **Disclosed architecture finding (LISS-0403):** `benchmark_report.py`'s
-  `top_k_overlap` metric measures near-zero. This is real, not a bug: the
-  hard-constraint selection (`prepare_selection` + `project onto
-  feasible(...)`) and the soft-objective evolution (`H_obj` on a separate
-  qubit pair) are two independent coordinates — `H_obj`'s evolution
-  currently has no channel through which to bias *which* feasible
-  selection gets sampled, because candidate identity never reaches the
-  Kernel and `prepare_selection`'s tuple-valued coordinate cannot itself
-  be evolved under an ordinary Pauli-term `Operator` (LISS-0402 finding).
-  Closing this is a real Staqex expressiveness gap, deliberately left
-  open pending Architecture Path review rather than worked around with
-  new Kernel surface invented ahead of that review.
+- **Architecture fix shipped (LISS-0404/ADR 0205, applied here in
+  LISS-0405):** `prepare_selection`'s tuple-valued coordinate can now be
+  evolved directly under an ordinary Pauli-term `Operator` (`Z[i]`/`X[i]`
+  indexed field terms). `main_selection.sqx`'s `H_obj` now acts on
+  `psi_sel` itself — not a disconnected qubit pair — and measurably
+  biases the terminal distribution away from uniform-over-feasible
+  (verified: per-pattern probabilities range `~1.4e-11`–`~0.0399` across
+  the 25 feasible patterns, not the old design's implicit uniform
+  `1/25`).
+- **Disclosed expressiveness finding (LISS-0405), superseding the old
+  LISS-0403 note:** `benchmark_report.py`'s `top_k_overlap` metric still
+  measures `0.0` even after the architecture fix above. This is real,
+  not a bug, and not the same gap as before: `objective_hamiltonian`
+  gives every one of the 8 candidate positions the *same* scalar weight
+  (`activity`/`selectivity`/`diversity` are per-run constants, not
+  per-candidate), so the bias it produces has no per-candidate structure
+  to correlate against `scoring.py`'s independent per-candidate
+  `build_candidate_scores` proxy used for `baseline_top_k`. Making the
+  two agree would need a further, unshipped mechanism for Host-computed
+  *per-position weights* (not candidate identity — the existing boundary
+  contract above is unaffected) to enter an `Operator`'s field terms,
+  e.g. a `Float[]` bound via `HostInputPort` and indexed into
+  `sum (i in Index<0..7>) { w[i] * Z[i] }`. Left open pending direction,
+  not worked around ahead of review.

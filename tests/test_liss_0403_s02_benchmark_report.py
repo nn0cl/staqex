@@ -53,9 +53,10 @@ def test_benchmark_report_shape_and_honesty() -> None:
 
     # Result contract: resource metadata is not fabricated -- every field
     # traces to a value this module actually knows (the .sqx source's own
-    # Suzuki params, the fixture's own candidate count).
+    # term count, the fixture's own candidate count). LISS-0405: H_obj now
+    # evolves psi_sel directly (no separate Suzuki-stepped objective pair).
     assert report.resource_metadata["candidate_count"] == 8
-    assert report.resource_metadata["suzuki_steps"] == 4
+    assert report.resource_metadata["hamiltonian_term_count"] == 44
 
     qm = report.quality_metrics
     assert qm["shots"] == 6
