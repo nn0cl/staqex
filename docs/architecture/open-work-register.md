@@ -445,7 +445,7 @@ Issue gives them a concrete scope:
 - **Operator coefficient/binder resolution unification:**
   [ADR 0206](adr/0206-operator-coefficient-resolution-unification.md)
   (**Accepted**, 2026-08-12) / [LISS-0407](../issues/LISS-0407-operator-resolution-unification.md)
-  (**complete**) — S02 work (LISS-0402/0405/0406) surfaced three
+  (**complete** — PR [#533](https://github.com/nn0cl/staqex/pull/533)) — S02 work (LISS-0402/0405/0406) surfaced three
   separate, incrementally-shipped Operator-coefficient resolution
   mechanisms (function-call return-position inlining, `finite_binder.py`'s
   top-level-only array lowering, and a third pass fired from `evolve`'s
