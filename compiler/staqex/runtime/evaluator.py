@@ -277,6 +277,45 @@ class Evaluator:
         with world_workers(self.data_parallel_workers):
             return self._run_unit_body(unit, stdout=stdout)
 
+    def _resolve_host_coefficient_arrays(self, unit: CompilationUnit) -> dict[str, Any]:
+        """Wire HostInputPort into the ADR 0119 coefficient-tensor path
+        (LISS-0406): resolve every `Float[N]... = host("key")` placeholder
+        the source itself declares against `self.host_input`, fail closed
+        on anything missing or malformed."""
+        from ..finite_binder import _host_placeholder_keys, merge_host_coefficient_arrays
+        from ..scientific_input import (
+            CoefficientTensor,
+            InputProvenance,
+            ScientificInputValidationError,
+        )
+
+        placeholders = _host_placeholder_keys(unit)
+        if not placeholders:
+            return {}
+        host_tensors: dict[str, Any] = {}
+        for _local_name, (host_key, shape) in placeholders.items():
+            if host_key in host_tensors:
+                continue
+            raw = self.host_input.get(host_key) if self.host_input is not None else None
+            if raw is None:
+                continue  # merge_host_coefficient_arrays reports HOST_COEFFICIENT_MISSING
+            try:
+                host_tensors[host_key] = CoefficientTensor(
+                    name=host_key,
+                    shape=shape,
+                    values=raw,
+                    provenance=InputProvenance(
+                        source_formula="HostInputPort", input_id=host_key
+                    ),
+                )
+            except ScientificInputValidationError as error:
+                raise KernelDiagnosticError(error.code, str(error)) from error
+        arrays, diagnostics = merge_host_coefficient_arrays(unit, host_tensors)
+        if diagnostics:
+            first = diagnostics[0]
+            raise KernelDiagnosticError(first["code"], first["message"])
+        return arrays
+
     def _run_unit_body(
         self, unit: CompilationUnit, *, stdout: TextIO | None = None
     ) -> EvalResult:
@@ -309,7 +348,8 @@ class Evaluator:
         }
         from ..finite_binder import lower_finite_binder_operators
 
-        lowered_binders, _ = lower_finite_binder_operators(unit)
+        host_arrays = self._resolve_host_coefficient_arrays(unit)
+        lowered_binders, _ = lower_finite_binder_operators(unit, host_arrays=host_arrays)
         for stmt in unit.main.body.stmts:
             if (
                 isinstance(stmt, StateBind)
@@ -419,6 +459,17 @@ class Evaluator:
                 if stmt.ty is not None and stmt.ty.name == "QubitRegister":
                     # Static Hilbert shape is compile-time metadata; it has no
                     # runtime allocation or state coordinate in the Kernel.
+                    continue
+                if (
+                    stmt.ty is not None
+                    and stmt.ty.name == "Float"
+                    and len(stmt.ty.args) >= 1
+                ):
+                    # LISS-0406: `Float[N]…` coefficient-tensor declarations
+                    # (ADR 0119, literal or `host("key")`-sourced) are
+                    # compile-time coefficient data consumed only via the
+                    # Operator sum-binder lowering above (host_arrays) --
+                    # they have no live Joint/scalar role.
                     continue
                 if stmt.ty is not None and stmt.ty.name == "Operator":
                     if len(stmt.names) != 1:
