@@ -505,6 +505,7 @@ Issue gives them a concrete scope:
   (`_resolve_unitary_matrix`) still read raw, unresolved AST directly
   and rejected the exact struct-field forms `evolve` already accepted.
   [LISS-0410](../issues/LISS-0410-operator-resolver-completion.md)
+  (PR [#539](https://github.com/nn0cl/staqex/pull/539))
   folds `OpAttr` into `_resolve_operator_tree` for real (threading an
   `objects` context parameter through the whole call chain, found
   necessary after a factory-function regression — A11/Noether-Forge —
@@ -516,7 +517,8 @@ Issue gives them a concrete scope:
   was also corrected: that form was never supported at all, unrelated
   to this gap. Full regression 1464 passed; spec verification 100.00%
   (161/161). **Static-analysis side closed 2026-08-12**:
-  [LISS-0411](../issues/LISS-0411-static-operator-resolution.md) fixed
+  [LISS-0411](../issues/LISS-0411-static-operator-resolution.md)
+  (PR [#540](https://github.com/nn0cl/staqex/pull/540)) fixed
   `unitarity_check.py`'s silent safety-gate bypass (`apply(Bad, psi)`
   with a genuinely non-unitary struct-field coefficient passed `check`
   with "ok" instead of `NON_UNITARY_TRANSFORM_ERROR`) and the QASM/
