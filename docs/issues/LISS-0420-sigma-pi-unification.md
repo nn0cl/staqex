@@ -1,5 +1,15 @@
 # LISS-0420: unify `sum`/`product` into `Sigma`/`Pi`, State-typed ket-sum
 
+> **Amended by [LISS-0422](LISS-0422-sigma-literal-unnormalized-correction.md).**
+> This Issue's ket-sum was shipped as self-normalizing (equal probability
+> weight per branch). Adjudicator review during LISS-0421 found this wrong
+> against the bare blackboard `Sigma` symbol, which denotes a literal,
+> unnormalized sum — normalization is the equation's own separate,
+> explicit coefficient, not something `Sigma` should supply implicitly.
+> LISS-0422 corrected `_bind_ket_sum_binder` accordingly; "Hard Stop 2" and
+> the "self-normalizing" framing below are the historical record of the
+> (incorrect) original decision, kept as-is rather than rewritten.
+
 ## Metadata
 
 - Local issue ID: LISS-0420

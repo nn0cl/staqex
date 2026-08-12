@@ -21,6 +21,7 @@ from .ast_nodes import (
     Expr,
     Inspect,
     KetLit,
+    KetSumBinder,
     Lambda,
     LitBool,
     LitFloat,
@@ -491,6 +492,8 @@ def _expr_is_quantum(
 ) -> bool:
     ops = _STRICT_QUANTUM_OPS if strict_mode else _QUANTUM_OPS
     if isinstance(expr, KetLit):
+        return True
+    if isinstance(expr, KetSumBinder):
         return True
     if isinstance(expr, Coin):
         return False
