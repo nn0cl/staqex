@@ -48,6 +48,7 @@ from .ast_nodes import (
     Pipe,
     ReturnStmt,
     RevDomain,
+    SetPowerDomain,
     Snapshot,
     StateBind,
     StructDecl,
@@ -111,6 +112,8 @@ class Ty:
             base = f"DiagnosticView<{self.payload}>"
         elif self.kind == "Continuous":
             base = f"Continuous<{self.payload}>"
+        elif self.kind == "Domain":
+            base = f"Domain<{self.payload}>"
         elif self.dim.is_dimensionless():
             base = f"State<{self.payload}>"
         else:
@@ -2799,6 +2802,22 @@ class TypeChecker:
             return Ty("State", "Coin", DIMLESS)
         if isinstance(expr, Vacuum):
             return Ty("State", "Any", DIMLESS)
+        if isinstance(expr, SetPowerDomain):
+            # LISS-0417: reserved ahead of its consumer (LISS-0420's
+            # Sigma/Pi binder domain) -- width must be a dimensionless
+            # classical Int/Float; no runtime evaluation path exists yet.
+            width_ty = self._infer(expr.width)
+            if not width_ty.dim.is_dimensionless():
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "`{...}^n` width must be dimensionless",
+                    }
+                )
+            labels = ",".join(str(v) for v in expr.labels)
+            return Ty("Domain", f"BitTuple<{{{labels}}}>", DIMLESS)
         if isinstance(expr, Dirac):
             inner = self._infer(expr.arg)
             return Ty("State", inner.payload, inner.dim)

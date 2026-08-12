@@ -85,6 +85,7 @@ from .ast_nodes import (
     Snapshot,
     ScientificScopeDecl,
     Span,
+    SetPowerDomain,
     StateBind,
     StructDecl,
     SuzukiPolicy,
@@ -2489,6 +2490,16 @@ class Parser:
                 return BlockExpr(lets=body.lets, result=body.result, span=body.span)
             self._advance()  # LBRACE
             items = self._comma_expr_items(TokenKind.RBRACE)
+            # LISS-0417: `{0,1}^n` set-power domain -- disambiguated from
+            # the anticommutator by a trailing `^` after the closing brace.
+            # Reserved ahead of its consumer (LISS-0420's Sigma/Pi binder).
+            if self._check(TokenKind.CARET) and items and all(
+                isinstance(it, LitInt) for it in items
+            ):
+                self._advance()  # CARET
+                width = self._power()
+                labels = [int(it.value) for it in items]  # type: ignore[union-attr]
+                return SetPowerDomain(labels=labels, width=width, span=sp)
             if len(items) != 2:
                 raise ParseError(
                     "anticommutator braces `{A, B}` require exactly two operands",

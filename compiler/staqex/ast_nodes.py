@@ -85,6 +85,20 @@ class Vacuum:
 
 
 @dataclass
+class SetPowerDomain:
+    """Literal set-power domain: `{0,1}^n` (LISS-0417) -- the Cartesian
+    power of a small literal label set, e.g. `{0,1}^n` = all n-tuples over
+    {0,1}. `labels` are the literal set members (usually `[0, 1]`, but
+    `{0,1,2}^n` for a qudit domain parses the same way); `width` is the
+    power exponent expression. Reserved ahead of its consumer (LISS-0420's
+    `Sigma`/`Pi` binder domain) -- not evaluated at runtime yet."""
+
+    labels: list[int]
+    width: "Expr"
+    span: Span
+
+
+@dataclass
 class BinOp:
     op: str  # + - * / == != < <= > >=
     lhs: "Expr"
@@ -485,6 +499,7 @@ Expr = Union[
     TensorExpr,
     UnaryNot,
     MeasureExpr,
+    SetPowerDomain,
 ]
 
 
