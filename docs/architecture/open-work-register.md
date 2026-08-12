@@ -543,7 +543,8 @@ Issue gives them a concrete scope:
   3 more real gaps, empirically verified: (a) second-quantization JW
   mapping never resolved a struct-field coefficient (two independent
   bugs — a parser lookahead gap and a missing `OpAttr` case — fixed as
-  [LISS-0412](../issues/LISS-0412-second-quantization-struct-field-coefficients.md));
+  [LISS-0412](../issues/LISS-0412-second-quantization-struct-field-coefficients.md)
+  (PR [#542](https://github.com/nn0cl/staqex/pull/542)));
   (b) `Evaluator._bind_method` (`evaluator.py:3717`) stores a class-
   method-local `Operator` bind raw, unresolved; (c) `_bind_user_fun`
   (`evaluator.py:4135`) does the same for a library-`fn`-local
