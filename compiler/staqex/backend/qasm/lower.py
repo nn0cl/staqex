@@ -131,6 +131,13 @@ def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
     # (LISS-0032, ADR 0093).
     second_quantized_env: dict[str, object] = {}
     lowered_binders, _ = lower_finite_binder_operators(unit)
+    # LISS-0411/0412 (ADR 0206 completion for this static-only backend):
+    # struct-of-literals objects, needed both for the JordanWigner
+    # mapping below (struct-field fermionic coefficients) and for the
+    # op_env resolution pass after the loop.
+    from ...static_operator_resolution import collect_static_operator_context
+
+    _, _, static_objects = collect_static_operator_context(unit)
     for b in binds:
         if b.ty is not None and b.ty.name == "Operator" and len(b.names) == 1:
             op_env[b.names[0]] = lowered_binders.get(b.names[0], b.expr)  # type: ignore[assignment]
@@ -184,7 +191,7 @@ def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
             if b.ty.name == "QubitOperator":
                 try:
                     mapped_expr = resolve_mapping_expr(
-                        b.expr, second_quantized_env, scalars
+                        b.expr, second_quantized_env, scalars, static_objects
                     )
                 except SecondQuantizationMappingError:
                     mapped_expr = None
@@ -199,12 +206,8 @@ def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
     # (LISS-0407/0410) -- e.g. `Operator H = scale * f(weights)` already
     # runs fine via `evolve`; QASM emission previously still hit the
     # pre-ADR-0206 vague `cannot compile sparse Pauli for OpCall`.
-    from ...static_operator_resolution import (
-        collect_static_operator_context,
-        resolve_static_operator,
-    )
+    from ...static_operator_resolution import resolve_static_operator
 
-    _, _, static_objects = collect_static_operator_context(unit)
     for op_name, op_ast in list(op_env.items()):
         try:
             op_env[op_name] = resolve_static_operator(

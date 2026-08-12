@@ -1979,6 +1979,14 @@ class Parser:
                 TokenKind.IDENT,
             ):
                 offset += 1
+                # LISS-0412: a dotted struct-field chain is a single
+                # coefficient term too (`weights.e0 * create[0]...`),
+                # not just a bare literal or scalar name.
+                while (
+                    self._peek_at_kind(offset) == TokenKind.DOT
+                    and self._peek_at_kind(offset + 1) == TokenKind.IDENT
+                ):
+                    offset += 2
             else:
                 return False
             if self._peek_at_kind(offset) != TokenKind.STAR:
