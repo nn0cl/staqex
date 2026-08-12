@@ -54,6 +54,8 @@ class TokenKind(Enum):
     UNTIL = auto()
     MAX = auto()
     ONTO = auto()
+    IN_SET = auto()  # `In` (LISS-0416): Sigma/Pi binder-domain membership,
+    # distinct from lowercase `in` (forEach's classical collection iteration)
 
     # Forbidden (hard error — still emitted so diagnostics have spans)
     FORBIDDEN = auto()
@@ -153,6 +155,7 @@ CONTEXTUAL: dict[str, TokenKind] = {
     "until": TokenKind.UNTIL,
     "max": TokenKind.MAX,
     "onto": TokenKind.ONTO,
+    "In": TokenKind.IN_SET,
 }
 
 FORBIDDEN: set[str] = {
