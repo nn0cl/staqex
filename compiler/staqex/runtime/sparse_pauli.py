@@ -200,7 +200,7 @@ def _eval(
             )
         if op.acting_space != n:
             raise ValueError("identity acting space does not match the target register")
-        return [] if op.kind == "sum" else _identity(n)
+        return [] if op.kind == "Sigma" else _identity(n)
     if isinstance(op, OpLit):
         return _identity(n, complex(op.value))
     if isinstance(op, OpPauli):

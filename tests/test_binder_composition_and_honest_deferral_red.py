@@ -39,9 +39,9 @@ _COMPOSED_SUMS = """
 package t
 pub fn main() -> Unit {
     QubitRegister<4> register = system()
-    Operator H = sum (i in Index<0..2>) {
+    Operator H = Sigma (i In Index<0..2>) {
         -1.0545718e-19 * Z[i] * Z[next(i)]
-    } + sum (i in Index<0..3>) {
+    } + Sigma (i In Index<0..3>) {
         -1.0545718e-19 * X[i]
     }
     State a = |+>
@@ -81,7 +81,7 @@ package t
 pub fn main() -> Unit {
     QubitRegister<4> register = system()
     Float J = 1.0545718e-19
-    Operator H = sum (i in Index<0..2>) {
+    Operator H = Sigma (i In Index<0..2>) {
         J * Z[i] * Z[next(i)]
     }
     State a = |+>
@@ -101,7 +101,7 @@ _PRODUCT = """
 package t
 pub fn main() -> Unit {
     QubitRegister<4> register = system()
-    Operator parity = product (i in Index<0..3>) { Z[i] }
+    Operator parity = Pi (i In Index<0..3>) { Z[i] }
     State a = |+>
     Measure a
 }
@@ -125,7 +125,7 @@ def test_composed_sums_emit_qasm() -> None:
 
 def test_named_scalar_coefficient_in_binder_matches_literal_coefficient() -> None:
     named = _run(_NAMED_COEFFICIENT)
-    literal = _run(_COMPOSED_SUMS.replace(" + sum (i in Index<0..3>) {\n        -1.0545718e-19 * X[i]\n    }", ""))
+    literal = _run(_COMPOSED_SUMS.replace(" + Sigma (i In Index<0..3>) {\n        -1.0545718e-19 * X[i]\n    }", ""))
 
     assert named.status == "succeeded", named.diagnostics
     assert named.measurements[0].marginal == literal.measurements[0].marginal

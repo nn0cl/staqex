@@ -30,6 +30,7 @@ from .ast_nodes import (
     Inspect,
     BraLit,
     KetLit,
+    KetSumBinder,
     Lambda,
     ListExpr,
     LitBool,
@@ -2854,6 +2855,20 @@ class TypeChecker:
                 )
             labels = ",".join(str(v) for v in expr.labels)
             return Ty("Domain", f"BitTuple<{{{labels}}}>", DIMLESS)
+        if isinstance(expr, KetSumBinder):
+            # LISS-0420: `Sigma (x In {0,1}^n) { |x> }` -- a State-typed
+            # ket-sum, structurally identical to `prepare_selection(n)`.
+            width_ty = self._infer(expr.domain.width)
+            if not width_ty.dim.is_dimensionless():
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Sigma ket-sum domain width must be dimensionless",
+                    }
+                )
+            return Ty("State", "Any", DIMLESS)
         if isinstance(expr, Dirac):
             inner = self._infer(expr.arg)
             return Ty("State", inner.payload, inner.dim)

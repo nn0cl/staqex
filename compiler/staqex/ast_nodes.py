@@ -85,6 +85,23 @@ class Vacuum:
 
 
 @dataclass
+class KetSumBinder:
+    """`Sigma (x In {0,1}^n) { |x> }` (LISS-0420): a State built as an
+    equal-weight sum over a literal bit-tuple domain -- structurally
+    identical to `prepare_selection(n)` for this case, expressed via
+    general Sigma-notation instead of a named primitive. The body is
+    always a bare `|<bound-var>>` ket; a per-term coefficient belongs
+    OUTSIDE the Sigma (multiplying the whole sum), matching the
+    equation's own layout. A per-term coefficient *inside* the body
+    (`w[x] * |x>`) is out of scope -- it would need indexing a classical
+    array by a tuple-valued variable, a separate future capability."""
+
+    variable: str
+    domain: "SetPowerDomain"
+    span: Span
+
+
+@dataclass
 class SetPowerDomain:
     """Literal set-power domain: `{0,1}^n` (LISS-0417) -- the Cartesian
     power of a small literal label set, e.g. `{0,1}^n` = all n-tuples over
@@ -500,6 +517,7 @@ Expr = Union[
     UnaryNot,
     MeasureExpr,
     SetPowerDomain,
+    KetSumBinder,
 ]
 
 

@@ -21,7 +21,7 @@ def _where_sum_program() -> str:
     return """
 package t
 pub fn main() -> Unit {
-  Operator H = sum (i in Index<0..1>, j in Index<0..1>) where i < j {
+  Operator H = Sigma (i In Index<0..1>, j In Index<0..1>) where i < j {
       1.0545718e-19 * (Z[i] * Z[j])
   }
   State a = |+>
@@ -67,7 +67,7 @@ def test_empty_outer_sum_still_rejected_without_register() -> None:
         """
 package t
 pub fn main() -> Unit {
-  Operator H = sum (i in Index<3..1>) { Z[i] }
+  Operator H = Sigma (i In Index<3..1>) { Z[i] }
   State psi = |0>
   State out = Evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
   Measure out

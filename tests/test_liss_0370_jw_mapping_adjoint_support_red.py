@@ -24,7 +24,7 @@ def test_adjoint_inside_binder_matches_annihilate() -> None:
         package t
         pub fn main() -> Unit {{
             QubitRegister<2> register = system()
-            Operator H = sum (i in Index<0..1>) {{ {_K} * (create[i] * {term}) }}
+            Operator H = Sigma (i In Index<0..1>) {{ {_K} * (create[i] * {term}) }}
             State a = |+>
             State b = |0>
             State (a, b) = Evolve {{ (a, b) under H for 1.0.fs using Suzuki(order = 2, steps = 8) }}.run()

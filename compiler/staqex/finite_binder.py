@@ -31,7 +31,7 @@ from .second_quantization import SecondQuantizationMappingError, jordan_wigner_m
 from .kernel_literals import RELATIONAL as _GUARD_OPERATORS
 
 MAX_EXPANSION_TERMS = 1_000_000
-_BINDER_KINDS = frozenset({"sum", "product"})
+_BINDER_KINDS = frozenset({"Sigma", "Pi"})  # LISS-0420: renamed from sum/product
 _INDEX_ACCESSORS = frozenset({"next", "wrap"})
 _INDEX_ACCESS_ERROR = (
     "indexed Pauli must use the binder, next(binder), or wrap(binder)"
@@ -352,18 +352,18 @@ def _lower_executable_expr(expr: OpExpr, context: _Context) -> OpExpr:
 def _fold_operator_terms(
     terms: list[OpExpr], kind: str, span: Any, acting_space: int | None = None
 ) -> OpExpr:
-    # LISS-0226: nested empty `sum` contributes additive zero, not an
+    # LISS-0226: nested empty `Sigma` contributes additive zero, not an
     # undetermined OpIdentity sibling inside a non-empty outer sum.
-    if kind == "sum":
+    if kind == "Sigma":
         terms = [
             term
             for term in terms
-            if not (isinstance(term, OpIdentity) and term.kind == "sum")
+            if not (isinstance(term, OpIdentity) and term.kind == "Sigma")
         ]
     if not terms:
         return OpIdentity(kind=kind, acting_space=acting_space, span=span)
     result = terms[0]
-    operator = "+" if kind == "sum" else "*"
+    operator = "+" if kind == "Sigma" else "*"
     for term in terms[1:]:
         result = OpBin(op=operator, lhs=result, rhs=term, span=span)
     return result
@@ -734,7 +734,7 @@ def _operator_metadata(
             )
         ]
     domain = {"start": start, "end": end, "inclusive": True}
-    operation = "Sum" if expr.kind == "sum" else "Product"
+    operation = "Sum" if expr.kind == "Sigma" else "Product"
     return (
         {
             "operator": name,

@@ -27,7 +27,7 @@ def test_classical_partial_float_bind_then_binder() -> None:
             [0.0, 0.5],
         ]
         Float[2] row = h[1]
-        Operator H = sum (q in Index<0..1>) {
+        Operator H = Sigma (q In Index<0..1>) {
             row[q] * Z[q]
         }
         State a = |0>
@@ -52,7 +52,7 @@ def test_partial_as_scalar_coeff_still_rejected() -> None:
         pub fn main() -> Unit {
             QubitRegister<2> register = system()
             Float[2][2] h = [[1.0, 0.0], [0.0, 0.5]]
-            Operator H = sum (p in Index<0..1>) {
+            Operator H = Sigma (p In Index<0..1>) {
                 h[p] * Z[p]
             }
             State a = |0>

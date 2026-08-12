@@ -47,7 +47,7 @@ pub fn main() -> Unit {{
 
 
 def test_site_free_identity_uses_declared_register_shape() -> None:
-    source = _program("sum (i in Index<3..1>) { Z[i] }")
+    source = _program("Sigma (i In Index<3..1>) { Z[i] }")
     compiled = compile_source(source)
 
     assert compiled.ok, compiled.diagnostics

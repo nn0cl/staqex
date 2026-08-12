@@ -26,7 +26,7 @@ def test_finite_sum_is_a_typed_formula_expression() -> None:
         package t
         pub fn main() -> Unit {
             Dimension sites = 4
-            Operator H = sum (i in sites) { Z[i] * Z[next(i)] }
+            Operator H = Sigma (i In sites) { Z[i] * Z[next(i)] }
             State<Int> observed = Coin()
             Measure observed
         }
@@ -41,7 +41,7 @@ def test_product_is_not_an_imperative_runtime_loop() -> None:
         """
         package t
         pub fn main() -> Unit {
-            Operator H = product (i in Index<4>) {
+            Operator H = Pi (i In Index<4>) {
                 log(i)
             }
             State<Int> observed = Coin()
@@ -59,7 +59,7 @@ def test_binder_rejects_execution_count_as_a_theory_domain() -> None:
         package t
         pub fn main() -> Unit {
             ShotCount shots = 1000
-            Operator H = sum (i in shots) { Z[i] }
+            Operator H = Sigma (i In shots) { Z[i] }
             State<Int> observed = Coin()
             Measure observed
         }
@@ -75,7 +75,7 @@ def test_binder_preserves_source_when_expansion_budget_is_exceeded() -> None:
         package t
         pub fn main() -> Unit {
             Dimension sites = 1000000000
-            Operator H = sum (i in sites) { Z[i] }
+            Operator H = Sigma (i In sites) { Z[i] }
             State<Int> observed = Coin()
             Measure observed
         }
@@ -91,7 +91,7 @@ def test_empty_or_zero_dimension_domain_is_rejected() -> None:
         package t
         pub fn main() -> Unit {
             Dimension sites = 0
-            Operator H = sum (i in sites) { Z[i] }
+            Operator H = Sigma (i In sites) { Z[i] }
             State<Int> observed = Coin()
             Measure observed
         }
@@ -106,7 +106,7 @@ def test_index_type_domain_requires_positive_finite_shape() -> None:
         """
         package t
         pub fn main() -> Unit {
-            Operator H = sum (i in Index<0>) { Z[i] }
+            Operator H = Sigma (i In Index<0>) { Z[i] }
             State<Int> observed = Coin()
             Measure observed
         }

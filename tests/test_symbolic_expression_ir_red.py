@@ -18,7 +18,7 @@ def test_symbolic_ir_retains_binder_and_source_span() -> None:
         package t
         pub fn main() -> Unit {
             Dimension sites = 4
-            Operator H = sum (i in sites) { Z[i] * Z[next(i)] }
+            Operator H = Sigma (i In sites) { Z[i] * Z[next(i)] }
             State<Int> observed = Coin()
             Measure observed
         }

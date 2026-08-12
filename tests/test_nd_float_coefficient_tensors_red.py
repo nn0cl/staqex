@@ -26,7 +26,7 @@ def test_2d_float_tensor_lowers_in_binder() -> None:
             [1.0, 0.0],
             [0.0, 0.5],
         ]
-        Operator H = sum (p in Index<0..1>, q in Index<0..1>) {
+        Operator H = Sigma (p In Index<0..1>, q In Index<0..1>) {
             h[p][q] * Z[p] * Z[q]
         }
         State a = |0>
@@ -50,7 +50,7 @@ def test_4d_float_tensor_smoke() -> None:
     pub fn main() -> Unit {
         QubitRegister<2> register = system()
         Float[1][1][1][1] v = [[[[2.0]]]]
-        Operator H = sum (i in Index<0..0>, j in Index<0..0>, k in Index<0..0>, l in Index<0..0>) {
+        Operator H = Sigma (i In Index<0..0>, j In Index<0..0>, k In Index<0..0>, l In Index<0..0>) {
             v[i][j][k][l] * Z[0]
         }
         State a = |0>
@@ -86,7 +86,7 @@ def test_partial_index_arity_is_rejected() -> None:
         pub fn main() -> Unit {
             QubitRegister<2> register = system()
             Float[2][2] h = [[1.0, 0.0], [0.0, 0.5]]
-            Operator H = sum (p in Index<0..1>) {
+            Operator H = Sigma (p In Index<0..1>) {
                 h[p] * Z[p]
             }
             State a = |0>
@@ -103,7 +103,7 @@ def test_1d_float_array_still_works() -> None:
     pub fn main() -> Unit {
         QubitRegister<2> register = system()
         Float[1] J = [1.0]
-        Operator H = sum (i in Index<0..0>) {
+        Operator H = Sigma (i In Index<0..0>) {
             J[i] * Z[i] * Z[next(i)]
         }
         State a = |0>

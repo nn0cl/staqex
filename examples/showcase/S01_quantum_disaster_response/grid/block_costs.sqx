@@ -10,7 +10,7 @@ namespace Disaster.Grid {
 }
 
 pub fn damage_hamiltonian() -> Operator {
-    Operator H = sum (i in Index<0..1>, j in Index<0..1>) where i < j {
+    Operator H = Sigma (i In Index<0..1>, j In Index<0..1>) where i < j {
         Z[i] * Z[j]
     }
     return H
@@ -18,24 +18,24 @@ pub fn damage_hamiltonian() -> Operator {
 
 // Four-block district lattice (satellite main_lattice_four).
 pub fn damage_hamiltonian_four() -> Operator {
-    Operator H = sum (i in Index<0..3>, j in Index<0..3>) where i < j {
+    Operator H = Sigma (i In Index<0..3>, j In Index<0..3>) where i < j {
         Z[i] * Z[j]
     }
     return H
 }
 
 pub fn basis_zone_sum() -> Operator {
-    Operator H = sum (i in Basis<2>) { Z[i] }
+    Operator H = Sigma (i In Basis<2>) { Z[i] }
     return H
 }
 
 pub fn corridor_product() -> Operator {
-    Operator P = product (i in Index<0..1>) { Z[i] }
+    Operator P = Pi (i In Index<0..1>) { Z[i] }
     return P
 }
 
 pub fn flood_zone_sum() -> Operator {
-    Operator H = sum (i in Index<0..1>) { X[i] }
+    Operator H = Sigma (i In Index<0..1>) { X[i] }
     return H
 }
 

@@ -38,7 +38,7 @@ def _src(hamiltonian: str) -> str:
 
 
 _NEXT_GUARD_SRC = _src(
-    "sum (i in Index<0..2>, j in Index<0..2>) where i == next(j) { Z[i] * Z[j] }"
+    "Sigma (i In Index<0..2>, j In Index<0..2>) where i == next(j) { Z[i] * Z[j] }"
 )
 
 

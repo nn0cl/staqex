@@ -279,7 +279,7 @@ def _eval_qubits(
             )
         if op.acting_space != n:
             raise ValueError("identity acting space does not match the target register")
-        if op.kind == "sum":
+        if op.kind == "Sigma":
             return mat_scale(eye(2**n), 0.0)
         return eye(2**n)
     if isinstance(op, OpLit):

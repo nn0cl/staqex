@@ -85,6 +85,7 @@ from .ast_nodes import (
     Snapshot,
     ScientificScopeDecl,
     Span,
+    KetSumBinder,
     SetPowerDomain,
     StateBind,
     StructDecl,
@@ -145,7 +146,7 @@ def _flatten_namespaces(decls: list) -> list:
 # itself: `sum`/`product` binders and the Pauli/hop atoms. An `Operator`
 # bind's factory-call heuristic must never treat these as an ordinary
 # function call, even when immediately followed by `(` (LISS-0051).
-_OPERATOR_DSL_RESERVED_ATOMS = {"sum", "product", "adjoint", "I", "X", "Y", "Z", "hop"}
+_OPERATOR_DSL_RESERVED_ATOMS = {"Sigma", "Pi", "adjoint", "I", "X", "Y", "Z", "hop"}
 # Algebra Calls that must parse as expression `Call` under `Operator … =`
 # (LISS-0207): reserved OpDSL atoms would otherwise become `OpCall` and lose
 # qubit domain when rebound through bare `Operator`.
@@ -2472,6 +2473,17 @@ class Parser:
                 self._expect(TokenKind.RPAREN)
             return Vacuum(span=sp)
 
+        # LISS-0420: `Sigma`/`Pi` reachable from general expression position
+        # too (not just the Operator-DSL's own `_op_primary`), so a bare
+        # State-typed ket-sum (`Sigma (x In {0,1}^n) { |x> }`) can appear
+        # directly in a classical/State expression, e.g. `coeff * Sigma
+        # (...) { ... }`. Reuses `_op_binder`, which already dispatches to
+        # `KetSumBinder` vs the Operator-DSL `OpBinder` based on domain shape.
+        if self._check(TokenKind.IDENT) and self._peek().lexeme in ("Sigma", "Pi"):
+            kind = self._peek().lexeme
+            self._advance()
+            return self._op_binder(kind, sp)
+
         if self._match(TokenKind.INSPECT):
             self._expect(TokenKind.LPAREN)
             inner = self._expression()
@@ -3174,7 +3186,7 @@ class Parser:
         if tok.kind == TokenKind.IDENT:
             name = tok.lexeme
             self._advance()
-            if name in {"sum", "product"}:
+            if name in {"Sigma", "Pi"}:
                 return self._op_binder(name, sp)
             if name in {"N", "Q", "P"}:
                 # LISS-0227: parse as OpVar so a local `Operator P = …; return P`
@@ -3344,18 +3356,53 @@ class Parser:
             return TypeRef(name="Index", args=args)
         if self._check(TokenKind.IDENT) and self._peek_at_kind(1) == TokenKind.LT:
             return self._type_ref()
+        if self._check(TokenKind.LBRACE):
+            return self._set_power_domain()
         return OpVar(name=self._expect_ident_like(), span=self._span())
+
+    def _set_power_domain(self) -> SetPowerDomain:
+        """`{0,1}^n` as a binder domain (LISS-0420) -- mirrors the
+        expression-position parsing added by LISS-0417 (`parser.py`'s
+        anticommutator-disambiguation branch), but binder-domain position
+        has no anticommutator ambiguity to resolve, so this is a direct,
+        self-contained parse."""
+        sp = self._span()
+        self._expect(TokenKind.LBRACE)
+        labels = [int(self._expect(TokenKind.INT).literal)]
+        while self._match(TokenKind.COMMA):
+            labels.append(int(self._expect(TokenKind.INT).literal))
+        self._expect(TokenKind.RBRACE)
+        self._expect(TokenKind.CARET)
+        width = self._power()
+        return SetPowerDomain(labels=labels, width=width, span=sp)
 
     def _op_binder(self, kind: str, sp: Span):
         self._expect(TokenKind.LPAREN)
-        bindings = []
-        while True:
+        variable = self._expect_ident_like()
+        self._expect(TokenKind.IN_SET)
+        domain = self._binder_domain()
+        if isinstance(domain, SetPowerDomain):
+            # LISS-0420: State-typed ket-sum -- `Sigma (x In {0,1}^n) { |x> }`.
+            # Single-binding only (matching the target use case); body is
+            # always a bare ket referencing the bound variable.
+            self._expect(TokenKind.RPAREN)
+            self._expect(TokenKind.LBRACE)
+            ket_tok = self._expect(TokenKind.KET)
+            if str(ket_tok.literal) != variable:
+                raise ParseError(
+                    f"Sigma ket-sum body must be `|{variable}>` "
+                    f"(the bound variable), got `|{ket_tok.literal}>`",
+                    ket_tok.line,
+                    ket_tok.col,
+                )
+            self._expect(TokenKind.RBRACE)
+            return KetSumBinder(variable=variable, domain=domain, span=sp)
+        bindings = [(variable, domain)]
+        while self._match(TokenKind.COMMA):
             variable = self._expect_ident_like()
-            self._expect(TokenKind.IN)
+            self._expect(TokenKind.IN_SET)
             domain = self._binder_domain()
             bindings.append((variable, domain))
-            if not self._match(TokenKind.COMMA):
-                break
         self._expect(TokenKind.RPAREN)
         guard = None
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "where":

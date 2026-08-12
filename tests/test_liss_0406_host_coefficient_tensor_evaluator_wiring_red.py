@@ -25,7 +25,7 @@ package t
 pub fn main() -> Unit {
     Energy scale = 1.0.eV to J
     Float[1] coeff = host("coupling")
-    Operator H_raw = sum (i in Index<0..0>) { coeff[i] * X[i] }
+    Operator H_raw = Sigma (i In Index<0..0>) { coeff[i] * X[i] }
     Operator H = scale * H_raw
     State q = |0>
     Time dur = 0.6.fs

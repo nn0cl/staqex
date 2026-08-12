@@ -22,7 +22,7 @@ def test_where_or_lowers() -> None:
     package t
     pub fn main() -> Unit {
         QubitRegister<3> register = system()
-        Operator H = sum (i in Index<0..2>, j in Index<0..2>) where i < j || j == 0 {
+        Operator H = Sigma (i In Index<0..2>, j In Index<0..2>) where i < j || j == 0 {
             Z[i] * Z[j]
         }
         State a = |0>
