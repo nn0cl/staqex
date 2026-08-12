@@ -45,7 +45,7 @@ def test_forEach_lowercase_in_is_unaffected() -> None:
         forEach q in register(2) {
             apply(X, q)
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -67,8 +67,8 @@ def test_operator_dsl_sum_binder_lowercase_in_is_unaffected() -> None:
         Energy scale = 1.0.eV to J
         Operator H_raw = sum (i in Index<0..1>) { Z[i] }
         Operator H = scale * H_raw
-        state (a, b) = (|0>, |0>)
-        state (a, b) = evolve { (a, b) under H for 0.1.fs }.run()
+        State (a, b) = (|0>, |0>)
+        State (a, b) = evolve { (a, b) under H for 0.1.fs }.run()
         measure a tracing_out b
     }
     """

@@ -21,7 +21,7 @@ def test_tuple_fills_multi_hole_call() -> None:
             return x + y
         }
         pub fn main() -> Unit {
-            state r = (1, 2) |> add(_, _)
+            State r = (1, 2) |> add(_, _)
             measure r
         }
         """,
@@ -46,7 +46,7 @@ def test_tuple_multi_hole_then_fuse_chain() -> None:
             return s + 1
         }
         pub fn main() -> Unit {
-            state r = (10, 3) |> add(_, _) |> dbl |> inc
+            State r = (10, 3) |> add(_, _) |> dbl |> inc
             measure r
         }
         """,
@@ -65,9 +65,9 @@ def test_tuple_multi_hole_then_fuse_chain() -> None:
             return s + 1
         }
         pub fn main() -> Unit {
-            state t = add(10, 3)
-            state u = dbl(t)
-            state r = inc(u)
+            State t = add(10, 3)
+            State u = dbl(t)
+            State r = inc(u)
             measure r
         }
         """,
@@ -87,8 +87,8 @@ def test_tuple_fills_multi_hole_partial() -> None:
             return x + y
         }
         pub fn main() -> Unit {
-            state p = add(_, _)
-            state r = (4, 5) |> p
+            State p = add(_, _)
+            State r = (4, 5) |> p
             measure r
         }
         """,
@@ -110,8 +110,8 @@ def test_one_hole_call_fusion_regression() -> None:
             return s * 2
         }
         pub fn main() -> Unit {
-            state z = 3
-            state r = z |> add(10, _) |> dbl
+            State z = 3
+            State r = z |> add(10, _) |> dbl
             measure r
         }
         """,

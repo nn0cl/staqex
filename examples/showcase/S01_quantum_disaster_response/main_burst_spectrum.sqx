@@ -14,13 +14,13 @@ pub fn main() -> Unit {
     Operator inverse_F = iqft(register)
     Operator CF = cqft(ctrl, register)
 
-    state burst = |+>
-    state probe = |0>
-    state (burst, probe) = apply(F, burst, probe)
-    state (burst, probe) = apply(inverse_F, burst, probe)
-    state c = |1>
-    state (c, burst, probe) = apply(CF, c, burst, probe)
-    state correlation = expect(ZZ, burst, probe)
-    state viewed = inspect(correlation)
+    State burst = |+>
+    State probe = |0>
+    State (burst, probe) = apply(F, burst, probe)
+    State (burst, probe) = apply(inverse_F, burst, probe)
+    State c = |1>
+    State (c, burst, probe) = apply(CF, c, burst, probe)
+    State correlation = expect(ZZ, burst, probe)
+    State viewed = inspect(correlation)
     measure probe tracing_out burst, c
 }

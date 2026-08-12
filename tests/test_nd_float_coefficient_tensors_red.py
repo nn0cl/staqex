@@ -29,7 +29,7 @@ def test_2d_float_tensor_lowers_in_binder() -> None:
         Operator H = sum (p in Index<0..1>, q in Index<0..1>) {
             h[p][q] * Z[p] * Z[q]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -53,7 +53,7 @@ def test_4d_float_tensor_smoke() -> None:
         Operator H = sum (i in Index<0..0>, j in Index<0..0>, k in Index<0..0>, l in Index<0..0>) {
             v[i][j][k][l] * Z[0]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -89,7 +89,7 @@ def test_partial_index_arity_is_rejected() -> None:
             Operator H = sum (p in Index<0..1>) {
                 h[p] * Z[p]
             }
-            state a = |0>
+            State a = |0>
             measure a
         }
         """
@@ -106,7 +106,7 @@ def test_1d_float_array_still_works() -> None:
         Operator H = sum (i in Index<0..0>) {
             J[i] * Z[i] * Z[next(i)]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """

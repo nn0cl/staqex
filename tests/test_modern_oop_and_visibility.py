@@ -233,7 +233,7 @@ package t
 protected class Bad {
 }
 pub fn main() -> Unit {
-  state x = dirac(0)
+  State x = dirac(0)
   measure x
 }
 """

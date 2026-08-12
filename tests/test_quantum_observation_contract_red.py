@@ -32,7 +32,7 @@ def test_unsupported_tomography_is_rejected_as_an_observation_capability() -> No
         """
         package t
         pub fn main() -> Unit {
-            state psi = |+>
+            State psi = |+>
             Host report = tomography(psi)
             measure psi
         }

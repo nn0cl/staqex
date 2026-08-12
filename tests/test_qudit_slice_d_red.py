@@ -60,7 +60,7 @@ def test_qutrit_register_evolve_is_unsupported_local_dimension() -> None:
         pub fn main() -> Unit {{
             Operator<QutritRegister<1>> H = I
             State<Qutrit> s = |0{KET}
-            state out = evolve {{ s under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
+            State out = evolve {{ s under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
             measure out
         }}
         """
@@ -76,7 +76,7 @@ def test_apply_on_qutrit_is_unsupported_local_dimension() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qutrit> s = |0{KET}
-            state out = apply(H, s)
+            State out = apply(H, s)
             measure out
         }}
         """

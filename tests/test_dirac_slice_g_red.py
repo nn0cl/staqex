@@ -72,7 +72,7 @@ def test_alone_bra_row() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state b = {BRA}0|
+            State b = {BRA}0|
             State observed = coin()
             measure observed
         }}
@@ -87,7 +87,7 @@ def test_inner_row() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state m = inner({BRA}0|, |1{KET})
+            State m = inner({BRA}0|, |1{KET})
             State observed = coin()
             measure observed
         }}
@@ -104,7 +104,7 @@ def test_matrix_element_row() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state m = {BRA}0|X|1{KET}
+            State m = {BRA}0|X|1{KET}
             State observed = coin()
             measure observed
         }}
@@ -151,7 +151,7 @@ def test_adjoint_dagger_row() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state a = adjoint(X)
+            State a = adjoint(X)
             State observed = coin()
             measure observed
         }}
@@ -168,7 +168,7 @@ def test_tensor_row() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state t = |0{KET} {TENSOR} |1{KET}
+            State t = |0{KET} {TENSOR} |1{KET}
             State observed = coin()
             measure observed
         }}
@@ -212,7 +212,7 @@ def test_expr_list_not_stolen_by_commutator() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state xs = [X, Y]
+            State xs = [X, Y]
             State observed = coin()
             measure observed
         }

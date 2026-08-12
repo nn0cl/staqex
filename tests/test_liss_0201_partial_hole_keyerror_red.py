@@ -19,14 +19,14 @@ def test_partial_pipe_no_keyerror() -> None:
             """
             package t
             fn second(x: State<Bit>, y: State<Bit>) -> State<Bit> {
-                state x = |0>
+                State x = |0>
                 return y
             }
             pub fn main() -> Unit {
-                state z = |0>
-                state p = second(z, _)
-                state w = |1>
-                state r = w |> p
+                State z = |0>
+                State p = second(z, _)
+                State w = |1>
+                State r = w |> p
                 measure r
             }
             """,

@@ -28,8 +28,8 @@ def test_removed_when_fails_without_mix_fallback() -> None:
     source = """
     package s02
     pub fn main() -> Unit {
-      state control = coin()
-      state result = when (control) {
+      State control = coin()
+      State result = when (control) {
         0 -> |0>,
         1 -> |1>,
       }
@@ -47,8 +47,8 @@ def test_mix_is_the_state_valued_non_collapsing_surface() -> None:
     source = """
     package s02
     pub fn main() -> Unit {
-      state control = coin()
-      state result = mix (control) {
+      State control = coin()
+      State result = mix (control) {
         0 -> |0>,
         1 -> |1>,
       }
@@ -69,9 +69,9 @@ def test_controlled_is_not_lowered_to_mixture() -> None:
     source = """
     package s02
     pub fn main() -> Unit {
-      state control = |+>
-      state target = |0>
-      state result = controlled(control, Hadamard, target)
+      State control = |+>
+      State target = |0>
+      State result = controlled(control, Hadamard, target)
       measure result
     }
     """
@@ -89,9 +89,9 @@ def test_projector_is_explicitly_lowered_from_selection_constraints() -> None:
     source = """
     package s02
     pub fn main() -> Unit {
-      state candidates = finiteize(0.0, 1.0, 8, 16, 0)
-      state selection = prepare_selection(candidates)
-      state feasible = project selection onto feasible(
+      State candidates = finiteize(0.0, 1.0, 8, 16, 0)
+      State selection = prepare_selection(candidates)
+      State feasible = project selection onto feasible(
         exactly_selected = 2,
         pairwise_compatible = true,
       )

@@ -26,7 +26,7 @@ def test_valid_qutrit_and_qudit_state_types_accepted() -> None:
             package t
             pub fn main() -> Unit {{
                 State<{annotation}> s = |0>
-                state s = |0>
+                State s = |0>
                 State observed = coin()
                 measure observed
             }}

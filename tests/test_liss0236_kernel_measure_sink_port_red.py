@@ -57,7 +57,7 @@ def test_custom_measure_sink_port_receives_measure_text() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state a = coin()
+        State a = coin()
         measure a
     }
     """

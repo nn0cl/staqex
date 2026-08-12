@@ -20,8 +20,8 @@ def test_non_destructive_inspection_has_a_diagnostic_view_type() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |+>
-            state viewed = inspect(psi)
+            State psi = |+>
+            State viewed = inspect(psi)
             measure viewed
         }
         """

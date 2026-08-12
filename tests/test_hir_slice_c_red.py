@@ -48,8 +48,8 @@ def test_declared_function_effects_recorded_on_hir() -> None:
             return inspect(x)
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            state viewed = inspect_state(psi)
+            State psi = dirac(0.0)
+            State viewed = inspect_state(psi)
             measure viewed
         }
         """
@@ -104,8 +104,8 @@ def test_effects_mapping_is_immutable() -> None:
             return inspect(x)
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            state viewed = inspect_state(psi)
+            State psi = dirac(0.0)
+            State viewed = inspect_state(psi)
             measure viewed
         }
         """

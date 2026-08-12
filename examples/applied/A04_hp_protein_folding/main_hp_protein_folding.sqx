@@ -15,13 +15,13 @@ pub fn main() -> Unit {
     Float harvested = ground_conformation_index()
     Float ground = 1.0
 
-    state b0 = coin()
-    state b1 = coin()
-    state conf = b0 * 2 + b1
+    State b0 = coin()
+    State b1 = coin()
+    State conf = b0 * 2 + b1
 
-    state marked = phase(conf, pi, ground)
-    state amplified = grover_diffuse(marked)
-    state viewed = inspect(amplified)
+    State marked = phase(conf, pi, ground)
+    State amplified = grover_diffuse(marked)
+    State viewed = inspect(amplified)
 
     // phase/diffuse moved conf/marked; live index bits leave via partial trace.
     measure viewed tracing_out b0, b1

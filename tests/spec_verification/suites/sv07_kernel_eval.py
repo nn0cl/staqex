@@ -24,7 +24,7 @@ def run() -> list[CaseResult]:
 
     # PoC A: correlated x + x
     try:
-        src = as_main("state x = coin()\nstate y = x + x\nmeasure y\n")
+        src = as_main("State x = coin()\nState y = x + x\nmeasure y\n")
         compiled = compile_source(src)
         if compiled.unit is None:
             raise AssertionFailure("PARSE_ERROR", str(compiled.diagnostics))
@@ -62,8 +62,8 @@ def run() -> list[CaseResult]:
     # when preserves both arms
     try:
         src = as_main("""
-state c = coin()
-state z = mix (c) {
+State c = coin()
+State z = mix (c) {
   0 -> 10,
   else -> 20,
 }
@@ -99,8 +99,8 @@ measure z
     # project all-reject → vacuum; measure safe
     try:
         src = as_main("""
-state x = coin()
-state y = project(x, 99)
+State x = coin()
+State y = project(x, 99)
 measure y
 """)
         compiled = compile_source(src)
@@ -139,8 +139,8 @@ measure y
     # map pushforward
     try:
         src = as_main("""
-state x = coin()
-state y = map(x, v -> v * 10)
+State x = coin()
+State y = map(x, v -> v * 10)
 measure y
 """)
         compiled = compile_source(src)
@@ -172,9 +172,9 @@ measure y
     # interfer mixture
     try:
         src = as_main("""
-state a = dirac(1)
-state b = dirac(2)
-state z = interfer(a, b)
+State a = dirac(1)
+State b = dirac(2)
+State z = interfer(a, b)
 measure z
 """)
         compiled = compile_source(src)
@@ -206,7 +206,7 @@ measure z
 
     # terminal measure samples
     try:
-        src = as_main("state x = dirac(42)\nmeasure x\n")
+        src = as_main("State x = dirac(42)\nmeasure x\n")
         buf = io.StringIO()
         rr = run_source(src, seed=1, stdout=buf)
         if not rr.compile_ok:

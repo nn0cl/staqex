@@ -35,8 +35,8 @@ _PLAIN_EVOLVE = """
 package t
 pub fn main() -> Unit {
     Operator H = 5.272859e-20 * I - 5.272859e-20 * Z[0]
-    state psi = |+>
-    state psi = evolve { psi under H for 100.0.fs }.run()
+    State psi = |+>
+    State psi = evolve { psi under H for 100.0.fs }.run()
     measure psi
 }
 """
@@ -45,8 +45,8 @@ _EXPLICIT_STEPS_ABOVE_OLD_CAP = """
 package t
 pub fn main() -> Unit {
     Operator H = 0.5 * I - 0.5 * Z[0]
-    state psi = |+>
-    state psi = evolve { psi under H for 100.0 using Suzuki(order = 2, steps = 200) }.run()
+    State psi = |+>
+    State psi = evolve { psi under H for 100.0 using Suzuki(order = 2, steps = 200) }.run()
     measure psi
 }
 """
@@ -100,8 +100,8 @@ def test_explicit_steps_are_never_silently_clamped_even_at_the_old_default() -> 
         package t
         pub fn main() -> Unit {
             Operator H = 0.5 * I - 0.5 * Z[0]
-            state psi = |+>
-            state psi = evolve { psi under H for 1.0 using Suzuki(order = 2, steps = 3) }.run()
+            State psi = |+>
+            State psi = evolve { psi under H for 1.0 using Suzuki(order = 2, steps = 3) }.run()
             measure psi
         }
         """

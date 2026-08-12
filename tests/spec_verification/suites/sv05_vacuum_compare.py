@@ -108,7 +108,7 @@ def run() -> list[CaseResult]:
 
     # Case 4: compiler types `>=` as State<Bool>
     try:
-        src = as_main("state a = 3\nstate b = 2\nstate c = a >= b\nmeasure c\n")
+        src = as_main("State a = 3\nState b = 2\nState c = a >= b\nmeasure c\n")
         result = compile_source(src)
         if result.unit is None or result.checker is None:
             raise AssertionFailure("TYPE_NOT_STATE", "compile failed")

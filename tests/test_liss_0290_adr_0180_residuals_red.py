@@ -35,9 +35,9 @@ def test_0290_typecheck_fills_operator_and_float_ty() -> None:
 J = 1.0
 h = 0.5
 H_chain = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
-state s0 = |+>
-state s1 = |+>
-state (s0, s1) = evolve { (s0, s1) under H_chain for 0.1 using Suzuki(order = 2, steps = 2) }.run()
+State s0 = |+>
+State s1 = |+>
+State (s0, s1) = evolve { (s0, s1) under H_chain for 0.1 using Suzuki(order = 2, steps = 2) }.run()
 measure s0 tracing_out s1
 """
     c = compile_source(src)
@@ -57,9 +57,9 @@ def test_0290_inferred_operator_emits_qasm(tmp_path: Path) -> None:
 J = 1.0
 h = 0.5
 H_chain = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
-state s0 = |+>
-state s1 = |+>
-state (s0, s1) = evolve { (s0, s1) under H_chain for 0.7 using Suzuki(order = 2, steps = 6) }.run()
+State s0 = |+>
+State s1 = |+>
+State (s0, s1) = evolve { (s0, s1) under H_chain for 0.7 using Suzuki(order = 2, steps = 6) }.run()
 measure s0 tracing_out s1
 """
     path = tmp_path / "inferred_b08.sqx"
@@ -86,7 +86,7 @@ pub fn score(r: D.R) -> Float {
 pub fn main() -> Unit {
   D.R report = D.R { a: 1.0, b: 0.15, c: 0.35 }
   fair = score(report)
-  state s = dirac(fair)
+  State s = dirac(fair)
   measure s
 }
 """
@@ -110,7 +110,7 @@ namespace G {
 }
 seg = G.Seg { length: 2.0 }
 scale = seg.length
-state s = |0>
+State s = |0>
 measure s
 """
     c = compile_source(src)
@@ -132,7 +132,7 @@ def test_0290_fail_closed_classical_state_clash() -> None:
 // staqex-profile: experiment
 pub fn main() -> Unit {
   x = 0
-  state s = dirac(x)
+  State s = dirac(x)
   measure s
 }
 """

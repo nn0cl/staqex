@@ -21,8 +21,8 @@ def test_deferred_eligible_main_sets_flag() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = coin()
-            state b = mix (a) {
+            State a = coin()
+            State b = mix (a) {
                 0 -> 10
                 1 -> 20
             }
@@ -44,12 +44,12 @@ def test_inspect_forces_eager_path() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = coin()
-            state b = mix (a) {
+            State a = coin()
+            State b = mix (a) {
                 0 -> 10
                 1 -> 20
             }
-            state viewed = inspect(b)
+            State viewed = inspect(b)
             measure viewed
         }
         """,
@@ -64,8 +64,8 @@ def test_inspect_forces_eager_path() -> None:
 
 def test_deferred_matches_eager_measure_under_same_seed() -> None:
     src_body = """
-            state a = coin()
-            state b = mix (a) {
+            State a = coin()
+            State b = mix (a) {
                 0 -> 10
                 1 -> 20
             }
@@ -86,7 +86,7 @@ def test_deferred_matches_eager_measure_under_same_seed() -> None:
         package t
         pub fn main() -> Unit {{
 {src_body}
-            state viewed = inspect(b)
+            State viewed = inspect(b)
             measure viewed
         }}
         """,
@@ -107,8 +107,8 @@ def test_bind_cone_includes_dependencies() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = coin()
-            state b = mix (a) { 0 -> 10, 1 -> 20 }
+            State a = coin()
+            State b = mix (a) { 0 -> 10, 1 -> 20 }
             measure b
         }
         """
@@ -126,7 +126,7 @@ def test_dag_lowerer_still_builds_measure_node() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = coin()
+            State a = coin()
             measure a
         }
         """

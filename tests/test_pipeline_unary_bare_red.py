@@ -24,8 +24,8 @@ def test_unary_bare_pipe_typechecks() -> None:
             return x
         }
         pub fn main() -> Unit {
-            state a = |0>
-            state a = a |> id
+            State a = |0>
+            State a = a |> id
             measure a
         }
         """
@@ -42,9 +42,9 @@ def test_operator_bare_pipe_rejected() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
+            State psi = dirac(0)
             Operator H = X
-            state result = psi |> H
+            State result = psi |> H
             measure result
         }
         """

@@ -33,9 +33,9 @@ def test_superpose_has_a_distinct_coherent_lane() -> None:
           operator H = Z[0]
         }
         experiment coherent() {
-          state control = |+>
-          state psi = |0>
-          state result = superpose(control) {
+          State control = |+>
+          State psi = |0>
+          State result = superpose(control) {
             0 -> psi,
             1 -> psi,
           }
@@ -57,8 +57,8 @@ def test_when_has_no_compatibility_fallback_to_mix() -> None:
           operator H = Z[0]
         }
         experiment legacy() {
-          state control = |+>
-          state result = when (control) {
+          State control = |+>
+          State result = when (control) {
             0 -> |0>,
             1 -> |1>,
           }

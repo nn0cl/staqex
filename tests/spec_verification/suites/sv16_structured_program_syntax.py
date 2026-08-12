@@ -115,7 +115,7 @@ measure dt
     try:
         src = as_main(
             """
-state x = coin()
+State x = coin()
 measure x
 """,
             package="com.staqex.spec.sv16",

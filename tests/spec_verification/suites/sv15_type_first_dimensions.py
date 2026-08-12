@@ -115,7 +115,7 @@ measure x
         src = as_main("""
 State<Length> x = dirac(1.0.m)
 Delta<Time> dt = 0.5.s
-state bad = x + dt
+State bad = x + dt
 measure bad
 """)
         compiled = compile_source(src)

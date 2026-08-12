@@ -20,19 +20,19 @@ pub fn main() -> Unit {
     Time duration = schedule_duration(schedule)
     // stepped / scale / coeff_sum: classical desk (Host may log); no inspect museum.
 
-    state bit = coin()
-    state s0 = mix (bit) {
+    State bit = coin()
+    State s0 = mix (bit) {
       0 -> |0>,
       else -> |+>,
     }
 
     Operator H = ising_hamiltonian(c)
-    state s1 = |+>
-    state (s0, s1) = evolve { (s0, s1) under H for duration using Suzuki(order = 2, steps = 6) }.run()
+    State s1 = |+>
+    State (s0, s1) = evolve { (s0, s1) under H for duration using Suzuki(order = 2, steps = 6) }.run()
 
-    state zz = expect(ZZ, s0, s1)
+    State zz = expect(ZZ, s0, s1)
     // Sparse notebook peek only (minimal dialect: Host owns structured logs).
-    state viewed_zz = inspect(zz)
+    State viewed_zz = inspect(zz)
 
     // Sibling leaves via partial trace (ADR 0173); not a ritual |0> rebind.
     measure s0 tracing_out s1

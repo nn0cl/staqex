@@ -26,10 +26,10 @@ pub fn main() -> Unit {
     Energy scale = 1.0.eV to J
     Operator H_raw = 1.0 * Z[0] + 1.0 * X[0] + 1.0 * (Z[0] * Z[1])
     Operator H = scale * H_raw
-    state q0 = |0>
-    state q1 = |+>
+    State q0 = |0>
+    State q1 = |+>
     Time dur = 0.6.fs
-    state (q0, q1) = evolve { (q0, q1) under H for dur }.run()
+    State (q0, q1) = evolve { (q0, q1) under H for dur }.run()
     measure q0 tracing_out q1
 }
 """
@@ -99,8 +99,8 @@ pub fn main() -> Unit {
     Energy scale = 1.0.eV to J
     Operator H_raw = 1.0 * Z[0] + 1.0 * X[0] + 1.0 * (Z[0] * Z[1])
     Operator H = scale * H_raw
-    state psi = prepare_selection(2)
-    state psi = evolve { psi under H for 0.6.fs }.run()
+    State psi = prepare_selection(2)
+    State psi = evolve { psi under H for 0.6.fs }.run()
     measure psi
 }
 """
@@ -129,8 +129,8 @@ pub fn main() -> Unit {
     Energy scale = 1.0.eV to J
     Operator H_raw = 1.0 * Z[0] + 1.0 * X[0] + 1.0 * (Z[0] * Z[1])
     Operator H = scale * H_raw
-    state psi = prepare_selection(3)
-    state psi = evolve { psi under H for 0.6.fs }.run()
+    State psi = prepare_selection(3)
+    State psi = evolve { psi under H for 0.6.fs }.run()
     measure psi
 }
 """

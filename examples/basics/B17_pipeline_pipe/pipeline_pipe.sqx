@@ -14,9 +14,9 @@ fn add(x: State<Int>, y: State<Int>) -> State<Int> {
 }
 
 // Unary chain: seed |> f |> g
-state a = 3 |> bump |> dbl
+State a = 3 |> bump |> dbl
 
 // Partial hole: fill left-to-right
-state b = 5 |> add(10, _)
+State b = 5 |> add(10, _)
 
 measure a tracing_out b

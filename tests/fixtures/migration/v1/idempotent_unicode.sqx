@@ -1,6 +1,6 @@
 package t
 pub fn main() -> Unit {
-    state psi = |0>
+    State psi = |0>
     Operator A = adjoint(X)
     (a, b) = psi *|* psi
     measure a

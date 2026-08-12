@@ -30,17 +30,17 @@ discretization PositionGrid {
 use PositionGrid for HarmonicOscillator.H as discrete_H
 pub fn main() -> Unit {
     Operator H = discrete_H
-    state psi = wavepacket(-pi, pi, 8, 0.0, 1.0)
-    state psi = evolve { psi under H for 0.1.fs }.run()
+    State psi = wavepacket(-pi, pi, 8, 0.0, 1.0)
+    State psi = evolve { psi under H for 0.1.fs }.run()
     measure psi
 }
 """
 
 _DIRECT_GRID_PROGRAM = """
 pub fn main() -> Unit {
-    state psi = wavepacket(-pi, pi, 8, 0.0, 1.0)
+    State psi = wavepacket(-pi, pi, 8, 0.0, 1.0)
     Operator H_grid = 5.272859e-20 * (X * X + P * P)
-    state psi = evolve { psi under H_grid for 0.1.fs }.run()
+    State psi = evolve { psi under H_grid for 0.1.fs }.run()
     measure psi
 }
 """

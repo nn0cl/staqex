@@ -29,7 +29,7 @@ def test_reset_of_unknown_wire_inside_match_arm_fails_closed() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         match bit {
             0 => { reset ghost }
@@ -55,7 +55,7 @@ def test_reset_of_wire_known_from_before_the_match_does_not_false_positive() -> 
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         match bit {
             0 => { reset q }
@@ -85,7 +85,7 @@ def test_measure_only_fixture_still_produces_no_implicit_discard() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         match bit {
             0 => { }
@@ -110,7 +110,7 @@ def test_nested_match_inside_arm_unknown_reset_is_still_caught() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         match bit {
             0 => {
@@ -140,7 +140,7 @@ def test_top_level_reset_behavior_is_unaffected() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         reset ghost_top_level
     }

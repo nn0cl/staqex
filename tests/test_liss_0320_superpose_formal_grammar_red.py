@@ -35,8 +35,8 @@ def _codes(diagnostics: list[dict[str, object]]) -> set[str]:
 _SUPERPOSE_SOURCE = """
 package liss0320
 pub fn main() -> Unit {
-  state control = coin()
-  state result = superpose (control) {
+  State control = coin()
+  State result = superpose (control) {
     0 -> |0>,
     1 -> |1>,
   }
@@ -47,8 +47,8 @@ pub fn main() -> Unit {
 _MIX_SOURCE = """
 package liss0320
 pub fn main() -> Unit {
-  state control = coin()
-  state result = mix (control) {
+  State control = coin()
+  State result = mix (control) {
     0 -> |0>,
     1 -> |1>,
   }
@@ -59,8 +59,8 @@ pub fn main() -> Unit {
 _WHEN_SOURCE = """
 package liss0320
 pub fn main() -> Unit {
-  state control = coin()
-  state result = when (control) {
+  State control = coin()
+  State result = when (control) {
     0 -> |0>,
     1 -> |1>,
   }

@@ -37,12 +37,12 @@ def test_inner_and_outer_preserve_state_operator_boundary() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |0>
-            state phi = |1>
-            state overlap = inner(phi, psi)
+            State psi = |0>
+            State phi = |1>
+            State overlap = inner(phi, psi)
             Operator projector = outer(psi, phi)
-            state psi = |0>
-            state phi = |0>
+            State psi = |0>
+            State phi = |0>
             measure overlap
         }
         """
@@ -56,7 +56,7 @@ def test_commutator_rejects_state_operator_mismatch() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |0>
+            State psi = |0>
             Operator invalid = commutator(X, psi)
             State<Int> observed = coin()
             measure observed

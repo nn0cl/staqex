@@ -55,9 +55,9 @@ package t
 pub fn main() -> Unit {
     Energy e = 1.0.eV to J
     Time dur = 1.0.fs
-    state psi = |0>
+    State psi = |0>
     Operator H = e * Z
-    state psi = evolve { psi under H for dur }.run()
+    State psi = evolve { psi under H for dur }.run()
     measure psi
 }
 """

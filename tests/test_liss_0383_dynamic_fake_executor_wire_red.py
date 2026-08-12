@@ -39,7 +39,7 @@ _SOURCE_MATCH = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         match bit {
             0 => { apply(X, q) }
@@ -55,7 +55,7 @@ _SOURCE_MATCH_NO_REUSE = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         match bit {
             0 => { }

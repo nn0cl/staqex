@@ -45,7 +45,7 @@ def test_energy_plus_energy_preserves_energy_payload() -> None:
         Energy x = 1.0.eV to J
         Energy y = 2.0.eV to J
         Energy z = add_energy(x, y)
-        state s = |0>
+        State s = |0>
         measure s
     }
     """
@@ -66,7 +66,7 @@ def test_int_plus_int_still_promotes_to_float_legacy_convention() -> None:
 
     pub fn main() -> Unit {
         Box b = Box(3)
-        state s = b.doubled()
+        State s = b.doubled()
         measure s
     }
     """

@@ -34,12 +34,12 @@ pub fn main() -> Unit {
     QubitOperator<Qubits> H_electronic = map(H_fermion, JordanWigner)
     Operator H = H_electronic + nuclear_repulsion * I
 
-    state a = |+>
-    state b = |0>
-    state (a, b) = evolve { (a, b) under H for dur using Suzuki(order = 2, steps = 8) }.run()
+    State a = |+>
+    State b = |0>
+    State (a, b) = evolve { (a, b) under H for dur using Suzuki(order = 2, steps = 8) }.run()
 
-    state zz = expect(ZZ, a, b)
-    state viewed = inspect(zz)
+    State zz = expect(ZZ, a, b)
+    State viewed = inspect(zz)
 
     // Terminal measure is singular; sibling leaves via partial trace (ADR 0173).
     measure a tracing_out b

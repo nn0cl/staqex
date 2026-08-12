@@ -108,9 +108,9 @@ _SOURCE_EVOLVE_INSIDE_WITHIN = """
 package t
 pub fn main() -> Unit {
     dynamic qpu within coherent_window {
-        state psi = |0>
+        State psi = |0>
         Operator H = X
-        state psi = evolve { psi under H for 1.0.s }.run()
+        State psi = evolve { psi under H for 1.0.s }.run()
         measure psi
     }
     State<Int> observed = coin()
@@ -169,9 +169,9 @@ pub fn main() -> Unit {
 _SOURCE_ADJACENT_STATIC_AND_DYNAMIC = """
 package t
 pub fn main() -> Unit {
-    state psi = |0>
+    State psi = |0>
     Operator H = X
-    state psi = evolve { psi under H for 1.0.s }.run()
+    State psi = evolve { psi under H for 1.0.s }.run()
     dynamic qpu within coherent_window {
         State<Int> flag = coin()
         measure flag

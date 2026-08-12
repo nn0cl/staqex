@@ -22,14 +22,14 @@ pub fn main() -> Unit {
     Operator H_cost = (-w01) * Z[0] - w02 * Z[1] + w12 * (Z[0] * Z[1])
     Operator H_mixer = w_mix * X[0] + w_mix * X[1]
 
-    state q0 = coin()
-    state q1 = coin()
+    State q0 = coin()
+    State q1 = coin()
 
-    state (q0, q1) = evolve { (q0, q1) under H_mixer for dur_mix }.run()
-    state (q0, q1) = evolve { (q0, q1) under H_cost for dur_cost }.run()
+    State (q0, q1) = evolve { (q0, q1) under H_mixer for dur_mix }.run()
+    State (q0, q1) = evolve { (q0, q1) under H_cost for dur_cost }.run()
 
-    state zz = expect(ZZ, q0, q1)
-    state viewed = inspect(zz)
+    State zz = expect(ZZ, q0, q1)
+    State viewed = inspect(zz)
 
     // Terminal measure is singular; sibling leaves via partial trace (ADR 0173).
     measure q0 tracing_out q1

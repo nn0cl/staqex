@@ -24,7 +24,7 @@ pub fn main() -> Unit {
   D.Edge e2 = D.Edge(0.5)
   D.Corridor map = D.Corridor(e1, e2)
   Float b = blockage(map)
-  state s = dirac(b)
+  State s = dirac(b)
   measure s
 }
 """
@@ -52,7 +52,7 @@ pub fn main() -> Unit {
   D.Item b = D.Item(0.7)
   D.Queue queue = D.Queue(a, b)
   Float p = queue_pressure(queue)
-  state s = dirac(p)
+  State s = dirac(p)
   measure s
 }
 """
@@ -81,7 +81,7 @@ pub fn main() -> Unit {
   D.Site coastal = D.Site(3.0)
   D.Board shelters = D.Board(coastal)
   Float t = total(shelters)
-  state s = dirac(t)
+  State s = dirac(t)
   measure s
 }
 """

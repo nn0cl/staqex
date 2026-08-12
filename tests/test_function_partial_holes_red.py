@@ -22,14 +22,14 @@ def test_partial_typechecks_and_strict_arity() -> None:
         """
         package t
         fn second(x: State<Bit>, y: State<Bit>) -> State<Bit> {
-            state x = |0>
+            State x = |0>
             return y
         }
         pub fn main() -> Unit {
-            state z = |0>
-            state p = second(z, _)
-            state w = |1>
-            state r = w |> p
+            State z = |0>
+            State p = second(z, _)
+            State w = |1>
+            State r = w |> p
             measure r
         }
         """
@@ -44,11 +44,11 @@ def test_partial_typechecks_and_strict_arity() -> None:
         """
         package t
         fn second(x: State<Bit>, y: State<Bit>) -> State<Bit> {
-            state x = |0>
+            State x = |0>
             return y
         }
         pub fn main() -> Unit {
-            state r = second(|0>)
+            State r = second(|0>)
             measure r
         }
         """
@@ -61,14 +61,14 @@ def test_partial_pipe_evaluates() -> None:
         """
         package t
         fn second(x: State<Bit>, y: State<Bit>) -> State<Bit> {
-            state x = |0>
+            State x = |0>
             return y
         }
         pub fn main() -> Unit {
-            state z = |0>
-            state p = second(z, _)
-            state w = |1>
-            state r = w |> p
+            State z = |0>
+            State p = second(z, _)
+            State w = |1>
+            State r = w |> p
             measure r
         }
         """,

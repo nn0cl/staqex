@@ -1,4 +1,14 @@
-"""AT-TDD: LISS-0129 typed `state name: State<T> = …` surface annotations."""
+"""AT-TDD: LISS-0129 typed `state name: State<T> = …` surface annotations.
+
+LISS-0418 update: the colon-annotation surface form (`state x: State<T> =
+e`) was a way to write an explicit `State<T>` annotation while still using
+the `state` keyword (ADR 0115). Once lowercase `state` was retired
+(LISS-0418, ADR 0191 amendment), this surface spelling has no reason to
+exist -- the identical need is already covered by Type-First
+(`State<T> x = e`, unaffected, still tested below). The colon form itself
+now correctly fails to parse (no grammar accepts `name: Type` after a
+Type-First head).
+"""
 
 from __future__ import annotations
 
@@ -30,11 +40,11 @@ def _main_binds(source: str) -> list[StateBind]:
     ]
 
 
-def test_annotated_state_bind_parses_with_type_ref() -> None:
+def test_type_first_annotated_state_bind_parses_with_type_ref() -> None:
     source = """
     package t
     pub fn main() -> Unit {
-        state x: State<Qubit> = |0>
+        State<Qubit> x = |0>
         measure x
     }
     """
@@ -48,11 +58,11 @@ def test_annotated_state_bind_parses_with_type_ref() -> None:
     assert binds[0].ty.args[0].name == "Qubit"
 
 
-def test_annotated_state_bind_compiles_and_runs() -> None:
+def test_type_first_annotated_state_bind_compiles_and_runs() -> None:
     source = """
     package t
     pub fn main() -> Unit {
-        state x: State<Qubit> = |0>
+        State<Qubit> x = |0>
         measure x
     }
     """
@@ -70,11 +80,11 @@ def test_annotated_state_bind_compiles_and_runs() -> None:
     assert result.status == "succeeded", result.diagnostics
 
 
-def test_annotation_mismatch_is_type_error() -> None:
+def test_type_first_annotation_mismatch_is_type_error() -> None:
     source = """
     package t
     pub fn main() -> Unit {
-        state x: State<Length> = |0>
+        State<Length> x = |0>
         measure x
     }
     """
@@ -88,17 +98,19 @@ def test_annotation_mismatch_is_type_error() -> None:
     }
 
 
-def test_non_state_annotation_rejected() -> None:
+def test_colon_annotation_surface_form_no_longer_parses() -> None:
+    """LISS-0418: the `state x: State<T> = e` colon surface form is
+    retired along with lowercase `state` itself -- `State x: ... = ...`
+    (Type-First head followed by a colon) has no grammar production."""
     source = """
     package t
     pub fn main() -> Unit {
-        state x: Float = 1.0
+        State x: State<Qubit> = |0>
         measure x
     }
     """
     codes = _codes(source)
-    assert "PARSE_ERROR" not in codes
-    assert "STATE_ANNOTATION_TYPE_ERROR" in codes
+    assert "PARSE_ERROR" in codes
 
 
 def test_type_first_and_inference_remain() -> None:
@@ -112,7 +124,7 @@ def test_type_first_and_inference_remain() -> None:
     infer = """
     package t
     pub fn main() -> Unit {
-        state x = |0>
+        State x = |0>
         measure x
     }
     """
@@ -121,9 +133,9 @@ def test_type_first_and_inference_remain() -> None:
 
 
 if __name__ == "__main__":
-    test_annotated_state_bind_parses_with_type_ref()
-    test_annotated_state_bind_compiles_and_runs()
-    test_annotation_mismatch_is_type_error()
-    test_non_state_annotation_rejected()
+    test_type_first_annotated_state_bind_parses_with_type_ref()
+    test_type_first_annotated_state_bind_compiles_and_runs()
+    test_type_first_annotation_mismatch_is_type_error()
+    test_colon_annotation_surface_form_no_longer_parses()
     test_type_first_and_inference_remain()
     print("OK — typed surface annotations")

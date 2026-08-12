@@ -25,7 +25,7 @@ pub fn main() -> Unit {
     State<Position> psi = dirac(0)
     Time dur = 0.5.fs
 
-    state psi = evolve { psi under Hssh for dur }.run()
+    State psi = evolve { psi under Hssh for dur }.run()
 
     // Notebook quantities (Host may log); not inspect floods before measure.
     Float left = occupation(psi, 0)

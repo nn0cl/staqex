@@ -33,7 +33,7 @@ def test_classical_float_keeps_fraction() -> None:
         package t
         pub fn main() -> Unit {
             Float x = 1 / 3
-            state s = x
+            State s = x
             measure s
         }
         """
@@ -70,7 +70,7 @@ def test_state_literal_div_is_float_on_joint() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state s = 1 / 3
+            State s = 1 / 3
             measure s
         }
         """,

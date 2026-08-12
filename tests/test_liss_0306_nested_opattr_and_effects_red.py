@@ -20,8 +20,8 @@ pub fn h_of(o: N.Outer) -> Operator {
 i = Inner(1.0545718e-19)
 o = Outer(i)
 H = h_of(o)
-state s = |+>
-state s = evolve { s under H for 0.1.fs }.run()
+State s = |+>
+State s = evolve { s under H for 0.1.fs }.run()
 measure s
 """
     r = run_source(src, settings={"seed": 0})
@@ -42,8 +42,8 @@ pub fn h_of(d: N.Drive) -> Operator {
 }
 D = Drive(1.0545718e-19)
 H = h_of(D)
-state s = |+>
-state s = evolve { s under H for 0.1.fs }.run()
+State s = |+>
+State s = evolve { s under H for 0.1.fs }.run()
 measure s
 """
     r = run_source(src, settings={"seed": 0})

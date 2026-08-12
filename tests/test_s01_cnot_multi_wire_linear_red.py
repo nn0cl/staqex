@@ -19,12 +19,12 @@ def test_cnot_multi_wire_rebind_keeps_both_linear() -> None:
     package t
     pub fn main() -> Unit {
         Operator ZZ = Z * Z
-        state ctrl = |1>
-        state tgt = |0>
-        state (ctrl, tgt) = cnot(ctrl, tgt)
-        state corr = expect(ZZ, ctrl, tgt)
-        state viewed = inspect(corr)
-        state tgt = |0>
+        State ctrl = |1>
+        State tgt = |0>
+        State (ctrl, tgt) = cnot(ctrl, tgt)
+        State corr = expect(ZZ, ctrl, tgt)
+        State viewed = inspect(corr)
+        State tgt = |0>
         measure ctrl
     }
     """

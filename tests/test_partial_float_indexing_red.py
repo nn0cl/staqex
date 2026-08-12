@@ -30,7 +30,7 @@ def test_classical_partial_float_bind_then_binder() -> None:
         Operator H = sum (q in Index<0..1>) {
             row[q] * Z[q]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -55,7 +55,7 @@ def test_partial_as_scalar_coeff_still_rejected() -> None:
             Operator H = sum (p in Index<0..1>) {
                 h[p] * Z[p]
             }
-            state a = |0>
+            State a = |0>
             measure a
         }
         """
@@ -73,7 +73,7 @@ def test_partial_shape_mismatch_is_diagnosed() -> None:
                 [4.0, 5.0, 6.0],
             ]
             Float[2] row = h[0]
-            state a = |0>
+            State a = |0>
             measure a
         }
         """

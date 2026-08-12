@@ -202,7 +202,7 @@ measure b
             as_main(
                 """
 State<(Qubit, Position)> (c, x) = |+> *|* dirac(0)
-state _t = trace_out(c)
+State _t = trace_out(c)
 measure x
 """
             )

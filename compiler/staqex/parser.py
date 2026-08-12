@@ -476,7 +476,7 @@ class Parser:
                     "operator",
                     "prepare",
                     "realize",
-                    "state",
+                    "State",  # LISS-0418: lowercase `state` retired
                     "evolve",
                     "measure",
                 }:
@@ -705,9 +705,10 @@ class Parser:
                 )
             elif "capply" in lexemes:
                 statements.append(H1CoherentControl(source_tokens=lexemes, span=span))
-            elif first.lexeme == "state" or "prepare" in lexemes:
+            elif first.lexeme == "State" or "prepare" in lexemes:
+                # LISS-0418 (ADR 0191 amendment): lowercase `state` retired.
                 state_name = (
-                    line[1].lexeme if first.lexeme == "state" and len(line) > 1 else None
+                    line[1].lexeme if first.lexeme == "State" and len(line) > 1 else None
                 )
                 bound_to: tuple[str, str] | None = None
                 if "over" in lexemes:
@@ -1720,6 +1721,27 @@ class Parser:
             return self._tuple_bind()
         if self._is_type_first_start():
             return self._type_first_bind()
+        # LISS-0418 (ADR 0191 amendment): lowercase `state` is retired --
+        # `State` (already-shipped Type-First form, TYPE_HEADS) is the sole
+        # canonical spelling. `state` is now a freely available ordinary
+        # identifier everywhere else (no RETIRED-dict blanket reservation);
+        # this check only fires on the exact old declaration shape (`state
+        # <name> =` / `state (<names>) =`), which was never valid syntax
+        # for anything else, so it does not shadow legitimate identifier
+        # uses of the word `state`.
+        if (
+            self._check(TokenKind.IDENT)
+            and self._peek().lexeme == "state"
+            and self._peek_at_kind(1) in (TokenKind.IDENT, TokenKind.LPAREN)
+        ):
+            tok = self._peek()
+            raise ParseError(
+                "lowercase `state` is retired -- use `State` "
+                "(e.g. `State a = |0>`, `State (a, b) = ...`)",
+                tok.line,
+                tok.col,
+                code="STATE_KEYWORD_RETIRED",
+            )
         # ADR 0197 / LISS-0382: contextual soft `match <ctrl> { … }`.
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "match":
             return self._match_stmt()

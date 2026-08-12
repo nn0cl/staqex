@@ -32,15 +32,15 @@ pub fn main() -> Unit {{
     Operator<QubitRegister<{register}>> H = {operator}
     State<Qubit> a = |0>
     State<Qubit> b = |0>
-    state b = |0>
+    State b = |0>
     State<Qubit> c = |0>
-    state c = |0>
+    State c = |0>
     State<Qubit> d = |0>
-    state d = |0>
-    state (a, b, c, d) = evolve {{ (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }}.run()
-    state b = |0>
-    state c = |0>
-    state d = |0>
+    State d = |0>
+    State (a, b, c, d) = evolve {{ (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }}.run()
+    State b = |0>
+    State c = |0>
+    State d = |0>
     measure a
 }}
 """
@@ -85,10 +85,10 @@ pub fn main() -> Unit {
     State<Qubit> b = |0>
     State<Qubit> c = |0>
     State<Qubit> d = |0>
-    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }.run()
-    state b = |0>
-    state c = |0>
-    state d = |0>
+    State (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }.run()
+    State b = |0>
+    State c = |0>
+    State d = |0>
     measure a
 }
 """
@@ -104,9 +104,9 @@ def test_context_free_operator_execution_has_no_one_qubit_fallback() -> None:
 package acting_space
 pub fn main() -> Unit {
     Operator H = I
-    state psi = |0>
-    state out = evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
-    state psi = |0>
+    State psi = |0>
+    State out = evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
+    State psi = |0>
     measure out
 }
 """
@@ -126,9 +126,9 @@ pub fn main() -> Unit {
     QubitRegister<2> left = system()
     QubitRegister<2> right = system()
     Operator<QubitRegister<2> * QubitRegister<2>> H = Z[0] * Z[1]
-    state psi = |00>
-    state out = evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
-    state psi = |0>
+    State psi = |00>
+    State out = evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
+    State psi = |0>
     measure out
 }
 """

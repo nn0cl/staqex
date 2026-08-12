@@ -35,7 +35,7 @@ def test_ascii_commutator_alias_has_the_same_meaning_as_brackets() -> None:
         package t
         pub fn main() -> Unit {
             Operator C = [X, Y]
-            state observed = coin()
+            State observed = coin()
             measure observed
         }
         """
@@ -45,7 +45,7 @@ def test_ascii_commutator_alias_has_the_same_meaning_as_brackets() -> None:
         package t
         pub fn main() -> Unit {
             Operator C = cm(X, Y)
-            state observed = coin()
+            State observed = coin()
             measure observed
         }
         """
@@ -65,7 +65,7 @@ def test_ascii_scientific_state_alias_normalizes_to_blackboard_symbol() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |+>
+            State psi = |+>
             measure psi
         }
         """
@@ -79,7 +79,7 @@ def test_ascii_wavefunction_name_is_the_canonical_binding_identity() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |+>
+            State psi = |+>
             measure psi
         }
         """

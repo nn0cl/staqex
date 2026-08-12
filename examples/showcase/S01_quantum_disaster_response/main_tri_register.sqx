@@ -11,11 +11,11 @@ import ..physics.tri_register.{DisasterLink}
 pub fn main() -> Unit {
     Operator<RegisterSet<DisasterLink>> zz = Z[rescue[0]] * Z[logistics[0]]
 
-    state rescue = |0>
-    state logistics = |0>
-    state (rescue, logistics) = cnot(rescue, logistics)
-    state corr = expect(ZZ, rescue, logistics)
-    state viewed = inspect(corr)
-    state (rescue, logistics) = cnot(rescue, logistics)
+    State rescue = |0>
+    State logistics = |0>
+    State (rescue, logistics) = cnot(rescue, logistics)
+    State corr = expect(ZZ, rescue, logistics)
+    State viewed = inspect(corr)
+    State (rescue, logistics) = cnot(rescue, logistics)
     measure rescue tracing_out logistics
 }

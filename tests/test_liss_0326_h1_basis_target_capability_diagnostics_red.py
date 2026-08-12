@@ -40,7 +40,7 @@ def test_renamed_identifiers_still_detect_basis_mismatch() -> None:
         }
 
         experiment run() {
-          state spin_carrier = |+>
+          State spin_carrier = |+>
           spin_carrier |> evolve under PositionModel.H for 0.7
           measure spin_carrier
         }
@@ -62,7 +62,7 @@ def test_unrelated_cooccurrence_does_not_fire_basis_mismatch() -> None:
         }
 
         experiment run() {
-          state spin = |0>
+          State spin = |0>
           measure spin
         }
         """
@@ -83,7 +83,7 @@ def test_correctly_bound_state_does_not_fire_basis_mismatch() -> None:
         }
 
         experiment run() {
-          state psi = prepare plus over PositionModel.position_grid
+          State psi = prepare plus over PositionModel.position_grid
           psi |> evolve under PositionModel.H for 0.7
           measure psi
         }
@@ -106,7 +106,7 @@ def test_small_coordinate_size_does_not_reject_a_real_target() -> None:
         }
 
         experiment run() {
-          state psi = prepare plus over SmallModel.site
+          State psi = prepare plus over SmallModel.site
           psi |> evolve under SmallModel.H for 0.7
           measure psi
         }

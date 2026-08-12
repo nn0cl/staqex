@@ -98,7 +98,7 @@ def run() -> list[CaseResult]:
 
     # Case 5: production typechecker Lit-Lift
     try:
-        src = as_main("state x = 10\nstate y = 0.01\nstate z = x + 20\nmeasure z\n")
+        src = as_main("State x = 10\nState y = 0.01\nState z = x + 20\nmeasure z\n")
         result = compile_source(src)
         if result.checker is None:
             raise AssertionFailure("TYPE_NOT_STATE", "typechecker missing")

@@ -68,8 +68,8 @@ def test_function_decl_span_recorded() -> None:
             return inspect(x)
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            state viewed = inspect_state(psi)
+            State psi = dirac(0.0)
+            State viewed = inspect_state(psi)
             measure viewed
         }
         """

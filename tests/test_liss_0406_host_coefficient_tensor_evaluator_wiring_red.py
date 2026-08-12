@@ -27,9 +27,9 @@ pub fn main() -> Unit {
     Float[1] coeff = host("coupling")
     Operator H_raw = sum (i in Index<0..0>) { coeff[i] * X[i] }
     Operator H = scale * H_raw
-    state q = |0>
+    State q = |0>
     Time dur = 0.6.fs
-    state q = evolve { q under H for dur }.run()
+    State q = evolve { q under H for dur }.run()
     measure q
 }
 """
@@ -85,10 +85,10 @@ def test_program_without_host_placeholders_is_unaffected() -> None:
         Energy scale = 1.0.eV to J
         Operator H_raw = 1.0 * Z[0] + 1.0 * X[0] + 1.0 * (Z[0] * Z[1])
         Operator H = scale * H_raw
-        state q0 = |0>
-        state q1 = |+>
+        State q0 = |0>
+        State q1 = |+>
         Time dur = 0.6.fs
-        state (q0, q1) = evolve { (q0, q1) under H for dur }.run()
+        State (q0, q1) = evolve { (q0, q1) under H for dur }.run()
         measure q0 tracing_out q1
     }
     """

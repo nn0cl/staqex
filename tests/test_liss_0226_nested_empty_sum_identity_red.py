@@ -24,10 +24,10 @@ pub fn main() -> Unit {
   Operator H = sum (i in Index<0..1>, j in Index<0..1>) where i < j {
       1.0545718e-19 * (Z[i] * Z[j])
   }
-  state a = |+>
-  state b = |0>
-  state (a, b) = evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }.run()
-  state b = |0>
+  State a = |+>
+  State b = |0>
+  State (a, b) = evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }.run()
+  State b = |0>
   measure a
 }
 """
@@ -68,8 +68,8 @@ def test_empty_outer_sum_still_rejected_without_register() -> None:
 package t
 pub fn main() -> Unit {
   Operator H = sum (i in Index<3..1>) { Z[i] }
-  state psi = |0>
-  state out = evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
+  State psi = |0>
+  State out = evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
   measure out
 }
 """,

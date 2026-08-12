@@ -29,8 +29,8 @@ def run() -> list[CaseResult]:
             "DIMENSION_MISMATCH_ERROR",
             as_main(
                 """
-state psi = |0>
-state out = evolve { psi under Z for 1.0.m }.run()
+State psi = |0>
+State out = evolve { psi under Z for 1.0.m }.run()
 measure out
 """
             ),
@@ -41,11 +41,11 @@ measure out
             "INTERFER_INDEPENDENT_STATE_ERROR",
             as_main(
                 """
-state a = coin()
-state b = coin()
-state left = mix (a) { 0 -> 0, else -> 1 }
-state right = mix (b) { 0 -> 1, else -> 2 }
-state z = interfer(left, right)
+State a = coin()
+State b = coin()
+State left = mix (a) { 0 -> 0, else -> 1 }
+State right = mix (b) { 0 -> 1, else -> 2 }
+State z = interfer(left, right)
 measure z
 """
             ),
@@ -56,9 +56,9 @@ measure z
             "EXPECT_CLASSICAL_ONLY_ERROR",
             as_main(
                 """
-state psi = |+>
-state ez = expect(Z, psi)
-state weird = psi + ez
+State psi = |+>
+State ez = expect(Z, psi)
+State weird = psi + ez
 measure weird
 """
             ),
@@ -71,7 +71,7 @@ measure weird
                 """
 State<Length> x0 = dirac(1.0.m)
 State<Momentum> p0 = dirac(1.0.kg_m_s)
-state (x, p) = evolve (x0, p0) times 1 { (p, x) }
+State (x, p) = evolve (x0, p0) times 1 { (p, x) }
 measure x
 """
             ),
@@ -83,7 +83,7 @@ measure x
             as_main(
                 """
 State<Length> x = dirac(1.0.m)
-state b = x == 1.0
+State b = x == 1.0
 measure b
 """
             ),
@@ -94,8 +94,8 @@ measure b
             "NESTED_WHEN_ERROR",
             as_main(
                 """
-state a = coin()
-state r = mix (mix (a) { 0 -> 0, else -> 1 }) { 0 -> 10, else -> 20 }
+State a = coin()
+State r = mix (mix (a) { 0 -> 0, else -> 1 }) { 0 -> 10, else -> 20 }
 measure r
 """
             ),
@@ -106,8 +106,8 @@ measure r
             "COIN_IN_EVOLVE_ERROR",
             as_main(
                 """
-state x = dirac(0)
-state y = evolve x times 1 {
+State x = dirac(0)
+State y = evolve x times 1 {
   let c = coin()
   c
 }
@@ -121,11 +121,11 @@ measure y
             None,
             as_main(
                 """
-state slit = coin()
-state a = mix (slit) { 0 -> 0, else -> 1 }
-state b0 = mix (slit) { 0 -> 1, else -> 2 }
-state b = phase(b0, pi)
-state screen = interfer(a, b)
+State slit = coin()
+State a = mix (slit) { 0 -> 0, else -> 1 }
+State b0 = mix (slit) { 0 -> 1, else -> 2 }
+State b = phase(b0, pi)
+State screen = interfer(a, b)
 measure screen
 """
             ),

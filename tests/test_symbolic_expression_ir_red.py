@@ -55,8 +55,8 @@ def test_lowering_provenance_records_approximation_metadata() -> None:
         pub fn main() -> Unit {
             Operator H = X + Z
             State<Qubit> q = |0>
-            state q = |0>
-            state out = evolve { q under H for 0.5 }.run()
+            State q = |0>
+            State out = evolve { q under H for 0.5 }.run()
             measure out
         }
         """

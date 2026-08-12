@@ -49,7 +49,7 @@ def _binds(compiled) -> dict:
 _SOURCE_LANE_A_UNCHANGED = """
 package t
 pub fn main() -> Unit {
-    state x = finiteize(0.0, 1.0, 4, 100, 0)
+    State x = finiteize(0.0, 1.0, 4, 100, 0)
     measure x
 }
 """
@@ -78,7 +78,7 @@ pub fn main() -> Unit {
     Continuous impassable = field_from_host("road_block_field", "Omega")
     Continuous risk = weight(damage, flood)
     Continuous masked = mask(risk, impassable)
-    state zone = finiteize(masked, 0.0, 1.0, 3, 0)
+    State zone = finiteize(masked, 0.0, 1.0, 3, 0)
     measure zone
 }
 """
@@ -135,8 +135,8 @@ _SOURCE_DOUBLE_FINITEIZE = """
 package t
 pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
-    state a = finiteize(damage, 0.0, 1.0, 2, 0)
-    state b = finiteize(damage, 0.0, 1.0, 2, 0)
+    State a = finiteize(damage, 0.0, 1.0, 2, 0)
+    State b = finiteize(damage, 0.0, 1.0, 2, 0)
     measure a
 }
 """

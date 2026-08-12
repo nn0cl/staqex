@@ -61,7 +61,7 @@ pub fn main() -> Unit {
   Float wind = params.topological_index()
   Float gap = params.band_gap()
 
-  state viewed = inspect(sites)
+  State viewed = inspect(sites)
   measure sites
 }
 """

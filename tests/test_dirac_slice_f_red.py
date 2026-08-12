@@ -76,7 +76,7 @@ def test_expr_two_element_list_remains_list_expr() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state xs = [X, Y]
+            State xs = [X, Y]
             State observed = coin()
             measure observed
         }
@@ -94,7 +94,7 @@ def test_expr_braces_parse_as_anticommutator() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = {X, Y}
+            State a = {X, Y}
             State observed = coin()
             measure observed
         }

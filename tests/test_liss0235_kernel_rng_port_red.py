@@ -41,7 +41,7 @@ def test_seeded_measure_bit_identical_across_runs() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state a = coin()
+        State a = coin()
         measure a
     }
     """
@@ -89,7 +89,7 @@ def test_custom_rng_port_is_used_for_measure() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state a = coin()
+        State a = coin()
         measure a
     }
     """

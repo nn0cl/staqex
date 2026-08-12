@@ -21,7 +21,7 @@ pub fn road_m(q: D.Q) -> Length {
 pub fn main() -> Unit {
   D.Q qty = D.Q(12.0.km)
   Length r = road_m(qty)
-  state s = dirac(1)
+  State s = dirac(1)
   measure s
 }
 """
@@ -44,7 +44,7 @@ pub fn water_g(q: D.Q) -> Mass {
 pub fn main() -> Unit {
   D.Q qty = D.Q(2.0.kg)
   Mass m = water_g(qty)
-  state s = dirac(1)
+  State s = dirac(1)
   measure s
 }
 """
@@ -64,7 +64,7 @@ pub fn dbl(i: D.Item) -> Float {
 pub fn main() -> Unit {
   D.Item a = D.Item(3.0)
   Float t = dbl(a)
-  state s = dirac(t)
+  State s = dirac(t)
   measure s
 }
 """

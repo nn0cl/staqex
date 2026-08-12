@@ -71,7 +71,7 @@ def test_s1_classical_if_still_fail_closed() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state x = |0>
+            State x = |0>
             if (true) { measure x }
         }
         """

@@ -8,10 +8,10 @@ forEach q in register {
 Operator F = qft(register)
 Operator inverse_F = iqft(register)
 
-state observatory = |+>
-state probe = |0>
-state probe = cnot(observatory, probe)
-state correlation = expect(ZZ, observatory, probe)
-state viewed = inspect(correlation)
+State observatory = |+>
+State probe = |0>
+State probe = cnot(observatory, probe)
+State correlation = expect(ZZ, observatory, probe)
+State viewed = inspect(correlation)
 // cnot already moved observatory; terminal measure on probe.
 measure probe

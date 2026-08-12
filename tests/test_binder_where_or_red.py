@@ -25,7 +25,7 @@ def test_where_or_lowers() -> None:
         Operator H = sum (i in Index<0..2>, j in Index<0..2>) where i < j || j == 0 {
             Z[i] * Z[j]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """

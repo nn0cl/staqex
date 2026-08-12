@@ -31,8 +31,8 @@ _SOURCE_ARM_ONLY_WIRE = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        state r = |0>
+        State q = |0>
+        State r = |0>
         Controller<Bit> bit = measure q
         match bit {
             0 => { reset r }
@@ -81,8 +81,8 @@ _SOURCE_CHAINED_MEASURE = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        state q2 = |0>
+        State q = |0>
+        State q2 = |0>
         Controller<Bit> bit = measure q
         match bit {
             0 => {
@@ -154,8 +154,8 @@ _SOURCE_CHAINED_MEASURE_NO_DISCARD = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        state q2 = |0>
+        State q = |0>
+        State q2 = |0>
         Controller<Bit> bit = measure q
         match bit {
             0 => { Controller<Bit> bit2 = measure q2 }
@@ -192,7 +192,7 @@ def test_existing_direct_call_site_still_works_unchanged() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         apply(X, q)
         reset q
     }

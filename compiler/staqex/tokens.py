@@ -122,7 +122,6 @@ ACTIVE: dict[str, TokenKind] = {
     "return": TokenKind.RETURN,
     "forEach": TokenKind.FOREACH,
     "dynamic": TokenKind.DYNAMIC,
-    "state": TokenKind.STATE,
     "let": TokenKind.LET,
     "mix": TokenKind.WHEN,
     "superpose": TokenKind.SUPERPOSE,

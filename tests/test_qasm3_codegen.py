@@ -38,9 +38,9 @@ def test_generator_from_unit() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-  state a = |+>
-  state b = |0>
-  state b = cnot(a, b)
+  State a = |+>
+  State b = |0>
+  State b = cnot(a, b)
   measure b
 }
 """
@@ -55,14 +55,14 @@ def test_apply_and_capply_gates() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-  state q = |0>
-  state q = apply(X, q)
-  state q = apply(Y, q)
-  state q = apply(Z, q)
-  state q = apply(H, q)
-  state t = |0>
-  state t = capply(q, X, t)
-  state t = capply(q, Z, t)
+  State q = |0>
+  State q = apply(X, q)
+  State q = apply(Y, q)
+  State q = apply(Z, q)
+  State q = apply(H, q)
+  State t = |0>
+  State t = capply(q, X, t)
+  State t = capply(q, Z, t)
   measure t
 }
 """
@@ -82,11 +82,11 @@ def test_apply_s_t_rx_ry_qasm() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-  state q = |0>
-  state q = apply(S, q)
-  state q = apply(T, q)
-  state q = apply(rx(pi), q)
-  state q = apply(ry(pi / 2.0), q)
+  State q = |0>
+  State q = apply(S, q)
+  State q = apply(T, q)
+  State q = apply(rx(pi), q)
+  State q = apply(ry(pi / 2.0), q)
   measure q
 }
 """
@@ -104,7 +104,7 @@ def test_compile_failure_before_emit() -> None:
     bad = """
 package t
 pub fn main() -> Unit {
-  state x = ???
+  State x = ???
   measure x
 }
 """
@@ -170,8 +170,8 @@ def test_trotter_single_qubit_x() -> None:
 package t
 pub fn main() -> Unit {
   Operator H = X
-  state q = |0>
-  state q = evolve { q under H for 0.5 using Suzuki(order = 2, steps = 4) }.run()
+  State q = |0>
+  State q = evolve { q under H for 0.5 using Suzuki(order = 2, steps = 4) }.run()
   measure q
 }
 """

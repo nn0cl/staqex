@@ -42,9 +42,9 @@ def _projector_regions(compiled) -> list[object]:
 _SOURCE_EXACTLY_SELECTED = """
 package s02
 pub fn main() -> Unit {
-  state candidates = finiteize(0.0, 1.0, 8, 16, 0)
-  state selection = prepare_selection(candidates)
-  state feasible = project selection onto feasible(
+  State candidates = finiteize(0.0, 1.0, 8, 16, 0)
+  State selection = prepare_selection(candidates)
+  State feasible = project selection onto feasible(
     exactly_selected = 2,
     pairwise_compatible = true,
   )
@@ -55,9 +55,9 @@ pub fn main() -> Unit {
 _SOURCE_DIVERSITY = """
 package s02
 pub fn main() -> Unit {
-  state candidates = finiteize(0.0, 1.0, 8, 16, 0)
-  state selection = prepare_selection(candidates)
-  state feasible = project selection onto feasible(
+  State candidates = finiteize(0.0, 1.0, 8, 16, 0)
+  State selection = prepare_selection(candidates)
+  State feasible = project selection onto feasible(
     diversity_at_least = 3,
   )
   measure feasible
@@ -67,9 +67,9 @@ pub fn main() -> Unit {
 _SOURCE_UNKNOWN_PREDICATE = """
 package s02
 pub fn main() -> Unit {
-  state candidates = finiteize(0.0, 1.0, 8, 16, 0)
-  state selection = prepare_selection(candidates)
-  state feasible = project selection onto feasible(
+  State candidates = finiteize(0.0, 1.0, 8, 16, 0)
+  State selection = prepare_selection(candidates)
+  State feasible = project selection onto feasible(
     unknown_rule = 1,
   )
   measure feasible
@@ -79,8 +79,8 @@ pub fn main() -> Unit {
 _SOURCE_NO_PROJECTOR = """
 package s02
 pub fn main() -> Unit {
-  state candidates = finiteize(0.0, 1.0, 8, 16, 0)
-  state selection = prepare_selection(candidates)
+  State candidates = finiteize(0.0, 1.0, 8, 16, 0)
+  State selection = prepare_selection(candidates)
   measure selection
 }
 """

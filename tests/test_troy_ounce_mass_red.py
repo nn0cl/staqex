@@ -30,7 +30,7 @@ def test_troy_g_kg_oz_bridge() -> None:
             pub fn main() -> Unit {
                 Mass g = 1.0.oz_t to g
                 Mass kg = 1.0.oz_t to kg
-                state a = |0>
+                State a = |0>
                 measure a
             }
             """
@@ -49,7 +49,7 @@ def test_troy_g_kg_oz_bridge() -> None:
             Mass raw = 1.0.oz_t
             Mass back = 31.1034768.g to oz_t
             Mass av = 1.0.oz_t to oz
-            state a = |0>
+            State a = |0>
             measure a
         }
         """

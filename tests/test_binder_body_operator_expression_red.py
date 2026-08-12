@@ -24,7 +24,7 @@ def _main(body: str):
         package t
         pub fn main() -> Unit {{
             {body}
-            state observed = |0>
+            State observed = |0>
             measure observed
         }}
         """

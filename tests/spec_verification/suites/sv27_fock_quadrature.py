@@ -54,7 +54,7 @@ def run() -> list[CaseResult]:
             as_main(
                 """
 Operator Hxp = 0.5 * (P * P + Q * Q)
-state x = dirac(0)
+State x = dirac(0)
 measure x
 """
             )
@@ -99,8 +99,8 @@ measure x
 Energy e = 0.5.eV to J
 Time dur = 1.0.fs
 Operator H = e * (P * P + Q * Q)
-state psi = dirac(0)
-state psi = evolve { psi under H for dur }.run()
+State psi = dirac(0)
+State psi = evolve { psi under H for dur }.run()
 measure psi
 """
             )

@@ -26,12 +26,12 @@ def _src(hamiltonian: str) -> str:
     pub fn main() -> Unit {{
         QubitRegister<3> register = system()
         Operator H = {hamiltonian}
-        state a = |0>
-        state b = |0>
-        state c = |0>
-        state (a, b, c) = evolve {{ (a, b, c) under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
-        state b = |0>
-        state c = |0>
+        State a = |0>
+        State b = |0>
+        State c = |0>
+        State (a, b, c) = evolve {{ (a, b, c) under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
+        State b = |0>
+        State c = |0>
         measure a
     }}
     """

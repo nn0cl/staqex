@@ -44,14 +44,14 @@ pub fn main() -> Unit {
     } + sum (i in Index<0..3>) {
         -1.0545718e-19 * X[i]
     }
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state d = |0>
-    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
-    state b = |0>
-    state c = |0>
-    state d = |0>
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State d = |0>
+    State (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+    State c = |0>
+    State d = |0>
     measure a
 }
 """
@@ -63,14 +63,14 @@ pub fn main() -> Unit {
     QubitRegister<4> register = system()
     Operator H = -1.0545718e-19 * (Z[0] * Z[1] + Z[1] * Z[2] + Z[2] * Z[3])
         + -1.0545718e-19 * (X[0] + X[1] + X[2] + X[3])
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state d = |0>
-    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
-    state b = |0>
-    state c = |0>
-    state d = |0>
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State d = |0>
+    State (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+    State c = |0>
+    State d = |0>
     measure a
 }
 """
@@ -84,14 +84,14 @@ pub fn main() -> Unit {
     Operator H = sum (i in Index<0..2>) {
         J * Z[i] * Z[next(i)]
     }
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state d = |0>
-    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
-    state b = |0>
-    state c = |0>
-    state d = |0>
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State d = |0>
+    State (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+    State c = |0>
+    State d = |0>
     measure a
 }
 """
@@ -102,7 +102,7 @@ package t
 pub fn main() -> Unit {
     QubitRegister<4> register = system()
     Operator parity = product (i in Index<0..3>) { Z[i] }
-    state a = |+>
+    State a = |+>
     measure a
 }
 """

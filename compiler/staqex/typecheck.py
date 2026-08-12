@@ -596,7 +596,12 @@ class TypeChecker:
                         self._check_assign(
                             declared, inferred, stmt.span.line, stmt.span.col
                         )
-                        ty = declared
+                        # LISS-0418: bare `State x = evolve …` (no `<T>`)
+                        # must not mask `inferred`'s real kind (e.g.
+                        # Continuous on an invalid seed) behind the
+                        # declared placeholder -- see the identical fix a
+                        # few lines below in the general single-name path.
+                        ty = inferred if declared.payload == "Any" else declared
                     else:
                         ty = inferred
                     for n in stmt.names:
@@ -667,8 +672,18 @@ class TypeChecker:
                         self._check_payload_assign(
                             declared, inferred, stmt.span.line, stmt.span.col
                         )
+                    # LISS-0418: bare `State x = e` (Type-First, no `<T>`)
+                    # declares no more specific information than full
+                    # inference already provides -- storing the coarse
+                    # `Ty("State", "Any", ...)` here instead of `inferred`
+                    # was losing precise info (e.g. a Partial's own arity)
+                    # that a later use of `x` needs, a gap that went
+                    # unexercised before lowercase `state` (always
+                    # `inferred`-preserving) was retired in its favor.
+                    if declared.payload == "Any" and declared.kind == "State":
+                        ty = inferred
                     # ADR 0154: preserve known unit suffix through Type-First binds.
-                    if inferred.unit is not None:
+                    elif inferred.unit is not None:
                         ty = Ty(
                             declared.kind,
                             declared.payload,
@@ -692,7 +707,19 @@ class TypeChecker:
                             self.static_scalars[n] = static_val
                     # ADR 0180: inferred classical/Operator/object binds are not State.
                     # `state` keyword and State-kind still require NLTS discipline.
-                    if stmt.via_state_keyword or ty.kind == "State":
+                    # LISS-0418: a bare `State x = e` declaration (Type-First,
+                    # no `<T>`) must also require NLTS discipline even though
+                    # `ty` now stores the precise `inferred` kind (which may
+                    # legitimately be non-"State", e.g. Continuous on a bad
+                    # seed) -- gating on `ty.kind == "State"` alone would skip
+                    # `_assert_is_state` (and its TYPE_NOT_STATE diagnostic)
+                    # exactly when it is most needed.
+                    bare_state_decl = (
+                        stmt.ty is not None
+                        and stmt.ty.name == "State"
+                        and not stmt.ty.args
+                    )
+                    if stmt.via_state_keyword or bare_state_decl or ty.kind == "State":
                         self._assert_is_state(ty, stmt.span.line, stmt.span.col, n)
             elif isinstance(stmt, (Measure, Snapshot)):
                 ty = self._infer(stmt.expr)
@@ -1212,6 +1239,15 @@ class TypeChecker:
         ):
             return
         if inferred.payload in {"Any", declared.payload}:
+            return
+        # LISS-0418: a bare `State x = …` (Type-First, no `<T>`) declares
+        # Ty("State", "Any", ...) -- "Any" must tolerate every payload, the
+        # same way the un-annotated `name = …` inferred-bind form always
+        # did (no declared type to compare against at all). Previously this
+        # gap (e.g. Bool) went unexercised because almost no shipped source
+        # used bare `State` before lowercase `state` was retired in favor
+        # of it.
+        if declared.payload == "Any":
             return
         if declared.payload in {"Any", "Int"} and inferred.payload in {
             "Int",

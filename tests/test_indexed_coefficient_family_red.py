@@ -27,10 +27,10 @@ pub fn main() -> Unit {
     Operator H = sum (i in Index<0..1>) {
         J[i] * Z[i] * Z[next(i)]
     }
-    state a = |0>
-    state b = |0>
-    state c = |0>
-    state (a, b, c) = evolve { (a, b, c) under H for 0.1 }.run()
+    State a = |0>
+    State b = |0>
+    State c = |0>
+    State (a, b, c) = evolve { (a, b, c) under H for 0.1 }.run()
     measure a
     measure b
     measure c
@@ -60,7 +60,7 @@ def test_indexed_coefficient_lowers_in_binder() -> None:
         Operator H = sum (i in Index<0..1>) {
             J[i] * Z[i] * Z[next(i)]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -83,9 +83,9 @@ def test_indexed_coefficient_evolve_runs() -> None:
         Operator H = sum (i in Index<0..0>) {
             J[i] * Z[i] * Z[next(i)]
         }
-        state a = |0>
-        state b = |0>
-        state (a, b) = evolve { (a, b) under H for 0.1 }.run()
+        State a = |0>
+        State b = |0>
+        State (a, b) = evolve { (a, b) under H for 0.1 }.run()
         measure a
     }
     """

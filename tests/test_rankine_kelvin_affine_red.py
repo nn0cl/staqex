@@ -31,7 +31,7 @@ def test_r_to_k_f_and_c() -> None:
                 Temperature k = 491.67.R to K
                 Temperature f = 491.67.R to F
                 Temperature c = 491.67.R to C
-                state a = |0>
+                State a = |0>
                 measure a
             }
             """
@@ -49,7 +49,7 @@ def test_r_to_k_f_and_c() -> None:
             Temperature f = 491.67.R to F
             Temperature c = 491.67.R to C
             Temperature raw = 491.67.R
-            state a = |0>
+            State a = |0>
             measure a
         }
         """
@@ -68,7 +68,7 @@ def test_k_to_r() -> None:
         package t
         pub fn main() -> Unit {
             Temperature r = 273.15.K to R
-            state a = |0>
+            State a = |0>
             measure a
         }
         """

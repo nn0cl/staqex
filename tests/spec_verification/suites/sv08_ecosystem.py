@@ -49,11 +49,11 @@ def run() -> list[CaseResult]:
     # Math.sin on State<Float>
     try:
         src = as_main("""
-state phase = mix (coin()) {
+State phase = mix (coin()) {
   0 -> 0.0,
   else -> 1.5707963267948966,
 }
-state s = Math.sin(phase)
+State s = Math.sin(phase)
 measure s
 """)
         compiled = compile_source(src)
@@ -96,8 +96,8 @@ measure s
     # inspect non-destructive + identity bind
     try:
         src = as_main("""
-state x = coin()
-state y = inspect(x)
+State x = coin()
+State y = inspect(x)
 measure y
 """)
         buf = io.StringIO()
@@ -136,13 +136,13 @@ measure y
         with tempfile.TemporaryDirectory() as td:
             path = str(Path(td) / "log.csv")
             src = f"""
-state x = coin()
+State x = coin()
 snapshot x to {path}
 measure x
 """
             # sink must be ident — write via stdout Console instead
             src = as_main("""
-state x = coin()
+State x = coin()
 snapshot x to stdout
 measure x
 """)
@@ -180,7 +180,7 @@ measure x
     try:
         parser = build_parser()
         args = parser.parse_args(
-            ["check", "-e", as_main("state x = coin()\nif (x) {}\nmeasure x\n")]
+            ["check", "-e", as_main("State x = coin()\nif (x) {}\nmeasure x\n")]
         )
         import contextlib
 
@@ -212,7 +212,7 @@ measure x
 
     # DAG IR extraction
     try:
-        src = as_main("state x = coin()\nstate y = x + x\nmeasure y\n")
+        src = as_main("State x = coin()\nState y = x + x\nmeasure y\n")
         compiled = compile_source(src)
         dag = lower_source_ast(compiled.unit)
         kinds = dag.summary()["kinds"]

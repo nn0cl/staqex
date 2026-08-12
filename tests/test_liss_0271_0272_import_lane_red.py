@@ -34,7 +34,7 @@ import demo.domain.ops.{Keep}
 pub fn main() -> Unit {
     Keep k = Keep(2.0)
     Float v = k.get() * 0.5
-    state s = dirac(v)
+    State s = dirac(v)
     measure s
 }
 """,
@@ -52,7 +52,7 @@ enum Phase { Tonight, Day }
 use Phase.*
 pub fn main() -> Unit {
     Phase p = Phase.Tonight
-    state s = mix (p) {
+    State s = mix (p) {
       Tonight -> |0>,
       else -> |1>,
     }
@@ -71,7 +71,7 @@ QubitRegister<1> r = system()
 forEach q in r {
   apply(H, q)
 }
-state s = |0>
+State s = |0>
 measure s
 """
     c = compile_source(src)
@@ -87,7 +87,7 @@ QubitRegister<1> r = system()
 forEach q in r {
   apply(H, q)
 }
-state s = |0>
+State s = |0>
 measure s
 """
     c = compile_source(src)

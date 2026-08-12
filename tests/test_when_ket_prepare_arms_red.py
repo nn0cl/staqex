@@ -33,15 +33,15 @@ def _run(src: str):
 _PREPARE_PLUS = """
 package t
 pub fn main() -> Unit {
-    state bit = coin()
-    state prep = mix (bit) {
+    State bit = coin()
+    State prep = mix (bit) {
       0 -> |0>,
       else -> |+>,
     }
     Operator H = 1.0545718e-19 * Z + 2.6364295e-20 * X
-    state prep = evolve { prep under H for 0.35.fs }.run()
-    state magnetization = expect(Z, prep)
-    state viewed = inspect(magnetization)
+    State prep = evolve { prep under H for 0.35.fs }.run()
+    State magnetization = expect(Z, prep)
+    State viewed = inspect(magnetization)
     measure prep
 }
 """
@@ -49,8 +49,8 @@ pub fn main() -> Unit {
 _PREPARE_01 = """
 package t
 pub fn main() -> Unit {
-    state bit = coin()
-    state prep = mix (bit) {
+    State bit = coin()
+    State prep = mix (bit) {
       0 -> |0>,
       else -> |1>,
     }

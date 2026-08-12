@@ -73,7 +73,7 @@ def test_unicode_ket_program_is_rejected() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |0>
+            State psi = |0>
             measure psi
         }
         """
@@ -82,7 +82,7 @@ def test_unicode_ket_program_is_rejected() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state psi = |0{KET_CLOSE}
+            State psi = |0{KET_CLOSE}
             measure psi
         }}
         """
@@ -97,11 +97,11 @@ def test_unicode_tensor_bind_is_rejected() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state left = |0>
-            state right = |1>
+            State left = |0>
+            State right = |1>
             (a, b) = left *|* right
-    state left = |0>
-    state right = |0>
+    State left = |0>
+    State right = |0>
             measure a
         }
         """
@@ -110,11 +110,11 @@ def test_unicode_tensor_bind_is_rejected() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state left = |0>
-            state right = |1>
+            State left = |0>
+            State right = |1>
             (a, b) = left {TENSOR} right
-    state left = |0>
-    state right = |0>
+    State left = |0>
+    State right = |0>
             measure a
         }}
         """

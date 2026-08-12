@@ -64,7 +64,7 @@ def test_comment_ascii_ket_is_not_rewritten() -> None:
     source = (_V01 / "comments_preserved.sqx").read_text(encoding="utf-8")
     migrated = _migrate(source)
     assert "// |0> in a comment must stay ASCII" in migrated
-    assert "state psi = |1>" in migrated
+    assert "State psi = |1>" in migrated
 
 
 def test_migrate_is_idempotent_on_canonical_ascii() -> None:

@@ -21,7 +21,7 @@ package t
 enum BoundaryCondition { Periodic, Open }
 pub fn main() -> Unit {
   BoundaryCondition bc = BoundaryCondition.Open
-  state x = dirac(0)
+  State x = dirac(0)
   measure x
 }
 """
@@ -30,7 +30,7 @@ package t
 enum BoundaryCondition { Periodic, Open }
 pub fn main() -> Unit {
   BoundaryCondition bc = 1
-  state x = dirac(0)
+  State x = dirac(0)
   measure x
 }
 """
@@ -119,7 +119,7 @@ namespace A.B {
 pub fn main() -> Unit {
   A.B.E e = A.B.E.Y
   A.B.S s = A.B.S(7)
-  state x = dirac(0)
+  State x = dirac(0)
   measure x
 }
 """

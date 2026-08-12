@@ -22,7 +22,7 @@ def test_ideal_dialect_multi_bind_chalk() -> None:
 J, h = 1.0545718e-19, 5.272859e-20
 H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
 s0, s1 = |+>, |+>
-state (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+State (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
 measure s0 tracing_out s1
 """
     r = run_source(src, settings={"seed": 0})
@@ -34,7 +34,7 @@ def test_classical_multi_bind_not_linearized() -> None:
     src = """
 // staqex-lane: experiment
 a, b = 1.0, 2.0
-state s = dirac(a + b)
+State s = dirac(a + b)
 measure s
 """
     r = run_source(src, settings={"seed": 0})

@@ -28,8 +28,8 @@ def test_dead_caller_axis_traced_out_after_library_call() -> None:
             return y * 2
         }
         pub fn main() -> Unit {
-            state x = 3
-            state r = double(x)
+            State x = 3
+            State r = double(x)
             measure r
         }
         """,
@@ -52,10 +52,10 @@ def test_live_caller_axis_preserved_when_used_later() -> None:
             return y * 2
         }
         pub fn main() -> Unit {
-            state x = 3
-            state r = double(x)
-            state s = r + 1
-            state viewed = inspect(r)
+            State x = 3
+            State r = double(x)
+            State s = r + 1
+            State viewed = inspect(r)
             measure s
         }
         """,
@@ -77,10 +77,10 @@ def test_unrelated_live_coord_preserved() -> None:
             return y
         }
         pub fn main() -> Unit {
-            state keep = |1>
-            state x = |0>
-            state r = id(x)
-            state viewed = inspect(r)
+            State keep = |1>
+            State x = |0>
+            State r = id(x)
+            State viewed = inspect(r)
             measure keep
         }
         """,

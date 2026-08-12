@@ -2,7 +2,7 @@
 package examples.applied.noether_forge.invalid
 
 pub fn main() -> Unit {
-    state psi = |+>
-    state unused = |0>
+    State psi = |+>
+    State unused = |0>
     measure psi
 }

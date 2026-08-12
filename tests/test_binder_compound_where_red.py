@@ -25,7 +25,7 @@ def test_compound_where_and_lowers_filtered_terms() -> None:
         Operator H = sum (i in Index<0..2>, j in Index<0..2>) where i < j && j < 2 {
             Z[i] * Z[j]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """

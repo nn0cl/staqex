@@ -22,7 +22,7 @@ _BASELINE_BARE_VAR_SRC = """
 package t
 pub fn main() -> Unit {
     QubitRegister<1> register = system()
-    state psi = |0>
+    State psi = |0>
     Float x = inner(|0>, psi(|1>))
     measure psi
 }
@@ -43,7 +43,7 @@ class Box {
 }
 pub fn main() -> Unit {
     QubitRegister<1> register = system()
-    state seed = |0>
+    State seed = |0>
     Box b = Box(seed)
     Float x = inner(|0>, b.getPsi(|1>))
     measure seed

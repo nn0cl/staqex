@@ -9,7 +9,7 @@ State<Time> dt = dirac(0.5.s)
 State<Mass> m = dirac(1.0.kg)
 State<Stiffness> k = dirac(1.0.N_m)
 
-state bit = coin()
+State bit = coin()
 
 State<Length> x = mix (bit) {
   0 -> 0.0.m,
@@ -20,11 +20,11 @@ State<Momentum> p = mix (bit) {
   else -> 0.0.kg_m_s,
 }
 
-state (x, p) = evolve (x, p) times 2 {
+State (x, p) = evolve (x, p) times 2 {
   (x + (dt / m) * p, p - (dt * k) * x)
 }
 
-state viewed = inspect(x)
+State viewed = inspect(x)
 // Type-First State leftovers leave via partial trace (ADR 0173 / LISS-0311).
 // Not ritual vacuum rebinds — dt/m/k/p remain dimensioned linear carriers.
 measure viewed tracing_out dt, m, k, p

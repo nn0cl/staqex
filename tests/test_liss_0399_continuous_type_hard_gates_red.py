@@ -27,7 +27,7 @@ _SOURCE_FIELD_ONLY = """
 package t
 pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
-    state zone = |0>
+    State zone = |0>
     measure zone
 }
 """
@@ -47,7 +47,7 @@ _SOURCE_FIELD_UNCONSUMED = """
 package t
 pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
-    state zone = |0>
+    State zone = |0>
     measure zone
 }
 """
@@ -92,7 +92,7 @@ _SOURCE_EVOLVE_CONTINUOUS = """
 package t
 pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
-    state r = evolve { damage under H for 1.0 }.run()
+    State r = evolve { damage under H for 1.0 }.run()
     measure r
 }
 """
@@ -113,7 +113,7 @@ package t
 pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
     apply(X, damage)
-    state zone = |0>
+    State zone = |0>
     measure zone
 }
 """

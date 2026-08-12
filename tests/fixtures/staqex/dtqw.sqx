@@ -10,11 +10,11 @@ pub fn main() -> Unit {
     State<Position> x0 = dirac(0)
     State<(Qubit, Position)> (c, x) = c0 *|* x0
 
-    state c = apply(CoinOp, c)
-    state x = walk_shift(c, x)
-    state c = apply(CoinOp, c)
-    state x = walk_shift(c, x)
+    State c = apply(CoinOp, c)
+    State x = walk_shift(c, x)
+    State c = apply(CoinOp, c)
+    State x = walk_shift(c, x)
 
-    state viewed = inspect(x)
+    State viewed = inspect(x)
     measure viewed
 }

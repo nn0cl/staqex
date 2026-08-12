@@ -35,7 +35,7 @@ def test_energy_div_length_preserves_force_payload() -> None:
         Energy e = 1.0.eV to J
         Length len = 1.0.m
         Force f = force_from_energy(e, len)
-        state s = |0>
+        State s = |0>
         measure s
     }
     """
@@ -56,7 +56,7 @@ def test_int_times_int_still_type_checks_in_state_context() -> None:
 
     pub fn main() -> Unit {
         Box b = Box(3)
-        state s = b.squared()
+        State s = b.squared()
         measure s
     }
     """

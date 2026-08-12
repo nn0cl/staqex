@@ -57,8 +57,8 @@ def run() -> list[CaseResult]:
 Energy e = 0.5.eV to J
 Time dur = 1.0.fs
 Operator H = e * (N + 0.5)
-state psi = dirac(0)
-state psi = evolve { psi under H for dur }.run()
+State psi = dirac(0)
+State psi = evolve { psi under H for dur }.run()
 measure psi
 """
         )
@@ -99,10 +99,10 @@ Energy J = 1.0.eV to J
 Energy h = 0.25.eV to J
 Time dur = 1.0.fs
 Operator H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
-state a = |+>
-state b = |0>
-state (a, b) = evolve { (a, b) under H for dur }.run()
-state zz = expect(ZZ, a, b)
+State a = |+>
+State b = |0>
+State (a, b) = evolve { (a, b) under H for dur }.run()
+State zz = expect(ZZ, a, b)
 measure zz
 """
         )
@@ -188,10 +188,10 @@ measure zz
     try:
         src = as_main(
             """
-state a = |+>
-state b = |0>
-state (c, x) = a *|* b
-state _t = trace_out(c)
+State a = |+>
+State b = |0>
+State (c, x) = a *|* b
+State _t = trace_out(c)
 measure x
 """
         )
@@ -202,7 +202,7 @@ measure x
         # also closed form tensor
         src2 = as_main(
             """
-state (c, x) = |+> *|* dirac(0)
+State (c, x) = |+> *|* dirac(0)
 measure x
 """
         )
@@ -239,9 +239,9 @@ measure x
 Energy e = 1.0.eV to J
 Time dur = 1.0.fs
 Operator H = e * Z
-state psi = |0>
-state psi = evolve { psi under H for dur }.run()
-state ez = expect(Z, psi)
+State psi = |0>
+State psi = evolve { psi under H for dur }.run()
+State ez = expect(Z, psi)
 measure ez
 """
         )

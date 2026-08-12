@@ -46,15 +46,15 @@ pub fn main() -> Unit {
     Operator H = sum (i in Index<0..2>) {
         J * Z[i] * Z[next(i)]
     }
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state d = |0>
-    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
-    state b = |0>
-        state b = |0>
-    state c = |0>
-    state d = |0>
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State d = |0>
+    State (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+        State b = |0>
+    State c = |0>
+    State d = |0>
 measure a
 }
 """
@@ -66,15 +66,15 @@ pub fn main() -> Unit {
     Operator H = sum (i in Index<0..2>) {
         1.0545718e-19 * Z[i] * Z[next(i)]
     }
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state d = |0>
-    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
-    state b = |0>
-        state b = |0>
-    state c = |0>
-    state d = |0>
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State d = |0>
+    State (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+        State b = |0>
+    State c = |0>
+    State d = |0>
 measure a
 }
 """
@@ -84,8 +84,8 @@ package t
 pub fn main() -> Unit {
     Float hx = 2.6364295e-20
     Operator H = hx * X
-    state psi = |+>
-    state psi = evolve { psi under H for 0.1.fs }.run()
+    State psi = |+>
+    State psi = evolve { psi under H for 0.1.fs }.run()
     measure psi
 }
 """
@@ -94,8 +94,8 @@ _LITERAL_OUTSIDE_BINDER = """
 package t
 pub fn main() -> Unit {
     Operator H = 2.6364295e-20 * X
-    state psi = |+>
-    state psi = evolve { psi under H for 0.1.fs }.run()
+    State psi = |+>
+    State psi = evolve { psi under H for 0.1.fs }.run()
     measure psi
 }
 """
@@ -110,8 +110,8 @@ namespace Dom {
 pub fn main() -> Unit {
     Dom.Couplings c = Dom.Couplings(2.6364295e-20)
     Operator H = c.h_x * X
-    state psi = |+>
-    state psi = evolve { psi under H for 0.1.fs }.run()
+    State psi = |+>
+    State psi = evolve { psi under H for 0.1.fs }.run()
     measure psi
 }
 """
@@ -183,8 +183,8 @@ def test_struct_field_coefficient_in_operator_compiles_and_runs() -> None:
 _DISCARDED_STATE = """
 package t
 pub fn main() -> Unit {
-    state q = |+>
-    state viewed = inspect(|0>)
+    State q = |+>
+    State viewed = inspect(|0>)
     measure viewed
 }
 """
@@ -199,10 +199,10 @@ def test_unconsumed_quantum_state_still_linear_implicit_discard() -> None:
 _QUANTUM_DEPENDENT_COEFF = """
 package t
 pub fn main() -> Unit {
-    state amp = |+>
+    State amp = |+>
     Operator H = amp * X
-    state psi = |0>
-    state psi = evolve { psi under H for 0.1 }.run()
+    State psi = |0>
+    State psi = evolve { psi under H for 0.1 }.run()
     measure psi
 }
 """
@@ -228,7 +228,7 @@ _WHEN_ON_COEFFICIENT = """
 package t
 pub fn main() -> Unit {
     Float J = 1.0
-    state label = mix (J) {
+    State label = mix (J) {
       0 -> 0,
       else -> 1,
     }

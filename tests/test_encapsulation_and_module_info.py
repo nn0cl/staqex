@@ -97,7 +97,7 @@ pub fn leak() -> Float {
 package demo.app
 import demo.app.hidden.secret
 pub fn main() -> Unit {
-  state observed = dirac(0)
+  State observed = dirac(0)
   measure observed
 }
 """,
@@ -135,7 +135,7 @@ package t
 pub enum BoundaryCondition { Periodic, Open }
 pub fn main() -> Unit {
   BoundaryCondition bc = BoundaryCondition.Open
-  state x = dirac(0)
+  State x = dirac(0)
   measure x
 }
 """

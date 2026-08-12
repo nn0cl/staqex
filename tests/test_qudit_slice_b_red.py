@@ -26,7 +26,7 @@ def test_in_range_labels_on_qutrit_accepted() -> None:
             package t
             pub fn main() -> Unit {{
                 State<Qutrit> s = |{label}{KET}
-                state s = |0>
+                State s = |0>
                 State observed = coin()
                 measure observed
             }}
@@ -74,7 +74,7 @@ def test_in_range_ket_on_qudit4_accepted() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qudit<4>> s = |3{KET}
-            state s = |0>
+            State s = |0>
             State observed = coin()
             measure observed
         }}
@@ -106,8 +106,8 @@ def test_alone_ket_without_qudit_carrier_unchanged() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state s = |1{KET}
-            state s = |0>
+            State s = |1{KET}
+            State s = |0>
             State observed = coin()
             measure observed
         }}

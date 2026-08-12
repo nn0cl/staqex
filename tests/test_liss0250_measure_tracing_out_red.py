@@ -78,8 +78,8 @@ def test_measure_tracing_out_compiles_without_hand_kill() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
-        state s1 = coin()
+        State s0 = coin()
+        State s1 = coin()
         measure s0 tracing_out s1
     }
     """
@@ -93,8 +93,8 @@ def test_measure_tracing_out_runs_seed_zero_and_drops_leftover_coord() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = |+>
-        state s1 = |+>
+        State s0 = |+>
+        State s1 = |+>
         measure s0 tracing_out s1
     }
     """
@@ -112,9 +112,9 @@ def test_unnamed_leftover_still_linear_implicit_discard() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
-        state s1 = coin()
-        state s2 = coin()
+        State s0 = coin()
+        State s1 = coin()
+        State s2 = coin()
         measure s0 tracing_out s1
     }
     """
@@ -127,7 +127,7 @@ def test_empty_tracing_out_list_is_rejected() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
+        State s0 = coin()
         measure s0 tracing_out
     }
     """
@@ -143,7 +143,7 @@ def test_primary_in_tracing_out_list_is_rejected() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
+        State s0 = coin()
         measure s0 tracing_out s0
     }
     """
@@ -159,8 +159,8 @@ def test_duplicate_tracing_out_names_are_rejected() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
-        state s1 = coin()
+        State s0 = coin()
+        State s1 = coin()
         measure s0 tracing_out s1, s1
     }
     """
@@ -176,8 +176,8 @@ def test_classical_bound_trace_out_consumes_state_argument() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
-        state s1 = coin()
+        State s0 = coin()
+        State s1 = coin()
         Classical<Float> _t = trace_out(s1)
         measure s0
     }

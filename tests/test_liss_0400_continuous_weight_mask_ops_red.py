@@ -36,7 +36,7 @@ pub fn main() -> Unit {
     Continuous impassable = field_from_host("road_block_field", "Omega")
     Continuous risk = weight(damage, flood)
     Continuous masked = mask(risk, impassable)
-    state zone = |0>
+    State zone = |0>
     measure zone
 }
 """
@@ -107,7 +107,7 @@ pub fn main() -> Unit {
     Continuous flood = field_from_host("inundation_v1", "Omega")
     Continuous fire = field_from_host("fire_index_v1", "Omega")
     Continuous risk = weight(damage, flood, fire)
-    state zone = |0>
+    State zone = |0>
     measure zone
 }
 """

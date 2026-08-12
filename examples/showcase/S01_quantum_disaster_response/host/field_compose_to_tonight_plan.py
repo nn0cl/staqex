@@ -84,9 +84,9 @@ pub fn main() -> Unit {{
     Float congestion = {congestion:.10f}
     Float fairness = {fairness:.10f}
     Operator H = congestion * (Z[0] * Z[1]) + fairness * (X[0] + X[1])
-    state plan0 = |+>
-    state plan1 = |0>
-    state (plan0, plan1) = evolve {{ (plan0, plan1) under H for 0.35 using Suzuki(order = 2, steps = 4) }}.run()
+    State plan0 = |+>
+    State plan1 = |0>
+    State (plan0, plan1) = evolve {{ (plan0, plan1) under H for 0.35 using Suzuki(order = 2, steps = 4) }}.run()
     measure plan0 tracing_out plan1
 }}
 """

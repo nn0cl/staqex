@@ -24,12 +24,12 @@ namespace N {{
 }}
 pub fn main() -> Unit {{
   N.S s = N.S.{variant}
-  state w = mix (s) {{
+  State w = mix (s) {{
     Open -> |1>,
     else -> |0>,
   }}
-  state peeked = expect(Z, w)
-  state viewed = inspect(peeked)
+  State peeked = expect(Z, w)
+  State viewed = inspect(peeked)
   measure w
 }}
 """
@@ -57,8 +57,8 @@ def test_when_on_coin_still_runs() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-  state bit = coin()
-  state w = mix (bit) {
+  State bit = coin()
+  State w = mix (bit) {
     0 -> |0>,
     else -> |+>,
   }

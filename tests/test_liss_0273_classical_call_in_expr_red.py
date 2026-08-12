@@ -18,7 +18,7 @@ namespace N {
 pub fn main() -> Unit {
     N.C c = N.C(2.0)
     Float b = c.get() * 0.4
-    state x = dirac(b)
+    State x = dirac(b)
     measure x
 }
 """
@@ -36,7 +36,7 @@ fn twice(x: Float) -> Float {
 }
 pub fn main() -> Unit {
     Float y = twice(1.5) + 0.5
-    state x = dirac(y)
+    State x = dirac(y)
     measure x
 }
 """
@@ -50,7 +50,7 @@ def test_state_forming_call_still_not_classical_operand() -> None:
 package p
 pub fn main() -> Unit {
     Float bad = coin() * 0.5
-    state x = dirac(0)
+    State x = dirac(0)
     measure x
 }
 """

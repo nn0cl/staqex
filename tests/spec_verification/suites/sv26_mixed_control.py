@@ -35,10 +35,10 @@ def run() -> list[CaseResult]:
         result, _ = _eval(
             as_main(
                 """
-state a = |1>
-state b = |0>
-state t = |0>
-state t = capply(a, !b, X, t)
+State a = |1>
+State b = |0>
+State t = |0>
+State t = capply(a, !b, X, t)
 measure t
 """
             )
@@ -70,10 +70,10 @@ measure t
         result, _ = _eval(
             as_main(
                 """
-state a = |1>
-state b = |1>
-state t = |0>
-state t = capply(a, !b, X, t)
+State a = |1>
+State b = |1>
+State t = |0>
+State t = capply(a, !b, X, t)
 measure t
 """
             )
@@ -106,10 +106,10 @@ measure t
         r1, _ = _eval(
             as_main(
                 """
-state a = |0>
-state b = |0>
-state t = |0>
-state t = capply(!a, !b, X, t)
+State a = |0>
+State b = |0>
+State t = |0>
+State t = capply(!a, !b, X, t)
 measure t
 """
             )
@@ -117,10 +117,10 @@ measure t
         r2, _ = _eval(
             as_main(
                 """
-state a = |0>
-state b = |0>
-state t = |0>
-state t = ocapply(a, b, X, t)
+State a = |0>
+State b = |0>
+State t = |0>
+State t = ocapply(a, b, X, t)
 measure t
 """
             )

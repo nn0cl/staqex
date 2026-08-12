@@ -25,7 +25,7 @@ def test_register_size_endpoint_lowers() -> None:
         Operator H = sum (i in Index<0..register-1>) {
             Z[i]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -46,7 +46,7 @@ def test_dependent_inner_range_lowers() -> None:
         Operator H = sum (i in Index<0..register-1>, j in Index<i+1..register-1>) {
             Z[i] * Z[j]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -65,7 +65,7 @@ def test_negative_endpoint_is_diagnosed() -> None:
         pub fn main() -> Unit {
             QubitRegister<2> register = system()
             Operator H = sum (i in Index<0..0-1>) { Z[0] }
-            state a = |0>
+            State a = |0>
             measure a
         }
         """

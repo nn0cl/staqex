@@ -39,10 +39,10 @@ def test_float_array_param_threaded_into_binder() -> None:
         Float[2] arr = host("arr")
         Operator H_raw = f(arr)
         Operator H = scale * H_raw
-        state q0 = |0>
-        state q1 = |0>
+        State q0 = |0>
+        State q1 = |0>
         Time dur = 0.6.fs
-        state (q0, q1) = evolve { (q0, q1) under H for dur }.run()
+        State (q0, q1) = evolve { (q0, q1) under H for dur }.run()
         measure q0 tracing_out q1
     }
     """
@@ -74,9 +74,9 @@ def test_struct_field_indirection_through_named_operator_variable() -> None:
         Operator H_raw = G + X[0]
         Energy scale = 1.0.eV to J
         Operator H = scale * H_raw
-        state q = |0>
+        State q = |0>
         Time dur = 0.6.fs
-        state q = evolve { q under H for dur }.run()
+        State q = evolve { q under H for dur }.run()
         measure q
     }
     """
@@ -102,9 +102,9 @@ def test_nested_operator_returning_call_inside_larger_expression() -> None:
         W weights = W(0.5)
         Energy scale = 1.0.eV to J
         Operator H = scale * f(weights)
-        state q = |0>
+        State q = |0>
         Time dur = 0.6.fs
-        state q = evolve { q under H for dur }.run()
+        State q = evolve { q under H for dur }.run()
         measure q
     }
     """
@@ -130,10 +130,10 @@ def test_missing_binder_array_fails_closed_with_a_clear_diagnostic() -> None:
         Float[2] arr = host("missing_key")
         Operator H_raw = f(arr)
         Operator H = scale * H_raw
-        state q0 = |0>
-        state q1 = |0>
+        State q0 = |0>
+        State q1 = |0>
         Time dur = 0.6.fs
-        state (q0, q1) = evolve { (q0, q1) under H for dur }.run()
+        State (q0, q1) = evolve { (q0, q1) under H for dur }.run()
         measure q0 tracing_out q1
     }
     """

@@ -48,8 +48,8 @@ def run() -> list[CaseResult]:
     try:
         src = as_main(
             """
-state z = |0>
-state p = |+>
+State z = |0>
+State p = |+>
 measure z
 """
         )
@@ -61,7 +61,7 @@ measure z
         result2, _ = _eval(
             as_main(
                 """
-state p = |+>
+State p = |+>
 measure p
 """
             )
@@ -106,9 +106,9 @@ measure p
         # value through the fail-closed Time-unit check unchanged.
         src = as_main(
             """
-state psi0 = |0>
+State psi0 = |0>
 Time dur = 1.5707963267948966.s
-state psi = evolve { psi0 under X for dur }.run()
+State psi = evolve { psi0 under X for dur }.run()
 measure psi
 """
         )
@@ -142,8 +142,8 @@ measure psi
     try:
         src = as_main(
             """
-state z = |0>
-state ez = expect(Z, z)
+State z = |0>
+State ez = expect(Z, z)
 measure ez
 """
         )
@@ -155,8 +155,8 @@ measure ez
 
         src2 = as_main(
             """
-state p = |+>
-state ez = expect(Z, p)
+State p = |+>
+State ez = expect(Z, p)
 measure ez
 """
         )
@@ -190,10 +190,10 @@ measure ez
     try:
         src = as_main(
             """
-state alice = |+>
-state bob = |0>
-state bob = cnot(alice, bob)
-state corr = expect(ZZ, alice, bob)
+State alice = |+>
+State bob = |0>
+State bob = cnot(alice, bob)
+State corr = expect(ZZ, alice, bob)
 measure corr
 """
         )
@@ -203,10 +203,10 @@ measure corr
         # via expect already bound — re-eval without measure to inspect pair
         src2 = as_main(
             """
-state alice = |+>
-state bob = |0>
-state bob = cnot(alice, bob)
-state corr = expect(ZZ, alice, bob)
+State alice = |+>
+State bob = |0>
+State bob = cnot(alice, bob)
+State corr = expect(ZZ, alice, bob)
 snapshot corr to sink
 measure corr
 """
@@ -253,7 +253,7 @@ measure corr
             """
 State<Length> x = dirac(1.0.m)
 Delta<Time> dt = 0.5.s
-state bad = x + dt
+State bad = x + dt
 measure bad
 """
         )

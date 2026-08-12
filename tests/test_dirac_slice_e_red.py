@@ -31,7 +31,7 @@ def test_expr_postfix_dagger_parses_as_adjoint_call() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state a = adjoint(X)
+            State a = adjoint(X)
             State observed = coin()
             measure observed
         }}
@@ -85,7 +85,7 @@ def test_expr_dagger_in_state_typechecks_like_adjoint() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = adjoint(X)
+            State a = adjoint(X)
             State observed = coin()
             measure observed
         }
@@ -95,7 +95,7 @@ def test_expr_dagger_in_state_typechecks_like_adjoint() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state a = adjoint(X)
+            State a = adjoint(X)
             State observed = coin()
             measure observed
         }}

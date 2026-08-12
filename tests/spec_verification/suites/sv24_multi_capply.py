@@ -44,10 +44,10 @@ def run() -> list[CaseResult]:
         result, _ = _eval(
             as_main(
                 """
-state a = |1>
-state b = |1>
-state t = |0>
-state t = capply(a, b, X, t)
+State a = |1>
+State b = |1>
+State t = |0>
+State t = capply(a, b, X, t)
 measure t
 """
             )
@@ -80,10 +80,10 @@ measure t
         result, _ = _eval(
             as_main(
                 """
-state a = |1>
-state b = |0>
-state t = |0>
-state t = toffoli(a, b, t)
+State a = |1>
+State b = |0>
+State t = |0>
+State t = toffoli(a, b, t)
 measure t
 """
             )
@@ -117,9 +117,9 @@ measure t
         r1, _ = _eval(
             as_main(
                 """
-state a = |+>
-state b = |0>
-state b = cnot(a, b)
+State a = |+>
+State b = |0>
+State b = cnot(a, b)
 measure b
 """
             )
@@ -127,9 +127,9 @@ measure b
         r2, _ = _eval(
             as_main(
                 """
-state a = |+>
-state b = |0>
-state b = capply(a, X, b)
+State a = |+>
+State b = |0>
+State b = capply(a, X, b)
 measure b
 """
             )

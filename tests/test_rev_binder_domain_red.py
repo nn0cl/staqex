@@ -42,7 +42,7 @@ def test_rev_enumerates_descending() -> None:
         Operator H = sum (i in rev(Index<0..2>)) {
             Z[i]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -64,7 +64,7 @@ def test_rev_empty_stays_empty() -> None:
         Operator H = sum (i in rev(Index<2..0>)) {
             Z[0]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """

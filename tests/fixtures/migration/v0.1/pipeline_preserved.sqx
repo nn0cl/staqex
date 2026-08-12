@@ -1,7 +1,7 @@
 package t
 pub fn main() -> Unit {
     // keep pipeline and migrate ket
-    state psi = |0>
-    state out = psi |> map(x -> x)
+    State psi = |0>
+    State out = psi |> map(x -> x)
     measure out
 }

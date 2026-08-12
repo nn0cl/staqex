@@ -94,8 +94,8 @@ def test_alone_ket_still_parses_without_following_bra() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state ket = |0{KET_CLOSE}
-            state ket = |0>
+            State ket = |0{KET_CLOSE}
+            State ket = |0>
             State observed = coin()
             measure observed
         }}

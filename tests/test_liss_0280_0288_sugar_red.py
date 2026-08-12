@@ -10,7 +10,7 @@ from compiler.staqex.pipeline import compile_source
 
 def test_0182_default_experiment_profile_no_package() -> None:
     src = """
-state s = dirac(7)
+State s = dirac(7)
 measure s
 """
     c = compile_source(src)
@@ -26,7 +26,7 @@ measure s
 def test_0182_packaged_still_requires_main() -> None:
     src = """
 package demo.pkg
-state s = dirac(1)
+State s = dirac(1)
 measure s
 """
     c = compile_source(src)
@@ -40,9 +40,9 @@ def test_0180_inferred_classical_and_operator() -> None:
 J = 1.0545718e-19
 h = 5.272859e-20
 H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
-state s0 = |+>
-state s1 = |+>
-state (s0, s1) = evolve { (s0, s1) under H for 0.3.fs using Suzuki(order = 2, steps = 2) }.run()
+State s0 = |+>
+State s1 = |+>
+State (s0, s1) = evolve { (s0, s1) under H for 0.3.fs using Suzuki(order = 2, steps = 2) }.run()
 measure s0 tracing_out s1
 """
     r = run_source(src, settings={"seed": 0})
@@ -65,7 +65,7 @@ pub fn main() -> Unit {
   D.Item b = D.Item { n: 2.0 }
   D.Board board = D.Board(a, b)
   Float t = board.a.n + board.b.n
-  state s = dirac(t)
+  State s = dirac(t)
   measure s
 }
 """
@@ -94,7 +94,7 @@ import .domain.ops.{Keep}
 pub fn main() -> Unit {
   Keep k = Keep { x: 2.0 }
   Float v = k.x * 0.5
-  state s = dirac(v)
+  State s = dirac(v)
   measure s
 }
 """,
@@ -127,7 +127,7 @@ package demo.lane
 import ..domain.ops.{Keep}
 pub fn main() -> Unit {
   Keep k = Keep { x: 4.0 }
-  state s = dirac(k.x)
+  State s = dirac(k.x)
   measure s
 }
 """,

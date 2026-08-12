@@ -37,7 +37,7 @@ def test_class_field_array_index_bind_reaches_the_correct_diagnostic() -> None:
         Operator H = sum (q in Index<0..1>) {
             row[q] * Z[q]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -65,7 +65,7 @@ def test_bare_variable_array_index_bind_still_parses() -> None:
         Operator H = sum (q in Index<0..1>) {
             row[q] * Z[q]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """

@@ -40,8 +40,8 @@ pub fn main() -> Unit {
     QubitOperator<Qubits> H_raw = map(H_fermion, JordanWigner)
     Energy scale = 1.0.eV to J
     Operator H = scale * H_raw
-    state a = |0>
-    state a = evolve { a under H for 0.5.fs }.run()
+    State a = |0>
+    State a = evolve { a under H for 0.5.fs }.run()
     measure a
 }
 """
@@ -79,8 +79,8 @@ def test_struct_field_coefficient_matches_equivalent_literal_value() -> None:
         QubitOperator<Qubits> H_raw = map(H_fermion, JordanWigner)
         Energy scale = 1.0.eV to J
         Operator H = scale * H_raw
-        state a = |0>
-        state a = evolve { a under H for 0.5.fs }.run()
+        State a = |0>
+        State a = evolve { a under H for 0.5.fs }.run()
         measure a
     }
     """
@@ -107,8 +107,8 @@ def test_existing_leading_coefficient_forms_still_parse() -> None:
         QubitOperator<Qubits> H_raw = map(H_fermion, JordanWigner)
         Energy scale = 1.0.eV to J
         Operator H = scale * H_raw
-        state a = |0>
-        state a = evolve { a under H for 0.5.fs }.run()
+        State a = |0>
+        State a = evolve { a under H for 0.5.fs }.run()
         measure a
     }
     """
@@ -120,8 +120,8 @@ def test_existing_leading_coefficient_forms_still_parse() -> None:
         QubitOperator<Qubits> H_raw = map(H_fermion, JordanWigner)
         Energy scale = 1.0.eV to J
         Operator H = scale * H_raw
-        state a = |0>
-        state a = evolve { a under H for 0.5.fs }.run()
+        State a = |0>
+        State a = evolve { a under H for 0.5.fs }.run()
         measure a
     }
     """
@@ -134,8 +134,8 @@ def test_existing_leading_coefficient_forms_still_parse() -> None:
         QubitOperator<Qubits> H_raw = map(H_fermion, JordanWigner)
         Energy scale = 1.0.eV to J
         Operator H = scale * H_raw
-        state a = |0>
-        state a = evolve { a under H for 0.5.fs }.run()
+        State a = |0>
+        State a = evolve { a under H for 0.5.fs }.run()
         measure a
     }
     """

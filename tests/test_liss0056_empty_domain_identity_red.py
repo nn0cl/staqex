@@ -35,9 +35,9 @@ def _program(operator: str, *, register: int | None = None) -> str:
 package t
 pub fn main() -> Unit {{
 {register_decl}    Operator H = {operator}
-    state psi = |0>
-    state psi = |0>
-    state out = evolve {{ psi under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
+    State psi = |0>
+    State psi = |0>
+    State out = evolve {{ psi under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
     measure out
 }}
 """

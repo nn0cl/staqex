@@ -33,7 +33,7 @@ def _matrix_element_source() -> str:
     return f"""
         package t
         pub fn main() -> Unit {{
-            state m = {BRA_OPEN}0|X|1{KET_CLOSE}
+            State m = {BRA_OPEN}0|X|1{KET_CLOSE}
             State observed = coin()
             measure observed
         }}
@@ -70,8 +70,8 @@ def test_matrix_element_rejects_state_middle_with_algebra_error() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state psi = |+>
-            state m = {BRA_OPEN}0|psi|1{KET_CLOSE}
+            State psi = |+>
+            State m = {BRA_OPEN}0|psi|1{KET_CLOSE}
             State observed = coin()
             measure observed
         }}
@@ -86,7 +86,7 @@ def test_slice_b_inner_without_middle_still_works() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state overlap = inner({BRA_OPEN}0|, |1{KET_CLOSE})
+            State overlap = inner({BRA_OPEN}0|, |1{KET_CLOSE})
             State observed = coin()
             measure observed
         }}

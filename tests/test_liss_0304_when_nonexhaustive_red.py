@@ -13,7 +13,7 @@ namespace M {
   pub enum Phase { Tonight, Morning, Day }
 }
 M.Phase p = M.Phase.Day
-state s = mix (p) {
+State s = mix (p) {
   Tonight -> |0>,
   Morning -> |+>,
 }
@@ -32,7 +32,7 @@ namespace M {
   pub enum Phase { Tonight, Morning, Day }
 }
 M.Phase p = M.Phase.Day
-state s = mix (p) {
+State s = mix (p) {
   Tonight -> |0>,
   Morning -> |+>,
   Day -> |1>,
@@ -51,7 +51,7 @@ namespace M {
   pub enum Phase { Tonight, Morning, Day }
 }
 M.Phase p = M.Phase.Day
-state s = mix (p) {
+State s = mix (p) {
   Tonight -> |0>,
   else -> |1>,
 }

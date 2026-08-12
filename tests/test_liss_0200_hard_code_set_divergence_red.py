@@ -25,8 +25,8 @@ fn pure_wrapper(x: State<Float>) -> State<Float> {
     return inspect_state(x)
 }
 pub fn main() -> Unit {
-    state psi = dirac(0.0)
-    state viewed = pure_wrapper(psi)
+    State psi = dirac(0.0)
+    State viewed = pure_wrapper(psi)
     measure viewed
 }
 """

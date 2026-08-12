@@ -18,8 +18,8 @@ from compiler.staqex.runtime.joint import Joint, World, current_world_workers, w
 SRC = """
 package t
 pub fn main() -> Unit {
-    state b = coin()
-    state r = mix (b) { 0 -> 0, else -> 1 }
+    State b = coin()
+    State r = mix (b) { 0 -> 0, else -> 1 }
     measure r
 }
 """

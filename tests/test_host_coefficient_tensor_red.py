@@ -48,7 +48,7 @@ def test_host_placeholder_lowers_with_overlay() -> None:
         Operator H = sum (p in Index<0..1>, q in Index<0..1>) {
             h[p][q] * Z[p] * Z[q]
         }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -80,7 +80,7 @@ def test_missing_host_coefficient_is_diagnosed() -> None:
         QubitRegister<2> register = system()
         Float[2] J = host("J")
         Operator H = sum (i in Index<0..0>) { J[i] * Z[i] }
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -95,7 +95,7 @@ def test_literal_and_host_conflict() -> None:
     package t
     pub fn main() -> Unit {
         Float[2] J = [1.0, 0.5]
-        state a = |0>
+        State a = |0>
         measure a
     }
     """

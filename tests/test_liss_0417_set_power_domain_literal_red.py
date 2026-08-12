@@ -28,7 +28,7 @@ def test_bit_domain_literal_parses_and_typechecks() -> None:
     package t
     pub fn main() -> Unit {
         d = {0,1}^8
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -44,7 +44,7 @@ def test_qudit_domain_literal_parses_for_free() -> None:
     package t
     pub fn main() -> Unit {
         d = {0,1,2}^4
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -60,7 +60,7 @@ def test_variable_width_parses() -> None:
     pub fn main() -> Unit {
         Int n = 8
         d = {0,1}^n
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -76,7 +76,7 @@ def test_dimensioned_width_is_rejected() -> None:
     pub fn main() -> Unit {
         Time dur = 1.0.s
         d = {0,1}^dur
-        state a = |0>
+        State a = |0>
         measure a
     }
     """
@@ -110,7 +110,7 @@ def test_brace_in_expression_position_was_previously_a_parse_error() -> None:
     package t
     pub fn main() -> Unit {
         d = {
-        state a = |0>
+        State a = |0>
         measure a
     }
     """

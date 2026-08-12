@@ -29,8 +29,8 @@ def run() -> list[CaseResult]:
             "PREDICATE_PROJECTOR_ERROR",
             as_main(
                 """
-state psi = |+>
-state bad = project(psi, x -> x == 0)
+State psi = |+>
+State bad = project(psi, x -> x == 0)
 measure bad
 """
             ),
@@ -41,8 +41,8 @@ measure bad
             "NON_UNITARY_TRANSFORM_ERROR",
             as_main(
                 """
-state psi = |+>
-state bad = map(psi, x -> 0)
+State psi = |+>
+State bad = map(psi, x -> 0)
 measure bad
 """
             ),
@@ -53,8 +53,8 @@ measure bad
             "NON_UNITARY_TRANSFORM_ERROR",
             as_main(
                 """
-state psi = |+>
-state bad = mix (psi) { 0 -> 7, else -> 7 }
+State psi = |+>
+State bad = mix (psi) { 0 -> 7, else -> 7 }
 measure bad
 """
             ),
@@ -66,8 +66,8 @@ measure bad
             as_main(
                 """
 Operator Bad = 2.0 * X
-state psi = |0>
-state psi = apply(Bad, psi)
+State psi = |0>
+State psi = apply(Bad, psi)
 measure psi
 """
             ),
@@ -79,8 +79,8 @@ measure psi
             as_main(
                 """
 Operator Had = 0.7071067811865476 * (X + Z)
-state psi = |0>
-state psi = apply(Had, psi)
+State psi = |0>
+State psi = apply(Had, psi)
 measure psi
 """
             ),
@@ -91,8 +91,8 @@ measure psi
             None,
             as_main(
                 """
-state psi = |0>
-state p = project(psi, |0>)
+State psi = |0>
+State p = project(psi, |0>)
 measure p
 """
             ),
@@ -103,8 +103,8 @@ measure p
             "PREDICATE_PROJECTOR_ERROR",
             as_main(
                 """
-state s = coin()
-state kept = project(s, v -> v == 1)
+State s = coin()
+State kept = project(s, v -> v == 1)
 measure kept
 """
             ),

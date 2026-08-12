@@ -86,7 +86,7 @@ import com.staqex.tests.liss0107.coinlib
 pub fn main() -> Unit {
     Operator k = make_op()
     State<Qubit> c = |+>
-    state c2 = apply(k, c)
+    State c2 = apply(k, c)
     measure c2
 }
 """
@@ -117,7 +117,7 @@ import com.staqex.tests.liss0107.hoplib
 pub fn main() -> Unit {
     Operator H = build_h()
     State<Position> psi = dirac(0)
-    state psi = evolve { psi under H for 0.1.fs }.run()
+    State psi = evolve { psi under H for 0.1.fs }.run()
     measure psi
 }
 """

@@ -30,8 +30,8 @@ def run() -> list[CaseResult]:
             as_main(
                 """
 Operator H = N + 0.5
-state psi = |0>
-state psi = apply(H, psi)
+State psi = |0>
+State psi = apply(H, psi)
 measure psi
 """
             ),
@@ -43,8 +43,8 @@ measure psi
             as_main(
                 """
 Operator H = 0.5 * (P * P + X * X)
-state psi = |0>
-state psi = apply(H, psi)
+State psi = |0>
+State psi = apply(H, psi)
 measure psi
 """
             ),
@@ -55,8 +55,8 @@ measure psi
             "NON_UNITARY_TRANSFORM_ERROR",
             as_main(
                 """
-state psi = |+>
-state bad = map(psi, x -> x * 0)
+State psi = |+>
+State bad = map(psi, x -> x * 0)
 measure bad
 """
             ),
@@ -67,8 +67,8 @@ measure bad
             None,
             as_main(
                 """
-state psi = |+>
-state ok = map(psi, x -> 1 - x)
+State psi = |+>
+State ok = map(psi, x -> 1 - x)
 measure ok
 """
             ),
@@ -80,9 +80,9 @@ measure ok
             as_main(
                 """
 Operator Bad = 2.0 * X
-state a = |1>
-state b = |0>
-state b = capply(a, Bad, b)
+State a = |1>
+State b = |0>
+State b = capply(a, Bad, b)
 measure b
 """
             ),
@@ -94,8 +94,8 @@ measure b
             as_main(
                 """
 Operator Bad = X * Y
-state psi = |0>
-state psi = evolve { psi under Bad for 1.0 }.run()
+State psi = |0>
+State psi = evolve { psi under Bad for 1.0 }.run()
 measure psi
 """
             ),
@@ -106,9 +106,9 @@ measure psi
             None,
             as_main(
                 """
-state psi = wavepacket(-4.0, 4.0, 16, 0.0, 0.7)
+State psi = wavepacket(-4.0, 4.0, 16, 0.0, 0.7)
 Operator H = 0.5 * (P * P + X * X)
-state psi = evolve { psi under H for 0.5 }.run()
+State psi = evolve { psi under H for 0.5 }.run()
 measure psi
 """
             ),

@@ -28,8 +28,8 @@ def test_hamiltonian_evolve_until_stops_when_predicate_holds() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state psi = evolve { psi under X for 1.5707963267948966.s until converged(psi) max 64 }.run()
+            State psi = dirac(0)
+            State psi = evolve { psi under X for 1.5707963267948966.s until converged(psi) max 64 }.run()
             measure psi
         }
         """
@@ -44,8 +44,8 @@ def test_hamiltonian_evolve_until_reports_max_steps_error() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |+>
-            state psi = evolve { psi under X for 1.s until converged(psi) max 2 }.run()
+            State psi = |+>
+            State psi = evolve { psi under X for 1.s until converged(psi) max 2 }.run()
             measure psi
         }
         """
@@ -60,8 +60,8 @@ def test_evolve_until_predicate_does_not_consume_rng() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state psi = evolve { psi under X for 1.5707963267948966.s until converged(psi) max 64 }.run()
+            State psi = dirac(0)
+            State psi = evolve { psi under X for 1.5707963267948966.s until converged(psi) max 64 }.run()
             measure psi
         }
         """,
@@ -71,8 +71,8 @@ def test_evolve_until_predicate_does_not_consume_rng() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state psi = evolve { psi under X for 1.5707963267948966.s }.run()
+            State psi = dirac(0)
+            State psi = evolve { psi under X for 1.5707963267948966.s }.run()
             measure psi
         }
         """,

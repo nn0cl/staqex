@@ -30,7 +30,7 @@ def test_ev_to_j_and_reverse() -> None:
             pub fn main() -> Unit {
                 Energy e = 1.0.eV to J
                 Energy back = 1.602176634e-19.J to eV
-                state a = |0>
+                State a = |0>
                 measure a
             }
             """
@@ -47,7 +47,7 @@ def test_ev_to_j_and_reverse() -> None:
             Energy e = 1.0.eV to J
             Energy raw = 1.0.eV
             Energy back = 1.602176634e-19.J to eV
-            state a = |0>
+            State a = |0>
             measure a
         }
         """

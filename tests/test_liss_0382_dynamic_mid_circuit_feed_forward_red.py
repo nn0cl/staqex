@@ -38,7 +38,7 @@ _SOURCE_MID_CIRCUIT_CONTROLLER = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
     }
     State<Int> observed = coin()
@@ -49,7 +49,7 @@ pub fn main() -> Unit {
 _SOURCE_STATIC_CONTROLLER_MEASURE = """
 package t
 pub fn main() -> Unit {
-    state q = |0>
+    State q = |0>
     Controller<Bit> bit = measure q
     measure q
 }
@@ -58,7 +58,7 @@ pub fn main() -> Unit {
 _SOURCE_OBSERVE = """
 package t
 pub fn main() -> Unit {
-    state x = |0>
+    State x = |0>
     observe x
     measure x
 }
@@ -68,7 +68,7 @@ _SOURCE_MATCH_FEED_FORWARD = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         match bit {
             0 => { apply(X, q) }
@@ -84,7 +84,7 @@ _SOURCE_WITHIN_AND_MID_CIRCUIT = """
 package t
 pub fn main() -> Unit {
     dynamic qpu within coherent_window {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
     }
     State<Int> observed = coin()

@@ -38,7 +38,7 @@ _SOURCE_RESET = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         reset q
     }
@@ -51,7 +51,7 @@ _SOURCE_RESET_THEN_REMEASURE = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         apply(X, q)
         reset q
@@ -72,7 +72,7 @@ def test_reset_outside_dynamic_qpu_fails_closed() -> None:
     source = """
 package t
 pub fn main() -> Unit {
-    state q = |0>
+    State q = |0>
     reset q
     measure q
 }
@@ -97,7 +97,7 @@ def test_reset_inside_dynamic_qpu_genuinely_reinitializes() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         apply(X, q)
         reset q
     }
@@ -198,7 +198,7 @@ def test_hir_reset_of_unknown_wire_fails_closed() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         reset ghost
     }

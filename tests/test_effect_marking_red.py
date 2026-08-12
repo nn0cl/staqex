@@ -24,8 +24,8 @@ def test_effect_annotation_is_accepted_on_a_function() -> None:
             return inspect(x)
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            state viewed = inspect_state(psi)
+            State psi = dirac(0.0)
+            State viewed = inspect_state(psi)
             measure viewed
         }
         """
@@ -45,8 +45,8 @@ def test_pure_function_cannot_call_an_inspect_effect() -> None:
             return inspect_state(x)
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            state viewed = pure_wrapper(psi)
+            State psi = dirac(0.0)
+            State viewed = pure_wrapper(psi)
             measure viewed
         }
         """
@@ -64,8 +64,8 @@ def test_measure_effect_cannot_return_a_state_value() -> None:
             return x
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            state observed = observe_state(psi)
+            State psi = dirac(0.0)
+            State observed = observe_state(psi)
             measure observed
         }
         """
@@ -82,8 +82,8 @@ def test_effects_propagate_through_a_pipeline_stage() -> None:
             return inspect(x)
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            state viewed = psi |> inspect_state()
+            State psi = dirac(0.0)
+            State viewed = psi |> inspect_state()
             measure viewed
         }
         """

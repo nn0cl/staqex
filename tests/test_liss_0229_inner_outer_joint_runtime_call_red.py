@@ -18,11 +18,11 @@ def test_inner_identical_plus() -> None:
         """
 package t
 pub fn main() -> Unit {
-  state a = |+>
-  state b = |+>
-  state ov = inner(a, b)
-  state a = |0>
-  state b = |0>
+  State a = |+>
+  State b = |+>
+  State ov = inner(a, b)
+  State a = |0>
+  State b = |0>
   measure ov
 }
 """,
@@ -37,11 +37,11 @@ def test_inner_orthogonal_zero() -> None:
         """
 package t
 pub fn main() -> Unit {
-  state z = |0>
-  state o = |1>
-  state ov = inner(z, o)
-  state z = |0>
-  state o = |0>
+  State z = |0>
+  State o = |1>
+  State ov = inner(z, o)
+  State z = |0>
+  State o = |0>
   measure ov
 }
 """,
@@ -56,13 +56,13 @@ def test_outer_apply() -> None:
         """
 package t
 pub fn main() -> Unit {
-  state a = |+>
-  state b = |0>
+  State a = |+>
+  State b = |0>
   Operator P = outer(a, b)
-  state w = |0>
-  state w = apply(P, w)
-  state a = |0>
-  state b = |0>
+  State w = |0>
+  State w = apply(P, w)
+  State a = |0>
+  State b = |0>
   measure w
 }
 """,

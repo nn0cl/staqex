@@ -13,13 +13,13 @@ pub fn main() -> Unit {
 
     Float ideal_zz = ideal_zz_correlation()
 
-    state alice = |+>
-    state bob = |0>
-    state bob = cnot(alice, bob)
+    State alice = |+>
+    State bob = |0>
+    State bob = cnot(alice, bob)
 
-    state corr = expect(ZZ, alice, bob)
-    state viewed_corr = inspect(corr)
-    state viewed_ideal = inspect(ideal_zz)
+    State corr = expect(ZZ, alice, bob)
+    State viewed_corr = inspect(corr)
+    State viewed_ideal = inspect(ideal_zz)
     // hop.alice_station is classical metadata (party index); no inspect bind.
 
     // Do not inspect `bob` before terminal measure; cnot already moved Alice.

@@ -34,8 +34,8 @@ def test_apply_resolves_struct_field_coefficient() -> None:
     pub fn main() -> Unit {
         W weights = W(1.0)
         Operator U = weights.a * X
-        state psi = |0>
-        state psi = apply(U, psi)
+        State psi = |0>
+        State psi = apply(U, psi)
         measure psi
     }
     """
@@ -63,8 +63,8 @@ def test_apply_resolution_does_not_add_a_new_runtime_unitary_check() -> None:
     package t
     pub fn main() -> Unit {
         Operator Bad = 2.0 * X
-        state psi = |0>
-        state psi = apply(Bad, psi)
+        State psi = |0>
+        State psi = apply(Bad, psi)
         measure psi
     }
     """
@@ -74,8 +74,8 @@ def test_apply_resolution_does_not_add_a_new_runtime_unitary_check() -> None:
     pub fn main() -> Unit {
         W weights = W(2.0)
         Operator Bad = weights.a * X
-        state psi = |0>
-        state psi = apply(Bad, psi)
+        State psi = |0>
+        State psi = apply(Bad, psi)
         measure psi
     }
     """
@@ -103,8 +103,8 @@ def test_operator_variable_indirection_still_works_via_operators_dict_shortcut()
         W weights = W(0.5)
         Operator G = weights.a * Z[0]
         Operator H = G
-        state q = |0>
-        state q = apply(H, q)
+        State q = |0>
+        State q = apply(H, q)
         measure q
     }
     """
@@ -132,9 +132,9 @@ def test_inline_compound_evolve_expression_was_never_supported() -> None:
     package t
     pub fn main() -> Unit {
         Energy scale = 1.0.eV to J
-        state q = |0>
+        State q = |0>
         Time dur = 0.6.fs
-        state q = evolve { q under scale * Z for dur }.run()
+        State q = evolve { q under scale * Z for dur }.run()
         measure q
     }
     """
@@ -162,9 +162,9 @@ def test_existing_liss_0407_cases_still_pass() -> None:
         W weights = W(0.5)
         Energy scale = 1.0.eV to J
         Operator H = scale * f(weights)
-        state q = |0>
+        State q = |0>
         Time dur = 0.6.fs
-        state q = evolve { q under H for dur }.run()
+        State q = evolve { q under H for dur }.run()
         measure q
     }
     """

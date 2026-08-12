@@ -77,7 +77,7 @@ def test_same_machine_representation_does_not_enable_arithmetic() -> None:
         pub fn main() -> Unit {
             Index<8> i = index(0)
             ShotCount shots = 1000
-            state invalid = i + shots
+            State invalid = i + shots
             State<Int> observed = coin()
             measure observed
         }

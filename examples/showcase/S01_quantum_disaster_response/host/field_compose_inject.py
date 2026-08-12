@@ -5,7 +5,7 @@ Ideal form (Lane B — NOT Runtime Continuous):
   Continuous damage, flood, fire, impassable
   Continuous risk   = weight(...)
   Continuous masked = mask(risk, impassable)
-  state zone = finiteize(masked, ...)
+  State zone = finiteize(masked, ...)
 
 This demo keeps the multi-step continuous algebra on the **Host (H-lane)**
 with named stages and provenance ``continuous_pipeline``. Only the finite

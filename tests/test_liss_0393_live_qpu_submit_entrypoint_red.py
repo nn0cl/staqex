@@ -36,7 +36,7 @@ _SOURCE_DYNAMIC = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         Controller<Bit> bit = measure q
         reset q
     }

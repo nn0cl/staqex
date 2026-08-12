@@ -18,16 +18,16 @@ from compiler.staqex.pipeline import compile_source  # noqa: E402
 from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
 
 EVOLVE_HO = as_main("""
-state bit = coin()
-state x0 = mix (bit) {
+State bit = coin()
+State x0 = mix (bit) {
   0 -> 0.0,
   else -> 1.0,
 }
-state p0 = mix (bit) {
+State p0 = mix (bit) {
   0 -> 1.0,
   else -> 0.0,
 }
-state (x, p) = evolve (x0, p0) times 1 {
+State (x, p) = evolve (x0, p0) times 1 {
   let x1 = x + 0.5 * p
   let p1 = p - 0.5 * x
   (x1, p1)
@@ -114,9 +114,9 @@ def run() -> list[CaseResult]:
     # times 2 matches hand Euler twice
     try:
         src = as_main("""
-state x0 = dirac(0.0)
-state p0 = dirac(1.0)
-state (x, p) = evolve (x0, p0) times 2 {
+State x0 = dirac(0.0)
+State p0 = dirac(1.0)
+State (x, p) = evolve (x0, p0) times 2 {
   let x1 = x + 0.5 * p
   let p1 = p - 0.5 * x
   (x1, p1)

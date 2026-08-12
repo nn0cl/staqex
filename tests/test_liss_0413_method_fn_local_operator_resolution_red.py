@@ -38,15 +38,15 @@ def test_class_method_local_operator_resolves_struct_field() -> None:
       fn init() {}
       pub fn use_op() -> State<Qubit> {
         Operator H = weights.a * X
-        state psi = |0>
-        state out = apply(H, psi)
+        State psi = |0>
+        State out = apply(H, psi)
         return out
       }
     }
     pub fn main() -> Unit {
       W weights = W(1.0)
       Lat L = Lat()
-      state result = L.use_op()
+      State result = L.use_op()
       measure result
     }
     """
@@ -65,13 +65,13 @@ def test_library_fn_local_operator_resolves_struct_field() -> None:
     struct W { a: Float }
     fn use_op() -> State<Qubit> {
         Operator H = weights.a * X
-        state psi = |0>
-        state out = apply(H, psi)
+        State psi = |0>
+        State out = apply(H, psi)
         return out
     }
     pub fn main() -> Unit {
         W weights = W(1.0)
-        state result = use_op()
+        State result = use_op()
         measure result
     }
     """
@@ -94,15 +94,15 @@ def test_class_method_local_operator_matches_equivalent_literal_value() -> None:
       fn init() {}
       pub fn use_op() -> State<Qubit> {
         Operator H = weights.a * X
-        state psi = |0>
-        state out = apply(H, psi)
+        State psi = |0>
+        State out = apply(H, psi)
         return out
       }
     }
     pub fn main() -> Unit {
       W weights = W(2.0)
       Lat L = Lat()
-      state result = L.use_op()
+      State result = L.use_op()
       measure result
     }
     """
@@ -112,14 +112,14 @@ def test_class_method_local_operator_matches_equivalent_literal_value() -> None:
       fn init() {}
       pub fn use_op() -> State<Qubit> {
         Operator H = 2.0 * X
-        state psi = |0>
-        state out = apply(H, psi)
+        State psi = |0>
+        State out = apply(H, psi)
         return out
       }
     }
     pub fn main() -> Unit {
       Lat L = Lat()
-      state result = L.use_op()
+      State result = L.use_op()
       measure result
     }
     """
@@ -144,14 +144,14 @@ def test_class_method_local_operator_with_literal_coefficient_still_works() -> N
       fn init() {}
       pub fn use_op() -> State<Qubit> {
         Operator H = 2.0 * X
-        state psi = |0>
-        state out = apply(H, psi)
+        State psi = |0>
+        State out = apply(H, psi)
         return out
       }
     }
     pub fn main() -> Unit {
       Lat L = Lat()
-      state result = L.use_op()
+      State result = L.use_op()
       measure result
     }
     """

@@ -30,9 +30,9 @@ def test_bare_seed_block_run_form_parses_and_runs() -> None:
     pub fn main() -> Unit {
         Energy scale = 1.0.eV to J
         Operator H = scale * Z
-        state a = |0>
+        State a = |0>
         Time dur = 0.6.fs
-        state a = evolve { a under H for dur }.run()
+        State a = evolve { a under H for dur }.run()
         measure a
     }
     """
@@ -48,10 +48,10 @@ def test_tuple_seed_with_suzuki_block_run_form_parses_and_runs() -> None:
     pub fn main() -> Unit {
         Energy scale = 1.0.eV to J
         Operator H = scale * (Z[0] * Z[1])
-        state a = |0>
-        state b = |+>
+        State a = |0>
+        State b = |+>
         Time dur = 0.6.fs
-        state (a, b) = evolve { (a, b) under H for dur using Suzuki(order=2, steps=4) }.run()
+        State (a, b) = evolve { (a, b) under H for dur using Suzuki(order=2, steps=4) }.run()
         measure a tracing_out b
     }
     """
@@ -65,9 +65,9 @@ def test_until_max_block_run_form_parses_and_runs() -> None:
     source = """
     package t
     pub fn main() -> Unit {
-        state fuel = dirac(0)
+        State fuel = dirac(0)
         Time dur = 1.5707963267948966.s
-        state fuel = evolve { fuel under X for dur until converged(fuel) max 64 }.run()
+        State fuel = evolve { fuel under X for dur until converged(fuel) max 64 }.run()
         measure fuel
     }
     """
@@ -83,9 +83,9 @@ def test_old_bare_form_is_rejected_with_a_migration_diagnostic() -> None:
     pub fn main() -> Unit {
         Energy scale = 1.0.eV to J
         Operator H = scale * Z
-        state a = |0>
+        State a = |0>
         Time dur = 0.6.fs
-        state a = evolve a under H for dur
+        State a = evolve a under H for dur
         measure a
     }
     """
@@ -101,9 +101,9 @@ def test_missing_run_suffix_is_rejected() -> None:
     pub fn main() -> Unit {
         Energy scale = 1.0.eV to J
         Operator H = scale * Z
-        state a = |0>
+        State a = |0>
         Time dur = 0.6.fs
-        state a = evolve { a under H for dur }
+        State a = evolve { a under H for dur }
         measure a
     }
     """
@@ -120,8 +120,8 @@ def test_times_block_form_is_unaffected() -> None:
     package t
     pub fn main() -> Unit {
         Operator H = X
-        state a = |0>
-        state a = evolve a times 2 {
+        State a = |0>
+        State a = evolve a times 2 {
             let next = evolve a under H for 0.1.fs
             next
         }
@@ -142,8 +142,8 @@ def test_for_block_form_is_unaffected() -> None:
     source = """
     package t
     pub fn main() -> Unit {
-        state a = |0>
-        state a = evolve a for 0.5 {
+        State a = |0>
+        State a = evolve a for 0.5 {
             a
         }
         measure a

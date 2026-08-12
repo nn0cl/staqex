@@ -50,7 +50,7 @@ def test_lossless_lex_retains_comment_and_whitespace_trivia() -> None:
 
 def test_lossless_lex_preserves_ascii_math_token_kinds() -> None:
     lossless_lex, _ = _load_cst_api()
-    source = f"state psi = |0{KET_CLOSE} // ascii ket\nmeasure psi\n"
+    source = f"State psi = |0{KET_CLOSE} // ascii ket\nmeasure psi\n"
 
     tokens = lossless_lex(source)
 

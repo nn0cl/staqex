@@ -22,8 +22,8 @@ _BASELINE_KET_BOUND_SRC = """
 package t
 pub fn main() -> Unit {
     QubitRegister<1> register = system()
-    state psi = |0>
-    state bad = map(psi, x -> 0)
+    State psi = |0>
+    State bad = map(psi, x -> 0)
     measure bad
 }
 """
@@ -32,10 +32,10 @@ _SUPERPOSE_BOUND_SRC = """
 package t
 pub fn main() -> Unit {
     QubitRegister<1> register = system()
-    state control = |+>
-    state psi = |0>
-    state sp = superpose(control) { 0 -> psi, 1 -> psi }
-    state bad = map(sp, x -> 0)
+    State control = |+>
+    State psi = |0>
+    State sp = superpose(control) { 0 -> psi, 1 -> psi }
+    State bad = map(sp, x -> 0)
     measure bad
 }
 """

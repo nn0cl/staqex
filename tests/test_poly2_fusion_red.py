@@ -40,8 +40,8 @@ def test_quadratic_pipe_collapses_to_single_map() -> None:
             return s + 1
         }
         pub fn main() -> Unit {
-            state z = 3
-            state w = z |> sq |> add1
+            State z = 3
+            State w = z |> sq |> add1
             measure w
         }
         """,
@@ -60,8 +60,8 @@ def test_quadratic_pipe_matches_sequential() -> None:
     fn sq(s: State<Int>) -> State<Int> { return s * s }
     fn dbl(s: State<Int>) -> State<Int> { return s * 2 }
     pub fn main() -> Unit {
-        state z = 4
-        state w = z |> sq |> dbl
+        State z = 4
+        State w = z |> sq |> dbl
         measure w
     }
     """
@@ -70,9 +70,9 @@ def test_quadratic_pipe_matches_sequential() -> None:
     fn sq(s: State<Int>) -> State<Int> { return s * s }
     fn dbl(s: State<Int>) -> State<Int> { return s * 2 }
     pub fn main() -> Unit {
-        state z = 4
-        state t1 = sq(z)
-        state w = dbl(t1)
+        State z = 4
+        State t1 = sq(z)
+        State w = dbl(t1)
         measure w
     }
     """
@@ -91,8 +91,8 @@ def test_affine_still_records_algebraic_fusion() -> None:
         fn add10(s: State<Int>) -> State<Int> { return s + 10 }
         fn dbl(s: State<Int>) -> State<Int> { return s * 2 }
         pub fn main() -> Unit {
-            state z = 3
-            state w = z |> add10 |> dbl
+            State z = 3
+            State w = z |> add10 |> dbl
             measure w
         }
         """,
@@ -116,8 +116,8 @@ def test_when_return_still_fuses_sequentially() -> None:
             return s
         }
         pub fn main() -> Unit {
-            state x = 0
-            state r = x |> flip |> id
+            State x = 0
+            State r = x |> flip |> id
             measure r
         }
         """,

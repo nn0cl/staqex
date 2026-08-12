@@ -31,7 +31,7 @@ def test_st_lb_oz_kg_conversions() -> None:
                 Mass lb = 1.0.st to lb
                 Mass oz = 1.0.st to oz
                 Mass kg = 1.0.st to kg
-                state a = |0>
+                State a = |0>
                 measure a
             }
             """
@@ -50,7 +50,7 @@ def test_st_lb_oz_kg_conversions() -> None:
             Mass kg = 1.0.st to kg
             Mass raw = 1.0.st
             Mass back = 14.0.lb to st
-            state a = |0>
+            State a = |0>
             measure a
         }
         """

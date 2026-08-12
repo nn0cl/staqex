@@ -41,7 +41,7 @@ def run() -> list[CaseResult]:
     try:
         src = as_main(
             """
-state psi = wavepacket(-6.0, 6.0, 32, 0.0, 0.7071067811865476)
+State psi = wavepacket(-6.0, 6.0, 32, 0.0, 0.7071067811865476)
 Operator H = 0.5 * (P * P + X * X)
 measure psi
 """
@@ -85,11 +85,11 @@ measure psi
         result, _ = _eval(
             as_main(
                 """
-state psi = wavepacket(-6.0, 6.0, 48, 0.0, 0.7071067811865476)
+State psi = wavepacket(-6.0, 6.0, 48, 0.0, 0.7071067811865476)
 Energy e = 0.5.eV to J
 Time dur = 1.0.fs
 Operator H = e * (P * P + X * X)
-state psi = evolve { psi under H for dur }.run()
+State psi = evolve { psi under H for dur }.run()
 measure psi
 """
             )

@@ -20,25 +20,25 @@ pub fn main() -> Unit {
     OpticalHop hop = OpticalHop(0, 1)
     // hop.source is classical metadata; no unused inspect bind.
 
-    state site = dirac(0)
+    State site = dirac(0)
     Operator Hssh = build_ssh_hamiltonian()
     // ADR 0174 struct-field units aren't recognized by evolve's
     // fail-closed check directly (LISS-0335) -- bind to a local first.
     Time dur = config.duration
-    state site = evolve { site under Hssh for dur }.run()
+    State site = evolve { site under Hssh for dur }.run()
 
     QubitRegister<3> register = system()
     forEach q in register {
         apply(H, q)
     }
 
-    state observatory = |+>
-    state probe = |0>
-    state probe = cnot(observatory, probe)
-    state correlation = expect(ZZ, observatory, probe)
-    state viewed_corr = inspect(correlation)
+    State observatory = |+>
+    State probe = |0>
+    State probe = cnot(observatory, probe)
+    State correlation = expect(ZZ, observatory, probe)
+    State viewed_corr = inspect(correlation)
     Float ideal = build_link_witness()
-    state viewed_ideal = inspect(ideal)
+    State viewed_ideal = inspect(ideal)
 
     // SSH site still live; cnot already moved observatory (ADR 0173).
     measure probe tracing_out site

@@ -36,12 +36,12 @@ pub fn build_ising() -> Operator {
 }
 pub fn main() -> Unit {
     Operator H = build_ising()
-    state s0 = |+>
-    state s1 = |+>
-    state (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
-    state zz = expect(ZZ, s0, s1)
-    state viewed = inspect(zz)
-    state s1 = |0>
+    State s0 = |+>
+    State s1 = |+>
+    State (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State zz = expect(ZZ, s0, s1)
+    State viewed = inspect(zz)
+    State s1 = |0>
     measure s0
 }
 """
@@ -55,12 +55,12 @@ pub fn build_ising() -> Operator {
 }
 pub fn main() -> Unit {
     Operator H = build_ising()
-    state s0 = |+>
-    state s1 = |+>
-    state (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
-    state zz = expect(ZZ, s0, s1)
-    state viewed = inspect(zz)
-    state s1 = |0>
+    State s0 = |+>
+    State s1 = |+>
+    State (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State zz = expect(ZZ, s0, s1)
+    State viewed = inspect(zz)
+    State s1 = |0>
     measure s0
 }
 """

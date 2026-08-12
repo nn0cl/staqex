@@ -86,7 +86,7 @@ def test_apply_hadamard_on_qutrit_remains_unsupported() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qutrit> s = |0{KET}
-            state out = apply(H, s)
+            State out = apply(H, s)
             measure out
         }}
         """

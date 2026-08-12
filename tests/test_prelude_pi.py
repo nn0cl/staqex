@@ -33,26 +33,26 @@ def test_phase_with_pi_matches_literal() -> None:
     src_pi = """
 package t
 pub fn main() -> Unit {
-    state b0 = coin()
-    state b1 = coin()
-    state idx = b0 * 2 + b1
-    state b0 = |0>
-    state b1 = |0>
-    state marked = phase(idx, pi, 2)
-    state amplified = grover_diffuse(marked)
+    State b0 = coin()
+    State b1 = coin()
+    State idx = b0 * 2 + b1
+    State b0 = |0>
+    State b1 = |0>
+    State marked = phase(idx, pi, 2)
+    State amplified = grover_diffuse(marked)
     measure amplified
 }
 """
     src_lit = """
 package t
 pub fn main() -> Unit {
-    state b0 = coin()
-    state b1 = coin()
-    state idx = b0 * 2 + b1
-    state b0 = |0>
-    state b1 = |0>
-    state marked = phase(idx, 3.141592653589793, 2)
-    state amplified = grover_diffuse(marked)
+    State b0 = coin()
+    State b1 = coin()
+    State idx = b0 * 2 + b1
+    State b0 = |0>
+    State b1 = |0>
+    State marked = phase(idx, 3.141592653589793, 2)
+    State amplified = grover_diffuse(marked)
     measure amplified
 }
 """
@@ -67,9 +67,9 @@ def test_pi_half_in_phase() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-    state z = |0>
-    state zp = phase(z, pi / 2.0)
-    state viewed = inspect(zp)
+    State z = |0>
+    State zp = phase(z, pi / 2.0)
+    State viewed = inspect(zp)
     measure viewed
 }
 """
@@ -81,13 +81,13 @@ def test_math_pi_alias_matches_pi() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-    state b0 = coin()
-    state b1 = coin()
-    state idx = b0 * 2 + b1
-    state b0 = |0>
-    state b1 = |0>
-    state marked = phase(idx, Math.pi, 2)
-    state amplified = grover_diffuse(marked)
+    State b0 = coin()
+    State b1 = coin()
+    State idx = b0 * 2 + b1
+    State b0 = |0>
+    State b1 = |0>
+    State marked = phase(idx, Math.pi, 2)
+    State amplified = grover_diffuse(marked)
     measure amplified
 }
 """
@@ -102,9 +102,9 @@ def test_hadamard_coin_via_inv_sqrt2() -> None:
 package t
 pub fn main() -> Unit {
     Operator Coin = (X + Z) * inv_sqrt2
-    state q = |0>
-    state q = apply(Coin, q)
-    state viewed = inspect(q)
+    State q = |0>
+    State q = apply(Coin, q)
+    State viewed = inspect(q)
     measure viewed
 }
 """
@@ -118,8 +118,8 @@ package t
 pub fn main() -> Unit {
     Float s = Math.inv_sqrt2
     Operator Coin = (X + Z) * s
-    state q = |0>
-    state q = apply(Coin, q)
+    State q = |0>
+    State q = apply(Coin, q)
     measure q
 }
 """
@@ -131,8 +131,8 @@ def test_state_plus_pi_type_error() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-    state psi = |0>
-    state bad = psi + pi
+    State psi = |0>
+    State bad = psi + pi
     measure bad
 }
 """

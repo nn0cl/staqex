@@ -68,7 +68,7 @@ def test_prepare_selection_equal_superposition_over_all_patterns() -> None:
 def test_terminal_measure_yields_one_pattern_reproducibly() -> None:
     src = _main(
         """
-    state selection = prepare_selection(3)
+    State selection = prepare_selection(3)
     measure selection
 """
     )

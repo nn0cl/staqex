@@ -23,7 +23,7 @@ pub fn main() -> Unit {
     QubitRegister<1> register = system()
     Bit c = 0
     Bit d = 0
-    state bad = mix (c) { 0 -> mix (d) {0 -> |0>, else -> |1>}, else -> |0> }
+    State bad = mix (c) { 0 -> mix (d) {0 -> |0>, else -> |1>}, else -> |0> }
     measure bad
 }
 """
@@ -34,8 +34,8 @@ pub fn main() -> Unit {
     QubitRegister<2> register = system()
     Bit c = 0
     Bit d = 0
-    state a = |0>
-    state ab = a *|* (mix (c) { 0 -> mix (d) {0 -> |0>, else -> |1>}, else -> |0> })
+    State a = |0>
+    State ab = a *|* (mix (c) { 0 -> mix (d) {0 -> |0>, else -> |1>}, else -> |0> })
     measure ab
 }
 """

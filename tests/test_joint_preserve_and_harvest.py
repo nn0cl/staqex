@@ -19,14 +19,14 @@ def test_float_survives_grover_diffuse() -> None:
 package t
 pub fn main() -> Unit {
     Float cfg = 2.0
-    state b0 = coin()
-    state b1 = coin()
-    state idx = b0 * 2 + b1
-    state marked = phase(idx, pi, cfg)
-    state amplified = grover_diffuse(marked)
-    state viewed = inspect(cfg)
-    state b0 = |0>
-    state b1 = |0>
+    State b0 = coin()
+    State b1 = coin()
+    State idx = b0 * 2 + b1
+    State marked = phase(idx, pi, cfg)
+    State amplified = grover_diffuse(marked)
+    State viewed = inspect(cfg)
+    State b0 = |0>
+    State b1 = |0>
     measure amplified
 }
 """
@@ -42,13 +42,13 @@ def test_phase_only_from_float_scalar() -> None:
 package t
 pub fn main() -> Unit {
     Float target = 2.0
-    state b0 = coin()
-    state b1 = coin()
-    state idx = b0 * 2 + b1
-    state marked = phase(idx, pi, target)
-    state amplified = grover_diffuse(marked)
-    state b0 = |0>
-    state b1 = |0>
+    State b0 = coin()
+    State b1 = coin()
+    State idx = b0 * 2 + b1
+    State marked = phase(idx, pi, target)
+    State amplified = grover_diffuse(marked)
+    State b0 = |0>
+    State b1 = |0>
     measure amplified
 }
 """
@@ -72,10 +72,10 @@ pub fn main() -> Unit {
     State<Qubit> c = |+>
     State<Position> x = dirac(0)
     State<(Qubit, Position)> (c, x) = c *|* x
-    state (c, x) = evolve (c, x) times n_steps {
+    State (c, x) = evolve (c, x) times n_steps {
         step(c, x)
     }
-    state c = |0>
+    State c = |0>
     measure x
 }
 """
@@ -101,8 +101,8 @@ pub class Hints {
 package demo
 import demo.hints
 pub fn main() -> Unit {
-    state viewed = inspect(r)
-    state bit = coin()
+    State viewed = inspect(r)
+    State bit = coin()
     measure bit
 }
 """,
@@ -136,8 +136,8 @@ package demo
 import demo.hints
 pub fn main() -> Unit {
     Float r = 9.0
-    state v = inspect(r)
-    state bit = coin()
+    State v = inspect(r)
+    State bit = coin()
     measure bit
 }
 """,

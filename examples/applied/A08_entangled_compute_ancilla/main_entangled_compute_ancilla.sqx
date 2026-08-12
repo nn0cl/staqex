@@ -11,12 +11,12 @@ system BellPair {
 pub fn main() -> Unit {
     Operator<RegisterSet<BellPair>> zz_link = Z[data[0]] * Z[ancilla[0]]
 
-    state compute = |+>
-    state anc = |0>
-    state anc = cnot(compute, anc)
+    State compute = |+>
+    State anc = |0>
+    State anc = cnot(compute, anc)
 
-    state correlation = expect(ZZ, compute, anc)
-    state viewed_corr = inspect(correlation)
+    State correlation = expect(ZZ, compute, anc)
+    State viewed_corr = inspect(correlation)
 
     // cnot already moved `compute`; terminal measure on the Bell ancilla.
     measure anc

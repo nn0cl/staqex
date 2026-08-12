@@ -42,9 +42,9 @@ def run() -> list[CaseResult]:
     # Opposite phases cancel completely under interfer
     try:
         src = as_main("""
-state z = dirac(0)
-state zp = phase(z, pi)
-state out = interfer(z, zp)
+State z = dirac(0)
+State zp = phase(z, pi)
+State out = interfer(z, zp)
 measure out
 """)
         result = _eval(src)
@@ -82,9 +82,9 @@ measure out
     # Same phase constructively reinforces (renormalized Dirac)
     try:
         src = as_main("""
-state a = dirac(7)
-state b = phase(a, 0.0)
-state out = interfer(a, b)
+State a = dirac(7)
+State b = phase(a, 0.0)
+State out = interfer(a, b)
 measure out
 """)
         result = _eval(src)
@@ -117,7 +117,7 @@ measure out
         if abs(cis(math.pi) - (-1 + 0j)) > 1e-9:
             raise AssertionFailure("NORM_MISMATCH", f"cis(π)={cis(math.pi)}")
         src = as_main("""
-state u = Complex.cis(pi)
+State u = Complex.cis(pi)
 measure u
 """)
         result = _eval(src)

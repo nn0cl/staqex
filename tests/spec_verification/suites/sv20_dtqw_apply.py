@@ -52,8 +52,8 @@ def run() -> list[CaseResult]:
         result, _ = _eval(
             as_main(
                 """
-state c = |0>
-state c = hadamard(c)
+State c = |0>
+State c = hadamard(c)
 measure c
 """
             )
@@ -88,8 +88,8 @@ measure c
         result, _ = _eval(
             as_main(
                 """
-state c = |0>
-state c = apply(X, c)
+State c = |0>
+State c = apply(X, c)
 measure c
 """
             )
@@ -124,11 +124,11 @@ measure c
             as_main(
                 """
 Operator Coin = 0.7071067811865476 * (X + Z)
-state c = |0>
-state x = dirac(0)
-state (c, x) = c *|* x
-state c = apply(Coin, c)
-state x = walk_shift(c, x)
+State c = |0>
+State x = dirac(0)
+State (c, x) = c *|* x
+State c = apply(Coin, c)
+State x = walk_shift(c, x)
 measure x
 """
             )
@@ -166,13 +166,13 @@ measure x
             as_main(
                 """
 Operator Coin = 0.7071067811865476 * (X + Z)
-state c = |0>
-state x = dirac(0)
-state (c, x) = c *|* x
-state c = apply(Coin, c)
-state x = walk_shift(c, x)
-state c = apply(Coin, c)
-state x = walk_shift(c, x)
+State c = |0>
+State x = dirac(0)
+State (c, x) = c *|* x
+State c = apply(Coin, c)
+State x = walk_shift(c, x)
+State c = apply(Coin, c)
+State x = walk_shift(c, x)
 measure x
 """
             )
@@ -207,8 +207,8 @@ measure x
         result, _ = _eval(
             as_main(
                 """
-state c = |0>
-state c = apply(Hadamard, c)
+State c = |0>
+State c = apply(Hadamard, c)
 measure c
 """
             )

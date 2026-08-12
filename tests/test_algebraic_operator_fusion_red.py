@@ -48,8 +48,8 @@ def test_affine_pipe_collapses_to_single_map() -> None:
             return s - 5
         }
         pub fn main() -> Unit {
-            state z = 3
-            state w = z |> add10 |> dbl |> sub5
+            State z = 3
+            State w = z |> add10 |> dbl |> sub5
             measure w
         }
         """,
@@ -68,8 +68,8 @@ def test_affine_pipe_matches_sequential() -> None:
     fn dbl(s: State<Int>) -> State<Int> { return s * 2 }
     fn sub5(s: State<Int>) -> State<Int> { return s - 5 }
     pub fn main() -> Unit {
-        state z = 7
-        state w = z |> add10 |> dbl |> sub5
+        State z = 7
+        State w = z |> add10 |> dbl |> sub5
         measure w
     }
     """
@@ -79,10 +79,10 @@ def test_affine_pipe_matches_sequential() -> None:
     fn dbl(s: State<Int>) -> State<Int> { return s * 2 }
     fn sub5(s: State<Int>) -> State<Int> { return s - 5 }
     pub fn main() -> Unit {
-        state z = 7
-        state t1 = add10(z)
-        state t2 = dbl(t1)
-        state w = sub5(t2)
+        State z = 7
+        State t1 = add10(z)
+        State t2 = dbl(t1)
+        State w = sub5(t2)
         measure w
     }
     """
@@ -105,8 +105,8 @@ def test_non_affine_return_still_fuses_sequentially() -> None:
             return s
         }
         pub fn main() -> Unit {
-            state x = 0
-            state r = x |> flip |> id
+            State x = 0
+            State r = x |> flip |> id
             measure r
         }
         """,

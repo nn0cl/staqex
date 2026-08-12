@@ -29,7 +29,7 @@ def test_g_kg_round_trip() -> None:
             pub fn main() -> Unit {
                 Mass m = 1000.0.g to kg
                 Mass g = 1.0.kg to g
-                state a = |0>
+                State a = |0>
                 measure a
             }
             """
@@ -45,7 +45,7 @@ def test_g_kg_round_trip() -> None:
             Mass m = 1000.0.g to kg
             Mass raw = 1000.0.g
             Mass g = 1.0.kg to g
-            state a = |0>
+            State a = |0>
             measure a
         }
         """

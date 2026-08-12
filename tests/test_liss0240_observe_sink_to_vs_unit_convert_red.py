@@ -18,7 +18,7 @@ def test_snapshot_to_stdout_parses_and_runs() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state x = coin()
+        State x = coin()
         snapshot x to stdout
         measure x
     }
@@ -40,7 +40,7 @@ def test_measure_to_stdout_parses() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state x = coin()
+        State x = coin()
         measure x to stdout
     }
     """
@@ -57,7 +57,7 @@ def test_explicit_unit_convert_still_parses() -> None:
     pub fn main() -> Unit {
         Float m = 1.0
         Float kg = m to kg
-        state s = dirac(0)
+        State s = dirac(0)
         measure s
     }
     """

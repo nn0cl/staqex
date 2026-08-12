@@ -31,7 +31,7 @@ def test_apply_identity_on_qutrit_preserves_ket2() -> None:
     package t
     pub fn main() -> Unit {{
         State<Qutrit> s = |2{KET}
-        state out = apply(I, s)
+        State out = apply(I, s)
         measure out
     }}
     """
@@ -52,7 +52,7 @@ def test_evolve_identity_on_qudit3_preserves_ket1() -> None:
     package t
     pub fn main() -> Unit {{
         State<Qudit<3>> s = |1{KET}
-        state s = evolve {{ s under I for 0.0.s }}.run()
+        State s = evolve {{ s under I for 0.0.s }}.run()
         measure s
     }}
     """
@@ -75,7 +75,7 @@ def test_apply_hadamard_on_qutrit_remains_unsupported() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qutrit> s = |0{KET}
-            state out = apply(H, s)
+            State out = apply(H, s)
             measure out
         }}
         """
@@ -92,7 +92,7 @@ def test_apply_identity_on_qudit4_remains_unsupported() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qudit<4>> s = |0{KET}
-            state out = apply(I, s)
+            State out = apply(I, s)
             measure out
         }}
         """
@@ -108,7 +108,7 @@ def test_qubit_apply_identity_unchanged() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qubit> s = |0{KET}
-            state out = apply(I, s)
+            State out = apply(I, s)
             measure out
         }}
         """

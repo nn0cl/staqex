@@ -28,8 +28,8 @@ def test_fn_param_axis_traced_out_after_call() -> None:
             return y * 2
         }
         pub fn main() -> Unit {
-            state x = 3
-            state r = double(x)
+            State x = 3
+            State r = double(x)
             measure r
         }
         """,
@@ -53,10 +53,10 @@ def test_caller_live_coords_preserved() -> None:
             return y
         }
         pub fn main() -> Unit {
-            state keep = |1>
-            state x = |0>
-            state r = id(x)
-            state viewed = inspect(r)
+            State keep = |1>
+            State x = |0>
+            State r = id(x)
+            State viewed = inspect(r)
             measure keep
         }
         """,

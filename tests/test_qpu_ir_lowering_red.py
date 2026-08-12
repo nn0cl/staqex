@@ -83,8 +83,8 @@ def test_unsupported_dynamic_capability_is_a_hard_diagnostic_without_host_fallba
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state evolved = evolve { psi under X for 1 until converged(psi) max 64 }.run()
+            State psi = dirac(0)
+            State evolved = evolve { psi under X for 1 until converged(psi) max 64 }.run()
             measure evolved
         }
         """
