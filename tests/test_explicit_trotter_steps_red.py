@@ -5,7 +5,7 @@ docs/issues/LISS-0050-trotter-step-silent-clamp.md: `backend/qasm/trotter.py`
 silently clamped the Trotter step count to 64 with no diagnostic, both for
 the derived (`ceil(|t|*8)`) default and for an explicit caller `steps=`
 value. Per the Adjudicator's decision (2026-07-25, ADR 0094): QASM emission
-of a plain `evolve { ... under H for t }.run()` (no `using Suzuki(...)`
+of a plain `Evolve { ... under H for t }.run()` (no `using Suzuki(...)`
 policy) must be rejected with an explicit diagnostic naming the fix; the
 already-shipped
 `using Suzuki(...)` mechanism (LISS-0017/ADR 0084) is the only path, and it
@@ -35,9 +35,9 @@ _PLAIN_EVOLVE = """
 package t
 pub fn main() -> Unit {
     Operator H = 5.272859e-20 * I - 5.272859e-20 * Z[0]
-    state psi = |+>
-    state psi = evolve { psi under H for 100.0.fs }.run()
-    measure psi
+    State psi = |+>
+    State psi = Evolve { psi under H for 100.0.fs }.run()
+    Measure psi
 }
 """
 
@@ -45,9 +45,9 @@ _EXPLICIT_STEPS_ABOVE_OLD_CAP = """
 package t
 pub fn main() -> Unit {
     Operator H = 0.5 * I - 0.5 * Z[0]
-    state psi = |+>
-    state psi = evolve { psi under H for 100.0 using Suzuki(order = 2, steps = 200) }.run()
-    measure psi
+    State psi = |+>
+    State psi = Evolve { psi under H for 100.0 using Suzuki(order = 2, steps = 200) }.run()
+    Measure psi
 }
 """
 
@@ -100,9 +100,9 @@ def test_explicit_steps_are_never_silently_clamped_even_at_the_old_default() -> 
         package t
         pub fn main() -> Unit {
             Operator H = 0.5 * I - 0.5 * Z[0]
-            state psi = |+>
-            state psi = evolve { psi under H for 1.0 using Suzuki(order = 2, steps = 3) }.run()
-            measure psi
+            State psi = |+>
+            State psi = Evolve { psi under H for 1.0 using Suzuki(order = 2, steps = 3) }.run()
+            Measure psi
         }
         """
     )

@@ -27,24 +27,24 @@ def _codes(diagnostics: list[dict[str, object]]) -> set[str]:
 _SOURCE_DUPLICATE_PREDICATE = """
 package s02
 pub fn main() -> Unit {
-  state selection = prepare_selection(3)
-  state feasible = project selection onto feasible(
+  State selection = prepare_selection(3)
+  State feasible = project selection onto feasible(
     exactly_selected = 2,
     exactly_selected = 3,
   )
-  measure feasible
+  Measure feasible
 }
 """
 
 _SOURCE_DISTINCT_PREDICATES = """
 package s02
 pub fn main() -> Unit {
-  state selection = prepare_selection(3)
-  state feasible = project selection onto feasible(
+  State selection = prepare_selection(3)
+  State feasible = project selection onto feasible(
     exactly_selected = 2,
     pairwise_compatible = true,
   )
-  measure feasible
+  Measure feasible
 }
 """
 

@@ -22,8 +22,8 @@ from compiler.staqex.cli import main  # noqa: E402
 _SOURCE_OK = """
 package t
 pub fn main() -> Unit {
-    state q = |0>
-    measure q
+    State q = |0>
+    Measure q
 }
 """
 

@@ -36,13 +36,13 @@ namespace Phys {
 pub fn main() -> Unit {
     Phys.Model m = Phys.Model()
     Operator H = m.hamiltonian()
-    state s0 = |+>
-    state s1 = |+>
-    state (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
-    state zz = expect(ZZ, s0, s1)
-    state viewed = inspect(zz)
-    state s1 = |0>
-    measure s0
+    State s0 = |+>
+    State s1 = |+>
+    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State zz = expect(ZZ, s0, s1)
+    State viewed = Inspect(zz)
+    State s1 = |0>
+    Measure s0
 }
 """
 
@@ -67,11 +67,11 @@ namespace Phys {
 pub fn main() -> Unit {
     Phys.Model m = Phys.Model(1.0545718e-19, 5.272859e-20)
     Operator H = m.hamiltonian()
-    state s0 = |+>
-    state s1 = |+>
-    state (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
-    state s1 = |0>
-    measure s0
+    State s0 = |+>
+    State s1 = |+>
+    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State s1 = |0>
+    Measure s0
 }
 """
 

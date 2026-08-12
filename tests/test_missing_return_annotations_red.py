@@ -36,7 +36,7 @@ def test_untyped_method_is_rejected() -> None:
             val value: Int
 
             fn next() {
-                State<Int> result = dirac(this.value + 1)
+                State<Int> result = Dirac(this.value + 1)
             }
         }
         """
@@ -49,8 +49,8 @@ def test_bare_main_is_rejected() -> None:
     codes = _codes(
         """
         pub fn main() {
-            State<Int> answer = dirac(1)
-            measure answer
+            State<Int> answer = Dirac(1)
+            Measure answer
         }
         """
     )

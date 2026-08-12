@@ -96,7 +96,7 @@ def test_dynamic_fake_report_does_not_pollute_measurements() -> None:
 
 
 def test_sibling_channels_when_static_terminal_measure_coexists() -> None:
-    """Scenario: Sibling channels when Static terminal measure coexists."""
+    """Scenario: Sibling channels when Static terminal Measure coexists."""
     measurement = _measurement()
     trace = project_dynamic_trace(
         _fake_exec_result(),

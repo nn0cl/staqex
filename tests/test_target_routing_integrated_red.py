@@ -152,7 +152,7 @@ def test_disconnected_topology_is_explicitly_infeasible() -> None:
     api = _load_api()
     # Two components: 0-1 and 2-3, but CX needs q0-q1 path only — force CX
     # across disconnected pair by mapping demand onto non-edge endpoints.
-    snapshot = _snapshot(
+    Snapshot = _snapshot(
         api,
         qubits=4,
         edges=((0, 1), (2, 3)),
@@ -163,7 +163,7 @@ def test_disconnected_topology_is_explicitly_infeasible() -> None:
         "operations": (_operation(api, "op.cx", "cx", ("q0", "q1")),),
         "preferred_physical": {"q0": 0, "q1": 2},
     }
-    result = api["run_target_pipeline"](plan, snapshot)
+    result = api["run_target_pipeline"](plan, Snapshot)
 
     assert result.status == "infeasible"
     assert "TARGET_TOPOLOGY_INFEASIBLE" in _codes(result.diagnostics)
@@ -172,9 +172,9 @@ def test_disconnected_topology_is_explicitly_infeasible() -> None:
 
 def test_over_capacity_plan_is_explicitly_infeasible() -> None:
     api = _load_api()
-    snapshot = _snapshot(api, qubits=2, max_logical=2)
+    Snapshot = _snapshot(api, qubits=2, max_logical=2)
     plan = _plan(api, width=3, include_cx=False)
-    result = api["run_target_pipeline"](plan, snapshot)
+    result = api["run_target_pipeline"](plan, Snapshot)
 
     assert result.status == "infeasible"
     assert "TARGET_CAPACITY_EXCEEDED" in _codes(result.diagnostics)
@@ -183,15 +183,15 @@ def test_over_capacity_plan_is_explicitly_infeasible() -> None:
 
 def test_deterministic_routing_inserts_swaps_when_needed() -> None:
     api = _load_api()
-    snapshot = _snapshot(api, qubits=3, edges=((0, 1), (1, 2)))
+    Snapshot = _snapshot(api, qubits=3, edges=((0, 1), (1, 2)))
     plan = {
         "plan_id": "plan.swap",
         "resources": (_resource(api, "q0"), _resource(api, "q1")),
         "operations": (_operation(api, "op.cx", "cx", ("q0", "q1")),),
         "preferred_physical": {"q0": 0, "q1": 2},
     }
-    first = api["run_target_pipeline"](plan, snapshot)
-    second = api["run_target_pipeline"](plan, snapshot)
+    first = api["run_target_pipeline"](plan, Snapshot)
+    second = api["run_target_pipeline"](plan, Snapshot)
 
     assert first.status == "verified"
     assert first.routing.insertions
@@ -203,9 +203,9 @@ def test_deterministic_routing_inserts_swaps_when_needed() -> None:
 
 def test_native_translation_rejects_unsupported_operations() -> None:
     api = _load_api()
-    snapshot = _snapshot(api, native_ops=("rz", "sx"))  # no cx
+    Snapshot = _snapshot(api, native_ops=("rz", "sx"))  # no cx
     plan = _plan(api, width=2, include_cx=True)
-    result = api["run_target_pipeline"](plan, snapshot)
+    result = api["run_target_pipeline"](plan, Snapshot)
 
     assert result.status == "infeasible"
     assert "TARGET_NATIVE_UNSUPPORTED" in _codes(result.diagnostics)

@@ -85,6 +85,8 @@ from .ast_nodes import (
     Snapshot,
     ScientificScopeDecl,
     Span,
+    KetSumBinder,
+    SetPowerDomain,
     StateBind,
     StructDecl,
     SuzukiPolicy,
@@ -144,7 +146,7 @@ def _flatten_namespaces(decls: list) -> list:
 # itself: `sum`/`product` binders and the Pauli/hop atoms. An `Operator`
 # bind's factory-call heuristic must never treat these as an ordinary
 # function call, even when immediately followed by `(` (LISS-0051).
-_OPERATOR_DSL_RESERVED_ATOMS = {"sum", "product", "adjoint", "I", "X", "Y", "Z", "hop"}
+_OPERATOR_DSL_RESERVED_ATOMS = {"Sigma", "Pi", "adjoint", "I", "X", "Y", "Z", "hop"}
 # Algebra Calls that must parse as expression `Call` under `Operator … =`
 # (LISS-0207): reserved OpDSL atoms would otherwise become `OpCall` and lose
 # qubit domain when rebound through bare `Operator`.
@@ -475,9 +477,9 @@ class Parser:
                     "operator",
                     "prepare",
                     "realize",
-                    "state",
-                    "evolve",
-                    "measure",
+                    "State",  # LISS-0418: lowercase `state` retired
+                    "Evolve",  # LISS-0419: lowercase `evolve` retired
+                    "Measure",  # LISS-0419: lowercase `measure` retired
                 }:
                     return True
                 if (
@@ -696,17 +698,18 @@ class Parser:
             span = Span(line=first.line, col=first.col)
             if first.lexeme == "dynamic" or "dynamic" in lexemes:
                 statements.append(H1DynamicControl(source_tokens=lexemes, span=span))
-            elif "mix" in lexemes:
+            elif "Mix" in lexemes:
                 statements.append(H1Mixture(source_tokens=lexemes, span=span))
-            elif "superpose" in lexemes:
+            elif "Superpose" in lexemes:
                 statements.append(
                     H1Superposition(source_tokens=lexemes, span=span)
                 )
             elif "capply" in lexemes:
                 statements.append(H1CoherentControl(source_tokens=lexemes, span=span))
-            elif first.lexeme == "state" or "prepare" in lexemes:
+            elif first.lexeme == "State" or "prepare" in lexemes:
+                # LISS-0418 (ADR 0191 amendment): lowercase `state` retired.
                 state_name = (
-                    line[1].lexeme if first.lexeme == "state" and len(line) > 1 else None
+                    line[1].lexeme if first.lexeme == "State" and len(line) > 1 else None
                 )
                 bound_to: tuple[str, str] | None = None
                 if "over" in lexemes:
@@ -724,7 +727,7 @@ class Parser:
                         bound_to=bound_to,
                     )
                 )
-            elif "evolve" in lexemes:
+            elif "Evolve" in lexemes:
                 state_name = (
                     first.lexeme if first.kind == TokenKind.IDENT else None
                 )
@@ -747,7 +750,7 @@ class Parser:
                 statements.append(H1TraceOut(source_tokens=lexemes, span=span))
             elif first.lexeme == "observable":
                 statements.append(H1Observable(source_tokens=lexemes, span=span))
-            elif first.lexeme == "measure":
+            elif first.lexeme == "Measure":
                 statements.append(H1Measure(source_tokens=lexemes, span=span))
         return statements
 
@@ -1324,6 +1327,21 @@ class Parser:
             generic_bounds=tuple(generic_bounds),
         )
 
+    # LISS-0419: effect labels are a closed vocabulary that includes
+    # several now-capitalized keyword spellings (Measure/Inspect/Snapshot/
+    # Evolve/...) -- `_expect_ident_like` alone rejects any keyword token,
+    # so `effects { Inspect }` needs this dedicated accessor.
+    _EFFECT_KEYWORD_LEXEMES = frozenset(
+        {"Evolve", "Measure", "Mix", "Coin", "Dirac", "Vacuum", "Snapshot", "Inspect", "Superpose", "ForEach"}
+    )
+
+    def _expect_effect_name(self) -> str:
+        tok = self._peek()
+        if tok.kind == TokenKind.IDENT or tok.lexeme in self._EFFECT_KEYWORD_LEXEMES:
+            self._advance()
+            return tok.lexeme
+        raise ParseError(f"expected effect name, got `{tok.lexeme}`", tok.line, tok.col)
+
     def _effects_clause(self) -> list[str]:
         """Parse the optional fixed effect annotation after a return type."""
         if self._peek().lexeme != "effects":
@@ -1332,9 +1350,9 @@ class Parser:
         self._expect(TokenKind.LBRACE)
         effects: list[str] = []
         if not self._check(TokenKind.RBRACE):
-            effects.append(self._expect_ident_like())
+            effects.append(self._expect_effect_name())
             while self._match(TokenKind.COMMA):
-                effects.append(self._expect_ident_like())
+                effects.append(self._expect_effect_name())
         self._expect(TokenKind.RBRACE)
         return effects
 
@@ -1719,6 +1737,27 @@ class Parser:
             return self._tuple_bind()
         if self._is_type_first_start():
             return self._type_first_bind()
+        # LISS-0418 (ADR 0191 amendment): lowercase `state` is retired --
+        # `State` (already-shipped Type-First form, TYPE_HEADS) is the sole
+        # canonical spelling. `state` is now a freely available ordinary
+        # identifier everywhere else (no RETIRED-dict blanket reservation);
+        # this check only fires on the exact old declaration shape (`state
+        # <name> =` / `state (<names>) =`), which was never valid syntax
+        # for anything else, so it does not shadow legitimate identifier
+        # uses of the word `state`.
+        if (
+            self._check(TokenKind.IDENT)
+            and self._peek().lexeme == "state"
+            and self._peek_at_kind(1) in (TokenKind.IDENT, TokenKind.LPAREN)
+        ):
+            tok = self._peek()
+            raise ParseError(
+                "lowercase `state` is retired -- use `State` "
+                "(e.g. `State a = |0>`, `State (a, b) = ...`)",
+                tok.line,
+                tok.col,
+                code="STATE_KEYWORD_RETIRED",
+            )
         # ADR 0197 / LISS-0382: contextual soft `match <ctrl> { … }`.
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "match":
             return self._match_stmt()
@@ -2263,7 +2302,20 @@ class Parser:
             # desugar -e as 0 - e (LitInt 0 or LitFloat 0.0)
             zero = LitFloat(value=0.0, span=sp)
             return BinOp(op="-", lhs=zero, rhs=inner, span=sp)
-        return self._call()
+        return self._power()
+
+    def _power(self):
+        """Classical `^` (LISS-0415), right-associative:
+        `2.0 ^ 3.0 ^ 2.0` == `2.0 ^ (3.0 ^ 2.0)`. Distinct from the
+        Operator-DSL's own `^`/`OpPow` (`_op_power`, integer-only matrix
+        power) -- this is plain numeric exponentiation, reusing the
+        existing `BinOp` AST node rather than a new one."""
+        expr = self._call()
+        if self._match(TokenKind.CARET):
+            sp = self._span()
+            rhs = self._power()
+            return BinOp(op="^", lhs=expr, rhs=rhs, span=sp)
+        return expr
 
     def _call(self):
         expr = self._primary()
@@ -2421,6 +2473,17 @@ class Parser:
                 self._expect(TokenKind.RPAREN)
             return Vacuum(span=sp)
 
+        # LISS-0420: `Sigma`/`Pi` reachable from general expression position
+        # too (not just the Operator-DSL's own `_op_primary`), so a bare
+        # State-typed ket-sum (`Sigma (x In {0,1}^n) { |x> }`) can appear
+        # directly in a classical/State expression, e.g. `coeff * Sigma
+        # (...) { ... }`. Reuses `_op_binder`, which already dispatches to
+        # `KetSumBinder` vs the Operator-DSL `OpBinder` based on domain shape.
+        if self._check(TokenKind.IDENT) and self._peek().lexeme in ("Sigma", "Pi"):
+            kind = self._peek().lexeme
+            self._advance()
+            return self._op_binder(kind, sp)
+
         if self._match(TokenKind.INSPECT):
             self._expect(TokenKind.LPAREN)
             inner = self._expression()
@@ -2476,6 +2539,16 @@ class Parser:
                 return BlockExpr(lets=body.lets, result=body.result, span=body.span)
             self._advance()  # LBRACE
             items = self._comma_expr_items(TokenKind.RBRACE)
+            # LISS-0417: `{0,1}^n` set-power domain -- disambiguated from
+            # the anticommutator by a trailing `^` after the closing brace.
+            # Reserved ahead of its consumer (LISS-0420's Sigma/Pi binder).
+            if self._check(TokenKind.CARET) and items and all(
+                isinstance(it, LitInt) for it in items
+            ):
+                self._advance()  # CARET
+                width = self._power()
+                labels = [int(it.value) for it in items]  # type: ignore[union-attr]
+                return SetPowerDomain(labels=labels, width=width, span=sp)
             if len(items) != 2:
                 raise ParseError(
                     "anticommutator braces `{A, B}` require exactly two operands",
@@ -3113,7 +3186,7 @@ class Parser:
         if tok.kind == TokenKind.IDENT:
             name = tok.lexeme
             self._advance()
-            if name in {"sum", "product"}:
+            if name in {"Sigma", "Pi"}:
                 return self._op_binder(name, sp)
             if name in {"N", "Q", "P"}:
                 # LISS-0227: parse as OpVar so a local `Operator P = …; return P`
@@ -3283,18 +3356,53 @@ class Parser:
             return TypeRef(name="Index", args=args)
         if self._check(TokenKind.IDENT) and self._peek_at_kind(1) == TokenKind.LT:
             return self._type_ref()
+        if self._check(TokenKind.LBRACE):
+            return self._set_power_domain()
         return OpVar(name=self._expect_ident_like(), span=self._span())
+
+    def _set_power_domain(self) -> SetPowerDomain:
+        """`{0,1}^n` as a binder domain (LISS-0420) -- mirrors the
+        expression-position parsing added by LISS-0417 (`parser.py`'s
+        anticommutator-disambiguation branch), but binder-domain position
+        has no anticommutator ambiguity to resolve, so this is a direct,
+        self-contained parse."""
+        sp = self._span()
+        self._expect(TokenKind.LBRACE)
+        labels = [int(self._expect(TokenKind.INT).literal)]
+        while self._match(TokenKind.COMMA):
+            labels.append(int(self._expect(TokenKind.INT).literal))
+        self._expect(TokenKind.RBRACE)
+        self._expect(TokenKind.CARET)
+        width = self._power()
+        return SetPowerDomain(labels=labels, width=width, span=sp)
 
     def _op_binder(self, kind: str, sp: Span):
         self._expect(TokenKind.LPAREN)
-        bindings = []
-        while True:
+        variable = self._expect_ident_like()
+        self._expect(TokenKind.IN_SET)
+        domain = self._binder_domain()
+        if isinstance(domain, SetPowerDomain):
+            # LISS-0420: State-typed ket-sum -- `Sigma (x In {0,1}^n) { |x> }`.
+            # Single-binding only (matching the target use case); body is
+            # always a bare ket referencing the bound variable.
+            self._expect(TokenKind.RPAREN)
+            self._expect(TokenKind.LBRACE)
+            ket_tok = self._expect(TokenKind.KET)
+            if str(ket_tok.literal) != variable:
+                raise ParseError(
+                    f"Sigma ket-sum body must be `|{variable}>` "
+                    f"(the bound variable), got `|{ket_tok.literal}>`",
+                    ket_tok.line,
+                    ket_tok.col,
+                )
+            self._expect(TokenKind.RBRACE)
+            return KetSumBinder(variable=variable, domain=domain, span=sp)
+        bindings = [(variable, domain)]
+        while self._match(TokenKind.COMMA):
             variable = self._expect_ident_like()
-            self._expect(TokenKind.IN)
+            self._expect(TokenKind.IN_SET)
             domain = self._binder_domain()
             bindings.append((variable, domain))
-            if not self._match(TokenKind.COMMA):
-                break
         self._expect(TokenKind.RPAREN)
         guard = None
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "where":

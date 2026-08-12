@@ -51,11 +51,11 @@ def run() -> list[CaseResult]:
         result, _ = _eval(
             as_main(
                 """
-state a = |+>
-state b = |0>
-state b = capply(a, X, b)
-state zz = expect(ZZ, a, b)
-measure zz
+State a = |+>
+State b = |0>
+State b = capply(a, X, b)
+State zz = expect(ZZ, a, b)
+Measure zz
 """
             )
         )
@@ -101,20 +101,20 @@ measure zz
         r1, _ = _eval(
             as_main(
                 """
-state a = |+>
-state b = |0>
-state b = cnot(a, b)
-measure b
+State a = |+>
+State b = |0>
+State b = cnot(a, b)
+Measure b
 """
             )
         )
         r2, _ = _eval(
             as_main(
                 """
-state a = |+>
-state b = |0>
-state b = capply(a, X, b)
-measure b
+State a = |+>
+State b = |0>
+State b = capply(a, X, b)
+Measure b
 """
             )
         )
@@ -150,11 +150,11 @@ measure b
         result, _ = _eval(
             as_main(
                 """
-state a = |1>
-state b = |1>
-state b = capply(a, Z, b)
-state ez = expect(Z, b)
-measure ez
+State a = |1>
+State b = |1>
+State b = capply(a, Z, b)
+State ez = expect(Z, b)
+Measure ez
 """
             )
         )
@@ -198,10 +198,10 @@ measure ez
         result, _ = _eval(
             as_main(
                 """
-state a = |0>
-state b = |0>
-state b = capply(a, X, b)
-measure b
+State a = |0>
+State b = |0>
+State b = capply(a, X, b)
+Measure b
 """
             )
         )
@@ -236,7 +236,7 @@ measure b
         )
         result, _ = _eval(src)
         if result.measure is None:
-            raise AssertionFailure("MEASURE", "no measure")
+            raise AssertionFailure("MEASURE", "no Measure")
         out.append(
             CaseResult(
                 "SV-21",

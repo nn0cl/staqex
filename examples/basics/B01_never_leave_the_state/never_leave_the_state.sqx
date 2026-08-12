@@ -1,5 +1,5 @@
 // B01 — mid-program values are State<T>; collapse only at terminal measure.
 // WP-0089 / LISS-0289: default experiment profile (0182) + inferred local (0180).
 
-answer = dirac(42)
-measure answer
+answer = Dirac(42)
+Measure answer

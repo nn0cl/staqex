@@ -24,9 +24,9 @@ def test_call_with_hole_pipe_chain_fuses() -> None:
             return s * 2
         }
         pub fn main() -> Unit {
-            state z = 3
-            state r = z |> add(10, _) |> dbl
-            measure r
+            State z = 3
+            State r = z |> add(10, _) |> dbl
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -41,10 +41,10 @@ def test_call_with_hole_pipe_chain_fuses() -> None:
             return s * 2
         }
         pub fn main() -> Unit {
-            state z = 3
-            state t = add(10, z)
-            state r = dbl(t)
-            measure r
+            State z = 3
+            State t = add(10, z)
+            State r = dbl(t)
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -66,10 +66,10 @@ def test_partial_var_pipe_chain_fuses() -> None:
             return s * 2
         }
         pub fn main() -> Unit {
-            state p = add(10, _)
-            state z = 3
-            state r = z |> p |> dbl
-            measure r
+            State p = add(10, _)
+            State z = 3
+            State r = z |> p |> dbl
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -86,9 +86,9 @@ def test_bare_unary_fusion_still_works() -> None:
         fn double(x: State<Int>) -> State<Int> { return x * 2 }
         fn inc(x: State<Int>) -> State<Int> { return x + 1 }
         pub fn main() -> Unit {
-            state x = 3
-            state r = x |> double |> inc
-            measure r
+            State x = 3
+            State r = x |> double |> inc
+            Measure r
         }
         """,
         stdout=io.StringIO(),

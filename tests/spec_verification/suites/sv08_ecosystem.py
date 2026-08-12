@@ -1,4 +1,4 @@
-"""SV-08: Phase 3 — Prelude/Math, CLI check, inspect/snapshot, DAG IR."""
+"""SV-08: Phase 3 — Prelude/Math, CLI check, Inspect/Snapshot, DAG IR."""
 
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ def run() -> list[CaseResult]:
 
     # Prelude names
     try:
-        for n in ("coin", "dirac", "vacuum", "inspect", "map", "Math"):
+        for n in ("Coin", "Dirac", "Vacuum", "Inspect", "map", "Math"):
             if not is_prelude(n):
                 raise AssertionFailure("TYPE_NOT_STATE", f"{n} missing from prelude")
         if "if" in PRELUDE_NAMES:
@@ -49,12 +49,12 @@ def run() -> list[CaseResult]:
     # Math.sin on State<Float>
     try:
         src = as_main("""
-state phase = mix (coin()) {
+State phase = Mix (Coin()) {
   0 -> 0.0,
   else -> 1.5707963267948966,
 }
-state s = Math.sin(phase)
-measure s
+State s = Math.sin(phase)
+Measure s
 """)
         compiled = compile_source(src)
         if compiled.unit is None:
@@ -93,12 +93,12 @@ measure s
             )
         )
 
-    # inspect non-destructive + identity bind
+    # Inspect non-destructive + identity bind
     try:
         src = as_main("""
-state x = coin()
-state y = inspect(x)
-measure y
+State x = Coin()
+State y = Inspect(x)
+Measure y
 """)
         buf = io.StringIO()
         compiled = compile_source(src)
@@ -107,44 +107,44 @@ measure y
         st = State(result.joint.marginal("y"), payload_type=int)
         assertSuperposition(st, {0: 0.5, 1: 0.5})
         if "mass" not in buf.getvalue():
-            raise AssertionFailure("SUPERPOSITION_MISMATCH", f"inspect log empty: {buf.getvalue()!r}")
+            raise AssertionFailure("SUPERPOSITION_MISMATCH", f"Inspect log empty: {buf.getvalue()!r}")
         if result.rng_calls_before_measure != 0:
-            raise AssertionFailure("NORM_MISMATCH", "inspect must not use RngPort")
+            raise AssertionFailure("NORM_MISMATCH", "Inspect must not use RngPort")
         out.append(
             CaseResult(
                 "SV-08",
-                "sv08-inspect",
-                "inspect logs table; identity on joint",
+                "sv08-Inspect",
+                "Inspect logs table; identity on joint",
                 True,
-                ["inspect"],
+                ["Inspect"],
             )
         )
     except AssertionFailure as e:
         out.append(
             CaseResult(
                 "SV-08",
-                "sv08-inspect",
-                "inspect",
+                "sv08-Inspect",
+                "Inspect",
                 False,
                 error_code=e.code,
                 message=str(e),
             )
         )
 
-    # snapshot CSV sink
+    # Snapshot CSV sink
     try:
         with tempfile.TemporaryDirectory() as td:
             path = str(Path(td) / "log.csv")
             src = f"""
-state x = coin()
-snapshot x to {path}
-measure x
+State x = Coin()
+Snapshot x to {path}
+Measure x
 """
             # sink must be ident — write via stdout Console instead
             src = as_main("""
-state x = coin()
-snapshot x to stdout
-measure x
+State x = Coin()
+Snapshot x to stdout
+Measure x
 """)
             buf = io.StringIO()
             compiled = compile_source(src)
@@ -152,24 +152,24 @@ measure x
             result = ev.run_unit(compiled.unit, stdout=buf)
             text = buf.getvalue()
             if "value" not in text or "mass" not in text:
-                raise AssertionFailure("SUPERPOSITION_MISMATCH", f"snapshot missing csv: {text!r}")
+                raise AssertionFailure("SUPERPOSITION_MISMATCH", f"Snapshot missing csv: {text!r}")
             if not any("snapshot:stdout" in log for log in result.logs):
                 raise AssertionFailure("SUPERPOSITION_MISMATCH", f"logs={result.logs}")
         out.append(
             CaseResult(
                 "SV-08",
-                "sv08-snapshot",
-                "snapshot writes CSV host log",
+                "sv08-Snapshot",
+                "Snapshot writes CSV host log",
                 True,
-                ["snapshot"],
+                ["Snapshot"],
             )
         )
     except AssertionFailure as e:
         out.append(
             CaseResult(
                 "SV-08",
-                "sv08-snapshot",
-                "snapshot",
+                "sv08-Snapshot",
+                "Snapshot",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -180,7 +180,7 @@ measure x
     try:
         parser = build_parser()
         args = parser.parse_args(
-            ["check", "-e", as_main("state x = coin()\nif (x) {}\nmeasure x\n")]
+            ["check", "-e", as_main("State x = Coin()\nif (x) {}\nMeasure x\n")]
         )
         import contextlib
 
@@ -212,14 +212,14 @@ measure x
 
     # DAG IR extraction
     try:
-        src = as_main("state x = coin()\nstate y = x + x\nmeasure y\n")
+        src = as_main("State x = Coin()\nState y = x + x\nMeasure y\n")
         compiled = compile_source(src)
         dag = lower_source_ast(compiled.unit)
         kinds = dag.summary()["kinds"]
         if "coin" not in kinds or "binop" not in kinds or "measure" not in kinds:
             raise AssertionFailure("PARSE_ERROR", f"dag kinds={kinds}")
         if dag.measure is None:
-            raise AssertionFailure("EARLY_COLLAPSE_ERROR", "dag missing measure node")
+            raise AssertionFailure("EARLY_COLLAPSE_ERROR", "dag missing Measure node")
         dot = dag.to_dot()
         if "digraph" not in dot:
             raise AssertionFailure("PARSE_ERROR", "bad DOT")
@@ -227,7 +227,7 @@ measure x
             CaseResult(
                 "SV-08",
                 "sv08-dag-ir",
-                "AST lowers to DAG IR with measure sink",
+                "AST lowers to DAG IR with Measure sink",
                 True,
                 ["dag ir"],
             )

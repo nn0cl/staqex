@@ -8,9 +8,9 @@ pub fn main() -> Unit {
     Time dur = 1.0.fs
     Operator H_xp = e * (P * P + Q * Q)
 
-    state psi = dirac(0)
-    state psi = evolve { psi under H_xp for dur }.run()
+    State psi = Dirac(0)
+    State psi = Evolve { psi under H_xp for dur }.run()
 
-    state viewed = inspect(psi)
-    measure viewed
+    State viewed = Inspect(psi)
+    Measure viewed
 }

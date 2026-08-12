@@ -1,6 +1,6 @@
 package t
 pub fn main() -> Unit {
     Operator A = adjoint(X)
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }

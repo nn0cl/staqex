@@ -23,8 +23,8 @@ def test_adjoint_and_commutator_are_typed_operator_forms() -> None:
         pub fn main() -> Unit {
             Operator A = adjoint(X)
             Operator C = commutator(A, X)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -37,13 +37,13 @@ def test_inner_and_outer_preserve_state_operator_boundary() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |0>
-            state phi = |1>
-            state overlap = inner(phi, psi)
+            State psi = |0>
+            State phi = |1>
+            State overlap = inner(phi, psi)
             Operator projector = outer(psi, phi)
-            state psi = |0>
-            state phi = |0>
-            measure overlap
+            State psi = |0>
+            State phi = |0>
+            Measure overlap
         }
         """
     )
@@ -56,10 +56,10 @@ def test_commutator_rejects_state_operator_mismatch() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |0>
+            State psi = |0>
             Operator invalid = commutator(X, psi)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -72,9 +72,9 @@ def test_operator_algebra_does_not_measure() -> None:
         """
         package t
         pub fn main() -> Unit {
-            Operator invalid = adjoint(measure(|0>))
-            State<Int> observed = coin()
-            measure observed
+            Operator invalid = adjoint(Measure(|0>))
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -88,8 +88,8 @@ def test_explicit_operator_domain_is_preserved() -> None:
         package t
         pub fn main() -> Unit {
             Operator<Qubit> A = adjoint(X)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -104,8 +104,8 @@ def test_commutator_rejects_known_domain_mismatch() -> None:
         pub fn main() -> Unit {
             Operator<Position> P = adjoint(X)
             Operator<Qubit> invalid = commutator(P, X)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

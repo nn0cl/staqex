@@ -22,18 +22,18 @@ def _ring_source(domain: str = "0..3", register: int = 4) -> str:
 package t
 pub fn main() -> Unit {{
     QubitRegister<{register}> register = system()
-    Operator H = sum (i in Index<{domain}>) {{
+    Operator H = Sigma (i In Index<{domain}>) {{
         -1.0545718e-19 * Z[i] * Z[wrap(i)]
     }}
     State<Qubit> a = |0>
     State<Qubit> b = |0>
-    state b = |0>
+    State b = |0>
     State<Qubit> c = |0>
-    state c = |0>
+    State c = |0>
     State<Qubit> d = |0>
-    state d = |0>
-    state (a, b, c, d) = evolve {{ (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }}.run()
-    measure a
+    State d = |0>
+    State (a, b, c, d) = Evolve {{ (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }}.run()
+    Measure a
 }}
 """
 

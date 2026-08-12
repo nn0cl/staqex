@@ -38,8 +38,8 @@ def test_math_op_usable_as_classical_scalar(op: str) -> None:
     pub fn main() -> Unit {{
         Float x = 1.0
         Float y = use_op(x)
-        state s = |0>
-        measure s
+        State s = |0>
+        Measure s
     }}
     """
     compiled = compile_source(src)
@@ -60,8 +60,8 @@ def test_abs_computes_the_correct_value() -> None:
         Float x = -3.0
         Float y = abs_val(x)
         Bool ok = y == 3.0
-        state s = dirac(ok)
-        measure s
+        State s = Dirac(ok)
+        Measure s
     }
     """
     compiled = compile_source(src)

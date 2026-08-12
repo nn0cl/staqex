@@ -23,10 +23,10 @@ def test_evolve_overflow_error_names_the_energy_scale_fix() -> None:
     package t
     pub fn main() -> Unit {
         Operator H = 1.0 * Z[0]
-        state q = |0>
+        State q = |0>
         Time dur = 1.0.fs
-        state q = evolve { q under H for dur }.run()
-        measure q
+        State q = Evolve { q under H for dur }.run()
+        Measure q
     }
     """
     compiled = compile_source(source)

@@ -1,7 +1,7 @@
-"""AT-TDD Phase 1 Red: LISS-0382 mid-circuit measure / feed-forward (ADR 0197).
+"""AT-TDD Phase 1 Red: LISS-0382 mid-circuit Measure / feed-forward (ADR 0197).
 
 Target behavior is docs/specs/staqex-dynamic-qpu-lane.md § "Acceptance
-scenarios — mid-circuit measure / feed-forward (ADR 0197, LISS-0382)".
+scenarios — mid-circuit Measure / feed-forward (ADR 0197, LISS-0382)".
 Default Plan: QSem witnesses + diagnostics; dynamic-lane capability
 rejection retained; no Fake executor wiring.
 
@@ -38,29 +38,29 @@ _SOURCE_MID_CIRCUIT_CONTROLLER = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
 _SOURCE_STATIC_CONTROLLER_MEASURE = """
 package t
 pub fn main() -> Unit {
-    state q = |0>
-    Controller<Bit> bit = measure q
-    measure q
+    State q = |0>
+    Controller<Bit> bit = Measure q
+    Measure q
 }
 """
 
 _SOURCE_OBSERVE = """
 package t
 pub fn main() -> Unit {
-    state x = |0>
+    State x = |0>
     observe x
-    measure x
+    Measure x
 }
 """
 
@@ -68,15 +68,15 @@ _SOURCE_MATCH_FEED_FORWARD = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { apply(X, q) }
             1 => { apply(Z, q) }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -84,25 +84,25 @@ _SOURCE_WITHIN_AND_MID_CIRCUIT = """
 package t
 pub fn main() -> Unit {
     dynamic qpu within coherent_window {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
 _SOURCE_STATIC_TERMINAL = """
 package t
 pub fn main() -> Unit {
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
 
 def test_controller_bind_from_measure_inside_dynamic_is_mid_circuit() -> None:
-    """Scenario: Controller bind from measure inside dynamic is mid-circuit."""
+    """Scenario: Controller bind from Measure inside dynamic is mid-circuit."""
     compiled = compile_source(_SOURCE_MID_CIRCUIT_CONTROLLER)
     codes = _codes(compiled.diagnostics)
     regions = _regions_named(compiled, "DynamicMeasurementRegion")
@@ -114,7 +114,7 @@ def test_controller_bind_from_measure_inside_dynamic_is_mid_circuit() -> None:
 
 
 def test_same_controller_measure_outside_dynamic_is_early_collapse() -> None:
-    """Scenario: the same Controller = measure form outside dynamic fails as early collapse."""
+    """Scenario: the same Controller = Measure form outside dynamic fails as early collapse."""
     compiled = compile_source(_SOURCE_STATIC_CONTROLLER_MEASURE)
     codes = _codes(compiled.diagnostics)
 
@@ -132,7 +132,7 @@ def test_observe_remains_retired() -> None:
 
 
 def test_match_after_mid_circuit_measure_yields_dynamic_control_region() -> None:
-    """Scenario: match after mid-circuit measure yields DynamicControlRegion."""
+    """Scenario: match after mid-circuit Measure yields DynamicControlRegion."""
     compiled = compile_source(_SOURCE_MATCH_FEED_FORWARD)
     codes = _codes(compiled.diagnostics)
     measurements = _regions_named(compiled, "DynamicMeasurementRegion")
@@ -162,7 +162,7 @@ def test_mid_circuit_plus_within_keeps_timing_and_measurement_regions() -> None:
 
 
 def test_static_terminal_measure_is_unchanged() -> None:
-    """Scenario: Static terminal measure is unchanged."""
+    """Scenario: Static terminal Measure is unchanged."""
     compiled = compile_source(_SOURCE_STATIC_TERMINAL)
     codes = _codes(compiled.diagnostics)
 

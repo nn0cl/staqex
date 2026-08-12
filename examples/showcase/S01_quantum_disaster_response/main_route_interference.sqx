@@ -12,11 +12,11 @@ pub fn main() -> Unit {
     Float route_tag = route_interference_tag(routes)
     Float phase_delta = relative_phase_tag(routes)
 
-    state left = |+>
-    state right = |+>
-    state left = phase(left, 0.35)
-    state right = phase(right, -0.35)
-    state corr = expect(ZZ, left, right)
-    state viewed_corr = inspect(corr)
-    measure left tracing_out right
+    State left = |+>
+    State right = |+>
+    State left = phase(left, 0.35)
+    State right = phase(right, -0.35)
+    State corr = expect(ZZ, left, right)
+    State viewed_corr = Inspect(corr)
+    Measure left tracing_out right
 }

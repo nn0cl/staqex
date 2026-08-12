@@ -38,13 +38,13 @@ def test_paper_inner_with_ident_labels_desugars_to_inner_vars() -> None:
     src = f"""
     package t
     pub fn main() -> Unit {{
-        state phi = |0{KET}
-        state psi = |0{KET}
-        state ov = inner(phi, psi)
-        state viewed = inspect(ov)
-        state phi = |0>
-        state psi = |0>
-        measure viewed
+        State phi = |0{KET}
+        State psi = |0{KET}
+        State ov = inner(phi, psi)
+        State viewed = Inspect(ov)
+        State phi = |0>
+        State psi = |0>
+        Measure viewed
     }}
     """
     compiled = compile_source(src)
@@ -68,9 +68,9 @@ def test_numeric_bra_ket_inner_still_uses_lits() -> None:
     src = f"""
     package t
     pub fn main() -> Unit {{
-        state overlap = inner({BRA}0|, |1{KET})
-        State observed = coin()
-        measure observed
+        State overlap = inner({BRA}0|, |1{KET})
+        State observed = Coin()
+        Measure observed
     }}
     """
     compiled = compile_source(src)
@@ -84,13 +84,13 @@ def test_paper_outer_with_ident_labels_desugars_to_outer_vars() -> None:
     src = f"""
     package t
     pub fn main() -> Unit {{
-        state psi = |0{KET}
-        state phi = |1{KET}
+        State psi = |0{KET}
+        State phi = |1{KET}
         Operator P = outer(|psi{KET}, {BRA}phi|)
-        state psi = |0>
-        state phi = |0>
-        state bit = coin()
-        measure bit
+        State psi = |0>
+        State phi = |0>
+        State bit = Coin()
+        Measure bit
     }}
     """
     compiled = compile_source(src)
@@ -107,11 +107,11 @@ def test_matching_ident_outer_desugars_to_projector_var() -> None:
     src = f"""
     package t
     pub fn main() -> Unit {{
-        state psi = |+{KET}
+        State psi = |+{KET}
         Operator P = projector(|psi{KET})
-        state psi = |0>
-        state bit = coin()
-        measure bit
+        State psi = |0>
+        State bit = Coin()
+        Measure bit
     }}
     """
     compiled = compile_source(src)
@@ -128,11 +128,11 @@ def test_pipeline_and_comparison_unaffected() -> None:
             package t
             fn id(x: State<Bit>) -> State<Bit> {{ return x }}
             pub fn main() -> Unit {{
-                state x = |0{KET}
-                state y = x |> id
-                state flag = 1 > 0
-                state y = |0>
-                measure flag
+                State x = |0{KET}
+                State y = x |> id
+                State flag = 1 > 0
+                State y = |0>
+                Measure flag
             }}
             """
         )
@@ -147,11 +147,11 @@ def test_anticommutator_and_bare_block_still_parse() -> None:
             package t
             pub fn main() -> Unit {
                 Operator C = {X, Y}
-                state w = {
+                State w = {
                     let t = 7
                     t
                 }
-                measure w
+                Measure w
             }
             """
         )

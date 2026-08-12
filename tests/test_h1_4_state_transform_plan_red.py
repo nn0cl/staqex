@@ -19,9 +19,9 @@ theory Ising {
 }
 experiment quench(J = 1.0) {
   prepare |+>
-  evolve under H for 0.7
+  Evolve under H for 0.7
   observable energy = expect(H)
-  measure
+  Measure
 }
 """
 
@@ -44,8 +44,8 @@ def test_h1_4_builds_ordered_state_transform_plan() -> None:
 def test_h1_4_rejects_operation_after_terminal_measure() -> None:
     compiled = compile_source(
         _SOURCE.replace(
-            "  measure\n",
-            "  measure\n  observable after_measure = expect(H)\n",
+            "  Measure\n",
+            "  Measure\n  observable after_measure = expect(H)\n",
         )
     )
 

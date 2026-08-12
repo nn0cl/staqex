@@ -40,9 +40,9 @@ def test_quadratic_pipe_collapses_to_single_map() -> None:
             return s + 1
         }
         pub fn main() -> Unit {
-            state z = 3
-            state w = z |> sq |> add1
-            measure w
+            State z = 3
+            State w = z |> sq |> add1
+            Measure w
         }
         """,
         stdout=io.StringIO(),
@@ -60,9 +60,9 @@ def test_quadratic_pipe_matches_sequential() -> None:
     fn sq(s: State<Int>) -> State<Int> { return s * s }
     fn dbl(s: State<Int>) -> State<Int> { return s * 2 }
     pub fn main() -> Unit {
-        state z = 4
-        state w = z |> sq |> dbl
-        measure w
+        State z = 4
+        State w = z |> sq |> dbl
+        Measure w
     }
     """
     seq_src = """
@@ -70,10 +70,10 @@ def test_quadratic_pipe_matches_sequential() -> None:
     fn sq(s: State<Int>) -> State<Int> { return s * s }
     fn dbl(s: State<Int>) -> State<Int> { return s * 2 }
     pub fn main() -> Unit {
-        state z = 4
-        state t1 = sq(z)
-        state w = dbl(t1)
-        measure w
+        State z = 4
+        State t1 = sq(z)
+        State w = dbl(t1)
+        Measure w
     }
     """
     fused = run_source(fused_src, stdout=io.StringIO())
@@ -91,9 +91,9 @@ def test_affine_still_records_algebraic_fusion() -> None:
         fn add10(s: State<Int>) -> State<Int> { return s + 10 }
         fn dbl(s: State<Int>) -> State<Int> { return s * 2 }
         pub fn main() -> Unit {
-            state z = 3
-            state w = z |> add10 |> dbl
-            measure w
+            State z = 3
+            State w = z |> add10 |> dbl
+            Measure w
         }
         """,
         stdout=io.StringIO(),
@@ -110,15 +110,15 @@ def test_when_return_still_fuses_sequentially() -> None:
         """
         package t
         fn flip(s: State<Int>) -> State<Int> {
-            return mix (s) { 0 -> 1, else -> 0 }
+            return Mix (s) { 0 -> 1, else -> 0 }
         }
         fn id(s: State<Int>) -> State<Int> {
             return s
         }
         pub fn main() -> Unit {
-            state x = 0
-            state r = x |> flip |> id
-            measure r
+            State x = 0
+            State r = x |> flip |> id
+            Measure r
         }
         """,
         stdout=io.StringIO(),

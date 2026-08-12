@@ -56,9 +56,9 @@ def run() -> list[CaseResult]:
             as_main(
                 """
 State<Qubit> c0 = |0>
-State<Position> x0 = dirac(0)
+State<Position> x0 = Dirac(0)
 State<(Qubit, Position)> (c, x) = c0 *|* x0
-measure x
+Measure x
 """
             )
         )
@@ -99,8 +99,8 @@ measure x
         codes = _codes(
             as_main(
                 """
-State<(Qubit, Position)> walker = |0> *|* dirac(0)
-measure walker
+State<(Qubit, Position)> walker = |0> *|* Dirac(0)
+Measure walker
 """
             )
         )
@@ -133,8 +133,8 @@ measure walker
         codes = _codes(
             as_main(
                 """
-State<(Qubit, Position, Int)> (a, b) = |0> *|* dirac(0)
-measure a
+State<(Qubit, Position, Int)> (a, b) = |0> *|* Dirac(0)
+Measure a
 """
             )
         )
@@ -167,8 +167,8 @@ measure a
         codes = _codes(
             as_main(
                 """
-State<(Length, Position)> (a, b) = |0> *|* dirac(0)
-measure b
+State<(Length, Position)> (a, b) = |0> *|* Dirac(0)
+Measure b
 """
             )
         )
@@ -201,9 +201,9 @@ measure b
         result, _ = _eval(
             as_main(
                 """
-State<(Qubit, Position)> (c, x) = |+> *|* dirac(0)
-state _t = trace_out(c)
-measure x
+State<(Qubit, Position)> (c, x) = |+> *|* Dirac(0)
+State _t = trace_out(c)
+Measure x
 """
             )
         )
@@ -236,7 +236,7 @@ measure x
         src = (_REPO / "tests/fixtures/staqex/dtqw.sqx").read_text(encoding="utf-8")
         result, _ = _eval(src)
         if result.measure is None:
-            raise AssertionFailure("MEASURE", "no measure")
+            raise AssertionFailure("MEASURE", "no Measure")
         out.append(
             CaseResult(
                 "SV-22",

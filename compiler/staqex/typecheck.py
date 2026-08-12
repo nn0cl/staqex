@@ -30,6 +30,7 @@ from .ast_nodes import (
     Inspect,
     BraLit,
     KetLit,
+    KetSumBinder,
     Lambda,
     ListExpr,
     LitBool,
@@ -48,6 +49,7 @@ from .ast_nodes import (
     Pipe,
     ReturnStmt,
     RevDomain,
+    SetPowerDomain,
     Snapshot,
     StateBind,
     StructDecl,
@@ -111,6 +113,8 @@ class Ty:
             base = f"DiagnosticView<{self.payload}>"
         elif self.kind == "Continuous":
             base = f"Continuous<{self.payload}>"
+        elif self.kind == "Domain":
+            base = f"Domain<{self.payload}>"
         elif self.dim.is_dimensionless():
             base = f"State<{self.payload}>"
         else:
@@ -593,7 +597,12 @@ class TypeChecker:
                         self._check_assign(
                             declared, inferred, stmt.span.line, stmt.span.col
                         )
-                        ty = declared
+                        # LISS-0418: bare `State x = evolve …` (no `<T>`)
+                        # must not mask `inferred`'s real kind (e.g.
+                        # Continuous on an invalid seed) behind the
+                        # declared placeholder -- see the identical fix a
+                        # few lines below in the general single-name path.
+                        ty = inferred if declared.payload == "Any" else declared
                     else:
                         ty = inferred
                     for n in stmt.names:
@@ -664,8 +673,18 @@ class TypeChecker:
                         self._check_payload_assign(
                             declared, inferred, stmt.span.line, stmt.span.col
                         )
+                    # LISS-0418: bare `State x = e` (Type-First, no `<T>`)
+                    # declares no more specific information than full
+                    # inference already provides -- storing the coarse
+                    # `Ty("State", "Any", ...)` here instead of `inferred`
+                    # was losing precise info (e.g. a Partial's own arity)
+                    # that a later use of `x` needs, a gap that went
+                    # unexercised before lowercase `state` (always
+                    # `inferred`-preserving) was retired in its favor.
+                    if declared.payload == "Any" and declared.kind == "State":
+                        ty = inferred
                     # ADR 0154: preserve known unit suffix through Type-First binds.
-                    if inferred.unit is not None:
+                    elif inferred.unit is not None:
                         ty = Ty(
                             declared.kind,
                             declared.payload,
@@ -689,7 +708,19 @@ class TypeChecker:
                             self.static_scalars[n] = static_val
                     # ADR 0180: inferred classical/Operator/object binds are not State.
                     # `state` keyword and State-kind still require NLTS discipline.
-                    if stmt.via_state_keyword or ty.kind == "State":
+                    # LISS-0418: a bare `State x = e` declaration (Type-First,
+                    # no `<T>`) must also require NLTS discipline even though
+                    # `ty` now stores the precise `inferred` kind (which may
+                    # legitimately be non-"State", e.g. Continuous on a bad
+                    # seed) -- gating on `ty.kind == "State"` alone would skip
+                    # `_assert_is_state` (and its TYPE_NOT_STATE diagnostic)
+                    # exactly when it is most needed.
+                    bare_state_decl = (
+                        stmt.ty is not None
+                        and stmt.ty.name == "State"
+                        and not stmt.ty.args
+                    )
+                    if stmt.via_state_keyword or bare_state_decl or ty.kind == "State":
                         self._assert_is_state(ty, stmt.span.line, stmt.span.col, n)
             elif isinstance(stmt, (Measure, Snapshot)):
                 ty = self._infer(stmt.expr)
@@ -1210,6 +1241,15 @@ class TypeChecker:
             return
         if inferred.payload in {"Any", declared.payload}:
             return
+        # LISS-0418: a bare `State x = …` (Type-First, no `<T>`) declares
+        # Ty("State", "Any", ...) -- "Any" must tolerate every payload, the
+        # same way the un-annotated `name = …` inferred-bind form always
+        # did (no declared type to compare against at all). Previously this
+        # gap (e.g. Bool) went unexercised because almost no shipped source
+        # used bare `State` before lowercase `state` was retired in favor
+        # of it.
+        if declared.payload == "Any":
+            return
         if declared.payload in {"Any", "Int"} and inferred.payload in {
             "Int",
             "Qubit",
@@ -1617,7 +1657,7 @@ class TypeChecker:
                         ),
                     }
                 )
-            if expr.name in {"measure", "log", "write", "send"}:
+            if expr.name in {"Measure", "log", "write", "send"}:
                 self.diagnostics.append(
                     {
                         "code": "MATHEMATICAL_BINDER_EFFECT_ERROR",
@@ -2799,6 +2839,36 @@ class TypeChecker:
             return Ty("State", "Coin", DIMLESS)
         if isinstance(expr, Vacuum):
             return Ty("State", "Any", DIMLESS)
+        if isinstance(expr, SetPowerDomain):
+            # LISS-0417: reserved ahead of its consumer (LISS-0420's
+            # Sigma/Pi binder domain) -- width must be a dimensionless
+            # classical Int/Float; no runtime evaluation path exists yet.
+            width_ty = self._infer(expr.width)
+            if not width_ty.dim.is_dimensionless():
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "`{...}^n` width must be dimensionless",
+                    }
+                )
+            labels = ",".join(str(v) for v in expr.labels)
+            return Ty("Domain", f"BitTuple<{{{labels}}}>", DIMLESS)
+        if isinstance(expr, KetSumBinder):
+            # LISS-0420: `Sigma (x In {0,1}^n) { |x> }` -- a State-typed
+            # ket-sum, structurally identical to `prepare_selection(n)`.
+            width_ty = self._infer(expr.domain.width)
+            if not width_ty.dim.is_dimensionless():
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Sigma ket-sum domain width must be dimensionless",
+                    }
+                )
+            return Ty("State", "Any", DIMLESS)
         if isinstance(expr, Dirac):
             inner = self._infer(expr.arg)
             return Ty("State", inner.payload, inner.dim)
@@ -3424,6 +3494,24 @@ class TypeChecker:
                 dim = left.dim.div(right.dim)
                 payload = _payload_for_dim(dim, _promote(left.payload, right.payload))
                 return Ty("Classical", payload, dim)
+            if expr.op == "^":
+                # LISS-0415: classical numeric power, dimensionless operands
+                # only -- a dimensioned base raised to a non-integer power is
+                # out of scope (the Sigma-binder coefficient use case this
+                # was added for is always dimensionless).
+                if not left.dim.is_dimensionless() or not right.dim.is_dimensionless():
+                    self.diagnostics.append(
+                        {
+                            "code": "TYPE_MISMATCH",
+                            "line": expr.span.line,
+                            "col": expr.span.col,
+                            "message": (
+                                "`^` requires dimensionless operands "
+                                f"(got `{left}` and `{right}`)"
+                            ),
+                        }
+                    )
+                return Ty("Classical", "Float", DIMLESS)
             if expr.op in RELATIONAL:
                 if not left.dim.matches(right.dim):
                     self._dim_error(
@@ -3498,6 +3586,21 @@ class TypeChecker:
             dim = left.dim.div(right.dim)
             payload = _payload_for_dim(dim, _promote(left.payload, right.payload))
             return Ty("State", payload, dim)
+        if expr.op == "^":
+            # LISS-0415: classical numeric power, dimensionless operands only.
+            if not left.dim.is_dimensionless() or not right.dim.is_dimensionless():
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": (
+                            "`^` requires dimensionless operands "
+                            f"(got `{left}` and `{right}`)"
+                        ),
+                    }
+                )
+            return Ty("State", "Float", DIMLESS)
         return Ty("State", "Any", DIMLESS)
 
     def _check_mixed_units(self, left: Ty, right: Ty, expr: BinOp) -> None:
@@ -3832,7 +3935,7 @@ class TypeChecker:
                 )
             if expr.args:
                 return self._infer(expr.args[0])
-        if op_name == "dirac" and expr.args:
+        if op_name == "Dirac" and expr.args:
             return self._infer(expr.args[0])
         if op_name == "controlled":
             # Coherent control is a state-preserving operation, distinct from
@@ -3846,7 +3949,7 @@ class TypeChecker:
         if op_name == "expect":
             # ⟨O⟩ is a classical scalar — not a quantum State coordinate
             return Ty("Classical", "Float", DIMLESS)
-        if op_name == "inspect":
+        if op_name == "Inspect":
             # ADR 0189: an inspection view is diagnostic, never a State or
             # terminal measurement result.
             return Ty("DiagnosticView", "Any", DIMLESS)

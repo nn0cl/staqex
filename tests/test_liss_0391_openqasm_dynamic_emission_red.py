@@ -20,16 +20,16 @@ _SOURCE_MEASURE_MATCH_RESET = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { apply(X, q) }
             1 => { }
         }
         reset q
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -50,7 +50,7 @@ def test_emission_available_without_any_fake_profile_setting() -> None:
 
 
 def test_emission_uses_native_qasm3_vocabulary() -> None:
-    """Scenario: measure/match/reset map to QASM3's own native syntax --
+    """Scenario: Measure/match/reset map to QASM3's own native syntax --
     no invented dialect (ADR 0201 Decision 3).
     """
     from compiler.staqex.backend.qasm.dynamic_emitter import emit_dynamic_qpu_qasm3
@@ -63,7 +63,7 @@ def test_emission_uses_native_qasm3_vocabulary() -> None:
 
     assert "qubit q;" in qasm
     assert "bit bit;" in qasm
-    assert "bit = measure q;" in qasm
+    assert "bit = measure q;" in qasm  # OpenQASM3 output keyword, always lowercase
     assert "if (bit == 0)" in qasm
     assert "if (bit == 1)" in qasm
     assert "x q;" in qasm
@@ -97,11 +97,11 @@ def test_static_qasm_emitter_is_unaffected() -> None:
 package t
 pub fn main() -> Unit {
     QubitRegister<1> reg = system()
-    forEach q in reg {
+    ForEach q in reg {
         apply(H, q)
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
     compiled = compile_source(source)

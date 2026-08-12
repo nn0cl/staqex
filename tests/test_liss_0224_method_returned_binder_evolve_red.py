@@ -1,4 +1,4 @@
-"""AT-TDD LISS-0224: method-returned finite binders must evolve."""
+"""AT-TDD LISS-0224: method-returned finite binders must Evolve."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ namespace G {
   pub class L {
     fn init() {}
     pub fn h() -> Operator {
-      Operator H = sum (i in Index<0..2>) { 1.0545718e-19 * Z[i] }
+      Operator H = Sigma (i In Index<0..2>) { 1.0545718e-19 * Z[i] }
       return H
     }
   }
@@ -28,13 +28,13 @@ namespace G {
 pub fn main() -> Unit {
   G.L lat = G.L()
   Operator H = lat.h()
-  state a = |+>
-  state b = |0>
-  state c = |0>
-  state (a, b, c) = evolve { (a, b, c) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }.run()
-  state b = |0>
-  state c = |0>
-  measure a
+  State a = |+>
+  State b = |0>
+  State c = |0>
+  State (a, b, c) = Evolve { (a, b, c) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }.run()
+  State b = |0>
+  State c = |0>
+  Measure a
 }
 """
 
@@ -43,14 +43,14 @@ def _top_level_binder_source() -> str:
     return """
 package t
 pub fn main() -> Unit {
-  Operator H = sum (i in Index<0..2>) { 1.0545718e-19 * Z[i] }
-  state a = |+>
-  state b = |0>
-  state c = |0>
-  state (a, b, c) = evolve { (a, b, c) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }.run()
-  state b = |0>
-  state c = |0>
-  measure a
+  Operator H = Sigma (i In Index<0..2>) { 1.0545718e-19 * Z[i] }
+  State a = |+>
+  State b = |0>
+  State c = |0>
+  State (a, b, c) = Evolve { (a, b, c) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }.run()
+  State b = |0>
+  State c = |0>
+  Measure a
 }
 """
 

@@ -35,9 +35,9 @@ def _inner_overlap_source() -> str:
     return f"""
         package t
         pub fn main() -> Unit {{
-            state overlap = inner({BRA_OPEN}0|, |1{KET_CLOSE})
-            State observed = coin()
-            measure observed
+            State overlap = inner({BRA_OPEN}0|, |1{KET_CLOSE})
+            State observed = Coin()
+            Measure observed
         }}
         """
 
@@ -69,9 +69,9 @@ def test_alone_bra_still_parses_without_following_ket() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state bra = {BRA_OPEN}0|
-            State observed = coin()
-            measure observed
+            State bra = {BRA_OPEN}0|
+            State observed = Coin()
+            Measure observed
         }}
         """
     )

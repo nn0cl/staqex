@@ -37,15 +37,15 @@ def _verify(source: str) -> tuple[list[dict], object]:
 
 
 def test_reset_to_ket0_counts_as_uncomputation() -> None:
-    """Same-name rebind to |0> consumes the root without measure (static witness)."""
+    """Same-name rebind to |0> consumes the root without Measure (static witness)."""
     diags, _ = _verify(
         """
         package t
         pub fn main() -> Unit {
-            State<Int> ancilla = coin()
+            State<Int> ancilla = Coin()
             State<Int> ancilla = |0>
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -60,12 +60,12 @@ def test_declared_uncompute_without_witness_is_rejected() -> None:
         """
         package t
         fn claim_uncompute() -> State<Int> effects { Uncompute } {
-            State<Int> ancilla = coin()
+            State<Int> ancilla = Coin()
             return ancilla
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -81,13 +81,13 @@ def test_build_hir_records_uncompute_effect_when_witnessed() -> None:
         """
         package t
         fn reset_ancilla() -> State<Int> {
-            State<Int> ancilla = coin()
+            State<Int> ancilla = Coin()
             State<Int> ancilla = |0>
             return ancilla
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )

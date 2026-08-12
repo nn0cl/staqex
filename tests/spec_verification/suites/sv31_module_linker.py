@@ -101,12 +101,12 @@ def run() -> list[CaseResult]:
         if not result.compile_ok:
             raise AssertionFailure("PARSE_ERROR", str(result.diagnostics))
         if result.eval.measure is None:
-            raise AssertionFailure("EARLY_COLLAPSE_ERROR", "missing measure")
+            raise AssertionFailure("EARLY_COLLAPSE_ERROR", "missing Measure")
         out.append(
             CaseResult(
                 "SV-31",
                 "sv31-linked-run",
-                "main_multi_file_modules.sqx import+evolve runs",
+                "main_multi_file_modules.sqx import+Evolve runs",
                 True,
                 ["run_path", "step_quantum_walk"],
             )
@@ -147,8 +147,8 @@ def run() -> list[CaseResult]:
 package tmp.modtest
 import tmp.modtest.does_not_exist
 pub fn main() -> Unit {
-    state x = dirac(0)
-    measure x
+    State x = Dirac(0)
+    Measure x
 }
 """,
                 encoding="utf-8",
@@ -200,8 +200,8 @@ class Env {
     Delta<Time> dt = 0.1.s
 }
 pub fn main() -> Unit {
-    state x = dirac(0)
-    measure x
+    State x = Dirac(0)
+    Measure x
 }
 """
         from compiler.staqex.ast_nodes import ClassDecl  # noqa: E402

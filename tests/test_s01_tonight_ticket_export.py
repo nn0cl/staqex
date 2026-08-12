@@ -27,8 +27,8 @@ from compiler.staqex.host import JobResult, MeasurementEnvelope, run_path  # noq
 
 def test_spine_source_has_no_inspect_or_identity_evolve_times() -> None:
     text = _ENTRY.read_text(encoding="utf-8")
-    assert "inspect(" not in text
-    assert "evolve times" not in text
+    assert "Inspect(" not in text
+    assert "Evolve times" not in text
 
     result = run_path(str(_ENTRY), settings={"seed": 0}, stdout=io.StringIO())
     assert result.status == "succeeded"
@@ -52,7 +52,7 @@ def test_build_tonight_ticket_happy_path_schema() -> None:
     assert ticket["honesty"]["live_qpu"] is False
     assert ticket["honesty"]["execution"] == "sim-only"
     assert ticket["honesty"]["optimality_claim"] is False
-    assert ticket["plan"]["vacuum"] is False
+    assert ticket["plan"]["Vacuum"] is False
     assert ticket["plan"]["sample_value"] is not None
     assert ticket["job"]["status"] == "succeeded"
     assert ticket["job"]["seed"] == 0
@@ -65,7 +65,7 @@ def test_build_tonight_ticket_happy_path_schema() -> None:
 def test_build_tonight_ticket_vacuum_fail_closed() -> None:
     from ticket_dto import IncompleteMeasurementError, build_tonight_ticket
 
-    vacuum = JobResult(
+    Vacuum = JobResult(
         status="succeeded",
         measurements=(
             MeasurementEnvelope(
@@ -81,7 +81,7 @@ def test_build_tonight_ticket_vacuum_fail_closed() -> None:
     )
     with pytest.raises(IncompleteMeasurementError):
         build_tonight_ticket(
-            vacuum,
+            Vacuum,
             entry=str(_ENTRY),
             seed=0,
             target="local",
@@ -108,7 +108,7 @@ def test_export_tonight_ticket_cli_writes_json(tmp_path: Path) -> None:
     assert exit_code == 0
     payload = json.loads(out.read_text(encoding="utf-8"))
     assert payload["schema_version"] == 1
-    assert payload["plan"]["vacuum"] is False
+    assert payload["plan"]["Vacuum"] is False
     assert payload["honesty"]["live_qpu"] is False
     assert payload["plan"]["sample_value"] is not None
 
@@ -116,7 +116,7 @@ def test_export_tonight_ticket_cli_writes_json(tmp_path: Path) -> None:
 def test_export_tonight_ticket_cli_incomplete_nonzero(tmp_path: Path) -> None:
     from export_tonight_ticket import export_tonight_ticket_from_result
 
-    vacuum = JobResult(
+    Vacuum = JobResult(
         status="succeeded",
         measurements=(
             MeasurementEnvelope(
@@ -130,7 +130,7 @@ def test_export_tonight_ticket_cli_incomplete_nonzero(tmp_path: Path) -> None:
     )
     out = tmp_path / "incomplete.json"
     exit_code = export_tonight_ticket_from_result(
-        vacuum,
+        Vacuum,
         entry=str(_ENTRY),
         seed=0,
         out_path=out,
@@ -141,17 +141,17 @@ def test_export_tonight_ticket_cli_incomplete_nonzero(tmp_path: Path) -> None:
 
 
 def test_pauli_evolve_preserves_sibling_joint_coords() -> None:
-    """Single-wire Pauli evolve must not wipe unrelated joint coordinates."""
+    """Single-wire Pauli Evolve must not wipe unrelated joint coordinates."""
     from compiler.staqex.pipeline import compile_source
     from compiler.staqex.runtime.evaluator import Evaluator
 
     source = """
         package t
         pub fn main() -> Unit {
-            state plan = |0>
-            state fuel = |0>
-            state fuel = evolve { fuel under X for pi / 2.0 until converged(fuel) max 64 }.run()
-            measure plan
+            State plan = |0>
+            State fuel = |0>
+            State fuel = Evolve { fuel under X for pi / 2.0 until converged(fuel) max 64 }.run()
+            Measure plan
         }
         """
     compiled = compile_source(source)

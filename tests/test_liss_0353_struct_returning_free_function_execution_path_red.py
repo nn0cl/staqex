@@ -50,8 +50,8 @@ def test_positional_struct_construction_inside_a_free_function_body() -> None:
         pub fn main() -> Unit {
             Point p = make_point(1.0, 2.0)
             Float sum = p.x + p.y
-            state s = |0>
-            measure s
+            State s = |0>
+            Measure s
         }
         """
     )
@@ -72,8 +72,8 @@ def test_kwargs_struct_construction_inside_a_free_function_body() -> None:
         pub fn main() -> Unit {
             Point p = make_point_kw(3.0, 4.0)
             Float sum = p.x + p.y
-            state s = |0>
-            measure s
+            State s = |0>
+            Measure s
         }
         """
     )
@@ -97,8 +97,8 @@ def test_struct_returning_call_nested_as_an_argument() -> None:
 
         pub fn main() -> Unit {
             Float total = point_sum(make_point(5.0, 6.0))
-            state s = |0>
-            measure s
+            State s = |0>
+            Measure s
         }
         """
     )

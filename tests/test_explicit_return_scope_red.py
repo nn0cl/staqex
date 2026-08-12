@@ -25,8 +25,8 @@ def test_terminal_return_is_accepted_for_ordinary_function() -> None:
         }
 
         pub fn main() -> Unit {
-            State<Int> answer = coin()
-            measure answer
+            State<Int> answer = Coin()
+            Measure answer
         }
         """
     )
@@ -44,8 +44,8 @@ def test_implicit_final_expression_is_rejected() -> None:
         }
 
         pub fn main() -> Unit {
-            State<Int> answer = coin()
-            measure answer
+            State<Int> answer = Coin()
+            Measure answer
         }
         """
     )
@@ -57,7 +57,7 @@ def test_return_is_not_an_entry_point_escape() -> None:
     codes = _codes(
         """
         pub fn main() -> Unit {
-            State<Int> answer = coin()
+            State<Int> answer = Coin()
             return answer
         }
         """
@@ -80,8 +80,8 @@ def test_function_local_operator_cannot_leak_to_sibling_function() -> None:
         }
 
         pub fn main() -> Unit {
-            State<Int> answer = coin()
-            measure answer
+            State<Int> answer = Coin()
+            Measure answer
         }
         """
     )
@@ -102,8 +102,8 @@ def test_init_cannot_return_a_value() -> None:
         }
 
         pub fn main() -> Unit {
-            State<Int> answer = coin()
-            measure answer
+            State<Int> answer = Coin()
+            Measure answer
         }
         """
     )

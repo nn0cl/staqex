@@ -24,8 +24,8 @@ def _main(body: str):
         package t
         pub fn main() -> Unit {{
             {body}
-            state observed = |0>
-            measure observed
+            State observed = |0>
+            Measure observed
         }}
         """
     )
@@ -35,7 +35,7 @@ def test_binder_body_accepts_sum_of_operator_terms_and_named_coefficient() -> No
     compiled = _main(
         """
         Float J = 1.0
-        Operator H = sum (i in Index<0..2>) {
+        Operator H = Sigma (i In Index<0..2>) {
             J * (X[i] * X[next(i)] + Y[i] * Y[next(i)])
         }
         """
@@ -47,8 +47,8 @@ def test_binder_body_accepts_sum_of_operator_terms_and_named_coefficient() -> No
 def test_nested_sum_is_a_valid_operator_expression() -> None:
     compiled = _main(
         """
-        Operator H = sum (i in Index<0..1>) {
-            sum (j in Index<0..1>) { Z[i] * Z[j] }
+        Operator H = Sigma (i In Index<0..1>) {
+            Sigma (j In Index<0..1>) { Z[i] * Z[j] }
         }
         """
     )
@@ -59,9 +59,9 @@ def test_nested_sum_is_a_valid_operator_expression() -> None:
 def test_multi_variable_sum_head_matches_nested_sum_surface() -> None:
     compiled = _main(
         """
-        Operator H = sum (
-            i in Index<0..1>,
-            j in Index<0..1>
+        Operator H = Sigma (
+            i In Index<0..1>,
+            j In Index<0..1>
         ) { Z[i] * Z[j] }
         """
     )
@@ -72,9 +72,9 @@ def test_multi_variable_sum_head_matches_nested_sum_surface() -> None:
 def test_where_is_a_static_index_constraint_not_quantum_when() -> None:
     compiled = _main(
         """
-        Operator H = sum (
-            i in Index<0..3>,
-            j in Index<0..3>
+        Operator H = Sigma (
+            i In Index<0..3>,
+            j In Index<0..3>
         ) where i < j {
             Z[i] * Z[j]
         }
@@ -87,7 +87,7 @@ def test_where_is_a_static_index_constraint_not_quantum_when() -> None:
 def test_second_quantized_atoms_can_be_composed_inside_a_binder() -> None:
     compiled = _main(
         """
-        Operator H = sum (i in Index<0..1>) {
+        Operator H = Sigma (i In Index<0..1>) {
             create[i] * annihilate[i]
         }
         """
@@ -99,7 +99,7 @@ def test_second_quantized_atoms_can_be_composed_inside_a_binder() -> None:
 def test_product_is_lowered_with_a_defined_nonempty_order() -> None:
     compiled = _main(
         """
-        Operator H = product (i in Index<0..1>) { Z[i] }
+        Operator H = Pi (i In Index<0..1>) { Z[i] }
         """
     )
 

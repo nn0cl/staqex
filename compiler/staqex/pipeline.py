@@ -268,7 +268,7 @@ def _surface_transform_plan(unit: CompilationUnit) -> H1StateTransformPlan | Non
             steps.append(
                 H1PlanStep(
                     kind="Mixture",
-                    source_tokens=("mix",),
+                    source_tokens=("Mix",),
                     origin=origin(expr.span),
                 )
             )
@@ -309,7 +309,7 @@ def _surface_transform_plan(unit: CompilationUnit) -> H1StateTransformPlan | Non
             steps.append(
                 H1PlanStep(
                     kind="TerminalMeasure",
-                    source_tokens=("measure",),
+                    source_tokens=("Measure",),
                     origin=origin(statement.span),
                 )
             )

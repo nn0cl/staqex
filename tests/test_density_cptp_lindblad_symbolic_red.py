@@ -22,7 +22,7 @@ def test_source_lindblad_lowers_operator_and_time_to_numeric_evolution() -> None
                 RawMatrix([[1.0, 0.0], [0.0, 0.0]])
             )
             DensityState<Qubit> evolved = lindblad(rho, H, [], 0.1)
-            measure evolved
+            Measure evolved
         }
         """
     )

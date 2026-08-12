@@ -16,10 +16,10 @@ def _source(policy: str) -> str:
     package t
     pub fn main() -> Unit {{
         Operator H = X + Z
-        state psi = |0>
-        state evolved = evolve {{ psi under H for 1.0.s using Suzuki(order = 2, {policy}) }}.run()
-        state psi = |0>
-        measure evolved
+        State psi = |0>
+        State evolved = Evolve {{ psi under H for 1.0.s using Suzuki(order = 2, {policy}) }}.run()
+        State psi = |0>
+        Measure evolved
     }}
     """
 

@@ -245,14 +245,14 @@ def _instruction_projection(unit: CompilationUnit) -> tuple[QpuInstruction, ...]
                             opcode=opcode,
                             qubits=(index,),
                             parameter=parameter,
-                            provenance=_provenance(body_stmt.span, "forEach.apply"),
+                            provenance=_provenance(body_stmt.span, "ForEach.apply"),
                         )
                     )
         elif isinstance(stmt, Measure):
             instructions.append(
                 QpuInstruction(
                     opcode="Measure",
-                    provenance=_provenance(stmt.span, "measure"),
+                    provenance=_provenance(stmt.span, "Measure"),
                 )
             )
     return tuple(instructions)

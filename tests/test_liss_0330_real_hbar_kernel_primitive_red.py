@@ -79,9 +79,9 @@ package t
 pub fn main() -> Unit {
     Float e = 1.0
     Operator H = e * Z
-    state psi = |0>
-    state psi = evolve { psi under H for 1.0 }.run()
-    measure psi
+    State psi = |0>
+    State psi = Evolve { psi under H for 1.0 }.run()
+    Measure psi
 }
 """
     result = run_source(src, settings={"target": "local", "seed": 0})

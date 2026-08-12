@@ -1,19 +1,19 @@
 // B05 — complex phases and destructive interference (Born |Σc|²).
 
-state slit = coin()
+State slit = Coin()
 
-state screenA = mix (slit) {
+State screenA = Mix (slit) {
   0 -> 0,
   else -> 1,
 }
 
-state screenB0 = mix (slit) {
+State screenB0 = Mix (slit) {
   0 -> 1,
   else -> 2,
 }
 
-state screenB = phase(screenB0, pi)
+State screenB = phase(screenB0, pi)
 
-state screen = interfer(screenA, screenB)
+State screen = interfer(screenA, screenB)
 
-measure screen
+Measure screen

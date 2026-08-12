@@ -27,8 +27,8 @@ def _operator_expr(decl: str):
         package t
         pub fn main() -> Unit {{
             {decl}
-            state psi = |0>
-            measure psi
+            State psi = |0>
+            Measure psi
         }}
         """
     )
@@ -73,12 +73,12 @@ _BARE_ZZ_PROGRAM = """
 package t
 pub fn main() -> Unit {
     Operator H = 1.0545718e-19 * (Z[0] * Z[1])
-    state a = |+>
-    state b = |0>
-    state (a, b) = evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
-    state b = |0>
-        state b = |0>
-measure a
+    State a = |+>
+    State b = |0>
+    State (a, b) = Evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+        State b = |0>
+Measure a
 }
 """
 
@@ -113,8 +113,8 @@ def test_factory_call_pattern_is_unaffected() -> None:
         }
         pub fn main() -> Unit {
             Operator k = make_coin()
-            state psi = |0>
-            measure psi
+            State psi = |0>
+            Measure psi
         }
         """
     )

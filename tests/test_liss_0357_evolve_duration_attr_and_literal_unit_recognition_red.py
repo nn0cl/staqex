@@ -1,7 +1,7 @@
-"""AT-TDD: LISS-0357 -- evolve's fail-closed duration check recognizes
+"""AT-TDD: LISS-0357 -- Evolve's fail-closed duration check recognizes
 struct-field and inline-literal durations, not just a bare Var.
 
-Design decision: docs/issues/LISS-0357-evolve-duration-attr-and-literal-unit-recognition.md
+Design decision: docs/issues/LISS-0357-Evolve-duration-attr-and-literal-unit-recognition.md
 """
 
 from __future__ import annotations
@@ -32,9 +32,9 @@ def test_struct_field_access_duration_is_accepted() -> None:
 
     pub fn main() -> Unit {
         Config config = Config(0.25.fs)
-        state s = |+>
-        state s = evolve { s under Z for config.duration }.run()
-        measure s
+        State s = |+>
+        State s = Evolve { s under Z for config.duration }.run()
+        Measure s
     }
     """
     result = run_source(src, settings={"target": "local", "seed": 0})
@@ -46,9 +46,9 @@ def test_inline_unit_suffixed_literal_duration_is_accepted() -> None:
     src = """
     package p
     pub fn main() -> Unit {
-        state s = |+>
-        state s = evolve { s under Z for 0.25.fs }.run()
-        measure s
+        State s = |+>
+        State s = Evolve { s under Z for 0.25.fs }.run()
+        Measure s
     }
     """
     result = run_source(src, settings={"target": "local", "seed": 0})
@@ -62,9 +62,9 @@ def test_genuinely_dimensionless_duration_is_still_rejected() -> None:
     package p
     pub fn main() -> Unit {
         Float t = 1.0
-        state s = |+>
-        state s = evolve { s under Z for t }.run()
-        measure s
+        State s = |+>
+        State s = Evolve { s under Z for t }.run()
+        Measure s
     }
     """
     result = run_source(src, settings={"target": "local", "seed": 0})

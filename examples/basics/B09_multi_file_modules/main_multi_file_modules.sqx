@@ -11,22 +11,22 @@ import .operators.walk_operators.{build_coin_operator, step_quantum_walk}
 pub fn main() -> Unit {
     Operator walk_operator = build_coin_operator()
 
-    state c = |0>
-    state x = dirac(0)
-    state (c, x) = c *|* x
+    State c = |0>
+    State x = Dirac(0)
+    State (c, x) = c *|* x
 
     // Unrolled DTQW steps (coin then conditional shift).
-    state c = apply(walk_operator, c)
-    state x = walk_shift(c, x)
-    state c = apply(walk_operator, c)
-    state x = walk_shift(c, x)
+    State c = apply(walk_operator, c)
+    State x = walk_shift(c, x)
+    State c = apply(walk_operator, c)
+    State x = walk_shift(c, x)
 
     // Module `evolve` + imported step surface (identity step; see operators).
-    state (c, x) = evolve (c, x) times n_steps {
+    State (c, x) = Evolve (c, x) times n_steps {
         step_quantum_walk(walk_operator, c, x)
     }
 
-    state viewed = inspect(x)
+    State viewed = Inspect(x)
     // Walk/evolve already moved the coin wire; measure the position peek.
-    measure viewed
+    Measure viewed
 }

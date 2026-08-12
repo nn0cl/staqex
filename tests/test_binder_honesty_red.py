@@ -23,11 +23,11 @@ def test_energy_level_binder_domain_is_hard_diagnosed() -> None:
         package t
         pub fn main() -> Unit {
             QubitRegister<2> register = system()
-            Operator H = sum (i in EnergyLevel<2>) { Z[i] }
-            state a = |0>
-            state b = |0>
-            state (a, b) = evolve { (a, b) under H for 0.1 using Suzuki(order = 2, steps = 2) }.run()
-            measure a
+            Operator H = Sigma (i In EnergyLevel<2>) { Z[i] }
+            State a = |0>
+            State b = |0>
+            State (a, b) = Evolve { (a, b) under H for 0.1 using Suzuki(order = 2, steps = 2) }.run()
+            Measure a
         }
         """
     )
@@ -40,11 +40,11 @@ def test_unbound_indexed_coefficient_is_hard_diagnosed() -> None:
         package t
         pub fn main() -> Unit {
             QubitRegister<2> register = system()
-            Operator H = sum (i in Index<0..0>) { J[i] * Z[i] * Z[next(i)] }
-            state a = |0>
-            state b = |0>
-            state (a, b) = evolve { (a, b) under H for 0.1 using Suzuki(order = 2, steps = 2) }.run()
-            measure a
+            Operator H = Sigma (i In Index<0..0>) { J[i] * Z[i] * Z[next(i)] }
+            State a = |0>
+            State b = |0>
+            State (a, b) = Evolve { (a, b) under H for 0.1 using Suzuki(order = 2, steps = 2) }.run()
+            Measure a
         }
         """
     )

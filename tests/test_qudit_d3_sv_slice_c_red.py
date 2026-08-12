@@ -29,7 +29,7 @@ def _codes(compiled) -> set[str]:
 
 
 def test_conformance_catalog_lists_d3_sv_mvp() -> None:
-    """E06-003 must cover Kernel D=3 measure + Identity (LISS-0112 A/B)."""
+    """E06-003 must cover Kernel D=3 Measure + Identity (LISS-0112 A/B)."""
     text = _CONFORMANCE.read_text(encoding="utf-8")
     assert "E06-003" in text, "missing E06-003 row for LISS-0112 D=3 SV MVP"
     assert "LISS-0112" in text
@@ -51,7 +51,7 @@ def test_qasm_emit_still_rejects_qutrit_measure() -> None:
     package t
     pub fn main() -> Unit {{
         State<Qutrit> s = |0{KET}
-        measure s
+        Measure s
     }}
     """
     with tempfile.TemporaryDirectory() as tmp:
@@ -71,7 +71,7 @@ def test_qudit4_measure_remains_unsupported() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qudit<4>> s = |0{KET}
-            measure s
+            Measure s
         }}
         """
     )
@@ -86,8 +86,8 @@ def test_apply_hadamard_on_qutrit_remains_unsupported() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qutrit> s = |0{KET}
-            state out = apply(H, s)
-            measure out
+            State out = apply(H, s)
+            Measure out
         }}
         """
     )

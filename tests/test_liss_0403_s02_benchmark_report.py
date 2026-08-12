@@ -83,9 +83,9 @@ def test_feasibility_leak_is_detected_and_excluded_from_scoring() -> None:
     """LISS-0406 finding, regression guard: H_obj's X[i] field terms do
     not commute with `project onto feasible(...)`'s projector, so real
     unitary evolution under it can leak probability outside the feasible
-    subspace -- a non-vacuum terminal measurement is not automatically
+    subspace -- a non-Vacuum terminal measurement is not automatically
     feasible. `build_report` must (a) detect this via `scoring.is_feasible`
-    rather than assuming every non-vacuum shot is feasible, (b) exclude
+    rather than assuming every non-Vacuum shot is feasible, (b) exclude
     infeasible shots from objective/top-k scoring so they don't corrupt
     the comparison against `baseline_score`/`baseline_top_k` (which are
     themselves computed only over genuinely feasible patterns), and (c)

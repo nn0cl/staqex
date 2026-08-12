@@ -18,11 +18,11 @@ def test_fn_function_is_accepted() -> None:
         """
         package t
         fn advance() -> State<Int> {
-            return dirac(1)
+            return Dirac(1)
         }
         pub fn main() -> Unit {
             State<Int> value = advance()
-            measure value
+            Measure value
         }
         """
     )
@@ -34,11 +34,11 @@ def test_fun_function_is_rejected() -> None:
         """
         package t
         fun advance() -> State<Int> {
-            return dirac(1)
+            return Dirac(1)
         }
         pub fn main() -> Unit {
             State<Int> value = advance()
-            measure value
+            Measure value
         }
         """
     )

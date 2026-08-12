@@ -19,7 +19,7 @@ from compiler.staqex.pipeline import compile_source  # noqa: E402
 def run() -> list[CaseResult]:
     out: list[CaseResult] = []
 
-    # Case 1: project rejects all → vacuum; map/measure safe
+    # Case 1: project rejects all → Vacuum; map/Measure safe
     try:
         s = State.coin()
         vac = s.project(lambda x: x > 10)  # never true
@@ -28,12 +28,12 @@ def run() -> list[CaseResult]:
         assertVacuum(mapped)
         outcome = mapped.measure()
         if not outcome.is_vacuum or outcome.norm > 0:
-            raise AssertionFailure("NOT_VACUUM", f"measure of vacuum not empty: {outcome}")
+            raise AssertionFailure("NOT_VACUUM", f"Measure of Vacuum not empty: {outcome}")
         out.append(
             CaseResult(
                 "SV-05",
-                "sv05-vacuum-project",
-                "full-reject project → vacuum; map/measure safe",
+                "sv05-Vacuum-project",
+                "full-reject project → Vacuum; map/Measure safe",
                 True,
                 ["assertVacuum", "assertNormEquals"],
             )
@@ -42,8 +42,8 @@ def run() -> list[CaseResult]:
         out.append(
             CaseResult(
                 "SV-05",
-                "sv05-vacuum-project",
-                "full-reject project → vacuum",
+                "sv05-Vacuum-project",
+                "full-reject project → Vacuum",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -81,14 +81,14 @@ def run() -> list[CaseResult]:
             )
         )
 
-    # Case 3: explicit vacuum()
+    # Case 3: explicit Vacuum()
     try:
         v = State.vacuum(payload_type=int)
         assertVacuum(v)
         out.append(
             CaseResult(
                 "SV-05",
-                "sv05-vacuum-ctor",
+                "sv05-Vacuum-ctor",
                 "State.vacuum() is norm-0",
                 True,
                 ["assertVacuum"],
@@ -98,7 +98,7 @@ def run() -> list[CaseResult]:
         out.append(
             CaseResult(
                 "SV-05",
-                "sv05-vacuum-ctor",
+                "sv05-Vacuum-ctor",
                 "State.vacuum()",
                 False,
                 error_code=e.code,
@@ -108,7 +108,7 @@ def run() -> list[CaseResult]:
 
     # Case 4: compiler types `>=` as State<Bool>
     try:
-        src = as_main("state a = 3\nstate b = 2\nstate c = a >= b\nmeasure c\n")
+        src = as_main("State a = 3\nState b = 2\nState c = a >= b\nMeasure c\n")
         result = compile_source(src)
         if result.unit is None or result.checker is None:
             raise AssertionFailure("TYPE_NOT_STATE", "compile failed")

@@ -40,6 +40,7 @@ from ..ast_nodes import (
     Hole,
     Inspect,
     KetLit,
+    KetSumBinder,
     Lambda,
     LitBool,
     LitFloat,
@@ -2484,6 +2485,8 @@ class Evaluator:
             return Joint.empty()
         if isinstance(expr, KetLit):
             return self._bind_ket(joint, name, expr)
+        if isinstance(expr, KetSumBinder):
+            return self._bind_ket_sum_binder(joint, name, expr)
         if isinstance(expr, Dirac):
             if self._is_closed(expr.arg):
                 return joint.bind_const(name, self._eval_value(expr.arg, {}))
@@ -2495,6 +2498,21 @@ class Evaluator:
                 name,
                 lambda a: a[resolve_scientific_binding(expr.name, a)],
             )
+        if isinstance(expr, BinOp) and expr.op == "*":
+            # LISS-0420: `classical_scalar * <State-producing expr>` (e.g.
+            # `(1.0/sqrt(2.0^n)) * Sigma (x In {0,1}^n) { |x> }`) -- scale
+            # the sub-expression's own amplitudes by the classical scalar,
+            # rather than treating the whole BinOp as a pure classical
+            # pushforward (which cannot evaluate a State-producing node at
+            # all, e.g. KetLit/KetSumBinder). General, not special-cased to
+            # just KetSumBinder: any State-producing node type recognized
+            # here on exactly one side triggers this path.
+            lhs_state = self._is_state_producing_bind_expr(expr.lhs)
+            rhs_state = self._is_state_producing_bind_expr(expr.rhs)
+            if lhs_state != rhs_state:
+                state_expr = expr.lhs if lhs_state else expr.rhs
+                scalar_expr = expr.rhs if lhs_state else expr.lhs
+                return self._bind_scaled_state(joint, name, state_expr, scalar_expr)
         if isinstance(expr, BinOp):
             return joint.bind_pushforward(name, lambda a: self._eval_value(expr, a))
         if isinstance(expr, Attr):
@@ -4732,15 +4750,15 @@ class Evaluator:
             val = float(abs(amps.get(k, 0j)) ** 2)
             return joint.bind_const(name, val)
 
-        if op == "coin":
+        if op == "Coin":
             return joint.bind_split(name, {0: 0.5, 1: 0.5})
-        if op == "vacuum":
+        if op == "Vacuum":
             # vacuum() = |0⟩ (Fock / computational ground), NOT empty support
             return joint.bind_pushforward(name, lambda a: 0)
         if op == "empty":
             # empty support (destructive interference / null joint)
             return Joint.empty()
-        if op == "dirac":
+        if op == "Dirac":
             if not expr.args:
                 raise KernelError("dirac requires an argument (point mass δ_c)")
             return joint.bind_pushforward(name, lambda a: self._eval_value(expr.args[0], a))
@@ -4898,6 +4916,66 @@ class Evaluator:
             return True
 
         return predicate
+
+    def _bind_ket_sum_binder(self, joint: Joint, name: str, expr: KetSumBinder) -> Joint:
+        """`Sigma (x In {0,1}^n) { |x> }` (LISS-0420) -- equal-weight sum
+        over the literal set-power domain, structurally identical to
+        `_bind_prepare_selection` for the `{0,1}^n` case (both produce a
+        uniform distribution over n-tuples of the domain's labels)."""
+        width_raw = self._eval_value(expr.domain.width, {})
+        try:
+            n = int(width_raw)
+        except (TypeError, ValueError) as e:
+            raise KernelError("Sigma ket-sum domain width must be Int") from e
+        if n < 1:
+            raise KernelError("Sigma ket-sum domain width must be >= 1")
+
+        import itertools
+
+        labels = tuple(expr.domain.labels)
+        patterns = list(itertools.product(labels, repeat=n))
+        weight = 1.0 / len(patterns)
+        return joint.bind_split(name, {pattern: weight for pattern in patterns})
+
+    def _is_state_producing_bind_expr(self, expr: Expr) -> bool:
+        """LISS-0420: does this expression need the amplitude-scaling bind
+        path, as opposed to `_eval_value` (pure classical)? Deliberately
+        narrow -- `KetLit`/`KetSumBinder` only, not a general classifier
+        over every State-producing node type. A broader first attempt
+        (also matching `Coin`/`Vacuum`/`WhenExpr`/`SuperposeExpr`/
+        `TensorExpr`) was found, during this Issue's own Green phase, to
+        reopen a boundary LISS-0273 deliberately closed: `Float bad =
+        Coin() * 0.5` must still fail (a State-forming call is not a
+        valid classical operand), and previously did so precisely because
+        `_eval_value` could not evaluate `Coin()` at all -- silently
+        "fixing" that crash for every State-producing type removed a
+        real safety net the declared-type check doesn't independently
+        replace at this layer. `KetLit`/`KetSumBinder` are safe to include
+        because nothing pre-existing relied on either crashing here."""
+        if isinstance(expr, KetLit):
+            return True
+        return isinstance(expr, KetSumBinder)
+
+    def _bind_scaled_state(
+        self, joint: Joint, name: str, state_expr: Expr, scalar_expr: Expr
+    ) -> Joint:
+        """Bind `state_expr` (any node `_bind` handles) then scale every
+        resulting world's amplitude by the classical `scalar_expr` value --
+        the general mechanism behind `classical_scalar * <State-producing
+        expr>` (LISS-0420)."""
+        from .joint import World, _coalesce
+
+        scale = self._eval_value(scalar_expr, {})
+        temp = f"__scale_tmp_{id(state_expr)}"
+        sub = self._bind(joint, temp, state_expr)
+        out: list[World] = []
+        for w in sub.worlds:
+            assign = {k: v for k, v in w.assign.items() if k != temp}
+            assign[name] = w.assign[temp]
+            out.append(
+                World(assign=assign, amp=w.amp * scale, coord_phase=dict(w.coord_phase))
+            )
+        return Joint(worlds=_coalesce(out))
 
     def _bind_prepare_selection(self, joint: Joint, name: str, expr: Call) -> Joint:
         """prepare_selection(n: Int) -- equal superposition over all 2**n
@@ -5591,6 +5669,8 @@ def _apply_op(op: str, l: Any, r: Any) -> Any:
         if isinstance(l, int) and isinstance(r, int):
             return Fraction(l, r)
         return l / r
+    if op == "^":
+        return l**r
     if op == "==":
         return l == r
     if op == "!=":

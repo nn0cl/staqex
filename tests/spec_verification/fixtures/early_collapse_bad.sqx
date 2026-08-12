@@ -1,8 +1,8 @@
 package demo.app
 
 pub fn main(sys: State<Sys>) -> Unit {
-  state x = coin()
-  measure sys  // EARLY — not terminal
-  state y = x + x
-  measure y
+  State x = Coin()
+  Measure sys  // EARLY — not terminal
+  State y = x + x
+  Measure y
 }

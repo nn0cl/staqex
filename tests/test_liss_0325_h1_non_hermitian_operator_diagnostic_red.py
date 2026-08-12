@@ -30,7 +30,7 @@ def test_declared_real_parameter_named_i_is_not_flagged_non_hermitian() -> None:
           parameter i: Real
           operator H = i * Z
         }
-        experiment run() { measure H }
+        experiment run() { Measure H }
         """
     )
 

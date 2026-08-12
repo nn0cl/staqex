@@ -4,10 +4,10 @@
 package examples.host.live_qpu_braket_demo
 
 pub fn main() -> Unit {
-    state compute = |+>
-    state anc = |0>
-    state anc = cnot(compute, anc)
+    State compute = |+>
+    State anc = |0>
+    State anc = cnot(compute, anc)
 
     // cnot already moved `compute`; terminal measure on the Bell ancilla.
-    measure anc
+    Measure anc
 }

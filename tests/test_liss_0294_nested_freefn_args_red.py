@@ -24,8 +24,8 @@ pub fn main() -> Unit {
   D.Edge e2 = D.Edge(0.5)
   D.Corridor map = D.Corridor(e1, e2)
   Float b = blockage(map)
-  state s = dirac(b)
-  measure s
+  State s = Dirac(b)
+  Measure s
 }
 """
     r = run_source(src, settings={"seed": 0})
@@ -52,8 +52,8 @@ pub fn main() -> Unit {
   D.Item b = D.Item(0.7)
   D.Queue queue = D.Queue(a, b)
   Float p = queue_pressure(queue)
-  state s = dirac(p)
-  measure s
+  State s = Dirac(p)
+  Measure s
 }
 """
     r = run_source(src, settings={"seed": 0})
@@ -81,8 +81,8 @@ pub fn main() -> Unit {
   D.Site coastal = D.Site(3.0)
   D.Board shelters = D.Board(coastal)
   Float t = total(shelters)
-  state s = dirac(t)
-  measure s
+  State s = Dirac(t)
+  Measure s
 }
 """
     r = run_source(src, settings={"seed": 0})

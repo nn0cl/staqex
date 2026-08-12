@@ -5,9 +5,9 @@
 // declared in seconds only to satisfy the Kernel's real-Time-unit check.
 Time dur = 1.5707963267948966.s
 
-state psi = |+>
-state psi = evolve { psi under Z for dur }.run()
-state ez = expect(Z, psi)
-state viewed = inspect(ez)
+State psi = |+>
+State psi = Evolve { psi under Z for dur }.run()
+State ez = expect(Z, psi)
+State viewed = Inspect(ez)
 
-measure psi
+Measure psi

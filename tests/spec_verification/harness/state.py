@@ -89,7 +89,7 @@ class State(Generic[T]):
         return State(dict(acc), payload_type=pt)
 
     def project(self, pred: Callable[[T], bool]) -> State[T]:
-        """Keep worlds where pred holds. All rejected → vacuum (no exception)."""
+        """Keep worlds where pred holds. All rejected → Vacuum (no exception)."""
         kept = {v: m for v, m in self._mass.items() if pred(v)}
         if not kept:
             return State.vacuum(payload_type=self._payload_type)
@@ -107,7 +107,7 @@ class State(Generic[T]):
         else_arm: Callable[[], State[U]] | None = None,
         payload_type: type | str | None = None,
     ) -> State[U]:
-        """Non-destructive branch: mix arm states weighted by matching mass."""
+        """Non-destructive branch: Mix arm states weighted by matching mass."""
         arm_list = list(arms.items()) if isinstance(arms, dict) else list(arms)
         acc: dict[U, float] = defaultdict(float)
         matched_mass = 0.0
@@ -204,5 +204,5 @@ def _as_state(x: State[Any] | Any) -> State[Any]:
 
 
 def lift(value: Any) -> State[Any]:
-    """Lit-Lift: classical literal → State (dirac)."""
+    """Lit-Lift: classical literal → State (Dirac)."""
     return State.dirac(value)

@@ -1,6 +1,6 @@
 """AT-TDD: LISS-0375 -- the ADR 0045 NESTED_WHEN_ERROR static guard
-covers a `mix` reachable through a `*|*` tensor product, not just the
-directly-nested form (was silently bypassable when the nested `mix`
+covers a `Mix` reachable through a `*|*` tensor product, not just the
+directly-nested form (was silently bypassable when the nested `Mix`
 was wrapped in a tensor expression).
 
 Design decision: docs/issues/LISS-0375-nested-when-tensor-dispatch.md
@@ -23,8 +23,8 @@ pub fn main() -> Unit {
     QubitRegister<1> register = system()
     Bit c = 0
     Bit d = 0
-    state bad = mix (c) { 0 -> mix (d) {0 -> |0>, else -> |1>}, else -> |0> }
-    measure bad
+    State bad = Mix (c) { 0 -> Mix (d) {0 -> |0>, else -> |1>}, else -> |0> }
+    Measure bad
 }
 """
 
@@ -34,16 +34,16 @@ pub fn main() -> Unit {
     QubitRegister<2> register = system()
     Bit c = 0
     Bit d = 0
-    state a = |0>
-    state ab = a *|* (mix (c) { 0 -> mix (d) {0 -> |0>, else -> |1>}, else -> |0> })
-    measure ab
+    State a = |0>
+    State ab = a *|* (Mix (c) { 0 -> Mix (d) {0 -> |0>, else -> |1>}, else -> |0> })
+    Measure ab
 }
 """
 
 
 def test_direct_nested_mix_is_rejected() -> None:
     """Regression guard: the already-working direct form must keep
-    rejecting a nested mix."""
+    rejecting a nested Mix."""
     compiled = compile_source(_DIRECT_SRC)
     codes = {d.get("code") for d in compiled.diagnostics}
     assert "NESTED_WHEN_ERROR" in codes, compiled.diagnostics

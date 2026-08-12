@@ -48,7 +48,7 @@ _TWO_QUBIT_HAMILTONIAN_PROGRAM = _main(
         [0.0, 0.0, 0.0, 0.0]
     ]))
     DensityState<Qubit> evolved = lindblad(rho, H, JumpSet([]), 0.1)
-    measure evolved
+    Measure evolved
     """
 )
 
@@ -79,7 +79,7 @@ _TWO_QUBIT_JUMP_PROGRAM = _main(
         [0.0, 0.0, 0.0, 0.0]
     ]))
     DensityState<Qubit> evolved = lindblad(rho, H, JumpSet([decay]), 0.1)
-    measure evolved
+    Measure evolved
     """
 )
 
@@ -103,7 +103,7 @@ def test_one_qubit_symbolic_hamiltonian_still_works() -> None:
                 RawMatrix([[1.0, 0.0], [0.0, 0.0]])
             )
             DensityState<Qubit> evolved = lindblad(rho, H, [], 0.1)
-            measure evolved
+            Measure evolved
             """
         )
     )

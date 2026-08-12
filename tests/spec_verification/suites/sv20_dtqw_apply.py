@@ -52,9 +52,9 @@ def run() -> list[CaseResult]:
         result, _ = _eval(
             as_main(
                 """
-state c = |0>
-state c = hadamard(c)
-measure c
+State c = |0>
+State c = hadamard(c)
+Measure c
 """
             )
         )
@@ -88,9 +88,9 @@ measure c
         result, _ = _eval(
             as_main(
                 """
-state c = |0>
-state c = apply(X, c)
-measure c
+State c = |0>
+State c = apply(X, c)
+Measure c
 """
             )
         )
@@ -123,13 +123,13 @@ measure c
         result, _ = _eval(
             as_main(
                 """
-Operator Coin = 0.7071067811865476 * (X + Z)
-state c = |0>
-state x = dirac(0)
-state (c, x) = c *|* x
-state c = apply(Coin, c)
-state x = walk_shift(c, x)
-measure x
+Operator CoinOp = 0.7071067811865476 * (X + Z)
+State c = |0>
+State x = Dirac(0)
+State (c, x) = c *|* x
+State c = apply(CoinOp, c)
+State x = walk_shift(c, x)
+Measure x
 """
             )
         )
@@ -165,15 +165,15 @@ measure x
         result, _ = _eval(
             as_main(
                 """
-Operator Coin = 0.7071067811865476 * (X + Z)
-state c = |0>
-state x = dirac(0)
-state (c, x) = c *|* x
-state c = apply(Coin, c)
-state x = walk_shift(c, x)
-state c = apply(Coin, c)
-state x = walk_shift(c, x)
-measure x
+Operator CoinOp = 0.7071067811865476 * (X + Z)
+State c = |0>
+State x = Dirac(0)
+State (c, x) = c *|* x
+State c = apply(CoinOp, c)
+State x = walk_shift(c, x)
+State c = apply(CoinOp, c)
+State x = walk_shift(c, x)
+Measure x
 """
             )
         )
@@ -207,9 +207,9 @@ measure x
         result, _ = _eval(
             as_main(
                 """
-state c = |0>
-state c = apply(Hadamard, c)
-measure c
+State c = |0>
+State c = apply(Hadamard, c)
+Measure c
 """
             )
         )
@@ -247,7 +247,7 @@ measure c
             src = (_REPO / rel).read_text(encoding="utf-8")
             result, _ = _eval(src)
             if result.measure is None:
-                raise AssertionFailure("MEASURE", f"no measure in {rel}")
+                raise AssertionFailure("MEASURE", f"no Measure in {rel}")
         out.append(
             CaseResult(
                 "SV-20",

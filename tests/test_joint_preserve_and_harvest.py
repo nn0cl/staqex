@@ -19,15 +19,15 @@ def test_float_survives_grover_diffuse() -> None:
 package t
 pub fn main() -> Unit {
     Float cfg = 2.0
-    state b0 = coin()
-    state b1 = coin()
-    state idx = b0 * 2 + b1
-    state marked = phase(idx, pi, cfg)
-    state amplified = grover_diffuse(marked)
-    state viewed = inspect(cfg)
-    state b0 = |0>
-    state b1 = |0>
-    measure amplified
+    State b0 = Coin()
+    State b1 = Coin()
+    State idx = b0 * 2 + b1
+    State marked = phase(idx, pi, cfg)
+    State amplified = grover_diffuse(marked)
+    State viewed = Inspect(cfg)
+    State b0 = |0>
+    State b1 = |0>
+    Measure amplified
 }
 """
     buf = io.StringIO()
@@ -42,14 +42,14 @@ def test_phase_only_from_float_scalar() -> None:
 package t
 pub fn main() -> Unit {
     Float target = 2.0
-    state b0 = coin()
-    state b1 = coin()
-    state idx = b0 * 2 + b1
-    state marked = phase(idx, pi, target)
-    state amplified = grover_diffuse(marked)
-    state b0 = |0>
-    state b1 = |0>
-    measure amplified
+    State b0 = Coin()
+    State b1 = Coin()
+    State idx = b0 * 2 + b1
+    State marked = phase(idx, pi, target)
+    State amplified = grover_diffuse(marked)
+    State b0 = |0>
+    State b1 = |0>
+    Measure amplified
 }
 """
     r = run_source(src, seed=0, stdout=io.StringIO())
@@ -70,13 +70,13 @@ pub fn step(c: State<Qubit>, x: State<Position>) -> State<(Qubit, Position)> {
 pub fn main() -> Unit {
     Float n_steps = 2.0
     State<Qubit> c = |+>
-    State<Position> x = dirac(0)
+    State<Position> x = Dirac(0)
     State<(Qubit, Position)> (c, x) = c *|* x
-    state (c, x) = evolve (c, x) times n_steps {
+    State (c, x) = Evolve (c, x) times n_steps {
         step(c, x)
     }
-    state c = |0>
-    measure x
+    State c = |0>
+    Measure x
 }
 """
     r = run_source(src, seed=0, stdout=io.StringIO())
@@ -101,9 +101,9 @@ pub class Hints {
 package demo
 import demo.hints
 pub fn main() -> Unit {
-    state viewed = inspect(r)
-    state bit = coin()
-    measure bit
+    State viewed = Inspect(r)
+    State bit = Coin()
+    Measure bit
 }
 """,
         encoding="utf-8",
@@ -136,9 +136,9 @@ package demo
 import demo.hints
 pub fn main() -> Unit {
     Float r = 9.0
-    state v = inspect(r)
-    state bit = coin()
-    measure bit
+    State v = Inspect(r)
+    State bit = Coin()
+    Measure bit
 }
 """,
         encoding="utf-8",

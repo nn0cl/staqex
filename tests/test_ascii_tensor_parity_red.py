@@ -18,11 +18,11 @@ def _compile(rhs: str):
         f"""
         package t
         pub fn main() -> Unit {{
-            state left = |0>
-            state right = |1>
-            state third = |0>
-            state result = {rhs}
-            measure result
+            State left = |0>
+            State right = |1>
+            State third = |0>
+            State result = {rhs}
+            Measure result
         }}
         """
     )

@@ -1,4 +1,4 @@
-"""SV-17: Dirac ket, evolve under H, expect, pretty dimension errors (ADR 0038)."""
+"""SV-17: Dirac ket, Evolve under H, expect, pretty dimension errors (ADR 0038)."""
 
 from __future__ import annotations
 
@@ -48,9 +48,9 @@ def run() -> list[CaseResult]:
     try:
         src = as_main(
             """
-state z = |0>
-state p = |+>
-measure z
+State z = |0>
+State p = |+>
+Measure z
 """
         )
         result, _ = _eval(src)
@@ -61,8 +61,8 @@ measure z
         result2, _ = _eval(
             as_main(
                 """
-state p = |+>
-measure p
+State p = |+>
+Measure p
 """
             )
         )
@@ -106,10 +106,10 @@ measure p
         # value through the fail-closed Time-unit check unchanged.
         src = as_main(
             """
-state psi0 = |0>
+State psi0 = |0>
 Time dur = 1.5707963267948966.s
-state psi = evolve { psi0 under X for dur }.run()
-measure psi
+State psi = Evolve { psi0 under X for dur }.run()
+Measure psi
 """
         )
         result, _ = _eval(src)
@@ -120,8 +120,8 @@ measure psi
         out.append(
             CaseResult(
                 "SV-17",
-                "sv17-evolve-under-x",
-                "evolve |0> under X for π/2 → |1>",
+                "sv17-Evolve-under-x",
+                "Evolve |0> under X for π/2 → |1>",
                 True,
                 ["hamiltonian"],
             )
@@ -130,8 +130,8 @@ measure psi
         out.append(
             CaseResult(
                 "SV-17",
-                "sv17-evolve-under-x",
-                "evolve under X",
+                "sv17-Evolve-under-x",
+                "Evolve under X",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -142,9 +142,9 @@ measure psi
     try:
         src = as_main(
             """
-state z = |0>
-state ez = expect(Z, z)
-measure ez
+State z = |0>
+State ez = expect(Z, z)
+Measure ez
 """
         )
         result, _ = _eval(src)
@@ -155,9 +155,9 @@ measure ez
 
         src2 = as_main(
             """
-state p = |+>
-state ez = expect(Z, p)
-measure ez
+State p = |+>
+State ez = expect(Z, p)
+Measure ez
 """
         )
         result2, _ = _eval(src2)
@@ -190,11 +190,11 @@ measure ez
     try:
         src = as_main(
             """
-state alice = |+>
-state bob = |0>
-state bob = cnot(alice, bob)
-state corr = expect(ZZ, alice, bob)
-measure corr
+State alice = |+>
+State bob = |0>
+State bob = cnot(alice, bob)
+State corr = expect(ZZ, alice, bob)
+Measure corr
 """
         )
         result, _ = _eval(src)
@@ -203,12 +203,12 @@ measure corr
         # via expect already bound — re-eval without measure to inspect pair
         src2 = as_main(
             """
-state alice = |+>
-state bob = |0>
-state bob = cnot(alice, bob)
-state corr = expect(ZZ, alice, bob)
-snapshot corr to sink
-measure corr
+State alice = |+>
+State bob = |0>
+State bob = cnot(alice, bob)
+State corr = expect(ZZ, alice, bob)
+Snapshot corr to sink
+Measure corr
 """
         )
         result2, _ = _eval(src2)
@@ -251,10 +251,10 @@ measure corr
     try:
         src = as_main(
             """
-State<Length> x = dirac(1.0.m)
+State<Length> x = Dirac(1.0.m)
 Delta<Time> dt = 0.5.s
-state bad = x + dt
-measure bad
+State bad = x + dt
+Measure bad
 """
         )
         compiled = compile_source(src)

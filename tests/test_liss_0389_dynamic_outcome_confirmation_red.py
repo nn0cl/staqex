@@ -20,15 +20,15 @@ _SOURCE_MEASURE_ONLY = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { }
             1 => { }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 

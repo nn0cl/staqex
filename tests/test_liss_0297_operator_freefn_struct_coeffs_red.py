@@ -18,9 +18,9 @@ pub fn h_of(k: D.Coeffs) -> Operator {
 pub fn main() -> Unit {
   D.Coeffs pack = D.Coeffs(1.0545718e-19)
   Operator H = h_of(pack)
-  state s = |+>
-  state s = evolve { s under H for 0.1.fs }.run()
-  measure s
+  State s = |+>
+  State s = Evolve { s under H for 0.1.fs }.run()
+  Measure s
 }
 """
     r = run_source(src, settings={"seed": 0})
@@ -42,10 +42,10 @@ pub fn drive_h(c: D.Coeffs) -> Operator {
 pub fn main() -> Unit {
   D.Coeffs coeffs = D.Coeffs(6.3274308e-20, 1.0545718e-19)
   Operator H = drive_h(coeffs)
-  state a = |+>
-  state b = |0>
-  state (a, b) = evolve { (a, b) under H for 0.2.fs }.run()
-  measure a tracing_out b
+  State a = |+>
+  State b = |0>
+  State (a, b) = Evolve { (a, b) under H for 0.2.fs }.run()
+  Measure a tracing_out b
 }
 """
     r = run_source(src, settings={"seed": 0})
@@ -64,10 +64,10 @@ pub fn drive_h(c: D.Coeffs) -> Operator {
 pub fn main() -> Unit {
   D.Coeffs coeffs = D.Coeffs(4.2182872e-20, 3.1637154e-20)
   Operator H = drive_h(coeffs)
-  state a = |+>
-  state b = |0>
-  state (a, b) = evolve { (a, b) under H for 0.15.fs }.run()
-  measure a tracing_out b
+  State a = |+>
+  State b = |0>
+  State (a, b) = Evolve { (a, b) under H for 0.15.fs }.run()
+  Measure a tracing_out b
 }
 """
     r = run_source(src, settings={"seed": 0})

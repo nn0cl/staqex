@@ -22,12 +22,12 @@ def test_pipe_into_multi_hole_partial_moves_lhs() -> None:
         return a + b + c
     }
     pub fn main() -> Unit {
-        state p = add3(1, _, _)
-        state x = 2
-        state q = x |> p
-        state y = 3
-        state r = y |> q
-        measure r
+        State p = add3(1, _, _)
+        State x = 2
+        State q = x |> p
+        State y = 3
+        State r = y |> q
+        Measure r
     }
     """
     codes = {d.get("code", "") for d in compile_source(src).diagnostics}
@@ -47,10 +47,10 @@ def test_one_hole_partial_pipe_still_moves() -> None:
         return x + y
     }
     pub fn main() -> Unit {
-        state p = add(10, _)
-        state z = 3
-        state r = z |> p
-        measure r
+        State p = add(10, _)
+        State z = 3
+        State r = z |> p
+        Measure r
     }
     """
     codes = {d.get("code", "") for d in compile_source(src).diagnostics}

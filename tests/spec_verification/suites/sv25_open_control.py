@@ -40,10 +40,10 @@ def run() -> list[CaseResult]:
         result, _ = _eval(
             as_main(
                 """
-state c = |0>
-state t = |0>
-state t = ocapply(c, X, t)
-measure t
+State c = |0>
+State t = |0>
+State t = ocapply(c, X, t)
+Measure t
 """
             )
         )
@@ -75,10 +75,10 @@ measure t
         result, _ = _eval(
             as_main(
                 """
-state c = |1>
-state t = |0>
-state t = ocapply(c, X, t)
-measure t
+State c = |1>
+State t = |0>
+State t = ocapply(c, X, t)
+Measure t
 """
             )
         )
@@ -111,11 +111,11 @@ measure t
         result, _ = _eval(
             as_main(
                 """
-state a = |0>
-state b = |0>
-state t = |0>
-state t = ocapply(a, b, X, t)
-measure t
+State a = |0>
+State b = |0>
+State t = |0>
+State t = ocapply(a, b, X, t)
+Measure t
 """
             )
         )
@@ -125,11 +125,11 @@ measure t
         result2, _ = _eval(
             as_main(
                 """
-state a = |0>
-state b = |1>
-state t = |0>
-state t = ocapply(a, b, X, t)
-measure t
+State a = |0>
+State b = |1>
+State t = |0>
+State t = ocapply(a, b, X, t)
+Measure t
 """
             )
         )
@@ -163,7 +163,7 @@ measure t
         )
         result, _ = _eval(src)
         if result.measure is None:
-            raise AssertionFailure("MEASURE", "no measure")
+            raise AssertionFailure("MEASURE", "no Measure")
         out.append(
             CaseResult(
                 "SV-25",

@@ -62,7 +62,7 @@ def test_migrate_write_rewrites_temp_file_in_place() -> None:
 def test_migrate_check_exits_one_on_legacy_unicode_drift() -> None:
     with tempfile.TemporaryDirectory() as td:
         path = Path(td) / _KET
-        path.write_text("state psi = |0⟩\n", encoding="utf-8")
+        path.write_text("State psi = |0⟩\n", encoding="utf-8")
         code, stdout, _stderr = _run_migrate([str(path), "--check"])
     assert code == 1
     assert stdout == ""

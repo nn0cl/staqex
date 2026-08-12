@@ -41,8 +41,8 @@ def test_seeded_measure_bit_identical_across_runs() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state a = coin()
-        measure a
+        State a = Coin()
+        Measure a
     }
     """
     first = run_source(src, seed=0, stdout=io.StringIO())
@@ -89,8 +89,8 @@ def test_custom_rng_port_is_used_for_measure() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state a = coin()
-        measure a
+        State a = Coin()
+        Measure a
     }
     """
     from compiler.staqex.pipeline import compile_source
@@ -100,7 +100,7 @@ def test_custom_rng_port_is_used_for_measure() -> None:
     ev = Evaluator(rng_port=FixedRng([0.9]))
     result = ev.run_unit(compiled.unit, stdout=io.StringIO())
     assert result.measure is not None
-    # coin() is 50/50 on {0,1}; u=0.9 selects the second mass atom (1).
+    # Coin() is 50/50 on {0,1}; u=0.9 selects the second mass atom (1).
     assert result.measure.value == 1
 
 

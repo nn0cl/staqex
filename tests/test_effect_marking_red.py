@@ -21,12 +21,12 @@ def test_effect_annotation_is_accepted_on_a_function() -> None:
         """
         package t
         fn inspect_state(x: State<Float>) -> State<Float> effects { Inspect } {
-            return inspect(x)
+            return Inspect(x)
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            state viewed = inspect_state(psi)
-            measure viewed
+            State psi = Dirac(0.0)
+            State viewed = inspect_state(psi)
+            Measure viewed
         }
         """
     )
@@ -39,15 +39,15 @@ def test_pure_function_cannot_call_an_inspect_effect() -> None:
         """
         package t
         fn inspect_state(x: State<Float>) -> State<Float> effects { Inspect } {
-            return inspect(x)
+            return Inspect(x)
         }
         fn pure_wrapper(x: State<Float>) -> State<Float> {
             return inspect_state(x)
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            state viewed = pure_wrapper(psi)
-            measure viewed
+            State psi = Dirac(0.0)
+            State viewed = pure_wrapper(psi)
+            Measure viewed
         }
         """
     )
@@ -60,13 +60,13 @@ def test_measure_effect_cannot_return_a_state_value() -> None:
         """
         package t
         fn observe_state(x: State<Float>) -> State<Float> effects { Measure } {
-            measure x
+            Measure x
             return x
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            state observed = observe_state(psi)
-            measure observed
+            State psi = Dirac(0.0)
+            State observed = observe_state(psi)
+            Measure observed
         }
         """
     )
@@ -79,12 +79,12 @@ def test_effects_propagate_through_a_pipeline_stage() -> None:
         """
         package t
         fn inspect_state(x: State<Float>) -> State<Float> effects { Inspect } {
-            return inspect(x)
+            return Inspect(x)
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            state viewed = psi |> inspect_state()
-            measure viewed
+            State psi = Dirac(0.0)
+            State viewed = psi |> inspect_state()
+            Measure viewed
         }
         """
     )

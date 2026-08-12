@@ -12,7 +12,7 @@ H_chain = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
 // LISS-0309: multi-ket multi-bind (ideal dialect face).
 s0, s1 = |+>, |+>
 Time dur = 0.7.fs
-state (s0, s1) = evolve { (s0, s1) under H_chain for dur using Suzuki(order = 2, steps = 6) }.run()
+State (s0, s1) = Evolve { (s0, s1) under H_chain for dur using Suzuki(order = 2, steps = 6) }.run()
 
-state zz = expect(ZZ, s0, s1)
-measure s0 tracing_out s1
+State zz = expect(ZZ, s0, s1)
+Measure s0 tracing_out s1

@@ -58,10 +58,10 @@ def _family_module(PhysicsModule, SourceOrigin):
 
 
 def test_inspection_preserves_all_required_formula_families() -> None:
-    _, PhysicsInspection, PhysicsModule, SourceOrigin, inspect, verify = _load_api()
+    _, PhysicsInspection, PhysicsModule, SourceOrigin, Inspect, verify = _load_api()
     module = _family_module(PhysicsModule, SourceOrigin)
 
-    result = inspect(module)
+    result = Inspect(module)
 
     assert isinstance(result, PhysicsInspection)
     assert tuple(record.family for record in result.records) == (
@@ -77,11 +77,11 @@ def test_inspection_preserves_all_required_formula_families() -> None:
 
 
 def test_inspection_is_deterministic_and_read_only() -> None:
-    _, _, PhysicsModule, SourceOrigin, inspect, _ = _load_api()
+    _, _, PhysicsModule, SourceOrigin, Inspect, _ = _load_api()
     module = _family_module(PhysicsModule, SourceOrigin)
 
-    first = inspect(module)
-    second = inspect(module)
+    first = Inspect(module)
+    second = Inspect(module)
 
     assert first == second
     assert first.module is module
@@ -90,10 +90,10 @@ def test_inspection_is_deterministic_and_read_only() -> None:
 
 
 def test_inspection_record_retains_recognizable_structure_and_identity() -> None:
-    InspectionRecord, _, PhysicsModule, SourceOrigin, inspect, _ = _load_api()
+    InspectionRecord, _, PhysicsModule, SourceOrigin, Inspect, _ = _load_api()
     module = _family_module(PhysicsModule, SourceOrigin)
 
-    result = inspect(module)
+    result = Inspect(module)
     record = result.records[0]
 
     assert isinstance(record, InspectionRecord)
@@ -103,7 +103,7 @@ def test_inspection_record_retains_recognizable_structure_and_identity() -> None
 
 
 def test_inspection_verifier_rejects_missing_family_or_provenance() -> None:
-    _, _, PhysicsModule, SourceOrigin, inspect, verify = _load_api()
+    _, _, PhysicsModule, SourceOrigin, Inspect, verify = _load_api()
     origin = SourceOrigin(source_id="invalid.staqex", line=1, col=1)
     module = PhysicsModule(
         spaces=(),
@@ -114,7 +114,7 @@ def test_inspection_verifier_rejects_missing_family_or_provenance() -> None:
         origins=(origin,),
     )
 
-    diagnostics = verify(inspect(module))
+    diagnostics = verify(Inspect(module))
     codes = {diagnostic.get("code") for diagnostic in diagnostics}
 
     assert "PHYSICS_IR_FAMILY_ERROR" in codes

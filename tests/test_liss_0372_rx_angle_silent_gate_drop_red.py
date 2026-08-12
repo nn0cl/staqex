@@ -24,9 +24,9 @@ def _src(angle_expr: str) -> str:
     pub fn main() -> Unit {{
         QubitRegister<1> register = system()
         {'' if angle_expr != 'theta' else 'Float theta = 1.57'}
-        state q = |0>
-        state q = apply(rx({angle_expr}), q)
-        measure q
+        State q = |0>
+        State q = apply(rx({angle_expr}), q)
+        Measure q
     }}
     """
 

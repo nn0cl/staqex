@@ -5,18 +5,18 @@
 package examples.gauge_symmetry
 
 pub fn main() -> Unit {
-    state site = |1>
+    State site = |1>
 
     // Local U(1) phase α = π on the occupied computational state
-    state gauged = phase(site, pi)
+    State gauged = phase(site, pi)
 
     // Occupation projector P̂ = |1⟩⟨1| (Hilbert), then compare Born weight
-    state occ = project(gauged, |1>)
+    State occ = project(gauged, |1>)
 
-    state before = expect(Z, site)
-    state after = expect(Z, gauged)
+    State before = expect(Z, site)
+    State after = expect(Z, gauged)
 
     // Gauge leaves ⟨Z⟩ invariant on an eigenstate of Z
-    state viewed = inspect(after)
-    measure occ
+    State viewed = Inspect(after)
+    Measure occ
 }

@@ -26,7 +26,7 @@ pub fn main() -> Unit {
     State<Qubit> psi = |0>
     Channel ch = KrausChannel([[[1.0, 0.0], [0.0, 1.0]]])
     DensityState<Qubit> rho = apply(ch, psi)
-    measure rho
+    Measure rho
 }
 """
 
@@ -39,7 +39,7 @@ pub fn main() -> Unit {
     State<Qubit> psi = |0>
     Channel ch = KrausChannel([[[1.0, 0.0], [0.0, 1.0]]])
     DensityState<Qubit> rho = apply(ch, id(psi))
-    measure rho
+    Measure rho
 }
 """
 

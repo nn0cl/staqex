@@ -27,8 +27,8 @@ _SOURCE_FIELD_ONLY = """
 package t
 pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
-    state zone = |0>
-    measure zone
+    State zone = |0>
+    Measure zone
 }
 """
 
@@ -47,8 +47,8 @@ _SOURCE_FIELD_UNCONSUMED = """
 package t
 pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
-    state zone = |0>
-    measure zone
+    State zone = |0>
+    Measure zone
 }
 """
 
@@ -67,19 +67,19 @@ _SOURCE_MEASURE_CONTINUOUS = """
 package t
 pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
-    measure damage
+    Measure damage
 }
 """
 
 
 def test_measuring_a_continuous_value_fails_closed() -> None:
-    """Scenario: `measure damage` where `damage` is Continuous must be
+    """Scenario: `Measure damage` where `damage` is Continuous must be
     rejected. Discovered during Green implementation: the top-level
-    `measure` statement already calls the existing, generic
+    `Measure` statement already calls the existing, generic
     `_assert_is_state` allowlist check (`TYPE_NOT_STATE`) -- once
     `Continuous` is a real, distinct `Ty.kind` not in that allowlist, this
     gate fires for free, no new diagnostic code needed here. (The earlier
-    Plan-stage probe that found `evolve`/`apply` permissive used the
+    Plan-stage probe that found `Evolve`/`apply` permissive used the
     *dynamic-lane* Controller path specifically, a separately laxer code
     path -- top-level/main-lane checking is stricter, confirmed here.)
     """
@@ -92,15 +92,15 @@ _SOURCE_EVOLVE_CONTINUOUS = """
 package t
 pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
-    state r = evolve { damage under H for 1.0 }.run()
-    measure r
+    State r = Evolve { damage under H for 1.0 }.run()
+    Measure r
 }
 """
 
 
 def test_evolving_a_continuous_value_fails_closed() -> None:
-    """Scenario: `evolve { damage under H for 1.0 }.run()` must be
-    rejected. Same free-gate discovery as the measure test above:
+    """Scenario: `Evolve { damage under H for 1.0 }.run()` must be
+    rejected. Same free-gate discovery as the Measure test above:
     `_assert_is_state` already rejects the bind result's non-State kind.
     """
     compiled = compile_source(_SOURCE_EVOLVE_CONTINUOUS)
@@ -113,8 +113,8 @@ package t
 pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
     apply(X, damage)
-    state zone = |0>
-    measure zone
+    State zone = |0>
+    Measure zone
 }
 """
 

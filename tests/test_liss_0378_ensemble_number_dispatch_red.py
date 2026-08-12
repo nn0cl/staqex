@@ -28,7 +28,7 @@ def test_literal_ensemble_weight_remains_ok() -> None:
         pub fn main() -> Unit {
             DensityState<Qubit> rho = DensityState(Ensemble([(1.0, |0>)]))
             POVM<Qubit> z = ComputationalBasis()
-            measure rho with z
+            Measure rho with z
         }
         """
     )
@@ -45,7 +45,7 @@ def test_binop_ensemble_weight_matches_literal() -> None:
                 Ensemble([(1.0 * 1.0, |0>)])
             )
             POVM<Qubit> z = ComputationalBasis()
-            measure rho with z
+            Measure rho with z
         }
         """
     )
@@ -62,7 +62,7 @@ def test_named_float_ensemble_weight_matches_literal() -> None:
             Float w = 1.0
             DensityState<Qubit> rho = DensityState(Ensemble([(w, |0>)]))
             POVM<Qubit> z = ComputationalBasis()
-            measure rho with z
+            Measure rho with z
         }
         """
     )

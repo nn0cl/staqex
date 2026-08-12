@@ -3,8 +3,8 @@
 package examples.basics.multi_file_modules.operators
 
 pub fn build_coin_operator() -> Operator {
-    Operator Coin = (X + Z) * inv_sqrt2
-    return Coin
+    Operator CoinOp = (X + Z) * inv_sqrt2
+    return CoinOp
 }
 
 // Identity joint step: intermediate `apply`/`walk_shift` binds before

@@ -40,8 +40,8 @@ def test_relational_against_literal_produces_bool() -> None:
         pub fn main() -> Unit {
             Float x = 3.0
             Bool ok = x == 3.0
-            state s = dirac(ok)
-            measure s
+            State s = Dirac(ok)
+            Measure s
         }
         """
     )
@@ -56,8 +56,8 @@ def test_int_times_literal_preserves_int_payload() -> None:
         pub fn main() -> Unit {
             Int x = 5
             Int y = double_it(x)
-            state s = |0>
-            measure s
+            State s = |0>
+            Measure s
         }
         """
     )
@@ -72,8 +72,8 @@ def test_energy_times_literal_preserves_energy_dimension() -> None:
         pub fn main() -> Unit {
             Energy e = 1.0.eV to J
             Energy e2 = scale(e)
-            state s = |0>
-            measure s
+            State s = |0>
+            Measure s
         }
         """
     )
@@ -88,8 +88,8 @@ def test_literal_on_the_left_side_is_handled_symmetrically() -> None:
         pub fn main() -> Unit {
             Float x = 5.0
             Bool ok = lit_lt(x)
-            state s = |0>
-            measure s
+            State s = |0>
+            Measure s
         }
         """
     )

@@ -10,10 +10,11 @@ import math
 HBAR_SI = 1.054571817e-34
 
 # Surface builtins / prep (also Active keywords in lexer).
-PRELUDE_PREP = frozenset({"coin", "dirac", "vacuum", "empty", "wavepacket"})
+# LISS-0419 (ADR 0191 amendment): capitalized blackboard-verb keywords.
+PRELUDE_PREP = frozenset({"Coin", "Dirac", "Vacuum", "empty", "wavepacket"})
 
 # Debug / host-boundary helpers always in scope for Kernel scripts.
-PRELUDE_DEBUG = frozenset({"inspect", "snapshot", "measure"})
+PRELUDE_DEBUG = frozenset({"Inspect", "Snapshot", "Measure"})
 
 # Combinators (identifiers resolved by Kernel, not hard keywords).
 PRELUDE_COMBINATORS = frozenset(

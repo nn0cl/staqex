@@ -30,18 +30,18 @@ discretization PositionGrid {
 use PositionGrid for HarmonicOscillator.H as discrete_H
 pub fn main() -> Unit {
     Operator H = discrete_H
-    state psi = wavepacket(-pi, pi, 8, 0.0, 1.0)
-    state psi = evolve { psi under H for 0.1.fs }.run()
-    measure psi
+    State psi = wavepacket(-pi, pi, 8, 0.0, 1.0)
+    State psi = Evolve { psi under H for 0.1.fs }.run()
+    Measure psi
 }
 """
 
 _DIRECT_GRID_PROGRAM = """
 pub fn main() -> Unit {
-    state psi = wavepacket(-pi, pi, 8, 0.0, 1.0)
+    State psi = wavepacket(-pi, pi, 8, 0.0, 1.0)
     Operator H_grid = 5.272859e-20 * (X * X + P * P)
-    state psi = evolve { psi under H_grid for 0.1.fs }.run()
-    measure psi
+    State psi = Evolve { psi under H_grid for 0.1.fs }.run()
+    Measure psi
 }
 """
 
@@ -80,8 +80,8 @@ def test_non_mvp_discretization_contract_is_rejected_at_lowering() -> None:
         }
         use MomentumGrid for HarmonicOscillator.H as discrete_H
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

@@ -50,11 +50,11 @@ package t
 pub fn main() -> Unit {
     QubitRegister<2> register = system()
     Operator H = 1.0545718e-19 * (Z[0] * Z[1])
-    state a = |+>
-    state b = |0>
-    state (a, b) = evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
-    state b = |0>
-    measure a
+    State a = |+>
+    State b = |0>
+    State (a, b) = Evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+    Measure a
 }
 """
 
@@ -63,11 +63,11 @@ package t
 pub fn main() -> Unit {
     QubitRegister<2> register = system()
     Operator H = 1.0545718e-19 * (Z[0] * Z[1])
-    state a = |+>
-    state b = |0>
-    state (a, b) = evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
-    state b = |0>
-    measure a
+    State a = |+>
+    State b = |0>
+    State (a, b) = Evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+    Measure a
 }
 """
 
@@ -93,18 +93,18 @@ _BINDER_CHAIN = """
 package t
 pub fn main() -> Unit {
     QubitRegister<4> register = system()
-    Operator H = sum (i in Index<0..2>) {
+    Operator H = Sigma (i In Index<0..2>) {
         1.0545718e-19 * Z[i] * Z[next(i)]
     }
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state d = |0>
-    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
-    state b = |0>
-    state c = |0>
-    state d = |0>
-    measure a
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State d = |0>
+    State (a, b, c, d) = Evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+    State c = |0>
+    State d = |0>
+    Measure a
 }
 """
 
@@ -113,15 +113,15 @@ package t
 pub fn main() -> Unit {
     QubitRegister<4> register = system()
     Operator H = 1.0545718e-19 * (Z[0] * Z[1] + Z[1] * Z[2] + Z[2] * Z[3])
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state d = |0>
-    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
-    state b = |0>
-    state c = |0>
-    state d = |0>
-    measure a
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State d = |0>
+    State (a, b, c, d) = Evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+    State c = |0>
+    State d = |0>
+    Measure a
 }
 """
 

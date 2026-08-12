@@ -38,9 +38,9 @@ def test_leading_numeric_literal_coefficient_parses() -> None:
         """
     FermionOperator<Orbitals> H_fermion = 1.0 * create[0] * annihilate[0]
     QubitOperator<Qubits> H = map(H_fermion, JordanWigner)
-    state a = |0>
-    state a = evolve { a under H for 0.5 }.run()
-    measure a
+    State a = |0>
+    State a = Evolve { a under H for 0.5 }.run()
+    Measure a
 """
     )
 
@@ -53,9 +53,9 @@ def test_leading_named_float_coefficient_parses() -> None:
     Float e0 = 1.0
     FermionOperator<Orbitals> H_fermion = e0 * create[0] * annihilate[0]
     QubitOperator<Qubits> H = map(H_fermion, JordanWigner)
-    state a = |0>
-    state a = evolve { a under H for 0.5 }.run()
-    measure a
+    State a = |0>
+    State a = Evolve { a under H for 0.5 }.run()
+    Measure a
 """
     )
 
@@ -69,9 +69,9 @@ def test_leading_parenthesized_coefficient_expression_parses() -> None:
     Float e1 = 2.0
     FermionOperator<Orbitals> H_fermion = (e0 + e1) * create[0] * annihilate[0]
     QubitOperator<Qubits> H = map(H_fermion, JordanWigner)
-    state a = |0>
-    state a = evolve { a under H for 0.5 }.run()
-    measure a
+    State a = |0>
+    State a = Evolve { a under H for 0.5 }.run()
+    Measure a
 """
     )
 
@@ -83,9 +83,9 @@ def test_trailing_coefficient_form_is_unaffected() -> None:
         """
     FermionOperator<Orbitals> H_fermion = create[0] * annihilate[0] * 1.0
     QubitOperator<Qubits> H = map(H_fermion, JordanWigner)
-    state a = |0>
-    state a = evolve { a under H for 0.5 }.run()
-    measure a
+    State a = |0>
+    State a = Evolve { a under H for 0.5 }.run()
+    Measure a
 """
     )
 
@@ -97,10 +97,10 @@ def test_map_binding_form_is_unaffected() -> None:
         """
     FermionOperator<Orbitals> H_fermion = create[0] * annihilate[1]
     QubitOperator<Qubits> H = map(H_fermion, JordanWigner)
-    state a = |0>
-    state b = |0>
-    state (a, b) = evolve { (a, b) under H for 0.5 }.run()
-    measure a tracing_out b
+    State a = |0>
+    State b = |0>
+    State (a, b) = Evolve { (a, b) under H for 0.5 }.run()
+    Measure a tracing_out b
 """
     )
 

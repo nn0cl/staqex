@@ -1,7 +1,7 @@
 """AT-TDD: LISS-0313 finiteize surface (ADR 0185 Lane A).
 
   Scenario: valid equal-width finiteize yields finite State
-    When main binds `state psi = finiteize(0.0, 1.0, 2, 2000, 0)`
+    When main binds `State psi = finiteize(0.0, 1.0, 2, 2000, 0)`
     Then compile succeeds and seed-0 run measures without LINEAR discard
 
   Scenario: invalid n_bins fails closed
@@ -36,8 +36,8 @@ pub fn main() -> Unit {{
 def test_finiteize_compiles_as_state_bind() -> None:
     src = _main(
         """
-    state psi = finiteize(0.0, 1.0, 2, 100, 0)
-    measure psi
+    State psi = finiteize(0.0, 1.0, 2, 100, 0)
+    Measure psi
 """
     )
     c = compile_source(src)
@@ -54,8 +54,8 @@ def test_finiteize_compiles_as_state_bind() -> None:
 def test_finiteize_run_seed_zero_two_bins() -> None:
     src = _main(
         """
-    state psi = finiteize(0.0, 1.0, 2, 2000, 0)
-    measure psi
+    State psi = finiteize(0.0, 1.0, 2, 2000, 0)
+    Measure psi
 """
     )
     buf = io.StringIO()
@@ -69,8 +69,8 @@ def test_finiteize_run_seed_zero_two_bins() -> None:
 def test_finiteize_invalid_bins_fail_closed() -> None:
     src = _main(
         """
-    state psi = finiteize(0.0, 1.0, 0, 10, 0)
-    measure psi
+    State psi = finiteize(0.0, 1.0, 0, 10, 0)
+    Measure psi
 """
     )
     c = compile_source(src)
@@ -93,8 +93,8 @@ def test_finiteize_is_prelude_not_user_fn() -> None:
     """finiteize is available without import (prelude combinator)."""
     src = _main(
         """
-    state psi = finiteize(0.0, 1.0, 4, 50, 1)
-    measure psi
+    State psi = finiteize(0.0, 1.0, 4, 50, 1)
+    Measure psi
 """
     )
     c = compile_source(src)

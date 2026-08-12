@@ -8,10 +8,10 @@ system Link {
 
 Operator<RegisterSet<Link>> zz = Z[data[0]] * Z[ancilla[0]]
 
-state data = |0>
-state ancilla = |0>
-state corr = expect(ZZ, data, ancilla)
-state viewed = inspect(corr)
+State data = |0>
+State ancilla = |0>
+State corr = expect(ZZ, data, ancilla)
+State viewed = Inspect(corr)
 
 // Ancilla leaves via partial trace; terminal measure on data.
-measure data tracing_out ancilla
+Measure data tracing_out ancilla

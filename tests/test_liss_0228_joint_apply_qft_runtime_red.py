@@ -21,12 +21,12 @@ pub fn main() -> Unit {
   QubitRegister<2> reg = system()
   Operator F = qft(reg)
   Operator Fi = iqft(reg)
-  state a = |0>
-  state b = |1>
-  state (a, b) = apply(F, a, b)
-  state (a, b) = apply(Fi, a, b)
-  state a = |0>
-  measure b
+  State a = |0>
+  State b = |1>
+  State (a, b) = apply(F, a, b)
+  State (a, b) = apply(Fi, a, b)
+  State a = |0>
+  Measure b
 }
 """,
         settings={"seed": 0},
@@ -45,13 +45,13 @@ pub fn main() -> Unit {
   QubitRegister<1> ctrl = system()
   QubitRegister<2> reg = system()
   Operator CF = cqft(ctrl, reg)
-  state c = |1>
-  state t0 = |0>
-  state t1 = |0>
-  state (c, t0, t1) = apply(CF, c, t0, t1)
-  state t0 = |0>
-  state t1 = |0>
-  measure c
+  State c = |1>
+  State t0 = |0>
+  State t1 = |0>
+  State (c, t0, t1) = apply(CF, c, t0, t1)
+  State t0 = |0>
+  State t1 = |0>
+  Measure c
 }
 """,
         settings={"seed": 0},

@@ -73,8 +73,8 @@ def test_unicode_ket_program_is_rejected() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |0>
-            measure psi
+            State psi = |0>
+            Measure psi
         }
         """
     )
@@ -82,8 +82,8 @@ def test_unicode_ket_program_is_rejected() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state psi = |0{KET_CLOSE}
-            measure psi
+            State psi = |0{KET_CLOSE}
+            Measure psi
         }}
         """
     )
@@ -97,12 +97,12 @@ def test_unicode_tensor_bind_is_rejected() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state left = |0>
-            state right = |1>
+            State left = |0>
+            State right = |1>
             (a, b) = left *|* right
-    state left = |0>
-    state right = |0>
-            measure a
+    State left = |0>
+    State right = |0>
+            Measure a
         }
         """
     )
@@ -110,12 +110,12 @@ def test_unicode_tensor_bind_is_rejected() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state left = |0>
-            state right = |1>
+            State left = |0>
+            State right = |1>
             (a, b) = left {TENSOR} right
-    state left = |0>
-    state right = |0>
-            measure a
+    State left = |0>
+    State right = |0>
+            Measure a
         }}
         """
     )
@@ -130,8 +130,8 @@ def test_postfix_dagger_is_rejected_but_adjoint_call_is_accepted() -> None:
         package t
         pub fn main() -> Unit {
             Operator A = adjoint(X)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -140,8 +140,8 @@ def test_postfix_dagger_is_rejected_but_adjoint_call_is_accepted() -> None:
         package t
         pub fn main() -> Unit {{
             Operator A = X{DAGGER}
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }}
         """
     )

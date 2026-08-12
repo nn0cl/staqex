@@ -34,11 +34,11 @@ def test_class_field_array_index_bind_reaches_the_correct_diagnostic() -> None:
         QubitRegister<2> register = system()
         D.Mat m = D.Mat([[1.0, 0.0], [0.0, 0.5]])
         Float[2] row = m.h[1]
-        Operator H = sum (q in Index<0..1>) {
+        Operator H = Sigma (q In Index<0..1>) {
             row[q] * Z[q]
         }
-        state a = |0>
-        measure a
+        State a = |0>
+        Measure a
     }
     """
     compiled = compile_source(src)
@@ -62,11 +62,11 @@ def test_bare_variable_array_index_bind_still_parses() -> None:
             [0.0, 0.5],
         ]
         Float[2] row = h[1]
-        Operator H = sum (q in Index<0..1>) {
+        Operator H = Sigma (q In Index<0..1>) {
             row[q] * Z[q]
         }
-        state a = |0>
-        measure a
+        State a = |0>
+        Measure a
     }
     """
     compiled = compile_source(src)

@@ -1,8 +1,8 @@
-"""AT-TDD: LISS-0377 -- measure of a DensityState-returning Call
+"""AT-TDD: LISS-0377 -- Measure of a DensityState-returning Call
 matches the named-Var POVM/mixed path (was silently empty / skipped
 domain check).
 
-Design decision: docs/issues/LISS-0377-measure-call-mixed-dispatch.md
+Design decision: docs/issues/LISS-0377-Measure-call-mixed-dispatch.md
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ pub fn main() -> Unit {
         RawMatrix([[0.25, 0.0], [0.0, 0.75]])
     )
     POVM<Qubit> z = ComputationalBasis()
-    measure rho with z
+    Measure rho with z
 }
 """
 
@@ -39,7 +39,7 @@ fn make() -> DensityState<Qubit> {
 }
 pub fn main() -> Unit {
     POVM<Qubit> z = ComputationalBasis()
-    measure make() with z
+    Measure make() with z
 }
 """
 
@@ -50,7 +50,7 @@ pub fn main() -> Unit {
         RawMatrix([[1.0, 0.0], [0.0, 0.0]])
     )
     POVM<Position> p = ComputationalBasis()
-    measure rho with p
+    Measure rho with p
 }
 """
 
@@ -61,7 +61,7 @@ fn make() -> DensityState<Qubit> {
 }
 pub fn main() -> Unit {
     POVM<Position> p = ComputationalBasis()
-    measure make() with p
+    Measure make() with p
 }
 """
 
@@ -75,7 +75,7 @@ def test_named_density_measure_remains_correct() -> None:
 
 
 def test_call_density_measure_matches_named_path() -> None:
-    """A zero-arg Call returning DensityState must measure like the Var path,
+    """A zero-arg Call returning DensityState must Measure like the Var path,
     not succeed with an empty marginal."""
     result = run_source(_CALL_MATCH)
     assert result.status == "succeeded", result.diagnostics

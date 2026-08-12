@@ -21,12 +21,12 @@ def test_deferred_eligible_main_sets_flag() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = coin()
-            state b = mix (a) {
+            State a = Coin()
+            State b = Mix (a) {
                 0 -> 10
                 1 -> 20
             }
-            measure b
+            Measure b
         }
         """,
         stdout=io.StringIO(),
@@ -44,13 +44,13 @@ def test_inspect_forces_eager_path() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = coin()
-            state b = mix (a) {
+            State a = Coin()
+            State b = Mix (a) {
                 0 -> 10
                 1 -> 20
             }
-            state viewed = inspect(b)
-            measure viewed
+            State viewed = Inspect(b)
+            Measure viewed
         }
         """,
         stdout=io.StringIO(),
@@ -64,8 +64,8 @@ def test_inspect_forces_eager_path() -> None:
 
 def test_deferred_matches_eager_measure_under_same_seed() -> None:
     src_body = """
-            state a = coin()
-            state b = mix (a) {
+            State a = Coin()
+            State b = Mix (a) {
                 0 -> 10
                 1 -> 20
             }
@@ -75,7 +75,7 @@ def test_deferred_matches_eager_measure_under_same_seed() -> None:
         package t
         pub fn main() -> Unit {{
 {src_body}
-            measure b
+            Measure b
         }}
         """,
         stdout=io.StringIO(),
@@ -86,8 +86,8 @@ def test_deferred_matches_eager_measure_under_same_seed() -> None:
         package t
         pub fn main() -> Unit {{
 {src_body}
-            state viewed = inspect(b)
-            measure viewed
+            State viewed = Inspect(b)
+            Measure viewed
         }}
         """,
         stdout=io.StringIO(),
@@ -107,17 +107,17 @@ def test_bind_cone_includes_dependencies() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = coin()
-            state b = mix (a) { 0 -> 10, 1 -> 20 }
-            measure b
+            State a = Coin()
+            State b = Mix (a) { 0 -> 10, 1 -> 20 }
+            Measure b
         }
         """
     )
     assert compiled.ok, compiled.diagnostics
     assert compiled.unit is not None and compiled.unit.main is not None
     binds = [s for s in compiled.unit.main.body.stmts if isinstance(s, StateBind)]
-    measure = compiled.unit.main.body.stmts[-1]
-    needed = Evaluator._deferred_bind_cone(binds, measure.expr)
+    Measure = compiled.unit.main.body.stmts[-1]
+    needed = Evaluator._deferred_bind_cone(binds, Measure.expr)
     assert "a" in needed and "b" in needed
 
 
@@ -126,15 +126,15 @@ def test_dag_lowerer_still_builds_measure_node() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = coin()
-            measure a
+            State a = Coin()
+            Measure a
         }
         """
     )
     assert compiled.ok and compiled.unit is not None
     dag = lower_source_ast(compiled.unit)
     assert dag.measure is not None
-    assert "coin" in dag.summary()["kinds"]
+    assert "coin" in dag.summary()["kinds"]  # internal DAG node-kind label, always lowercase
 
 
 if __name__ == "__main__":

@@ -27,7 +27,7 @@ def _non_eof(tokens):
 
 def test_lossless_lex_retains_comment_and_whitespace_trivia() -> None:
     lossless_lex, _ = _load_cst_api()
-    source = "package demo  // package note\n\npub fn main() -> Unit {\n    measure |0>\n}\n"
+    source = "package demo  // package note\n\npub fn main() -> Unit {\n    Measure |0>\n}\n"
 
     tokens = lossless_lex(source)
 
@@ -50,7 +50,7 @@ def test_lossless_lex_retains_comment_and_whitespace_trivia() -> None:
 
 def test_lossless_lex_preserves_ascii_math_token_kinds() -> None:
     lossless_lex, _ = _load_cst_api()
-    source = f"state psi = |0{KET_CLOSE} // ascii ket\nmeasure psi\n"
+    source = f"State psi = |0{KET_CLOSE} // ascii ket\nMeasure psi\n"
 
     tokens = lossless_lex(source)
 
@@ -65,7 +65,7 @@ def test_lossless_lex_preserves_ascii_math_token_kinds() -> None:
 
 def test_build_lossless_cst_exposes_root_and_original_source() -> None:
     _, build_lossless_cst = _load_cst_api()
-    source = "package demo\npub fn main() -> Unit {\n    measure |0>\n}\n"
+    source = "package demo\npub fn main() -> Unit {\n    Measure |0>\n}\n"
 
     cst = build_lossless_cst(source)
 

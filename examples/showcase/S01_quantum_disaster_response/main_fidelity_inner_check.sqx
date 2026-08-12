@@ -5,11 +5,11 @@
 package examples.showcase.s01_disaster.protocol_observe
 
 pub fn main() -> Unit {
-    state prior = |+>
-    state current = |+>
-    state overlap = inner(prior, current)
+    State prior = |+>
+    State current = |+>
+    State overlap = inner(prior, current)
     Operator projector = outer(current, prior)
-    state probe = |0>
-    state probe = apply(projector, probe)
-    measure overlap tracing_out prior, current, probe
+    State probe = |0>
+    State probe = apply(projector, probe)
+    Measure overlap tracing_out prior, current, probe
 }

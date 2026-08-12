@@ -46,8 +46,8 @@ def test_classical_and_or_truth_table() -> None:
         Bool r2 = both(t, f)
         Bool r3 = either(f, t)
         Bool r4 = either(f, f)
-        state s = |0>
-        measure s
+        State s = |0>
+        Measure s
     }
     """
     compiled = compile_source(src)
@@ -65,8 +65,8 @@ def test_non_bool_operands_rejected_at_typecheck_not_parse() -> None:
             Float x = 1.0
             Float y = 2.0
             Float z = x && y
-            state s = |0>
-            measure s
+            State s = |0>
+            Measure s
         }
         """
     )
@@ -81,18 +81,18 @@ def test_state_bool_and_is_a_genuine_per_world_pushforward() -> None:
     not match two independent fair coins both landing true (P=0.25)."""
     src = """
     pub fn main() -> Unit {
-        state bit1 = coin()
-        State<Bool> a = mix (bit1) {
-          0 -> dirac(false),
-          else -> dirac(true),
+        State bit1 = Coin()
+        State<Bool> a = Mix (bit1) {
+          0 -> Dirac(false),
+          else -> Dirac(true),
         }
-        state bit2 = coin()
-        State<Bool> b = mix (bit2) {
-          0 -> dirac(false),
-          else -> dirac(true),
+        State bit2 = Coin()
+        State<Bool> b = Mix (bit2) {
+          0 -> Dirac(false),
+          else -> Dirac(true),
         }
-        state c = a && b
-        measure c tracing_out a, b
+        State c = a && b
+        Measure c tracing_out a, b
     }
     """
     compiled = compile_source(src)
@@ -120,11 +120,11 @@ def test_operator_dsl_binder_guard_and_or_unaffected() -> None:
     src = """
     pub fn main() -> Unit {
         QubitRegister<3> register = system()
-        Operator H = sum (i in Index<0..2>, j in Index<0..2>) where i < j && j < 2 {
+        Operator H = Sigma (i In Index<0..2>, j In Index<0..2>) where i < j && j < 2 {
             Z[i] * Z[j]
         }
-        state a = |0>
-        measure a
+        State a = |0>
+        Measure a
     }
     """
     compiled = compile_source(src)

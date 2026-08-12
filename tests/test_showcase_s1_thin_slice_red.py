@@ -54,11 +54,11 @@ def test_s1_source_exercises_required_surfaces() -> None:
     for path in _SHOWCASE_ROOT.rglob("*.sqx"):
         texts.append(path.read_text(encoding="utf-8"))
     blob = "\n".join(texts)
-    assert "mix (" in blob
+    assert "Mix (" in blob
     assert "expect(" in blob
-    assert "inspect(" in blob
-    assert "measure " in blob
-    assert "evolve " in blob
+    assert "Inspect(" in blob
+    assert "Measure " in blob
+    assert "Evolve " in blob
     assert "Float " in blob
     assert "Operator " in blob
     assert "struct " in blob or "namespace " in blob
@@ -71,8 +71,8 @@ def test_s1_classical_if_still_fail_closed() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state x = |0>
-            if (true) { measure x }
+            State x = |0>
+            if (true) { Measure x }
         }
         """
     )

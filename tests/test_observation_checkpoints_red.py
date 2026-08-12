@@ -56,12 +56,12 @@ def test_simulator_snapshot_requires_explicit_simulator_capability():
     CheckpointIdentity, _, ObservationRequest, _, SnapshotCapability = _api()
 
     request = ObservationRequest(
-        checkpoint=CheckpointIdentity(name="debug", stage="evolve"),
+        checkpoint=CheckpointIdentity(name="debug", stage="Evolve"),
         observable="state",
         projection="density_snapshot",
         target_lane="simulator",
         capability=SnapshotCapability("density_snapshot", lane="simulator"),
-        source_formula="evolve psi under H",
+        source_formula="Evolve psi under H",
     )
 
     assert request.portable is False
@@ -73,12 +73,12 @@ def test_qpu_snapshot_is_rejected_as_non_portable():
 
     try:
         ObservationRequest(
-            checkpoint=CheckpointIdentity(name="qpu-debug", stage="evolve"),
+            checkpoint=CheckpointIdentity(name="qpu-debug", stage="Evolve"),
             observable="state",
             projection="state_vector",
             target_lane="qpu",
             capability=SnapshotCapability("state_vector", lane="simulator"),
-            source_formula="evolve psi under H",
+            source_formula="Evolve psi under H",
         )
     except ObservationValidationError as error:
         assert error.code == "OBSERVATION_QPU_SNAPSHOT_UNSUPPORTED"

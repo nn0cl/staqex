@@ -54,6 +54,8 @@ class TokenKind(Enum):
     UNTIL = auto()
     MAX = auto()
     ONTO = auto()
+    IN_SET = auto()  # `In` (LISS-0416): Sigma/Pi binder-domain membership,
+    # distinct from lowercase `in` (forEach's classical collection iteration)
 
     # Forbidden (hard error — still emitted so diagnostics have spans)
     FORBIDDEN = auto()
@@ -118,20 +120,20 @@ ACTIVE: dict[str, TokenKind] = {
     "struct": TokenKind.STRUCT,
     "fn": TokenKind.FUN,
     "return": TokenKind.RETURN,
-    "forEach": TokenKind.FOREACH,
     "dynamic": TokenKind.DYNAMIC,
-    "state": TokenKind.STATE,
     "let": TokenKind.LET,
-    "mix": TokenKind.WHEN,
-    "superpose": TokenKind.SUPERPOSE,
-    "coin": TokenKind.COIN,
-    "dirac": TokenKind.DIRAC,
-    "vacuum": TokenKind.VACUUM,
-    "evolve": TokenKind.EVOLVE,
-    "measure": TokenKind.MEASURE,
-    "snapshot": TokenKind.SNAPSHOT,
-    "inspect": TokenKind.INSPECT,
     "this": TokenKind.THIS,
+    # LISS-0419 (ADR 0191 amendment): capitalized blackboard-verb keywords.
+    "ForEach": TokenKind.FOREACH,
+    "Mix": TokenKind.WHEN,
+    "Superpose": TokenKind.SUPERPOSE,
+    "Coin": TokenKind.COIN,
+    "Dirac": TokenKind.DIRAC,
+    "Vacuum": TokenKind.VACUUM,
+    "Evolve": TokenKind.EVOLVE,
+    "Measure": TokenKind.MEASURE,
+    "Snapshot": TokenKind.SNAPSHOT,
+    "Inspect": TokenKind.INSPECT,
     "val": TokenKind.VAL,
     "var": TokenKind.VAR,
     "module": TokenKind.MODULE,
@@ -153,6 +155,7 @@ CONTEXTUAL: dict[str, TokenKind] = {
     "until": TokenKind.UNTIL,
     "max": TokenKind.MAX,
     "onto": TokenKind.ONTO,
+    "In": TokenKind.IN_SET,
 }
 
 FORBIDDEN: set[str] = {
@@ -173,12 +176,23 @@ FORBIDDEN: set[str] = {
 }
 
 RETIRED: dict[str, str] = {
-    "observe": "measure",
-    "span": "mix",
-    "when": "mix",
+    "observe": "Measure",
+    "span": "Mix",
+    "when": "Mix",
     "fun": "fn",
     "public": "pub",
     "trait": "interface",
+    # LISS-0419 (ADR 0191 amendment): capitalized blackboard-verb keywords.
+    "forEach": "ForEach",
+    "mix": "Mix",
+    "superpose": "Superpose",
+    "coin": "Coin",
+    "dirac": "Dirac",
+    "vacuum": "Vacuum",
+    "evolve": "Evolve",
+    "measure": "Measure",
+    "snapshot": "Snapshot",
+    "inspect": "Inspect",
 }
 
 FORBIDDEN_MESSAGES: dict[str, str] = {

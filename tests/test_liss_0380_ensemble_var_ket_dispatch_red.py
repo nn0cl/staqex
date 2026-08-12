@@ -22,7 +22,7 @@ def test_ensemble_ketlit_remains_ok() -> None:
         pub fn main() -> Unit {
             DensityState<Qubit> rho = DensityState(Ensemble([(1.0, |0>)]))
             POVM<Qubit> z = ComputationalBasis()
-            measure rho with z
+            Measure rho with z
         }
         """
     )
@@ -38,7 +38,7 @@ def test_ensemble_var_ket_matches_ketlit() -> None:
             State<Qubit> psi = |0>
             DensityState<Qubit> rho = DensityState(Ensemble([(1.0, psi)]))
             POVM<Qubit> z = ComputationalBasis()
-            measure rho with z
+            Measure rho with z
         }
         """
     )

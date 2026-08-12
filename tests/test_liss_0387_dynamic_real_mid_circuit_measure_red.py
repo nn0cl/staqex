@@ -24,15 +24,15 @@ _SOURCE_MEASURE_ONLY = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { }
             1 => { }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -44,7 +44,7 @@ def _codes(diagnostics) -> set[str]:
 def test_measure_only_program_consistent_outcome_runs_to_completion() -> None:
     """Scenario: a supplied outcome consistent with the prepared state (q =
     |0>, outcome "0") lets execution proceed normally -- the Static tail
-    (`observed = coin(); measure observed`) still produces a real sample.
+    (`observed = Coin(); Measure observed`) still produces a real sample.
     """
     compiled = compile_source(_SOURCE_MEASURE_ONLY)
     assert compiled.unit is not None
@@ -60,9 +60,9 @@ def test_measure_only_program_consistent_outcome_runs_to_completion() -> None:
 def test_measure_only_program_inconsistent_outcome_vacuums_the_run() -> None:
     """Scenario: real collapse checks consistency against amplitudes, not a
     bookkeeping label. `state q = |0>` deterministically prepares q = 0;
-    supplying outcome "1" for the mid-circuit measure is physically
+    supplying outcome "1" for the mid-circuit Measure is physically
     impossible (zero probability). A genuine Lueders projection
-    (`project_coord`) must vacuum the run -- a label-only implementation
+    (`project_coord`) must Vacuum the run -- a label-only implementation
     would accept any supplied outcome unconditionally and proceed normally.
     """
     compiled = compile_source(_SOURCE_MEASURE_ONLY)
@@ -74,8 +74,8 @@ def test_measure_only_program_inconsistent_outcome_vacuums_the_run() -> None:
 
     assert result.measure is not None
     assert result.measure.vacuum is True, (
-        "expected the physically-impossible supplied outcome to vacuum the "
-        "run via real project_coord collapse; a non-vacuum result means "
+        "expected the physically-impossible supplied outcome to Vacuum the "
+        "run via real project_coord collapse; a non-Vacuum result means "
         "the outcome was accepted as a label without checking amplitudes"
     )
 
@@ -84,21 +84,21 @@ _SOURCE_MATCH_REUSE = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { apply(X, q) }
             1 => { }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
 
 def test_match_arm_reuse_applies_gate_for_real() -> None:
-    """Scenario: post-measure reuse inside a match arm actually evolves
+    """Scenario: post-Measure reuse inside a match arm actually evolves
     state (Decision 3), not a capability-flag bookkeeping decision.
     `apply(X, q)` inside the matching arm (bit=0, consistent with the
     prepared |0>) must flip q to a real 1 via the normal Call dispatch --
@@ -130,7 +130,7 @@ def test_match_arm_reuse_applies_gate_for_real() -> None:
 
 
 def test_hir_dynamic_measure_bind_does_not_trigger_implicit_discard() -> None:
-    """Controller<T> = measure wire must be recognized as consuming `wire`
+    """Controller<T> = Measure wire must be recognized as consuming `wire`
     for the linear-use checker (LISS-0387 Decision 4), not flagged as an
     implicit discard the way an untouched `state` var would be.
     """

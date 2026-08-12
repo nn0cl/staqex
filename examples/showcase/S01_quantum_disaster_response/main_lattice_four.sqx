@@ -18,11 +18,11 @@ pub fn main() -> Unit {
     Time dur_h = 0.15.fs
     Time dur_basis = 0.1.fs
 
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state d = |1>
-    state (a, b, c, d) = evolve { (a, b, c, d) under H for dur_h using Suzuki(order = 2, steps = 2) }.run()
-    state (a, b) = evolve { (a, b) under H_basis for dur_basis using Suzuki(order = 2, steps = 2) }.run()
-    measure a tracing_out b, c, d
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State d = |1>
+    State (a, b, c, d) = Evolve { (a, b, c, d) under H for dur_h using Suzuki(order = 2, steps = 2) }.run()
+    State (a, b) = Evolve { (a, b) under H_basis for dur_basis using Suzuki(order = 2, steps = 2) }.run()
+    Measure a tracing_out b, c, d
 }

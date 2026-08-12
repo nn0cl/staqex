@@ -29,15 +29,15 @@ def test_reset_of_unknown_wire_inside_match_arm_fails_closed() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { reset ghost }
             1 => { }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
     compiled = compile_source(source)
@@ -55,15 +55,15 @@ def test_reset_of_wire_known_from_before_the_match_does_not_false_positive() -> 
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { reset q }
             1 => { }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
     compiled = compile_source(source)
@@ -73,8 +73,8 @@ pub fn main() -> Unit {
 
 
 def test_measure_only_fixture_still_produces_no_implicit_discard() -> None:
-    """Scenario 3 (regression guard): LISS-0387's measure-only fixture
-    (measure, then arms with no reset) must still produce NO
+    """Scenario 3 (regression guard): LISS-0387's Measure-only fixture
+    (Measure, then arms with no reset) must still produce NO
     LINEAR_IMPLICIT_DISCARD. This is exactly the false-positive the
     rejected "seeded nested _analyze_block per arm" design would have
     caused (q consumed before the match would appear undischarged inside
@@ -85,15 +85,15 @@ def test_measure_only_fixture_still_produces_no_implicit_discard() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { }
             1 => { }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
     compiled = compile_source(source)
@@ -110,8 +110,8 @@ def test_nested_match_inside_arm_unknown_reset_is_still_caught() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => {
                 match bit {
@@ -122,8 +122,8 @@ pub fn main() -> Unit {
             1 => { }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
     compiled = compile_source(source)
@@ -140,12 +140,12 @@ def test_top_level_reset_behavior_is_unaffected() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         reset ghost_top_level
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
     compiled = compile_source(source)

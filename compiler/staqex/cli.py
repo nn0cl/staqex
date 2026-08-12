@@ -208,14 +208,14 @@ def cmd_repl(args: argparse.Namespace) -> int:
         if line.strip() == "" and buf:
             source = "\n".join(buf) + "\n"
             buf.clear()
-            if "measure" not in source:
+            if "Measure" not in source:
                 last = None
                 for ln in source.splitlines():
                     s = ln.strip()
-                    if s.startswith("state "):
-                        last = s.split("=")[0].replace("state", "").strip()
+                    if s.startswith("State "):
+                        last = s.split("=")[0].replace("State", "").strip()
                 if last:
-                    source = source + f"measure {last}\n"
+                    source = source + f"Measure {last}\n"
             result = host_run_source(
                 source,
                 settings={"target": "local", "seed": seed},

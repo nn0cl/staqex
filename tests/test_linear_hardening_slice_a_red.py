@@ -22,9 +22,9 @@ def test_implicit_discard_fails_compile_source() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> leftover = coin()
-            State<Int> q = coin()
-            measure q
+            State<Int> leftover = Coin()
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -40,9 +40,9 @@ def test_duplicate_alias_fails_compile_source() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> q = coin()
+            State<Int> q = Coin()
             State<Int> alias = q
-            measure alias
+            Measure alias
         }
         """
     )

@@ -41,8 +41,8 @@ theory T {
     Operator H = n * X
 }
 pub fn main() -> Unit {
-    State<Int> q = coin()
-    measure q
+    State<Int> q = Coin()
+    Measure q
 }
 """
     with tempfile.TemporaryDirectory() as td:
@@ -81,8 +81,8 @@ execution Run {
     shots = 1000
 }
 pub fn main() -> Unit {
-    State<Int> q = coin()
-    measure q
+    State<Int> q = Coin()
+    Measure q
 }
 """
     with tempfile.TemporaryDirectory() as td:

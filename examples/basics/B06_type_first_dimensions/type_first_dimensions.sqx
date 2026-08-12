@@ -5,26 +5,26 @@ import staqex.math.*
 // Dimension tags live on State payloads. Classical Type-First heads
 // (`Delta<Time> dt = 0.5.s`) mixed into State arithmetic are a language
 // follow-up — see LISS-0122 notes.
-State<Time> dt = dirac(0.5.s)
-State<Mass> m = dirac(1.0.kg)
-State<Stiffness> k = dirac(1.0.N_m)
+State<Time> dt = Dirac(0.5.s)
+State<Mass> m = Dirac(1.0.kg)
+State<Stiffness> k = Dirac(1.0.N_m)
 
-state bit = coin()
+State bit = Coin()
 
-State<Length> x = mix (bit) {
+State<Length> x = Mix (bit) {
   0 -> 0.0.m,
   else -> 1.0.m,
 }
-State<Momentum> p = mix (bit) {
+State<Momentum> p = Mix (bit) {
   0 -> 1.0.kg_m_s,
   else -> 0.0.kg_m_s,
 }
 
-state (x, p) = evolve (x, p) times 2 {
+State (x, p) = Evolve (x, p) times 2 {
   (x + (dt / m) * p, p - (dt * k) * x)
 }
 
-state viewed = inspect(x)
+State viewed = Inspect(x)
 // Type-First State leftovers leave via partial trace (ADR 0173 / LISS-0311).
 // Not ritual vacuum rebinds — dt/m/k/p remain dimensioned linear carriers.
-measure viewed tracing_out dt, m, k, p
+Measure viewed tracing_out dt, m, k, p

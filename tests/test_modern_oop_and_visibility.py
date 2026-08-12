@@ -70,7 +70,7 @@ class SSHSystem {
 pub fn main() -> Unit {
   SSHSystem s = SSHSystem()
   Float leaked = s._t
-  measure leaked
+  Measure leaked
 }
 """
     compiled = compile_source(src)
@@ -94,7 +94,7 @@ class SSHSystem {
 pub fn main() -> Unit {
   SSHSystem s = SSHSystem()
   Float x = s.step()
-  measure x
+  Measure x
 }
 """
     compiled = compile_source(src)
@@ -134,7 +134,7 @@ pub fn main() -> Unit {
   Topology.SSH.SSHParams p = Topology.SSH.SSHParams(0.5, 1.5)
   Topology.SSH.SSHSystem sys = Topology.SSH.SSHSystem(p, Topology.SSH.BoundaryCondition.Open)
   Float ok = sys.step()
-  measure ok
+  Measure ok
 }
 """
     compiled = compile_source(src)
@@ -161,7 +161,7 @@ pub fn main() -> Unit {
   P p = P(2.5)
   Box b = Box(p)
   Float v = b.read()
-  measure v
+  Measure v
 }
 """
     result = run_source(src, seed=0, stdout=io.StringIO())
@@ -205,7 +205,7 @@ package demo.app
 import demo.lib.secret
 pub fn main() -> Unit {
   Float y = hidden()
-  measure y
+  Measure y
 }
 """,
             encoding="utf-8",
@@ -233,8 +233,8 @@ package t
 protected class Bad {
 }
 pub fn main() -> Unit {
-  state x = dirac(0)
-  measure x
+  State x = Dirac(0)
+  Measure x
 }
 """
     compiled = compile_source(src)

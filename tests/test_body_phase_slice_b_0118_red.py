@@ -24,8 +24,8 @@ def test_report_may_reference_execution_symbol() -> None:
             Classical x = n
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -50,8 +50,8 @@ def test_theory_must_not_see_report_symbol() -> None:
             Operator H = out * X
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -77,8 +77,8 @@ def test_experiment_must_not_see_report_symbol() -> None:
             Classical x = out
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )

@@ -24,12 +24,12 @@ from compiler.staqex.cli import build_parser, cmd_run  # noqa: E402
 from compiler.staqex.pipeline import compile_source  # noqa: E402
 
 BELL = as_main("""
-state q = coin()
-state result = mix (q) {
-  0 -> dirac(0),
-  else -> dirac(1),
+State q = Coin()
+State result = Mix (q) {
+  0 -> Dirac(0),
+  else -> Dirac(1),
 }
-measure result
+Measure result
 """)
 
 
@@ -82,7 +82,7 @@ def run() -> list[CaseResult]:
             CaseResult(
                 "SV-11",
                 "sv11-gate-map",
-                "coin→H, when-copy→CX, measure",
+                "Coin→H, when-copy→CX, Measure",
                 True,
                 ["lower"],
             )

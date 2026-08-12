@@ -19,12 +19,12 @@ from compiler.staqex.pipeline import compile_source  # noqa: E402
 
 
 PORTABLE = as_main("""
-state q = coin()
-state result = mix (q) {
-  0 -> dirac(0),
-  else -> dirac(1),
+State q = Coin()
+State result = Mix (q) {
+  0 -> Dirac(0),
+  else -> Dirac(1),
 }
-measure result
+Measure result
 """)
 
 
@@ -45,7 +45,7 @@ def run() -> list[CaseResult]:
             CaseResult(
                 "SV-10",
                 "sv10-openqasm-bell",
-                "coin/when/measure → OpenQASM H+CX",
+                "Coin/when/Measure → OpenQASM H+CX",
                 True,
                 ["emit_openqasm3"],
             )

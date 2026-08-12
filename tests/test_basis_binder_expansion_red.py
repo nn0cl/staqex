@@ -22,9 +22,9 @@ def test_basis_binder_domain_lowers() -> None:
     package t
     pub fn main() -> Unit {
         QubitRegister<2> register = system()
-        Operator H = sum (i in Basis<2>) { Z[i] }
-        state a = |0>
-        measure a
+        Operator H = Sigma (i In Basis<2>) { Z[i] }
+        State a = |0>
+        Measure a
     }
     """
     codes = _codes(source)
@@ -42,9 +42,9 @@ def test_rev_basis_binder_domain_lowers() -> None:
     package t
     pub fn main() -> Unit {
         QubitRegister<2> register = system()
-        Operator H = sum (i in rev(Basis<2>)) { Z[i] }
-        state a = |0>
-        measure a
+        Operator H = Sigma (i In rev(Basis<2>)) { Z[i] }
+        State a = |0>
+        Measure a
     }
     """
     codes = _codes(source)
@@ -62,9 +62,9 @@ def test_energy_level_binder_domain_still_deferred() -> None:
         package t
         pub fn main() -> Unit {
             QubitRegister<2> register = system()
-            Operator H = sum (i in EnergyLevel<2>) { Z[i] }
-            state a = |0>
-            measure a
+            Operator H = Sigma (i In EnergyLevel<2>) { Z[i] }
+            State a = |0>
+            Measure a
         }
         """
     )

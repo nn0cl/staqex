@@ -1,5 +1,5 @@
 package t
 pub fn main() -> Unit {
-    state psi = |0>
-    measure psi
+    State psi = |0>
+    Measure psi
 }

@@ -67,7 +67,7 @@ def main() -> int:
     if result.measurements:
         envelope = result.measurements[0]
         print(f"selection pattern: {envelope.value}")
-        print(f"vacuum: {envelope.vacuum}")
+        print(f"Vacuum: {envelope.vacuum}")
     else:
         print("no terminal measurement")
     return 0 if result.status == "succeeded" else 1

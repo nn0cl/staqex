@@ -1,4 +1,4 @@
-"""SV-28: Sparse Pauli-sum IR for multi-qubit evolve (ADR 0050)."""
+"""SV-28: Sparse Pauli-sum IR for multi-qubit Evolve (ADR 0050)."""
 
 from __future__ import annotations
 
@@ -66,8 +66,8 @@ def run() -> list[CaseResult]:
 Float J = 1.0
 Float h = 0.5
 Operator H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
-state a = |0>
-measure a
+State a = |0>
+Measure a
 """
         )
         compiled = compile_source(src)
@@ -107,8 +107,8 @@ measure a
 Float J = 1.0
 Float h = 0.25
 Operator H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
-state a = |0>
-measure a
+State a = |0>
+Measure a
 """
         )
         compiled = compile_source(src)
@@ -160,12 +160,12 @@ measure a
 Energy J = 1.0.eV to J
 Time dur = 1.0.fs
 Operator H = -J * (Z[0]*Z[1] + Z[1]*Z[2] + Z[2]*Z[3] + Z[3]*Z[0])
-state q0 = |+>
-state q1 = |0>
-state q2 = |0>
-state q3 = |0>
-state (q0, q1, q2, q3) = evolve { (q0, q1, q2, q3) under H for dur }.run()
-measure q0
+State q0 = |+>
+State q1 = |0>
+State q2 = |0>
+State q3 = |0>
+State (q0, q1, q2, q3) = Evolve { (q0, q1, q2, q3) under H for dur }.run()
+Measure q0
 """
             )
         )
@@ -176,7 +176,7 @@ measure q0
             CaseResult(
                 "SV-28",
                 "sv28-ising4-norm",
-                "4-qubit sparse evolve preserves Born norm",
+                "4-qubit sparse Evolve preserves Born norm",
                 True,
                 ["n=4"],
             )
@@ -186,7 +186,7 @@ measure q0
             CaseResult(
                 "SV-28",
                 "sv28-ising4-norm",
-                "4-qubit sparse evolve preserves Born norm",
+                "4-qubit sparse Evolve preserves Born norm",
                 False,
                 [],
                 error_code=e.code,
@@ -200,7 +200,7 @@ measure q0
         ).read_text(encoding="utf-8")
         result, _ = _eval(src)
         if result.measure is None:
-            raise AssertionFailure("MEASURE", "no measure")
+            raise AssertionFailure("MEASURE", "no Measure")
         out.append(
             CaseResult(
                 "SV-28",

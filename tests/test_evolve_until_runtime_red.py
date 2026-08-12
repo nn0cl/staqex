@@ -1,4 +1,4 @@
-"""AT-TDD: LISS-0012 bounded evolve-until runtime (Joint evaluator)."""
+"""AT-TDD: LISS-0012 bounded Evolve-until runtime (Joint evaluator)."""
 
 from __future__ import annotations
 
@@ -28,9 +28,9 @@ def test_hamiltonian_evolve_until_stops_when_predicate_holds() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state psi = evolve { psi under X for 1.5707963267948966.s until converged(psi) max 64 }.run()
-            measure psi
+            State psi = Dirac(0)
+            State psi = Evolve { psi under X for 1.5707963267948966.s until converged(psi) max 64 }.run()
+            Measure psi
         }
         """
     )
@@ -44,9 +44,9 @@ def test_hamiltonian_evolve_until_reports_max_steps_error() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |+>
-            state psi = evolve { psi under X for 1.s until converged(psi) max 2 }.run()
-            measure psi
+            State psi = |+>
+            State psi = Evolve { psi under X for 1.s until converged(psi) max 2 }.run()
+            Measure psi
         }
         """
     )
@@ -60,9 +60,9 @@ def test_evolve_until_predicate_does_not_consume_rng() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state psi = evolve { psi under X for 1.5707963267948966.s until converged(psi) max 64 }.run()
-            measure psi
+            State psi = Dirac(0)
+            State psi = Evolve { psi under X for 1.5707963267948966.s until converged(psi) max 64 }.run()
+            Measure psi
         }
         """,
         seed=11,
@@ -71,9 +71,9 @@ def test_evolve_until_predicate_does_not_consume_rng() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state psi = evolve { psi under X for 1.5707963267948966.s }.run()
-            measure psi
+            State psi = Dirac(0)
+            State psi = Evolve { psi under X for 1.5707963267948966.s }.run()
+            Measure psi
         }
         """,
         seed=11,
@@ -90,4 +90,4 @@ if __name__ == "__main__":
         test_evolve_until_predicate_does_not_consume_rng,
     ):
         test()
-    print("OK — evolve until runtime tests")
+    print("OK — Evolve until runtime tests")

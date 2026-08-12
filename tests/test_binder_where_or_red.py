@@ -22,11 +22,11 @@ def test_where_or_lowers() -> None:
     package t
     pub fn main() -> Unit {
         QubitRegister<3> register = system()
-        Operator H = sum (i in Index<0..2>, j in Index<0..2>) where i < j || j == 0 {
+        Operator H = Sigma (i In Index<0..2>, j In Index<0..2>) where i < j || j == 0 {
             Z[i] * Z[j]
         }
-        state a = |0>
-        measure a
+        State a = |0>
+        Measure a
     }
     """
     codes = _codes(source)
@@ -51,7 +51,7 @@ def test_statement_or_on_non_bool_operands_rejects_at_typecheck() -> None:
             Float x = 1.0
             Float y = 0.0
             Float z = x || y
-            measure z
+            Measure z
         }
         """
     )

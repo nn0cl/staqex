@@ -31,16 +31,16 @@ _SOURCE_ARM_ONLY_WIRE = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        state r = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        State r = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { reset r }
             1 => { }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -81,12 +81,12 @@ _SOURCE_CHAINED_MEASURE = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        state q2 = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        State q2 = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => {
-                Controller<Bit> bit2 = measure q2
+                Controller<Bit> bit2 = Measure q2
                 match bit2 {
                     0 => { }
                     1 => { }
@@ -95,14 +95,14 @@ pub fn main() -> Unit {
             1 => { }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
 
 def test_chained_measure_inside_arm_runs_without_kernel_error() -> None:
-    """Scenario 2: a second Controller-measure written inside a match arm,
+    """Scenario 2: a second Controller-Measure written inside a match arm,
     followed by a nested match dispatching on it, must genuinely execute
     -- not raise `KernelError("cannot bind expr MeasureExpr")` the way it
     does today (confirmed in Plan Design verification point 2). A
@@ -119,7 +119,7 @@ def test_chained_measure_inside_arm_runs_without_kernel_error() -> None:
     result = job.result()
 
     assert result.status == "succeeded", (
-        f"expected the chained measure to execute for real instead of "
+        f"expected the chained Measure to execute for real instead of "
         f"raising KernelError; got status={result.status!r}"
     )
     assert result.dynamic_trace is not None
@@ -127,10 +127,10 @@ def test_chained_measure_inside_arm_runs_without_kernel_error() -> None:
 
 
 def test_chained_measure_inconsistent_outcome_vacuums_for_real() -> None:
-    """Scenario 3: the chained measure must be a real `project_coord`
+    """Scenario 3: the chained Measure must be a real `project_coord`
     collapse, not a bookkeeping label -- supplying "1" for `bit2` is
     physically impossible against the prepared `q2 = |0>`, so the run must
-    vacuum (physical_outcome_confirmed=False), proving real collapse
+    Vacuum (physical_outcome_confirmed=False), proving real collapse
     rather than label acceptance.
     """
     job = submit_source(
@@ -145,7 +145,7 @@ def test_chained_measure_inconsistent_outcome_vacuums_for_real() -> None:
     assert result.status == "succeeded"
     assert result.dynamic_trace is not None
     assert result.dynamic_trace.physical_outcome_confirmed is False, (
-        "expected the physically-impossible bit2 outcome to vacuum the run "
+        "expected the physically-impossible bit2 outcome to Vacuum the run "
         "via a real project_coord collapse of q2"
     )
 
@@ -154,22 +154,22 @@ _SOURCE_CHAINED_MEASURE_NO_DISCARD = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        state q2 = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        State q2 = |0>
+        Controller<Bit> bit = Measure q
         match bit {
-            0 => { Controller<Bit> bit2 = measure q2 }
+            0 => { Controller<Bit> bit2 = Measure q2 }
             1 => { }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
 
 def test_hir_controller_measure_inside_arm_does_not_false_positive_discard() -> None:
-    """Scenario 4: once `hir.py` recognizes a Controller-measure inside a
+    """Scenario 4: once `hir.py` recognizes a Controller-Measure inside a
     match arm as consuming its wire (mirroring the existing top-level
     treatment), a measured-and-untouched-again `q2` must NOT be flagged as
     LINEAR_IMPLICIT_DISCARD.
@@ -192,12 +192,12 @@ def test_existing_direct_call_site_still_works_unchanged() -> None:
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
+        State q = |0>
         apply(X, q)
         reset q
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
     )

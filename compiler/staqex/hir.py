@@ -50,7 +50,7 @@ _KERNEL_PHASE = "kernel"
 # Gate / apply / hadamard rebinds are not listed here — Call moves are
 # governed by ADR 0168 (result-type driven), not by this kind set.
 LINEAR_CONSUME_KINDS = frozenset({
-    "measure",
+    "Measure",
     "static_uncompute_zero_reset",
 })
 
@@ -306,12 +306,25 @@ def _stmt_binds_state(
     # binds: some builtin calls infer coarsely (`qft(reg)` infers `State` while
     # it is declared and used as `Operator`), so it must not override a
     # declaration.
-    if stmt.ty is not None:
+    if stmt.ty is not None and not (stmt.ty.name == "State" and not stmt.ty.args):
         # ADR 0204 / LISS-0399: Continuous roots use the same
         # introduced/consumed LINEAR machinery as State roots -- consumed
         # only by finiteize (LISS-0401); an untouched root discards the
         # same as an unmeasured State.
         return stmt.ty.name in {"State", "DensityState", "Continuous"}
+    if stmt.ty is not None:
+        # LISS-0418: bare `State x = e` (Type-First, no `<T>`) is not a
+        # deliberate "this IS definitely linear" declaration the way
+        # `State<Qubit> x = e` is -- it is the canonical replacement for
+        # the old, always-inference-driven `state x = e`, so it must fall
+        # through to the same precise-inference check `via_state_keyword`
+        # already uses below, not the blind "declared State -> always
+        # linear" assumption (which mis-flagged e.g. a Partial-application
+        # value bound via bare `State` as an undischarged linear root).
+        bound_ty = state.expr_types.get(id(stmt.expr))
+        if bound_ty is not None:
+            return is_linear_carrier_ty(bound_ty)
+        return True
     if stmt.via_state_keyword:
         bound_ty = state.expr_types.get(id(stmt.expr))
         if bound_ty is not None:

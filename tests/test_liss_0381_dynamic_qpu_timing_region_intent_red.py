@@ -60,11 +60,11 @@ _SOURCE_WITHIN_COHERENT = """
 package t
 pub fn main() -> Unit {
     dynamic qpu within coherent_window {
-        State<Int> flag = coin()
-        measure flag
+        State<Int> flag = Coin()
+        Measure flag
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -72,11 +72,11 @@ _SOURCE_WITHIN_IDLE = """
 package t
 pub fn main() -> Unit {
     dynamic qpu within idle_window {
-        State<Int> flag = coin()
-        measure flag
+        State<Int> flag = Coin()
+        Measure flag
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -84,11 +84,11 @@ _SOURCE_NO_WITHIN = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        State<Int> flag = coin()
-        measure flag
+        State<Int> flag = Coin()
+        Measure flag
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -96,11 +96,11 @@ _SOURCE_MALFORMED_WITHIN = """
 package t
 pub fn main() -> Unit {
     dynamic qpu within {
-        State<Int> flag = coin()
-        measure flag
+        State<Int> flag = Coin()
+        Measure flag
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -108,13 +108,13 @@ _SOURCE_EVOLVE_INSIDE_WITHIN = """
 package t
 pub fn main() -> Unit {
     dynamic qpu within coherent_window {
-        state psi = |0>
+        State psi = |0>
         Operator H = X
-        state psi = evolve { psi under H for 1.0.s }.run()
-        measure psi
+        State psi = Evolve { psi under H for 1.0.s }.run()
+        Measure psi
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -122,15 +122,15 @@ _SOURCE_TWO_WITHIN_ONE_MAIN = """
 package t
 pub fn main() -> Unit {
     dynamic qpu within coherent_window {
-        State<Int> flag = coin()
-        measure flag
+        State<Int> flag = Coin()
+        Measure flag
     }
     dynamic qpu within idle_window {
-        State<Int> other = coin()
-        measure other
+        State<Int> other = Coin()
+        Measure other
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -138,11 +138,11 @@ _SOURCE_WITHIN_LITERAL = """
 package t
 pub fn main() -> Unit {
     dynamic qpu within 1 {
-        State<Int> flag = coin()
-        measure flag
+        State<Int> flag = Coin()
+        Measure flag
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -150,33 +150,33 @@ _SOURCE_WITHIN_CALL = """
 package t
 pub fn main() -> Unit {
     dynamic qpu within foo(bar) {
-        State<Int> flag = coin()
-        measure flag
+        State<Int> flag = Coin()
+        Measure flag
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
 _SOURCE_WITHIN_AS_IDENTIFIER = """
 package t
 pub fn main() -> Unit {
-    State<Int> within = coin()
-    measure within
+    State<Int> within = Coin()
+    Measure within
 }
 """
 
 _SOURCE_ADJACENT_STATIC_AND_DYNAMIC = """
 package t
 pub fn main() -> Unit {
-    state psi = |0>
+    State psi = |0>
     Operator H = X
-    state psi = evolve { psi under H for 1.0.s }.run()
+    State psi = Evolve { psi under H for 1.0.s }.run()
     dynamic qpu within coherent_window {
-        State<Int> flag = coin()
-        measure flag
+        State<Int> flag = Coin()
+        Measure flag
     }
-    measure psi
+    Measure psi
 }
 """
 
@@ -256,7 +256,7 @@ def test_timing_intent_does_not_make_the_lane_executable() -> None:
 
 
 def test_evolve_under_for_inside_within_keeps_timing_intent() -> None:
-    """Scenario: evolve under/for inside within keeps timing intent."""
+    """Scenario: Evolve under/for inside within keeps timing intent."""
     compiled = compile_source(_SOURCE_EVOLVE_INSIDE_WITHIN)
     stmts = _dynamic_stmts(compiled)
     codes = _codes(compiled.diagnostics)
@@ -311,7 +311,7 @@ def test_within_remains_usable_as_ordinary_identifier_outside_clause() -> None:
 
 
 def test_adjacent_static_evolve_and_dynamic_within_do_not_corrupt_each_other() -> None:
-    """Scenario: adjacent Static evolve and dynamic within do not corrupt each other."""
+    """Scenario: adjacent Static Evolve and dynamic within do not corrupt each other."""
     compiled = compile_source(_SOURCE_ADJACENT_STATIC_AND_DYNAMIC)
     stmts = _dynamic_stmts(compiled)
     codes = _codes(compiled.diagnostics)

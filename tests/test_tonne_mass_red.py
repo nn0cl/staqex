@@ -28,8 +28,8 @@ def test_tonne_kg_g_conversions() -> None:
             pub fn main() -> Unit {
                 Mass kg = 1.0.t to kg
                 Mass g = 1.0.t to g
-                state a = |0>
-                measure a
+                State a = |0>
+                Measure a
             }
             """
         ).diagnostics
@@ -46,8 +46,8 @@ def test_tonne_kg_g_conversions() -> None:
             Mass g = 1.0.t to g
             Mass raw = 1.0.t
             Mass back = 1000.0.kg to t
-            state a = |0>
-            measure a
+            State a = |0>
+            Measure a
         }
         """
     )

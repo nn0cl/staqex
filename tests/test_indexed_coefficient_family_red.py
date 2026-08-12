@@ -24,16 +24,16 @@ package t
 pub fn main() -> Unit {
     QubitRegister<3> register = system()
     Float[2] J = [1.0, 0.5]
-    Operator H = sum (i in Index<0..1>) {
+    Operator H = Sigma (i In Index<0..1>) {
         J[i] * Z[i] * Z[next(i)]
     }
-    state a = |0>
-    state b = |0>
-    state c = |0>
-    state (a, b, c) = evolve { (a, b, c) under H for 0.1 }.run()
-    measure a
-    measure b
-    measure c
+    State a = |0>
+    State b = |0>
+    State c = |0>
+    State (a, b, c) = Evolve { (a, b, c) under H for 0.1 }.run()
+    Measure a
+    Measure b
+    Measure c
 }
 """
 
@@ -44,7 +44,7 @@ def test_float_array_shape_mismatch_is_diagnosed() -> None:
         package t
         pub fn main() -> Unit {
             Float[2] J = [1.0]
-            measure J
+            Measure J
         }
         """
     )
@@ -57,11 +57,11 @@ def test_indexed_coefficient_lowers_in_binder() -> None:
     pub fn main() -> Unit {
         QubitRegister<3> register = system()
         Float[2] J = [1.0, 0.5]
-        Operator H = sum (i in Index<0..1>) {
+        Operator H = Sigma (i In Index<0..1>) {
             J[i] * Z[i] * Z[next(i)]
         }
-        state a = |0>
-        measure a
+        State a = |0>
+        Measure a
     }
     """
     codes = _codes(source)
@@ -80,13 +80,13 @@ def test_indexed_coefficient_evolve_runs() -> None:
     pub fn main() -> Unit {
         QubitRegister<2> register = system()
         Float[1] J = [1.0]
-        Operator H = sum (i in Index<0..0>) {
+        Operator H = Sigma (i In Index<0..0>) {
             J[i] * Z[i] * Z[next(i)]
         }
-        state a = |0>
-        state b = |0>
-        state (a, b) = evolve { (a, b) under H for 0.1 }.run()
-        measure a
+        State a = |0>
+        State b = |0>
+        State (a, b) = Evolve { (a, b) under H for 0.1 }.run()
+        Measure a
     }
     """
     codes = _codes(source)

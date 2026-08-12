@@ -7,7 +7,7 @@ fixture below (`_SOURCE_MATCH`) reuses the measured wire `q` inside its
 `match` arms, which LISS-0385's `infer_dynamic_capability_demand` flags as
 `needs_reuse=True`. Once LISS-0386 wires that inference into
 `build_dynamic_exec_request`, this fixture must fail closed instead of
-accept. The former "accepts" assertion now runs against a measure-only
+accept. The former "accepts" assertion now runs against a Measure-only
 fixture (`_SOURCE_MATCH_NO_REUSE`); `_SOURCE_MATCH` is repurposed below as
 the "now fails closed end-to-end" regression.
 """
@@ -39,15 +39,15 @@ _SOURCE_MATCH = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { apply(X, q) }
             1 => { apply(Z, q) }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -55,15 +55,15 @@ _SOURCE_MATCH_NO_REUSE = """
 package t
 pub fn main() -> Unit {
     dynamic qpu {
-        state q = |0>
-        Controller<Bit> bit = measure q
+        State q = |0>
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { }
             1 => { }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -86,7 +86,7 @@ def test_without_fake_gate_compile_still_rejects_dynamic_lane() -> None:
 def test_with_fake_gate_and_supplied_outcomes_accepts_without_physical_claim() -> None:
     """Scenario: with Fake gate and supplied outcomes, Fake accepts without physical claim.
 
-    LISS-0386 amendment: uses the measure-only fixture (no post-measure
+    LISS-0386 amendment: uses the Measure-only fixture (no post-Measure
     reuse of the measured wire) so this scenario stays true once inferred
     capability demand is auto-attached.
     """
@@ -104,7 +104,7 @@ def test_with_fake_gate_and_supplied_outcomes_accepts_without_physical_claim() -
     assert result.dynamic_trace is not None
     assert result.dynamic_trace.physical_execution_claimed is False
     assert result.dynamic_trace.controller_bindings.get("bit") == "1"
-    assert result.measurements  # Static terminal measure still present
+    assert result.measurements  # Static terminal Measure still present
     assert all(
         "bit" not in str(getattr(envelope, "value", ""))
         for envelope in result.measurements

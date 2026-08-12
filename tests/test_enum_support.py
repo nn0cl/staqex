@@ -29,8 +29,8 @@ enum BoundaryCondition {
 }
 pub fn main() -> Unit {
     BoundaryCondition bc = BoundaryCondition.Open
-    state x = dirac(0)
-    measure x
+    State x = Dirac(0)
+    Measure x
 }
 """
     compiled = compile_source(src)
@@ -51,8 +51,8 @@ package t
 enum BoundaryCondition { Periodic, Open }
 pub fn main() -> Unit {
     BoundaryCondition bc = 1
-    state x = dirac(0)
-    measure x
+    State x = Dirac(0)
+    Measure x
 }
 """
     codes = [d.get("code") for d in compile_source(src).diagnostics]
@@ -65,8 +65,8 @@ package t
 enum Basis { Z, X }
 pub fn main() -> Unit {
     Basis b = "Z"
-    state x = dirac(0)
-    measure x
+    State x = Dirac(0)
+    Measure x
 }
 """
     codes = [d.get("code") for d in compile_source(src).diagnostics]
@@ -81,8 +81,8 @@ namespace Geometry {
 }
 pub fn main() -> Unit {
   Geometry.BoundaryCondition bc = Geometry.BoundaryCondition.Periodic
-  state x = dirac(0)
-  measure x
+  State x = Dirac(0)
+  Measure x
 }
 """
     compiled = compile_source(src)

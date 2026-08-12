@@ -10,7 +10,7 @@ Pipeline:
 Honesty:
   - Not Kernel Continuous; not city-wide continuous QC
   - Not a rewrite of main_disaster_response.sqx desk packs
-  - Demonstrates causal map: Host zone feed → classical coeffs → evolve → measure
+  - Demonstrates causal map: Host zone feed → classical coeffs → Evolve → Measure
   - Full OS spine remains the constellation main; this is the compose-fed seat link
 """
 
@@ -73,7 +73,7 @@ def zone_atoms_to_plan_coeffs(
 
 
 def _finite_plan_source(congestion: float, fairness: float) -> str:
-    """Minimal E-lane program: Host-fed coeffs → constraint H → terminal measure."""
+    """Minimal E-lane program: Host-fed coeffs → constraint H → terminal Measure."""
     # Literals only — no Continuous mid-program.
     return f"""
 package examples.showcase.s01_disaster.host_zone_fed
@@ -84,10 +84,10 @@ pub fn main() -> Unit {{
     Float congestion = {congestion:.10f}
     Float fairness = {fairness:.10f}
     Operator H = congestion * (Z[0] * Z[1]) + fairness * (X[0] + X[1])
-    state plan0 = |+>
-    state plan1 = |0>
-    state (plan0, plan1) = evolve {{ (plan0, plan1) under H for 0.35 using Suzuki(order = 2, steps = 4) }}.run()
-    measure plan0 tracing_out plan1
+    State plan0 = |+>
+    State plan1 = |0>
+    State (plan0, plan1) = Evolve {{ (plan0, plan1) under H for 0.35 using Suzuki(order = 2, steps = 4) }}.run()
+    Measure plan0 tracing_out plan1
 }}
 """
 
@@ -123,7 +123,7 @@ def build_envelope(
             "measure_wire": "plan0",
             "sample_value": plan_value,
             "note": (
-                "Thin E-lane evolve under constraint-shaped H; "
+                "Thin E-lane Evolve under constraint-shaped H; "
                 "full OS spine (main_disaster_response.sqx) still owns desk packs"
             ),
         },

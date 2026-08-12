@@ -15,9 +15,9 @@ from compiler.staqex.host import run_source  # noqa: E402
 _MAIN = """
 package t
 pub fn main() -> Unit {{
-    state selection = prepare_selection(3)
-    state feasible_selection = project selection onto feasible({predicates})
-    measure feasible_selection
+    State selection = prepare_selection(3)
+    State feasible_selection = project selection onto feasible({predicates})
+    Measure feasible_selection
 }}
 """
 

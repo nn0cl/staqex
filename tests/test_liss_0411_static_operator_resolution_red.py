@@ -29,9 +29,9 @@ struct W { a: Float }
 pub fn main() -> Unit {
     W weights = W(2.0)
     Operator Bad = weights.a * X
-    state psi = |0>
-    state psi = apply(Bad, psi)
-    measure psi
+    State psi = |0>
+    State psi = apply(Bad, psi)
+    Measure psi
 }
 """
 
@@ -39,9 +39,9 @@ _NON_UNITARY_LITERAL_SOURCE = """
 package t
 pub fn main() -> Unit {
     Operator Bad = 2.0 * X
-    state psi = |0>
-    state psi = apply(Bad, psi)
-    measure psi
+    State psi = |0>
+    State psi = apply(Bad, psi)
+    Measure psi
 }
 """
 
@@ -77,9 +77,9 @@ def test_static_check_does_not_false_positive_a_unitary_struct_field_operator() 
     pub fn main() -> Unit {
         W weights = W(1.0)
         Operator Good = weights.a * X
-        state psi = |0>
-        state psi = apply(Good, psi)
-        measure psi
+        State psi = |0>
+        State psi = apply(Good, psi)
+        Measure psi
     }
     """
     compiled = compile_source(source)
@@ -91,7 +91,7 @@ def test_static_check_does_not_false_positive_a_unitary_struct_field_operator() 
 
 def test_qasm_emission_resolves_the_liss_0407_nested_call_case() -> None:
     """ADR 0206's own regression case (`scale * f(weights)`) already
-    runs fine via `evolve`; QASM emission must not still raise the
+    runs fine via `Evolve`; QASM emission must not still raise the
     pre-ADR-0206 vague `cannot compile sparse Pauli for OpCall`."""
     from compiler.staqex.pipeline import compile_source as _compile
     from compiler.staqex.backend.qasm.lower import lower_unit_to_circuit
@@ -106,10 +106,10 @@ def test_qasm_emission_resolves_the_liss_0407_nested_call_case() -> None:
         W weights = W(0.5)
         Energy scale = 1.0.eV to J
         Operator H = scale * f(weights)
-        state q = |0>
+        State q = |0>
         Time dur = 0.6.fs
-        state q = evolve { q under H for dur }.run()
-        measure q
+        State q = Evolve { q under H for dur }.run()
+        Measure q
     }
     """
     compiled = _compile(source)

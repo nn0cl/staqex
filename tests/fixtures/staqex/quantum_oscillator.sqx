@@ -9,12 +9,12 @@ pub fn main() -> Unit {
     Operator H_osc = e * (N + 0.5)
 
     // Truncated Fock: seed |0⟩ (dim auto-extends to ≥2 under evolve)
-    state psi = dirac(0)
+    State psi = Dirac(0)
 
     // Schrödinger evolve under H_osc (real time, ADR 0195)
     Time dur = 1.0.fs
-    state psi = evolve { psi under H_osc for dur }.run()
+    State psi = Evolve { psi under H_osc for dur }.run()
 
-    state viewed = inspect(psi)
-    measure viewed
+    State viewed = Inspect(psi)
+    Measure viewed
 }

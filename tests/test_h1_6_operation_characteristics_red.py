@@ -27,15 +27,15 @@ def test_h1_6_evolve_is_unitary_and_adjointable() -> None:
         }
         experiment evolve_run() {
           prepare |0>
-          evolve under H for 0.7
-          measure
+          Evolve under H for 0.7
+          Measure
         }
         """
     )
 
-    evolve = next(step for step in plan.steps if step.kind == "Evolve")
-    assert {"Unitary", "Adj"}.issubset(set(evolve.characteristics))
-    assert "Channel" not in evolve.characteristics
+    Evolve = next(step for step in plan.steps if step.kind == "Evolve")
+    assert {"Unitary", "Adj"}.issubset(set(Evolve.characteristics))
+    assert "Channel" not in Evolve.characteristics
 
 
 def test_h1_6_coherent_control_is_controllable() -> None:
@@ -47,7 +47,7 @@ def test_h1_6_coherent_control_is_controllable() -> None:
         experiment controlled() {
           prepare |00>
           capply(control, X, target)
-          measure
+          Measure
         }
         """
     )
@@ -76,7 +76,7 @@ def test_h1_6_observe_and_measure_are_not_transform_characteristics() -> None:
         experiment observe_run() {
           prepare |0>
           observable energy = expect(H)
-          measure
+          Measure
         }
         """
     )

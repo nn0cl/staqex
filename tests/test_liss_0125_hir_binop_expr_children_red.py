@@ -17,21 +17,21 @@ def test_when_with_binop_does_not_raise_attribute_error() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-  state a = |0>
-  state b = |1>
-  state r = mix (a) {
+  State a = |0>
+  State b = |1>
+  State r = Mix (a) {
     |0> => b
     |1> => a
   }
   // Force a BinOp into an expression tree walked with when-related LINEAR
   // analysis (control arithmetic / comparison paths).
-  state flag = mix (a) {
+  State flag = Mix (a) {
     |0> => |0>
     else => |1>
   }
   Int n = 1 + 2
-  measure r
-  measure flag
+  Measure r
+  Measure flag
 }
 """
     try:
@@ -51,9 +51,9 @@ def test_binop_in_when_scrutinee_position_does_not_crash() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-  state q = |0>
+  State q = |0>
   // Comparison BinOp as classical-ish tree near quantum control surface.
-  mix (q) {
+  Mix (q) {
     |0> => {
       Int x = 0 + 1
     }
@@ -61,7 +61,7 @@ pub fn main() -> Unit {
       Int y = 2 * 3
     }
   }
-  measure q
+  Measure q
 }
 """
     try:
