@@ -549,7 +549,8 @@ Issue gives them a concrete scope:
   method-local `Operator` bind raw, unresolved; (c) `_bind_user_fun`
   (`evaluator.py:4135`) did the same for a library-`fn`-local `Operator`
   bind. **(b)/(c) fixed 2026-08-12** as
-  [LISS-0413](../issues/LISS-0413-method-fn-local-operator-resolution.md) —
+  [LISS-0413](../issues/LISS-0413-method-fn-local-operator-resolution.md)
+  (PR [#544](https://github.com/nn0cl/staqex/pull/544)) —
   same one-line-each shape as LISS-0410's original fix (`self.operators[...]
   = stmt.expr` → `self._resolve_operator_expr(stmt.expr)`, defaulting to
   module-scope `self.objects`); confirmed the fix matches the equivalent
