@@ -578,7 +578,8 @@ Issue gives them a concrete scope:
   blackboard. Adjudicator chose to keep `evolve` as the verb and fix only
   the syntax-signaling problem (decomposing into explicit U-construction
   + `apply` was considered and deferred, not adopted).
-  [LISS-0414](../issues/LISS-0414-evolve-block-run-syntax.md) requires
+  [LISS-0414](../issues/LISS-0414-evolve-block-run-syntax.md)
+  (PR [#546](https://github.com/nn0cl/staqex/pull/546)) requires
   `evolve { seed under H for t [using Suzuki(...)] [until pred [max N]]
   }.run()`; the old bare form now raises `EVOLVE_REQUIRES_BLOCK_RUN`
   naming the exact rewrite (hard cutover, no back-compat alias, matching

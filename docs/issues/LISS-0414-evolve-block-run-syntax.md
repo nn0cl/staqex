@@ -17,7 +17,7 @@
 - Owner / agent: Claude Code
 - Parent: Adjudicator language-design critique (this session)
 - Branch: `feature/liss-0414-evolve-block-run-syntax`
-- GitHub Issue / PR: (opened at Completion)
+- GitHub Issue / PR: [#546](https://github.com/nn0cl/staqex/pull/546)
 
 ## Intent
 
