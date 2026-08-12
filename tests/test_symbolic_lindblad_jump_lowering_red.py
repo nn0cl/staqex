@@ -37,7 +37,7 @@ def test_source_lowers_bound_operator_jump() -> None:
             DensityState<Qubit> evolved = lindblad(
                 rho, H, JumpSet([decay]), 0.1
             )
-            measure evolved
+            Measure evolved
             """
         )
     )
@@ -59,7 +59,7 @@ def test_source_applies_multiple_symbolic_jumps() -> None:
             DensityState<Qubit> evolved = lindblad(
                 rho, H, JumpSet([first, second]), 0.1
             )
-            measure evolved
+            Measure evolved
             """
         )
     )
@@ -79,7 +79,7 @@ def test_source_rejects_unresolved_symbolic_jump() -> None:
             DensityState<Qubit> evolved = lindblad(
                 rho, H, JumpSet([missing_jump]), 0.1
             )
-            measure evolved
+            Measure evolved
             """
         )
     )
@@ -100,7 +100,7 @@ def test_source_rejects_symbolic_jump_dimension_mismatch() -> None:
             DensityState<Qubit> evolved = lindblad(
                 rho, H, JumpSet([invalid]), 0.1
             )
-            measure evolved
+            Measure evolved
             """
         )
     )
@@ -123,7 +123,7 @@ def test_source_rejects_channel_as_symbolic_jump() -> None:
             DensityState<Qubit> evolved = lindblad(
                 rho, H, JumpSet([channel]), 0.1
             )
-            measure evolved
+            Measure evolved
             """
         )
     )

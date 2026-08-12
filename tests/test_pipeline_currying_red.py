@@ -21,10 +21,10 @@ def test_pipeline_is_left_associative_and_preserves_state() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State psi = dirac(0)
+            State psi = Dirac(0)
             State psi = |0>
             State result = psi |> phase(0.5) |> phase(0.25)
-            measure result
+            Measure result
         }
         """
     )
@@ -37,9 +37,9 @@ def test_pipeline_rejects_measurement_or_rng_effects() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State psi = dirac(0)
-            State result = psi |> measure
-            measure result
+            State psi = Dirac(0)
+            State result = psi |> Measure
+            Measure result
         }
         """
     )
@@ -52,10 +52,10 @@ def test_pipeline_does_not_implicitly_convert_an_operator_to_a_function() -> Non
         """
         package t
         pub fn main() -> Unit {
-            State psi = dirac(0)
+            State psi = Dirac(0)
             Operator H = X
             State result = psi |> H
-            measure result
+            Measure result
         }
         """
     )

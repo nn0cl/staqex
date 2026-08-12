@@ -37,7 +37,7 @@ def test_classical_greater_than_type_checks_and_runs_as_bool() -> None:
         Float b = 2.0
         Bool c = is_greater(a, b)
         State s = |0>
-        measure s
+        Measure s
     }
     """
     compiled = compile_source(src)

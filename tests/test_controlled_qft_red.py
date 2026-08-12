@@ -26,8 +26,8 @@ def test_cqft_lowers_to_basic_opcodes() -> None:
             QubitRegister<1> ctrl = system()
             QubitRegister<2> reg = system()
             Operator CF = cqft(ctrl, reg)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -49,8 +49,8 @@ def test_ciqft_preserves_inverse_provenance() -> None:
             QubitRegister<1> ctrl = system()
             QubitRegister<2> reg = system()
             Operator CI = ciqft(ctrl, reg)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -65,10 +65,10 @@ def test_cqft_rejects_non_register_control() -> None:
         package t
         pub fn main() -> Unit {
             QubitRegister<2> reg = system()
-            State<Int> n = coin()
+            State<Int> n = Coin()
             Operator CF = cqft(n, reg)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

@@ -29,8 +29,8 @@ def test_experiment_body_must_not_see_execution_symbol() -> None:
             Classical x = n
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -54,8 +54,8 @@ def test_experiment_field_rhs_must_not_see_execution_symbol() -> None:
             observable = n
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -79,8 +79,8 @@ def test_workflow_body_must_not_see_execution_symbol() -> None:
             Classical x = n
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -104,8 +104,8 @@ def test_experiment_may_reference_theory_symbol() -> None:
             shots = 1000
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -123,8 +123,8 @@ def test_execution_may_reference_theory_operator() -> None:
             Operator Bad = H
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )

@@ -46,14 +46,14 @@ pub fn main() -> Unit {
     State s0 = |0>
     State s1 = |0>
     State s2 = |0>
-    State (s0, s1, s2) = evolve { (s0, s1, s2) under H for dur }.run()
+    State (s0, s1, s2) = Evolve { (s0, s1, s2) under H for dur }.run()
 
     State m0 = expect(Z, s0)
     State m1 = expect(Z, s1)
     State m2 = expect(Z, s2)
-    State v0 = inspect(m0)
-    State v1 = inspect(m1)
-    State v2 = inspect(m2)
+    State v0 = Inspect(m0)
+    State v1 = Inspect(m1)
+    State v2 = Inspect(m2)
 
     // Illustrative dossier assembly (Never Leave the State: classical
     // collapse happens only at terminal measure, so the live m0/m1/m2
@@ -69,5 +69,5 @@ pub fn main() -> Unit {
 
     // Symmetry / evidence checks are non-blocking; the terminal measure
     // is singular. Sibling sensors leave via partial trace (ADR 0173).
-    measure s1 tracing_out s0, s2
+    Measure s1 tracing_out s0, s2
 }

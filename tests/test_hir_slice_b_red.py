@@ -26,8 +26,8 @@ def test_hir_decl_and_declarations_exist() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -47,8 +47,8 @@ def test_scientific_scope_phases_recorded_on_hir() -> None:
         theory Ising { Operator H = X + Z }
         experiment GroundState { theory = Ising }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -74,8 +74,8 @@ def test_build_hir_without_scope_contracts_defaults_kernel_phase() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State q = coin()
-            measure q
+            State q = Coin()
+            Measure q
         }
         """
     )
@@ -92,8 +92,8 @@ def test_declaration_mapping_is_immutable() -> None:
         package t
         theory T { Operator H = X }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

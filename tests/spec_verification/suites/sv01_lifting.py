@@ -79,7 +79,7 @@ def run() -> list[CaseResult]:
     except AssertionFailure as e:
         out.append(CaseResult("SV-01", "sv01-add-state", "10 + 20 as State ops", False, error_code=e.code, message=str(e)))
 
-    # Case 4: dirac alias
+    # Case 4: Dirac alias
     try:
         s = State.dirac(42)
         assertTypeIsState(s, payload=int)
@@ -87,18 +87,18 @@ def run() -> list[CaseResult]:
         out.append(
             CaseResult(
                 "SV-01",
-                "sv01-dirac",
-                "dirac(42) is State<Int>",
+                "sv01-Dirac",
+                "Dirac(42) is State<Int>",
                 True,
                 ["assertTypeIsState", "assertNormEquals"],
             )
         )
     except AssertionFailure as e:
-        out.append(CaseResult("SV-01", "sv01-dirac", "dirac(42)", False, error_code=e.code, message=str(e)))
+        out.append(CaseResult("SV-01", "sv01-Dirac", "Dirac(42)", False, error_code=e.code, message=str(e)))
 
     # Case 5: production typechecker Lit-Lift
     try:
-        src = as_main("State x = 10\nState y = 0.01\nState z = x + 20\nmeasure z\n")
+        src = as_main("State x = 10\nState y = 0.01\nState z = x + 20\nMeasure z\n")
         result = compile_source(src)
         if result.checker is None:
             raise AssertionFailure("TYPE_NOT_STATE", "typechecker missing")

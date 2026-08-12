@@ -7,7 +7,7 @@ pub fn main() -> Unit {
     Operator CoinOp = (X + Z) * inv_sqrt2
 
     State<Qubit> c0 = |0>
-    State<Position> x0 = dirac(0)
+    State<Position> x0 = Dirac(0)
     State<(Qubit, Position)> (c, x) = c0 *|* x0
 
     State c = apply(CoinOp, c)
@@ -15,6 +15,6 @@ pub fn main() -> Unit {
     State c = apply(CoinOp, c)
     State x = walk_shift(c, x)
 
-    State viewed = inspect(x)
-    measure viewed
+    State viewed = Inspect(x)
+    Measure viewed
 }

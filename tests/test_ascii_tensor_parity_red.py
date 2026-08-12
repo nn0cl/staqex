@@ -22,7 +22,7 @@ def _compile(rhs: str):
             State right = |1>
             State third = |0>
             State result = {rhs}
-            measure result
+            Measure result
         }}
         """
     )

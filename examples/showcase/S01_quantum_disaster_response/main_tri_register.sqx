@@ -15,7 +15,7 @@ pub fn main() -> Unit {
     State logistics = |0>
     State (rescue, logistics) = cnot(rescue, logistics)
     State corr = expect(ZZ, rescue, logistics)
-    State viewed = inspect(corr)
+    State viewed = Inspect(corr)
     State (rescue, logistics) = cnot(rescue, logistics)
-    measure rescue tracing_out logistics
+    Measure rescue tracing_out logistics
 }

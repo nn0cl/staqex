@@ -27,7 +27,7 @@ def test_partial_pipe_no_keyerror() -> None:
                 State p = second(z, _)
                 State w = |1>
                 State r = w |> p
-                measure r
+                Measure r
             }
             """,
             stdout=io.StringIO(),

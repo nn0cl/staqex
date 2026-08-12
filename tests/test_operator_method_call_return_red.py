@@ -38,11 +38,11 @@ pub fn main() -> Unit {
     Operator H = m.hamiltonian()
     State s0 = |+>
     State s1 = |+>
-    State (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
     State zz = expect(ZZ, s0, s1)
-    State viewed = inspect(zz)
+    State viewed = Inspect(zz)
     State s1 = |0>
-    measure s0
+    Measure s0
 }
 """
 
@@ -69,9 +69,9 @@ pub fn main() -> Unit {
     Operator H = m.hamiltonian()
     State s0 = |+>
     State s1 = |+>
-    State (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
     State s1 = |0>
-    measure s0
+    Measure s0
 }
 """
 

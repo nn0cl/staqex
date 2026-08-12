@@ -48,7 +48,7 @@ pub fn main() -> Unit {
     exactly_selected = 2,
     pairwise_compatible = true,
   )
-  measure feasible
+  Measure feasible
 }
 """
 
@@ -60,7 +60,7 @@ pub fn main() -> Unit {
   State feasible = project selection onto feasible(
     diversity_at_least = 3,
   )
-  measure feasible
+  Measure feasible
 }
 """
 
@@ -72,7 +72,7 @@ pub fn main() -> Unit {
   State feasible = project selection onto feasible(
     unknown_rule = 1,
   )
-  measure feasible
+  Measure feasible
 }
 """
 
@@ -81,7 +81,7 @@ package s02
 pub fn main() -> Unit {
   State candidates = finiteize(0.0, 1.0, 8, 16, 0)
   State selection = prepare_selection(candidates)
-  measure selection
+  Measure selection
 }
 """
 

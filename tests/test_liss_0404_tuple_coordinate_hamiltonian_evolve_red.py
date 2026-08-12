@@ -2,7 +2,7 @@
 tuple-valued coordinates.
 
 Target: docs/architecture/adr/0205-tuple-coordinate-register-bridge.md /
-docs/issues/LISS-0404-tuple-coordinate-hamiltonian-evolve.md.
+docs/issues/LISS-0404-tuple-coordinate-hamiltonian-Evolve.md.
 """
 
 from __future__ import annotations
@@ -29,8 +29,8 @@ pub fn main() -> Unit {
     State q0 = |0>
     State q1 = |+>
     Time dur = 0.6.fs
-    State (q0, q1) = evolve { (q0, q1) under H for dur }.run()
-    measure q0 tracing_out q1
+    State (q0, q1) = Evolve { (q0, q1) under H for dur }.run()
+    Measure q0 tracing_out q1
 }
 """
 
@@ -90,7 +90,7 @@ def test_evolve_under_tuple_coordinate_matches_separate_coordinates_exactly() ->
 
 
 def test_evolve_under_tuple_coordinate_dispatches_from_source() -> None:
-    """The full end-to-end source-level path: evolve psi under H where
+    """The full end-to-end source-level path: Evolve psi under H where
     psi is a tuple-valued coordinate from prepare_selection.
     """
     source = """
@@ -100,8 +100,8 @@ pub fn main() -> Unit {
     Operator H_raw = 1.0 * Z[0] + 1.0 * X[0] + 1.0 * (Z[0] * Z[1])
     Operator H = scale * H_raw
     State psi = prepare_selection(2)
-    State psi = evolve { psi under H for 0.6.fs }.run()
-    measure psi
+    State psi = Evolve { psi under H for 0.6.fs }.run()
+    Measure psi
 }
 """
     compiled = compile_source(source)
@@ -130,8 +130,8 @@ pub fn main() -> Unit {
     Operator H_raw = 1.0 * Z[0] + 1.0 * X[0] + 1.0 * (Z[0] * Z[1])
     Operator H = scale * H_raw
     State psi = prepare_selection(3)
-    State psi = evolve { psi under H for 0.6.fs }.run()
-    measure psi
+    State psi = Evolve { psi under H for 0.6.fs }.run()
+    Measure psi
 }
 """
     compiled = compile_source(source)
@@ -146,7 +146,7 @@ pub fn main() -> Unit {
 
 
 def test_existing_separate_coordinate_evolve_is_unaffected() -> None:
-    """Regression guard: the existing nq-separate-names evolve path must
+    """Regression guard: the existing nq-separate-names Evolve path must
     remain byte-for-byte unaffected by this Issue.
     """
     compiled = compile_source(_SOURCE_H)

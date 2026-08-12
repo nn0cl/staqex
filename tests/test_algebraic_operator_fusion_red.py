@@ -50,7 +50,7 @@ def test_affine_pipe_collapses_to_single_map() -> None:
         pub fn main() -> Unit {
             State z = 3
             State w = z |> add10 |> dbl |> sub5
-            measure w
+            Measure w
         }
         """,
         stdout=io.StringIO(),
@@ -70,7 +70,7 @@ def test_affine_pipe_matches_sequential() -> None:
     pub fn main() -> Unit {
         State z = 7
         State w = z |> add10 |> dbl |> sub5
-        measure w
+        Measure w
     }
     """
     seq_src = """
@@ -83,7 +83,7 @@ def test_affine_pipe_matches_sequential() -> None:
         State t1 = add10(z)
         State t2 = dbl(t1)
         State w = sub5(t2)
-        measure w
+        Measure w
     }
     """
     fused = run_source(fused_src, stdout=io.StringIO())
@@ -99,7 +99,7 @@ def test_non_affine_return_still_fuses_sequentially() -> None:
         """
         package t
         fn flip(s: State<Int>) -> State<Int> {
-            return mix (s) { 0 -> 1, else -> 0 }
+            return Mix (s) { 0 -> 1, else -> 0 }
         }
         fn id(s: State<Int>) -> State<Int> {
             return s
@@ -107,7 +107,7 @@ def test_non_affine_return_still_fuses_sequentially() -> None:
         pub fn main() -> Unit {
             State x = 0
             State r = x |> flip |> id
-            measure r
+            Measure r
         }
         """,
         stdout=io.StringIO(),

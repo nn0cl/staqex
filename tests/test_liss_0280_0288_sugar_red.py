@@ -10,8 +10,8 @@ from compiler.staqex.pipeline import compile_source
 
 def test_0182_default_experiment_profile_no_package() -> None:
     src = """
-State s = dirac(7)
-measure s
+State s = Dirac(7)
+Measure s
 """
     c = compile_source(src)
     assert c.ok, c.diagnostics
@@ -26,8 +26,8 @@ measure s
 def test_0182_packaged_still_requires_main() -> None:
     src = """
 package demo.pkg
-State s = dirac(1)
-measure s
+State s = Dirac(1)
+Measure s
 """
     c = compile_source(src)
     codes = {d.get("code") for d in c.diagnostics}
@@ -42,8 +42,8 @@ h = 5.272859e-20
 H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
 State s0 = |+>
 State s1 = |+>
-State (s0, s1) = evolve { (s0, s1) under H for 0.3.fs using Suzuki(order = 2, steps = 2) }.run()
-measure s0 tracing_out s1
+State (s0, s1) = Evolve { (s0, s1) under H for 0.3.fs using Suzuki(order = 2, steps = 2) }.run()
+Measure s0 tracing_out s1
 """
     r = run_source(src, settings={"seed": 0})
     assert r.status == "succeeded", r.diagnostics
@@ -65,8 +65,8 @@ pub fn main() -> Unit {
   D.Item b = D.Item { n: 2.0 }
   D.Board board = D.Board(a, b)
   Float t = board.a.n + board.b.n
-  State s = dirac(t)
-  measure s
+  State s = Dirac(t)
+  Measure s
 }
 """
     r = run_source(src, settings={"seed": 0})
@@ -94,8 +94,8 @@ import .domain.ops.{Keep}
 pub fn main() -> Unit {
   Keep k = Keep { x: 2.0 }
   Float v = k.x * 0.5
-  State s = dirac(v)
-  measure s
+  State s = Dirac(v)
+  Measure s
 }
 """,
         encoding="utf-8",
@@ -127,8 +127,8 @@ package demo.lane
 import ..domain.ops.{Keep}
 pub fn main() -> Unit {
   Keep k = Keep { x: 4.0 }
-  State s = dirac(k.x)
-  measure s
+  State s = Dirac(k.x)
+  Measure s
 }
 """,
         encoding="utf-8",

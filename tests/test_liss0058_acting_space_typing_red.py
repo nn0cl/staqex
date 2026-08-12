@@ -37,11 +37,11 @@ pub fn main() -> Unit {{
     State c = |0>
     State<Qubit> d = |0>
     State d = |0>
-    State (a, b, c, d) = evolve {{ (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }}.run()
+    State (a, b, c, d) = Evolve {{ (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }}.run()
     State b = |0>
     State c = |0>
     State d = |0>
-    measure a
+    Measure a
 }}
 """
 
@@ -85,11 +85,11 @@ pub fn main() -> Unit {
     State<Qubit> b = |0>
     State<Qubit> c = |0>
     State<Qubit> d = |0>
-    State (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }.run()
+    State (a, b, c, d) = Evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }.run()
     State b = |0>
     State c = |0>
     State d = |0>
-    measure a
+    Measure a
 }
 """
     result = run_source(source, seed=0, stdout=io.StringIO())
@@ -105,9 +105,9 @@ package acting_space
 pub fn main() -> Unit {
     Operator H = I
     State psi = |0>
-    State out = evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
+    State out = Evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
     State psi = |0>
-    measure out
+    Measure out
 }
 """
     result = run_source(source, seed=0, stdout=io.StringIO())
@@ -127,9 +127,9 @@ pub fn main() -> Unit {
     QubitRegister<2> right = system()
     Operator<QubitRegister<2> * QubitRegister<2>> H = Z[0] * Z[1]
     State psi = |00>
-    State out = evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
+    State out = Evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
     State psi = |0>
-    measure out
+    Measure out
 }
 """
     diagnostics = _codes(source)

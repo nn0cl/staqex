@@ -57,8 +57,8 @@ pub fn main() -> Unit {
     FermionOperator<Orbitals> H = 1.0545718e-19 * create[0] * annihilate[0]
     QubitOperator<Qubits> mapped = map(H, JordanWigner)
     State psi = |+>
-    State psi = evolve { psi under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
-    measure psi
+    State psi = Evolve { psi under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
+    Measure psi
 }
 """
 
@@ -67,8 +67,8 @@ package t
 pub fn main() -> Unit {
     Operator H = 5.272859e-20 * I - 5.272859e-20 * Z[0]
     State psi = |+>
-    State psi = evolve { psi under H for 1.0.fs }.run()
-    measure psi
+    State psi = Evolve { psi under H for 1.0.fs }.run()
+    Measure psi
 }
 """
 
@@ -100,9 +100,9 @@ pub fn main() -> Unit {
     QubitOperator<Qubits> mapped = map(H, JordanWigner)
     State a = |+>
     State b = |0>
-    State (a, b) = evolve { (a, b) under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
+    State (a, b) = Evolve { (a, b) under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
     State b = |0>
-    measure a
+    Measure a
 }
 """
 
@@ -112,9 +112,9 @@ pub fn main() -> Unit {
     Operator H = 5.272859e-20 * (X[0] * X[1]) + 5.272859e-20 * (Y[0] * Y[1])
     State a = |+>
     State b = |0>
-    State (a, b) = evolve { (a, b) under H for 1.0.fs }.run()
+    State (a, b) = Evolve { (a, b) under H for 1.0.fs }.run()
     State b = |0>
-    measure a
+    Measure a
 }
 """
 
@@ -146,10 +146,10 @@ pub fn main() -> Unit {
     State a = |+>
     State b = |0>
     State c = |0>
-    State (a, b, c) = evolve { (a, b, c) under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
+    State (a, b, c) = Evolve { (a, b, c) under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
     State b = |0>
     State c = |0>
-    measure a
+    Measure a
 }
 """
 
@@ -160,10 +160,10 @@ pub fn main() -> Unit {
     State a = |+>
     State b = |0>
     State c = |0>
-    State (a, b, c) = evolve { (a, b, c) under H for 1.0.fs }.run()
+    State (a, b, c) = Evolve { (a, b, c) under H for 1.0.fs }.run()
     State b = |0>
     State c = |0>
-    measure a
+    Measure a
 }
 """
 
@@ -199,9 +199,9 @@ pub fn main() -> Unit {
     QubitOperator<Qubits> mapped = map(H, JordanWigner)
     State a = |+>
     State b = |+>
-    State (a, b) = evolve { (a, b) under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
+    State (a, b) = Evolve { (a, b) under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
     State b = |0>
-    measure a
+    Measure a
 }
 """
 
@@ -211,9 +211,9 @@ pub fn main() -> Unit {
     Operator H = 2.6364295e-20 * I - 2.6364295e-20 * Z[0] - 2.6364295e-20 * Z[1] + 2.6364295e-20 * (Z[0] * Z[1])
     State a = |+>
     State b = |+>
-    State (a, b) = evolve { (a, b) under H for 1.0.fs }.run()
+    State (a, b) = Evolve { (a, b) under H for 1.0.fs }.run()
     State b = |0>
-    measure a
+    Measure a
 }
 """
 
@@ -268,7 +268,7 @@ pub fn main() -> Unit {
     BosonOperator<Modes> H = create[0] * annihilate[0]
     QubitOperator<Qubits> mapped = map(H, JordanWigner)
     State psi = |0>
-    measure psi
+    Measure psi
 }
 """
 

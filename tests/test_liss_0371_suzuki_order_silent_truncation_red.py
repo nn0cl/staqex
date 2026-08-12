@@ -28,8 +28,8 @@ def _src(order_expr: str) -> str:
         {'' if order_expr != 'ord' else 'Int ord = 4'}
         Operator H = Z[0]
         State a = |+>
-        State a = evolve {{ a under H for 0.1 using Suzuki(order = {order_expr}, steps = 3) }}.run()
-        measure a
+        State a = Evolve {{ a under H for 0.1 using Suzuki(order = {order_expr}, steps = 3) }}.run()
+        Measure a
     }}
     """
 
@@ -68,8 +68,8 @@ def test_unresolvable_order_still_falls_back_to_2() -> None:
         QubitRegister<1> register = system()
         Operator H = Z[0]
         State a = |+>
-        State a = evolve { a under H for 0.1 using Suzuki(order = unbound_name, steps = 3) }.run()
-        measure a
+        State a = Evolve { a under H for 0.1 using Suzuki(order = unbound_name, steps = 3) }.run()
+        Measure a
     }
     """
     compiled = compile_source(source)

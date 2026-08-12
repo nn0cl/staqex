@@ -29,7 +29,7 @@ def test_bit_domain_literal_parses_and_typechecks() -> None:
     pub fn main() -> Unit {
         d = {0,1}^8
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)
@@ -45,7 +45,7 @@ def test_qudit_domain_literal_parses_for_free() -> None:
     pub fn main() -> Unit {
         d = {0,1,2}^4
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)
@@ -61,7 +61,7 @@ def test_variable_width_parses() -> None:
         Int n = 8
         d = {0,1}^n
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)
@@ -77,7 +77,7 @@ def test_dimensioned_width_is_rejected() -> None:
         Time dur = 1.0.s
         d = {0,1}^dur
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)
@@ -93,8 +93,8 @@ def test_anticommutator_braces_are_unaffected() -> None:
     package t
     pub fn main() -> Unit {
         Operator C = {X, Y}
-        State observed = coin()
-        measure observed
+        State observed = Coin()
+        Measure observed
     }
     """
     compiled = compile_source(src)
@@ -111,7 +111,7 @@ def test_brace_in_expression_position_was_previously_a_parse_error() -> None:
     pub fn main() -> Unit {
         d = {
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)

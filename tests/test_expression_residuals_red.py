@@ -27,8 +27,8 @@ def test_float_function_return_binds_as_classical() -> None:
         pub fn mark() -> Float { return 0.5 }
         pub fn main() -> Unit {
             Float a = mark()
-            State x = dirac(0)
-            measure x
+            State x = Dirac(0)
+            Measure x
         }
         """
     )
@@ -42,8 +42,8 @@ def test_delta_time_evolve_for_is_classical() -> None:
         pub fn main() -> Unit {
             State x = |0>
             Delta<Time> dt = 0.1.s
-            State x = evolve { x under X for dt }.run()
-            measure x
+            State x = Evolve { x under X for dt }.run()
+            Measure x
         }
         """
     )
@@ -61,9 +61,9 @@ def test_consume_on_return_product_chain() -> None:
         }
         pub fn main() -> Unit {
             State c = |0>
-            State x = dirac(0)
+            State x = Dirac(0)
             State s = step(c, x)
-            measure s
+            Measure s
         }
         """
     )
@@ -85,18 +85,18 @@ def test_classical_quantity_scales_state() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State bit = coin()
+            State bit = Coin()
             Time dt = 0.5.s
             Mass m = 1.0.kg
             Stiffness k = 1.0.N_m
-            State<Length> x = mix (bit) { 0 -> 0.0.m, else -> 1.0.m }
-            State<Momentum> p = mix (bit) { 0 -> 1.0.kg_m_s, else -> 0.0.kg_m_s }
-            State (x, p) = evolve (x, p) times 2 {
+            State<Length> x = Mix (bit) { 0 -> 0.0.m, else -> 1.0.m }
+            State<Momentum> p = Mix (bit) { 0 -> 1.0.kg_m_s, else -> 0.0.kg_m_s }
+            State (x, p) = Evolve (x, p) times 2 {
                 (x + (dt / m) * p, p - (dt * k) * x)
             }
-            State bit = vacuum
-            State p = vacuum
-            measure x
+            State bit = Vacuum
+            State p = Vacuum
+            Measure x
         }
         """
     )

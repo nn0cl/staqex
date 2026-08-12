@@ -23,10 +23,10 @@ package t
 pub fn main() -> Unit {
     dynamic qpu {
         State q = |0>
-        Controller<Bit> bit = measure q
+        Controller<Bit> bit = Measure q
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -35,14 +35,14 @@ package t
 pub fn main() -> Unit {
     dynamic qpu {
         State q = |0>
-        Controller<Bit> bit = measure q
+        Controller<Bit> bit = Measure q
         match bit {
             0 => { apply(X, q) }
             1 => { apply(Z, q) }
         }
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -51,16 +51,16 @@ package t
 pub fn main() -> Unit {
     dynamic qpu within coherent_window {
         State q = |0>
-        Controller<Bit> bit = measure q
+        Controller<Bit> bit = Measure q
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
 
 def test_mid_circuit_measure_alone_does_not_demand_reuse() -> None:
-    """Scenario: mid-circuit measure alone does not demand reuse."""
+    """Scenario: mid-circuit Measure alone does not demand reuse."""
     compiled = compile_source(_SOURCE_MEASURE_ONLY)
     demand = infer_dynamic_capability_demand(compiled.unit)
 
@@ -69,7 +69,7 @@ def test_mid_circuit_measure_alone_does_not_demand_reuse() -> None:
 
 
 def test_post_measure_apply_on_measured_wire_demands_reuse() -> None:
-    """Scenario: post-measure apply on the measured wire demands reuse."""
+    """Scenario: post-Measure apply on the measured wire demands reuse."""
     compiled = compile_source(_SOURCE_POST_MEASURE_APPLY)
     demand = infer_dynamic_capability_demand(compiled.unit)
 

@@ -17,7 +17,7 @@ package t
 pub fn main() -> Unit {{
     State selection = prepare_selection(3)
     State feasible_selection = project selection onto feasible({predicates})
-    measure feasible_selection
+    Measure feasible_selection
 }}
 """
 

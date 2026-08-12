@@ -41,10 +41,10 @@ def test_paper_inner_with_ident_labels_desugars_to_inner_vars() -> None:
         State phi = |0{KET}
         State psi = |0{KET}
         State ov = inner(phi, psi)
-        State viewed = inspect(ov)
+        State viewed = Inspect(ov)
         State phi = |0>
         State psi = |0>
-        measure viewed
+        Measure viewed
     }}
     """
     compiled = compile_source(src)
@@ -69,8 +69,8 @@ def test_numeric_bra_ket_inner_still_uses_lits() -> None:
     package t
     pub fn main() -> Unit {{
         State overlap = inner({BRA}0|, |1{KET})
-        State observed = coin()
-        measure observed
+        State observed = Coin()
+        Measure observed
     }}
     """
     compiled = compile_source(src)
@@ -89,8 +89,8 @@ def test_paper_outer_with_ident_labels_desugars_to_outer_vars() -> None:
         Operator P = outer(|psi{KET}, {BRA}phi|)
         State psi = |0>
         State phi = |0>
-        State bit = coin()
-        measure bit
+        State bit = Coin()
+        Measure bit
     }}
     """
     compiled = compile_source(src)
@@ -110,8 +110,8 @@ def test_matching_ident_outer_desugars_to_projector_var() -> None:
         State psi = |+{KET}
         Operator P = projector(|psi{KET})
         State psi = |0>
-        State bit = coin()
-        measure bit
+        State bit = Coin()
+        Measure bit
     }}
     """
     compiled = compile_source(src)
@@ -132,7 +132,7 @@ def test_pipeline_and_comparison_unaffected() -> None:
                 State y = x |> id
                 State flag = 1 > 0
                 State y = |0>
-                measure flag
+                Measure flag
             }}
             """
         )
@@ -151,7 +151,7 @@ def test_anticommutator_and_bare_block_still_parse() -> None:
                     let t = 7
                     t
                 }
-                measure w
+                Measure w
             }
             """
         )

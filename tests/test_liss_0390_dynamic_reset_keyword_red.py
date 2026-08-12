@@ -39,11 +39,11 @@ package t
 pub fn main() -> Unit {
     dynamic qpu {
         State q = |0>
-        Controller<Bit> bit = measure q
+        Controller<Bit> bit = Measure q
         reset q
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -52,13 +52,13 @@ package t
 pub fn main() -> Unit {
     dynamic qpu {
         State q = |0>
-        Controller<Bit> bit = measure q
+        Controller<Bit> bit = Measure q
         apply(X, q)
         reset q
-        Controller<Bit> bit2 = measure q
+        Controller<Bit> bit2 = Measure q
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -74,7 +74,7 @@ package t
 pub fn main() -> Unit {
     State q = |0>
     reset q
-    measure q
+    Measure q
 }
 """
     job = submit_source(source, settings={})
@@ -101,8 +101,8 @@ pub fn main() -> Unit {
         apply(X, q)
         reset q
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
     )
@@ -133,10 +133,10 @@ def test_reset_wire_is_usable_again_after_reset() -> None:
     q is measured (bit=0), flipped to 1 via apply(X, q), then reset back
     to |0>. A second measurement supplying "0" is only physically
     consistent if reset genuinely forced q back to |0> -- if reset were a
-    no-op, q would still be 1 and the second measure would vacuum,
+    no-op, q would still be 1 and the second Measure would Vacuum,
     surfacing as dynamic_trace.physical_outcome_confirmed=False
     (LISS-0389). This is a stronger check than JobResult.status alone,
-    which stays "succeeded" even for a vacuum run.
+    which stays "succeeded" even for a Vacuum run.
     """
     job = submit_source(
         _SOURCE_RESET_THEN_REMEASURE,
@@ -150,7 +150,7 @@ def test_reset_wire_is_usable_again_after_reset() -> None:
     assert result.status == "succeeded"
     assert result.dynamic_trace is not None
     assert result.dynamic_trace.physical_outcome_confirmed is True, (
-        "expected reset to force q back to |0> so the second measure "
+        "expected reset to force q back to |0> so the second Measure "
         "(outcome 0) is physically consistent; False means reset did not "
         "genuinely reinitialize the wire"
     )
@@ -199,11 +199,11 @@ package t
 pub fn main() -> Unit {
     dynamic qpu {
         State q = |0>
-        Controller<Bit> bit = measure q
+        Controller<Bit> bit = Measure q
         reset ghost
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
     compiled = compile_source(source)

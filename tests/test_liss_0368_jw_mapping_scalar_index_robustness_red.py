@@ -25,8 +25,8 @@ def _wrap(decl: str) -> str:
         {decl}
         QubitOperator<Qubits> mapped = map(H, JordanWigner)
         State psi = |+>
-        State psi = evolve {{ psi under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }}.run()
-        measure psi
+        State psi = Evolve {{ psi under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }}.run()
+        Measure psi
     }}
     """
 

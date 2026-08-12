@@ -25,7 +25,7 @@ def test_ketlit_direct_fn_arg() -> None:
             }
             pub fn main() -> Unit {
                 State r = id(|1>)
-                measure r
+                Measure r
             }
             """
         ).diagnostics
@@ -41,7 +41,7 @@ def test_ketlit_direct_fn_arg() -> None:
         }
         pub fn main() -> Unit {
             State r = id(|1>)
-            measure r
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -63,7 +63,7 @@ def test_partial_with_ketlit_bound_slot() -> None:
             State p = second(|0>, _)
             State w = |1>
             State r = w |> p
-            measure r
+            Measure r
         }
         """,
         stdout=io.StringIO(),

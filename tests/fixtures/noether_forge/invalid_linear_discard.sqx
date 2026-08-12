@@ -4,5 +4,5 @@ package examples.applied.noether_forge.invalid
 pub fn main() -> Unit {
     State psi = |+>
     State unused = |0>
-    measure psi
+    Measure psi
 }

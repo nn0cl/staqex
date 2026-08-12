@@ -37,8 +37,8 @@ def test_float_power_with_int_literal_exponent() -> None:
     pub fn main() -> Unit {
         Float x = f()
         Bool ok = x == 256.0
-        State s = dirac(ok)
-        measure s
+        State s = Dirac(ok)
+        Measure s
     }
     """
     compiled = compile_source(src)
@@ -59,8 +59,8 @@ def test_float_power_with_int_variable_exponent() -> None:
         Int n = 8
         Float x = f(n)
         Bool ok = x == 256.0
-        State s = dirac(ok)
-        measure s
+        State s = Dirac(ok)
+        Measure s
     }
     """
     compiled = compile_source(src)
@@ -86,8 +86,8 @@ def test_sigma_coefficient_style_expression_evaluates_correctly() -> None:
         Int n = 8
         Float c = coeff(n)
         Bool ok = c == {expected!r}
-        State s = dirac(ok)
-        measure s
+        State s = Dirac(ok)
+        Measure s
     }}
     """
     compiled = compile_source(src)
@@ -105,7 +105,7 @@ def test_dimensioned_base_power_is_rejected_with_clear_diagnostic() -> None:
         Energy scale = 1.0.eV to J
         Float bad = scale ^ 2
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)
@@ -122,8 +122,8 @@ def test_operator_dsl_power_is_unaffected() -> None:
         Operator H_raw = Z ^ 2
         Operator H = scale * H_raw
         State a = |0>
-        State a = evolve { a under H for 0.1.fs }.run()
-        measure a
+        State a = Evolve { a under H for 0.1.fs }.run()
+        Measure a
     }
     """
     compiled = compile_source(src)

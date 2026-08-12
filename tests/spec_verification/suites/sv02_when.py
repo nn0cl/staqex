@@ -10,9 +10,9 @@ def run() -> list[CaseResult]:
     out: list[CaseResult] = []
 
     try:
-        coin = State.coin()
+        Coin = State.coin()
         # mix (coin()) { 0 -> "A", else -> "B" }
-        joined = coin.when(
+        joined = Coin.when(
             {0: lambda: State.dirac("A")},
             else_arm=lambda: State.dirac("B"),
             payload_type=str,
@@ -23,8 +23,8 @@ def run() -> list[CaseResult]:
         out.append(
             CaseResult(
                 "SV-02",
-                "sv02-when-coin",
-                "mix (coin) keeps A and B at 0.5",
+                "sv02-when-Coin",
+                "Mix (Coin) keeps A and B at 0.5",
                 True,
                 ["assertTypeIsState", "assertNormEquals", "assertSuperposition"],
             )
@@ -33,8 +33,8 @@ def run() -> list[CaseResult]:
         out.append(
             CaseResult(
                 "SV-02",
-                "sv02-when-coin",
-                "mix (coin) keeps A and B at 0.5",
+                "sv02-when-Coin",
+                "Mix (Coin) keeps A and B at 0.5",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -43,8 +43,8 @@ def run() -> list[CaseResult]:
 
     try:
         # both arms are themselves superpositions — masses multiply
-        coin = State.coin()
-        joined = coin.when(
+        Coin = State.coin()
+        joined = Coin.when(
             {
                 0: lambda: State({10: 0.5, 20: 0.5}, payload_type=int),
             },

@@ -21,12 +21,12 @@ from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
 def run() -> list[CaseResult]:
     out: list[CaseResult] = []
 
-    # package + pub fn main with Type-First + measure runs
+    # package + pub fn main with Type-First + Measure runs
     try:
         src = as_main(
             """
 Delta<Time> dt = 0.05.s
-measure dt
+Measure dt
 """,
             package="com.staqex.spec.sv16",
         )
@@ -60,7 +60,7 @@ measure dt
             CaseResult(
                 "SV-16",
                 "sv16-main-ok",
-                "package + pub fn main Type-First + measure runs",
+                "package + pub fn main Type-First + Measure runs",
                 True,
                 ["main", "Type-First"],
             )
@@ -115,8 +115,8 @@ measure dt
     try:
         src = as_main(
             """
-State x = coin()
-measure x
+State x = Coin()
+Measure x
 """,
             package="com.staqex.spec.sv16",
             imports=["staqex.math.*"],

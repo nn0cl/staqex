@@ -31,7 +31,7 @@ def test_lb_kg_round_trip() -> None:
                 Mass m = 1.0.lb to kg
                 Mass p = 0.45359237.kg to lb
                 State a = |0>
-                measure a
+                Measure a
             }
             """
         ).diagnostics
@@ -49,7 +49,7 @@ def test_lb_kg_round_trip() -> None:
             Mass p = 0.45359237.kg to lb
             Mass g = 1.0.lb to g
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )

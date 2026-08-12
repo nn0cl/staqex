@@ -17,8 +17,8 @@ def _operator_source() -> str:
     package t
     pub fn main() -> Unit {
         Operator H = X + Z
-        State<Int> observed = coin()
-        measure observed
+        State<Int> observed = Coin()
+        Measure observed
     }
     """
 
@@ -79,8 +79,8 @@ def test_ordinary_program_still_compiles_without_requiring_equations() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

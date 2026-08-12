@@ -21,9 +21,9 @@ theory Ising {
 
 experiment run(J = 1.0, h = 0.5) {
   State psi = |+>
-  psi |> evolve under Ising.H(J, h) for 0.7
+  psi |> Evolve under Ising.H(J, h) for 0.7
   observable energy = expect(Ising.H, psi)
-  measure psi
+  Measure psi
 }
 """
 

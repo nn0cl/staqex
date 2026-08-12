@@ -23,9 +23,9 @@ def test_cnot_multi_wire_rebind_keeps_both_linear() -> None:
         State tgt = |0>
         State (ctrl, tgt) = cnot(ctrl, tgt)
         State corr = expect(ZZ, ctrl, tgt)
-        State viewed = inspect(corr)
+        State viewed = Inspect(corr)
         State tgt = |0>
-        measure ctrl
+        Measure ctrl
     }
     """
     codes = {d.get("code", "") for d in compile_source(src).diagnostics}

@@ -1,10 +1,10 @@
 """AT-TDD: LISS-0376 -- the unitarity guard's quantum-lineage tracker
-(`_expr_is_quantum`) recognizes a `superpose`-bound state, not just a
-ket-bound one (was silently tracking a superpose-bound state as
+(`_expr_is_quantum`) recognizes a `Superpose`-bound state, not just a
+ket-bound one (was silently tracking a Superpose-bound state as
 non-quantum, so a subsequent non-unitary transform on it was never
 checked).
 
-Design decision: docs/issues/LISS-0376-unitarity-superpose-dispatch.md
+Design decision: docs/issues/LISS-0376-unitarity-Superpose-dispatch.md
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ pub fn main() -> Unit {
     QubitRegister<1> register = system()
     State psi = |0>
     State bad = map(psi, x -> 0)
-    measure bad
+    Measure bad
 }
 """
 
@@ -34,9 +34,9 @@ pub fn main() -> Unit {
     QubitRegister<1> register = system()
     State control = |+>
     State psi = |0>
-    State sp = superpose(control) { 0 -> psi, 1 -> psi }
+    State sp = Superpose(control) { 0 -> psi, 1 -> psi }
     State bad = map(sp, x -> 0)
-    measure bad
+    Measure bad
 }
 """
 
@@ -50,7 +50,7 @@ def test_baseline_ket_bound_non_unitary_map_is_rejected() -> None:
 
 
 def test_superpose_bound_non_unitary_map_is_rejected_the_same_way() -> None:
-    """The identical non-unitary transform on a superpose-bound state
+    """The identical non-unitary transform on a Superpose-bound state
     must be rejected identically, not silently unchecked."""
     compiled = compile_source(_SUPERPOSE_BOUND_SRC)
     codes = {d.get("code") for d in compiled.diagnostics}

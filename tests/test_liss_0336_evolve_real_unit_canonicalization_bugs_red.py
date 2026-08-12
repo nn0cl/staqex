@@ -1,17 +1,17 @@
-"""AT-TDD: LISS-0336 -- fix two real-unit `evolve` bugs found while doing
+"""AT-TDD: LISS-0336 -- fix two real-unit `Evolve` bugs found while doing
 WP-0095 work unit 6 (A11) design intake.
 
 Bug 1: sparse_pauli.py's `_coalesce` uses an absolute 1e-15 epsilon that
 silently zeroes real Joule-scale (eV ~ 1.6e-19 J) Hamiltonian
-coefficients, turning `evolve` into a no-op identity transform for any
+coefficients, turning `Evolve` into a no-op identity transform for any
 multi-qubit-Pauli-Operator built directly from `X[i]`/`Z[i]` atoms.
 
 Bug 2: evaluator.py's `_hamiltonian_evolve_one_step` never canonicalizes
-the evolve duration from its declared Time unit (fs/ps/ns) to seconds --
+the Evolve duration from its declared Time unit (fs/ps/ns) to seconds --
 it reads the raw declared magnitude and uses it directly as seconds.
 
 Both confirmed live via instrumented tracing during design intake; see
-docs/issues/LISS-0336-evolve-real-unit-canonicalization-bugs.md.
+docs/issues/LISS-0336-Evolve-real-unit-canonicalization-bugs.md.
 """
 
 from __future__ import annotations
@@ -57,8 +57,8 @@ pub fn main() -> Unit {
     Time dur = 1.0.fs
     State psi = |0>
     Operator H = e * Z
-    State psi = evolve { psi under H for dur }.run()
-    measure psi
+    State psi = Evolve { psi under H for dur }.run()
+    Measure psi
 }
 """
     compiled = compile_source(src)

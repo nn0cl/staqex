@@ -21,7 +21,7 @@ def test_capitalized_state_bare_form_is_unaffected() -> None:
     package t
     pub fn main() -> Unit {
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)
@@ -35,7 +35,7 @@ def test_capitalized_state_tuple_form_is_unaffected() -> None:
     package t
     pub fn main() -> Unit {
         State (a, b) = (|0>, |+>)
-        measure a tracing_out b
+        Measure a tracing_out b
     }
     """
     compiled = compile_source(src)
@@ -49,7 +49,7 @@ def test_lowercase_state_bare_form_is_rejected_with_migration_diagnostic() -> No
     package t
     pub fn main() -> Unit {
         state a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)
@@ -63,7 +63,7 @@ def test_lowercase_state_tuple_form_is_rejected_with_migration_diagnostic() -> N
     package t
     pub fn main() -> Unit {
         state (a, b) = (|0>, |+>)
-        measure a tracing_out b
+        Measure a tracing_out b
     }
     """
     compiled = compile_source(src)
@@ -79,7 +79,7 @@ def test_state_is_usable_as_an_ordinary_identifier() -> None:
         Int state = 5
         Int y = state + 1
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)

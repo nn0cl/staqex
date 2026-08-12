@@ -2,7 +2,7 @@
 WP-0093 work units D and E).
 
 Maps S02's classical/quantum boundary onto already-shipped Kernel
-primitives -- terminal `measure` and `MeasurementEnvelope.vacuum` -- into
+primitives -- terminal `Measure` and `MeasurementEnvelope.vacuum` -- into
 the accepted S02 spec's Result contract. Does not define
 `Observable<T>`/`Projection<T>`/`Observation<T>` as Kernel types (WP-0092's
 own open decision).

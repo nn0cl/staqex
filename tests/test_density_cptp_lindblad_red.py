@@ -25,7 +25,7 @@ def test_density_state_and_typed_cptp_channel_have_distinct_contracts() -> None:
             DensityState<Qubit> rho = pure_to_density(psi)
             Channel<Qubit, Qubit> noise = DepolarizingChannel(0.1)
             DensityState<Qubit> evolved = apply(noise, rho)
-            measure evolved
+            Measure evolved
         }
         """
     )
@@ -43,7 +43,7 @@ def test_partial_trace_and_lindblad_require_mixed_state_lane() -> None:
         pub fn main() -> Unit {
             DensityState<Qubit> rho = mixed(|0>, |1>)
             DensityState<Qubit> reduced = partial_trace(rho, subsystem)
-            measure reduced
+            Measure reduced
         }
         """
     )
@@ -53,7 +53,7 @@ def test_partial_trace_and_lindblad_require_mixed_state_lane() -> None:
         pub fn main() -> Unit {
             DensityState<Qubit> rho = mixed(|0>, |1>)
             DensityState<Qubit> evolved = lindblad(rho, H, jumps, t)
-            measure evolved
+            Measure evolved
         }
         """
     )
@@ -71,7 +71,7 @@ def test_pure_state_surface_does_not_gain_implicit_noise() -> None:
         pub fn main() -> Unit {
             State<Qubit> psi = |0>
             DensityState<Qubit> rho = apply(DepolarizingChannel(0.1), psi)
-            measure rho
+            Measure rho
         }
         """
     )

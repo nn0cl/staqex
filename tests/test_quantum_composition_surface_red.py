@@ -1,8 +1,8 @@
 """Acceptance tests for the quantum composition surface boundary.
 
-The accepted design keeps ``mix``, ``superpose``, ``controlled``, and dynamic
+The accepted design keeps ``Mix``, ``Superpose``, ``controlled``, and dynamic
 feed-forward in distinct semantic lanes. These tests intentionally describe
-the next contract; the ``superpose`` lane is not implemented yet.
+the next contract; the ``Superpose`` lane is not implemented yet.
 """
 
 from __future__ import annotations
@@ -35,11 +35,11 @@ def test_superpose_has_a_distinct_coherent_lane() -> None:
         experiment coherent() {
           State control = |+>
           State psi = |0>
-          State result = superpose(control) {
+          State result = Superpose(control) {
             0 -> psi,
             1 -> psi,
           }
-          measure result
+          Measure result
         }
         """
     )
@@ -62,7 +62,7 @@ def test_when_has_no_compatibility_fallback_to_mix() -> None:
             0 -> |0>,
             1 -> |1>,
           }
-          measure result
+          Measure result
         }
         """
     )

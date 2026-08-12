@@ -26,7 +26,7 @@ def _src(angle_expr: str) -> str:
         {'' if angle_expr != 'theta' else 'Float theta = 1.57'}
         State q = |0>
         State q = apply(rx({angle_expr}), q)
-        measure q
+        Measure q
     }}
     """
 

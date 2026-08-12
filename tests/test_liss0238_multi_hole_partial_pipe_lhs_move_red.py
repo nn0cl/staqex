@@ -27,7 +27,7 @@ def test_pipe_into_multi_hole_partial_moves_lhs() -> None:
         State q = x |> p
         State y = 3
         State r = y |> q
-        measure r
+        Measure r
     }
     """
     codes = {d.get("code", "") for d in compile_source(src).diagnostics}
@@ -50,7 +50,7 @@ def test_one_hole_partial_pipe_still_moves() -> None:
         State p = add(10, _)
         State z = 3
         State r = z |> p
-        measure r
+        Measure r
     }
     """
     codes = {d.get("code", "") for d in compile_source(src).diagnostics}

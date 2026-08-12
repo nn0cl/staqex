@@ -29,8 +29,8 @@ def test_semantic_carrier_declarations_are_accepted() -> None:
             Dimension sites = 8
             Index<8> i = index(0)
             Basis<8> basis = basis(0)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -45,8 +45,8 @@ def test_index_and_basis_are_not_implicitly_interchangeable() -> None:
         pub fn main() -> Unit {
             Basis<8> basis = basis(0)
             Index<8> i = basis
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -61,8 +61,8 @@ def test_execution_counts_cannot_enter_theory_values() -> None:
         pub fn main() -> Unit {
             ShotCount shots = 1000
             Index<8> i = shots
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -78,8 +78,8 @@ def test_same_machine_representation_does_not_enable_arithmetic() -> None:
             Index<8> i = index(0)
             ShotCount shots = 1000
             State invalid = i + shots
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

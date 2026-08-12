@@ -3,5 +3,5 @@ pub fn main() -> Unit {
     State psi = |0>
     Operator A = adjoint(X)
     (a, b) = psi *|* psi
-    measure a
+    Measure a
 }

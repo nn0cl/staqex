@@ -49,7 +49,7 @@ def test_host_placeholder_lowers_with_overlay() -> None:
             h[p][q] * Z[p] * Z[q]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(source)
@@ -81,7 +81,7 @@ def test_missing_host_coefficient_is_diagnosed() -> None:
         Float[2] J = host("J")
         Operator H = sum (i in Index<0..0>) { J[i] * Z[i] }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(source)
@@ -96,7 +96,7 @@ def test_literal_and_host_conflict() -> None:
     pub fn main() -> Unit {
         Float[2] J = [1.0, 0.5]
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(source)

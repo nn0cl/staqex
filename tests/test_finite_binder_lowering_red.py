@@ -22,8 +22,8 @@ def _main(operator: str):
     pub fn main() -> Unit {{
         QubitRegister<4> register = system()
         Operator H = {operator}
-        State<Int> observed = coin()
-        measure observed
+        State<Int> observed = Coin()
+        Measure observed
     }}
     """
 

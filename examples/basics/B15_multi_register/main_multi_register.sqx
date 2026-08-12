@@ -11,7 +11,7 @@ Operator<RegisterSet<Link>> zz = Z[data[0]] * Z[ancilla[0]]
 State data = |0>
 State ancilla = |0>
 State corr = expect(ZZ, data, ancilla)
-State viewed = inspect(corr)
+State viewed = Inspect(corr)
 
 // Ancilla leaves via partial trace; terminal measure on data.
-measure data tracing_out ancilla
+Measure data tracing_out ancilla

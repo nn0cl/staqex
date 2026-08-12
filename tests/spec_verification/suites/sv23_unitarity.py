@@ -31,7 +31,7 @@ def run() -> list[CaseResult]:
                 """
 State psi = |+>
 State bad = project(psi, x -> x == 0)
-measure bad
+Measure bad
 """
             ),
         ),
@@ -43,7 +43,7 @@ measure bad
                 """
 State psi = |+>
 State bad = map(psi, x -> 0)
-measure bad
+Measure bad
 """
             ),
         ),
@@ -54,8 +54,8 @@ measure bad
             as_main(
                 """
 State psi = |+>
-State bad = mix (psi) { 0 -> 7, else -> 7 }
-measure bad
+State bad = Mix (psi) { 0 -> 7, else -> 7 }
+Measure bad
 """
             ),
         ),
@@ -68,7 +68,7 @@ measure bad
 Operator Bad = 2.0 * X
 State psi = |0>
 State psi = apply(Bad, psi)
-measure psi
+Measure psi
 """
             ),
         ),
@@ -81,7 +81,7 @@ measure psi
 Operator Had = 0.7071067811865476 * (X + Z)
 State psi = |0>
 State psi = apply(Had, psi)
-measure psi
+Measure psi
 """
             ),
         ),
@@ -93,19 +93,19 @@ measure psi
                 """
 State psi = |0>
 State p = project(psi, |0>)
-measure p
+Measure p
 """
             ),
         ),
         (
-            "sv23-coin-project-banned",
-            "project on classical coin → PREDICATE_PROJECTOR_ERROR",
+            "sv23-Coin-project-banned",
+            "project on classical Coin → PREDICATE_PROJECTOR_ERROR",
             "PREDICATE_PROJECTOR_ERROR",
             as_main(
                 """
-State s = coin()
+State s = Coin()
 State kept = project(s, v -> v == 1)
-measure kept
+Measure kept
 """
             ),
         ),

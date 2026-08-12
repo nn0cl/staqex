@@ -32,9 +32,9 @@ pub fn main() -> Unit {{
     QubitRegister<{register}> register = system()
     Operator H = {operator}
 {wires}
-    State ({names}) = evolve {{ ({names}) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }}.run()
+    State ({names}) = Evolve {{ ({names}) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }}.run()
 {uncompute}
-    measure a
+    Measure a
 }}
 """
 

@@ -1,11 +1,11 @@
 package com.staqex.fixtures
 
 pub fn main() -> Unit {
-    State s0 = coin()
-    State s1 = coin()
-    State agree = mix (s0) {
-      0 -> mix (s1) { 0 -> 1, else -> 0 },
-      else -> mix (s1) { 0 -> 0, else -> 1 },
+    State s0 = Coin()
+    State s1 = Coin()
+    State agree = Mix (s0) {
+      0 -> Mix (s1) { 0 -> 1, else -> 0 },
+      else -> Mix (s1) { 0 -> 0, else -> 1 },
     }
-    measure agree
+    Measure agree
 }

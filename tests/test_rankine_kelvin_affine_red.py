@@ -32,7 +32,7 @@ def test_r_to_k_f_and_c() -> None:
                 Temperature f = 491.67.R to F
                 Temperature c = 491.67.R to C
                 State a = |0>
-                measure a
+                Measure a
             }
             """
         ).diagnostics
@@ -50,7 +50,7 @@ def test_r_to_k_f_and_c() -> None:
             Temperature c = 491.67.R to C
             Temperature raw = 491.67.R
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )
@@ -69,7 +69,7 @@ def test_k_to_r() -> None:
         pub fn main() -> Unit {
             Temperature r = 273.15.K to R
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )

@@ -46,7 +46,7 @@ def test_energy_plus_energy_preserves_energy_payload() -> None:
         Energy y = 2.0.eV to J
         Energy z = add_energy(x, y)
         State s = |0>
-        measure s
+        Measure s
     }
     """
     compiled = compile_source(src)
@@ -60,14 +60,14 @@ def test_int_plus_int_still_promotes_to_float_legacy_convention() -> None:
         val x: Int
         fn init(value: Int) { this.x = value }
         fn doubled() -> State<Float> {
-            return dirac(this.x + this.x)
+            return Dirac(this.x + this.x)
         }
     }
 
     pub fn main() -> Unit {
         Box b = Box(3)
         State s = b.doubled()
-        measure s
+        Measure s
     }
     """
     compiled = compile_source(src)

@@ -28,9 +28,9 @@ def test_filesystem_adapter_implements_source_port() -> None:
         "fn main" in text
         or "pub fn main" in text
         or "staqex-profile: experiment" in text
-        or "measure" in text
+        or "Measure" in text
     )
-    assert "dirac" in text or "measure" in text
+    assert "Dirac" in text or "Measure" in text
 
 
 def test_load_module_graph_reads_via_source_port() -> None:

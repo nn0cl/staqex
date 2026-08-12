@@ -31,7 +31,7 @@ def test_source_density_measure_returns_opaque_mixed_job_result() -> None:
                     (0.5, |1>)
                 ])
             )
-            measure rho
+            Measure rho
             """
         )
     )
@@ -50,7 +50,7 @@ def test_source_lindblad_executes_on_cpu_lane_before_terminal_measure() -> None:
                 Ensemble([(1.0, |1>)])
             )
             DensityState<Qubit> evolved = lindblad(rho, H, jumps, t)
-            measure evolved
+            Measure evolved
             """
         ),
         settings={"target": "cpu"},
@@ -66,7 +66,7 @@ def test_source_pure_state_channel_mixing_remains_hard_rejected() -> None:
             """
             State<Qubit> psi = |0>
             DensityState<Qubit> rho = apply(DepolarizingChannel(0.1), psi)
-            measure rho
+            Measure rho
             """
         )
     )

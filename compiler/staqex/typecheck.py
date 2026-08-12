@@ -1656,7 +1656,7 @@ class TypeChecker:
                         ),
                     }
                 )
-            if expr.name in {"measure", "log", "write", "send"}:
+            if expr.name in {"Measure", "log", "write", "send"}:
                 self.diagnostics.append(
                     {
                         "code": "MATHEMATICAL_BINDER_EFFECT_ERROR",
@@ -3920,7 +3920,7 @@ class TypeChecker:
                 )
             if expr.args:
                 return self._infer(expr.args[0])
-        if op_name == "dirac" and expr.args:
+        if op_name == "Dirac" and expr.args:
             return self._infer(expr.args[0])
         if op_name == "controlled":
             # Coherent control is a state-preserving operation, distinct from
@@ -3934,7 +3934,7 @@ class TypeChecker:
         if op_name == "expect":
             # ⟨O⟩ is a classical scalar — not a quantum State coordinate
             return Ty("Classical", "Float", DIMLESS)
-        if op_name == "inspect":
+        if op_name == "Inspect":
             # ADR 0189: an inspection view is diagnostic, never a State or
             # terminal measurement result.
             return Ty("DiagnosticView", "Any", DIMLESS)

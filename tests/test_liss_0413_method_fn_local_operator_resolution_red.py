@@ -47,7 +47,7 @@ def test_class_method_local_operator_resolves_struct_field() -> None:
       W weights = W(1.0)
       Lat L = Lat()
       State result = L.use_op()
-      measure result
+      Measure result
     }
     """
     compiled = compile_source(source)
@@ -72,7 +72,7 @@ def test_library_fn_local_operator_resolves_struct_field() -> None:
     pub fn main() -> Unit {
         W weights = W(1.0)
         State result = use_op()
-        measure result
+        Measure result
     }
     """
     compiled = compile_source(source)
@@ -103,7 +103,7 @@ def test_class_method_local_operator_matches_equivalent_literal_value() -> None:
       W weights = W(2.0)
       Lat L = Lat()
       State result = L.use_op()
-      measure result
+      Measure result
     }
     """
     literal_source = """
@@ -120,7 +120,7 @@ def test_class_method_local_operator_matches_equivalent_literal_value() -> None:
     pub fn main() -> Unit {
       Lat L = Lat()
       State result = L.use_op()
-      measure result
+      Measure result
     }
     """
     struct_compiled = compile_source(struct_source)
@@ -152,7 +152,7 @@ def test_class_method_local_operator_with_literal_coefficient_still_works() -> N
     pub fn main() -> Unit {
       Lat L = Lat()
       State result = L.use_op()
-      measure result
+      Measure result
     }
     """
     compiled = compile_source(source)

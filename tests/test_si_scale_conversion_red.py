@@ -33,7 +33,7 @@ def test_explicit_to_converts_magnitude() -> None:
             Length x = 2.0.nm to m
             Frequency f = 1.0.GHz to Hz
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )
@@ -47,7 +47,7 @@ def test_explicit_to_converts_magnitude() -> None:
         pub fn main() -> Unit {
             Time t = 5.0.ms to s
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )
@@ -70,7 +70,7 @@ def test_bare_suffix_stays_raw() -> None:
         pub fn main() -> Unit {
             Time t = 5.0.ms
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )
@@ -86,7 +86,7 @@ def test_dim_mismatch_and_unknown_pair() -> None:
         pub fn main() -> Unit {
             Time t = 5.0.ms to m
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )
@@ -98,7 +98,7 @@ def test_dim_mismatch_and_unknown_pair() -> None:
         pub fn main() -> Unit {
             Mass m = 1.0.kg to bob
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )

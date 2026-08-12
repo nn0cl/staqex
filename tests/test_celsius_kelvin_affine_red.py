@@ -30,7 +30,7 @@ def test_c_to_k_and_reverse() -> None:
                 Temperature t = 0.0.C to K
                 Temperature c = 273.15.K to C
                 State a = |0>
-                measure a
+                Measure a
             }
             """
         ).diagnostics
@@ -47,7 +47,7 @@ def test_c_to_k_and_reverse() -> None:
             Temperature raw = 0.0.C
             Temperature c = 273.15.K to C
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )

@@ -27,8 +27,8 @@ def test_valid_qutrit_and_qudit_state_types_accepted() -> None:
             pub fn main() -> Unit {{
                 State<{annotation}> s = |0>
                 State s = |0>
-                State observed = coin()
-                measure observed
+                State observed = Coin()
+                Measure observed
             }}
             """
         )
@@ -49,8 +49,8 @@ def test_valid_qutrit_and_qudit_registers_accepted() -> None:
             package t
             pub fn main() -> Unit {{
                 {bind}
-                State observed = coin()
-                measure observed
+                State observed = Coin()
+                Measure observed
             }}
             """
         )
@@ -64,8 +64,8 @@ def test_qudit_zero_dimension_is_local_dimension_type_error() -> None:
         package t
         pub fn main() -> Unit {
             State<Qudit<0>> s = |0>
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -86,8 +86,8 @@ def test_qudit_register_nonpositive_shape_is_error() -> None:
             package t
             pub fn main() -> Unit {{
                 {bind}
-                State observed = coin()
-                measure observed
+                State observed = Coin()
+                Measure observed
             }}
             """
         )
@@ -105,8 +105,8 @@ def test_qudit_arity_mismatch_is_local_dimension_type_error() -> None:
         package t
         pub fn main() -> Unit {
             State<Qudit> s = |0>
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -121,8 +121,8 @@ def test_qudit_register_arity_mismatch_is_error() -> None:
         package t
         pub fn main() -> Unit {
             QuditRegister<3> r = system()
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )

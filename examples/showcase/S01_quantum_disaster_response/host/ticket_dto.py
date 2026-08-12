@@ -13,7 +13,7 @@ from compiler.staqex.host import JobResult, MeasurementEnvelope
 _HONESTY_NOTES = (
     "Language-spec showcase; not a city-wide optimum proof.",
     "Ticket is a Host mapping of JobResult, not a field dispatch system.",
-    "plan.sample_value is the terminal measure wire basis label, not a multi-field dispatch ID.",
+    "plan.sample_value is the terminal Measure wire basis label, not a multi-field dispatch ID.",
 )
 
 _PLAN_MEANING = (
@@ -36,7 +36,7 @@ def _terminal_envelope(result: JobResult) -> MeasurementEnvelope:
     envelope = result.measurements[-1]
     if envelope.vacuum:
         raise IncompleteMeasurementError(
-            "Terminal measurement is vacuum; refusing invented sample_value"
+            "Terminal measurement is Vacuum; refusing invented sample_value"
         )
     if envelope.value is None and not envelope.marginal:
         raise IncompleteMeasurementError(
@@ -69,7 +69,7 @@ def build_tonight_ticket(
 ) -> dict[str, Any]:
     """Map a succeeded local JobResult into TonightTicket schema_version 1.
 
-    Raises IncompleteMeasurementError on vacuum / empty measurements.
+    Raises IncompleteMeasurementError on Vacuum / empty measurements.
     Never invents sample_value.
     """
 
@@ -86,7 +86,7 @@ def build_tonight_ticket(
         "plan": {
             "sample_value": envelope.value,
             "marginal": _serialize_marginal(dict(envelope.marginal)),
-            "vacuum": False,
+            "Vacuum": False,
             "wire": "plan0",
             "meaning": _PLAN_MEANING,
         },

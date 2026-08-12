@@ -79,7 +79,7 @@ def assertVacuum(state: State[Any]) -> None:
     if not state.is_vacuum():
         raise AssertionFailure(
             "NOT_VACUUM",
-            f"expected vacuum (norm=0, empty support), got norm={state.norm()} support={state.support()}",
+            f"expected Vacuum (norm=0, empty support), got norm={state.norm()} support={state.support()}",
         )
     assertNormEquals(state, 0.0)
 

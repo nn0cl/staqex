@@ -42,11 +42,11 @@ def test_forEach_lowercase_in_is_unaffected() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        forEach q in register(2) {
+        ForEach q in register(2) {
             apply(X, q)
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)
@@ -68,8 +68,8 @@ def test_operator_dsl_sum_binder_lowercase_in_is_unaffected() -> None:
         Operator H_raw = sum (i in Index<0..1>) { Z[i] }
         Operator H = scale * H_raw
         State (a, b) = (|0>, |0>)
-        State (a, b) = evolve { (a, b) under H for 0.1.fs }.run()
-        measure a tracing_out b
+        State (a, b) = Evolve { (a, b) under H for 0.1.fs }.run()
+        Measure a tracing_out b
     }
     """
     compiled = compile_source(src)

@@ -32,8 +32,8 @@ def test_expr_postfix_dagger_parses_as_adjoint_call() -> None:
         package t
         pub fn main() -> Unit {{
             State a = adjoint(X)
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -54,8 +54,8 @@ def test_expr_dagger_typechecks_like_adjoint_call() -> None:
         package t
         pub fn main() -> Unit {
             Operator A = adjoint(X)
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -64,8 +64,8 @@ def test_expr_dagger_typechecks_like_adjoint_call() -> None:
         package t
         pub fn main() -> Unit {{
             Operator A = adjoint(X)
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -86,8 +86,8 @@ def test_expr_dagger_in_state_typechecks_like_adjoint() -> None:
         package t
         pub fn main() -> Unit {
             State a = adjoint(X)
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -96,8 +96,8 @@ def test_expr_dagger_in_state_typechecks_like_adjoint() -> None:
         package t
         pub fn main() -> Unit {{
             State a = adjoint(X)
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -114,8 +114,8 @@ def test_opdsl_postfix_dagger_still_compiles() -> None:
         package t
         pub fn main() -> Unit {{
             Operator A = adjoint(X)
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )

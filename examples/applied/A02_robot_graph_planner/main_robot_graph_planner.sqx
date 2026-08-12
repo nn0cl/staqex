@@ -14,7 +14,7 @@ pub fn main() -> Unit {
     Operator walk_operator = build_graph_coin()
 
     State<Qubit> c = |+>
-    State<Position> x = dirac(0)
+    State<Position> x = Dirac(0)
     State<(Qubit, Position)> (c, x) = c *|* x
 
     // Unrolled DTQW hops (coin then conditional shift).
@@ -24,24 +24,24 @@ pub fn main() -> Unit {
     State x = walk_shift(c, x)
 
     // Module `evolve` + imported step surface (identity step; see operators).
-    State (c, x) = evolve (c, x) times graph.walk_steps {
+    State (c, x) = Evolve (c, x) times graph.walk_steps {
         step_graph_hop(walk_operator, c, x)
     }
 
     State mx = expect(X, c)
-    State viewed_mx = inspect(mx)
+    State viewed_mx = Inspect(mx)
 
     // Classical oracle harvest (Float); phase mark uses a literal target index.
     Float corridor = collision_free_corridor()
     Float target = 2.0
 
-    State b0 = coin()
-    State b1 = coin()
+    State b0 = Coin()
+    State b1 = Coin()
     State route = b0 * 2 + b1
     State marked = phase(route, pi, target)
     State amplified = grover_diffuse(marked)
-    State viewed = inspect(amplified)
+    State viewed = Inspect(amplified)
 
     // Grover chain / walk moved some roots; remaining live leftovers via partial trace.
-    measure viewed tracing_out b0, b1, x
+    Measure viewed tracing_out b0, b1, x
 }

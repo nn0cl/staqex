@@ -2,8 +2,8 @@
 
 Reproduces the gap recorded in
 docs/issues/LISS-0049-qasm-function-call-lowering.md: `emit-qasm` on a
-program whose `main` calls a measure-free `fn` silently substitutes the
-empty-program fallback (`h; measure`) instead of rejecting the program.
+program whose `main` calls a Measure-free `fn` silently substitutes the
+empty-program fallback (`h; Measure`) instead of rejecting the program.
 This pins the Architecture Path decision (2026-07-25, Option B): reject
 with `QASM_FUNCTION_CALL_UNSUPPORTED` and actionable advice, and never emit
 a silently wrong circuit in its place.
@@ -30,11 +30,11 @@ from compiler.staqex.pipeline import compile_source  # noqa: E402
 _FUNCTION_CALL_SOURCE = """
 package t
 fn origin() -> State<Int> {
-    return dirac(0)
+    return Dirac(0)
 }
 pub fn main() -> Unit {
     State<Int> result = origin()
-    measure result
+    Measure result
 }
 """
 

@@ -36,11 +36,11 @@ pub fn main() -> Unit {
 
     State a = |+>
     State b = |0>
-    State (a, b) = evolve { (a, b) under H for dur using Suzuki(order = 2, steps = 8) }.run()
+    State (a, b) = Evolve { (a, b) under H for dur using Suzuki(order = 2, steps = 8) }.run()
 
     State zz = expect(ZZ, a, b)
-    State viewed = inspect(zz)
+    State viewed = Inspect(zz)
 
     // Terminal measure is singular; sibling leaves via partial trace (ADR 0173).
-    measure a tracing_out b
+    Measure a tracing_out b
 }

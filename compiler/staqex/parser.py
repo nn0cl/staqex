@@ -477,8 +477,8 @@ class Parser:
                     "prepare",
                     "realize",
                     "State",  # LISS-0418: lowercase `state` retired
-                    "evolve",
-                    "measure",
+                    "Evolve",  # LISS-0419: lowercase `evolve` retired
+                    "Measure",  # LISS-0419: lowercase `measure` retired
                 }:
                     return True
                 if (
@@ -697,9 +697,9 @@ class Parser:
             span = Span(line=first.line, col=first.col)
             if first.lexeme == "dynamic" or "dynamic" in lexemes:
                 statements.append(H1DynamicControl(source_tokens=lexemes, span=span))
-            elif "mix" in lexemes:
+            elif "Mix" in lexemes:
                 statements.append(H1Mixture(source_tokens=lexemes, span=span))
-            elif "superpose" in lexemes:
+            elif "Superpose" in lexemes:
                 statements.append(
                     H1Superposition(source_tokens=lexemes, span=span)
                 )
@@ -726,7 +726,7 @@ class Parser:
                         bound_to=bound_to,
                     )
                 )
-            elif "evolve" in lexemes:
+            elif "Evolve" in lexemes:
                 state_name = (
                     first.lexeme if first.kind == TokenKind.IDENT else None
                 )
@@ -749,7 +749,7 @@ class Parser:
                 statements.append(H1TraceOut(source_tokens=lexemes, span=span))
             elif first.lexeme == "observable":
                 statements.append(H1Observable(source_tokens=lexemes, span=span))
-            elif first.lexeme == "measure":
+            elif first.lexeme == "Measure":
                 statements.append(H1Measure(source_tokens=lexemes, span=span))
         return statements
 
@@ -1326,6 +1326,21 @@ class Parser:
             generic_bounds=tuple(generic_bounds),
         )
 
+    # LISS-0419: effect labels are a closed vocabulary that includes
+    # several now-capitalized keyword spellings (Measure/Inspect/Snapshot/
+    # Evolve/...) -- `_expect_ident_like` alone rejects any keyword token,
+    # so `effects { Inspect }` needs this dedicated accessor.
+    _EFFECT_KEYWORD_LEXEMES = frozenset(
+        {"Evolve", "Measure", "Mix", "Coin", "Dirac", "Vacuum", "Snapshot", "Inspect", "Superpose", "ForEach"}
+    )
+
+    def _expect_effect_name(self) -> str:
+        tok = self._peek()
+        if tok.kind == TokenKind.IDENT or tok.lexeme in self._EFFECT_KEYWORD_LEXEMES:
+            self._advance()
+            return tok.lexeme
+        raise ParseError(f"expected effect name, got `{tok.lexeme}`", tok.line, tok.col)
+
     def _effects_clause(self) -> list[str]:
         """Parse the optional fixed effect annotation after a return type."""
         if self._peek().lexeme != "effects":
@@ -1334,9 +1349,9 @@ class Parser:
         self._expect(TokenKind.LBRACE)
         effects: list[str] = []
         if not self._check(TokenKind.RBRACE):
-            effects.append(self._expect_ident_like())
+            effects.append(self._expect_effect_name())
             while self._match(TokenKind.COMMA):
-                effects.append(self._expect_ident_like())
+                effects.append(self._expect_effect_name())
         self._expect(TokenKind.RBRACE)
         return effects
 

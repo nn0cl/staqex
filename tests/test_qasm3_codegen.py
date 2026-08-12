@@ -19,7 +19,7 @@ def _assert_valid_qasm3(text: str) -> None:
     assert 'include "stdgates.inc";' in text
     assert re.search(r"qubit\[\d+\]\s+q;", text)
     assert re.search(r"bit\[\d+\]\s+c;", text)
-    assert "measure" in text
+    assert "measure" in text  # OpenQASM3 output keyword, always lowercase
     # No vendor SDKs leaked into output
     assert "braket" not in text.lower()
     assert "qiskit" not in text.lower()
@@ -31,7 +31,7 @@ def test_portable_bell_via_compiler() -> None:
     _assert_valid_qasm3(qasm)
     assert "h q[" in qasm
     assert "cx q[" in qasm
-    assert "c[0] = measure q[" in qasm
+    assert "c[0] = measure q[" in qasm  # OpenQASM3 output keyword, always lowercase
 
 
 def test_generator_from_unit() -> None:
@@ -41,7 +41,7 @@ pub fn main() -> Unit {
   State a = |+>
   State b = |0>
   State b = cnot(a, b)
-  measure b
+  Measure b
 }
 """
     compiled = compile_source(src)
@@ -63,7 +63,7 @@ pub fn main() -> Unit {
   State t = |0>
   State t = capply(q, X, t)
   State t = capply(q, Z, t)
-  measure t
+  Measure t
 }
 """
     compiled = compile_source(src)
@@ -87,7 +87,7 @@ pub fn main() -> Unit {
   State q = apply(T, q)
   State q = apply(rx(pi), q)
   State q = apply(ry(pi / 2.0), q)
-  measure q
+  Measure q
 }
 """
     compiled = compile_source(src)
@@ -105,7 +105,7 @@ def test_compile_failure_before_emit() -> None:
 package t
 pub fn main() -> Unit {
   State x = ???
-  measure x
+  Measure x
 }
 """
     try:
@@ -150,7 +150,7 @@ def test_stdlib_only_module() -> None:
 
 
 def test_trotter_ising_evolve_qasm() -> None:
-    """LISS-0008: TFIM evolve under H → discrete rz/cx (not empty).
+    """LISS-0008: TFIM Evolve under H → discrete rz/cx (not empty).
 
     LISS-0050 (ADR 0094): the example now carries an explicit
     `using Suzuki(order = 2, steps = N)` policy, so lowering goes through
@@ -171,8 +171,8 @@ package t
 pub fn main() -> Unit {
   Operator H = X
   State q = |0>
-  State q = evolve { q under H for 0.5 using Suzuki(order = 2, steps = 4) }.run()
-  measure q
+  State q = Evolve { q under H for 0.5 using Suzuki(order = 2, steps = 4) }.run()
+  Measure q
 }
 """
     compiled = compile_source(src)

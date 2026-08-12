@@ -45,12 +45,12 @@ def test_when_keeps_distinct_control_axes() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State c = coin()
-            State z = mix (c) {
+            State c = Coin()
+            State z = Mix (c) {
                 0 -> 10
                 1 -> 10
             }
-            measure z
+            Measure z
         }
         """,
         stdout=io.StringIO(),
@@ -67,8 +67,8 @@ def test_fn_trace_out_then_merged_identical_arms() -> None:
         """
         package t
         fn merged() -> State<Int> {
-            State c = coin()
-            State z = mix (c) {
+            State c = Coin()
+            State z = Mix (c) {
                 0 -> 10
                 1 -> 10
             }
@@ -76,7 +76,7 @@ def test_fn_trace_out_then_merged_identical_arms() -> None:
         }
         pub fn main() -> Unit {
             State r = merged()
-            measure r
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -96,7 +96,7 @@ def test_interfer_cancel_is_vacuum() -> None:
             State x = |+>
             State y = phase(x, 3.141592653589793)
             State z = interfer(x, y)
-            measure z
+            Measure z
         }
         """,
         stdout=io.StringIO(),

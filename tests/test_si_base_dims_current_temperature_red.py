@@ -34,7 +34,7 @@ def test_current_temperature_typecheck() -> None:
                 Length x = 1.0.m
                 Length bad = i
                 State a = |0>
-                measure a
+                Measure a
             }
             """
         ).diagnostics

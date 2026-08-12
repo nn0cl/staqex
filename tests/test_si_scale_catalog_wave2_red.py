@@ -41,7 +41,7 @@ def test_wave2_converts_and_bare_stays_raw() -> None:
             Frequency f = 5.0.kHz to Hz
             Frequency g = 6.0.MHz to Hz
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )
@@ -56,7 +56,7 @@ def test_wave2_converts_and_bare_stays_raw() -> None:
             Time t = 2.0.ps to s
             Time raw = 2.0.ps
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )
@@ -73,7 +73,7 @@ def test_unsupported_mass_scale_still_hard_fails() -> None:
         pub fn main() -> Unit {
             Mass m = 1.0.kg to bob
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )

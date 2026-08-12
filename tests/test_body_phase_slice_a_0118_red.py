@@ -31,8 +31,8 @@ def test_theory_must_not_call_transitively_tainted_fn() -> None:
             Operator H = mid()
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -57,8 +57,8 @@ def test_one_hop_taint_still_rejected() -> None:
             Operator H = leak()
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -87,8 +87,8 @@ def test_main_may_call_transitively_tainted_fn() -> None:
         }
         pub fn main() -> Unit {
             Operator H = mid()
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )

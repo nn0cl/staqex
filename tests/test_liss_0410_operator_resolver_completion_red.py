@@ -1,12 +1,12 @@
 """AT-TDD Phase 1 Red: complete the ADR 0206/LISS-0407 unified Operator
-resolver so apply/capply (and inline anonymous evolve expressions) see
-fully-resolved Operator AST, not just evolve's own named-bind path.
+resolver so apply/capply (and inline anonymous Evolve expressions) see
+fully-resolved Operator AST, not just Evolve's own named-bind path.
 
 Target: docs/issues/LISS-0410-operator-resolver-completion.md.
 
 Independent-context code review (this session) found LISS-0407's
 `_resolve_operator_tree` never actually learned to handle `OpAttr` --
-that stayed a separate, bolted-on call only reachable from evolve's own
+that stayed a separate, bolted-on call only reachable from Evolve's own
 call site and the factory-call path. `apply`/`capply` read
 `self.operators[name]` directly with no resolution step at all.
 """
@@ -27,7 +27,7 @@ from compiler.staqex.runtime.evaluator import Evaluator, KernelError  # noqa: E4
 def test_apply_resolves_struct_field_coefficient() -> None:
     """`apply(Bad, psi)` where Bad's coefficient comes from a struct
     field must run -- today it raises `cannot compile operator node
-    OpAttr` even though the identical form already works for `evolve`."""
+    OpAttr` even though the identical form already works for `Evolve`."""
     source = """
     package t
     struct W { a: Float }
@@ -36,7 +36,7 @@ def test_apply_resolves_struct_field_coefficient() -> None:
         Operator U = weights.a * X
         State psi = |0>
         State psi = apply(U, psi)
-        measure psi
+        Measure psi
     }
     """
     compiled = compile_source(source)
@@ -65,7 +65,7 @@ def test_apply_resolution_does_not_add_a_new_runtime_unitary_check() -> None:
         Operator Bad = 2.0 * X
         State psi = |0>
         State psi = apply(Bad, psi)
-        measure psi
+        Measure psi
     }
     """
     struct_source = """
@@ -76,7 +76,7 @@ def test_apply_resolution_does_not_add_a_new_runtime_unitary_check() -> None:
         Operator Bad = weights.a * X
         State psi = |0>
         State psi = apply(Bad, psi)
-        measure psi
+        Measure psi
     }
     """
     literal_compiled = compile_source(literal_source)
@@ -105,7 +105,7 @@ def test_operator_variable_indirection_still_works_via_operators_dict_shortcut()
         Operator H = G
         State q = |0>
         State q = apply(H, q)
-        measure q
+        Measure q
     }
     """
     compiled = compile_source(source)
@@ -116,9 +116,9 @@ def test_operator_variable_indirection_still_works_via_operators_dict_shortcut()
 
 def test_inline_compound_evolve_expression_was_never_supported() -> None:
     """Correction found during this Issue's own Red phase: an inline
-    *compound* Operator expression at `evolve { ... under <expr> for t
+    *compound* Operator expression at `Evolve { ... under <expr> for t
     }.run()` (never bound to a name) was never a working form at all,
-    with or without a struct field -- `evolve { q under scale * Z for
+    with or without a struct field -- `Evolve { q under scale * Z for
     dur }.run()` fails the same way as the struct-field case, because
     the parser produces
     generic `BinOp`/`Attr`/`Var` nodes for this position, not the
@@ -134,8 +134,8 @@ def test_inline_compound_evolve_expression_was_never_supported() -> None:
         Energy scale = 1.0.eV to J
         State q = |0>
         Time dur = 0.6.fs
-        State q = evolve { q under scale * Z for dur }.run()
-        measure q
+        State q = Evolve { q under scale * Z for dur }.run()
+        Measure q
     }
     """
     compiled = compile_source(source)
@@ -164,8 +164,8 @@ def test_existing_liss_0407_cases_still_pass() -> None:
         Operator H = scale * f(weights)
         State q = |0>
         Time dur = 0.6.fs
-        State q = evolve { q under H for dur }.run()
-        measure q
+        State q = Evolve { q under H for dur }.run()
+        Measure q
     }
     """
     compiled = compile_source(source)

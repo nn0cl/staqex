@@ -24,7 +24,7 @@ def test_h1_3_operator_has_structured_expression_and_parameters() -> None:
           parameter h: Energy
           operator H(J, h) = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
         }
-        experiment run(J = 1.0, h = 0.5) { measure H }
+        experiment run(J = 1.0, h = 0.5) { Measure H }
         """
     )
 
@@ -46,7 +46,7 @@ def test_h1_3_dimensionally_valid_hamiltonian_is_retained() -> None:
           parameter h: Energy
           operator H(J, h) = -J * Z[0] - h * X[0]
         }
-        experiment run(J = 1.0, h = 0.5) { measure H }
+        experiment run(J = 1.0, h = 0.5) { Measure H }
         """
     )
 
@@ -64,7 +64,7 @@ def test_h1_3_dimension_mismatch_rejects_operator_artifact() -> None:
           parameter dt: Time
           operator H(J, dt) = J + dt
         }
-        experiment run(J = 1.0, dt = 0.1) { measure H }
+        experiment run(J = 1.0, dt = 0.1) { Measure H }
         """
     )
 
@@ -77,7 +77,7 @@ def test_h1_3_non_hermitian_hamiltonian_is_rejected() -> None:
         theory Invalid {
           operator H = i * X
         }
-        experiment run() { measure H }
+        experiment run() { Measure H }
         """
     )
 
@@ -91,7 +91,7 @@ def test_h1_3_physics_ir_contains_structured_operator_node() -> None:
           parameter J: Energy
           operator H(J) = -J * Z[0]
         }
-        experiment run(J = 1.0) { measure H }
+        experiment run(J = 1.0) { Measure H }
         """
     )
 

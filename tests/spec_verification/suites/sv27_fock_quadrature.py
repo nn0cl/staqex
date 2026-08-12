@@ -54,8 +54,8 @@ def run() -> list[CaseResult]:
             as_main(
                 """
 Operator Hxp = 0.5 * (P * P + Q * Q)
-State x = dirac(0)
-measure x
+State x = Dirac(0)
+Measure x
 """
             )
         )
@@ -99,9 +99,9 @@ measure x
 Energy e = 0.5.eV to J
 Time dur = 1.0.fs
 Operator H = e * (P * P + Q * Q)
-State psi = dirac(0)
-State psi = evolve { psi under H for dur }.run()
-measure psi
+State psi = Dirac(0)
+State psi = Evolve { psi under H for dur }.run()
+Measure psi
 """
             )
         )
@@ -111,18 +111,18 @@ measure psi
         out.append(
             CaseResult(
                 "SV-27",
-                "sv27-evolve-ground",
-                "evolve |0⟩ under H_xp stays |0⟩",
+                "sv27-Evolve-ground",
+                "Evolve |0⟩ under H_xp stays |0⟩",
                 True,
-                ["evolve"],
+                ["Evolve"],
             )
         )
     except AssertionFailure as e:
         out.append(
             CaseResult(
                 "SV-27",
-                "sv27-evolve-ground",
-                "evolve |0⟩ under H_xp stays |0⟩",
+                "sv27-Evolve-ground",
+                "Evolve |0⟩ under H_xp stays |0⟩",
                 False,
                 [],
                 error_code=e.code,
@@ -136,7 +136,7 @@ measure psi
         )
         result, _ = _eval(src)
         if result.measure is None:
-            raise AssertionFailure("MEASURE", "no measure")
+            raise AssertionFailure("MEASURE", "no Measure")
         out.append(
             CaseResult(
                 "SV-27",

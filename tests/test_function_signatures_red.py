@@ -18,11 +18,11 @@ def test_zero_argument_function_returns_final_state_expression() -> None:
     src = """
 package t
 fn origin() -> State<Int> {
-    return dirac(0)
+    return Dirac(0)
 }
 pub fn main() -> Unit {
     State<Int> result = origin()
-    measure result
+    Measure result
 }
 """
     result = run_source(src, seed=0, stdout=io.StringIO())
@@ -38,10 +38,10 @@ fn add(a: State<Int>, b: State<Int>) -> State<Int> {
     return a + b
 }
 pub fn main() -> Unit {
-    State<Int> a = coin()
-    State<Int> b = dirac(2)
+    State<Int> a = Coin()
+    State<Int> b = Dirac(2)
     State<Int> result = add(a, b)
-    measure result
+    Measure result
 }
 """
     result = run_source(src, seed=0, stdout=io.StringIO())
@@ -61,13 +61,13 @@ class Box {
     }
 
     fn doubled() -> State<Float> {
-        return dirac(this.x + this.x)
+        return Dirac(this.x + this.x)
     }
 }
 pub fn main() -> Unit {
     Box box = Box(3)
     State<Float> result = box.doubled()
-    measure result
+    Measure result
 }
 """
     result = run_source(src, seed=0, stdout=io.StringIO())
@@ -80,13 +80,13 @@ def test_function_measure_remains_forbidden_inside_measure_free_boundary() -> No
     src = """
 package t
 fn bad() -> State<Int> {
-    State<Int> value = coin()
-    measure value
-    return dirac(0)
+    State<Int> value = Coin()
+    Measure value
+    return Dirac(0)
 }
 pub fn main() -> Unit {
     State<Int> result = bad()
-    measure result
+    Measure result
 }
 """
     compiled = compile_source(src)

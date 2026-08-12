@@ -23,7 +23,7 @@ def _messages(diags: list[dict]) -> str:
 
 
 def test_lindblad_moves_input_rho() -> None:
-    """Transformation consumes rho; measure evolved discharges the result."""
+    """Transformation consumes rho; Measure evolved discharges the result."""
     compiled = compile_source(
         """
         package t
@@ -33,7 +33,7 @@ def test_lindblad_moves_input_rho() -> None:
             Operator jumps = X
             Float t = 0.1
             DensityState<Qubit> evolved = lindblad(rho, H, jumps, t)
-            measure evolved
+            Measure evolved
         }
         """
     )
@@ -80,7 +80,7 @@ def test_same_name_hadamard_rebind_emits_discard_without_measure() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> q = coin()
+            State<Int> q = Coin()
             State<Int> q = hadamard(q)
         }
         """
@@ -96,9 +96,9 @@ def test_same_name_hadamard_rebind_then_measure_ok() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> q = coin()
+            State<Int> q = Coin()
             State<Int> q = hadamard(q)
-            measure q
+            Measure q
         }
         """
     )

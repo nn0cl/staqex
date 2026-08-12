@@ -101,8 +101,8 @@ def test_settings_inputs_passes_through_to_evaluator_construction() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-    State x = coin()
-    measure x
+    State x = Coin()
+    Measure x
 }
 """
     with _patched_evaluator(_CapturingEvaluator):

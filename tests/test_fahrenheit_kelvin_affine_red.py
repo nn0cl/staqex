@@ -32,7 +32,7 @@ def test_f_to_k_and_c() -> None:
                 Temperature k = 32.0.F to K
                 Temperature c = 32.0.F to C
                 State a = |0>
-                measure a
+                Measure a
             }
             """
         ).diagnostics
@@ -49,7 +49,7 @@ def test_f_to_k_and_c() -> None:
             Temperature c = 32.0.F to C
             Temperature raw = 32.0.F
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )

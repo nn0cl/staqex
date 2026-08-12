@@ -37,7 +37,7 @@ pub fn main() -> Unit {
     Continuous risk = weight(damage, flood)
     Continuous masked = mask(risk, impassable)
     State zone = |0>
-    measure zone
+    Measure zone
 }
 """
 
@@ -108,7 +108,7 @@ pub fn main() -> Unit {
     Continuous fire = field_from_host("fire_index_v1", "Omega")
     Continuous risk = weight(damage, flood, fire)
     State zone = |0>
-    measure zone
+    Measure zone
 }
 """
     compiled = compile_source(source)

@@ -24,11 +24,11 @@ _SOURCE_STATIC = """
 package t
 pub fn main() -> Unit {
     QubitRegister<1> reg = system()
-    forEach q in reg {
+    ForEach q in reg {
         apply(H, q)
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -37,11 +37,11 @@ package t
 pub fn main() -> Unit {
     dynamic qpu {
         State q = |0>
-        Controller<Bit> bit = measure q
+        Controller<Bit> bit = Measure q
         reset q
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -87,7 +87,7 @@ def test_dynamic_source_emits_dynamic_qasm_and_submits() -> None:
     assert job_id is not None
     assert adapter.received is not None
     qasm = adapter.received.artifact.qasm
-    assert "bit = measure q;" in qasm
+    assert "bit = measure q;" in qasm  # OpenQASM3 output keyword, always lowercase
     assert "reset q;" in qasm
 
 

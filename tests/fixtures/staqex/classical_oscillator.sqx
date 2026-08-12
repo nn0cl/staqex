@@ -11,22 +11,22 @@ pub fn main() -> Unit {
     Mass m = 1.0.kg
     Stiffness k = 1.0.N_m
 
-    State bit = coin()
-    State<Length> q0 = mix (bit) {
+    State bit = Coin()
+    State<Length> q0 = Mix (bit) {
       0 -> 1.0.m,
       else -> 1.2.m,
     }
-    State<Momentum> p0 = mix (bit) {
+    State<Momentum> p0 = Mix (bit) {
       0 -> 0.0.kg_m_s,
       else -> 0.0.kg_m_s,
     }
 
-    State (q, p) = evolve (q0, p0) times 2 {
+    State (q, p) = Evolve (q0, p0) times 2 {
       let q1 = q + (dt / m) * p
       let p1 = p - (dt * k) * q
       (q1, p1)
     }
 
-    State viewed = inspect(q)
-    measure viewed
+    State viewed = Inspect(q)
+    Measure viewed
 }

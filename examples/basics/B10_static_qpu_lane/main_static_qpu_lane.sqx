@@ -2,8 +2,8 @@
 // B10 — static register elaboration; `q` is an opaque wire handle.
 
 QubitRegister<3> reg = system()
-forEach q in reg {
+ForEach q in reg {
     apply(H, q)
 }
-State<Int> observed = coin()
-measure observed
+State<Int> observed = Coin()
+Measure observed

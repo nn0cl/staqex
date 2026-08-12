@@ -19,4 +19,4 @@ State a = 3 |> bump |> dbl
 // Partial hole: fill left-to-right
 State b = 5 |> add(10, _)
 
-measure a tracing_out b
+Measure a tracing_out b

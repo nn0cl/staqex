@@ -36,7 +36,7 @@ def test_energy_div_length_preserves_force_payload() -> None:
         Length len = 1.0.m
         Force f = force_from_energy(e, len)
         State s = |0>
-        measure s
+        Measure s
     }
     """
     compiled = compile_source(src)
@@ -50,14 +50,14 @@ def test_int_times_int_still_type_checks_in_state_context() -> None:
         val x: Int
         fn init(value: Int) { this.x = value }
         fn squared() -> State<Int> {
-            return dirac(this.x * this.x)
+            return Dirac(this.x * this.x)
         }
     }
 
     pub fn main() -> Unit {
         Box b = Box(3)
         State s = b.squared()
-        measure s
+        Measure s
     }
     """
     compiled = compile_source(src)

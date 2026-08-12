@@ -37,8 +37,8 @@ def test_qualified_clean_method_not_blocked_by_tainted_peer() -> None:
             Operator H = Pure().k()
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -66,8 +66,8 @@ def test_qualified_tainted_method_still_rejected() -> None:
             Operator H = S().k()
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -102,8 +102,8 @@ def test_bare_short_name_fails_closed_when_any_peer_tainted() -> None:
             Operator H = k()
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -130,8 +130,8 @@ def test_bare_short_name_ok_when_only_clean_methods_exist() -> None:
             Operator H = k()
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )

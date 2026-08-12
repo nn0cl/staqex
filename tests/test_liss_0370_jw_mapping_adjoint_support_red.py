@@ -27,9 +27,9 @@ def test_adjoint_inside_binder_matches_annihilate() -> None:
             Operator H = sum (i in Index<0..1>) {{ {_K} * (create[i] * {term}) }}
             State a = |+>
             State b = |0>
-            State (a, b) = evolve {{ (a, b) under H for 1.0.fs using Suzuki(order = 2, steps = 8) }}.run()
+            State (a, b) = Evolve {{ (a, b) under H for 1.0.fs using Suzuki(order = 2, steps = 8) }}.run()
             State b = |0>
-            measure a
+            Measure a
         }}
         """
 
@@ -47,8 +47,8 @@ def test_adjoint_through_explicit_jordan_wigner_path() -> None:
         FermionOperator<Orbitals> H = {_K} * create[0] * adjoint(create[0])
         QubitOperator<Qubits> mapped = map(H, JordanWigner)
         State psi = |+>
-        State psi = evolve {{ psi under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }}.run()
-        measure psi
+        State psi = Evolve {{ psi under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }}.run()
+        Measure psi
     }}
     """
     result = run_source(src, settings={"seed": 7})

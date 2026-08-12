@@ -3,7 +3,7 @@
 
   Scenario: prepare_selection produces an equal superposition over all
     2^n selection patterns, before any measurement.
-  Scenario: terminal measure yields one concrete selection pattern,
+  Scenario: terminal Measure yields one concrete selection pattern,
     reproducibly under the same seed.
   Scenario: candidate identity never crosses into the Kernel --
     prepare_selection's signature is (n: Int) only.
@@ -69,7 +69,7 @@ def test_terminal_measure_yields_one_pattern_reproducibly() -> None:
     src = _main(
         """
     State selection = prepare_selection(3)
-    measure selection
+    Measure selection
 """
     )
     first = run_source(src, settings={"target": "local", "seed": 0})

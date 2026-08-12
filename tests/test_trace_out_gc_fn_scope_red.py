@@ -30,7 +30,7 @@ def test_fn_param_axis_traced_out_after_call() -> None:
         pub fn main() -> Unit {
             State x = 3
             State r = double(x)
-            measure r
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -56,8 +56,8 @@ def test_caller_live_coords_preserved() -> None:
             State keep = |1>
             State x = |0>
             State r = id(x)
-            State viewed = inspect(r)
-            measure keep
+            State viewed = Inspect(r)
+            Measure keep
         }
         """,
         stdout=io.StringIO(),

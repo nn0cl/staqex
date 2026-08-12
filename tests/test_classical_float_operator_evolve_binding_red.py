@@ -1,4 +1,4 @@
-"""AT-TDD: LISS-0137 classical Float → Operator / evolve for (+ param factory)."""
+"""AT-TDD: LISS-0137 classical Float → Operator / Evolve for (+ param factory)."""
 
 from __future__ import annotations
 
@@ -40,11 +40,11 @@ pub fn main() -> Unit {
     Operator H = tfim(1.0545718e-19, 5.272859e-20)
     State s0 = |+>
     State s1 = |+>
-    State (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
     State zz = expect(ZZ, s0, s1)
-    State viewed = inspect(zz)
+    State viewed = Inspect(zz)
     State s1 = |0>
-    measure s0
+    Measure s0
 }
 """
 
@@ -63,9 +63,9 @@ pub fn main() -> Unit {
     Operator H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
     State s0 = |+>
     State s1 = |+>
-    State (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
     State s1 = |0>
-    measure s0
+    Measure s0
 }
 """
 
@@ -89,9 +89,9 @@ pub fn main() -> Unit {
     Operator H = -1.0545718e-19 * (Z[0] * Z[1]) - 5.272859e-20 * (X[0] + X[1])
     State s0 = |+>
     State s1 = |+>
-    State (s0, s1) = evolve { (s0, s1) under H for duration using Suzuki(order = 2, steps = 6) }.run()
+    State (s0, s1) = Evolve { (s0, s1) under H for duration using Suzuki(order = 2, steps = 6) }.run()
     State s1 = |0>
-    measure s0
+    Measure s0
 }
 """
 

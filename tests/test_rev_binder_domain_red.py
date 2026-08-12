@@ -43,7 +43,7 @@ def test_rev_enumerates_descending() -> None:
             Z[i]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     codes = _codes(source)
@@ -65,7 +65,7 @@ def test_rev_empty_stays_empty() -> None:
             Z[0]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(source)

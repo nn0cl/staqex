@@ -1,4 +1,4 @@
-"""AT-TDD Phase 1 Red: LISS-0012 bounded pure evolve-until."""
+"""AT-TDD Phase 1 Red: LISS-0012 bounded pure Evolve-until."""
 
 from __future__ import annotations
 
@@ -22,10 +22,10 @@ def test_bounded_evolve_until_is_a_state_preserving_expression() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State psi = dirac(0)
-            State result = evolve { psi under X for 1 until converged(psi) max 64 }.run()
+            State psi = Dirac(0)
+            State result = Evolve { psi under X for 1 until converged(psi) max 64 }.run()
             State psi = |0>
-            measure result
+            Measure result
         }
         """
     )
@@ -40,10 +40,10 @@ def test_qpu_emission_rejects_evolve_until_at_the_backend_boundary() -> None:
         pub fn main() -> Unit {
             QubitRegister<1> reg = system()
             Operator H = Z[0]
-            State psi = dirac(0)
-            State result = evolve { psi under H for 1 using Suzuki(order = 2, steps = 1) until converged(psi) max 64 }.run()
+            State psi = Dirac(0)
+            State result = Evolve { psi under H for 1 using Suzuki(order = 2, steps = 1) until converged(psi) max 64 }.run()
             State psi = |0>
-            measure result
+            Measure result
         }
         """
     )
@@ -61,9 +61,9 @@ def test_evolve_until_requires_an_explicit_positive_max() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State psi = dirac(0)
-            State result = evolve { psi under X for 1 until converged(psi) }.run()
-            measure result
+            State psi = Dirac(0)
+            State result = Evolve { psi under X for 1 until converged(psi) }.run()
+            Measure result
         }
         """
     )
@@ -76,9 +76,9 @@ def test_evolve_until_rejects_non_positive_max() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State psi = dirac(0)
-            State result = evolve { psi under X for 1 until converged(psi) max 0 }.run()
-            measure result
+            State psi = Dirac(0)
+            State result = Evolve { psi under X for 1 until converged(psi) max 0 }.run()
+            Measure result
         }
         """
     )
@@ -91,9 +91,9 @@ def test_evolve_until_predicate_cannot_measure_or_consume_rng() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State psi = dirac(0)
-            State result = evolve { psi under X for 1 until measure psi max 64 }.run()
-            measure result
+            State psi = Dirac(0)
+            State result = Evolve { psi under X for 1 until Measure psi max 64 }.run()
+            Measure result
         }
         """
     )
@@ -110,4 +110,4 @@ if __name__ == "__main__":
         test_evolve_until_predicate_cannot_measure_or_consume_rng,
     ):
         test()
-    print("OK — evolve until Red tests")
+    print("OK — Evolve until Red tests")

@@ -70,8 +70,8 @@ def test_class_mass_field_to_g_retains_source_unit() -> None:
     pub fn main() -> Unit {
         Box b = Box(1.0.kg)
         Mass grams = b.as_g()
-        State q = coin()
-        measure q
+        State q = Coin()
+        Measure q
     }
     """
     compiled = compile_source(src)
@@ -104,8 +104,8 @@ def test_class_mass_fields_mixed_plus_promotes_to_kg() -> None:
     pub fn main() -> Unit {
         Box b = Box(1.0.kg, 500.0.g)
         Mass total = b.sum_kg()
-        State q = coin()
-        measure q
+        State q = Coin()
+        Measure q
     }
     """
     compiled = compile_source(src)
@@ -129,8 +129,8 @@ def test_struct_mass_field_to_g_retains_source_unit() -> None:
     pub fn main() -> Unit {
         Pack p = Pack(1.0.kg)
         Mass grams = p.water to g
-        State q = coin()
-        measure q
+        State q = Coin()
+        Measure q
     }
     """
     compiled = compile_source(src)
@@ -162,8 +162,8 @@ def test_float_field_to_kg_remains_fail_closed() -> None:
     pub fn main() -> Unit {
         Box b = Box(1.0)
         Mass m = b.as_mass()
-        State q = coin()
-        measure q
+        State q = Coin()
+        Measure q
     }
     """
     codes = {str(d.get("code", "")) for d in compile_source(src).diagnostics}

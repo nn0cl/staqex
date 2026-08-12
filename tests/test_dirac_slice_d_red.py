@@ -34,8 +34,8 @@ def test_ket_bra_parses_as_outer_call() -> None:
         package t
         pub fn main() -> Unit {{
             Operator P = outer(|0{KET_CLOSE}, {BRA_OPEN}1|)
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -57,8 +57,8 @@ def test_matching_ket_bra_parses_as_projector() -> None:
         package t
         pub fn main() -> Unit {{
             Operator P = projector(|0{KET_CLOSE})
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -79,8 +79,8 @@ def test_outer_and_projector_punctuation_typecheck() -> None:
         pub fn main() -> Unit {{
             Operator O = outer(|0{KET_CLOSE}, {BRA_OPEN}1|)
             Operator P = projector(|+{KET_CLOSE})
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -96,8 +96,8 @@ def test_alone_ket_still_parses_without_following_bra() -> None:
         pub fn main() -> Unit {{
             State ket = |0{KET_CLOSE}
             State ket = |0>
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )

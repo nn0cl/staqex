@@ -24,9 +24,9 @@ def test_build_hir_attaches_linear_diagnostics() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> leftover = coin()
-            State<Int> q = coin()
-            measure q
+            State<Int> leftover = Coin()
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -52,9 +52,9 @@ def test_e2e_linear_suite_covers_a_b_c() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> q = coin()
+            State<Int> q = Coin()
             State<Int> alias = q
-            measure alias
+            Measure alias
         }
         """
     )
@@ -67,9 +67,9 @@ def test_e2e_linear_suite_covers_a_b_c() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> leftover = coin()
-            State<Int> q = coin()
-            measure q
+            State<Int> leftover = Coin()
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -82,13 +82,13 @@ def test_e2e_linear_suite_covers_a_b_c() -> None:
         """
         package t
         fn reset_ancilla() -> State<Int> {
-            State<Int> ancilla = coin()
+            State<Int> ancilla = Coin()
             State<Int> ancilla = |0>
             return ancilla
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )

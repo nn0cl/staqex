@@ -20,7 +20,7 @@ def test_mixed_kg_g_promotes_to_kg() -> None:
         pub fn main() -> Unit {
             Mass a = 1.0.kg + 1.0.g
             State x = |0>
-            measure x
+            Measure x
         }
         """
     )
@@ -40,7 +40,7 @@ def test_same_unit_addition_ok() -> None:
         pub fn main() -> Unit {
             Mass a = 1.0.kg + 2.0.kg
             State x = |0>
-            measure x
+            Measure x
         }
         """
     )
@@ -59,7 +59,7 @@ def test_explicit_to_then_same_unit_ok() -> None:
         pub fn main() -> Unit {
             Mass a = (1.0.kg to g) + 1.0.g
             State x = |0>
-            measure x
+            Measure x
         }
         """
     )
@@ -80,7 +80,7 @@ def test_type_first_mixed_vars_promote() -> None:
             Mass b = 1.0.g
             Mass c = a + b
             State x = |0>
-            measure x
+            Measure x
         }
         """
     )
@@ -100,7 +100,7 @@ def test_celsius_fahrenheit_promote_restores_lhs_celsius() -> None:
         pub fn main() -> Unit {
             Temperature t = 0.0.C + 32.0.F
             State x = |0>
-            measure x
+            Measure x
         }
         """
     )

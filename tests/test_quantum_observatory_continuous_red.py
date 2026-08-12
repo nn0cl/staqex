@@ -17,7 +17,7 @@ def test_fixture_continuous_models_remain_available_for_sv() -> None:
         path = _FIXTURES / name
         assert path.is_file(), f"missing fixture {path}"
         text = path.read_text(encoding="utf-8")
-        assert "evolve" in text, f"{name} should exercise evolve"
+        assert "Evolve" in text, f"{name} should exercise Evolve"
 
 
 def test_open_system_examples_cover_lindblad_lane() -> None:

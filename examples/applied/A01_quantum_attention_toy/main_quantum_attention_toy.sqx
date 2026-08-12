@@ -6,7 +6,7 @@ package examples.applied.quantum_attention_toy
 
 pub fn main() -> Unit {
     QubitRegister<3> wires = system()
-    forEach q in wires {
+    ForEach q in wires {
         apply(H, q)
     }
 
@@ -33,8 +33,8 @@ pub fn main() -> Unit {
     State ccx_tgt = toffoli(c0, c1, ccx_tgt)
 
     State score = expect(ZZ, query, key)
-    State viewed_score = inspect(score)
+    State viewed_score = Inspect(score)
 
     // Controls already moved by capply/toffoli; live targets leave via partial trace.
-    measure value tracing_out key, open_tgt, mixed_tgt, ccx_tgt
+    Measure value tracing_out key, open_tgt, mixed_tgt, ccx_tgt
 }

@@ -1,4 +1,4 @@
-"""SV-17: Dirac ket, evolve under H, expect, pretty dimension errors (ADR 0038)."""
+"""SV-17: Dirac ket, Evolve under H, expect, pretty dimension errors (ADR 0038)."""
 
 from __future__ import annotations
 
@@ -50,7 +50,7 @@ def run() -> list[CaseResult]:
             """
 State z = |0>
 State p = |+>
-measure z
+Measure z
 """
         )
         result, _ = _eval(src)
@@ -62,7 +62,7 @@ measure z
             as_main(
                 """
 State p = |+>
-measure p
+Measure p
 """
             )
         )
@@ -108,8 +108,8 @@ measure p
             """
 State psi0 = |0>
 Time dur = 1.5707963267948966.s
-State psi = evolve { psi0 under X for dur }.run()
-measure psi
+State psi = Evolve { psi0 under X for dur }.run()
+Measure psi
 """
         )
         result, _ = _eval(src)
@@ -120,8 +120,8 @@ measure psi
         out.append(
             CaseResult(
                 "SV-17",
-                "sv17-evolve-under-x",
-                "evolve |0> under X for π/2 → |1>",
+                "sv17-Evolve-under-x",
+                "Evolve |0> under X for π/2 → |1>",
                 True,
                 ["hamiltonian"],
             )
@@ -130,8 +130,8 @@ measure psi
         out.append(
             CaseResult(
                 "SV-17",
-                "sv17-evolve-under-x",
-                "evolve under X",
+                "sv17-Evolve-under-x",
+                "Evolve under X",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -144,7 +144,7 @@ measure psi
             """
 State z = |0>
 State ez = expect(Z, z)
-measure ez
+Measure ez
 """
         )
         result, _ = _eval(src)
@@ -157,7 +157,7 @@ measure ez
             """
 State p = |+>
 State ez = expect(Z, p)
-measure ez
+Measure ez
 """
         )
         result2, _ = _eval(src2)
@@ -194,7 +194,7 @@ State alice = |+>
 State bob = |0>
 State bob = cnot(alice, bob)
 State corr = expect(ZZ, alice, bob)
-measure corr
+Measure corr
 """
         )
         result, _ = _eval(src)
@@ -207,8 +207,8 @@ State alice = |+>
 State bob = |0>
 State bob = cnot(alice, bob)
 State corr = expect(ZZ, alice, bob)
-snapshot corr to sink
-measure corr
+Snapshot corr to sink
+Measure corr
 """
         )
         result2, _ = _eval(src2)
@@ -251,10 +251,10 @@ measure corr
     try:
         src = as_main(
             """
-State<Length> x = dirac(1.0.m)
+State<Length> x = Dirac(1.0.m)
 Delta<Time> dt = 0.5.s
 State bad = x + dt
-measure bad
+Measure bad
 """
         )
         compiled = compile_source(src)

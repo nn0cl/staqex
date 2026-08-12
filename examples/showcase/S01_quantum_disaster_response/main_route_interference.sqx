@@ -17,6 +17,6 @@ pub fn main() -> Unit {
     State left = phase(left, 0.35)
     State right = phase(right, -0.35)
     State corr = expect(ZZ, left, right)
-    State viewed_corr = inspect(corr)
-    measure left tracing_out right
+    State viewed_corr = Inspect(corr)
+    Measure left tracing_out right
 }

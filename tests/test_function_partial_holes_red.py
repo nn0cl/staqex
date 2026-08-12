@@ -30,7 +30,7 @@ def test_partial_typechecks_and_strict_arity() -> None:
             State p = second(z, _)
             State w = |1>
             State r = w |> p
-            measure r
+            Measure r
         }
         """
     )
@@ -49,7 +49,7 @@ def test_partial_typechecks_and_strict_arity() -> None:
         }
         pub fn main() -> Unit {
             State r = second(|0>)
-            measure r
+            Measure r
         }
         """
     )
@@ -69,7 +69,7 @@ def test_partial_pipe_evaluates() -> None:
             State p = second(z, _)
             State w = |1>
             State r = w |> p
-            measure r
+            Measure r
         }
         """,
         stdout=__import__("io").StringIO(),

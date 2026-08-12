@@ -22,7 +22,7 @@ def test_tuple_fills_multi_hole_call() -> None:
         }
         pub fn main() -> Unit {
             State r = (1, 2) |> add(_, _)
-            measure r
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -47,7 +47,7 @@ def test_tuple_multi_hole_then_fuse_chain() -> None:
         }
         pub fn main() -> Unit {
             State r = (10, 3) |> add(_, _) |> dbl |> inc
-            measure r
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -68,7 +68,7 @@ def test_tuple_multi_hole_then_fuse_chain() -> None:
             State t = add(10, 3)
             State u = dbl(t)
             State r = inc(u)
-            measure r
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -89,7 +89,7 @@ def test_tuple_fills_multi_hole_partial() -> None:
         pub fn main() -> Unit {
             State p = add(_, _)
             State r = (4, 5) |> p
-            measure r
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -112,7 +112,7 @@ def test_one_hole_call_fusion_regression() -> None:
         pub fn main() -> Unit {
             State z = 3
             State r = z |> add(10, _) |> dbl
-            measure r
+            Measure r
         }
         """,
         stdout=io.StringIO(),

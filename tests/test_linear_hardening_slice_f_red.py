@@ -54,13 +54,13 @@ def test_static_uncompute_program_runs_under_runtime_check() -> None:
         """
         package t
         fn reset_ancilla() -> State<Int> effects { Uncompute } {
-            State<Int> ancilla = coin()
+            State<Int> ancilla = Coin()
             State<Int> ancilla = |0>
             return ancilla
         }
         pub fn main() -> Unit {
             State<Int> a = reset_ancilla()
-            measure a
+            Measure a
         }
         """
     )

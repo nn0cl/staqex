@@ -24,13 +24,13 @@ namespace N {{
 }}
 pub fn main() -> Unit {{
   N.S s = N.S.{variant}
-  State w = mix (s) {{
+  State w = Mix (s) {{
     Open -> |1>,
     else -> |0>,
   }}
   State peeked = expect(Z, w)
-  State viewed = inspect(peeked)
-  measure w
+  State viewed = Inspect(peeked)
+  Measure w
 }}
 """
 
@@ -57,12 +57,12 @@ def test_when_on_coin_still_runs() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-  State bit = coin()
-  State w = mix (bit) {
+  State bit = Coin()
+  State w = Mix (bit) {
     0 -> |0>,
     else -> |+>,
   }
-  measure w
+  Measure w
 }
 """
     result = run_source(src, settings={"seed": 0}, stdout=io.StringIO())

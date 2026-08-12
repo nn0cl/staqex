@@ -21,4 +21,4 @@ DensityState<Qubit> observed = lindblad(
 )
 
 // lindblad already moved the source density; terminal measure on observed.
-measure observed
+Measure observed

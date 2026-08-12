@@ -28,7 +28,7 @@ def test_stepwise_multi_hole_partial_via_pipe() -> None:
         State q = x |> p
         State y = 3
         State r = y |> q
-        measure r
+        Measure r
     }
     """
     codes = {d.get("code", "") for d in compile_source(src).diagnostics}
@@ -52,7 +52,7 @@ def test_inline_multi_hole_call_pipe_forms_partial() -> None:
         State q = add3(1, x, _)
         State y = 3
         State r = y |> q
-        measure r
+        Measure r
     }
     """
     result = run_source(src, stdout=io.StringIO())
@@ -71,7 +71,7 @@ def test_one_hole_partial_pipe_still_works() -> None:
         State p = add(10, _)
         State z = 3
         State r = z |> p
-        measure r
+        Measure r
     }
     """
     result = run_source(src, stdout=io.StringIO())

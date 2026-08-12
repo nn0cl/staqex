@@ -24,7 +24,7 @@ from compiler.staqex.pipeline import compile_source
 BRA = "<"
 KET = ">"
 TENSOR = "*|*"
-PLAN_PATH = _REPO / "docs" / "specs" / "staqex-v1-dirac-algebra-ast-plan.md"
+PLAN_PATH = _REPO / "docs" / "specs" / "staqex-v1-Dirac-algebra-ast-plan.md"
 
 
 def _codes(compiled) -> set[str]:
@@ -73,8 +73,8 @@ def test_alone_bra_row() -> None:
         package t
         pub fn main() -> Unit {{
             State b = {BRA}0|
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -88,8 +88,8 @@ def test_inner_row() -> None:
         package t
         pub fn main() -> Unit {{
             State m = inner({BRA}0|, |1{KET})
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -105,8 +105,8 @@ def test_matrix_element_row() -> None:
         package t
         pub fn main() -> Unit {{
             State m = {BRA}0|X|1{KET}
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -123,8 +123,8 @@ def test_outer_and_projector_rows() -> None:
         package t
         pub fn main() -> Unit {{
             Operator O = outer(|0{KET}, {BRA}1|)
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -133,8 +133,8 @@ def test_outer_and_projector_rows() -> None:
         package t
         pub fn main() -> Unit {{
             Operator P = projector(|0{KET})
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -152,8 +152,8 @@ def test_adjoint_dagger_row() -> None:
         package t
         pub fn main() -> Unit {{
             State a = adjoint(X)
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -169,8 +169,8 @@ def test_tensor_row() -> None:
         package t
         pub fn main() -> Unit {{
             State t = |0{KET} {TENSOR} |1{KET}
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -184,8 +184,8 @@ def test_commutator_anticommutator_rows() -> None:
         package t
         pub fn main() -> Unit {
             Operator C = [X, Y]
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -194,8 +194,8 @@ def test_commutator_anticommutator_rows() -> None:
         package t
         pub fn main() -> Unit {
             Operator A = {X, Y}
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -213,8 +213,8 @@ def test_expr_list_not_stolen_by_commutator() -> None:
         package t
         pub fn main() -> Unit {
             State xs = [X, Y]
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )

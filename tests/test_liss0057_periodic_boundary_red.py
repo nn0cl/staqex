@@ -32,8 +32,8 @@ pub fn main() -> Unit {{
     State c = |0>
     State<Qubit> d = |0>
     State d = |0>
-    State (a, b, c, d) = evolve {{ (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }}.run()
-    measure a
+    State (a, b, c, d) = Evolve {{ (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }}.run()
+    Measure a
 }}
 """
 

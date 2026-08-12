@@ -30,5 +30,5 @@ pub fn main() -> Unit {
     )
 
     // lindblad already moved the source density; terminal measure on observed.
-    measure observed
+    Measure observed
 }

@@ -24,8 +24,8 @@ def test_qft_and_iqft_are_operator_values_over_a_static_register() -> None:
             QubitRegister<3> reg = system()
             Operator F = qft(reg)
             Operator G = iqft(reg)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -41,10 +41,10 @@ def test_qft_rejects_non_register_inputs() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> n = coin()
+            State<Int> n = Coin()
             Operator F = qft(n)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -59,8 +59,8 @@ def test_qft_rejects_unsupported_static_resource_size() -> None:
         pub fn main() -> Unit {
             QubitRegister<1000000> reg = system()
             Operator F = qft(reg)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

@@ -29,8 +29,8 @@ pub fn main() -> Unit {
     Operator H = scale * H_raw
     State q = |0>
     Time dur = 0.6.fs
-    State q = evolve { q under H for dur }.run()
-    measure q
+    State q = Evolve { q under H for dur }.run()
+    Measure q
 }
 """
 
@@ -78,7 +78,7 @@ def test_missing_host_coefficient_fails_closed_from_a_real_evaluator_run() -> No
 
 def test_program_without_host_placeholders_is_unaffected() -> None:
     """Regression guard: programs with no `host("key")` coefficient
-    placeholders must evolve exactly as before this wiring change."""
+    placeholders must Evolve exactly as before this wiring change."""
     source = """
     package t
     pub fn main() -> Unit {
@@ -88,8 +88,8 @@ def test_program_without_host_placeholders_is_unaffected() -> None:
         State q0 = |0>
         State q1 = |+>
         Time dur = 0.6.fs
-        State (q0, q1) = evolve { (q0, q1) under H for dur }.run()
-        measure q0 tracing_out q1
+        State (q0, q1) = Evolve { (q0, q1) under H for dur }.run()
+        Measure q0 tracing_out q1
     }
     """
     compiled = compile_source(source)

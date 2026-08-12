@@ -28,7 +28,7 @@ def test_fused_unary_pipe_matches_sequential() -> None:
     pub fn main() -> Unit {
         State x = 3
         State r = x |> double |> inc
-        measure r
+        Measure r
     }
     """
     seq_src = """
@@ -43,7 +43,7 @@ def test_fused_unary_pipe_matches_sequential() -> None:
         State x = 3
         State t = double(x)
         State r = inc(t)
-        measure r
+        Measure r
     }
     """
     fused = run_source(fused_src, stdout=io.StringIO())
@@ -81,7 +81,7 @@ def test_non_unary_bare_pipe_still_arity_error() -> None:
             pub fn main() -> Unit {
                 State a = |0>
                 State r = a |> second
-                measure r
+                Measure r
             }
             """
         ).diagnostics

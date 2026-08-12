@@ -21,7 +21,7 @@ def main() -> int:
     result = job.result()
     print(f"status={result.status}")
     if result.measurements:
-        print(f"measure={result.measurements[0].value}")
+        print(f"Measure={result.measurements[0].value}")
     if result.status != "succeeded":
         for diagnostic in result.diagnostics:
             print(diagnostic, file=sys.stderr)

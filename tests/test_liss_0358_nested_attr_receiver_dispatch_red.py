@@ -46,8 +46,8 @@ def test_nested_receiver_state_bind() -> None:
     Test.Inner i = Test.Inner(3.0)
     Test.Outer o = Test.Outer(i)
     Float nested = o.inner.get()
-    State answer = dirac(nested == 3.0)
-    measure answer
+    State answer = Dirac(nested == 3.0)
+    Measure answer
     """
     result = run_source(src, settings={"target": "local", "seed": 0})
     hard = _hard(result.diagnostics)
@@ -60,8 +60,8 @@ def test_nested_receiver_embedded_in_classical_expression() -> None:
     Test.Inner i = Test.Inner(3.0)
     Test.Outer o = Test.Outer(i)
     Float nested = o.inner.get() + 0.0
-    State answer = dirac(nested == 3.0)
-    measure answer
+    State answer = Dirac(nested == 3.0)
+    Measure answer
     """
     result = run_source(src, settings={"target": "local", "seed": 0})
     hard = _hard(result.diagnostics)
@@ -75,8 +75,8 @@ def test_nested_receiver_operator_returning_method() -> None:
     Test.Outer o = Test.Outer(i)
     Operator H = o.inner.h()
     State s = |+>
-    State s = evolve {{ s under H for 1.0.fs }}.run()
-    measure s
+    State s = Evolve {{ s under H for 1.0.fs }}.run()
+    Measure s
     """
     compiled = compile_source(src)
     hard_compile = _hard(compiled.diagnostics)
@@ -94,9 +94,9 @@ def test_single_level_receiver_still_works() -> None:
     Float direct = i.get()
     Operator H = i.h()
     State s = |+>
-    State s = evolve {{ s under H for 1.0.fs }}.run()
-    State answer = dirac(direct == 2.0)
-    measure answer tracing_out s
+    State s = Evolve {{ s under H for 1.0.fs }}.run()
+    State answer = Dirac(direct == 2.0)
+    Measure answer tracing_out s
     """
     compiled = compile_source(src)
     hard_compile = _hard(compiled.diagnostics)

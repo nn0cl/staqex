@@ -47,7 +47,7 @@ def test_classical_and_or_truth_table() -> None:
         Bool r3 = either(f, t)
         Bool r4 = either(f, f)
         State s = |0>
-        measure s
+        Measure s
     }
     """
     compiled = compile_source(src)
@@ -66,7 +66,7 @@ def test_non_bool_operands_rejected_at_typecheck_not_parse() -> None:
             Float y = 2.0
             Float z = x && y
             State s = |0>
-            measure s
+            Measure s
         }
         """
     )
@@ -81,18 +81,18 @@ def test_state_bool_and_is_a_genuine_per_world_pushforward() -> None:
     not match two independent fair coins both landing true (P=0.25)."""
     src = """
     pub fn main() -> Unit {
-        State bit1 = coin()
-        State<Bool> a = mix (bit1) {
-          0 -> dirac(false),
-          else -> dirac(true),
+        State bit1 = Coin()
+        State<Bool> a = Mix (bit1) {
+          0 -> Dirac(false),
+          else -> Dirac(true),
         }
-        State bit2 = coin()
-        State<Bool> b = mix (bit2) {
-          0 -> dirac(false),
-          else -> dirac(true),
+        State bit2 = Coin()
+        State<Bool> b = Mix (bit2) {
+          0 -> Dirac(false),
+          else -> Dirac(true),
         }
         State c = a && b
-        measure c tracing_out a, b
+        Measure c tracing_out a, b
     }
     """
     compiled = compile_source(src)
@@ -124,7 +124,7 @@ def test_operator_dsl_binder_guard_and_or_unaffected() -> None:
             Z[i] * Z[j]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)

@@ -24,14 +24,14 @@ def run() -> list[CaseResult]:
 
     cases = [
         (
-            "sv18-h-evolve-length",
-            "H-evolve for Length → DIMENSION_MISMATCH_ERROR",
+            "sv18-h-Evolve-length",
+            "H-Evolve for Length → DIMENSION_MISMATCH_ERROR",
             "DIMENSION_MISMATCH_ERROR",
             as_main(
                 """
 State psi = |0>
-State out = evolve { psi under Z for 1.0.m }.run()
-measure out
+State out = Evolve { psi under Z for 1.0.m }.run()
+Measure out
 """
             ),
         ),
@@ -41,17 +41,17 @@ measure out
             "INTERFER_INDEPENDENT_STATE_ERROR",
             as_main(
                 """
-State a = coin()
-State b = coin()
-State left = mix (a) { 0 -> 0, else -> 1 }
-State right = mix (b) { 0 -> 1, else -> 2 }
+State a = Coin()
+State b = Coin()
+State left = Mix (a) { 0 -> 0, else -> 1 }
+State right = Mix (b) { 0 -> 1, else -> 2 }
 State z = interfer(left, right)
-measure z
+Measure z
 """
             ),
         ),
         (
-            "sv18-expect-mix",
+            "sv18-expect-Mix",
             "psi + expect → EXPECT_CLASSICAL_ONLY_ERROR",
             "EXPECT_CLASSICAL_ONLY_ERROR",
             as_main(
@@ -59,20 +59,20 @@ measure z
 State psi = |+>
 State ez = expect(Z, psi)
 State weird = psi + ez
-measure weird
+Measure weird
 """
             ),
         ),
         (
-            "sv18-evolve-tuple-swap",
-            "Length↔Momentum evolve result → DIMENSION_MISMATCH_ERROR",
+            "sv18-Evolve-tuple-swap",
+            "Length↔Momentum Evolve result → DIMENSION_MISMATCH_ERROR",
             "DIMENSION_MISMATCH_ERROR",
             as_main(
                 """
-State<Length> x0 = dirac(1.0.m)
-State<Momentum> p0 = dirac(1.0.kg_m_s)
-State (x, p) = evolve (x0, p0) times 1 { (p, x) }
-measure x
+State<Length> x0 = Dirac(1.0.m)
+State<Momentum> p0 = Dirac(1.0.kg_m_s)
+State (x, p) = Evolve (x0, p0) times 1 { (p, x) }
+Measure x
 """
             ),
         ),
@@ -82,9 +82,9 @@ measure x
             "DIMENSION_MISMATCH_ERROR",
             as_main(
                 """
-State<Length> x = dirac(1.0.m)
+State<Length> x = Dirac(1.0.m)
 State b = x == 1.0
-measure b
+Measure b
 """
             ),
         ),
@@ -94,24 +94,24 @@ measure b
             "NESTED_WHEN_ERROR",
             as_main(
                 """
-State a = coin()
-State r = mix (mix (a) { 0 -> 0, else -> 1 }) { 0 -> 10, else -> 20 }
-measure r
+State a = Coin()
+State r = Mix (Mix (a) { 0 -> 0, else -> 1 }) { 0 -> 10, else -> 20 }
+Measure r
 """
             ),
         ),
         (
-            "sv18-coin-in-evolve",
-            "coin inside evolve → COIN_IN_EVOLVE_ERROR",
+            "sv18-Coin-in-Evolve",
+            "Coin inside Evolve → COIN_IN_EVOLVE_ERROR",
             "COIN_IN_EVOLVE_ERROR",
             as_main(
                 """
-State x = dirac(0)
-State y = evolve x times 1 {
-  let c = coin()
+State x = Dirac(0)
+State y = Evolve x times 1 {
+  let c = Coin()
   c
 }
-measure y
+Measure y
 """
             ),
         ),
@@ -121,12 +121,12 @@ measure y
             None,
             as_main(
                 """
-State slit = coin()
-State a = mix (slit) { 0 -> 0, else -> 1 }
-State b0 = mix (slit) { 0 -> 1, else -> 2 }
+State slit = Coin()
+State a = Mix (slit) { 0 -> 0, else -> 1 }
+State b0 = Mix (slit) { 0 -> 1, else -> 2 }
 State b = phase(b0, pi)
 State screen = interfer(a, b)
-measure screen
+Measure screen
 """
             ),
         ),

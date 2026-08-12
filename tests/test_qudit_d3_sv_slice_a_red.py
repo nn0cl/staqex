@@ -1,4 +1,4 @@
-"""AT-TDD Phase 1 Red: LISS-0112 Slice A — D=3 ket + measure SV path."""
+"""AT-TDD Phase 1 Red: LISS-0112 Slice A — D=3 ket + Measure SV path."""
 
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ def test_qutrit_basis_kets_measure_without_unsupported() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qutrit> s = |{label}{KET}
-            measure s
+            Measure s
         }}
         """
         compiled = compile_source(source)
@@ -53,7 +53,7 @@ def test_qudit3_ket2_measure_accepted() -> None:
     package t
     pub fn main() -> Unit {{
         State<Qudit<3>> s = |2{KET}
-        measure s
+        Measure s
     }}
     """
     compiled = compile_source(source)
@@ -74,7 +74,7 @@ def test_qudit4_measure_remains_unsupported() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qudit<4>> s = |0{KET}
-            measure s
+            Measure s
         }}
         """
     )
@@ -89,7 +89,7 @@ def test_qutrit_out_of_range_ket_still_local_dimension_type_error() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qutrit> s = |3{KET}
-            measure s
+            Measure s
         }}
         """
     )
@@ -104,7 +104,7 @@ def test_qubit_measure_unchanged() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qubit> s = |0{KET}
-            measure s
+            Measure s
         }}
         """
     )

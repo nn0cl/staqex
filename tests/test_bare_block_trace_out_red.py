@@ -31,7 +31,7 @@ def test_bare_block_let_temps_traced_out() -> None:
                 let temp2 = temp1 + 5
                 temp2
             }
-            measure w
+            Measure w
         }
         """,
         stdout=io.StringIO(),
@@ -55,8 +55,8 @@ def test_bare_block_preserves_unrelated_live_coord() -> None:
                 let t = 7
                 t
             }
-            State viewed = inspect(w)
-            measure keep
+            State viewed = Inspect(w)
+            Measure keep
         }
         """,
         stdout=io.StringIO(),

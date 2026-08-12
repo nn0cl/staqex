@@ -30,10 +30,10 @@ pub fn main() -> Unit {
     State a = |0>
     State b = |0>
     State c = |0>
-    State (a, b, c) = evolve { (a, b, c) under H for 0.1 }.run()
-    measure a
-    measure b
-    measure c
+    State (a, b, c) = Evolve { (a, b, c) under H for 0.1 }.run()
+    Measure a
+    Measure b
+    Measure c
 }
 """
 
@@ -44,7 +44,7 @@ def test_float_array_shape_mismatch_is_diagnosed() -> None:
         package t
         pub fn main() -> Unit {
             Float[2] J = [1.0]
-            measure J
+            Measure J
         }
         """
     )
@@ -61,7 +61,7 @@ def test_indexed_coefficient_lowers_in_binder() -> None:
             J[i] * Z[i] * Z[next(i)]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     codes = _codes(source)
@@ -85,8 +85,8 @@ def test_indexed_coefficient_evolve_runs() -> None:
         }
         State a = |0>
         State b = |0>
-        State (a, b) = evolve { (a, b) under H for 0.1 }.run()
-        measure a
+        State (a, b) = Evolve { (a, b) under H for 0.1 }.run()
+        Measure a
     }
     """
     codes = _codes(source)

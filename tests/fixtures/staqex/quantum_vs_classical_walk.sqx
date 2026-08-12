@@ -5,16 +5,16 @@
 package examples.walk
 
 pub fn main() -> Unit {
-    State qcoin = coin()
-    State left = mix (qcoin) {
+    State qcoin = Coin()
+    State left = Mix (qcoin) {
       0 -> -2,
       else -> 0,
     }
-    State right = mix (qcoin) {
+    State right = Mix (qcoin) {
       0 -> 0,
       else -> 2,
     }
     State quantum = interfer(left, right)
-    State viewed = inspect(quantum)
-    measure viewed
+    State viewed = Inspect(quantum)
+    Measure viewed
 }

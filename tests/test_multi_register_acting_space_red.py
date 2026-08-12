@@ -32,7 +32,7 @@ system BellPair {{
 pub fn main() -> Unit {{
     Operator<RegisterSet<BellPair>> H = {operator}
     State<Qubit> psi = |0>
-    measure psi
+    Measure psi
 }}
 """
 
@@ -88,7 +88,7 @@ pub fn make_operator() -> Operator<QubitRegister<2>> {
 pub fn main() -> Unit {
     Operator<RegisterSet<BellPair>> H = make_operator()
     State<Qubit> psi = |0>
-    measure psi
+    Measure psi
 }
 """
     diagnostics = _codes(source)

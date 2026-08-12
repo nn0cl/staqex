@@ -1,4 +1,4 @@
-"""AT-TDD Phase 1 Red: LISS-0112 Slice B — Identity evolve / apply(I) on D=3."""
+"""AT-TDD Phase 1 Red: LISS-0112 Slice B — Identity Evolve / apply(I) on D=3."""
 
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ def test_apply_identity_on_qutrit_preserves_ket2() -> None:
     pub fn main() -> Unit {{
         State<Qutrit> s = |2{KET}
         State out = apply(I, s)
-        measure out
+        Measure out
     }}
     """
     compiled = compile_source(source)
@@ -47,13 +47,13 @@ def test_apply_identity_on_qutrit_preserves_ket2() -> None:
 
 
 def test_evolve_identity_on_qudit3_preserves_ket1() -> None:
-    """evolve under I on State<Qudit<3>> must succeed with Hilbert dim 3 preserved."""
+    """Evolve under I on State<Qudit<3>> must succeed with Hilbert dim 3 preserved."""
     source = f"""
     package t
     pub fn main() -> Unit {{
         State<Qudit<3>> s = |1{KET}
-        State s = evolve {{ s under I for 0.0.s }}.run()
-        measure s
+        State s = Evolve {{ s under I for 0.0.s }}.run()
+        Measure s
     }}
     """
     compiled = compile_source(source)
@@ -76,7 +76,7 @@ def test_apply_hadamard_on_qutrit_remains_unsupported() -> None:
         pub fn main() -> Unit {{
             State<Qutrit> s = |0{KET}
             State out = apply(H, s)
-            measure out
+            Measure out
         }}
         """
     )
@@ -93,7 +93,7 @@ def test_apply_identity_on_qudit4_remains_unsupported() -> None:
         pub fn main() -> Unit {{
             State<Qudit<4>> s = |0{KET}
             State out = apply(I, s)
-            measure out
+            Measure out
         }}
         """
     )
@@ -109,7 +109,7 @@ def test_qubit_apply_identity_unchanged() -> None:
         pub fn main() -> Unit {{
             State<Qubit> s = |0{KET}
             State out = apply(I, s)
-            measure out
+            Measure out
         }}
         """
     )

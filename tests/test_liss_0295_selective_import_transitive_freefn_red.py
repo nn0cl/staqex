@@ -40,8 +40,8 @@ pub fn main() -> Unit {
   Item b = Item(0.7)
   Queue q = Queue(a, b)
   Float p = queue_pressure(q)
-  State s = dirac(p)
-  measure s
+  State s = Dirac(p)
+  Measure s
 }
 """,
         encoding="utf-8",
@@ -72,8 +72,8 @@ import demo.domain.scores.{Box, used}
 pub fn main() -> Unit {
   Box b = Box(2.0)
   Float v = used(b)
-  State s = dirac(v)
-  measure s
+  State s = Dirac(v)
+  Measure s
 }
 """,
         encoding="utf-8",
@@ -115,7 +115,7 @@ package demo
 import demo.domain.pipe.{compose}
 pub fn main() -> Unit {
   State out = compose(3)
-  measure out
+  Measure out
 }
 """,
         encoding="utf-8",

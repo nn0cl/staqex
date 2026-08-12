@@ -1,9 +1,9 @@
 package demo.app
 
 pub fn main(sys: State<Sys>) -> Unit {
-  State x = coin()
+  State x = Coin()
   if (x) {  // forbidden
-    State y = dirac(1)
+    State y = Dirac(1)
   }
-  measure x
+  Measure x
 }

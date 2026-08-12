@@ -26,7 +26,7 @@ def test_compound_where_and_lowers_filtered_terms() -> None:
             Z[i] * Z[j]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     codes = _codes(source)
@@ -55,7 +55,7 @@ def test_classical_ampersand_on_non_bool_operands_rejects_at_typecheck() -> None
             Float x = 1.0
             Float y = 2.0
             Float z = x && y
-            measure z
+            Measure z
         }
         """
     )

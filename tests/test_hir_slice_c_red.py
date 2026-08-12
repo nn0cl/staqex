@@ -29,8 +29,8 @@ def test_hir_decl_has_effects_field() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -45,12 +45,12 @@ def test_declared_function_effects_recorded_on_hir() -> None:
         """
         package t
         fn inspect_state(x: State<Float>) -> State<Float> effects { Inspect } {
-            return inspect(x)
+            return Inspect(x)
         }
         pub fn main() -> Unit {
-            State psi = dirac(0.0)
+            State psi = Dirac(0.0)
             State viewed = inspect_state(psi)
-            measure viewed
+            Measure viewed
         }
         """
     )
@@ -70,8 +70,8 @@ def test_main_entry_effects_is_empty() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -86,8 +86,8 @@ def test_scope_decl_effects_is_empty() -> None:
         theory Ising { Operator H = X + Z }
         experiment GroundState { theory = Ising }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -101,12 +101,12 @@ def test_effects_mapping_is_immutable() -> None:
         """
         package t
         fn inspect_state(x: State<Float>) -> State<Float> effects { Inspect } {
-            return inspect(x)
+            return Inspect(x)
         }
         pub fn main() -> Unit {
-            State psi = dirac(0.0)
+            State psi = Dirac(0.0)
             State viewed = inspect_state(psi)
-            measure viewed
+            Measure viewed
         }
         """
     )

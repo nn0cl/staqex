@@ -23,7 +23,7 @@ _SOURCE_OK = """
 package t
 pub fn main() -> Unit {
     State q = |0>
-    measure q
+    Measure q
 }
 """
 

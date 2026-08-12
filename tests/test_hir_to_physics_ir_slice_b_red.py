@@ -44,8 +44,8 @@ def test_operator_expression_extracts_typed_operator_atoms() -> None:
         package t
         pub fn main() -> Unit {
             Operator H = X + Z
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -65,8 +65,8 @@ def test_binder_extraction_preserves_variables_domain_constraints_and_order() ->
         package t
         pub fn main() -> Unit {
             Operator H = sum (i in Index<4>) { Z[i] }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -88,8 +88,8 @@ def test_channel_extraction_preserves_domains_and_operands_without_execution() -
         package t
         pub fn main() -> Unit {
             Channel<Qubit, Qubit> noise = DepolarizingChannel(0.1)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

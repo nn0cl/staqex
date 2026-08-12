@@ -32,7 +32,7 @@ def test_reject_non_trace_one_density_matrix() -> None:
             DensityState<Qubit> rho = DensityState(
                 RawMatrix([[0.8, 0.0], [0.0, 0.5]])
             )
-            measure rho
+            Measure rho
             """
         )
     )
@@ -47,7 +47,7 @@ def test_reject_non_positive_density_matrix() -> None:
             DensityState<Qubit> rho = DensityState(
                 RawMatrix([[1.2, 0.0], [0.0, -0.2]])
             )
-            measure rho
+            Measure rho
             """
         )
     )
@@ -65,7 +65,7 @@ def test_accept_valid_ensemble() -> None:
                     (0.5, |1>)
                 ])
             )
-            measure rho
+            Measure rho
             """
         )
     )
@@ -80,7 +80,7 @@ def test_accept_valid_raw_matrix() -> None:
             DensityState<Qubit> rho = DensityState(
                 RawMatrix([[0.5, 0.0], [0.0, 0.5]])
             )
-            measure rho
+            Measure rho
             """
         )
     )
@@ -97,7 +97,7 @@ def test_reject_incomplete_kraus_channel_before_application() -> None:
                 Ensemble([(1.0, |0>)])
             )
             DensityState<Qubit> evolved = apply(channel, rho)
-            measure evolved
+            Measure evolved
             """
         )
     )
@@ -113,7 +113,7 @@ def test_lindblad_numeric_lane_is_explicitly_constructible() -> None:
                 Ensemble([(1.0, |0>)])
             )
             DensityState<Qubit> evolved = lindblad(rho, H, jumps, t)
-            measure evolved
+            Measure evolved
             """
         )
     )

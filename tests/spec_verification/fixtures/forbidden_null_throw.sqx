@@ -3,5 +3,5 @@ package demo.app
 pub fn main(sys: State<Sys>) -> Unit {
   State x = null
   throw x
-  measure x
+  Measure x
 }

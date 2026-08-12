@@ -32,7 +32,7 @@ pub fn main() -> Unit {
     exactly_selected = 2,
     exactly_selected = 3,
   )
-  measure feasible
+  Measure feasible
 }
 """
 
@@ -44,7 +44,7 @@ pub fn main() -> Unit {
     exactly_selected = 2,
     pairwise_compatible = true,
   )
-  measure feasible
+  Measure feasible
 }
 """
 

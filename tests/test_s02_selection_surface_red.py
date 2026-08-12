@@ -2,7 +2,7 @@
 
 These tests intentionally describe the reviewed future surface. They must fail
 against the current v1 compiler until a later Phase 2 implementation is
-approved. No production fallback from ``when`` to ``mix`` is permitted.
+approved. No production fallback from ``when`` to ``Mix`` is permitted.
 """
 
 from __future__ import annotations
@@ -28,12 +28,12 @@ def test_removed_when_fails_without_mix_fallback() -> None:
     source = """
     package s02
     pub fn main() -> Unit {
-      State control = coin()
+      State control = Coin()
       State result = when (control) {
         0 -> |0>,
         1 -> |1>,
       }
-      measure result
+      Measure result
     }
     """
 
@@ -47,12 +47,12 @@ def test_mix_is_the_state_valued_non_collapsing_surface() -> None:
     source = """
     package s02
     pub fn main() -> Unit {
-      State control = coin()
-      State result = mix (control) {
+      State control = Coin()
+      State result = Mix (control) {
         0 -> |0>,
         1 -> |1>,
       }
-      measure result
+      Measure result
     }
     """
 
@@ -72,7 +72,7 @@ def test_controlled_is_not_lowered_to_mixture() -> None:
       State control = |+>
       State target = |0>
       State result = controlled(control, Hadamard, target)
-      measure result
+      Measure result
     }
     """
 
@@ -95,7 +95,7 @@ def test_projector_is_explicitly_lowered_from_selection_constraints() -> None:
         exactly_selected = 2,
         pairwise_compatible = true,
       )
-      measure feasible
+      Measure feasible
     }
     """
 

@@ -37,8 +37,8 @@ pub fn main() -> Unit {{
 {register_decl}    Operator H = {operator}
     State psi = |0>
     State psi = |0>
-    State out = evolve {{ psi under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
-    measure out
+    State out = Evolve {{ psi under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
+    Measure out
 }}
 """
 

@@ -9,5 +9,5 @@ pub fn main() -> Unit {
     State anc = cnot(compute, anc)
 
     // cnot already moved `compute`; terminal measure on the Bell ancilla.
-    measure anc
+    Measure anc
 }

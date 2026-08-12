@@ -1,7 +1,7 @@
 """AT-TDD: LISS-0136 sparse Pauli Operator return from helper fn.
 
 Named Float coefficients inside a factory must remain usable after return
-(same evolve path as inline B08).
+(same Evolve path as inline B08).
 """
 
 from __future__ import annotations
@@ -38,11 +38,11 @@ pub fn main() -> Unit {
     Operator H = build_ising()
     State s0 = |+>
     State s1 = |+>
-    State (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
     State zz = expect(ZZ, s0, s1)
-    State viewed = inspect(zz)
+    State viewed = Inspect(zz)
     State s1 = |0>
-    measure s0
+    Measure s0
 }
 """
 
@@ -57,11 +57,11 @@ pub fn main() -> Unit {
     Operator H = build_ising()
     State s0 = |+>
     State s1 = |+>
-    State (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
     State zz = expect(ZZ, s0, s1)
-    State viewed = inspect(zz)
+    State viewed = Inspect(zz)
     State s1 = |0>
-    measure s0
+    Measure s0
 }
 """
 

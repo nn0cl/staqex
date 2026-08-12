@@ -31,7 +31,7 @@ def test_stepwise_partial_typechecks_and_runs() -> None:
         State p1 = p2(|1>)
         State w = |0>
         State r = w |> p1
-        measure r
+        Measure r
     }
     """
     codes = _codes(src)
@@ -55,7 +55,7 @@ def test_over_arity_partial_call_rejected() -> None:
         pub fn main() -> Unit {
             State p = second(|0>, _)
             State r = p(|1>, |0>)
-            measure r
+            Measure r
         }
         """
     )

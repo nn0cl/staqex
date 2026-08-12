@@ -1,6 +1,6 @@
 // staqex-lane: experiment
 // B14 — small program for resource-profile pedagogy (manifest loaded via helper).
 
-State<Int> answer = dirac(7)
-State<Int> viewed = inspect(answer)
-measure viewed
+State<Int> answer = Dirac(7)
+State<Int> viewed = Inspect(answer)
+Measure viewed

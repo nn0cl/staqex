@@ -100,23 +100,23 @@ pub fn main() -> Unit {
     Float capital_cells_v = capital_cells()
     Float capital_qpu = capital_qpu_recommended()
 
-    State plan0 = mix (board.phase) {
+    State plan0 = Mix (board.phase) {
       Tonight -> |0>,
       MorningCollect -> |+>,
       NextDayRecovery -> |1>,
       else -> |0>,
     }
-    State bit = coin()
-    State plan_branch = mix (bit) {
+    State bit = Coin()
+    State plan_branch = Mix (bit) {
       0 -> |0>,
       else -> |+>,
     }
 
     State plan1 = |+>
     Time dur = 0.9.fs
-    State (plan0, plan1) = evolve { (plan0, plan1) under H for dur using Suzuki(order = 4, steps = 8) }.run()
+    State (plan0, plan1) = Evolve { (plan0, plan1) under H for dur using Suzuki(order = 4, steps = 8) }.run()
     State zz = expect(ZZ, plan0, plan1)
     // Sparse notebook peek (not Float-tag flood).
-    State viewed_zz = inspect(zz)
-    measure plan0 tracing_out plan1, plan_branch
+    State viewed_zz = Inspect(zz)
+    Measure plan0 tracing_out plan1, plan_branch
 }

@@ -1,15 +1,15 @@
 // B03 — failure is a world-line tag, not an exception (ADR 0025).
 // Glossary: world-line vs Job vs capability — ADR 0175.
 
-State bit = coin()
+State bit = Coin()
 
 // Division by zero yields an `Err` label inside the joint — no throw.
 // Arms keep the correlated (num, den) world-lines without leftover
 // linear bindings for the intermediate factors.
-State ratio = mix (bit) {
+State ratio = Mix (bit) {
   0 -> 4.0 / 0.0,
   else -> 8.0 / 2.0,
 }
 
-State viewed = inspect(ratio)
-measure viewed
+State viewed = Inspect(ratio)
+Measure viewed

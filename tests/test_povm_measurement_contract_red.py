@@ -31,7 +31,7 @@ def test_terminal_povm_measures_pure_state() -> None:
             """
             State<Qubit> psi = |0>
             POVM<Qubit> z_basis = ComputationalBasis()
-            measure psi with z_basis
+            Measure psi with z_basis
             """
         )
     )
@@ -48,7 +48,7 @@ def test_terminal_povm_measures_density_state_without_raw_matrix() -> None:
                 RawMatrix([[0.25, 0.0], [0.0, 0.75]])
             )
             POVM<Qubit> z_basis = ComputationalBasis()
-            measure rho with z_basis
+            Measure rho with z_basis
             """
         )
     )
@@ -67,7 +67,7 @@ def test_povm_domain_mismatch_is_hard_rejected() -> None:
                 RawMatrix([[1.0, 0.0], [0.0, 0.0]])
             )
             POVM<Position> position_basis = ComputationalBasis()
-            measure rho with position_basis
+            Measure rho with position_basis
             """
         )
     )

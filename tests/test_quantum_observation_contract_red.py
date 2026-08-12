@@ -34,7 +34,7 @@ def test_unsupported_tomography_is_rejected_as_an_observation_capability() -> No
         pub fn main() -> Unit {
             State psi = |+>
             Host report = tomography(psi)
-            measure psi
+            Measure psi
         }
         """
     )

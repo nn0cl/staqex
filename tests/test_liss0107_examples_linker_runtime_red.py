@@ -74,8 +74,8 @@ def test_linked_operator_factory_result_is_resolved_at_runtime() -> None:
     """Library fn ``return Coin`` must lower to a closed OpExpr in the caller."""
     lib_body = """
 pub fn make_op() -> Operator {
-    Operator Coin = (X + Z) * inv_sqrt2
-    return Coin
+    Operator CoinOp = (X + Z) * inv_sqrt2
+    return CoinOp
 }
 """
     main = """
@@ -87,7 +87,7 @@ pub fn main() -> Unit {
     Operator k = make_op()
     State<Qubit> c = |+>
     State c2 = apply(k, c)
-    measure c2
+    Measure c2
 }
 """
     with tempfile.TemporaryDirectory() as td:
@@ -116,9 +116,9 @@ import com.staqex.tests.liss0107.hoplib
 
 pub fn main() -> Unit {
     Operator H = build_h()
-    State<Position> psi = dirac(0)
-    State psi = evolve { psi under H for 0.1.fs }.run()
-    measure psi
+    State<Position> psi = Dirac(0)
+    State psi = Evolve { psi under H for 0.1.fs }.run()
+    Measure psi
 }
 """
     with tempfile.TemporaryDirectory() as td:

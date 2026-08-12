@@ -25,17 +25,17 @@ def _linear(diags: list[dict]) -> set[str]:
 
 
 def test_foreach_inner_discard_is_detected() -> None:
-    """R6: leftover State inside forEach body must LINEAR_IMPLICIT_DISCARD."""
+    """R6: leftover State inside ForEach body must LINEAR_IMPLICIT_DISCARD."""
     compiled = compile_source(
         """
         package t
         pub fn main() -> Unit {
             QubitRegister<1> wires = QubitRegister(1)
-            forEach w in wires {
-                State<Int> leftover = coin()
+            ForEach w in wires {
+                State<Int> leftover = Coin()
             }
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -46,17 +46,17 @@ def test_foreach_inner_discard_is_detected() -> None:
 
 
 def test_when_scrutinee_counts_as_consume() -> None:
-    """R6: mix (bit) consumes bit so it is not an implicit discard."""
+    """R6: Mix (bit) consumes bit so it is not an implicit discard."""
     compiled = compile_source(
         """
         package t
         pub fn main() -> Unit {
-            State<Int> bit = coin()
-            State<Int> label = mix (bit) {
+            State<Int> bit = Coin()
+            State<Int> label = Mix (bit) {
               0 -> 0,
               else -> 1,
             }
-            measure label
+            Measure label
         }
         """
     )
@@ -73,19 +73,19 @@ def test_when_arm_var_use_consumes_outer_root() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> bit = coin()
-            State<Int> a = coin()
-            State<Int> b = coin()
-            State<Int> q = mix (bit) {
+            State<Int> bit = Coin()
+            State<Int> a = Coin()
+            State<Int> b = Coin()
+            State<Int> q = Mix (bit) {
               0 -> a,
               else -> b,
             }
-            measure q
+            Measure q
         }
         """
     )
     assert "LINEAR_IMPLICIT_DISCARD" not in _codes(compiled.diagnostics), (
-        f"arm uses of a/b and mix (bit) must consume, got {compiled.diagnostics}"
+        f"arm uses of a/b and Mix (bit) must consume, got {compiled.diagnostics}"
     )
     assert not _linear(compiled.diagnostics), compiled.diagnostics
     assert compiled.ok, compiled.diagnostics

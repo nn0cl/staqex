@@ -56,7 +56,7 @@ def test_capstone_qpu_lane_emits_portable_openqasm3() -> None:
     assert qasm.startswith("OPENQASM 3.0;")
     assert 'include "stdgates.inc";' in qasm
     assert "qubit[" in qasm
-    assert "measure" in qasm
+    assert "measure" in qasm  # OpenQASM3 output keyword, always lowercase
     assert "braket" not in qasm.lower()
     assert "qiskit" not in qasm.lower()
 

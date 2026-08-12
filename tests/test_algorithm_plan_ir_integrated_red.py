@@ -87,7 +87,7 @@ def _node(api, *, complete=True):
         obligation_id="obligation.0",
         decision_ids=("decision.0",),
         resource_id="resource.0",
-        operation_kind="evolve",
+        operation_kind="Evolve",
     )
 
 

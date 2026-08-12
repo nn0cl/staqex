@@ -27,8 +27,8 @@ def test_finite_sum_is_a_typed_formula_expression() -> None:
         pub fn main() -> Unit {
             Dimension sites = 4
             Operator H = sum (i in sites) { Z[i] * Z[next(i)] }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -44,8 +44,8 @@ def test_product_is_not_an_imperative_runtime_loop() -> None:
             Operator H = product (i in Index<4>) {
                 log(i)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -60,8 +60,8 @@ def test_binder_rejects_execution_count_as_a_theory_domain() -> None:
         pub fn main() -> Unit {
             ShotCount shots = 1000
             Operator H = sum (i in shots) { Z[i] }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -76,8 +76,8 @@ def test_binder_preserves_source_when_expansion_budget_is_exceeded() -> None:
         pub fn main() -> Unit {
             Dimension sites = 1000000000
             Operator H = sum (i in sites) { Z[i] }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -92,8 +92,8 @@ def test_empty_or_zero_dimension_domain_is_rejected() -> None:
         pub fn main() -> Unit {
             Dimension sites = 0
             Operator H = sum (i in sites) { Z[i] }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -107,8 +107,8 @@ def test_index_type_domain_requires_positive_finite_shape() -> None:
         package t
         pub fn main() -> Unit {
             Operator H = sum (i in Index<0>) { Z[i] }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

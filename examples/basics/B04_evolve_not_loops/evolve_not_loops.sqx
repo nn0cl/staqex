@@ -6,8 +6,8 @@
 Time dur = 1.5707963267948966.s
 
 State psi = |+>
-State psi = evolve { psi under Z for dur }.run()
+State psi = Evolve { psi under Z for dur }.run()
 State ez = expect(Z, psi)
-State viewed = inspect(ez)
+State viewed = Inspect(ez)
 
-measure psi
+Measure psi

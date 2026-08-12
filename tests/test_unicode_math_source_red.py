@@ -74,7 +74,7 @@ def test_unicode_ket_program_is_rejected() -> None:
         package t
         pub fn main() -> Unit {
             State psi = |0>
-            measure psi
+            Measure psi
         }
         """
     )
@@ -83,7 +83,7 @@ def test_unicode_ket_program_is_rejected() -> None:
         package t
         pub fn main() -> Unit {{
             State psi = |0{KET_CLOSE}
-            measure psi
+            Measure psi
         }}
         """
     )
@@ -102,7 +102,7 @@ def test_unicode_tensor_bind_is_rejected() -> None:
             (a, b) = left *|* right
     State left = |0>
     State right = |0>
-            measure a
+            Measure a
         }
         """
     )
@@ -115,7 +115,7 @@ def test_unicode_tensor_bind_is_rejected() -> None:
             (a, b) = left {TENSOR} right
     State left = |0>
     State right = |0>
-            measure a
+            Measure a
         }}
         """
     )
@@ -130,8 +130,8 @@ def test_postfix_dagger_is_rejected_but_adjoint_call_is_accepted() -> None:
         package t
         pub fn main() -> Unit {
             Operator A = adjoint(X)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -140,8 +140,8 @@ def test_postfix_dagger_is_rejected_but_adjoint_call_is_accepted() -> None:
         package t
         pub fn main() -> Unit {{
             Operator A = X{DAGGER}
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }}
         """
     )

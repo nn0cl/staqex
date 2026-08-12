@@ -29,7 +29,7 @@ def test_pipe_fills_leftmost_hole() -> None:
         State z = |0>
         State w = |1>
         State r = w |> second(z, _)
-        measure r
+        Measure r
     }
     """
     codes = _codes(src)
@@ -54,7 +54,7 @@ def test_pipe_into_two_holes_yields_partial() -> None:
         State a = |0>
         State w = |0>
         State r = w |> p
-        measure r
+        Measure r
     }
     """
     codes = _codes(src)

@@ -57,15 +57,15 @@ def run() -> list[CaseResult]:
 Energy e = 0.5.eV to J
 Time dur = 1.0.fs
 Operator H = e * (N + 0.5)
-State psi = dirac(0)
-State psi = evolve { psi under H for dur }.run()
-measure psi
+State psi = Dirac(0)
+State psi = Evolve { psi under H for dur }.run()
+Measure psi
 """
         )
         result, _ = _eval(src)
         n = _joint_norm(result.joint)
         if abs(n - 1.0) > 1e-9:
-            raise AssertionFailure("NORM", f"Fock evolve norm {n}")
+            raise AssertionFailure("NORM", f"Fock Evolve norm {n}")
         st = State(result.joint.marginal("psi"), payload_type=int)
         assertNormEquals(st, 1.0)
         assertSuperposition(st, {0: 1.0})
@@ -73,7 +73,7 @@ measure psi
             CaseResult(
                 "SV-19",
                 "sv19-fock-ho-unitary",
-                "Fock H=N+1/2 evolve preserves |0⟩ and unit norm",
+                "Fock H=N+1/2 Evolve preserves |0⟩ and unit norm",
                 True,
                 ["Operator", "expm"],
             )
@@ -83,7 +83,7 @@ measure psi
             CaseResult(
                 "SV-19",
                 "sv19-fock-ho-unitary",
-                "Fock H=N+1/2 evolve preserves |0⟩ and unit norm",
+                "Fock H=N+1/2 Evolve preserves |0⟩ and unit norm",
                 False,
                 [],
                 error_code=e.code,
@@ -101,21 +101,21 @@ Time dur = 1.0.fs
 Operator H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
 State a = |+>
 State b = |0>
-State (a, b) = evolve { (a, b) under H for dur }.run()
+State (a, b) = Evolve { (a, b) under H for dur }.run()
 State zz = expect(ZZ, a, b)
-measure zz
+Measure zz
 """
         )
         result, _ = _eval(src)
         n = _joint_norm(result.joint)
         if abs(n - 1.0) > 1e-8:
-            raise AssertionFailure("NORM", f"Ising evolve norm {n}")
+            raise AssertionFailure("NORM", f"Ising Evolve norm {n}")
         # Energy proxy: ⟨ZZ⟩ is classical; joint still unit
         out.append(
             CaseResult(
                 "SV-19",
                 "sv19-ising-unitary",
-                "Ising Operator H evolve preserves Born norm",
+                "Ising Operator H Evolve preserves Born norm",
                 True,
                 ["Operator", "Z[index]", "Float coeff"],
             )
@@ -125,7 +125,7 @@ measure zz
             CaseResult(
                 "SV-19",
                 "sv19-ising-unitary",
-                "Ising Operator H evolve preserves Born norm",
+                "Ising Operator H Evolve preserves Born norm",
                 False,
                 [],
                 error_code=e.code,
@@ -192,7 +192,7 @@ State a = |+>
 State b = |0>
 State (c, x) = a *|* b
 State _t = trace_out(c)
-measure x
+Measure x
 """
         )
         result, _ = _eval(src)
@@ -202,8 +202,8 @@ measure x
         # also closed form tensor
         src2 = as_main(
             """
-State (c, x) = |+> *|* dirac(0)
-measure x
+State (c, x) = |+> *|* Dirac(0)
+Measure x
 """
         )
         result2, _ = _eval(src2)
@@ -240,9 +240,9 @@ Energy e = 1.0.eV to J
 Time dur = 1.0.fs
 Operator H = e * Z
 State psi = |0>
-State psi = evolve { psi under H for dur }.run()
+State psi = Evolve { psi under H for dur }.run()
 State ez = expect(Z, psi)
-measure ez
+Measure ez
 """
         )
         result, _ = _eval(src)
@@ -259,7 +259,7 @@ measure ez
                 "sv19-energy-eigenstate",
                 "|0⟩ under H=Z: populations fixed, ⟨Z⟩=1",
                 True,
-                ["expect", "evolve under H"],
+                ["expect", "Evolve under H"],
             )
         )
     except AssertionFailure as e:
@@ -298,7 +298,7 @@ measure ez
                     getattr(ke, "code", "KERNEL_ERROR"), f"{rel}: {ke}"
                 ) from ke
             if result.measure is None:
-                raise AssertionFailure("MEASURE", f"no measure in {rel}")
+                raise AssertionFailure("MEASURE", f"no Measure in {rel}")
         out.append(
             CaseResult(
                 "SV-19",

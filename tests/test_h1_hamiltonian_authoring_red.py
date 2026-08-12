@@ -42,8 +42,8 @@ def test_h1_typed_theory_parameters_and_hamiltonian_expression() -> None:
 
         experiment run(J = 1.0, h = 0.5) {
           State psi = |+>
-          psi |> evolve under Ising.H(J, h) for 0.7
-          measure psi
+          psi |> Evolve under Ising.H(J, h) for 0.7
+          Measure psi
         }
         """
     )
@@ -60,8 +60,8 @@ def test_h1_indexed_operator_sum_lowers_with_domain_metadata() -> None:
 
         experiment run(J = 1.0) {
           State psi = prepare plus over Chain.site
-          psi |> evolve under Chain.H(J) for 0.7
-          measure psi
+          psi |> Evolve under Chain.H(J) for 0.7
+          Measure psi
         }
         """
     )
@@ -80,9 +80,9 @@ def test_h1_observable_is_not_terminal_measurement() -> None:
 
         experiment run() {
           State psi = |+> *|* |+>
-          psi |> evolve under Ising.H for 0.7
+          psi |> Evolve under Ising.H for 0.7
           observable energy = expect(Ising.H, psi)
-          measure psi
+          Measure psi
         }
         """
     )
@@ -98,8 +98,8 @@ def test_h1_basis_mismatch_is_a_physics_diagnostic() -> None:
 
         experiment run() {
           State spin = |+>
-          spin |> evolve under PositionModel.H for 0.7
-          measure spin
+          spin |> Evolve under PositionModel.H for 0.7
+          Measure spin
         }
         """
     )
@@ -117,8 +117,8 @@ def test_h1_invalid_target_rejects_without_rewriting_the_model() -> None:
 
         experiment run() {
           State psi = prepare plus over LargeModel.site
-          psi |> evolve under LargeModel.H for 0.7
-          measure psi
+          psi |> Evolve under LargeModel.H for 0.7
+          Measure psi
         }
 
         realize qpu:NH5_REFERENCE

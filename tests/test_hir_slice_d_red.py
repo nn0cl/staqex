@@ -30,8 +30,8 @@ def test_hir_decl_has_span() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -49,8 +49,8 @@ def test_scope_decl_span_recorded() -> None:
         package t
         theory Ising { Operator H = X + Z }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -65,12 +65,12 @@ def test_function_decl_span_recorded() -> None:
         """
         package t
         fn inspect_state(x: State<Float>) -> State<Float> effects { Inspect } {
-            return inspect(x)
+            return Inspect(x)
         }
         pub fn main() -> Unit {
-            State psi = dirac(0.0)
+            State psi = Dirac(0.0)
             State viewed = inspect_state(psi)
-            measure viewed
+            Measure viewed
         }
         """
     )
@@ -99,11 +99,11 @@ def test_verify_hir_accepts_valid_module() -> None:
         package t
         theory Ising { Operator H = X + Z }
         fn inspect_state(x: State<Float>) -> State<Float> effects { Inspect } {
-            return inspect(x)
+            return Inspect(x)
         }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

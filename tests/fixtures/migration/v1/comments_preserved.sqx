@@ -2,5 +2,5 @@ package t
 pub fn main() -> Unit {
     // |0> in a comment must stay ASCII
     State psi = |1>
-    measure psi
+    Measure psi
 }

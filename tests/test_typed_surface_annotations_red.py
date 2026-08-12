@@ -45,7 +45,7 @@ def test_type_first_annotated_state_bind_parses_with_type_ref() -> None:
     package t
     pub fn main() -> Unit {
         State<Qubit> x = |0>
-        measure x
+        Measure x
     }
     """
     compiled = compile_source(source)
@@ -63,7 +63,7 @@ def test_type_first_annotated_state_bind_compiles_and_runs() -> None:
     package t
     pub fn main() -> Unit {
         State<Qubit> x = |0>
-        measure x
+        Measure x
     }
     """
     compiled = compile_source(source)
@@ -85,7 +85,7 @@ def test_type_first_annotation_mismatch_is_type_error() -> None:
     package t
     pub fn main() -> Unit {
         State<Length> x = |0>
-        measure x
+        Measure x
     }
     """
     codes = _codes(source)
@@ -106,7 +106,7 @@ def test_colon_annotation_surface_form_no_longer_parses() -> None:
     package t
     pub fn main() -> Unit {
         State x: State<Qubit> = |0>
-        measure x
+        Measure x
     }
     """
     codes = _codes(source)
@@ -118,14 +118,14 @@ def test_type_first_and_inference_remain() -> None:
     package t
     pub fn main() -> Unit {
         State<Qubit> x = |0>
-        measure x
+        Measure x
     }
     """
     infer = """
     package t
     pub fn main() -> Unit {
         State x = |0>
-        measure x
+        Measure x
     }
     """
     assert "PARSE_ERROR" not in _codes(tf)

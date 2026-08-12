@@ -26,7 +26,7 @@ def test_where_or_lowers() -> None:
             Z[i] * Z[j]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     codes = _codes(source)
@@ -51,7 +51,7 @@ def test_statement_or_on_non_bool_operands_rejects_at_typecheck() -> None:
             Float x = 1.0
             Float y = 0.0
             Float z = x || y
-            measure z
+            Measure z
         }
         """
     )

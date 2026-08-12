@@ -30,7 +30,7 @@ def test_dead_caller_axis_traced_out_after_library_call() -> None:
         pub fn main() -> Unit {
             State x = 3
             State r = double(x)
-            measure r
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -55,8 +55,8 @@ def test_live_caller_axis_preserved_when_used_later() -> None:
             State x = 3
             State r = double(x)
             State s = r + 1
-            State viewed = inspect(r)
-            measure s
+            State viewed = Inspect(r)
+            Measure s
         }
         """,
         stdout=io.StringIO(),
@@ -80,8 +80,8 @@ def test_unrelated_live_coord_preserved() -> None:
             State keep = |1>
             State x = |0>
             State r = id(x)
-            State viewed = inspect(r)
-            measure keep
+            State viewed = Inspect(r)
+            Measure keep
         }
         """,
         stdout=io.StringIO(),

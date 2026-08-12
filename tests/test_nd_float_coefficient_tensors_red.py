@@ -30,7 +30,7 @@ def test_2d_float_tensor_lowers_in_binder() -> None:
             h[p][q] * Z[p] * Z[q]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     codes = _codes(source)
@@ -54,7 +54,7 @@ def test_4d_float_tensor_smoke() -> None:
             v[i][j][k][l] * Z[0]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     codes = _codes(source)
@@ -72,7 +72,7 @@ def test_shape_mismatch_is_diagnosed() -> None:
         package t
         pub fn main() -> Unit {
             Float[2][2] h = [[1.0], [0.0, 0.5]]
-            measure h
+            Measure h
         }
         """
     )
@@ -90,7 +90,7 @@ def test_partial_index_arity_is_rejected() -> None:
                 h[p] * Z[p]
             }
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )
@@ -107,7 +107,7 @@ def test_1d_float_array_still_works() -> None:
             J[i] * Z[i] * Z[next(i)]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     codes = _codes(source)

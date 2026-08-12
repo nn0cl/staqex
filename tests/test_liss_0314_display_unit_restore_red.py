@@ -27,7 +27,7 @@ def test_lhs_g_plus_kg_restores_g() -> None:
         pub fn main() -> Unit {
             Mass a = 1.0.g + 1.0.kg
             State x = |0>
-            measure x
+            Measure x
         }
         """
     )
@@ -47,7 +47,7 @@ def test_lhs_kg_plus_g_stays_kg() -> None:
         pub fn main() -> Unit {
             Mass a = 1.0.kg + 1.0.g
             State x = |0>
-            measure x
+            Measure x
         }
         """
     )
@@ -64,7 +64,7 @@ def test_lhs_f_plus_c_restores_f() -> None:
         pub fn main() -> Unit {
             Temperature t = 32.0.F + 0.0.C
             State x = |0>
-            measure x
+            Measure x
         }
         """
     )

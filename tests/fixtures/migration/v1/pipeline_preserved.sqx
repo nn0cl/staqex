@@ -3,5 +3,5 @@ pub fn main() -> Unit {
     // keep pipeline and migrate ket
     State psi = |0>
     State out = psi |> map(x -> x)
-    measure out
+    Measure out
 }

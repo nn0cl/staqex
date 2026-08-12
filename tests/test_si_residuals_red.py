@@ -32,7 +32,7 @@ def test_atomic_mass_to_kg() -> None:
             Mass kg = 1.0.u to kg
             Mass raw = 1.0.u
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )
@@ -52,7 +52,7 @@ def test_bare_ton_matches_ton_us() -> None:
             Mass lb = 1.0.ton to lb
             Mass us = 1.0.ton to ton_us
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )

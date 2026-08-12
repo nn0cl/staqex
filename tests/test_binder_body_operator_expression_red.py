@@ -25,7 +25,7 @@ def _main(body: str):
         pub fn main() -> Unit {{
             {body}
             State observed = |0>
-            measure observed
+            Measure observed
         }}
         """
     )

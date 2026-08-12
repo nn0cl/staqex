@@ -3,5 +3,5 @@ pub fn main() -> Unit {
     State left = |0>
     State right = |1>
     (a, b) = left *|* right
-    measure a
+    Measure a
 }

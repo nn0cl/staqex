@@ -39,9 +39,9 @@ def test_duplicate_quantum_use_emits_named_diagnostic() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> q = coin()
+            State<Int> q = Coin()
             State<Int> alias = q
-            measure alias
+            Measure alias
         }
         """
     )
@@ -66,8 +66,8 @@ def test_single_quantum_consumption_is_accepted() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )

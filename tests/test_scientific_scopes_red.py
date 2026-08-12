@@ -32,8 +32,8 @@ def test_scope_blocks_resolve_independently_of_source_order() -> None:
             observable = H
         }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -59,8 +59,8 @@ def test_scope_contracts_are_immutable() -> None:
         package t
         theory Ising { Operator H = X + Z }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -83,8 +83,8 @@ def test_invalid_scope_direction_is_rejected() -> None:
         theory Invalid { uses = Run }
         execution Run { shots = 1000 }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -101,8 +101,8 @@ def test_execution_symbols_are_invisible_to_theory() -> None:
         }
         execution Run { shots = 1000 }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -117,8 +117,8 @@ def test_scope_cycle_is_rejected_before_lowering() -> None:
         theory A { uses = B }
         experiment B { theory = A }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

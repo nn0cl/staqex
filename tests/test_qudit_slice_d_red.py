@@ -21,13 +21,13 @@ def _codes(compiled) -> set[str]:
 
 
 def test_state_qutrit_measure_is_supported_d3_sv() -> None:
-    """LISS-0112 Slice A lifts measure reject for State<Qutrit> (dim-3 SV)."""
+    """LISS-0112 Slice A lifts Measure reject for State<Qutrit> (dim-3 SV)."""
     compiled = compile_source(
         f"""
         package t
         pub fn main() -> Unit {{
             State<Qutrit> s = |0{KET}
-            measure s
+            Measure s
         }}
         """
     )
@@ -37,13 +37,13 @@ def test_state_qutrit_measure_is_supported_d3_sv() -> None:
 
 
 def test_state_qudit3_measure_is_supported_d3_sv() -> None:
-    """LISS-0112 Slice A lifts measure reject for State<Qudit<3>>."""
+    """LISS-0112 Slice A lifts Measure reject for State<Qudit<3>>."""
     compiled = compile_source(
         f"""
         package t
         pub fn main() -> Unit {{
             State<Qudit<3>> s = |1{KET}
-            measure s
+            Measure s
         }}
         """
     )
@@ -53,15 +53,15 @@ def test_state_qudit3_measure_is_supported_d3_sv() -> None:
 
 
 def test_qutrit_register_evolve_is_unsupported_local_dimension() -> None:
-    """Operator<QutritRegister> must not lower to 2**n evolve."""
+    """Operator<QutritRegister> must not lower to 2**n Evolve."""
     compiled = compile_source(
         f"""
         package t
         pub fn main() -> Unit {{
             Operator<QutritRegister<1>> H = I
             State<Qutrit> s = |0{KET}
-            State out = evolve {{ s under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
-            measure out
+            State out = Evolve {{ s under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
+            Measure out
         }}
         """
     )
@@ -77,7 +77,7 @@ def test_apply_on_qutrit_is_unsupported_local_dimension() -> None:
         pub fn main() -> Unit {{
             State<Qutrit> s = |0{KET}
             State out = apply(H, s)
-            measure out
+            Measure out
         }}
         """
     )
@@ -93,7 +93,7 @@ def test_qubit_state_measure_unchanged() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qubit> s = |0{KET}
-            measure s
+            Measure s
         }}
         """
     )

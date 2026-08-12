@@ -145,7 +145,7 @@ pub fn main() -> Unit {
     Operator H_corridor = scale * corridor_product()
     Operator H_flood = scale * flood_zone_sum()
 
-    // Evolve times from domain pressures + PlanWindow (not anonymous-only).
+    // Evolution durations from domain pressures + PlanWindow (not anonymous-only).
     // ADR 0195: these classical desk values stay for the causal map, but
     // cannot themselves be `to`-converted into Time (computed dimensionless
     // Float has no matching dimension) -- each evolve below is driven by an
@@ -171,33 +171,33 @@ pub fn main() -> Unit {
     State bumped_pri = local_priority_bump(1)
 
     // Enum when — phase and shelter status gate the plan wire.
-    State plan0 = mix (board.phase) {
+    State plan0 = Mix (board.phase) {
       Tonight -> |0>,
       MorningCollect -> |+>,
       NextDayRecovery -> |1>,
       else -> |0>,
     }
-    State shelter_gate = mix (coastal.status) {
+    State shelter_gate = Mix (coastal.status) {
       Open -> |+>,
       NearFull -> |0>,
       ClosedFlooded -> |1>,
       else -> |0>,
     }
-    State bit = coin()
-    State plan_branch = mix (bit) {
+    State bit = Coin()
+    State plan_branch = Mix (bit) {
       0 -> |0>,
       else -> |+>,
     }
 
     State plan1 = |+>
-    State (plan0, plan1) = evolve { (plan0, plan1) under H_drive for dur_drive using Suzuki(order = 2, steps = 4) }.run()
-    State (plan0, plan1) = evolve { (plan0, plan1) under H_damage for dur_damage using Suzuki(order = 2, steps = 4) }.run()
-    State (plan0, plan1) = evolve { (plan0, plan1) under H_flood for dur_flood using Suzuki(order = 2, steps = 2) }.run()
-    State (plan0, plan1) = evolve { (plan0, plan1) under H_corridor for dur_corridor using Suzuki(order = 2, steps = 2) }.run()
+    State (plan0, plan1) = Evolve { (plan0, plan1) under H_drive for dur_drive using Suzuki(order = 2, steps = 4) }.run()
+    State (plan0, plan1) = Evolve { (plan0, plan1) under H_damage for dur_damage using Suzuki(order = 2, steps = 4) }.run()
+    State (plan0, plan1) = Evolve { (plan0, plan1) under H_flood for dur_flood using Suzuki(order = 2, steps = 2) }.run()
+    State (plan0, plan1) = Evolve { (plan0, plan1) under H_corridor for dur_corridor using Suzuki(order = 2, steps = 2) }.run()
 
     State zz = expect(ZZ, plan0, plan1)
 
     // ADR 0173: leftovers leave via Born partial trace.
-    measure plan0 tracing_out plan1, ration, composed, pair_sum, poly,
+    Measure plan0 tracing_out plan1, ration, composed, pair_sum, poly,
         bumped_pri, shelter_gate, plan_branch
 }

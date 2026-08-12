@@ -7,7 +7,7 @@ package examples.showcase.s01_disaster.spectrum_lane
 pub fn main() -> Unit {
     QubitRegister<1> ctrl = system()
     QubitRegister<2> register = system()
-    forEach q in register {
+    ForEach q in register {
         apply(H, q)
     }
     Operator F = qft(register)
@@ -21,6 +21,6 @@ pub fn main() -> Unit {
     State c = |1>
     State (c, burst, probe) = apply(CF, c, burst, probe)
     State correlation = expect(ZZ, burst, probe)
-    State viewed = inspect(correlation)
-    measure probe tracing_out burst, c
+    State viewed = Inspect(correlation)
+    Measure probe tracing_out burst, c
 }

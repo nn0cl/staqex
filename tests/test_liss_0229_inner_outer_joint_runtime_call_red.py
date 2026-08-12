@@ -23,7 +23,7 @@ pub fn main() -> Unit {
   State ov = inner(a, b)
   State a = |0>
   State b = |0>
-  measure ov
+  Measure ov
 }
 """,
         settings={"seed": 0},
@@ -42,7 +42,7 @@ pub fn main() -> Unit {
   State ov = inner(z, o)
   State z = |0>
   State o = |0>
-  measure ov
+  Measure ov
 }
 """,
         settings={"seed": 0},
@@ -63,7 +63,7 @@ pub fn main() -> Unit {
   State w = apply(P, w)
   State a = |0>
   State b = |0>
-  measure w
+  Measure w
 }
 """,
         settings={"seed": 0},

@@ -18,8 +18,8 @@ namespace N {
 pub fn main() -> Unit {
     N.C c = N.C(2.0)
     Float b = c.get() * 0.4
-    State x = dirac(b)
-    measure x
+    State x = Dirac(b)
+    Measure x
 }
 """
     r = run_source(src, settings={"seed": 0})
@@ -36,8 +36,8 @@ fn twice(x: Float) -> Float {
 }
 pub fn main() -> Unit {
     Float y = twice(1.5) + 0.5
-    State x = dirac(y)
-    measure x
+    State x = Dirac(y)
+    Measure x
 }
 """
     r = run_source(src, settings={"seed": 0})
@@ -49,12 +49,12 @@ def test_state_forming_call_still_not_classical_operand() -> None:
     src = """
 package p
 pub fn main() -> Unit {
-    Float bad = coin() * 0.5
-    State x = dirac(0)
-    measure x
+    Float bad = Coin() * 0.5
+    State x = Dirac(0)
+    Measure x
 }
 """
     r = run_source(src, settings={"seed": 0})
     assert r.status == "failed"
     codes = " ".join(str(d.get("message", "")) + str(d.get("code", "")) for d in r.diagnostics)
-    assert "coin" in codes.lower() or "classical" in codes.lower() or "RUNTIME" in codes
+    assert "Coin" in codes.lower() or "classical" in codes.lower() or "RUNTIME" in codes

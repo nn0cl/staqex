@@ -21,8 +21,8 @@ i = Inner(1.0545718e-19)
 o = Outer(i)
 H = h_of(o)
 State s = |+>
-State s = evolve { s under H for 0.1.fs }.run()
-measure s
+State s = Evolve { s under H for 0.1.fs }.run()
+Measure s
 """
     r = run_source(src, settings={"seed": 0})
     assert r.status == "succeeded", r.diagnostics
@@ -43,8 +43,8 @@ pub fn h_of(d: N.Drive) -> Operator {
 D = Drive(1.0545718e-19)
 H = h_of(D)
 State s = |+>
-State s = evolve { s under H for 0.1.fs }.run()
-measure s
+State s = Evolve { s under H for 0.1.fs }.run()
+Measure s
 """
     r = run_source(src, settings={"seed": 0})
     assert r.status == "succeeded", r.diagnostics

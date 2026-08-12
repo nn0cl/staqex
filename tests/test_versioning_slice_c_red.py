@@ -40,7 +40,7 @@ def test_staqex_version_1_0_metadata_compiles() -> None:
 
         pub fn main() -> Unit {
             State psi = |0>
-            measure psi
+            Measure psi
         }
         """
     )
@@ -56,7 +56,7 @@ def test_unsupported_staqex_version_fails_with_named_diagnostic() -> None:
 
         pub fn main() -> Unit {
             State psi = |0>
-            measure psi
+            Measure psi
         }
         """
     )
@@ -80,7 +80,7 @@ def test_check_surfaces_retired_keyword_fix_it() -> None:
 
     assert code == 1
     assert "RETIRED_KEYWORD" in stderr
-    assert "fix-it: use `pub`" in stderr or "fix-it: use `measure`" in stderr
+    assert "fix-it: use `pub`" in stderr or "fix-it: use `Measure`" in stderr
 
 
 def test_check_does_not_invent_fix_it_for_forbidden_keyword() -> None:
@@ -89,7 +89,7 @@ def test_check_does_not_invent_fix_it_for_forbidden_keyword() -> None:
         package demo
         pub fn main() -> Unit {
             if true {
-                measure |0>
+                Measure |0>
             }
         }
         """

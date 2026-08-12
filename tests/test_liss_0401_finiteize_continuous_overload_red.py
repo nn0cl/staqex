@@ -50,7 +50,7 @@ _SOURCE_LANE_A_UNCHANGED = """
 package t
 pub fn main() -> Unit {
     State x = finiteize(0.0, 1.0, 4, 100, 0)
-    measure x
+    Measure x
 }
 """
 
@@ -79,7 +79,7 @@ pub fn main() -> Unit {
     Continuous risk = weight(damage, flood)
     Continuous masked = mask(risk, impassable)
     State zone = finiteize(masked, 0.0, 1.0, 3, 0)
-    measure zone
+    Measure zone
 }
 """
 
@@ -137,7 +137,7 @@ pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
     State a = finiteize(damage, 0.0, 1.0, 2, 0)
     State b = finiteize(damage, 0.0, 1.0, 2, 0)
-    measure a
+    Measure a
 }
 """
 

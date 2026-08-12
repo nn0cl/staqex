@@ -172,7 +172,7 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
             baseline_score=baseline_score,
             quality_metrics={"shots": shots, "feasibility_rate": feasibility_rate},
             warnings=tuple(warnings)
-            or (("all shots vacuum",) if not non_vacuum else ()),
+            or (("all shots Vacuum",) if not non_vacuum else ()),
         )
 
     objective_scores = [

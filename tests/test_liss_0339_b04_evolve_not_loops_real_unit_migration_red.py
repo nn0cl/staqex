@@ -1,7 +1,7 @@
 """AT-TDD: LISS-0339 -- migrate B04_evolve_not_loops to a real Time-typed
 duration (WP-0095 work unit 7).
 
-Design decision: docs/issues/LISS-0339-b04-evolve-not-loops-real-unit-migration.md
+Design decision: docs/issues/LISS-0339-b04-Evolve-not-loops-real-unit-migration.md
 """
 
 from __future__ import annotations

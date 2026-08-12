@@ -3,7 +3,7 @@
 Physicist-first: ``Float J`` (and struct fields) used only as Operator /
 binder coefficients must not be treated as linear quantum resources.
 True ``state`` values remain LINEAR. Fail-closed when coefficients are
-misused as measure/when subjects or depend on unmeasured quantum state.
+misused as Measure/when subjects or depend on unmeasured quantum state.
 """
 
 from __future__ import annotations
@@ -50,12 +50,12 @@ pub fn main() -> Unit {
     State b = |0>
     State c = |0>
     State d = |0>
-    State (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State (a, b, c, d) = Evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
     State b = |0>
         State b = |0>
     State c = |0>
     State d = |0>
-measure a
+Measure a
 }
 """
 
@@ -70,12 +70,12 @@ pub fn main() -> Unit {
     State b = |0>
     State c = |0>
     State d = |0>
-    State (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State (a, b, c, d) = Evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
     State b = |0>
         State b = |0>
     State c = |0>
     State d = |0>
-measure a
+Measure a
 }
 """
 
@@ -85,8 +85,8 @@ pub fn main() -> Unit {
     Float hx = 2.6364295e-20
     Operator H = hx * X
     State psi = |+>
-    State psi = evolve { psi under H for 0.1.fs }.run()
-    measure psi
+    State psi = Evolve { psi under H for 0.1.fs }.run()
+    Measure psi
 }
 """
 
@@ -95,8 +95,8 @@ package t
 pub fn main() -> Unit {
     Operator H = 2.6364295e-20 * X
     State psi = |+>
-    State psi = evolve { psi under H for 0.1.fs }.run()
-    measure psi
+    State psi = Evolve { psi under H for 0.1.fs }.run()
+    Measure psi
 }
 """
 
@@ -111,8 +111,8 @@ pub fn main() -> Unit {
     Dom.Couplings c = Dom.Couplings(2.6364295e-20)
     Operator H = c.h_x * X
     State psi = |+>
-    State psi = evolve { psi under H for 0.1.fs }.run()
-    measure psi
+    State psi = Evolve { psi under H for 0.1.fs }.run()
+    Measure psi
 }
 """
 
@@ -184,8 +184,8 @@ _DISCARDED_STATE = """
 package t
 pub fn main() -> Unit {
     State q = |+>
-    State viewed = inspect(|0>)
-    measure viewed
+    State viewed = Inspect(|0>)
+    Measure viewed
 }
 """
 
@@ -202,8 +202,8 @@ pub fn main() -> Unit {
     State amp = |+>
     Operator H = amp * X
     State psi = |0>
-    State psi = evolve { psi under H for 0.1 }.run()
-    measure psi
+    State psi = Evolve { psi under H for 0.1 }.run()
+    Measure psi
 }
 """
 
@@ -214,13 +214,13 @@ def test_quantum_dependent_coefficient_is_explicitly_rejected() -> None:
     assert compiled.diagnostics, "expected an explicit diagnostic, not silence"
 
 
-# --- EARS 4: misuse as measure / when subject -------------------------------
+# --- EARS 4: misuse as Measure / when subject -------------------------------
 
 _MEASURE_COEFFICIENT = """
 package t
 pub fn main() -> Unit {
     Float J = 1.0
-    measure J
+    Measure J
 }
 """
 
@@ -228,11 +228,11 @@ _WHEN_ON_COEFFICIENT = """
 package t
 pub fn main() -> Unit {
     Float J = 1.0
-    State label = mix (J) {
+    State label = Mix (J) {
       0 -> 0,
       else -> 1,
     }
-    measure label
+    Measure label
 }
 """
 

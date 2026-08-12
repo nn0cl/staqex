@@ -25,11 +25,11 @@ package t
 pub fn main() -> Unit {
     QubitRegister<1> reg = system()
     Param<Angle> theta = parameter("theta")
-    forEach q in reg {
+    ForEach q in reg {
         apply(Rz(theta), q)
     }
-    State<Int> observed = coin()
-    measure observed
+    State<Int> observed = Coin()
+    Measure observed
 }
 """
 
@@ -55,7 +55,7 @@ def test_emit_unit_uses_qpu_ir_lane_for_parametric_static_register() -> None:
 
     assert emitted.ok
     assert "rz(theta)" in emitted.qasm
-    assert "c[0] = measure q[0];" in emitted.qasm
+    assert "c[0] = measure q[0];" in emitted.qasm  # OpenQASM3 output keyword, always lowercase
 
 
 def test_concrete_bindings_substitute_symbolic_angles_in_openqasm() -> None:
@@ -117,11 +117,11 @@ def test_binding_key_uses_parameter_literal_not_only_local_name() -> None:
         pub fn main() -> Unit {
             QubitRegister<1> reg = system()
             Param<Angle> phi = parameter("theta")
-            forEach q in reg {
+            ForEach q in reg {
                 apply(Rz(phi), q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

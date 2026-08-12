@@ -1,7 +1,7 @@
 package demo.app
 
 pub fn main(sys: State<Sys>) -> Unit {
-  State x = coin()
+  State x = Coin()
   State y = x + x
-  measure y
+  Measure y
 }

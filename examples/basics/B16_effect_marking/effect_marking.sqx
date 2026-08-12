@@ -4,7 +4,7 @@
 
 // Non-collapsing notebook peek — must declare Inspect (pure callers cannot hide it).
 fn peek_zz(z: State<Float>) -> State<Float> effects { Inspect } {
-    return inspect(z)
+    return Inspect(z)
 }
 
 // ADR 0195: J/h carry real Energy units; H stays inferred.
@@ -15,11 +15,11 @@ H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
 State s0 = |+>
 State s1 = |+>
 Time dur = 0.5.fs
-State (s0, s1) = evolve { (s0, s1) under H for dur using Suzuki(order = 2, steps = 4) }.run()
+State (s0, s1) = Evolve { (s0, s1) under H for dur using Suzuki(order = 2, steps = 4) }.run()
 
 State zz = expect(ZZ, s0, s1)
 // ≤1 peek via an effect-marked helper (Host still owns structured logs).
 State viewed = peek_zz(zz)
 
 // Peek is non-collapsing; leave it when measuring the evolve wire.
-measure s0 tracing_out s1, viewed
+Measure s0 tracing_out s1, viewed

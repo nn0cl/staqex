@@ -38,7 +38,7 @@ def test_class_field_array_index_bind_reaches_the_correct_diagnostic() -> None:
             row[q] * Z[q]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)
@@ -66,7 +66,7 @@ def test_bare_variable_array_index_bind_still_parses() -> None:
             row[q] * Z[q]
         }
         State a = |0>
-        measure a
+        Measure a
     }
     """
     compiled = compile_source(src)

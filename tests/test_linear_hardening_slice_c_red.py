@@ -28,9 +28,9 @@ def test_alias_rebinding_still_rejected_under_strict_policy() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> q = coin()
+            State<Int> q = Coin()
             State<Int> alias = q
-            measure alias
+            Measure alias
         }
         """
     )

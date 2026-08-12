@@ -1,16 +1,16 @@
-"""AT-TDD Phase 1 Red: LISS-0320 `superpose` formal grammar and type boundary.
+"""AT-TDD Phase 1 Red: LISS-0320 `Superpose` formal grammar and type boundary.
 
 Target behavior is docs/specs/staqex-v1-quantum-mental-model-follow-up.md
-§4.5. `superpose` must become a real, first-class construct in the ordinary
+§4.5. `Superpose` must become a real, first-class construct in the ordinary
 language surface (a distinct ``SuperposeExpr`` AST node), never silently
-accepted as ``mix``/``WhenExpr``, and must fail closed with one explicit
+accepted as ``Mix``/``WhenExpr``, and must fail closed with one explicit
 diagnostic if a program tries to evaluate it (real coherent execution is a
 separate, later slice).
 
 These tests intentionally describe the not-yet-implemented surface. They
-must fail against the current compiler, which only recognizes ``superpose``
+must fail against the current compiler, which only recognizes ``Superpose``
 inside the shallow ``H1Superposition`` line-lexeme heuristic (PR #344), not
-in the ordinary grammar. `superpose (...) { ... }` on the ordinary surface
+in the ordinary grammar. `Superpose (...) { ... }` on the ordinary surface
 currently fails to parse.
 """
 
@@ -35,36 +35,36 @@ def _codes(diagnostics: list[dict[str, object]]) -> set[str]:
 _SUPERPOSE_SOURCE = """
 package liss0320
 pub fn main() -> Unit {
-  State control = coin()
-  State result = superpose (control) {
+  State control = Coin()
+  State result = Superpose (control) {
     0 -> |0>,
     1 -> |1>,
   }
-  measure result
+  Measure result
 }
 """
 
 _MIX_SOURCE = """
 package liss0320
 pub fn main() -> Unit {
-  State control = coin()
-  State result = mix (control) {
+  State control = Coin()
+  State result = Mix (control) {
     0 -> |0>,
     1 -> |1>,
   }
-  measure result
+  Measure result
 }
 """
 
 _WHEN_SOURCE = """
 package liss0320
 pub fn main() -> Unit {
-  State control = coin()
+  State control = Coin()
   State result = when (control) {
     0 -> |0>,
     1 -> |1>,
   }
-  measure result
+  Measure result
 }
 """
 
@@ -78,7 +78,7 @@ def _result_bind_expr(unit) -> object:
 
 
 def test_superpose_parses_to_distinct_ast_node() -> None:
-    """`superpose (control) { ... }` must parse to a `SuperposeExpr`, not a
+    """`Superpose (control) { ... }` must parse to a `SuperposeExpr`, not a
     `PARSE_ERROR` and not a `WhenExpr`."""
 
     compiled = compile_source(_SUPERPOSE_SOURCE)
@@ -94,8 +94,8 @@ def test_superpose_parses_to_distinct_ast_node() -> None:
 
 
 def test_superpose_type_checks_as_state_and_is_not_a_mixture() -> None:
-    """Type-checking `superpose` must succeed and must not classify it as a
-    `mix`/`Mixture` composition."""
+    """Type-checking `Superpose` must succeed and must not classify it as a
+    `Mix`/`Mixture` composition."""
 
     compiled = compile_source(_SUPERPOSE_SOURCE)
 
@@ -108,8 +108,8 @@ def test_superpose_type_checks_as_state_and_is_not_a_mixture() -> None:
 
 
 def test_mix_and_when_ordinary_surface_are_unaffected() -> None:
-    """Regression guard: existing `mix`/`when` ordinary-surface behavior must
-    stay exactly as shipped while `superpose` grammar is added."""
+    """Regression guard: existing `Mix`/`when` ordinary-surface behavior must
+    stay exactly as shipped while `Superpose` grammar is added."""
 
     mix_compiled = compile_source(_MIX_SOURCE)
     assert mix_compiled.ok, mix_compiled.diagnostics
@@ -120,8 +120,8 @@ def test_mix_and_when_ordinary_surface_are_unaffected() -> None:
 
 
 def test_evaluating_superpose_fails_closed_not_open() -> None:
-    """Attempting to actually run a `superpose` program must not crash with
-    an unhandled-node exception and must not silently execute `mix`
+    """Attempting to actually run a `Superpose` program must not crash with
+    an unhandled-node exception and must not silently execute `Mix`
     semantics. It must fail with one explicit, documented diagnostic."""
 
     result = run_source(_SUPERPOSE_SOURCE, settings={"target": "local", "seed": 0})
@@ -137,4 +137,4 @@ if __name__ == "__main__":
     test_superpose_type_checks_as_state_and_is_not_a_mixture()
     test_mix_and_when_ordinary_surface_are_unaffected()
     test_evaluating_superpose_fails_closed_not_open()
-    print("GREEN — superpose formal grammar and type boundary")
+    print("GREEN — Superpose formal grammar and type boundary")

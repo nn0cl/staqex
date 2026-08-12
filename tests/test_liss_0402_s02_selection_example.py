@@ -53,7 +53,7 @@ def test_main_selection_runs_and_some_seeds_respect_feasibility() -> None:
     `project onto feasible(...)`'s projector (X changes a candidate's
     selected bit, so it changes Hamming weight), so real unitary
     evolution under H_obj can leak probability outside the projected
-    feasible subspace -- a non-vacuum terminal measurement is not
+    feasible subspace -- a non-Vacuum terminal measurement is not
     unconditionally feasible (superseding this test's original LISS-0402
     assumption, which held only for the pre-LISS-0405 disconnected
     objective-qubit-pair design). This test verifies the program still

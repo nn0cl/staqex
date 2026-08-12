@@ -42,8 +42,8 @@ def test_float_array_param_threaded_into_binder() -> None:
         State q0 = |0>
         State q1 = |0>
         Time dur = 0.6.fs
-        State (q0, q1) = evolve { (q0, q1) under H for dur }.run()
-        measure q0 tracing_out q1
+        State (q0, q1) = Evolve { (q0, q1) under H for dur }.run()
+        Measure q0 tracing_out q1
     }
     """
     compiled = compile_source(source)
@@ -76,8 +76,8 @@ def test_struct_field_indirection_through_named_operator_variable() -> None:
         Operator H = scale * H_raw
         State q = |0>
         Time dur = 0.6.fs
-        State q = evolve { q under H for dur }.run()
-        measure q
+        State q = Evolve { q under H for dur }.run()
+        Measure q
     }
     """
     compiled = compile_source(source)
@@ -104,8 +104,8 @@ def test_nested_operator_returning_call_inside_larger_expression() -> None:
         Operator H = scale * f(weights)
         State q = |0>
         Time dur = 0.6.fs
-        State q = evolve { q under H for dur }.run()
-        measure q
+        State q = Evolve { q under H for dur }.run()
+        Measure q
     }
     """
     compiled = compile_source(source)
@@ -133,8 +133,8 @@ def test_missing_binder_array_fails_closed_with_a_clear_diagnostic() -> None:
         State q0 = |0>
         State q1 = |0>
         Time dur = 0.6.fs
-        State (q0, q1) = evolve { (q0, q1) under H for dur }.run()
-        measure q0 tracing_out q1
+        State (q0, q1) = Evolve { (q0, q1) under H for dur }.run()
+        Measure q0 tracing_out q1
     }
     """
     compiled = compile_source(source)

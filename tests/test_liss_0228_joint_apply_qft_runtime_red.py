@@ -26,7 +26,7 @@ pub fn main() -> Unit {
   State (a, b) = apply(F, a, b)
   State (a, b) = apply(Fi, a, b)
   State a = |0>
-  measure b
+  Measure b
 }
 """,
         settings={"seed": 0},
@@ -51,7 +51,7 @@ pub fn main() -> Unit {
   State (c, t0, t1) = apply(CF, c, t0, t1)
   State t0 = |0>
   State t1 = |0>
-  measure c
+  Measure c
 }
 """,
         settings={"seed": 0},

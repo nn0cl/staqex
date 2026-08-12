@@ -37,7 +37,7 @@ def test_bracketed_pauli_is_one_indexed_operator_ast_node_everywhere() -> None:
         pub fn main() -> Unit {
             Operator H = Z[0]
             State psi = |0>
-            measure psi
+            Measure psi
         }
         """
     )
@@ -55,8 +55,8 @@ def test_bracketed_second_quantized_atoms_work_in_their_family_bind() -> None:
         package t
         pub fn main() -> Unit {
             FermionOperator<Orbitals> H = create[0] * annihilate[0]
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -76,7 +76,7 @@ def test_parenthesized_operator_index_is_retired_without_alias() -> None:
         pub fn main() -> Unit {
             Operator H = Z(0)
             State psi = |0>
-            measure psi
+            Measure psi
         }
         """
     )
@@ -95,7 +95,7 @@ def test_user_callable_named_like_operator_atom_is_not_rejected_by_name() -> Non
         pub fn main() -> Unit {
             Operator H = Z(0)
             State psi = |0>
-            measure psi
+            Measure psi
         }
         """
     )

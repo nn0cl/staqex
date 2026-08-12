@@ -52,9 +52,9 @@ pub fn main() -> Unit {
     Operator H = 1.0545718e-19 * (Z[0] * Z[1])
     State a = |+>
     State b = |0>
-    State (a, b) = evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State (a, b) = Evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
     State b = |0>
-    measure a
+    Measure a
 }
 """
 
@@ -65,9 +65,9 @@ pub fn main() -> Unit {
     Operator H = 1.0545718e-19 * (Z[0] * Z[1])
     State a = |+>
     State b = |0>
-    State (a, b) = evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State (a, b) = Evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
     State b = |0>
-    measure a
+    Measure a
 }
 """
 
@@ -100,11 +100,11 @@ pub fn main() -> Unit {
     State b = |0>
     State c = |0>
     State d = |0>
-    State (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State (a, b, c, d) = Evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
     State b = |0>
     State c = |0>
     State d = |0>
-    measure a
+    Measure a
 }
 """
 
@@ -117,11 +117,11 @@ pub fn main() -> Unit {
     State b = |0>
     State c = |0>
     State d = |0>
-    State (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State (a, b, c, d) = Evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
     State b = |0>
     State c = |0>
     State d = |0>
-    measure a
+    Measure a
 }
 """
 

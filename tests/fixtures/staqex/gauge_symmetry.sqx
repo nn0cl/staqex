@@ -17,6 +17,6 @@ pub fn main() -> Unit {
     State after = expect(Z, gauged)
 
     // Gauge leaves ⟨Z⟩ invariant on an eigenstate of Z
-    State viewed = inspect(after)
-    measure occ
+    State viewed = Inspect(after)
+    Measure occ
 }

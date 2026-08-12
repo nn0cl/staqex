@@ -33,7 +33,7 @@ def test_short_ton_lb_kg_conversions() -> None:
                 Mass lb = 1.0.ton_us to lb
                 Mass kg = 1.0.ton_us to kg
                 State a = |0>
-                measure a
+                Measure a
             }
             """
         ).diagnostics
@@ -51,7 +51,7 @@ def test_short_ton_lb_kg_conversions() -> None:
             Mass raw = 1.0.ton_us
             Mass back = 2000.0.lb to ton_us
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )
@@ -72,7 +72,7 @@ def test_long_ton_and_metric_tonne_bridge() -> None:
             Mass t = 1.0.ton_uk to t
             Mass us = 1.0.ton_uk to ton_us
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )

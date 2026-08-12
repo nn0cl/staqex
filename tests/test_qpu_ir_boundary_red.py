@@ -24,11 +24,11 @@ def test_qpu_ir_projection_preserves_provenance_and_terminal_measurement() -> No
         package t
         pub fn main() -> Unit {
             QubitRegister<1> reg = system()
-            forEach q in reg {
+            ForEach q in reg {
                 apply(H, q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -46,11 +46,11 @@ def test_qpu_ir_keeps_param_symbolic_without_host_binding() -> None:
         pub fn main() -> Unit {
             QubitRegister<1> reg = system()
             Param<Angle> theta = parameter("theta")
-            forEach q in reg {
+            ForEach q in reg {
                 apply(Rz(theta), q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -66,11 +66,11 @@ def test_qpu_ir_projection_has_no_provider_submission_objects() -> None:
         package t
         pub fn main() -> Unit {
             QubitRegister<1> reg = system()
-            forEach q in reg {
+            ForEach q in reg {
                 apply(H, q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

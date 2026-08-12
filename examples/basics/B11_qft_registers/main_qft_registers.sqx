@@ -2,7 +2,7 @@
 // B11 — static register QFT/IQFT + Bell-style correlation witness.
 
 QubitRegister<3> register = system()
-forEach q in register {
+ForEach q in register {
     apply(H, q)
 }
 Operator F = qft(register)
@@ -12,6 +12,6 @@ State observatory = |+>
 State probe = |0>
 State probe = cnot(observatory, probe)
 State correlation = expect(ZZ, observatory, probe)
-State viewed = inspect(correlation)
+State viewed = Inspect(correlation)
 // cnot already moved observatory; terminal measure on probe.
-measure probe
+Measure probe

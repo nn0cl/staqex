@@ -13,8 +13,8 @@ if str(_REPO) not in sys.path:
 
 SOURCE = """
 pub fn main() -> Unit {
-    State<Int> answer = dirac(42)
-    measure answer
+    State<Int> answer = Dirac(42)
+    Measure answer
 }
 """
 

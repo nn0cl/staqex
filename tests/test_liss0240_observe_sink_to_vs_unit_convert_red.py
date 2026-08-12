@@ -1,4 +1,4 @@
-"""AT-TDD: LISS-0240 measure/snapshot `to <sink>` vs unit convert."""
+"""AT-TDD: LISS-0240 Measure/Snapshot `to <sink>` vs unit convert."""
 
 from __future__ import annotations
 
@@ -18,9 +18,9 @@ def test_snapshot_to_stdout_parses_and_runs() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        State x = coin()
-        snapshot x to stdout
-        measure x
+        State x = Coin()
+        Snapshot x to stdout
+        Measure x
     }
     """
     compiled = compile_source(src)
@@ -40,8 +40,8 @@ def test_measure_to_stdout_parses() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        State x = coin()
-        measure x to stdout
+        State x = Coin()
+        Measure x to stdout
     }
     """
     compiled = compile_source(src)
@@ -57,8 +57,8 @@ def test_explicit_unit_convert_still_parses() -> None:
     pub fn main() -> Unit {
         Float m = 1.0
         Float kg = m to kg
-        State s = dirac(0)
-        measure s
+        State s = Dirac(0)
+        Measure s
     }
     """
     # May fail for other reasons; must not treat `to` as unavailable.
@@ -69,9 +69,9 @@ def test_explicit_unit_convert_still_parses() -> None:
 
 if __name__ == "__main__":
     test_snapshot_to_stdout_parses_and_runs()
-    print("PASS snapshot")
+    print("PASS Snapshot")
     test_measure_to_stdout_parses()
-    print("PASS measure")
+    print("PASS Measure")
     test_explicit_unit_convert_still_parses()
     print("PASS unit convert")
     print("OK — LISS-0240")

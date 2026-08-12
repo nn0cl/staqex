@@ -1,13 +1,13 @@
 // B02 — classical `if` is forbidden; `when` keeps mixture arms (axiom 3).
 // Arm bodies may be classical labels or ket prepare literals (LISS-0138).
 
-State bit = coin()
+State bit = Coin()
 
-State prep = mix (bit) {
+State prep = Mix (bit) {
   0 -> |0>,
   else -> |+>,
 }
 
 // inspect is a non-collapsing teaching view (not measure); Host owns logs.
-State viewed = inspect(prep)
-measure viewed
+State viewed = Inspect(prep)
+Measure viewed

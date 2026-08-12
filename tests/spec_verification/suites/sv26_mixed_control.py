@@ -39,7 +39,7 @@ State a = |1>
 State b = |0>
 State t = |0>
 State t = capply(a, !b, X, t)
-measure t
+Measure t
 """
             )
         )
@@ -74,7 +74,7 @@ State a = |1>
 State b = |1>
 State t = |0>
 State t = capply(a, !b, X, t)
-measure t
+Measure t
 """
             )
         )
@@ -110,7 +110,7 @@ State a = |0>
 State b = |0>
 State t = |0>
 State t = capply(!a, !b, X, t)
-measure t
+Measure t
 """
             )
         )
@@ -121,7 +121,7 @@ State a = |0>
 State b = |0>
 State t = |0>
 State t = ocapply(a, b, X, t)
-measure t
+Measure t
 """
             )
         )
@@ -157,7 +157,7 @@ measure t
         )
         result, _ = _eval(src)
         if result.measure is None:
-            raise AssertionFailure("MEASURE", "no measure")
+            raise AssertionFailure("MEASURE", "no Measure")
         out.append(
             CaseResult(
                 "SV-26",

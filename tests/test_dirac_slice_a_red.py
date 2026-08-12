@@ -42,8 +42,8 @@ def test_alone_bra_parses_to_bralit() -> None:
         package t
         pub fn main() -> Unit {{
             State bra = {BRA_OPEN}0|
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -63,8 +63,8 @@ def test_alone_bra_typechecks_as_algebra_primary() -> None:
         pub fn main() -> Unit {{
             State bra = {BRA_OPEN}0|
             State bra = |0>
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )

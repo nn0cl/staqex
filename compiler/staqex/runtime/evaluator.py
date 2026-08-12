@@ -4732,15 +4732,15 @@ class Evaluator:
             val = float(abs(amps.get(k, 0j)) ** 2)
             return joint.bind_const(name, val)
 
-        if op == "coin":
+        if op == "Coin":
             return joint.bind_split(name, {0: 0.5, 1: 0.5})
-        if op == "vacuum":
+        if op == "Vacuum":
             # vacuum() = |0⟩ (Fock / computational ground), NOT empty support
             return joint.bind_pushforward(name, lambda a: 0)
         if op == "empty":
             # empty support (destructive interference / null joint)
             return Joint.empty()
-        if op == "dirac":
+        if op == "Dirac":
             if not expr.args:
                 raise KernelError("dirac requires an argument (point mass δ_c)")
             return joint.bind_pushforward(name, lambda a: self._eval_value(expr.args[0], a))

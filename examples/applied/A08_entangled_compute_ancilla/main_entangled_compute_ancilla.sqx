@@ -16,8 +16,8 @@ pub fn main() -> Unit {
     State anc = cnot(compute, anc)
 
     State correlation = expect(ZZ, compute, anc)
-    State viewed_corr = inspect(correlation)
+    State viewed_corr = Inspect(correlation)
 
     // cnot already moved `compute`; terminal measure on the Bell ancilla.
-    measure anc
+    Measure anc
 }

@@ -1,4 +1,4 @@
-"""AT-TDD: LISS-0174 evolve-block Trace-Out GC MVP (ADR 0142)."""
+"""AT-TDD: LISS-0174 Evolve-block Trace-Out GC MVP (ADR 0142)."""
 
 from __future__ import annotations
 
@@ -26,13 +26,13 @@ def test_evolve_let_temps_traced_out() -> None:
         package t
         pub fn main() -> Unit {
             State z = 3
-            State w = evolve (z) times 1 {
+            State w = Evolve (z) times 1 {
                 let temp1 = z * 2
                 let temp2 = temp1 + 5
                 temp2
             }
-            State viewed_z = inspect(z)
-            measure w
+            State viewed_z = Inspect(z)
+            Measure w
         }
         """,
         stdout=io.StringIO(),
@@ -52,13 +52,13 @@ def test_evolve_preserves_unrelated_live_coord() -> None:
         pub fn main() -> Unit {
             State keep = |1>
             State z = 0
-            State w = evolve (z) times 1 {
+            State w = Evolve (z) times 1 {
                 let t = z + 1
                 t
             }
-            State viewed_w = inspect(w)
-            State viewed_z = inspect(z)
-            measure keep
+            State viewed_w = Inspect(w)
+            State viewed_z = Inspect(z)
+            Measure keep
         }
         """,
         stdout=io.StringIO(),
@@ -77,12 +77,12 @@ def test_multi_step_evolve_drops_lets() -> None:
         package t
         pub fn main() -> Unit {
             State z = 1
-            State w = evolve (z) times 2 {
+            State w = Evolve (z) times 2 {
                 let t = w + 1
                 t
             }
-            State viewed_z = inspect(z)
-            measure w
+            State viewed_z = Inspect(z)
+            Measure w
         }
         """,
         stdout=io.StringIO(),

@@ -24,7 +24,7 @@ pub fn main() -> Unit {
     QubitRegister<1> register = system()
     State psi = |0>
     Float x = inner(|0>, psi(|1>))
-    measure psi
+    Measure psi
 }
 """
 
@@ -46,7 +46,7 @@ pub fn main() -> Unit {
     State seed = |0>
     Box b = Box(seed)
     Float x = inner(|0>, b.getPsi(|1>))
-    measure seed
+    Measure seed
 }
 """
 

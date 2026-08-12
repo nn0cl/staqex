@@ -50,7 +50,7 @@ _KERNEL_PHASE = "kernel"
 # Gate / apply / hadamard rebinds are not listed here — Call moves are
 # governed by ADR 0168 (result-type driven), not by this kind set.
 LINEAR_CONSUME_KINDS = frozenset({
-    "measure",
+    "Measure",
     "static_uncompute_zero_reset",
 })
 

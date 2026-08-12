@@ -29,8 +29,8 @@ def test_discretization_contract_is_explicit_and_order_independent() -> None:
             domain = Position
         }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -53,8 +53,8 @@ def test_continuous_lowering_without_contract_is_rejected() -> None:
             continuous_operator H = derivative(Position)
         }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -77,8 +77,8 @@ def test_discretization_bridge_preserves_theory_and_contract_provenance() -> Non
         }
         theory HarmonicOscillator { Operator H = X + P }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -99,8 +99,8 @@ def test_discretization_bridge_requires_known_contract_and_operator() -> None:
         use MissingGrid for HarmonicOscillator.H as discrete_H
         theory HarmonicOscillator { Operator H = X + P }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

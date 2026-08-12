@@ -1,4 +1,4 @@
-"""AT-TDD Phase 1 Red: LISS-0114 Slice B — consume-set policy + R3 measure-reuse."""
+"""AT-TDD Phase 1 Red: LISS-0114 Slice B — consume-set policy + R3 Measure-reuse."""
 
 from __future__ import annotations
 
@@ -21,10 +21,10 @@ def test_linear_consume_kinds_documented() -> None:
     from compiler.staqex import hir as hir_mod
 
     assert hasattr(hir_mod, "LINEAR_CONSUME_KINDS"), (
-        "expected LINEAR_CONSUME_KINDS documenting measure ∪ static uncompute"
+        "expected LINEAR_CONSUME_KINDS documenting Measure ∪ static uncompute"
     )
     kinds = hir_mod.LINEAR_CONSUME_KINDS
-    assert "measure" in kinds
+    assert "Measure" in kinds
     assert "static_uncompute_zero_reset" in kinds
     # Gate / apply / hadamard rebinds are explicitly non-consume.
     assert "gate_apply" not in kinds
@@ -34,21 +34,21 @@ def test_linear_consume_kinds_documented() -> None:
 def test_second_measure_emits_linear_duplicate_use() -> None:
     """R3: measuring an already-consumed root emits LINEAR_DUPLICATE_USE.
 
-    Early-collapse may also fire (non-terminal measure); linear must still name
+    Early-collapse may also fire (non-terminal Measure); linear must still name
     the reuse.
     """
     compiled = compile_source(
         """
         package t
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
-            measure q
+            State<Int> q = Coin()
+            Measure q
+            Measure q
         }
         """
     )
     assert "LINEAR_DUPLICATE_USE" in _codes(compiled.diagnostics), (
-        f"expected LINEAR_DUPLICATE_USE on second measure, got "
+        f"expected LINEAR_DUPLICATE_USE on second Measure, got "
         f"{compiled.diagnostics}"
     )
     assert compiled.ok is False
@@ -60,7 +60,7 @@ def test_gate_rebind_does_not_consume() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> q = coin()
+            State<Int> q = Coin()
             State<Int> q = hadamard(q)
         }
         """
@@ -77,9 +77,9 @@ def test_gate_rebind_then_single_measure_is_accepted() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> q = coin()
+            State<Int> q = Coin()
             State<Int> q = hadamard(q)
-            measure q
+            Measure q
         }
         """
     )

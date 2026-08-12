@@ -31,7 +31,7 @@ def test_troy_g_kg_oz_bridge() -> None:
                 Mass g = 1.0.oz_t to g
                 Mass kg = 1.0.oz_t to kg
                 State a = |0>
-                measure a
+                Measure a
             }
             """
         ).diagnostics
@@ -50,7 +50,7 @@ def test_troy_g_kg_oz_bridge() -> None:
             Mass back = 31.1034768.g to oz_t
             Mass av = 1.0.oz_t to oz
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )

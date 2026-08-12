@@ -31,7 +31,7 @@ def test_oz_lb_kg_conversions() -> None:
                 Mass m = 16.0.oz to lb
                 Mass k = 16.0.oz to kg
                 State a = |0>
-                measure a
+                Measure a
             }
             """
         ).diagnostics
@@ -49,7 +49,7 @@ def test_oz_lb_kg_conversions() -> None:
             Mass raw = 16.0.oz
             Mass back = 1.0.lb to oz
             State a = |0>
-            measure a
+            Measure a
         }
         """
     )
