@@ -497,7 +497,29 @@ Issue gives them a concrete scope:
   unnecessary to change (they already consume the resolver's literal
   output correctly). Full regression 1459 passed (up from 1455); spec
   verification 100.00% (161/161); S02's own example confirmed
-  byte-identical before/after.
+  byte-identical before/after. **Gap in the "unified" claim found and
+  closed 2026-08-12** (independent-context code review, Adjudicator-
+  requested): `_resolve_operator_tree` never actually learned `OpAttr`
+  — that stayed a separate, bolted-on call reachable only from
+  `evolve`'s own call site, so `apply`/`capply`
+  (`_resolve_unitary_matrix`) still read raw, unresolved AST directly
+  and rejected the exact struct-field forms `evolve` already accepted.
+  [LISS-0410](../issues/LISS-0410-operator-resolver-completion.md)
+  folds `OpAttr` into `_resolve_operator_tree` for real (threading an
+  `objects` context parameter through the whole call chain, found
+  necessary after a factory-function regression — A11/Noether-Forge —
+  surfaced during Green: a factory's own local `Operator` bind must
+  resolve against its *parameter*-name object scope, not module-level
+  `self.objects`) — `apply`/`capply` needed **no code change at all**
+  once StateBind is guaranteed fully resolved. A wrong plan assumption
+  (inline anonymous `evolve under (expr)` needing richer resolution)
+  was also corrected: that form was never supported at all, unrelated
+  to this gap. Full regression 1464 passed; spec verification 100.00%
+  (161/161). `unitarity_check.py`'s silent safety-gate bypass and the
+  QASM/Trotter backend's identical vague-error gap (both separate,
+  compile-time-only static-analysis paths, same review) are
+  [LISS-0411](../issues/LISS-0411-static-operator-resolution.md),
+  not yet started.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the

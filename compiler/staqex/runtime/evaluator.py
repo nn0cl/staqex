@@ -3180,8 +3180,18 @@ class Evaluator:
                 return False
         return False
 
-    def _resolve_operator_expr(self, expr: Any) -> Any:
-        """Resolve an explicit Operator value/factory without leaking locals."""
+    def _resolve_operator_expr(
+        self, expr: Any, *, objects: Mapping[str, Any] | None = None
+    ) -> Any:
+        """Resolve an explicit Operator value/factory without leaking locals.
+
+        `objects` (LISS-0410): the struct/class-instance context `OpAttr`
+        resolution should use. Defaults to `self.objects` (module scope);
+        `_resolve_operator_factory_call` passes its own param-name-rekeyed
+        `attr_objects` here for a factory function's own local `Operator`
+        binds, so `c.defect` resolves against the callee's parameter `c`,
+        not a same-named (or absent) module-level object.
+        """
         if isinstance(expr, OpVar) and expr.name in self.grid_hamiltonians:
             return GridHamiltonianRef(expr.name)
         if isinstance(expr, Var) and expr.name in self.grid_hamiltonians:
@@ -3197,7 +3207,7 @@ class Evaluator:
         # LISS-0139: Operator H = recv.method(…)
         if isinstance(expr, Call) and isinstance(expr.callee, Attr):
             return self._resolve_operator_method_call(expr)
-        return self._lower_operator_value(expr)
+        return self._lower_operator_value(expr, objects=objects)
 
     def _operator_array_context(self) -> dict[str, Any]:
         """Merged Float[N]… coefficient arrays (literal + Host-resolved,
@@ -3251,28 +3261,53 @@ class Evaluator:
         return self._resolve_operator_factory_call(synthetic, fun)
 
     def _resolve_operator_tree(
-        self, expr: Any, *, arrays: Mapping[str, Any]
+        self,
+        expr: Any,
+        *,
+        arrays: Mapping[str, Any],
+        objects: Mapping[str, Any] | None = None,
     ) -> Any:
         """Single recursive resolution pass over an Operator AST
-        (LISS-0407 / ADR 0206): inlines Operator-returning function
+        (LISS-0407 / ADR 0206, completed LISS-0410): resolves `OpAttr`
+        struct-field coefficients, inlines Operator-returning function
         calls found anywhere in the tree, then lowers any remaining
         finite binder against the merged array context. Preserves
-        object identity when a subtree needs no change."""
-        from ..finite_binder import _contains_binder, _lower_operator_expr
+        object identity when a subtree needs no change.
 
+        LISS-0410: `OpAttr` used to be resolved by a separate, bolted-on
+        call (`materialize_op_attrs`) reachable only from `evolve`'s own
+        call site and the factory-call path -- `apply`/`capply`
+        (`_resolve_unitary_matrix`) read `self.operators[name]` directly
+        with no resolution step at all, so a struct-field coefficient
+        that already worked for `evolve` still failed for `apply`/
+        `capply`. Folding `OpAttr` in here makes every `Operator`
+        StateBind fully resolved by the time it's stored, so any later
+        consumer that just reads `self.operators[name]` sees a clean
+        tree for free."""
+        from ..finite_binder import _contains_binder, _lower_operator_expr
+        from .op_attr_elaboration import OpAttrElaborationError, _op_attr_float
+
+        resolved_objects = self.objects if objects is None else objects
+
+        if isinstance(expr, OpAttr):
+            try:
+                value = _op_attr_float(expr, resolved_objects)
+            except OpAttrElaborationError as exc:
+                raise KernelError(str(exc)) from exc
+            return OpLit(value=float(value), span=expr.span)
         if isinstance(expr, OpCall):
             resolved = self._resolve_op_call(expr)
             if resolved is expr:
                 return expr
-            return self._resolve_operator_tree(resolved, arrays=arrays)
+            return self._resolve_operator_tree(resolved, arrays=arrays, objects=objects)
         if isinstance(expr, OpBin):
-            new_lhs = self._resolve_operator_tree(expr.lhs, arrays=arrays)
-            new_rhs = self._resolve_operator_tree(expr.rhs, arrays=arrays)
+            new_lhs = self._resolve_operator_tree(expr.lhs, arrays=arrays, objects=objects)
+            new_rhs = self._resolve_operator_tree(expr.rhs, arrays=arrays, objects=objects)
             if new_lhs is expr.lhs and new_rhs is expr.rhs:
                 return expr
             return OpBin(op=expr.op, lhs=new_lhs, rhs=new_rhs, span=expr.span)
         if isinstance(expr, OpPow):
-            new_base = self._resolve_operator_tree(expr.base, arrays=arrays)
+            new_base = self._resolve_operator_tree(expr.base, arrays=arrays, objects=objects)
             if new_base is expr.base:
                 return expr
             return OpPow(base=new_base, exp=expr.exp, span=expr.span)
@@ -3292,18 +3327,23 @@ class Evaluator:
         return expr
 
     def _lower_operator_value(
-        self, expr: Any, *, extra_arrays: Mapping[str, Any] | None = None
+        self,
+        expr: Any,
+        *,
+        extra_arrays: Mapping[str, Any] | None = None,
+        objects: Mapping[str, Any] | None = None,
     ) -> Any:
-        """Resolve an Operator AST's remaining non-literal nodes (nested
-        Operator-returning calls, finite binders) via
-        `_resolve_operator_tree` (LISS-0407 unifies what used to be a
-        binder-only pass, LISS-0224, into one recursive resolver)."""
+        """Resolve an Operator AST's remaining non-literal nodes (struct
+        fields, nested Operator-returning calls, finite binders) via
+        `_resolve_operator_tree` (LISS-0407/LISS-0410 unifies what used
+        to be several separate, bolted-on passes into one recursive
+        resolver)."""
         if expr is None or isinstance(expr, (GridHamiltonianRef, str)):
             return expr
         arrays = self._operator_array_context()
         if extra_arrays:
             arrays.update(extra_arrays)
-        return self._resolve_operator_tree(expr, arrays=arrays)
+        return self._resolve_operator_tree(expr, arrays=arrays, objects=objects)
 
     def _resolve_operator_factory_call(self, expr: Call, fun: FunDecl) -> Any:
         """Evaluate a `fn … -> Operator` Call into a materialized OpExpr.
@@ -3372,7 +3412,11 @@ class Evaluator:
             if not isinstance(stmt, StateBind) or stmt.ty is None:
                 continue
             if stmt.ty.name == "Operator" and len(stmt.names) == 1:
-                raw = self._resolve_operator_expr(stmt.expr)
+                # LISS-0410: resolve against this call's own param-name
+                # object scope (attr_objects), not module-level
+                # self.objects -- a factory-local `Operator H = c.field *
+                # ...` must see the callee's own parameter `c`.
+                raw = self._resolve_operator_expr(stmt.expr, objects=attr_objects)
                 local_ops[stmt.names[0]] = _materialize_op(raw)
                 continue
             if (
