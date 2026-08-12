@@ -40,6 +40,7 @@ from .ast_nodes import (
 from .runtime.hamiltonian import compile_hamiltonian, op_n_qubits
 from .runtime.matrix import mat_dag, mat_mul
 from .runtime.unitaries import named_gate_matrix, rotation_gate_matrix
+from .static_operator_resolution import collect_static_operator_context, resolve_static_operator
 
 _EPS = 1e-8
 
@@ -87,6 +88,10 @@ def check_unitarity(unit: CompilationUnit) -> list[dict[str, Any]]:
 
     from .ast_nodes import FunDecl
 
+    # LISS-0411: struct-of-literals constant folding (ADR 0206 completion
+    # for this static-only pass -- no live Evaluator state exists here).
+    _, _, objects = collect_static_operator_context(unit)
+
     operators: dict[str, Any] = {}
     from .stdlib.prelude import PRELUDE_CONSTANTS
 
@@ -110,7 +115,7 @@ def check_unitarity(unit: CompilationUnit) -> list[dict[str, Any]]:
                     local_operators[stmt.names[0]] = stmt.expr
                 continue
             _check_expr_unitarity(
-                stmt.expr, quantum, strict, local_operators, scalars, diags
+                stmt.expr, quantum, strict, local_operators, scalars, objects, unit, diags
             )
 
     for stmt in unit.main.body.stmts:
@@ -118,11 +123,11 @@ def check_unitarity(unit: CompilationUnit) -> list[dict[str, Any]]:
             if isinstance(stmt, Measure):
                 _check_measure_target(stmt.expr, classical, diags)
                 _check_expr_unitarity(
-                    stmt.expr, quantum, strict, operators, scalars, diags
+                    stmt.expr, quantum, strict, operators, scalars, objects, unit, diags
                 )
             elif isinstance(stmt, Snapshot):
                 _check_expr_unitarity(
-                    stmt.expr, quantum, strict, operators, scalars, diags
+                    stmt.expr, quantum, strict, operators, scalars, objects, unit, diags
                 )
             continue
         if stmt.ty is not None and stmt.ty.name == "Operator":
@@ -148,7 +153,7 @@ def check_unitarity(unit: CompilationUnit) -> list[dict[str, Any]]:
                 classical[n] = True
 
         _check_expr_unitarity(
-            stmt.expr, quantum, strict, operators, scalars, diags
+            stmt.expr, quantum, strict, operators, scalars, objects, unit, diags
         )
 
     return diags
@@ -204,6 +209,8 @@ def _check_expr_unitarity(
     strict: dict[str, bool],
     operators: dict[str, Any],
     scalars: dict[str, float],
+    objects: dict[str, Any],
+    unit: CompilationUnit,
     diags: list[dict[str, Any]],
 ) -> None:
     if isinstance(expr, Call):
@@ -285,9 +292,9 @@ def _check_expr_unitarity(
                     u_expr = expr.args[u_idx]
                     n_wires = len(expr.args) - u_idx - 1
             if u_expr is not None and n_wires >= 1:
-                _check_apply_unitary(u_expr, n_wires, operators, scalars, diags, expr)
+                _check_apply_unitary(u_expr, n_wires, operators, scalars, objects, unit, diags, expr)
         for a in expr.args:
-            _check_expr_unitarity(a, quantum, strict, operators, scalars, diags)
+            _check_expr_unitarity(a, quantum, strict, operators, scalars, objects, unit, diags)
         return
 
     if isinstance(expr, WhenExpr):
@@ -305,10 +312,10 @@ def _check_expr_unitarity(
                     ),
                 }
             )
-        _check_expr_unitarity(expr.ctrl, quantum, strict, operators, scalars, diags)
+        _check_expr_unitarity(expr.ctrl, quantum, strict, operators, scalars, objects, unit, diags)
         for arm in expr.arms:
             _check_expr_unitarity(
-                arm.body, quantum, strict, operators, scalars, diags
+                arm.body, quantum, strict, operators, scalars, objects, unit, diags
             )
         return
 
@@ -316,14 +323,14 @@ def _check_expr_unitarity(
         hop = expr.hamiltonian
         if isinstance(hop, Var) and hop.name in operators:
             _check_hamiltonian_hermitian(
-                hop.name, operators[hop.name], operators, scalars, diags, expr
+                hop.name, operators[hop.name], operators, scalars, objects, unit, diags, expr
             )
         for s in expr.seeds:
-            _check_expr_unitarity(s, quantum, strict, operators, scalars, diags)
+            _check_expr_unitarity(s, quantum, strict, operators, scalars, objects, unit, diags)
         return
 
     for child in _children(expr):
-        _check_expr_unitarity(child, quantum, strict, operators, scalars, diags)
+        _check_expr_unitarity(child, quantum, strict, operators, scalars, objects, unit, diags)
 
 
 def _check_apply_unitary(
@@ -331,6 +338,8 @@ def _check_apply_unitary(
     n_wires: int,
     operators: dict[str, Any],
     scalars: dict[str, float],
+    objects: dict[str, Any],
+    unit: CompilationUnit,
     diags: list[dict[str, Any]],
     site: Expr,
 ) -> None:
@@ -360,7 +369,13 @@ def _check_apply_unitary(
             return
         name = u_expr.name
         if name in operators:
-            op_ast = operators[name]
+            # LISS-0411: resolve struct-field coefficients before
+            # op_n_qubits/compile_hamiltonian, which don't understand
+            # OpAttr -- matches the live Evaluator's own resolution
+            # (ADR 0206/LISS-0410), statically, with no runtime state.
+            op_ast = resolve_static_operator(
+                operators[name], unit=unit, operators=operators, objects=objects
+            )
             nq = op_n_qubits(op_ast, operators, scalars)
             if nq == 0 or nq < 0:
                 kind = "Fock" if nq == 0 else "grid"
@@ -409,10 +424,14 @@ def _check_hamiltonian_hermitian(
     op_ast: Any,
     operators: dict[str, Any],
     scalars: dict[str, float],
+    objects: dict[str, Any],
+    unit: CompilationUnit,
     diags: list[dict[str, Any]],
     site: Expr,
 ) -> None:
     try:
+        # LISS-0411: same struct-field resolution as _check_apply_unitary.
+        op_ast = resolve_static_operator(op_ast, unit=unit, operators=operators, objects=objects)
         nq = op_n_qubits(op_ast, operators, scalars)
         if nq == 0:
             mat = compile_hamiltonian(
