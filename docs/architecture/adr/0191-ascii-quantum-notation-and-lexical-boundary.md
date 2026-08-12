@@ -2,10 +2,10 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted — PR #339 merged 2026-08-04** |
+| Status | **Accepted — PR #339 merged 2026-08-04.** Amended 2026-08-12 (case-sensitive keyword spelling) — Adjudicator approval via WP-0098 batch record. |
 | Date | 2026-08-04 |
 | Scope | Ket, bra, tensor notation, and Unicode input policy |
-| Related | ADR 0189, ADR 0190, WP-0094 |
+| Related | ADR 0189, ADR 0190, WP-0094, WP-0098 |
 
 ## Context
 
@@ -119,3 +119,71 @@ Costs:
 This ADR is accepted as the source-language boundary. Implementation evidence
 and the remaining final-review gate are recorded in WP-0094; no compatibility
 fallback or alternate Unicode source semantics are implied.
+
+## Amendment (2026-08-12): case-sensitive keyword spelling for blackboard symbols
+
+Approved by the Adjudicator as part of the WP-0098 batch record
+(`docs/collaboration/reviews/execution-batch-case-sensitive-keywords-and-sigma-binder.json`).
+Originated from a design-review session finding Staqex had no way to write a
+State as a literal sum over basis kets, and generalizing the fix into a
+language-wide convention.
+
+### Amended decision
+
+1. **Case is a semantic axis, not decoration.** Extending this ADR's existing
+   "canonical ASCII spelling" rule (§1–3 above): a capitalized ASCII spelling
+   is reserved for a keyword that stands in for one specific blackboard
+   symbol or operator. A lowercase spelling stays reserved for a connective
+   or procedural keyword with no single blackboard glyph. This is the same
+   underlying principle as `psi`/`phi`/`rho` (§1) — canonical ASCII spelling
+   of the symbol's read-aloud name — with case added as a second, orthogonal
+   signal. It does not relax §3's Unicode ban; `Σ`/`Π`/`∈` remain rejected
+   exactly as `ψ`/`⟨`/`⟩` already are.
+2. **`state` is retired**, hard cutover (no back-compat alias, matching this
+   project's own `fun`→`fn`/`public`→`pub`/`evolve{}.run()` precedent).
+   `State` (already an existing, shipped Type-First spelling — see
+   `TYPE_HEADS` in `compiler/staqex/dimensions.py`) becomes the sole
+   canonical declaration spelling. Once retired as a keyword, `state`
+   becomes an ordinary available identifier.
+3. **Ten further verb keywords are capitalized**, hard cutover: `evolve`→
+   `Evolve`, `measure`→`Measure`, `mix`→`Mix`, `coin`→`Coin`, `dirac`→
+   `Dirac`, `inspect`→`Inspect`, `vacuum`→`Vacuum`, `snapshot`→`Snapshot`,
+   `superpose`→`Superpose`, `forEach`→`ForEach`.
+4. **`sum`/`product` are retired in favor of `Sigma`/`Pi`** (Σ/Π), which also
+   gain a State-typed body (a literal sum over basis kets, previously
+   inexpressible in Staqex source at all — see LISS-0420) alongside the
+   existing Operator-typed body. Every `Sigma`/`Pi` binder domain uses a new
+   dedicated `In` keyword (∈) — including the domain that previously read
+   `sum (i in Index<0..7>)`.
+5. **`In` and lowercase `in` are two separate, non-interchangeable reserved
+   words**, not a case-insensitive alias. `In` denotes set/domain membership
+   inside a `Sigma`/`Pi` binder only. Lowercase `in` remains reserved for
+   `forEach`'s classical collection iteration — a different relation
+   ("iterate over," not "is an element of").
+6. **Explicitly out of scope**: built-in *functions* resolved by string-name
+   dispatch rather than a reserved keyword (`apply`, `capply`, `ocapply`,
+   `project`, `controlled`, `toffoli`, `prepare_selection`, `feasible`,
+   `expect`, `host`, `finiteize`, `map`, …) are not renamed by this
+   amendment. Everything else in `tokens.py`'s `ACTIVE`/`CONTEXTUAL` tables
+   not listed above (`class`, `struct`, `fn`, `let`, `return`, `package`,
+   `import`, `namespace`, `enum`, `this`, `val`, `var`, `module`, `exports`,
+   `requires`, `private`, `else`, `pub`, `true`, `false`, `to`, `times`,
+   `for`, `under`, `in`, `until`, `max`, `onto`) is scaffolding/connective,
+   not a blackboard-symbol verb, and stays lowercase.
+
+### Non-goals (amendment)
+
+- Renaming Category-B built-in functions (see Decision 6 above) — a
+  separate, larger, and more invasive change (touches evaluator.py/
+  typecheck.py string-name dispatch at many sites, not one lexer table),
+  explicitly declined for this round.
+- Retroactively re-litigating already-capitalized tokens that predate this
+  amendment (Pauli `X`/`Y`/`Z`, `Suzuki`, `Index`) — they were already
+  consistent with the convention this amendment formalizes.
+
+### Gate (amendment)
+
+Tracked under WP-0098 (`docs/work-plans/WP-0098-case-sensitive-keywords-and-sigma-binder.md`),
+Issues LISS-0415 through LISS-0420. `main_selection.sqx` itself is not
+touched by this amendment or WP-0098; rewriting it to the new syntax is a
+separate follow-on Issue.

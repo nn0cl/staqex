@@ -5591,6 +5591,8 @@ def _apply_op(op: str, l: Any, r: Any) -> Any:
         if isinstance(l, int) and isinstance(r, int):
             return Fraction(l, r)
         return l / r
+    if op == "^":
+        return l**r
     if op == "==":
         return l == r
     if op == "!=":

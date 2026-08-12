@@ -3424,6 +3424,24 @@ class TypeChecker:
                 dim = left.dim.div(right.dim)
                 payload = _payload_for_dim(dim, _promote(left.payload, right.payload))
                 return Ty("Classical", payload, dim)
+            if expr.op == "^":
+                # LISS-0415: classical numeric power, dimensionless operands
+                # only -- a dimensioned base raised to a non-integer power is
+                # out of scope (the Sigma-binder coefficient use case this
+                # was added for is always dimensionless).
+                if not left.dim.is_dimensionless() or not right.dim.is_dimensionless():
+                    self.diagnostics.append(
+                        {
+                            "code": "TYPE_MISMATCH",
+                            "line": expr.span.line,
+                            "col": expr.span.col,
+                            "message": (
+                                "`^` requires dimensionless operands "
+                                f"(got `{left}` and `{right}`)"
+                            ),
+                        }
+                    )
+                return Ty("Classical", "Float", DIMLESS)
             if expr.op in RELATIONAL:
                 if not left.dim.matches(right.dim):
                     self._dim_error(
@@ -3498,6 +3516,21 @@ class TypeChecker:
             dim = left.dim.div(right.dim)
             payload = _payload_for_dim(dim, _promote(left.payload, right.payload))
             return Ty("State", payload, dim)
+        if expr.op == "^":
+            # LISS-0415: classical numeric power, dimensionless operands only.
+            if not left.dim.is_dimensionless() or not right.dim.is_dimensionless():
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": (
+                            "`^` requires dimensionless operands "
+                            f"(got `{left}` and `{right}`)"
+                        ),
+                    }
+                )
+            return Ty("State", "Float", DIMLESS)
         return Ty("State", "Any", DIMLESS)
 
     def _check_mixed_units(self, left: Ty, right: Ty, expr: BinOp) -> None:

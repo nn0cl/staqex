@@ -2263,7 +2263,20 @@ class Parser:
             # desugar -e as 0 - e (LitInt 0 or LitFloat 0.0)
             zero = LitFloat(value=0.0, span=sp)
             return BinOp(op="-", lhs=zero, rhs=inner, span=sp)
-        return self._call()
+        return self._power()
+
+    def _power(self):
+        """Classical `^` (LISS-0415), right-associative:
+        `2.0 ^ 3.0 ^ 2.0` == `2.0 ^ (3.0 ^ 2.0)`. Distinct from the
+        Operator-DSL's own `^`/`OpPow` (`_op_power`, integer-only matrix
+        power) -- this is plain numeric exponentiation, reusing the
+        existing `BinOp` AST node rather than a new one."""
+        expr = self._call()
+        if self._match(TokenKind.CARET):
+            sp = self._span()
+            rhs = self._power()
+            return BinOp(op="^", lhs=expr, rhs=rhs, span=sp)
+        return expr
 
     def _call(self):
         expr = self._primary()
