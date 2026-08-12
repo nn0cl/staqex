@@ -545,13 +545,18 @@ Issue gives them a concrete scope:
   bugs — a parser lookahead gap and a missing `OpAttr` case — fixed as
   [LISS-0412](../issues/LISS-0412-second-quantization-struct-field-coefficients.md)
   (PR [#542](https://github.com/nn0cl/staqex/pull/542)));
-  (b) `Evaluator._bind_method` (`evaluator.py:3717`) stores a class-
+  (b) `Evaluator._bind_method` (`evaluator.py:3717`) stored a class-
   method-local `Operator` bind raw, unresolved; (c) `_bind_user_fun`
-  (`evaluator.py:4135`) does the same for a library-`fn`-local
-  `Operator` bind — both (b)/(c) not yet fixed, same one-line-each shape
-  as LISS-0410's original fix, deferred by explicit Adjudicator
-  direction ("大きいモノから" — start with the bigger one, LISS-0412,
-  first). Ruled out with empirical evidence: Lindblad/`DensityState`
+  (`evaluator.py:4135`) did the same for a library-`fn`-local `Operator`
+  bind. **(b)/(c) fixed 2026-08-12** as
+  [LISS-0413](../issues/LISS-0413-method-fn-local-operator-resolution.md) —
+  same one-line-each shape as LISS-0410's original fix (`self.operators[...]
+  = stmt.expr` → `self._resolve_operator_expr(stmt.expr)`, defaulting to
+  module-scope `self.objects`); confirmed the fix matches the equivalent
+  literal-coefficient form's result exactly. Full regression 1476
+  passed; spec verification 100.00% (161/161). This closes out the
+  second review pass — no further findings pending. Ruled out with
+  empirical evidence: Lindblad/`DensityState`
   (already resolved at top-level bind time), quantum-walk ops (never
   consume Operator AST at all), `controlled`/`ocapply`/`toffoli`
   (already route through the same `_resolve_unitary_matrix` LISS-0410

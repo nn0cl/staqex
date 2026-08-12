@@ -3714,7 +3714,17 @@ class Evaluator:
                     if stmt.ty is not None and stmt.ty.name == "Operator":
                         if len(stmt.names) != 1:
                             raise KernelError("Operator bind expects a single name")
-                        self.operators[stmt.names[0]] = stmt.expr
+                        # LISS-0413: resolve the same way the top-level
+                        # Operator StateBind dispatch does -- unlike this
+                        # method's own Operator-typed *parameters|struct
+                        # fields the runtime evaluator already resolves,
+                        # a *local* Operator bind here previously stored
+                        # its raw AST, so a struct-field coefficient
+                        # (`weights.a * X`) failed with `cannot compile
+                        # operator node OpAttr`.
+                        self.operators[stmt.names[0]] = self._resolve_operator_expr(
+                            stmt.expr
+                        )
                         continue
                     # Evaluate RHS with this/local; bind into local (classical methods)
                     if len(stmt.names) != 1:
@@ -4132,7 +4142,14 @@ class Evaluator:
                 if stmt.ty is not None and stmt.ty.name == "Operator":
                     if len(stmt.names) != 1:
                         raise KernelError("Operator bind expects a single name")
-                    self.operators[stmt.names[0]] = stmt.expr
+                    # LISS-0413: same fix as _bind_method -- a local
+                    # Operator bind inside a library fn previously stored
+                    # its raw AST unresolved (unlike this same function's
+                    # own Operator-typed *parameter* binding a few lines
+                    # above, which already resolves).
+                    self.operators[stmt.names[0]] = self._resolve_operator_expr(
+                        stmt.expr
+                    )
                     continue
                 joint = self._bind_names(
                     joint,
