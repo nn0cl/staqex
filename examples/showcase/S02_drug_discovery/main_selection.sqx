@@ -54,12 +54,14 @@ pub fn main() -> Unit {
     // pairwise_compatible / diversity_at_least matrices are Host-supplied via
     // HostInputPort (ADR 0194) -- see host/run_selection.py.
     Int n = 8
-    // LISS-0421: literal equal superposition over all 2^n selection
-    // patterns, matching the blackboard equation term for term --
-    // |psi_0> = sum_{x in {0,1}^n} |x>, self-normalizing by construction
-    // (same result as the earlier prepare_selection(n) primitive it
-    // replaces; LISS-0420 confirmed byte-identical output).
-    State psi_sel = Sigma (x In {0,1}^n) { |x> }
+    // LISS-0421/0422: literal transcription of the blackboard equation
+    // term for term -- |psi_0> = (1/sqrt(2^n)) * sum_{x in {0,1}^n} |x>.
+    // Sigma itself is the literal, unnormalized ket sum (each |x> gets
+    // amplitude 1); the explicit (1.0/sqrt(2.0^n)) coefficient is what
+    // normalizes it, exactly mirroring the blackboard's own separate
+    // prefactor (same terminal distribution as the earlier
+    // prepare_selection(n) primitive it replaces).
+    State psi_sel = (1.0 / sqrt(2.0 ^ n)) * Sigma (x In {0,1}^n) { |x> }
     State psi_sel = project psi_sel onto feasible(
         exactly_selected = 3,
         pairwise_compatible = true,

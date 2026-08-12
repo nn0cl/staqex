@@ -12,11 +12,14 @@ and the [expressiveness review](../../../docs/specs/staqex-v1-s02-expressiveness
 (8 candidates, select exactly 3) on a **single** quantum coordinate,
 `psi_sel`:
 
-1. **Hard-constraint selection subspace** — `Sigma (x In {0,1}^n) { |x> }`
-   (equal superposition over all `2^n` selection patterns, LISS-0421;
-   structurally identical to the earlier `prepare_selection(n)` primitive it
-   replaces) restricted by `project ... onto feasible(exactly_selected = 3,
-   pairwise_compatible = true, diversity_at_least = 0.3)`.
+1. **Hard-constraint selection subspace** — `(1.0/sqrt(2.0^n)) * Sigma (x
+   In {0,1}^n) { |x> }` (LISS-0421/0422: `Sigma` is the literal,
+   unnormalized ket sum, matching the bare blackboard `Sigma` symbol
+   exactly; the explicit coefficient is what normalizes it, mirroring the
+   blackboard equation's own separate `1/sqrt(2^n)` prefactor — same
+   terminal distribution as the earlier `prepare_selection(n)` primitive
+   it replaces) restricted by `project ... onto feasible(exactly_selected
+   = 3, pairwise_compatible = true, diversity_at_least = 0.3)`.
 2. **Soft-objective evolution** — `psi_sel` itself evolved under a
    Hamiltonian built from named weighted terms (`activity`/`selectivity`/
    `diversity`), reusing S01's own energy-scale idiom
@@ -45,7 +48,7 @@ $\lvert\psi_0\rangle = \dfrac{1}{\sqrt{2^n}}\sum_{x\in\{0,1\}^n}\lvert x\rangle$
 
 ```staqex
 Int n = 8
-State psi_sel = Sigma (x In {0,1}^n) { |x> }
+State psi_sel = (1.0 / sqrt(2.0 ^ n)) * Sigma (x In {0,1}^n) { |x> }
 ```
 
 ### 2. Project onto the feasible subspace (hard constraint)

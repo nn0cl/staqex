@@ -4918,10 +4918,19 @@ class Evaluator:
         return predicate
 
     def _bind_ket_sum_binder(self, joint: Joint, name: str, expr: KetSumBinder) -> Joint:
-        """`Sigma (x In {0,1}^n) { |x> }` (LISS-0420) -- equal-weight sum
-        over the literal set-power domain, structurally identical to
-        `_bind_prepare_selection` for the `{0,1}^n` case (both produce a
-        uniform distribution over n-tuples of the domain's labels)."""
+        """`Sigma (x In {0,1}^n) { |x> }` (LISS-0420, literal semantics per
+        LISS-0422) -- the literal, unnormalized sum $\\sum_{x} |x\\rangle$:
+        each basis ket gets amplitude 1, exactly matching the bare
+        blackboard `Sigma` symbol. Normalization is never implicit -- the
+        caller must apply an explicit coefficient (e.g.
+        `(1.0/sqrt(2.0^n)) * Sigma (...) { |x> }`) to obtain a normalized
+        State, the same way the blackboard equation carries its own
+        separate `1/sqrt(2^n)` prefactor. Deliberately NOT the same
+        construction as `_bind_prepare_selection` (which stays equal-
+        weight/normalized as its own, unrelated native primitive) --
+        `bind_split` takes a probability `p` and computes `amp =
+        parent_amp * sqrt(p)`, so `p = 1.0` per branch yields amplitude 1,
+        i.e. literal unnormalized addition."""
         width_raw = self._eval_value(expr.domain.width, {})
         try:
             n = int(width_raw)
@@ -4934,24 +4943,27 @@ class Evaluator:
 
         labels = tuple(expr.domain.labels)
         patterns = list(itertools.product(labels, repeat=n))
-        weight = 1.0 / len(patterns)
-        return joint.bind_split(name, {pattern: weight for pattern in patterns})
+        return joint.bind_split(name, {pattern: 1.0 for pattern in patterns})
 
     def _is_state_producing_bind_expr(self, expr: Expr) -> bool:
-        """LISS-0420: does this expression need the amplitude-scaling bind
-        path, as opposed to `_eval_value` (pure classical)? Deliberately
-        narrow -- `KetLit`/`KetSumBinder` only, not a general classifier
-        over every State-producing node type. A broader first attempt
-        (also matching `Coin`/`Vacuum`/`WhenExpr`/`SuperposeExpr`/
-        `TensorExpr`) was found, during this Issue's own Green phase, to
-        reopen a boundary LISS-0273 deliberately closed: `Float bad =
-        Coin() * 0.5` must still fail (a State-forming call is not a
-        valid classical operand), and previously did so precisely because
-        `_eval_value` could not evaluate `Coin()` at all -- silently
-        "fixing" that crash for every State-producing type removed a
-        real safety net the declared-type check doesn't independently
-        replace at this layer. `KetLit`/`KetSumBinder` are safe to include
-        because nothing pre-existing relied on either crashing here."""
+        """LISS-0420 (coefficient semantics corrected by LISS-0422): does
+        this expression need the amplitude-scaling bind path, as opposed
+        to `_eval_value` (pure classical)? Deliberately narrow --
+        `KetLit`/`KetSumBinder` only, not a general classifier over every
+        State-producing node type. A broader first attempt (also matching
+        `Coin`/`Vacuum`/`WhenExpr`/`SuperposeExpr`/`TensorExpr`) was found,
+        during LISS-0420's own Green phase, to reopen a boundary LISS-0273
+        deliberately closed: `Float bad = Coin() * 0.5` must still fail (a
+        State-forming call is not a valid classical operand), and
+        previously did so precisely because `_eval_value` could not
+        evaluate `Coin()` at all -- silently "fixing" that crash for every
+        State-producing type removed a real safety net the declared-type
+        check doesn't independently replace at this layer. `KetLit`/
+        `KetSumBinder` are safe to include because nothing pre-existing
+        relied on either crashing here. Since LISS-0422, `KetSumBinder` is
+        itself unnormalized, so this scaling path is how a caller supplies
+        the required normalization coefficient, not an optional/redundant
+        one."""
         if isinstance(expr, KetLit):
             return True
         return isinstance(expr, KetSumBinder)

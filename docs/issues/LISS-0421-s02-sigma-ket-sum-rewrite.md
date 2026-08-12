@@ -1,5 +1,16 @@
 # LISS-0421: rewrite S02 `main_selection.sqx` step 1 to the `Sigma` ket-sum
 
+> **Amended by [LISS-0422](LISS-0422-sigma-literal-unnormalized-correction.md)**,
+> in the same PR (#548). This Issue originally shipped the coefficient-free
+> form `State psi_sel = Sigma (x In {0,1}^n) { |x> }`, relying on LISS-0420's
+> then-shipped self-normalizing `Sigma`. LISS-0422 corrected `Sigma` to be
+> the literal, unnormalized blackboard sum, so this file now reads
+> `State psi_sel = (1.0 / sqrt(2.0 ^ n)) * Sigma (x In {0,1}^n) { |x> }` —
+> a genuinely literal transcription, not an approximation. The scope,
+> `PREDICATE_PROJECTOR_ERROR` bug, and verification below are the
+> historical record of this Issue's own work and remain accurate for the
+> `unitarity_check.py` fix; only the exact source line changed afterward.
+
 ## Metadata
 
 - Local issue ID: LISS-0421

@@ -17,9 +17,13 @@ from compiler.staqex.pipeline import compile_source  # noqa: E402
 from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
 
 
-def test_ket_sum_over_bit_domain_is_equal_superposition() -> None:
-    """`Sigma (x In {0,1}^n) { |x> }` alone is self-normalizing, matching
-    `prepare_selection(n)` exactly (same equal-weight construction)."""
+def test_bare_ket_sum_is_literal_and_unnormalized() -> None:
+    """LISS-0422: `Sigma (x In {0,1}^n) { |x> }` alone is the literal,
+    UNNORMALIZED sum $\\sum_x |x\\rangle$ -- each basis ket gets amplitude
+    1, exactly matching the bare blackboard `Sigma` symbol (which never
+    carries implicit normalization; the blackboard equation's own
+    `1/sqrt(2^n)` prefactor is a separate, explicit factor). Total
+    probability is therefore `2**n`, not 1."""
     src = """
     package t
     pub fn main() -> Unit {
@@ -33,18 +37,23 @@ def test_ket_sum_over_bit_domain_is_equal_superposition() -> None:
     result = Evaluator(seed=0).run_unit(compiled.unit)
     assert result.measure is not None
     total = sum(result.measure.marginal.values())
-    assert abs(total - 1.0) < 1e-9
+    assert abs(total - 16.0) < 1e-9
     assert len(result.measure.marginal) == 16
     for p in result.measure.marginal.values():
-        assert abs(p - 1.0 / 16) < 1e-9
+        assert abs(p - 1.0) < 1e-9
 
 
-def test_ket_sum_matches_prepare_selection_exactly() -> None:
+def test_coefficient_scaled_ket_sum_matches_prepare_selection_exactly() -> None:
+    """The literal blackboard transcription -- Sigma (unnormalized) times
+    the explicit `1/sqrt(2^n)` coefficient -- reproduces
+    `prepare_selection(n)`'s normalized equal superposition exactly.
+    Bare `Sigma` alone no longer matches `prepare_selection` (LISS-0422
+    correction); only the fully-transcribed equation does."""
     src_sigma = """
     package t
     pub fn main() -> Unit {
         Int n = 6
-        State psi = Sigma (x In {0,1}^n) { |x> }
+        State psi = (1.0 / sqrt(2.0 ^ n)) * Sigma (x In {0,1}^n) { |x> }
         Measure psi
     }
     """
@@ -64,13 +73,14 @@ def test_ket_sum_matches_prepare_selection_exactly() -> None:
     assert r1.measure.marginal == r2.measure.marginal
 
 
-def test_external_coefficient_applies_literally_and_can_unnormalize() -> None:
-    """LISS-0420 design finding: the Sigma ket-sum is already self-
-    normalizing, so an *explicit* external coefficient (matching how the
-    equation reads aloud) double-applies -- honest, unnormalized output,
-    matching this codebase's established precedent of never silently
-    enforcing normalization (LISS-0410: apply() with a non-unitary
-    Operator already produced an unnormalized result, not an error)."""
+def test_external_coefficient_applies_literally_as_amplitude_scale() -> None:
+    """LISS-0422: the external coefficient multiplies each branch's
+    amplitude directly (`amp *= scale`); since bare Sigma now has
+    amplitude 1 per branch (not sqrt(1/N)), a coefficient of
+    `1/sqrt(2^n)` yields probability `1/2^n` per branch, i.e. total
+    probability 1.0 -- the coefficient is REQUIRED for normalization,
+    not optional/redundant (correcting LISS-0420's original,
+    self-normalizing-Sigma framing)."""
     src = """
     package t
     pub fn main() -> Unit {
@@ -83,11 +93,9 @@ def test_external_coefficient_applies_literally_and_can_unnormalize() -> None:
     assert compiled.unit is not None, compiled.diagnostics
     result = Evaluator(seed=0).run_unit(compiled.unit)
     total = sum(result.measure.marginal.values())
-    # Self-normalized Sigma (total=1.0) scaled by amplitude coefficient
-    # (1/sqrt(2^n)) -- probability scales by the coefficient SQUARED.
-    coeff = 1.0 / (2.0**4) ** 0.5
-    expected_total = 1.0 * coeff * coeff
-    assert abs(total - expected_total) < 1e-9
+    assert abs(total - 1.0) < 1e-9
+    for p in result.measure.marginal.values():
+        assert abs(p - 1.0 / 16.0) < 1e-9
 
 
 def test_operator_sigma_binder_still_works_with_In() -> None:
