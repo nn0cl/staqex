@@ -635,10 +635,26 @@ Issue gives them a concrete scope:
   LISS-0420 where an initially-too-broad "classical scalar × State-
   producing expr" evaluator path silently reopened a boundary LISS-0273
   deliberately closed, found by the full regression sweep and narrowed
-  before merge. `main_selection.sqx` itself is not rewritten by this
-  batch — a follow-on Issue. Final state: 1511 tests passed (up from the
-  pre-batch baseline); spec verification 100.00% (161/161); full `.sqx`
-  corpus `staqex check` clean.
+  before merge. Final state: 1511 tests passed (up from the pre-batch
+  baseline); spec verification 100.00% (161/161); full `.sqx` corpus
+  `staqex check` clean.
+  `main_selection.sqx` itself was rewritten in the deferred follow-on,
+  [LISS-0421](../issues/LISS-0421-s02-sigma-ket-sum-rewrite.md) — step 1
+  now reads `Sigma (x In {0,1}^n) { |x> }` in place of
+  `prepare_selection(n)`, term-for-term matching the blackboard equation.
+  Found and fixed one more real bug of the same "recognized by
+  construction site, not structural shape" class this batch kept
+  surfacing: `unitarity_check.py`'s static `_expr_is_quantum` recognized
+  `KetLit` directly and `prepare_selection` via its `Call`-name allowlist,
+  but had no case for the new `KetSumBinder` node, so the rewritten
+  `psi_sel` fell through to `return False` and the very next
+  `project psi_sel onto feasible(...)` statement wrongly raised
+  `PREDICATE_PROJECTOR_ERROR`. Fixed by adding `KetSumBinder` to the same
+  direct-recognition case as `KetLit`. Verified byte-identical seeded
+  terminal output to the pre-rewrite baseline; full regression (1511) and
+  spec verification (100.00%, including the existing
+  `sv23-Coin-project-banned` check) confirm the fix does not weaken the
+  guard's original purpose.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the

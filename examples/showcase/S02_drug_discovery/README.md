@@ -12,10 +12,11 @@ and the [expressiveness review](../../../docs/specs/staqex-v1-s02-expressiveness
 (8 candidates, select exactly 3) on a **single** quantum coordinate,
 `psi_sel`:
 
-1. **Hard-constraint selection subspace** — `prepare_selection(n)` (equal
-   superposition over all `2^n` selection patterns) restricted by
-   `project ... onto feasible(exactly_selected = 3, pairwise_compatible =
-   true, diversity_at_least = 0.3)`.
+1. **Hard-constraint selection subspace** — `Sigma (x In {0,1}^n) { |x> }`
+   (equal superposition over all `2^n` selection patterns, LISS-0421;
+   structurally identical to the earlier `prepare_selection(n)` primitive it
+   replaces) restricted by `project ... onto feasible(exactly_selected = 3,
+   pairwise_compatible = true, diversity_at_least = 0.3)`.
 2. **Soft-objective evolution** — `psi_sel` itself evolved under a
    Hamiltonian built from named weighted terms (`activity`/`selectivity`/
    `diversity`), reusing S01's own energy-scale idiom
@@ -44,7 +45,7 @@ $\lvert\psi_0\rangle = \dfrac{1}{\sqrt{2^n}}\sum_{x\in\{0,1\}^n}\lvert x\rangle$
 
 ```staqex
 Int n = 8
-state psi_sel = prepare_selection(n)
+State psi_sel = Sigma (x In {0,1}^n) { |x> }
 ```
 
 ### 2. Project onto the feasible subspace (hard constraint)
@@ -56,7 +57,7 @@ diversity-separated — see `host/finite_boundary.py`/`host/scoring.py` for
 how $F$ is defined Host-side).
 
 ```staqex
-state psi_sel = project psi_sel onto feasible(
+State psi_sel = project psi_sel onto feasible(
     exactly_selected = 3,
     pairwise_compatible = true,
     diversity_at_least = 0.3
@@ -75,9 +76,9 @@ where $a_i$/$s_i$ are the Host-supplied per-candidate `activity_w`/
 
 ```staqex
 fn objective_hamiltonian(w: ObjectiveWeights, activity_w: Float[8], selectivity_w: Float[8]) -> Operator {
-    Operator z_field = sum (i in Index<0..7>) { activity_w[i] * Z[i] }
-    Operator x_field = sum (i in Index<0..7>) { selectivity_w[i] * X[i] }
-    Operator coupling = sum (i in Index<0..7>, j in Index<0..7>) where i < j {
+    Operator z_field = Sigma (i In Index<0..7>) { activity_w[i] * Z[i] }
+    Operator x_field = Sigma (i In Index<0..7>) { selectivity_w[i] * X[i] }
+    Operator coupling = Sigma (i In Index<0..7>, j In Index<0..7>) where i < j {
         Z[i] * Z[j]
     }
     return w.activity * z_field + w.selectivity * x_field + w.diversity * coupling
@@ -89,14 +90,14 @@ fn objective_hamiltonian(w: ObjectiveWeights, activity_w: Float[8], selectivity_
 $\lvert\psi_{sel}(t)\rangle = U(t)\lvert\psi_{sel}(0)\rangle,\quad
 U(t)=e^{-iH_{obj}t/\hbar}$
 
-`evolve { ... }.run()` *is* this operator-on-ket application — `under H
+`Evolve { ... }.run()` *is* this operator-on-ket application — `under H
 for t` is how $U(t)$ gets built (Hamiltonian + duration, via
 exponentiation), not a distinct physical operation from `apply(U, psi)`.
 
 ```staqex
 Operator H_obj = scale * objective_hamiltonian(weights, activity_w, selectivity_w)
 Time dur = 0.6.fs
-state psi_sel = evolve { psi_sel under H_obj for dur }.run()
+State psi_sel = Evolve { psi_sel under H_obj for dur }.run()
 ```
 
 ### 5. Terminal measurement (Born rule)
@@ -104,7 +105,7 @@ state psi_sel = evolve { psi_sel under H_obj for dur }.run()
 $P(x) = \lvert\langle x\rvert\psi_{sel}(t)\rangle\rvert^2$
 
 ```staqex
-measure psi_sel
+Measure psi_sel
 ```
 
 Note: step 4's $H_{obj}$ contains `X[i]` terms, which do not commute with

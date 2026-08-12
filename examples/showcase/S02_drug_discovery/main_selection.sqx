@@ -2,7 +2,8 @@
 // Hard constraints (Projector) and soft objective (Hamiltonian evolution)
 // act on the SAME quantum coordinate: LISS-0404 (ADR 0205) shipped
 // Pauli-term Hamiltonian evolution on tuple-valued coordinates, so
-// psi_sel (from prepare_selection) can itself be evolved directly --
+// psi_sel (from the Sigma ket-sum below, LISS-0421) can itself be
+// evolved directly --
 // no separate, disconnected objective qubit pair (LISS-0402's original
 // two-coordinate design, superseded by LISS-0405).
 // Field terms carry genuine per-candidate weight (LISS-0406): activity_w/
@@ -53,7 +54,12 @@ pub fn main() -> Unit {
     // pairwise_compatible / diversity_at_least matrices are Host-supplied via
     // HostInputPort (ADR 0194) -- see host/run_selection.py.
     Int n = 8
-    State psi_sel = prepare_selection(n)
+    // LISS-0421: literal equal superposition over all 2^n selection
+    // patterns, matching the blackboard equation term for term --
+    // |psi_0> = sum_{x in {0,1}^n} |x>, self-normalizing by construction
+    // (same result as the earlier prepare_selection(n) primitive it
+    // replaces; LISS-0420 confirmed byte-identical output).
+    State psi_sel = Sigma (x In {0,1}^n) { |x> }
     State psi_sel = project psi_sel onto feasible(
         exactly_selected = 3,
         pairwise_compatible = true,
