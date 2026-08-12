@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **approved_for_execution** (2026-08-12) — Adjudicator「承認」 |
+| Status | **complete** (2026-08-13) — LISS-0415–0420 all Green/Refactor complete; full regression 1511 passed; spec verification 100.00% (161/161) |
 | Purpose | Extend ADR 0191's ASCII-spelling rule with a case axis: capitalized spellings for tokens standing in for a blackboard symbol/operator (`Sigma`, `Pi`, `State`, and the existing `X`/`Y`/`Z`/`Suzuki`/`Index` precedent); lowercase stays for connective/procedural keywords. Unify the Operator-DSL `sum`/`product` binder with a new State-typed ket-sum capability under one `Sigma`/`Pi` keyword pair. |
 | Parent | Design-review session re-examining S02's `main_selection.sqx` against the actual blackboard physics (see [S02 README's Physics ↔ program section](../../examples/showcase/S02_drug_discovery/README.md)) — found Staqex has no way to write a State as a literal sum over basis kets |
 | Investigation | Plan file content folded into this WP + the batch record below; two of the investigating agent's own technical claims were wrong and corrected after actually running the parser (see "Corrections" in the batch proposal notes) |
@@ -22,12 +22,12 @@
 
 | Order | ID | Title | Depends |
 |---|---|---|---|
-| 1 | LISS-0415 | classical `sqrt`/`^` builtins | none |
-| 2 | LISS-0416 | dedicated `In` keyword (distinct from lowercase `in`) | none |
-| 3 | LISS-0417 | `{0,1}^n` set-literal domain expression | none |
-| 4 | LISS-0418 | retire lowercase `state` → `State` (hard cutover, freed identifier) | none |
-| 5 | LISS-0419 | capitalize remaining ten verb keywords (`Evolve`/`Measure`/`Mix`/`Coin`/`Dirac`/`Inspect`/`Vacuum`/`Snapshot`/`Superpose`/`ForEach`) | none |
-| 6 | LISS-0420 | unify `sum`/`product` → `Sigma`/`Pi`; State-typed ket-sum body support | 0415, 0416, 0417 (own Red tests use final target spelling); benefits from 0418/0419 landing first too |
+| 1 | [LISS-0415](../issues/LISS-0415-classical-float-power.md) | classical `sqrt`/`^` builtins (scope reduced to `^` only — `sqrt` was already shipped by LISS-0356) | none | **complete** |
+| 2 | [LISS-0416](../issues/LISS-0416-dedicated-in-keyword.md) | dedicated `In` keyword (distinct from lowercase `in`) | none | **complete** |
+| 3 | [LISS-0417](../issues/LISS-0417-set-power-domain-literal.md) | `{0,1}^n` set-literal domain expression | none | **complete** |
+| 4 | [LISS-0418](../issues/LISS-0418-retire-lowercase-state.md) | retire lowercase `state` → `State` (hard cutover, freed identifier) | none | **complete** |
+| 5 | [LISS-0419](../issues/LISS-0419-capitalize-verb-keywords.md) | capitalize remaining ten verb keywords (`Evolve`/`Measure`/`Mix`/`Coin`/`Dirac`/`Inspect`/`Vacuum`/`Snapshot`/`Superpose`/`ForEach`) | none | **complete** |
+| 6 | [LISS-0420](../issues/LISS-0420-sigma-pi-unification.md) | unify `sum`/`product` → `Sigma`/`Pi`; State-typed ket-sum body support | 0415, 0416, 0417, 0418, 0419 | **complete** |
 
 Execution order: **0415, 0416, 0417 (any order) → 0418, 0419 (any order) → 0420 last.**
 
@@ -36,6 +36,24 @@ Execution order: **0415, 0416, 0417 (any order) → 0418, 0419 (any order) → 0
 `main_selection.sqx` itself is not rewritten by this WP — a follow-on Issue
 once LISS-0420 ships. Category-B builtin-function renames (`apply`,
 `project`, `prepare_selection`, …) are explicitly declined for this round.
+
+## Completion summary
+
+All six Issues shipped, in order, each self-verified (full regression +
+spec verification) before the next began. Two Hard Stops during LISS-0420
+were escalated to the Adjudicator rather than resolved unilaterally: how
+`|x>` binds to a Sigma-loop variable's runtime value (KetLit's scope was
+extended, narrowly — see LISS-0420's own doc), and how the external
+normalization coefficient applies at runtime (literal application,
+verified to produce an honest unnormalized result when redundant,
+matching this codebase's own no-silent-normalization precedent). Several
+real, pre-existing bugs were found and fixed along the way — most
+notably LISS-0418's five gaps in bare `State` Type-First handling
+(exposed only because the corpus migration made that combination common
+for the first time) and LISS-0420's regression against LISS-0273's
+classical/State boundary (found and narrowed before merge). Final state:
+1511 tests passed (up from the pre-batch 1476 baseline), spec
+verification 100.00% (161/161), full `.sqx` corpus `staqex check` clean.
 
 ## Verification
 

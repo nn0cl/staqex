@@ -593,6 +593,52 @@ Issue gives them a concrete scope:
   matched the pattern) and several garbled docstring/comment rewrites,
   all hand-corrected. Full regression 1483 passed; spec verification
   100.00% (161/161); full `.sqx` corpus `staqex check` swept clean.
+- **Case-sensitive keyword convention + Sigma/Pi binder unification —
+  complete 2026-08-13** ([ADR 0191 amendment](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
+  [WP-0098](../work-plans/WP-0098-case-sensitive-keywords-and-sigma-binder.md),
+  LISS-0415–0420). Originated from the same design-review session that
+  produced the `evolve` syntax fix above: re-examining S02's
+  `main_selection.sqx` step 1 against the actual blackboard equation
+  found Staqex had no way to write a State as a literal sum over basis
+  kets at all. Generalized into a language-wide convention: capitalized
+  spellings are reserved for tokens standing in for a blackboard
+  symbol/operator (extending the existing Pauli `X`/`Y`/`Z`/`Suzuki`/
+  `Index` precedent); lowercase stays for connective/procedural keywords.
+  Retired lowercase `state` (freed as an ordinary identifier, LISS-0418)
+  and ten verb keywords — `Evolve`/`Measure`/`Mix`/`Coin`/`Dirac`/
+  `Inspect`/`Vacuum`/`Snapshot`/`Superpose`/`ForEach` (hard cutover via
+  the existing `RETIRED` dict, LISS-0419); added `sqrt`/`^` classical
+  Float builtins (LISS-0415), a dedicated `In` domain-membership keyword
+  distinct from `forEach`'s lowercase `in` (LISS-0416), and a `{0,1}^n`
+  set-power domain literal (LISS-0417). Capstone LISS-0420 unified the
+  Operator-DSL `sum`/`product` binder into `Sigma`/`Pi` and added a new
+  State-typed "ket-sum" capability (`Sigma (x In {0,1}^n) { |x> }`,
+  structurally identical to `prepare_selection(n)`) — closing the
+  originating gap. Two Hard Stops escalated to the Adjudicator rather
+  than resolved unilaterally: how `|x>` binds to the loop variable's
+  runtime value (`KetLit`'s scope extended narrowly — the ket-sum body
+  must be exactly the bound variable, parser-verified; `KetLit`'s own
+  node/evaluation untouched) and how an external normalization
+  coefficient applies at runtime (literal application, verified to
+  produce an honest unnormalized result when redundant with the
+  self-normalizing ket-sum, matching this codebase's own no-silent-
+  normalization precedent from LISS-0410). Several real, pre-existing
+  bugs found and fixed along the way — most substantially LISS-0418's
+  five gaps in bare `State` Type-First handling (only exposed once the
+  corpus migration made that combination common for the first time:
+  an incomplete `_check_payload_assign` "Any" allowlist, the
+  declared-vs-inferred type masking a `Partial`'s own arity, the
+  identical bug in the separate `EvolveExpr`-specific bind path, `hir.py`
+  treating bare `State` the same as an explicit annotation for linear-use
+  tracking, and the separate "H1" experimental authoring surface's own
+  independent lowercase keyword detection) — and a regression during
+  LISS-0420 where an initially-too-broad "classical scalar × State-
+  producing expr" evaluator path silently reopened a boundary LISS-0273
+  deliberately closed, found by the full regression sweep and narrowed
+  before merge. `main_selection.sqx` itself is not rewritten by this
+  batch — a follow-on Issue. Final state: 1511 tests passed (up from the
+  pre-batch baseline); spec verification 100.00% (161/161); full `.sqx`
+  corpus `staqex check` clean.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the

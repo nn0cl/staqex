@@ -33,8 +33,16 @@
     "compiler/staqex/ast_nodes.py",
     "compiler/staqex/typecheck.py",
     "compiler/staqex/dimensions.py",
+    "compiler/staqex/finite_binder.py",
+    "compiler/staqex/stdlib/prelude.py",
+    "compiler/staqex/hir.py",
+    "compiler/staqex/qpu_ir.py",
+    "compiler/staqex/pipeline.py",
+    "compiler/staqex/cli.py",
     "compiler/staqex/runtime/evaluator.py",
     "compiler/staqex/runtime/joint.py",
+    "compiler/staqex/runtime/hamiltonian.py",
+    "compiler/staqex/runtime/sparse_pauli.py",
     "examples/**",
     "tests/**",
     "docs/issues/LISS-0415*",
@@ -78,5 +86,12 @@
     "created_on_branch": "batch/case-sensitive-keywords-and-sigma-binder",
     "work_plan": "docs/work-plans/WP-0098-case-sensitive-keywords-and-sigma-binder.md",
     "plan_file": "conversational Plan Mode output, approved 2026-08-12 (承認)"
+  },
+  "completion_notes": {
+    "completed_at": "2026-08-13",
+    "allowed_paths_amended": "Investigation's original allowed_paths enumerated compiler/staqex/{lexer,tokens,parser,ast_nodes,typecheck,dimensions}.py + runtime/{evaluator,joint}.py; Green discovered several more files needed the same keyword-consistency fix (scattered lowercase-literal checks outside the main lexer table: finite_binder.py, stdlib/prelude.py, hir.py, qpu_ir.py, pipeline.py, cli.py, runtime/hamiltonian.py, runtime/sparse_pauli.py) -- all within the approved scope's spirit (consistent keyword capitalization across the compiler), not a scope expansion in kind. Added to allowed_paths here for an honest record; none of the invalidating_triggers fired.",
+    "full_regression": "1511 passed (up from pre-batch baseline 1476)",
+    "spec_verification": "100.00% (161/161)",
+    "sqx_corpus_check": "clean (pre-existing A11_noether_forge standalone-import artifacts untouched)"
   }
 }
