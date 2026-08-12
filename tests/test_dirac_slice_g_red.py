@@ -24,7 +24,7 @@ from compiler.staqex.pipeline import compile_source
 BRA = "<"
 KET = ">"
 TENSOR = "*|*"
-PLAN_PATH = _REPO / "docs" / "specs" / "staqex-v1-Dirac-algebra-ast-plan.md"
+PLAN_PATH = _REPO / "docs" / "specs" / "staqex-v1-dirac-algebra-ast-plan.md"
 
 
 def _codes(compiled) -> set[str]:
