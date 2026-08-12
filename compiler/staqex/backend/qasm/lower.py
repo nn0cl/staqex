@@ -193,6 +193,26 @@ def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
             else:
                 second_quantized_env[name] = b.expr
 
+    # LISS-0411 (ADR 0206 completion for this static-only backend): resolve
+    # struct-field coefficients and nested Operator-returning calls in
+    # op_env, the same way the live Evaluator does at runtime
+    # (LISS-0407/0410) -- e.g. `Operator H = scale * f(weights)` already
+    # runs fine via `evolve`; QASM emission previously still hit the
+    # pre-ADR-0206 vague `cannot compile sparse Pauli for OpCall`.
+    from ...static_operator_resolution import (
+        collect_static_operator_context,
+        resolve_static_operator,
+    )
+
+    _, _, static_objects = collect_static_operator_context(unit)
+    for op_name, op_ast in list(op_env.items()):
+        try:
+            op_env[op_name] = resolve_static_operator(
+                op_ast, unit=unit, operators=op_env, objects=static_objects
+            )
+        except (ValueError, TypeError, KeyError):
+            pass
+
     # Map state names → logical qubit ids as we allocate
     qubit_of: dict[str, int] = {}
     gates: list[Gate] = []
