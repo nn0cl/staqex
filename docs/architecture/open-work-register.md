@@ -534,7 +534,31 @@ Issue gives them a concrete scope:
   `operators` context (proper lexical scoping, matching the runtime
   resolver's own `local_ops` pattern). Full regression 1468 passed; spec
   verification 100.00% (161/161); every showcase/applied `.sqx` entry
-  point re-checked and confirmed unaffected.
+  point re-checked and confirmed unaffected. **Second review pass
+  2026-08-12** (Adjudicator: "個別確認し、できるだけバグを探して" — check
+  individually, find as many bugs as possible; scoped to consumers
+  LISS-0410/0411 didn't touch: Lindblad/`DensityState` evolve, second-
+  quantization Jordan-Wigner mapping, quantum-walk ops, `controlled`/
+  `ocapply`/`toffoli`, grid/Fock evolve branches, `outer`/`inner`) found
+  3 more real gaps, empirically verified: (a) second-quantization JW
+  mapping never resolved a struct-field coefficient (two independent
+  bugs — a parser lookahead gap and a missing `OpAttr` case — fixed as
+  [LISS-0412](../issues/LISS-0412-second-quantization-struct-field-coefficients.md));
+  (b) `Evaluator._bind_method` (`evaluator.py:3717`) stores a class-
+  method-local `Operator` bind raw, unresolved; (c) `_bind_user_fun`
+  (`evaluator.py:4135`) does the same for a library-`fn`-local
+  `Operator` bind — both (b)/(c) not yet fixed, same one-line-each shape
+  as LISS-0410's original fix, deferred by explicit Adjudicator
+  direction ("大きいモノから" — start with the bigger one, LISS-0412,
+  first). Ruled out with empirical evidence: Lindblad/`DensityState`
+  (already resolved at top-level bind time), quantum-walk ops (never
+  consume Operator AST at all), `controlled`/`ocapply`/`toffoli`
+  (already route through the same `_resolve_unitary_matrix` LISS-0410
+  fixed), grid/Fock evolve branches (share the same pre-branch
+  resolution call `evolve`'s multi-qubit path uses). `outer`/`inner`
+  combined with Operator algebra is a distinct, pre-existing, unrelated
+  limitation (fails identically for literal and struct-field
+  coefficients), not this bug class.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the

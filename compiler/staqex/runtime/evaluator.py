@@ -3600,7 +3600,7 @@ class Evaluator:
         if family == "QubitOperator":
             try:
                 mapped_expr = resolve_mapping_expr(
-                    expr, self.second_quantized_operators, self.scalars
+                    expr, self.second_quantized_operators, self.scalars, self.objects
                 )
             except SecondQuantizationMappingError as exc:
                 raise KernelError(f"{exc.code}: {exc.message}") from exc
