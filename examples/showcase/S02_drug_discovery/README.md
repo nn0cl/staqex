@@ -9,29 +9,109 @@ and the [expressiveness review](../../../docs/specs/staqex-v1-s02-expressiveness
 ## What this program does
 
 `main_selection.sqx` expresses a finite candidate-selection experiment
-(8 candidates, select exactly 3) with two deliberately separate quantum
-coordinates:
+(8 candidates, select exactly 3) on a **single** quantum coordinate,
+`psi_sel`:
 
 1. **Hard-constraint selection subspace** — `prepare_selection(n)` (equal
    superposition over all `2^n` selection patterns) restricted by
    `project ... onto feasible(exactly_selected = 3, pairwise_compatible =
    true, diversity_at_least = 0.3)`.
-2. **Soft-objective evolution** — a separate qubit pair evolved under a
+2. **Soft-objective evolution** — `psi_sel` itself evolved under a
    Hamiltonian built from named weighted terms (`activity`/`selectivity`/
    `diversity`), reusing S01's own energy-scale idiom
    (`Energy scale = 1.0.eV to J`).
 
-These are two coordinates, not one, because `prepare_selection`'s
-tuple-valued state cannot itself be evolved under an ordinary Pauli-term
-`Operator` — confirmed by direct execution during design (see
-[LISS-0402](../../../docs/issues/LISS-0402-s02-selection-example.md)
-Design verification point 3). This mirrors S01's own pattern: classical
-domain data feeds a Hamiltonian's *coefficients*, it never becomes the
-evolved state itself.
+Earlier designs (LISS-0402/0403) used two disconnected coordinates,
+because `prepare_selection`'s tuple-valued state could not yet be
+evolved under an ordinary Pauli-term `Operator`. LISS-0404/ADR 0205
+shipped Pauli-term Hamiltonian evolution on tuple-valued coordinates, so
+LISS-0405 collapsed this back down to `psi_sel` alone — see the Honesty
+notes below for the measured effect of that change.
 
 `pairwise_compatible`/`diversity_at_least` are `N×N` Host-computed
 matrices (ADR 0194 `HostInputPort`) — the Kernel never sees candidate
 identity, only the finite width `n` and the terminal selection pattern.
+
+## Physics ↔ program
+
+Each stage below pairs the actual physics with the exact `main_selection.sqx`
+lines that realize it — nothing here is a separate re-derivation, it is the
+same program read twice.
+
+### 1. Equal superposition over selection patterns
+
+$\lvert\psi_0\rangle = \dfrac{1}{\sqrt{2^n}}\sum_{x\in\{0,1\}^n}\lvert x\rangle$
+
+```staqex
+Int n = 8
+state psi_sel = prepare_selection(n)
+```
+
+### 2. Project onto the feasible subspace (hard constraint)
+
+$\lvert\psi_{sel}\rangle = \dfrac{P_F\lvert\psi_0\rangle}{\lVert P_F\lvert\psi_0\rangle\rVert}$,
+where $P_F=\sum_{x\in F}\lvert x\rangle\langle x\rvert$ projects onto the
+feasible set $F$ (exactly 3 selected, pairwise-compatible,
+diversity-separated — see `host/finite_boundary.py`/`host/scoring.py` for
+how $F$ is defined Host-side).
+
+```staqex
+state psi_sel = project psi_sel onto feasible(
+    exactly_selected = 3,
+    pairwise_compatible = true,
+    diversity_at_least = 0.3
+)
+```
+
+### 3. Objective Hamiltonian (soft objective, per-candidate weighted)
+
+$H_{obj} = \mathrm{scale}\cdot\left[w_a\displaystyle\sum_i a_i Z_i \;+\;
+w_s\sum_i s_i X_i \;+\; w_d\sum_{i<j} Z_iZ_j\right]$
+
+where $a_i$/$s_i$ are the Host-supplied per-candidate `activity_w`/
+`selectivity_w` arrays (ADR 0119 coefficient tensor,
+`host/run_selection.py`), and $w_a$/$w_s$/$w_d$ are the named
+`ObjectiveWeights` struct fields.
+
+```staqex
+fn objective_hamiltonian(w: ObjectiveWeights, activity_w: Float[8], selectivity_w: Float[8]) -> Operator {
+    Operator z_field = sum (i in Index<0..7>) { activity_w[i] * Z[i] }
+    Operator x_field = sum (i in Index<0..7>) { selectivity_w[i] * X[i] }
+    Operator coupling = sum (i in Index<0..7>, j in Index<0..7>) where i < j {
+        Z[i] * Z[j]
+    }
+    return w.activity * z_field + w.selectivity * x_field + w.diversity * coupling
+}
+```
+
+### 4. Time evolution under $H_{obj}$
+
+$\lvert\psi_{sel}(t)\rangle = U(t)\lvert\psi_{sel}(0)\rangle,\quad
+U(t)=e^{-iH_{obj}t/\hbar}$
+
+`evolve { ... }.run()` *is* this operator-on-ket application — `under H
+for t` is how $U(t)$ gets built (Hamiltonian + duration, via
+exponentiation), not a distinct physical operation from `apply(U, psi)`.
+
+```staqex
+Operator H_obj = scale * objective_hamiltonian(weights, activity_w, selectivity_w)
+Time dur = 0.6.fs
+state psi_sel = evolve { psi_sel under H_obj for dur }.run()
+```
+
+### 5. Terminal measurement (Born rule)
+
+$P(x) = \lvert\langle x\rvert\psi_{sel}(t)\rangle\rvert^2$
+
+```staqex
+measure psi_sel
+```
+
+Note: step 4's $H_{obj}$ contains `X[i]` terms, which do not commute with
+step 2's projector $P_F$ — so the terminal distribution is **not**
+guaranteed to stay inside $F$. This is a real, disclosed effect (see
+"Feasibility-leakage finding" below), not a simplification made for this
+side-by-side.
 
 ## Run it
 
