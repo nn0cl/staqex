@@ -14,7 +14,7 @@ Float h = 5.272859e-20
 Operator H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
 state s0 = |+>
 state s1 = |+>
-state (s0, s1) = evolve (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 4)
+state (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 4) }.run()
 measure s0 tracing_out s1
 """
     compiled = compile_source(src)

@@ -31,8 +31,7 @@ pub fn main() -> Unit {
   state a = |+>
   state b = |0>
   state c = |0>
-  state (a, b, c) = evolve (a, b, c) under H for 0.1.fs
-      using Suzuki(order = 2, steps = 2)
+  state (a, b, c) = evolve { (a, b, c) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }.run()
   state b = |0>
   state c = |0>
   measure a
@@ -48,8 +47,7 @@ pub fn main() -> Unit {
   state a = |+>
   state b = |0>
   state c = |0>
-  state (a, b, c) = evolve (a, b, c) under H for 0.1.fs
-      using Suzuki(order = 2, steps = 2)
+  state (a, b, c) = evolve { (a, b, c) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }.run()
   state b = |0>
   state c = |0>
   measure a

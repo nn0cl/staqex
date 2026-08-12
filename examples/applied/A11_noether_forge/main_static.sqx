@@ -46,7 +46,7 @@ pub fn main() -> Unit {
     state s0 = |0>
     state s1 = |0>
     state s2 = |0>
-    state (s0, s1, s2) = evolve (s0, s1, s2) under H for dur
+    state (s0, s1, s2) = evolve { (s0, s1, s2) under H for dur }.run()
 
     state m0 = expect(Z, s0)
     state m1 = expect(Z, s1)

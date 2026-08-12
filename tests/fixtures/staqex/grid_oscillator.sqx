@@ -9,7 +9,7 @@ pub fn main() -> Unit {
     Energy e = 0.5.eV to J
     Time dur = 1.0.fs
     Operator H_grid = e * (P * P + X * X)
-    state psi = evolve psi under H_grid for dur
+    state psi = evolve { psi under H_grid for dur }.run()
 
     state viewed = inspect(psi)
     measure viewed

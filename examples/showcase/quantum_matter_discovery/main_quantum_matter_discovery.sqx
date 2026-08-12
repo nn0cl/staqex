@@ -28,8 +28,7 @@ pub fn main() -> Unit {
 
     Operator H = ising_hamiltonian(c)
     state s1 = |+>
-    state (s0, s1) = evolve (s0, s1) under H for duration
-        using Suzuki(order = 2, steps = 6)
+    state (s0, s1) = evolve { (s0, s1) under H for duration using Suzuki(order = 2, steps = 6) }.run()
 
     state zz = expect(ZZ, s0, s1)
     // Sparse notebook peek only (minimal dialect: Host owns structured logs).

@@ -48,8 +48,7 @@ pub fn main() -> Unit {
     state b = |0>
     state c = |0>
     state d = |0>
-    state (a, b, c, d) = evolve (a, b, c, d) under H for 0.1.fs
-        using Suzuki(order = 2, steps = 4)
+    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
     state b = |0>
     state c = |0>
     state d = |0>
@@ -68,8 +67,7 @@ pub fn main() -> Unit {
     state b = |0>
     state c = |0>
     state d = |0>
-    state (a, b, c, d) = evolve (a, b, c, d) under H for 0.1.fs
-        using Suzuki(order = 2, steps = 4)
+    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
     state b = |0>
     state c = |0>
     state d = |0>
@@ -90,8 +88,7 @@ pub fn main() -> Unit {
     state b = |0>
     state c = |0>
     state d = |0>
-    state (a, b, c, d) = evolve (a, b, c, d) under H for 0.1.fs
-        using Suzuki(order = 2, steps = 4)
+    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
     state b = |0>
     state c = |0>
     state d = |0>

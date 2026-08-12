@@ -114,8 +114,7 @@ pub fn main() -> Unit {
 
     state plan1 = |+>
     Time dur = 0.9.fs
-    state (plan0, plan1) = evolve (plan0, plan1) under H for dur
-        using Suzuki(order = 4, steps = 8)
+    state (plan0, plan1) = evolve { (plan0, plan1) under H for dur using Suzuki(order = 4, steps = 8) }.run()
     state zz = expect(ZZ, plan0, plan1)
     // Sparse notebook peek (not Float-tag flood).
     state viewed_zz = inspect(zz)

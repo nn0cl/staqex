@@ -14,8 +14,7 @@ pub fn main() -> Unit {
     state q1 = |0>
     state q2 = |0>
     state q3 = |0>
-    state (q0, q1, q2, q3) = evolve (q0, q1, q2, q3) under H4 for dur
-        using Suzuki(order = 2, steps = 5)
+    state (q0, q1, q2, q3) = evolve { (q0, q1, q2, q3) under H4 for dur using Suzuki(order = 2, steps = 5) }.run()
 
     state viewed = inspect(q0)
     measure q0

@@ -44,6 +44,5 @@ Time dur = 0.5.fs
 
 state s0 = |+>
 state s1 = |+>
-state (s0, s1) = evolve (s0, s1) under H for dur
-    using Suzuki(order = 2, steps = 4)
+state (s0, s1) = evolve { (s0, s1) under H for dur using Suzuki(order = 2, steps = 4) }.run()
 measure s0 tracing_out s1

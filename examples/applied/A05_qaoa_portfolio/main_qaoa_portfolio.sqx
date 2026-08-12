@@ -25,8 +25,8 @@ pub fn main() -> Unit {
     state q0 = coin()
     state q1 = coin()
 
-    state (q0, q1) = evolve (q0, q1) under H_mixer for dur_mix
-    state (q0, q1) = evolve (q0, q1) under H_cost for dur_cost
+    state (q0, q1) = evolve { (q0, q1) under H_mixer for dur_mix }.run()
+    state (q0, q1) = evolve { (q0, q1) under H_cost for dur_cost }.run()
 
     state zz = expect(ZZ, q0, q1)
     state viewed = inspect(zz)

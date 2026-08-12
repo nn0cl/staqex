@@ -95,7 +95,7 @@ measure b
                 """
 Operator Bad = X * Y
 state psi = |0>
-state psi = evolve psi under Bad for 1.0
+state psi = evolve { psi under Bad for 1.0 }.run()
 measure psi
 """
             ),
@@ -108,7 +108,7 @@ measure psi
                 """
 state psi = wavepacket(-4.0, 4.0, 16, 0.0, 0.7)
 Operator H = 0.5 * (P * P + X * X)
-state psi = evolve psi under H for 0.5
+state psi = evolve { psi under H for 0.5 }.run()
 measure psi
 """
             ),

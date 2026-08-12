@@ -26,8 +26,7 @@ def test_energy_level_binder_domain_is_hard_diagnosed() -> None:
             Operator H = sum (i in EnergyLevel<2>) { Z[i] }
             state a = |0>
             state b = |0>
-            state (a, b) = evolve (a, b) under H for 0.1
-                using Suzuki(order = 2, steps = 2)
+            state (a, b) = evolve { (a, b) under H for 0.1 using Suzuki(order = 2, steps = 2) }.run()
             measure a
         }
         """
@@ -44,8 +43,7 @@ def test_unbound_indexed_coefficient_is_hard_diagnosed() -> None:
             Operator H = sum (i in Index<0..0>) { J[i] * Z[i] * Z[next(i)] }
             state a = |0>
             state b = |0>
-            state (a, b) = evolve (a, b) under H for 0.1
-                using Suzuki(order = 2, steps = 2)
+            state (a, b) = evolve { (a, b) under H for 0.1 using Suzuki(order = 2, steps = 2) }.run()
             measure a
         }
         """

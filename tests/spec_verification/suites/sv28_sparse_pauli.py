@@ -164,7 +164,7 @@ state q0 = |+>
 state q1 = |0>
 state q2 = |0>
 state q3 = |0>
-state (q0, q1, q2, q3) = evolve (q0, q1, q2, q3) under H for dur
+state (q0, q1, q2, q3) = evolve { (q0, q1, q2, q3) under H for dur }.run()
 measure q0
 """
             )

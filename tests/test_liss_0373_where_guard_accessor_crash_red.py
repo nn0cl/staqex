@@ -29,7 +29,7 @@ def _src(hamiltonian: str) -> str:
         state a = |0>
         state b = |0>
         state c = |0>
-        state (a, b, c) = evolve (a, b, c) under H for 0.1 using Suzuki(order = 2, steps = 1)
+        state (a, b, c) = evolve {{ (a, b, c) under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
         state b = |0>
         state c = |0>
         measure a

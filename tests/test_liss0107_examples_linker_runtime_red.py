@@ -117,7 +117,7 @@ import com.staqex.tests.liss0107.hoplib
 pub fn main() -> Unit {
     Operator H = build_h()
     State<Position> psi = dirac(0)
-    state psi = evolve psi under H for 0.1.fs
+    state psi = evolve { psi under H for 0.1.fs }.run()
     measure psi
 }
 """

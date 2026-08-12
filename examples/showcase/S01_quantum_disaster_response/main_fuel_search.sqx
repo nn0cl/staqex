@@ -8,6 +8,6 @@ package examples.showcase.s01_disaster.fuel_lane
 pub fn main() -> Unit {
     state fuel = dirac(0)
     Time dur = 1.5707963267948966.s
-    state fuel = evolve fuel under X for dur until converged(fuel) max 64
+    state fuel = evolve { fuel under X for dur until converged(fuel) max 64 }.run()
     measure fuel
 }
