@@ -30,7 +30,7 @@ pub fn main() -> Unit {
     state a = |0>
     state b = |0>
     state c = |0>
-    state (a, b, c) = evolve (a, b, c) under H for 0.1
+    state (a, b, c) = evolve { (a, b, c) under H for 0.1 }.run()
     measure a
     measure b
     measure c
@@ -85,7 +85,7 @@ def test_indexed_coefficient_evolve_runs() -> None:
         }
         state a = |0>
         state b = |0>
-        state (a, b) = evolve (a, b) under H for 0.1
+        state (a, b) = evolve { (a, b) under H for 0.1 }.run()
         measure a
     }
     """

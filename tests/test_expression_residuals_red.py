@@ -42,7 +42,7 @@ def test_delta_time_evolve_for_is_classical() -> None:
         pub fn main() -> Unit {
             state x = |0>
             Delta<Time> dt = 0.1.s
-            state x = evolve x under X for dt
+            state x = evolve { x under X for dt }.run()
             measure x
         }
         """

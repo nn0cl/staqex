@@ -92,16 +92,16 @@ _SOURCE_EVOLVE_CONTINUOUS = """
 package t
 pub fn main() -> Unit {
     Continuous damage = field_from_host("damage_proxy_v1", "Omega")
-    state r = evolve damage under H for 1.0
+    state r = evolve { damage under H for 1.0 }.run()
     measure r
 }
 """
 
 
 def test_evolving_a_continuous_value_fails_closed() -> None:
-    """Scenario: `evolve damage under H for 1.0` must be rejected. Same
-    free-gate discovery as the measure test above: `_assert_is_state`
-    already rejects the bind result's non-State kind.
+    """Scenario: `evolve { damage under H for 1.0 }.run()` must be
+    rejected. Same free-gate discovery as the measure test above:
+    `_assert_is_state` already rejects the bind result's non-State kind.
     """
     compiled = compile_source(_SOURCE_EVOLVE_CONTINUOUS)
     codes = _codes(compiled.diagnostics)

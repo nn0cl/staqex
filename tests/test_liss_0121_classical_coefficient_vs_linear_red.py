@@ -50,8 +50,7 @@ pub fn main() -> Unit {
     state b = |0>
     state c = |0>
     state d = |0>
-    state (a, b, c, d) = evolve (a, b, c, d) under H for 0.1.fs
-        using Suzuki(order = 2, steps = 4)
+    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
     state b = |0>
         state b = |0>
     state c = |0>
@@ -71,8 +70,7 @@ pub fn main() -> Unit {
     state b = |0>
     state c = |0>
     state d = |0>
-    state (a, b, c, d) = evolve (a, b, c, d) under H for 0.1.fs
-        using Suzuki(order = 2, steps = 4)
+    state (a, b, c, d) = evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
     state b = |0>
         state b = |0>
     state c = |0>
@@ -87,7 +85,7 @@ pub fn main() -> Unit {
     Float hx = 2.6364295e-20
     Operator H = hx * X
     state psi = |+>
-    state psi = evolve psi under H for 0.1.fs
+    state psi = evolve { psi under H for 0.1.fs }.run()
     measure psi
 }
 """
@@ -97,7 +95,7 @@ package t
 pub fn main() -> Unit {
     Operator H = 2.6364295e-20 * X
     state psi = |+>
-    state psi = evolve psi under H for 0.1.fs
+    state psi = evolve { psi under H for 0.1.fs }.run()
     measure psi
 }
 """
@@ -113,7 +111,7 @@ pub fn main() -> Unit {
     Dom.Couplings c = Dom.Couplings(2.6364295e-20)
     Operator H = c.h_x * X
     state psi = |+>
-    state psi = evolve psi under H for 0.1.fs
+    state psi = evolve { psi under H for 0.1.fs }.run()
     measure psi
 }
 """
@@ -204,7 +202,7 @@ pub fn main() -> Unit {
     state amp = |+>
     Operator H = amp * X
     state psi = |0>
-    state psi = evolve psi under H for 0.1
+    state psi = evolve { psi under H for 0.1 }.run()
     measure psi
 }
 """

@@ -22,9 +22,7 @@ pub fn main() -> Unit {
     state b = |0>
     state c = |0>
     state d = |1>
-    state (a, b, c, d) = evolve (a, b, c, d) under H for dur_h
-        using Suzuki(order = 2, steps = 2)
-    state (a, b) = evolve (a, b) under H_basis for dur_basis
-        using Suzuki(order = 2, steps = 2)
+    state (a, b, c, d) = evolve { (a, b, c, d) under H for dur_h using Suzuki(order = 2, steps = 2) }.run()
+    state (a, b) = evolve { (a, b) under H_basis for dur_basis using Suzuki(order = 2, steps = 2) }.run()
     measure a tracing_out b, c, d
 }

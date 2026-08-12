@@ -25,7 +25,7 @@ def test_evolve_overflow_error_names_the_energy_scale_fix() -> None:
         Operator H = 1.0 * Z[0]
         state q = |0>
         Time dur = 1.0.fs
-        state q = evolve q under H for dur
+        state q = evolve { q under H for dur }.run()
         measure q
     }
     """

@@ -29,7 +29,7 @@ pub fn main() -> Unit {
     Operator H = scale * H_raw
     state q = |0>
     Time dur = 0.6.fs
-    state q = evolve q under H for dur
+    state q = evolve { q under H for dur }.run()
     measure q
 }
 """
@@ -88,7 +88,7 @@ def test_program_without_host_placeholders_is_unaffected() -> None:
         state q0 = |0>
         state q1 = |+>
         Time dur = 0.6.fs
-        state (q0, q1) = evolve (q0, q1) under H for dur
+        state (q0, q1) = evolve { (q0, q1) under H for dur }.run()
         measure q0 tracing_out q1
     }
     """

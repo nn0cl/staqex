@@ -40,8 +40,7 @@ pub fn main() -> Unit {
     Operator H = tfim(1.0545718e-19, 5.272859e-20)
     state s0 = |+>
     state s1 = |+>
-    state (s0, s1) = evolve (s0, s1) under H for 0.7.fs
-        using Suzuki(order = 2, steps = 6)
+    state (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
     state zz = expect(ZZ, s0, s1)
     state viewed = inspect(zz)
     state s1 = |0>
@@ -64,8 +63,7 @@ pub fn main() -> Unit {
     Operator H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
     state s0 = |+>
     state s1 = |+>
-    state (s0, s1) = evolve (s0, s1) under H for 0.7.fs
-        using Suzuki(order = 2, steps = 6)
+    state (s0, s1) = evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
     state s1 = |0>
     measure s0
 }
@@ -91,8 +89,7 @@ pub fn main() -> Unit {
     Operator H = -1.0545718e-19 * (Z[0] * Z[1]) - 5.272859e-20 * (X[0] + X[1])
     state s0 = |+>
     state s1 = |+>
-    state (s0, s1) = evolve (s0, s1) under H for duration
-        using Suzuki(order = 2, steps = 6)
+    state (s0, s1) = evolve { (s0, s1) under H for duration using Suzuki(order = 2, steps = 6) }.run()
     state s1 = |0>
     measure s0
 }

@@ -23,7 +23,7 @@ def test_bounded_evolve_until_is_a_state_preserving_expression() -> None:
         package t
         pub fn main() -> Unit {
             state psi = dirac(0)
-            state result = evolve psi under X for 1 until converged(psi) max 64
+            state result = evolve { psi under X for 1 until converged(psi) max 64 }.run()
             state psi = |0>
             measure result
         }
@@ -41,9 +41,7 @@ def test_qpu_emission_rejects_evolve_until_at_the_backend_boundary() -> None:
             QubitRegister<1> reg = system()
             Operator H = Z[0]
             state psi = dirac(0)
-            state result = evolve psi under H for 1
-                using Suzuki(order = 2, steps = 1)
-                until converged(psi) max 64
+            state result = evolve { psi under H for 1 using Suzuki(order = 2, steps = 1) until converged(psi) max 64 }.run()
             state psi = |0>
             measure result
         }
@@ -64,7 +62,7 @@ def test_evolve_until_requires_an_explicit_positive_max() -> None:
         package t
         pub fn main() -> Unit {
             state psi = dirac(0)
-            state result = evolve psi under X for 1 until converged(psi)
+            state result = evolve { psi under X for 1 until converged(psi) }.run()
             measure result
         }
         """
@@ -79,7 +77,7 @@ def test_evolve_until_rejects_non_positive_max() -> None:
         package t
         pub fn main() -> Unit {
             state psi = dirac(0)
-            state result = evolve psi under X for 1 until converged(psi) max 0
+            state result = evolve { psi under X for 1 until converged(psi) max 0 }.run()
             measure result
         }
         """
@@ -94,7 +92,7 @@ def test_evolve_until_predicate_cannot_measure_or_consume_rng() -> None:
         package t
         pub fn main() -> Unit {
             state psi = dirac(0)
-            state result = evolve psi under X for 1 until measure psi max 64
+            state result = evolve { psi under X for 1 until measure psi max 64 }.run()
             measure result
         }
         """

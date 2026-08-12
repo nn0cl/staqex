@@ -100,7 +100,7 @@ Energy e = 0.5.eV to J
 Time dur = 1.0.fs
 Operator H = e * (P * P + Q * Q)
 state psi = dirac(0)
-state psi = evolve psi under H for dur
+state psi = evolve { psi under H for dur }.run()
 measure psi
 """
             )

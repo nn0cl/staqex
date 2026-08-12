@@ -108,7 +108,7 @@ def test_qasm_emission_resolves_the_liss_0407_nested_call_case() -> None:
         Operator H = scale * f(weights)
         state q = |0>
         Time dur = 0.6.fs
-        state q = evolve q under H for dur
+        state q = evolve { q under H for dur }.run()
         measure q
     }
     """

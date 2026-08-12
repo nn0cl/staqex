@@ -36,8 +36,7 @@ pub fn main() -> Unit {
 
     state a = |+>
     state b = |0>
-    state (a, b) = evolve (a, b) under H for dur
-        using Suzuki(order = 2, steps = 8)
+    state (a, b) = evolve { (a, b) under H for dur using Suzuki(order = 2, steps = 8) }.run()
 
     state zz = expect(ZZ, a, b)
     state viewed = inspect(zz)

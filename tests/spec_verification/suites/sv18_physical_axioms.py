@@ -30,7 +30,7 @@ def run() -> list[CaseResult]:
             as_main(
                 """
 state psi = |0>
-state out = evolve psi under Z for 1.0.m
+state out = evolve { psi under Z for 1.0.m }.run()
 measure out
 """
             ),

@@ -13,7 +13,7 @@ pub fn main() -> Unit {
 
     // Schrödinger evolve under H_osc (real time, ADR 0195)
     Time dur = 1.0.fs
-    state psi = evolve psi under H_osc for dur
+    state psi = evolve { psi under H_osc for dur }.run()
 
     state viewed = inspect(psi)
     measure viewed

@@ -58,7 +58,7 @@ Energy e = 0.5.eV to J
 Time dur = 1.0.fs
 Operator H = e * (N + 0.5)
 state psi = dirac(0)
-state psi = evolve psi under H for dur
+state psi = evolve { psi under H for dur }.run()
 measure psi
 """
         )
@@ -101,7 +101,7 @@ Time dur = 1.0.fs
 Operator H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
 state a = |+>
 state b = |0>
-state (a, b) = evolve (a, b) under H for dur
+state (a, b) = evolve { (a, b) under H for dur }.run()
 state zz = expect(ZZ, a, b)
 measure zz
 """
@@ -240,7 +240,7 @@ Energy e = 1.0.eV to J
 Time dur = 1.0.fs
 Operator H = e * Z
 state psi = |0>
-state psi = evolve psi under H for dur
+state psi = evolve { psi under H for dur }.run()
 state ez = expect(Z, psi)
 measure ez
 """

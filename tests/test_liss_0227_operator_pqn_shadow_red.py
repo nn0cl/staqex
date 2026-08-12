@@ -28,7 +28,7 @@ pub fn main() -> Unit {{
   Operator H = L.corridor()
   state a = |+>
   state b = |0>
-  state (a, b) = evolve (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 2)
+  state (a, b) = evolve {{ (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }}.run()
   state b = |0>
   measure a
 }}
@@ -41,7 +41,7 @@ package t
 pub fn main() -> Unit {
   Operator H = 5.272859e-20 * (P * P + Q * Q)
   state psi = dirac(0)
-  state psi = evolve psi under H for 0.5.fs using Suzuki(order = 2, steps = 4)
+  state psi = evolve { psi under H for 0.5.fs using Suzuki(order = 2, steps = 4) }.run()
   measure psi
 }
 """

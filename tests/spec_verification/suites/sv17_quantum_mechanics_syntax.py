@@ -108,7 +108,7 @@ measure p
             """
 state psi0 = |0>
 Time dur = 1.5707963267948966.s
-state psi = evolve psi0 under X for dur
+state psi = evolve { psi0 under X for dur }.run()
 measure psi
 """
         )

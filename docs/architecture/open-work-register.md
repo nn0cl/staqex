@@ -566,6 +566,33 @@ Issue gives them a concrete scope:
   combined with Operator algebra is a distinct, pre-existing, unrelated
   limitation (fails identically for literal and struct-field
   coefficients), not this bug class.
+- **`evolve` Hamiltonian-form syntax — complete 2026-08-12** (Adjudicator
+  language-design critique: a reader unfamiliar with Staqex could not
+  tell, at a glance, whether bare `evolve a under H for t` was an
+  operation, a variable, or a declaration — no bracketing signaled "this
+  is an operation," unlike `apply(H, psi)`). Discussion also corrected an
+  earlier, imprecise justification for the old bare form ("mirrors a
+  blackboard sentence") — the actual physics is
+  $|\psi(t)\rangle=U(t)|\psi(0)\rangle$, $U=e^{-iHt/\hbar}$, structurally
+  identical to `apply(U,psi)`; `evolve` itself never appears on the
+  blackboard. Adjudicator chose to keep `evolve` as the verb and fix only
+  the syntax-signaling problem (decomposing into explicit U-construction
+  + `apply` was considered and deferred, not adopted).
+  [LISS-0414](../issues/LISS-0414-evolve-block-run-syntax.md)
+  (PR [#546](https://github.com/nn0cl/staqex/pull/546)) requires
+  `evolve { seed under H for t [using Suzuki(...)] [until pred [max N]]
+  }.run()`; the old bare form now raises `EVOLVE_REQUIRES_BLOCK_RUN`
+  naming the exact rewrite (hard cutover, no back-compat alias, matching
+  the `fun`→`fn`/`public`→`pub` precedent). Parser-only change — the new
+  form produces the identical `EvolveExpr` AST the old bare form did, so
+  no typecheck/hir/evaluator/QASM change was needed. The already-
+  bracketed `times N { body }` / `for dt { body }` forms are unaffected.
+  Migrated ~290 pre-existing call sites across `examples/`/`tests/` via a
+  scratch script; found and fixed one false-positive match (a plain
+  descriptive string in `sv17_quantum_mechanics_syntax.py` coincidentally
+  matched the pattern) and several garbled docstring/comment rewrites,
+  all hand-corrected. Full regression 1483 passed; spec verification
+  100.00% (161/161); full `.sqx` corpus `staqex check` swept clean.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the

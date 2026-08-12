@@ -33,7 +33,7 @@ def test_struct_field_access_duration_is_accepted() -> None:
     pub fn main() -> Unit {
         Config config = Config(0.25.fs)
         state s = |+>
-        state s = evolve s under Z for config.duration
+        state s = evolve { s under Z for config.duration }.run()
         measure s
     }
     """
@@ -47,7 +47,7 @@ def test_inline_unit_suffixed_literal_duration_is_accepted() -> None:
     package p
     pub fn main() -> Unit {
         state s = |+>
-        state s = evolve s under Z for 0.25.fs
+        state s = evolve { s under Z for 0.25.fs }.run()
         measure s
     }
     """
@@ -63,7 +63,7 @@ def test_genuinely_dimensionless_duration_is_still_rejected() -> None:
     pub fn main() -> Unit {
         Float t = 1.0
         state s = |+>
-        state s = evolve s under Z for t
+        state s = evolve { s under Z for t }.run()
         measure s
     }
     """

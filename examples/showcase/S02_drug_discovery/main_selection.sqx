@@ -75,7 +75,7 @@ pub fn main() -> Unit {
     Energy scale = 1.0.eV to J
     Operator H_obj = scale * objective_hamiltonian(weights, activity_w, selectivity_w)
     Time dur = 0.6.fs
-    state psi_sel = evolve psi_sel under H_obj for dur
+    state psi_sel = evolve { psi_sel under H_obj for dur }.run()
 
     // ADR 0173: no leftovers to trace out -- psi_sel is the only coordinate.
     measure psi_sel

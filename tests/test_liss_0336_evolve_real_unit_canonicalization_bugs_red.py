@@ -57,7 +57,7 @@ pub fn main() -> Unit {
     Time dur = 1.0.fs
     state psi = |0>
     Operator H = e * Z
-    state psi = evolve psi under H for dur
+    state psi = evolve { psi under H for dur }.run()
     measure psi
 }
 """

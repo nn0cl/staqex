@@ -26,8 +26,7 @@ pub fn main() -> Unit {
   }
   state a = |+>
   state b = |0>
-  state (a, b) = evolve (a, b) under H for 0.1.fs
-      using Suzuki(order = 2, steps = 2)
+  state (a, b) = evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }.run()
   state b = |0>
   measure a
 }
@@ -70,7 +69,7 @@ package t
 pub fn main() -> Unit {
   Operator H = sum (i in Index<3..1>) { Z[i] }
   state psi = |0>
-  state out = evolve psi under H for 0.1 using Suzuki(order = 2, steps = 1)
+  state out = evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
   measure out
 }
 """,

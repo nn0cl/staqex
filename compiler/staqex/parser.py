@@ -2634,8 +2634,11 @@ class Parser:
         # Forms:
         #   evolve (seeds) times N { body }
         #   evolve (seeds) for dt { body }
-        #   evolve psi under H for t          (ADR 0038)
-        #   evolve (psi) under H for t
+        #   evolve { psi under H for t }.run()             (LISS-0414)
+        #   evolve { (psi, phi) under H for t }.run()
+        if self._check(TokenKind.LBRACE):
+            return self._evolve_hamiltonian_block(sp)
+
         if self._match(TokenKind.LPAREN):
             seeds = [self._expression()]
             while self._match(TokenKind.COMMA):
@@ -2644,36 +2647,23 @@ class Parser:
         else:
             seeds = [self._expression()]
 
+        if self._check(TokenKind.UNDER):
+            tok = self._peek()
+            raise ParseError(
+                "evolve … under H for t requires the `{ … }.run()` form "
+                "(LISS-0414): write `evolve { "
+                + self._render_seeds_hint(seeds)
+                + " under H for t }.run()` — bare `evolve … under …` "
+                "with no braces is retired, matching this project's own "
+                "keyword-migration precedent (no back-compat alias)",
+                tok.line,
+                tok.col,
+                code="EVOLVE_REQUIRES_BLOCK_RUN",
+            )
+
         duration = None
-        hamiltonian = None
         times = 1
         body: EvolveBody | None = None
-
-        if self._match(TokenKind.UNDER):
-            hamiltonian = self._expression()
-            self._expect(TokenKind.FOR)
-            duration = self._expression()
-            suzuki = self._suzuki_policy()
-            until_predicate = None
-            max_steps = None
-            if self._match(TokenKind.UNTIL):
-                until_predicate = self._expression()
-                if self._match(TokenKind.MAX):
-                    max_steps = self._expression()
-            times = 1
-            if self._check(TokenKind.LBRACE):
-                body = self._evolve_body()
-            return EvolveExpr(
-                seeds=seeds,
-                times=times,
-                body=body,
-                span=sp,
-                duration=duration,
-                hamiltonian=hamiltonian,
-                until_predicate=until_predicate,
-                max_steps=max_steps,
-                suzuki=suzuki,
-            )
 
         if self._match(TokenKind.TIMES):
             # ADR 0060: integer literal or closed classical expression
@@ -2693,10 +2683,74 @@ class Parser:
 
         tok = self._peek()
         raise ParseError(
-            "evolve expects `times N`, `for duration`, or `under H for t`",
+            "evolve expects `times N`, `for duration`, or "
+            "`{ … under H for t }.run()`",
             tok.line,
             tok.col,
         )
+
+    def _evolve_hamiltonian_block(self, sp: Span) -> EvolveExpr:
+        """`evolve { psi under H for t [using Suzuki(...)] [until pred
+        [max N]] }.run()` (LISS-0414). Produces the identical `EvolveExpr`
+        shape the old bare `evolve psi under H for t` form did -- this is
+        a surface-syntax-only change, no new AST/semantics."""
+        self._expect(TokenKind.LBRACE)
+        if self._match(TokenKind.LPAREN):
+            seeds = [self._expression()]
+            while self._match(TokenKind.COMMA):
+                seeds.append(self._expression())
+            self._expect(TokenKind.RPAREN)
+        else:
+            seeds = [self._expression()]
+        self._expect(TokenKind.UNDER)
+        hamiltonian = self._expression()
+        self._expect(TokenKind.FOR)
+        duration = self._expression()
+        suzuki = self._suzuki_policy()
+        until_predicate = None
+        max_steps = None
+        if self._match(TokenKind.UNTIL):
+            until_predicate = self._expression()
+            if self._match(TokenKind.MAX):
+                max_steps = self._expression()
+        self._expect(TokenKind.RBRACE)
+        self._expect(TokenKind.DOT)
+        run_tok = self._peek()
+        run_name = self._expect_ident_like()
+        if run_name != "run":
+            raise ParseError(
+                f"evolve {{ … }} must be followed by `.run()`, got `.{run_name}`",
+                run_tok.line,
+                run_tok.col,
+                code="EVOLVE_REQUIRES_BLOCK_RUN",
+            )
+        self._expect(TokenKind.LPAREN)
+        self._expect(TokenKind.RPAREN)
+        return EvolveExpr(
+            seeds=seeds,
+            times=1,
+            body=None,
+            span=sp,
+            duration=duration,
+            hamiltonian=hamiltonian,
+            until_predicate=until_predicate,
+            max_steps=max_steps,
+            suzuki=suzuki,
+        )
+
+    def _render_seeds_hint(self, seeds: list) -> str:
+        """Best-effort source-like rendering of already-parsed seed
+        expressions, for the LISS-0414 migration error message only --
+        not a general pretty-printer."""
+
+        def _one(e) -> str:
+            if isinstance(e, Var):
+                return e.name
+            return "…"
+
+        if len(seeds) == 1:
+            return _one(seeds[0])
+        return "(" + ", ".join(_one(s) for s in seeds) + ")"
 
     def _suzuki_policy(self) -> SuzukiPolicy | None:
         if self._peek().lexeme != "using":

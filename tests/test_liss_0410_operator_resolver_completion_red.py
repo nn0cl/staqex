@@ -116,10 +116,11 @@ def test_operator_variable_indirection_still_works_via_operators_dict_shortcut()
 
 def test_inline_compound_evolve_expression_was_never_supported() -> None:
     """Correction found during this Issue's own Red phase: an inline
-    *compound* Operator expression at `evolve ... under <expr> for t`
-    (never bound to a name) was never a working form at all, with or
-    without a struct field -- `evolve q under scale * Z for dur` fails
-    the same way as the struct-field case, because the parser produces
+    *compound* Operator expression at `evolve { ... under <expr> for t
+    }.run()` (never bound to a name) was never a working form at all,
+    with or without a struct field -- `evolve { q under scale * Z for
+    dur }.run()` fails the same way as the struct-field case, because
+    the parser produces
     generic `BinOp`/`Attr`/`Var` nodes for this position, not the
     Operator-DSL `Op*` AST `_resolve_operator_tree` operates on. This is
     a separate, pre-existing parser-level gap, not something LISS-0407
@@ -133,7 +134,7 @@ def test_inline_compound_evolve_expression_was_never_supported() -> None:
         Energy scale = 1.0.eV to J
         state q = |0>
         Time dur = 0.6.fs
-        state q = evolve q under scale * Z for dur
+        state q = evolve { q under scale * Z for dur }.run()
         measure q
     }
     """
@@ -163,7 +164,7 @@ def test_existing_liss_0407_cases_still_pass() -> None:
         Operator H = scale * f(weights)
         state q = |0>
         Time dur = 0.6.fs
-        state q = evolve q under H for dur
+        state q = evolve { q under H for dur }.run()
         measure q
     }
     """

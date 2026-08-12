@@ -75,7 +75,7 @@ def test_nested_receiver_operator_returning_method() -> None:
     Test.Outer o = Test.Outer(i)
     Operator H = o.inner.h()
     state s = |+>
-    state s = evolve s under H for 1.0.fs
+    state s = evolve {{ s under H for 1.0.fs }}.run()
     measure s
     """
     compiled = compile_source(src)
@@ -94,7 +94,7 @@ def test_single_level_receiver_still_works() -> None:
     Float direct = i.get()
     Operator H = i.h()
     state s = |+>
-    state s = evolve s under H for 1.0.fs
+    state s = evolve {{ s under H for 1.0.fs }}.run()
     state answer = dirac(direct == 2.0)
     measure answer tracing_out s
     """

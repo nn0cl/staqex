@@ -52,7 +52,7 @@ def test_evolve_identity_on_qudit3_preserves_ket1() -> None:
     package t
     pub fn main() -> Unit {{
         State<Qudit<3>> s = |1{KET}
-        state s = evolve s under I for 0.0.s
+        state s = evolve {{ s under I for 0.0.s }}.run()
         measure s
     }}
     """

@@ -190,14 +190,10 @@ pub fn main() -> Unit {
     }
 
     state plan1 = |+>
-    state (plan0, plan1) = evolve (plan0, plan1) under H_drive for dur_drive
-        using Suzuki(order = 2, steps = 4)
-    state (plan0, plan1) = evolve (plan0, plan1) under H_damage for dur_damage
-        using Suzuki(order = 2, steps = 4)
-    state (plan0, plan1) = evolve (plan0, plan1) under H_flood for dur_flood
-        using Suzuki(order = 2, steps = 2)
-    state (plan0, plan1) = evolve (plan0, plan1) under H_corridor for dur_corridor
-        using Suzuki(order = 2, steps = 2)
+    state (plan0, plan1) = evolve { (plan0, plan1) under H_drive for dur_drive using Suzuki(order = 2, steps = 4) }.run()
+    state (plan0, plan1) = evolve { (plan0, plan1) under H_damage for dur_damage using Suzuki(order = 2, steps = 4) }.run()
+    state (plan0, plan1) = evolve { (plan0, plan1) under H_flood for dur_flood using Suzuki(order = 2, steps = 2) }.run()
+    state (plan0, plan1) = evolve { (plan0, plan1) under H_corridor for dur_corridor using Suzuki(order = 2, steps = 2) }.run()
 
     state zz = expect(ZZ, plan0, plan1)
 

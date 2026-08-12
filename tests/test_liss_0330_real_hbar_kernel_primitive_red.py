@@ -80,7 +80,7 @@ pub fn main() -> Unit {
     Float e = 1.0
     Operator H = e * Z
     state psi = |0>
-    state psi = evolve psi under H for 1.0
+    state psi = evolve { psi under H for 1.0 }.run()
     measure psi
 }
 """

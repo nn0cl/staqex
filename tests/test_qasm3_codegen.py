@@ -171,8 +171,7 @@ package t
 pub fn main() -> Unit {
   Operator H = X
   state q = |0>
-  state q = evolve q under H for 0.5
-      using Suzuki(order = 2, steps = 4)
+  state q = evolve { q under H for 0.5 using Suzuki(order = 2, steps = 4) }.run()
   measure q
 }
 """
