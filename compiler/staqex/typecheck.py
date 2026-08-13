@@ -40,6 +40,7 @@ from .ast_nodes import (
     MeasureExpr,
     Measure,
     NormExpr,
+    SetComprehension,
     OpBinder,
     OpCall,
     OpIndexed,
@@ -3025,6 +3026,11 @@ class TypeChecker:
                     }
                 )
             return Ty("Classical", "Float", DIMLESS)
+        if isinstance(expr, SetComprehension):
+            # LISS-0429: `Set F = { x In D : cond1, cond2, ... }` is a
+            # classical domain value, not a State -- consumed by
+            # `Sigma (x In F) { ... }` (LISS-0430).
+            return Ty("Classical", "Set", DIMLESS)
         return Ty("State", "Any", DIMLESS)
 
     def _infer_pipe(self, expr: Pipe) -> Ty:

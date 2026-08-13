@@ -115,6 +115,24 @@ class NormExpr:
 
 
 @dataclass
+class SetComprehension:
+    """`Set F = { x In D : cond1, cond2, ... }` (LISS-0429) -- a domain
+    value built by filtering `D` (typically `{0,1}^n`) to the elements
+    satisfying every comma-separated condition (implicit conjunction,
+    matching the equation's own set-builder notation -- `,` not `&&`,
+    the same convention `where` guards adopted in LISS-0428). Conditions
+    are parsed via the Operator-DSL expression grammar (`_op_implies`),
+    since they need `x[i]`-style indexing (`OpIndexed`), which the
+    general expression grammar does not support (confirmed during
+    LISS-0424). Consumed by `Sigma (x In F) { ... }` (LISS-0430)."""
+
+    variable: str
+    domain: "SetPowerDomain | IndexDomain | RevDomain | TypeRef | OpVar"
+    conditions: list["OpExpr"]
+    span: Span
+
+
+@dataclass
 class SetPowerDomain:
     """Literal set-power domain: `{0,1}^n` (LISS-0417) -- the Cartesian
     power of a small literal label set, e.g. `{0,1}^n` = all n-tuples over
@@ -532,6 +550,7 @@ Expr = Union[
     SetPowerDomain,
     KetSumBinder,
     NormExpr,
+    SetComprehension,
 ]
 
 

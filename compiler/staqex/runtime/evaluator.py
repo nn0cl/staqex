@@ -51,6 +51,7 @@ from ..ast_nodes import (
     Measure,
     MeasureExpr,
     NormExpr,
+    SetComprehension,
     OpBin,
     OpHop,
     OpLit,
@@ -2495,6 +2496,14 @@ class Evaluator:
             # own bind too).
             norm = self._compute_norm(joint, expr.state)
             return joint.bind_const(name, norm)
+        if isinstance(expr, SetComprehension):
+            # LISS-0429: `Set F = { x In D : cond1, cond2, ... }` -- a
+            # pure classical computation (the comprehension's own bound
+            # variable ranges over `D`, never a per-World assign value),
+            # so it needs no Joint access beyond the uniform `bind_const`
+            # wrapper every World shares.
+            elements = self._eval_set_comprehension(expr, {})
+            return joint.bind_const(name, elements)
         if isinstance(expr, OpBinder):
             # LISS-0424: an OpBinder reaching general `_bind` (as opposed
             # to the separate `Operator H = ...` statement-level dispatch,
@@ -5046,6 +5055,11 @@ class Evaluator:
         """Evaluate an Operator-DSL `OpExpr` node as a plain classical
         value (LISS-0424) -- rejects genuine Operator/Pauli atoms with a
         clear error, since those belong in an Operator-typed Sigma/Pi."""
+        if isinstance(expr, OpBinder):
+            # LISS-0429: a nested Sigma/Pi/ForAll/Min used as part of a
+            # larger classical expression, e.g. `Sigma (...) {...} == 3`
+            # as one condition inside a Set comprehension's list.
+            return self._eval_classical_op_binder(expr, assign)
         if isinstance(expr, OpLit):
             return expr.value
         if isinstance(expr, OpVar):
@@ -5184,6 +5198,42 @@ class Evaluator:
         if total <= EPS:
             raise KernelError("||...|| of a zero-norm (vacuum) state")
         return total**0.5
+
+    def _eval_set_comprehension(
+        self, expr: "SetComprehension", assign: dict[str, Any]
+    ) -> tuple[Any, ...]:
+        """`{ x In D : cond1, cond2, ... }` (LISS-0429) -- enumerates `D`
+        (currently only `{0,1}^n`, matching the confirmed target design;
+        a bare-range `D` is deliberately out of scope for this Issue),
+        keeping only elements where every comma-separated condition
+        (implicit conjunction) holds. Reuses `_eval_op_expr_classical`
+        for conditions, the same leaf evaluator LISS-0424's classical
+        Sigma/Pi/ForAll/Min already use."""
+        from ..ast_nodes import SetPowerDomain
+
+        domain = expr.domain
+        if not isinstance(domain, SetPowerDomain):
+            raise KernelError(
+                "Set comprehension domain must be `{0,1}^n` (or a similar "
+                "set-power literal) -- a bare-range domain is not yet "
+                "supported"
+            )
+        width_raw = self._eval_value(domain.width, assign)
+        n = int(width_raw)
+        labels = tuple(domain.labels)
+
+        import itertools
+
+        matches: list[Any] = []
+        for element in itertools.product(labels, repeat=n):
+            local = dict(assign)
+            local[expr.variable] = element
+            if all(
+                bool(self._eval_op_expr_classical(cond, local))
+                for cond in expr.conditions
+            ):
+                matches.append(element)
+        return tuple(matches)
 
     def _bind_prepare_selection(self, joint: Joint, name: str, expr: Call) -> Joint:
         """prepare_selection(n: Int) -- equal superposition over all 2**n

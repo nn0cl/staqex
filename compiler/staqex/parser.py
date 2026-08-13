@@ -87,6 +87,7 @@ from .ast_nodes import (
     Span,
     KetSumBinder,
     NormExpr,
+    SetComprehension,
     SetPowerDomain,
     StateBind,
     StructDecl,
@@ -2578,6 +2579,17 @@ class Parser:
             if nxt is not None and nxt.kind == TokenKind.LET:
                 body = self._evolve_body()
                 return BlockExpr(lets=body.lets, result=body.result, span=body.span)
+            # LISS-0429: `{ x In D : cond1, cond2, ... }` set comprehension
+            # -- disambiguated from `{A, B}` anticommutator / `{0,1}^n` by
+            # a distinctive 2-token lookahead (`{` IDENT `In`), which
+            # neither of those shapes can produce (an anticommutator/
+            # set-power operand is never immediately followed by `In`).
+            if (
+                nxt is not None
+                and nxt.kind == TokenKind.IDENT
+                and self._peek_at_kind(2) == TokenKind.IN_SET
+            ):
+                return self._set_comprehension(sp)
             self._advance()  # LBRACE
             items = self._comma_expr_items(TokenKind.RBRACE)
             # LISS-0417: `{0,1}^n` set-power domain -- disambiguated from
@@ -3428,6 +3440,26 @@ class Parser:
         self._expect(TokenKind.CARET)
         width = self._power()
         return SetPowerDomain(labels=labels, width=width, span=sp)
+
+    def _set_comprehension(self, sp: Span) -> SetComprehension:
+        """`Set F = { x In D : cond1, cond2, ... }` (LISS-0429). Reuses
+        `_binder_domain()` for `D` (so `{0,1}^n` or a bare range both
+        work) and `_op_implies()` for each comma-separated condition --
+        the Operator-DSL expression grammar, which already supports
+        `x[i]` indexing (the general expression grammar does not,
+        confirmed during LISS-0424)."""
+        self._expect(TokenKind.LBRACE)
+        variable = self._expect_ident_like()
+        self._expect(TokenKind.IN_SET)
+        domain = self._binder_domain()
+        self._expect(TokenKind.COLON)
+        conditions = [self._op_implies()]
+        while self._match(TokenKind.COMMA):
+            conditions.append(self._op_implies())
+        self._expect(TokenKind.RBRACE)
+        return SetComprehension(
+            variable=variable, domain=domain, conditions=conditions, span=sp
+        )
 
     def _op_binder(self, kind: str, sp: Span):
         self._expect(TokenKind.LPAREN)

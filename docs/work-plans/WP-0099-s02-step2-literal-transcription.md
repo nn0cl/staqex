@@ -57,7 +57,7 @@ State psi_sel = (project psi_0 onto P_F) / ||project psi_0 onto P_F||
 | 4 | [LISS-0426](../issues/LISS-0426-norm-and-state-division.md) | `\|\|State\|\|` norm notation + `State / Float` division | none | **complete** |
 | 5 | [LISS-0427](../issues/LISS-0427-forall-binder.md) | `ForAll` binder, comma-separated guard | S1 | **complete** |
 | 6 | [LISS-0428](../issues/LISS-0428-min-binder.md) | `Min` binder, comma-separated guard | S1 | **complete** |
-| 7 | LISS-TBD-S7 | `Set F = { x In D : cond1, cond2, ... }` comprehension | S1, S2, S5, S6 | pending |
+| 7 | [LISS-0429](../issues/LISS-0429-set-comprehension.md) | `Set F = { x In D : cond1, cond2, ... }` comprehension | S1, S2, S5, S6 | **complete** |
 | 8 | LISS-TBD-S8 | `Sigma (x In F)` over general `Set` domain + bound-variable `\|x><x\|` (Pauli-Z decomposition) | S7 | pending |
 | 9 | LISS-TBD-S9 | `project` drops implicit renormalization entirely; accepts general multi-term `Operator` | S8 | pending |
 | 10 | LISS-TBD-S10 | retire `feasible(...)`; migrate to plain `host(...)`-bound arrays | S8 | pending |
