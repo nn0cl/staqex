@@ -18,7 +18,7 @@
     "LISS-0428",
     "LISS-0429",
     "LISS-0430",
-    "LISS-TBD-S9",
+    "LISS-0431",
     "LISS-TBD-S10",
     "LISS-TBD-S11"
   ],
@@ -31,7 +31,7 @@
     "LISS-0428",
     "LISS-0429",
     "LISS-0430",
-    "LISS-TBD-S9",
+    "LISS-0431",
     "LISS-TBD-S10",
     "LISS-TBD-S11"
   ],
@@ -56,7 +56,7 @@
     "docs/issues/LISS-0428*",
     "docs/issues/LISS-0429*",
     "docs/issues/LISS-0430*",
-    "docs/issues/LISS-TBD-S9*",
+    "docs/issues/LISS-0431*",
     "docs/issues/LISS-TBD-S10*",
     "docs/issues/LISS-TBD-S11*",
     "docs/work-plans/WP-0099*",
@@ -84,7 +84,7 @@
     "LISS-0428": "Feature Path; new Min binder AST/typecheck/evaluator; empty-guard-match behavior decided in this Issue's own Red",
     "LISS-0429": "Feature Path; new Set comprehension AST/typecheck/evaluator, comma-separated conjunction",
     "LISS-0430": "Feature Path; Sigma domain generalization + new bound-variable projector term, Pauli-Z decomposition lowering in finite_binder.py/hamiltonian.py",
-    "LISS-TBD-S9": "Feature Path; remove project's implicit renormalization (breaking change to existing behavior), accept general multi-term Operator",
+    "LISS-0431": "Feature Path; remove project's implicit renormalization (breaking change to existing behavior), accept general multi-term Operator",
     "LISS-TBD-S10": "Feature Path; retire feasible(...) and _bind_feasible_predicate, migrate Host binding to plain host()-bound arrays",
     "LISS-TBD-S11": "Feature Path; main_selection.sqx step 2 rewrite + byte-identical terminal verification"
   },
@@ -111,6 +111,7 @@
     "LISS-0427": "complete 2026-08-13. Reused OpBinder as a third kind alongside Sigma/Pi and LISS-0424's classical fold machinery, generalized to short-circuiting logical AND for ForAll. Found and fixed during Green (pre-existing, not introduced by this Issue): _op_binder's {0,1}^n-domain dispatch never checked kind at all, so Pi (x In {0,1}^n) would also have silently become a KetSumBinder (always sums, never products, doesn't even record kind) -- never caught because no shipped code used Pi/ForAll/Min with a {0,1}^n domain. Narrowed to kind == \"Sigma\" specifically. Target shape (ForAll with multi-binding, guard, and Implies over a tuple-valued State coordinate) cross-checked against all 8 hand-enumerated patterns. Full regression 1536 passed; spec verification 100.00%.",
     "LISS-0428": "complete 2026-08-13. Resolved the empty-guard-match open question flagged in the original investigation: Min over an empty guarded domain is +infinity (the standard fold identity, matching Sigma's 0/Pi's 1), chosen specifically because it reproduces the exact vacuous-pass behavior of the original _bind_feasible_predicate/scoring.py::is_feasible Python code being transcribed (diversity check skipped entirely when no pair is selected). New _op_guard_list() makes comma mean AND for every binder's where guard (Sigma/Pi/ForAll/Min alike), not just Min's -- folds into the same OpBin(&&) shape, no evaluator change needed for the comma itself. Target shape cross-checked against all 8 hand-enumerated patterns. Full regression 1540 passed; spec verification 100.00%.",
     "LISS-0429": "complete 2026-08-13. { x In D : cond1, cond2, ... } disambiguated from {A,B} anticommutator / {0,1}^n by a distinctive 2-token lookahead ({ IDENT In), which neither of those shapes can produce. Conditions parsed via the Operator-DSL grammar (_op_implies), not the general expression grammar, since they need x[i] indexing. Found and fixed during Green: nested Sigma/ForAll/Min used inside a condition (e.g. Sigma(...) == 3) crashed because _eval_op_expr_classical had no OpBinder case at all -- only the two top-level entry points (_bind/_eval_value) dispatched to it. Fixed by adding the recursive case directly to _eval_op_expr_classical. First point in the batch where LISS-0424/0425/0427/0428/0429 were all exercised together as one integrated expression (the real S02 F, all three conditions), verified against hand-enumerated ground truth for n=3: F = {(1,0,1),(1,1,0)}. Full regression 1544 passed; spec verification 100.00%.",
-    "LISS-0430": "complete 2026-08-13 -- largest Issue in the batch. Found a real, previously-dead pre-existing lexer bug: |x><x| (ADR 0169 Slice D) never actually worked anywhere, because _can_start_primary blocked < from starting a bra literal immediately after a closed ket -- confirmed zero existing corpus usage before fixing. Sigma over a named Set domain is resolved in _resolve_operator_tree (not the static lower_finite_binder_operators pass, which already fails gracefully there) by re-evaluating F's defining SetComprehension directly rather than threading the live Joint through the whole Operator-resolution chain. Built the Pauli-Z decomposition as a literal OpBin tree per element and left tensor-product reduction to hamiltonian.py's existing, already-proven matrix compiler rather than manually expanding into a flat Pauli-string sum. Also found and fixed: typecheck's named-domain validation rejected F outright (BINDER_DOMAIN_ERROR) because F's actual inferred type (traced via checker.env directly) is Ty(State,Set) via the generic Type-First fallback, not the Ty(Classical,Set) LISS-0429's own case returns -- fixed by checking payload==\"Set\" alone. Verified at the matrix level (not just \"doesn't crash\") against hand-computed ground truth at n=2 and the full target n=3 shape, cross-checked against LISS-0429's own F={(1,0,1),(1,1,0)}. Full regression 1549 passed; spec verification 100.00%; full .sqx corpus staqex check clean."
+    "LISS-0430": "complete 2026-08-13 -- largest Issue in the batch. Found a real, previously-dead pre-existing lexer bug: |x><x| (ADR 0169 Slice D) never actually worked anywhere, because _can_start_primary blocked < from starting a bra literal immediately after a closed ket -- confirmed zero existing corpus usage before fixing. Sigma over a named Set domain is resolved in _resolve_operator_tree (not the static lower_finite_binder_operators pass, which already fails gracefully there) by re-evaluating F's defining SetComprehension directly rather than threading the live Joint through the whole Operator-resolution chain. Built the Pauli-Z decomposition as a literal OpBin tree per element and left tensor-product reduction to hamiltonian.py's existing, already-proven matrix compiler rather than manually expanding into a flat Pauli-string sum. Also found and fixed: typecheck's named-domain validation rejected F outright (BINDER_DOMAIN_ERROR) because F's actual inferred type (traced via checker.env directly) is Ty(State,Set) via the generic Type-First fallback, not the Ty(Classical,Set) LISS-0429's own case returns -- fixed by checking payload==\"Set\" alone. Verified at the matrix level (not just \"doesn't crash\") against hand-computed ground truth at n=2 and the full target n=3 shape, cross-checked against LISS-0429's own F={(1,0,1),(1,1,0)}. Full regression 1549 passed; spec verification 100.00%; full .sqx corpus staqex check clean.",
+    "LISS-0431": "complete 2026-08-13. project's 'Renormalize after Lüders projection' block removed entirely, for every target shape, matching LISS-0422's own precedent (the equation writes projection and renormalization as two separate factors; project now does only the projection, LISS-0426's /||...|| does the renormalization). New _project_onto_operator resolves a general Var target against self.operators, compiles it via hamiltonian.compile_hamiltonian, verifies it is diagonal, and scales each World's amplitude by the sqrt of its own diagonal entry at that World's big-endian coordinate index. Migration blast radius audited empirically and found smaller than the batch record's ~9-call-site estimate: sample_from_marginal (joint.py) already scales by the marginal's own total, so Born-rule sampled outcomes are invariant to the amplitude-scale change, and a full grep of every project-using test file found none asserting exact marginal probability values -- full regression stayed green with zero pre-existing test file changes needed. Found and deliberately deferred (not silently ignored): pipeline.py's _append_selection_projector_region visit() (ADR 0192's S02-region-building pass) only recurses into Call/WhenExpr, not BinOp/NormExpr, so a project(...) wrapped in the new X/||X|| pattern is invisible to that pass -- left unpatched since the whole mechanism is feasible()-specific and ADR 0207 already schedules feasible()'s outright retirement in LISS-0432 (S10), which will retire this mechanism together with it. Verified end to end: the full confirmed step 2 design (psi_0, F, P_F, (project psi_0 onto P_F)/||...||) at n=3 gives exactly {(1,0,1): 0.5, (1,1,0): 0.5}, matching F's independently-verified two elements with the physically-correct 50/50 split. Full regression 1553 passed; spec verification 100.00%; full .sqx corpus staqex check clean."
   }
 }

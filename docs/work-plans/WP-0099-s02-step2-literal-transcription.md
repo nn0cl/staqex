@@ -59,7 +59,7 @@ State psi_sel = (project psi_0 onto P_F) / ||project psi_0 onto P_F||
 | 6 | [LISS-0428](../issues/LISS-0428-min-binder.md) | `Min` binder, comma-separated guard | S1 | **complete** |
 | 7 | [LISS-0429](../issues/LISS-0429-set-comprehension.md) | `Set F = { x In D : cond1, cond2, ... }` comprehension | S1, S2, S5, S6 | **complete** |
 | 8 | [LISS-0430](../issues/LISS-0430-sigma-over-set-projector.md) | `Sigma (x In F)` over general `Set` domain + bound-variable `\|x><x\|` (Pauli-Z decomposition) | S7 | **complete** |
-| 9 | LISS-TBD-S9 | `project` drops implicit renormalization entirely; accepts general multi-term `Operator` | S8 | pending |
+| 9 | [LISS-0431](../issues/LISS-0431-project-explicit-renorm.md) | `project` drops implicit renormalization entirely; accepts general multi-term `Operator` | S8 | **complete** |
 | 10 | LISS-TBD-S10 | retire `feasible(...)`; migrate to plain `host(...)`-bound arrays | S8 | pending |
 | 11 | LISS-TBD-S11 | rewrite `main_selection.sqx` step 2 to the confirmed final form; byte-identical terminal output | S1-S10 | pending |
 

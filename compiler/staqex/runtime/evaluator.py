@@ -4670,6 +4670,18 @@ class Evaluator:
                     )
                 predicate = self._bind_feasible_predicate(target, len(sample))
                 projected = joint.project_coord(src_expr.name, predicate)
+            elif isinstance(target, Var) and target.name in self.operators:
+                # LISS-0431: `project psi onto P_F` -- a general (possibly
+                # multi-term) Operator, e.g. LISS-0430's literal
+                # $P_F=\sum_{x\in F}\lvert x\rangle\langle x\rvert$. Diagonal
+                # projectors only for now (the confirmed target design
+                # never needs anything else); scales each World's
+                # amplitude by sqrt of the projector's diagonal entry at
+                # that World's own coordinate value, matching
+                # `bind_split`'s own probability->amplitude convention.
+                projected = self._project_onto_operator(
+                    joint, src_expr.name, target.name
+                )
             else:
                 if isinstance(target, KetLit):
                     bits = target.label
@@ -4687,24 +4699,13 @@ class Evaluator:
                 projected = joint.project_coord(src_expr.name, lambda v, lab=label: v == lab)
             if projected.is_vacuum():
                 return Joint.empty()
-            # Renormalize after Lüders projection
-            from .joint import World, _coalesce
-
-            total = sum(abs(w.amp) ** 2 for w in projected.worlds)
-            if total <= EPS:
-                return Joint.empty()
-            scale = 1.0 / cmath.sqrt(total)
-            out = [
-                World(
-                    assign=dict(w.assign),
-                    amp=w.amp * scale,
-                    coord_phase=dict(w.coord_phase),
-                )
-                for w in projected.worlds
-            ]
-            return Joint(worlds=_coalesce(out)).bind_pushforward(
-                name, lambda a: a[src_expr.name]
-            )
+            # LISS-0431: `project` no longer renormalizes -- the result is
+            # the literal, generally-unnormalized $P\lvert\psi\rangle$;
+            # explicit renormalization is written at the call site via
+            # `/ ||...||` (LISS-0426), matching the equation's own
+            # separate $/\lVert\cdot\rVert$ factor instead of folding it
+            # silently into every `project`.
+            return projected.bind_pushforward(name, lambda a: a[src_expr.name])
 
         if op == "interfer":
             if not expr.args:
@@ -5319,6 +5320,77 @@ class Evaluator:
         if total <= EPS:
             raise KernelError("||...|| of a zero-norm (vacuum) state")
         return total**0.5
+
+    def _project_onto_operator(
+        self, joint: Joint, coord_name: str, operator_name: str
+    ) -> Joint:
+        """`project psi onto P` where `P` is a general (multi-term)
+        Operator (LISS-0431) -- compiles `P`'s already-resolved OpExpr
+        (`self.operators[operator_name]`, e.g. LISS-0430's Pauli-Z-
+        decomposed $P_F$) to a matrix and scales each World's amplitude
+        by the square root of `P`'s diagonal entry at that World's own
+        `coord_name` value (big-endian tuple-to-index, matching
+        `hamiltonian.py`'s own convention -- confirmed by direct
+        execution, not assumed). Diagonal-only: the confirmed target
+        design (a projector built from `Sigma (x In F) { |x><x| }`) is
+        always diagonal in the computational basis by construction; a
+        genuinely non-diagonal Operator target is out of scope and
+        rejected with a clear error rather than silently mishandled."""
+        from .hamiltonian import compile_hamiltonian
+        from .joint import World, _coalesce
+
+        op_ast = self.operators.get(operator_name)
+        if op_ast is None:
+            raise KernelError(f"project onto `{operator_name}`: unknown Operator")
+        sample = next(
+            (
+                world.assign.get(coord_name)
+                for world in joint.worlds
+                if isinstance(world.assign.get(coord_name), tuple)
+            ),
+            None,
+        )
+        if sample is None:
+            raise KernelError(
+                "project onto a general Operator requires a tuple-valued "
+                "coordinate"
+            )
+        n = len(sample)
+        matrix = compile_hamiltonian(op_ast, env={}, n_qubits=n)
+        dim = len(matrix)
+        for i in range(dim):
+            for j in range(dim):
+                if i != j and abs(matrix[i][j]) > EPS:
+                    raise KernelError(
+                        "project onto a general Operator currently supports "
+                        "diagonal projectors only (e.g. Sigma (x In F) "
+                        "{ |x><x| }); the given Operator has a non-zero "
+                        "off-diagonal entry"
+                    )
+
+        def _index(pattern: tuple[int, ...]) -> int:
+            idx = 0
+            for bit in pattern:
+                idx = idx * 2 + int(bit)
+            return idx
+
+        out: list[World] = []
+        for w in joint.worlds:
+            value = w.assign.get(coord_name)
+            if not isinstance(value, tuple):
+                continue
+            diag = matrix[_index(value)][_index(value)].real
+            if diag <= EPS:
+                continue
+            new_amp = w.amp * cmath.sqrt(diag)
+            if abs(new_amp) ** 2 <= EPS:
+                continue
+            out.append(
+                World(assign=dict(w.assign), amp=new_amp, coord_phase=dict(w.coord_phase))
+            )
+        if not out:
+            return Joint.empty()
+        return Joint(worlds=_coalesce(out))
 
     def _eval_set_comprehension(
         self, expr: "SetComprehension", assign: dict[str, Any]
