@@ -2487,6 +2487,15 @@ class Evaluator:
             return self._bind_ket(joint, name, expr)
         if isinstance(expr, KetSumBinder):
             return self._bind_ket_sum_binder(joint, name, expr)
+        if isinstance(expr, OpBinder):
+            # LISS-0424: an OpBinder reaching general `_bind` (as opposed
+            # to the separate `Operator H = ...` statement-level dispatch,
+            # which never calls `_bind` at all) means the surrounding
+            # declared type is non-Operator -- a classical numeric
+            # Sigma/Pi, e.g. `Int total = Sigma (i In 0..n-1) { x[i] }`.
+            return joint.bind_pushforward(
+                name, lambda a: self._eval_classical_op_binder(expr, a)
+            )
         if isinstance(expr, Dirac):
             if self._is_closed(expr.arg):
                 return joint.bind_const(name, self._eval_value(expr.arg, {}))
@@ -4945,6 +4954,107 @@ class Evaluator:
         patterns = list(itertools.product(labels, repeat=n))
         return joint.bind_split(name, {pattern: 1.0 for pattern in patterns})
 
+    def _eval_classical_op_binder(self, expr: "OpBinder", assign: dict[str, Any]) -> Any:
+        """LISS-0424: classical numeric Sigma/Pi -- a third result-kind for
+        the `Sigma`/`Pi` keyword, alongside the existing Operator-typed
+        (`OpBinder` reached via the separate `Operator H = ...` statement
+        dispatch) and State-typed (`KetSumBinder`) forms. Folds the body
+        with `+` (Sigma) or `*` (Pi) over a bare-range `IndexDomain`
+        (LISS-0423), evaluating the body/guard as plain classical
+        expressions -- reuses the Operator-DSL's existing `OpIndexed`/
+        `OpBin`/`OpVar`/`OpLit` grammar (already proven for classical
+        array-indexed coefficients like `activity_w[i] * Z[i]`) rather
+        than requiring new general-expression array-index syntax. Handles
+        multi-binding (`Sigma (i In D1, j In D2) where ... {...}`) by
+        recursing into a nested `OpBinder` body, matching how the parser
+        itself nests multi-binding binders (`parser.py::_op_binder`)."""
+        from ..ast_nodes import IndexDomain, RevDomain
+
+        domain = expr.domain
+        descending = False
+        while isinstance(domain, RevDomain):
+            descending = not descending
+            domain = domain.inner
+        if not isinstance(domain, IndexDomain):
+            raise KernelError(
+                "classical Sigma/Pi requires a bare-range binder domain "
+                "(e.g. `0..n-1`), not an Operator/State-shaped domain"
+            )
+        start = int(self._eval_op_expr_classical(domain.start, assign))
+        end = int(self._eval_op_expr_classical(domain.end, assign))
+        indices = list(range(start, end + 1)) if end >= start else []
+        if descending:
+            indices.reverse()
+        acc: Any = 0 if expr.kind == "Sigma" else 1
+        for i in indices:
+            local = dict(assign)
+            local[expr.variable] = i
+            if expr.guard is not None and not bool(
+                self._eval_op_expr_classical(expr.guard, local)
+            ):
+                continue
+            if isinstance(expr.body, OpBinder):
+                term = self._eval_classical_op_binder(expr.body, local)
+            else:
+                term = self._eval_op_expr_classical(expr.body, local)
+            acc = acc + term if expr.kind == "Sigma" else acc * term
+        return acc
+
+    def _eval_op_expr_classical(self, expr: Any, assign: dict[str, Any]) -> Any:
+        """Evaluate an Operator-DSL `OpExpr` node as a plain classical
+        value (LISS-0424) -- rejects genuine Operator/Pauli atoms with a
+        clear error, since those belong in an Operator-typed Sigma/Pi."""
+        if isinstance(expr, OpLit):
+            return expr.value
+        if isinstance(expr, OpVar):
+            if expr.name in assign:
+                return assign[expr.name]
+            if expr.name in self.scalars:
+                return self.scalars[expr.name]
+            raise KernelError(
+                f"classical Sigma/Pi: unbound name `{expr.name}`"
+            )
+        if isinstance(expr, OpIndexed):
+            base = self._eval_op_expr_classical(expr.base, assign)
+            index = int(self._eval_op_expr_classical(expr.index, assign))
+            try:
+                return base[index]
+            except (TypeError, IndexError, KeyError) as e:
+                raise KernelError(
+                    f"classical Sigma/Pi: index {index} out of range"
+                ) from e
+        if isinstance(expr, OpPow):
+            base = self._eval_op_expr_classical(expr.base, assign)
+            return base ** expr.exp
+        if isinstance(expr, OpBin):
+            if expr.op in ("&&", "||"):
+                lhs = bool(self._eval_op_expr_classical(expr.lhs, assign))
+                rhs = bool(self._eval_op_expr_classical(expr.rhs, assign))
+                return (lhs and rhs) if expr.op == "&&" else (lhs or rhs)
+            lhs = self._eval_op_expr_classical(expr.lhs, assign)
+            rhs = self._eval_op_expr_classical(expr.rhs, assign)
+            ops: dict[str, Any] = {
+                "+": lambda a, b: a + b,
+                "-": lambda a, b: a - b,
+                "*": lambda a, b: a * b,
+                "<": lambda a, b: a < b,
+                "<=": lambda a, b: a <= b,
+                ">": lambda a, b: a > b,
+                ">=": lambda a, b: a >= b,
+                "==": lambda a, b: a == b,
+                "!=": lambda a, b: a != b,
+            }
+            if expr.op not in ops:
+                raise KernelError(
+                    f"classical Sigma/Pi: unsupported operator `{expr.op}`"
+                )
+            return ops[expr.op](lhs, rhs)
+        raise KernelError(
+            f"classical Sigma/Pi body contains a non-classical term "
+            f"({type(expr).__name__}) -- Operator/Pauli atoms belong in "
+            "an Operator-typed Sigma/Pi, not a classical one"
+        )
+
     def _is_state_producing_bind_expr(self, expr: Expr) -> bool:
         """LISS-0420 (coefficient semantics corrected by LISS-0422): does
         this expression need the amplitude-scaling bind path, as opposed
@@ -5593,6 +5703,12 @@ class Evaluator:
             # ADR 0179 / LISS-0273: pure classical Calls as classical operands.
             # Thread assign so nested free-fn object args see the caller frame.
             return self._eval_classical_call(expr, assign)
+        if isinstance(expr, OpBinder):
+            # LISS-0424: classical numeric Sigma/Pi as a sub-expression
+            # (e.g. `Sigma (i In 0..n-1) { x[i] } == 3`), not just a bare
+            # top-level bind -- reuses the same fold `_bind`'s OpBinder
+            # case uses.
+            return self._eval_classical_op_binder(expr, assign)
         raise KernelError(f"cannot evaluate {type(expr).__name__} as value")
 
     def _expr_marginal(self, joint: Joint, expr: Expr) -> dict[Any, float]:

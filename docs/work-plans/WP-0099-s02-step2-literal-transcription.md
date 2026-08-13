@@ -52,7 +52,7 @@ State psi_sel = (project psi_0 onto P_F) / ||project psi_0 onto P_F||
 | Order | ID | Title | Depends | Status |
 |---|---|---|---|---|
 | 1 | [LISS-0423](../issues/LISS-0423-bare-range-binder-domains.md) | bare-range binder domains (`i In 0..n-1`), retire `Index<...>` (hard cutover; corpus impact turned out to be ~35 files, not just `objective_hamiltonian` — escalated per the batch record's own invalidating trigger, Adjudicator confirmed proceeding) | none | **complete** |
-| 2 | LISS-TBD-S2 | classical numeric `Sigma` (Int/Float array-element sum) | none | pending |
+| 2 | [LISS-0424](../issues/LISS-0424-classical-numeric-sigma.md) | classical numeric `Sigma` (Int/Float array-element sum) | none | **complete** |
 | 3 | LISS-TBD-S3 | `Implies` keyword operator | none | pending |
 | 4 | LISS-TBD-S4 | `\|\|State\|\|` norm notation + `State / Float` division | none | pending |
 | 5 | LISS-TBD-S5 | `ForAll` binder, comma-separated guard | S1 | pending |
