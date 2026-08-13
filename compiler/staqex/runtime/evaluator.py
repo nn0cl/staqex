@@ -3246,7 +3246,11 @@ class Evaluator:
         return False
 
     def _resolve_operator_expr(
-        self, expr: Any, *, objects: Mapping[str, Any] | None = None
+        self,
+        expr: Any,
+        *,
+        objects: Mapping[str, Any] | None = None,
+        extra_arrays: Mapping[str, Any] | None = None,
     ) -> Any:
         """Resolve an explicit Operator value/factory without leaking locals.
 
@@ -3256,6 +3260,12 @@ class Evaluator:
         `attr_objects` here for a factory function's own local `Operator`
         binds, so `c.defect` resolves against the callee's parameter `c`,
         not a same-named (or absent) module-level object.
+        `extra_arrays` (LISS-0434): a factory's own param-name-rekeyed
+        `Float[N]…` arrays -- needed here (not only in the caller's later
+        `_materialize_op` pass) once a scalar-parameterized binder domain
+        (e.g. `Sigma (i In 0..n-1)` where `n` is this call's own scalar
+        parameter) makes this same call eagerly lower the binder's body
+        too, instead of leaving it for the deferred pass.
         """
         if isinstance(expr, OpVar) and expr.name in self.grid_hamiltonians:
             return GridHamiltonianRef(expr.name)
@@ -3272,7 +3282,9 @@ class Evaluator:
         # LISS-0139: Operator H = recv.method(…)
         if isinstance(expr, Call) and isinstance(expr.callee, Attr):
             return self._resolve_operator_method_call(expr)
-        return self._lower_operator_value(expr, objects=objects)
+        return self._lower_operator_value(
+            expr, objects=objects, extra_arrays=extra_arrays
+        )
 
     def _operator_array_context(self) -> dict[str, Any]:
         """Merged Float[N]… coefficient arrays (literal + Host-resolved,
@@ -3580,7 +3592,7 @@ class Evaluator:
         attr_objects: dict[str, Any] = dict(self.objects)
         attr_objects.update(local_objects)
 
-        def _materialize_op(raw: Any) -> Any:
+        def _fold_scalars_and_attrs(raw: Any) -> Any:
             folded = materialize_op_scalar_vars(
                 raw,
                 local_scalars,
@@ -3592,6 +3604,10 @@ class Evaluator:
                 )
             except OpAttrElaborationError as exc:
                 raise KernelError(str(exc)) from exc
+            return folded
+
+        def _materialize_op(raw: Any) -> Any:
+            folded = _fold_scalars_and_attrs(raw)
             return self._lower_operator_value(folded, extra_arrays=local_arrays)
 
         for stmt in fun.body.stmts:
@@ -3602,7 +3618,22 @@ class Evaluator:
                 # object scope (attr_objects), not module-level
                 # self.objects -- a factory-local `Operator H = c.field *
                 # ...` must see the callee's own parameter `c`.
-                raw = self._resolve_operator_expr(stmt.expr, objects=attr_objects)
+                # LISS-0434: fold this call's own scalar params/struct
+                # attrs (e.g. a width `n` used as a Sigma binder's own
+                # `0..n-1` range bound, or `w.activity` as a per-term
+                # coefficient inside the binder body, not just as an
+                # already-built Operator's outer scale) BEFORE resolving
+                # -- `_resolve_operator_expr` eagerly lowers the whole
+                # binder (domain and body) in one static pass, which fails
+                # closed on an unresolved name/OpAttr rather than
+                # deferring; substituting first, the same way `body`/
+                # `guard` are already substituted by `_map_op_tree`, avoids
+                # that instead of only folding the (already-crashed)
+                # result afterward.
+                pre_folded = _fold_scalars_and_attrs(stmt.expr)
+                raw = self._resolve_operator_expr(
+                    pre_folded, objects=attr_objects, extra_arrays=local_arrays
+                )
                 local_ops[stmt.names[0]] = _materialize_op(raw)
                 continue
             if (
