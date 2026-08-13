@@ -10,7 +10,7 @@
   "execution_branch": "batch/s02-step2-literal-transcription",
   "approval_commit": "cbb36f52aab064d63b15c2285aa9579485f08f5b",
   "issue_ids": [
-    "LISS-TBD-S1",
+    "LISS-0423",
     "LISS-TBD-S2",
     "LISS-TBD-S3",
     "LISS-TBD-S4",
@@ -23,7 +23,7 @@
     "LISS-TBD-S11"
   ],
   "issue_order": [
-    "LISS-TBD-S1",
+    "LISS-0423",
     "LISS-TBD-S2",
     "LISS-TBD-S3",
     "LISS-TBD-S4",
@@ -48,7 +48,7 @@
     "compiler/staqex/runtime/joint.py",
     "examples/showcase/S02_drug_discovery/**",
     "tests/**",
-    "docs/issues/LISS-TBD-S1*",
+    "docs/issues/LISS-0423*",
     "docs/issues/LISS-TBD-S2*",
     "docs/issues/LISS-TBD-S3*",
     "docs/issues/LISS-TBD-S4*",
@@ -76,7 +76,7 @@
     "run-verification"
   ],
   "operation_notes": {
-    "LISS-TBD-S1": "Feature Path; parser binder-domain grammar change + hard-cutover retirement of Index<...> + corpus migration for objective_hamiltonian",
+    "LISS-0423": "Feature Path; parser binder-domain grammar change + hard-cutover retirement of Index<...> + corpus migration for objective_hamiltonian",
     "LISS-TBD-S2": "Feature Path; new classical numeric result-kind for the existing Sigma keyword",
     "LISS-TBD-S3": "Feature Path; new keyword infix Bool operator",
     "LISS-TBD-S4": "Feature Path; new norm notation + new State/Float division operator",
@@ -102,5 +102,8 @@
     "adr": "docs/architecture/adr/0207-literal-set-builder-projector-transcription.md, Accepted 2026-08-13 (承認)",
     "plan_file": "/Users/nn0cl/.claude/plans/zany-juggling-hejlsberg.md, conversational Plan Mode + extensive iterative term-by-term equation review, ADR accepted 2026-08-13 (承認)",
     "awaiting": "Adjudicator to set status to approved_for_execution before any Issue's Red phase may begin"
+  },
+  "progress_notes": {
+    "LISS-0423": "complete 2026-08-13. Invalidating trigger fired mid-Red: full corpus grep found ~35 files use Index<...> as a binder domain, not just objective_hamiltonian as the batch record assumed. Escalated to the Adjudicator (AskUserQuestion) rather than resolved unilaterally; Adjudicator confirmed proceeding with the full migration (recommended option). Also found and fixed a real bug during Green: the new BINDER_DOMAIN_INDEX_RETIRED ParseError was initially silently swallowed by the parser's implicit-final-expression backtracking recovery because the code was embedded in the message text instead of passed via ParseError's code= kwarg -- fixed to match the existing EVOLVE_REQUIRES_BLOCK_RUN precedent. Also added BINDER_DOMAIN_INDEX_RETIRED to pipeline.py's HARD_CODES (CompileResult.ok was wrongly True otherwise). Full regression 1518 passed (1511 + 7 new); spec verification 100.00%."
   }
 }

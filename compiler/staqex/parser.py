@@ -3305,7 +3305,10 @@ class Parser:
         )
 
     def _binder_domain(self):
-        """Parse a binder domain: Index<…>, rev(…), or named domain."""
+        """Parse a binder domain: `rev(…)`, a bare range `a..b` (LISS-0423:
+        `Index<…>` is retired as a binder-domain spelling -- hard cutover,
+        no back-compat alias, matching how `{0,1}^n` is already written
+        with no wrapper type), `{0,1}^n`, or a named domain."""
         sp = self._span()
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "rev":
             self._advance()
@@ -3314,51 +3317,31 @@ class Parser:
             self._expect(TokenKind.RPAREN)
             return RevDomain(inner=inner, span=sp)
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "Index":
-            self._advance()
-            self._expect(TokenKind.LT)
-            start = self._static_index_endpoint()
-            if self._match(TokenKind.RANGE):
-                end = self._static_index_endpoint()
-                if self._check(TokenKind.GT):
-                    self._advance()
-                elif self._check(TokenKind.GE):
-                    self._advance()
-                else:
-                    t = self._peek()
-                    raise ParseError(
-                        "expected `>` to close Index range", t.line, t.col
-                    )
-                return IndexDomain(start=start, end=end, span=sp)
-            # Index<N> single-arg form → TypeRef for compatibility
-            if not isinstance(start, OpLit):
-                raise ParseError(
-                    "`Index<N>` requires a literal size or use `Index<a..b>`",
-                    sp.line,
-                    sp.col,
-                )
-            args = [TypeRef(name=str(int(start.value)))]
-            while self._match(TokenKind.COMMA):
-                ep = self._static_index_endpoint()
-                if not isinstance(ep, OpLit):
-                    raise ParseError(
-                        "Index type arguments must be literals here",
-                        sp.line,
-                        sp.col,
-                    )
-                args.append(TypeRef(name=str(int(ep.value))))
-            if self._check(TokenKind.GT):
-                self._advance()
-            elif self._check(TokenKind.GE):
-                self._advance()
-            else:
-                t = self._peek()
-                raise ParseError("expected `>` to close type arguments", t.line, t.col)
-            return TypeRef(name="Index", args=args)
+            raise ParseError(
+                "`Index<a..b>` / `Index<N>` are retired as binder-domain "
+                "spellings (LISS-0423) -- write the bare range directly: "
+                "`a..b` for `Index<a..b>`, `0..N-1` for `Index<N>`. Matches "
+                "how `{0,1}^n` is already written with no wrapper type.",
+                sp.line,
+                sp.col,
+                code="BINDER_DOMAIN_INDEX_RETIRED",
+            )
         if self._check(TokenKind.IDENT) and self._peek_at_kind(1) == TokenKind.LT:
             return self._type_ref()
         if self._check(TokenKind.LBRACE):
             return self._set_power_domain()
-        return OpVar(name=self._expect_ident_like(), span=self._span())
+        start = self._static_index_endpoint()
+        if self._match(TokenKind.RANGE):
+            end = self._static_index_endpoint()
+            return IndexDomain(start=start, end=end, span=sp)
+        if isinstance(start, OpVar):
+            return start
+        raise ParseError(
+            "expected `..` to complete a bare-range binder domain "
+            "(e.g. `0..n-1`)",
+            sp.line,
+            sp.col,
+        )
 
     def _set_power_domain(self) -> SetPowerDomain:
         """`{0,1}^n` as a binder domain (LISS-0420) -- mirrors the

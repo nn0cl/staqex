@@ -32,7 +32,7 @@ def test_float_array_param_threaded_into_binder() -> None:
     source = """
     package t
     fn f(w: Float[2]) -> Operator {
-        return Sigma (i In Index<0..1>) { w[i] * Z[i] }
+        return Sigma (i In 0..1) { w[i] * Z[i] }
     }
     pub fn main() -> Unit {
         Energy scale = 1.0.eV to J
@@ -123,7 +123,7 @@ def test_missing_binder_array_fails_closed_with_a_clear_diagnostic() -> None:
     source = """
     package t
     fn f(w: Float[2]) -> Operator {
-        return Sigma (i In Index<0..1>) { w[i] * Z[i] }
+        return Sigma (i In 0..1) { w[i] * Z[i] }
     }
     pub fn main() -> Unit {
         Energy scale = 1.0.eV to J

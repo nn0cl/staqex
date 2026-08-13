@@ -19,7 +19,7 @@ package t
 class Lat {{
   fn init() {{}}
   pub fn corridor() -> Operator {{
-    Operator {name} = Pi (i In Index<0..1>) {{ 1.0545718e-19 * Z[i] }}
+    Operator {name} = Pi (i In 0..1) {{ 1.0545718e-19 * Z[i] }}
     return {name}
   }}
 }}

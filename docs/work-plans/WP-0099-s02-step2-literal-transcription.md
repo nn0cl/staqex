@@ -49,19 +49,19 @@ State psi_sel = (project psi_0 onto P_F) / ||project psi_0 onto P_F||
 
 ## Issue rows
 
-| Order | ID | Title | Depends |
-|---|---|---|---|
-| 1 | LISS-TBD-S1 | bare-range binder domains (`i In 0..n-1`), retire `Index<...>` (hard cutover, migrates `objective_hamiltonian` too) | none |
-| 2 | LISS-TBD-S2 | classical numeric `Sigma` (Int/Float array-element sum) | none |
-| 3 | LISS-TBD-S3 | `Implies` keyword operator | none |
-| 4 | LISS-TBD-S4 | `\|\|State\|\|` norm notation + `State / Float` division | none |
-| 5 | LISS-TBD-S5 | `ForAll` binder, comma-separated guard | S1 |
-| 6 | LISS-TBD-S6 | `Min` binder, comma-separated guard | S1 |
-| 7 | LISS-TBD-S7 | `Set F = { x In D : cond1, cond2, ... }` comprehension | S1, S2, S5, S6 |
-| 8 | LISS-TBD-S8 | `Sigma (x In F)` over general `Set` domain + bound-variable `\|x><x\|` (Pauli-Z decomposition) | S7 |
-| 9 | LISS-TBD-S9 | `project` drops implicit renormalization entirely; accepts general multi-term `Operator` | S8 |
-| 10 | LISS-TBD-S10 | retire `feasible(...)`; migrate to plain `host(...)`-bound arrays | S8 |
-| 11 | LISS-TBD-S11 | rewrite `main_selection.sqx` step 2 to the confirmed final form; byte-identical terminal output | S1-S10 |
+| Order | ID | Title | Depends | Status |
+|---|---|---|---|---|
+| 1 | [LISS-0423](../issues/LISS-0423-bare-range-binder-domains.md) | bare-range binder domains (`i In 0..n-1`), retire `Index<...>` (hard cutover; corpus impact turned out to be ~35 files, not just `objective_hamiltonian` — escalated per the batch record's own invalidating trigger, Adjudicator confirmed proceeding) | none | **complete** |
+| 2 | LISS-TBD-S2 | classical numeric `Sigma` (Int/Float array-element sum) | none | pending |
+| 3 | LISS-TBD-S3 | `Implies` keyword operator | none | pending |
+| 4 | LISS-TBD-S4 | `\|\|State\|\|` norm notation + `State / Float` division | none | pending |
+| 5 | LISS-TBD-S5 | `ForAll` binder, comma-separated guard | S1 | pending |
+| 6 | LISS-TBD-S6 | `Min` binder, comma-separated guard | S1 | pending |
+| 7 | LISS-TBD-S7 | `Set F = { x In D : cond1, cond2, ... }` comprehension | S1, S2, S5, S6 | pending |
+| 8 | LISS-TBD-S8 | `Sigma (x In F)` over general `Set` domain + bound-variable `\|x><x\|` (Pauli-Z decomposition) | S7 | pending |
+| 9 | LISS-TBD-S9 | `project` drops implicit renormalization entirely; accepts general multi-term `Operator` | S8 | pending |
+| 10 | LISS-TBD-S10 | retire `feasible(...)`; migrate to plain `host(...)`-bound arrays | S8 | pending |
+| 11 | LISS-TBD-S11 | rewrite `main_selection.sqx` step 2 to the confirmed final form; byte-identical terminal output | S1-S10 | pending |
 
 Execution order: **S1, S2, S3, S4 (any order) → S5, S6 (any order, after S1) → S7 → S8 → S9, S10 (any order, after S8) → S11.**
 

@@ -39,7 +39,7 @@ def test_rev_enumerates_descending() -> None:
     package t
     pub fn main() -> Unit {
         QubitRegister<3> register = system()
-        Operator H = Sigma (i In rev(Index<0..2>)) {
+        Operator H = Sigma (i In rev(0..2)) {
             Z[i]
         }
         State a = |0>
@@ -61,7 +61,7 @@ def test_rev_empty_stays_empty() -> None:
     package t
     pub fn main() -> Unit {
         QubitRegister<2> register = system()
-        Operator H = Sigma (i In rev(Index<2..0>)) {
+        Operator H = Sigma (i In rev(2..0)) {
             Z[0]
         }
         State a = |0>

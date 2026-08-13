@@ -93,7 +93,7 @@ _BINDER_CHAIN = """
 package t
 pub fn main() -> Unit {
     QubitRegister<4> register = system()
-    Operator H = Sigma (i In Index<0..2>) {
+    Operator H = Sigma (i In 0..2) {
         1.0545718e-19 * Z[i] * Z[next(i)]
     }
     State a = |+>

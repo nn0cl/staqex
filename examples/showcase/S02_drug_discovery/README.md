@@ -79,9 +79,9 @@ where $a_i$/$s_i$ are the Host-supplied per-candidate `activity_w`/
 
 ```staqex
 fn objective_hamiltonian(w: ObjectiveWeights, activity_w: Float[8], selectivity_w: Float[8]) -> Operator {
-    Operator z_field = Sigma (i In Index<0..7>) { activity_w[i] * Z[i] }
-    Operator x_field = Sigma (i In Index<0..7>) { selectivity_w[i] * X[i] }
-    Operator coupling = Sigma (i In Index<0..7>, j In Index<0..7>) where i < j {
+    Operator z_field = Sigma (i In 0..7) { activity_w[i] * Z[i] }
+    Operator x_field = Sigma (i In 0..7) { selectivity_w[i] * X[i] }
+    Operator coupling = Sigma (i In 0..7, j In 0..7) where i < j {
         Z[i] * Z[j]
     }
     return w.activity * z_field + w.selectivity * x_field + w.diversity * coupling

@@ -42,7 +42,7 @@ pub fn main() -> Unit {{
 def test_where_filters_index_tuples_before_execution() -> None:
     compiled = compile_source(
         _source(
-            "Sigma (i In Index<0..2>, j In Index<0..2>) "
+            "Sigma (i In 0..2, j In 0..2) "
             "where i < j { 1.0545718e-19 * (Z[i] * Z[j]) }"
         )
     )
@@ -51,12 +51,12 @@ def test_where_filters_index_tuples_before_execution() -> None:
     assert provenance["binder_variables"] == ["i", "j"]
     assert provenance["desugared"] is True
     assert provenance["retained_terms"] == 3
-    assert run_source(_source("Sigma (i In Index<0..2>, j In Index<0..2>) where i < j { 1.0545718e-19 * (Z[i] * Z[j]) }"), stdout=io.StringIO()).status == "succeeded"
+    assert run_source(_source("Sigma (i In 0..2, j In 0..2) where i < j { 1.0545718e-19 * (Z[i] * Z[j]) }"), stdout=io.StringIO()).status == "succeeded"
 
 
 def test_nested_sum_runs_and_emits_qasm() -> None:
     source = _source(
-        "Sigma (i In Index<0..1>) { Sigma (j In Index<0..1>) "
+        "Sigma (i In 0..1) { Sigma (j In 0..1) "
         "{ 1.0545718e-19 * (Z[i] * Z[j]) } }"
     )
     result = run_source(source, stdout=io.StringIO())
@@ -67,7 +67,7 @@ def test_nested_sum_runs_and_emits_qasm() -> None:
 
 
 def test_product_preserves_ascending_factor_order() -> None:
-    source = _source("Pi (i In Index<0..2>) { Z[i] }")
+    source = _source("Pi (i In 0..2) { Z[i] }")
     compiled = compile_source(source)
     lowered, diagnostics = lower_finite_binder_operators(compiled.unit)
     assert not diagnostics
@@ -87,7 +87,7 @@ def test_product_preserves_ascending_factor_order() -> None:
 
 def test_second_quantized_binder_runs_and_emits_qasm() -> None:
     source = _source(
-        "Sigma (i In Index<0..1>) { 1.0545718e-19 * (create[i] * annihilate[i]) }"
+        "Sigma (i In 0..1) { 1.0545718e-19 * (create[i] * annihilate[i]) }"
     )
     result = run_source(source, stdout=io.StringIO())
     assert result.status == "succeeded", result.diagnostics
