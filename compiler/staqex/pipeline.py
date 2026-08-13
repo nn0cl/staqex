@@ -74,6 +74,9 @@ HARD_CODES = {
     "COIN_IN_EVOLVE_ERROR",
     "NON_UNITARY_TRANSFORM_ERROR",
     "PREDICATE_PROJECTOR_ERROR",
+    # LISS-0436: Evolve `times N { block }` block must be built only from
+    # State arithmetic/tensor-products and already-verified primitives.
+    "EVOLVE_BLOCK_OPAQUE_TRANSFORM",
     "CANNOT_MEASURE_CLASSICAL_VALUE_ERROR",
     "COEFFICIENT_IN_QUANTUM_POSITION",
     "PARSE_ERROR",
