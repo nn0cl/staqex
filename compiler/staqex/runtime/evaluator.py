@@ -5007,8 +5007,18 @@ class Evaluator:
             acc: Any = 0
         elif expr.kind == "Pi":
             acc = 1
-        else:  # ForAll
+        elif expr.kind == "ForAll":
             acc = True
+        else:  # Min
+            # LISS-0428: min over an empty guarded domain is +infinity --
+            # the standard identity element for min-as-a-fold (matching
+            # sum's 0 / product's 1), and it reproduces the original
+            # `_bind_feasible_predicate`/`host/scoring.py::is_feasible`
+            # Python behavior exactly: "if pairs and min(...) < threshold"
+            # skips the diversity check entirely (vacuously satisfied)
+            # when no pair is selected -- `+inf >= theta` is always True,
+            # the same vacuous pass.
+            acc = float("inf")
         for i in indices:
             local = dict(assign)
             local[expr.variable] = i
@@ -5024,10 +5034,12 @@ class Evaluator:
                 acc = acc + term
             elif expr.kind == "Pi":
                 acc = acc * term
-            else:  # ForAll: logical AND, short-circuit on the first False
+            elif expr.kind == "ForAll":
                 acc = acc and bool(term)
-                if not acc:
+                if not acc:  # short-circuit on the first False
                     break
+            else:  # Min
+                acc = term if term < acc else acc
         return acc
 
     def _eval_op_expr_classical(self, expr: Any, assign: dict[str, Any]) -> Any:

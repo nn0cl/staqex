@@ -147,7 +147,7 @@ def _flatten_namespaces(decls: list) -> list:
 # itself: `sum`/`product` binders and the Pauli/hop atoms. An `Operator`
 # bind's factory-call heuristic must never treat these as an ordinary
 # function call, even when immediately followed by `(` (LISS-0051).
-_OPERATOR_DSL_RESERVED_ATOMS = {"Sigma", "Pi", "ForAll", "adjoint", "I", "X", "Y", "Z", "hop"}
+_OPERATOR_DSL_RESERVED_ATOMS = {"Sigma", "Pi", "ForAll", "Min", "adjoint", "I", "X", "Y", "Z", "hop"}
 # Algebra Calls that must parse as expression `Call` under `Operator … =`
 # (LISS-0207): reserved OpDSL atoms would otherwise become `OpCall` and lose
 # qubit domain when rebound through bare `Operator`.
@@ -2520,7 +2520,7 @@ class Parser:
         # directly in a classical/State expression, e.g. `coeff * Sigma
         # (...) { ... }`. Reuses `_op_binder`, which already dispatches to
         # `KetSumBinder` vs the Operator-DSL `OpBinder` based on domain shape.
-        if self._check(TokenKind.IDENT) and self._peek().lexeme in ("Sigma", "Pi", "ForAll"):
+        if self._check(TokenKind.IDENT) and self._peek().lexeme in ("Sigma", "Pi", "ForAll", "Min"):
             kind = self._peek().lexeme
             self._advance()
             return self._op_binder(kind, sp)
@@ -3104,6 +3104,21 @@ class Parser:
     def _op_expression(self):
         return self._op_implies()
 
+    def _op_guard_list(self):
+        """LISS-0428: comma-separated `where` conditions (implicit AND),
+        matching the equation's own set-builder/subscript convention --
+        e.g. $\\min_{i<j:\\,x_ix_j=1}$ separates "$i<j$" and "$x_ix_j=1$"
+        with nothing but a comma-shaped juxtaposition, never `&&`. Folds
+        into the same `OpBin(op="&&", ...)` shape writing `&&` explicitly
+        already produces, so no evaluator change was needed -- only the
+        parser gained an alternate spelling for conjunction here."""
+        expr = self._op_implies()
+        while self._match(TokenKind.COMMA):
+            sp = self._span()
+            rhs = self._op_implies()
+            expr = OpBin(op="&&", lhs=expr, rhs=rhs, span=sp)
+        return expr
+
     def _op_implies(self):
         """LISS-0425: `A Implies B` for $\\Rightarrow$, lowest precedence --
         available in both binder bodies (classical `ForAll`/`Min`/`Sigma`
@@ -3241,7 +3256,7 @@ class Parser:
         if tok.kind == TokenKind.IDENT:
             name = tok.lexeme
             self._advance()
-            if name in {"Sigma", "Pi", "ForAll"}:
+            if name in {"Sigma", "Pi", "ForAll", "Min"}:
                 return self._op_binder(name, sp)
             if name in {"N", "Q", "P"}:
                 # LISS-0227: parse as OpVar so a local `Operator P = …; return P`
@@ -3453,7 +3468,7 @@ class Parser:
         guard = None
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "where":
             self._advance()
-            guard = self._op_implies()
+            guard = self._op_guard_list()
         self._expect(TokenKind.LBRACE)
         body = self._op_expression()
         self._expect(TokenKind.RBRACE)

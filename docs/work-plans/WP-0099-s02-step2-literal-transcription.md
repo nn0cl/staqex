@@ -56,7 +56,7 @@ State psi_sel = (project psi_0 onto P_F) / ||project psi_0 onto P_F||
 | 3 | [LISS-0425](../issues/LISS-0425-implies-operator.md) | `Implies` keyword operator | none | **complete** |
 | 4 | [LISS-0426](../issues/LISS-0426-norm-and-state-division.md) | `\|\|State\|\|` norm notation + `State / Float` division | none | **complete** |
 | 5 | [LISS-0427](../issues/LISS-0427-forall-binder.md) | `ForAll` binder, comma-separated guard | S1 | **complete** |
-| 6 | LISS-TBD-S6 | `Min` binder, comma-separated guard | S1 | pending |
+| 6 | [LISS-0428](../issues/LISS-0428-min-binder.md) | `Min` binder, comma-separated guard | S1 | **complete** |
 | 7 | LISS-TBD-S7 | `Set F = { x In D : cond1, cond2, ... }` comprehension | S1, S2, S5, S6 | pending |
 | 8 | LISS-TBD-S8 | `Sigma (x In F)` over general `Set` domain + bound-variable `\|x><x\|` (Pauli-Z decomposition) | S7 | pending |
 | 9 | LISS-TBD-S9 | `project` drops implicit renormalization entirely; accepts general multi-term `Operator` | S8 | pending |
@@ -70,7 +70,7 @@ Execution order: **S1, S2, S3, S4 (any order) → S5, S6 (any order, after S1) �
 Steps 1, 3, 4, 5 of `main_selection.sqx` (already literal per LISS-0421/0422,
 or not yet reviewed with the same rigor) are out of scope — this WP is step 2
 only. `Min`'s empty-guard-match behavior is not decided here; it is Red-phase
-work for LISS-TBD-S6.
+work for LISS-0428.
 
 ## Verification
 
