@@ -19,6 +19,7 @@ from .ast_nodes import (
     Dirac,
     EvolveExpr,
     Expr,
+    FunDecl,
     Inspect,
     KetLit,
     KetSumBinder,
@@ -29,6 +30,7 @@ from .ast_nodes import (
     LitString,
     Measure,
     Pipe,
+    ReturnStmt,
     Snapshot,
     StateBind,
     SuperposeExpr,
@@ -330,8 +332,151 @@ def _check_expr_unitarity(
             _check_expr_unitarity(s, quantum, strict, operators, scalars, objects, unit, diags)
         return
 
+    if isinstance(expr, EvolveExpr) and expr.hamiltonian is None and expr.body is not None:
+        # LISS-0436: `Evolve (vars) times N { block }` has no Hamiltonian to
+        # check Hermiticity of -- unlike the `under H for dur` branch above,
+        # nothing here previously verified the block's own content at all
+        # (it fell through to the generic `_children` walk, which only finds
+        # *nested* Evolve/apply/map/etc. sites to check, never asks whether
+        # the block itself is built from anything trustworthy). A block that
+        # calls an arbitrary user function is opaque: that function's own
+        # body is never inspected, so nothing here actually guarantees the
+        # block is a coherent transform at all. Require every `lets`/`result`
+        # expression to be built only from State arithmetic/tensor-products
+        # and calls to the closed, already-unitarity-checked vocabulary
+        # (`_QUANTUM_OPS`) or to another user function whose own body
+        # satisfies this same constraint, recursively -- fail closed
+        # (`EVOLVE_BLOCK_OPAQUE_TRANSFORM`) on anything else, rather than
+        # silently trusting it.
+        verified: dict[str, bool] = {}
+        transparent = True
+        for lb in expr.body.lets:
+            if not _expr_is_transparent(lb.expr, unit, verified, frozenset()):
+                transparent = False
+                break
+        if transparent and not _expr_is_transparent(
+            expr.body.result, unit, verified, frozenset()
+        ):
+            transparent = False
+        if not transparent:
+            diags.append(
+                {
+                    "code": "EVOLVE_BLOCK_OPAQUE_TRANSFORM",
+                    "line": expr.span.line,
+                    "col": expr.span.col,
+                    "message": (
+                        "`Evolve (...) times N { ... }`'s block must be built "
+                        "only from State arithmetic/tensor-products and calls "
+                        "to an already-unitarity-checked primitive (apply/"
+                        "capply/controlled/walk_shift/...) or a user function "
+                        "whose own body satisfies the same constraint -- an "
+                        "opaque call whose body is not itself verified is not "
+                        "allowed here."
+                    ),
+                }
+            )
+        for s in expr.seeds:
+            _check_expr_unitarity(s, quantum, strict, operators, scalars, objects, unit, diags)
+        return
+
     for child in _children(expr):
         _check_expr_unitarity(child, quantum, strict, operators, scalars, objects, unit, diags)
+
+
+def _expr_is_transparent(
+    expr: Expr,
+    unit: CompilationUnit,
+    verified: dict[str, bool],
+    in_progress: frozenset[str],
+) -> bool:
+    """LISS-0436: does `expr` denote a coherent transform built only from
+    State arithmetic/tensor-products, literals, and calls to either the
+    closed `_QUANTUM_OPS` vocabulary or a user function whose own body
+    satisfies this same constraint (checked recursively)? Fails closed
+    (`False`) on anything else -- a classical control-flow construct
+    (`WhenExpr`/`Mix`, `Pipe`, ...) or a call to an unrecognized/unverified
+    callee -- rather than assuming it's safe."""
+    if isinstance(expr, (Var, LitInt, LitFloat, LitBool, LitString, KetLit)):
+        return True
+    if isinstance(expr, BinOp):
+        return _expr_is_transparent(
+            expr.lhs, unit, verified, in_progress
+        ) and _expr_is_transparent(expr.rhs, unit, verified, in_progress)
+    if isinstance(expr, TensorExpr):
+        return _expr_is_transparent(
+            expr.left, unit, verified, in_progress
+        ) and _expr_is_transparent(expr.right, unit, verified, in_progress)
+    if isinstance(expr, TupleExpr):
+        return all(_expr_is_transparent(it, unit, verified, in_progress) for it in expr.items)
+    if isinstance(expr, Attr):
+        return _expr_is_transparent(expr.obj, unit, verified, in_progress)
+    if isinstance(expr, Call):
+        name = _op_name(expr)
+        args_ok = all(
+            _expr_is_transparent(a, unit, verified, in_progress) for a in expr.args
+        )
+        if not args_ok:
+            return False
+        if name in _QUANTUM_OPS:
+            return True
+        return _fn_body_is_transparent(name, unit, verified, in_progress)
+    return False
+
+
+def _fn_body_is_transparent(
+    name: str,
+    unit: CompilationUnit,
+    verified: dict[str, bool],
+    in_progress: frozenset[str],
+) -> bool:
+    """Recursively verify a user-defined function's own body, memoizing by
+    name (`verified`) and guarding against a call cycle (`in_progress` --
+    a function already being verified higher up the same recursion stack
+    is provisionally trusted, matching how a genuinely-cyclic pair of
+    mutually-recursive transforms would still each individually reduce to
+    the same closed vocabulary at their own base case)."""
+    if name in verified:
+        return verified[name]
+    if name in in_progress:
+        return True
+    fn = next(
+        (
+            d
+            for d in unit.decls
+            if isinstance(d, FunDecl) and d.name == name
+        ),
+        None,
+    )
+    if fn is None:
+        return False
+    next_in_progress = in_progress | {name}
+    ok = True
+    for stmt in fn.body.stmts:
+        if isinstance(stmt, StateBind):
+            if stmt.ty is not None and stmt.ty.name == "Operator":
+                # An Operator-typed bind constructs matrix/Hamiltonian
+                # *data* (Pauli-atom OpBin/OpVar trees, a different AST
+                # family from the general expression grammar this check
+                # otherwise walks) -- it doesn't act on a State by itself,
+                # so it isn't a "transform" this check needs to verify.
+                # Its actual use (`apply(CoinOp, c)`) is what matters, and
+                # that call site is already checked as an ordinary Call
+                # below; `_check_apply_unitary` independently verifies the
+                # matrix itself is unitary. Matches `check_unitarity`'s own
+                # top-level loop, which skips Operator binds the same way.
+                continue
+            if not _expr_is_transparent(stmt.expr, unit, verified, next_in_progress):
+                ok = False
+                break
+        elif isinstance(stmt, ReturnStmt):
+            if not _expr_is_transparent(stmt.expr, unit, verified, next_in_progress):
+                ok = False
+                break
+        else:
+            ok = False
+            break
+    verified[name] = ok
+    return ok
 
 
 def _check_apply_unitary(
