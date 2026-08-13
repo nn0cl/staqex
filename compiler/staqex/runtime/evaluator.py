@@ -5031,6 +5031,10 @@ class Evaluator:
                 lhs = bool(self._eval_op_expr_classical(expr.lhs, assign))
                 rhs = bool(self._eval_op_expr_classical(expr.rhs, assign))
                 return (lhs and rhs) if expr.op == "&&" else (lhs or rhs)
+            if expr.op == "Implies":
+                lhs = bool(self._eval_op_expr_classical(expr.lhs, assign))
+                rhs = bool(self._eval_op_expr_classical(expr.rhs, assign))
+                return (not lhs) or rhs
             lhs = self._eval_op_expr_classical(expr.lhs, assign)
             rhs = self._eval_op_expr_classical(expr.rhs, assign)
             ops: dict[str, Any] = {
@@ -5819,6 +5823,9 @@ def _apply_op(op: str, l: Any, r: Any) -> Any:
         return bool(l) and bool(r)
     if op == "||":
         return bool(l) or bool(r)
+    if op == "Implies":
+        # LISS-0425: A => B, i.e. !A || B.
+        return (not bool(l)) or bool(r)
     raise KernelError(f"unknown op {op}")
 
 

@@ -2205,11 +2205,28 @@ class Parser:
         return self._pipe()
 
     def _pipe(self):
-        expr = self._logical_or()
+        expr = self._implies()
         while self._match(TokenKind.PIPE_OP):
             sp = self._span()
-            rhs = self._logical_or()
+            rhs = self._implies()
             expr = Pipe(lhs=expr, rhs=rhs, span=sp)
+        return expr
+
+    def _implies(self):
+        """LISS-0425: `A Implies B` for $\\Rightarrow$ -- lower precedence
+        than `&&`/`||` (matching logical implication's usual binding
+        looser than conjunction/disjunction). `->`/`=>` were both already
+        taken (function return types/lambdas; match arms, ADR 0197/
+        LISS-0382) so `Implies` follows this project's own convention of
+        a capitalized English name for a blackboard symbol (`Sigma`,
+        `Pi`, `In`), a contextual keyword like `Sigma`/`Pi` rather than a
+        new reserved token."""
+        expr = self._logical_or()
+        while self._check(TokenKind.IDENT) and self._peek().lexeme == "Implies":
+            self._advance()
+            sp = self._span()
+            rhs = self._logical_or()
+            expr = BinOp(op="Implies", lhs=expr, rhs=rhs, span=sp)
         return expr
 
     def _logical_or(self):
@@ -3061,7 +3078,21 @@ class Parser:
     # --- Operator expressions (Type-First `Operator H = …`) ---
 
     def _op_expression(self):
-        return self._op_comparison()
+        return self._op_implies()
+
+    def _op_implies(self):
+        """LISS-0425: `A Implies B` for $\\Rightarrow$, lowest precedence --
+        available in both binder bodies (classical `ForAll`/`Min`/`Sigma`
+        bodies need it, e.g. `(x[i]*x[j]==1) Implies (C[i][j]==1)`) and
+        `where` guards, since both route through this same entry point
+        now (`_op_expression`/`_op_guard` are unified)."""
+        expr = self._op_guard()
+        while self._check(TokenKind.IDENT) and self._peek().lexeme == "Implies":
+            self._advance()
+            sp = self._span()
+            rhs = self._op_guard()
+            expr = OpBin(op="Implies", lhs=expr, rhs=rhs, span=sp)
+        return expr
 
     def _op_guard(self):
         """Binder `where`: comparisons with `&&` (higher) and `||` (LISS-0145)."""
@@ -3390,7 +3421,7 @@ class Parser:
         guard = None
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "where":
             self._advance()
-            guard = self._op_guard()
+            guard = self._op_implies()
         self._expect(TokenKind.LBRACE)
         body = self._op_expression()
         self._expect(TokenKind.RBRACE)

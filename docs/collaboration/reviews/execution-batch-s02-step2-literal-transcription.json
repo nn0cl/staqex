@@ -12,7 +12,7 @@
   "issue_ids": [
     "LISS-0423",
     "LISS-0424",
-    "LISS-TBD-S3",
+    "LISS-0425",
     "LISS-TBD-S4",
     "LISS-TBD-S5",
     "LISS-TBD-S6",
@@ -25,7 +25,7 @@
   "issue_order": [
     "LISS-0423",
     "LISS-0424",
-    "LISS-TBD-S3",
+    "LISS-0425",
     "LISS-TBD-S4",
     "LISS-TBD-S5",
     "LISS-TBD-S6",
@@ -50,7 +50,7 @@
     "tests/**",
     "docs/issues/LISS-0423*",
     "docs/issues/LISS-0424*",
-    "docs/issues/LISS-TBD-S3*",
+    "docs/issues/LISS-0425*",
     "docs/issues/LISS-TBD-S4*",
     "docs/issues/LISS-TBD-S5*",
     "docs/issues/LISS-TBD-S6*",
@@ -78,7 +78,7 @@
   "operation_notes": {
     "LISS-0423": "Feature Path; parser binder-domain grammar change + hard-cutover retirement of Index<...> + corpus migration for objective_hamiltonian",
     "LISS-0424": "Feature Path; new classical numeric result-kind for the existing Sigma keyword",
-    "LISS-TBD-S3": "Feature Path; new keyword infix Bool operator",
+    "LISS-0425": "Feature Path; new keyword infix Bool operator",
     "LISS-TBD-S4": "Feature Path; new norm notation + new State/Float division operator",
     "LISS-TBD-S5": "Feature Path; new ForAll binder AST/typecheck/evaluator",
     "LISS-TBD-S6": "Feature Path; new Min binder AST/typecheck/evaluator; empty-guard-match behavior decided in this Issue's own Red",
@@ -105,6 +105,7 @@
   },
   "progress_notes": {
     "LISS-0423": "complete 2026-08-13. Invalidating trigger fired mid-Red: full corpus grep found ~35 files use Index<...> as a binder domain, not just objective_hamiltonian as the batch record assumed. Escalated to the Adjudicator (AskUserQuestion) rather than resolved unilaterally; Adjudicator confirmed proceeding with the full migration (recommended option). Also found and fixed a real bug during Green: the new BINDER_DOMAIN_INDEX_RETIRED ParseError was initially silently swallowed by the parser's implicit-final-expression backtracking recovery because the code was embedded in the message text instead of passed via ParseError's code= kwarg -- fixed to match the existing EVOLVE_REQUIRES_BLOCK_RUN precedent. Also added BINDER_DOMAIN_INDEX_RETIRED to pipeline.py's HARD_CODES (CompileResult.ok was wrongly True otherwise). Full regression 1518 passed (1511 + 7 new); spec verification 100.00%.",
-    "LISS-0424": "complete 2026-08-13. Reused the existing Operator-DSL body grammar (OpIndexed/OpBin/OpVar/OpLit, already proven for activity_w[i]*Z[i]-style coefficients) for the classical body instead of inventing new general-expression array-index syntax. Found and fixed during Green: the OpBinder case was initially only added to _bind (covering top-level `Int total = Sigma(...)`), but the real target shape `Sigma(...) == 3` used as a sub-expression crashed with 'cannot evaluate OpBinder as value' since _eval_value is a separate function -- fixed by adding the same dispatch there too. Multi-binding + guard verified to recurse correctly by hand-computing expected marginals, not just checking it runs. Full regression 1523 passed; spec verification 100.00%."
+    "LISS-0424": "complete 2026-08-13. Reused the existing Operator-DSL body grammar (OpIndexed/OpBin/OpVar/OpLit, already proven for activity_w[i]*Z[i]-style coefficients) for the classical body instead of inventing new general-expression array-index syntax. Found and fixed during Green: the OpBinder case was initially only added to _bind (covering top-level `Int total = Sigma(...)`), but the real target shape `Sigma(...) == 3` used as a sub-expression crashed with 'cannot evaluate OpBinder as value' since _eval_value is a separate function -- fixed by adding the same dispatch there too. Multi-binding + guard verified to recurse correctly by hand-computing expected marginals, not just checking it runs. Full regression 1523 passed; spec verification 100.00%.",
+    "LISS-0425": "complete 2026-08-13. -> and => both confirmed already taken (return types/lambdas; match arms) before choosing the Implies keyword. Found during Green: Implies needed wiring into TWO separate grammars, not one -- the general expression grammar AND the Operator-DSL's own _op_expression (Sigma/Pi/future ForAll/Min bodies), which previously had no &&/|| level at all (only the separate where-guard grammar did). Unified by routing _op_expression through a new _op_implies() wrapping the existing _op_guard() chain, rather than maintaining two divergent grammars. Full regression 1527 passed; spec verification 100.00%."
   }
 }

@@ -3519,10 +3519,11 @@ class TypeChecker:
                     )
                 self._check_mixed_units(left, right, expr)
                 return Ty("Classical", "Bool", DIMLESS)
-            if expr.op in {"&&", "||"}:
+            if expr.op in {"&&", "||", "Implies"}:
                 # ADR 0196: total-pushforward Boolean combinators -- both
                 # operands must already be Bool, no implicit truthiness
-                # coercion from other classical types.
+                # coercion from other classical types. LISS-0425: Implies
+                # (A => B) follows the same Bool-Bool -> Bool rule.
                 if left.payload != "Bool" or right.payload != "Bool":
                     self.diagnostics.append(
                         {
@@ -3545,10 +3546,11 @@ class TypeChecker:
                 )
             self._check_mixed_units(left, right, expr)
             return Ty("State", "Bool", DIMLESS)
-        if expr.op in {"&&", "||"}:
+        if expr.op in {"&&", "||", "Implies"}:
             # ADR 0196: total-pushforward Boolean combinators -- both
             # operands must already be Bool, no implicit truthiness
-            # coercion from other State-carrier types.
+            # coercion from other State-carrier types. LISS-0425: Implies
+            # (A => B) follows the same Bool-Bool -> Bool rule.
             if left.payload != "Bool" or right.payload != "Bool":
                 self.diagnostics.append(
                     {
