@@ -55,7 +55,7 @@ State psi_sel = (project psi_0 onto P_F) / ||project psi_0 onto P_F||
 | 2 | [LISS-0424](../issues/LISS-0424-classical-numeric-sigma.md) | classical numeric `Sigma` (Int/Float array-element sum) | none | **complete** |
 | 3 | [LISS-0425](../issues/LISS-0425-implies-operator.md) | `Implies` keyword operator | none | **complete** |
 | 4 | [LISS-0426](../issues/LISS-0426-norm-and-state-division.md) | `\|\|State\|\|` norm notation + `State / Float` division | none | **complete** |
-| 5 | LISS-TBD-S5 | `ForAll` binder, comma-separated guard | S1 | pending |
+| 5 | [LISS-0427](../issues/LISS-0427-forall-binder.md) | `ForAll` binder, comma-separated guard | S1 | **complete** |
 | 6 | LISS-TBD-S6 | `Min` binder, comma-separated guard | S1 | pending |
 | 7 | LISS-TBD-S7 | `Set F = { x In D : cond1, cond2, ... }` comprehension | S1, S2, S5, S6 | pending |
 | 8 | LISS-TBD-S8 | `Sigma (x In F)` over general `Set` domain + bound-variable `\|x><x\|` (Pauli-Z decomposition) | S7 | pending |

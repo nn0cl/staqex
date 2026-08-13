@@ -4972,19 +4972,20 @@ class Evaluator:
         return joint.bind_split(name, {pattern: 1.0 for pattern in patterns})
 
     def _eval_classical_op_binder(self, expr: "OpBinder", assign: dict[str, Any]) -> Any:
-        """LISS-0424: classical numeric Sigma/Pi -- a third result-kind for
-        the `Sigma`/`Pi` keyword, alongside the existing Operator-typed
+        """LISS-0424/0427: classical numeric `Sigma`/`Pi` and the Bool-
+        valued `ForAll` -- alongside the existing Operator-typed
         (`OpBinder` reached via the separate `Operator H = ...` statement
         dispatch) and State-typed (`KetSumBinder`) forms. Folds the body
-        with `+` (Sigma) or `*` (Pi) over a bare-range `IndexDomain`
-        (LISS-0423), evaluating the body/guard as plain classical
-        expressions -- reuses the Operator-DSL's existing `OpIndexed`/
-        `OpBin`/`OpVar`/`OpLit` grammar (already proven for classical
-        array-indexed coefficients like `activity_w[i] * Z[i]`) rather
-        than requiring new general-expression array-index syntax. Handles
-        multi-binding (`Sigma (i In D1, j In D2) where ... {...}`) by
-        recursing into a nested `OpBinder` body, matching how the parser
-        itself nests multi-binding binders (`parser.py::_op_binder`)."""
+        with `+` (Sigma), `*` (Pi), or logical AND with early exit
+        (ForAll) over a bare-range `IndexDomain` (LISS-0423), evaluating
+        the body/guard as plain classical expressions -- reuses the
+        Operator-DSL's existing `OpIndexed`/`OpBin`/`OpVar`/`OpLit`
+        grammar (already proven for classical array-indexed coefficients
+        like `activity_w[i] * Z[i]`) rather than requiring new general-
+        expression array-index syntax. Handles multi-binding
+        (`Sigma (i In D1, j In D2) where ... {...}`) by recursing into a
+        nested `OpBinder` body, matching how the parser itself nests
+        multi-binding binders (`parser.py::_op_binder`)."""
         from ..ast_nodes import IndexDomain, RevDomain
 
         domain = expr.domain
@@ -4994,15 +4995,20 @@ class Evaluator:
             domain = domain.inner
         if not isinstance(domain, IndexDomain):
             raise KernelError(
-                "classical Sigma/Pi requires a bare-range binder domain "
-                "(e.g. `0..n-1`), not an Operator/State-shaped domain"
+                "classical Sigma/Pi/ForAll requires a bare-range binder "
+                "domain (e.g. `0..n-1`), not an Operator/State-shaped domain"
             )
         start = int(self._eval_op_expr_classical(domain.start, assign))
         end = int(self._eval_op_expr_classical(domain.end, assign))
         indices = list(range(start, end + 1)) if end >= start else []
         if descending:
             indices.reverse()
-        acc: Any = 0 if expr.kind == "Sigma" else 1
+        if expr.kind == "Sigma":
+            acc: Any = 0
+        elif expr.kind == "Pi":
+            acc = 1
+        else:  # ForAll
+            acc = True
         for i in indices:
             local = dict(assign)
             local[expr.variable] = i
@@ -5014,7 +5020,14 @@ class Evaluator:
                 term = self._eval_classical_op_binder(expr.body, local)
             else:
                 term = self._eval_op_expr_classical(expr.body, local)
-            acc = acc + term if expr.kind == "Sigma" else acc * term
+            if expr.kind == "Sigma":
+                acc = acc + term
+            elif expr.kind == "Pi":
+                acc = acc * term
+            else:  # ForAll: logical AND, short-circuit on the first False
+                acc = acc and bool(term)
+                if not acc:
+                    break
         return acc
 
     def _eval_op_expr_classical(self, expr: Any, assign: dict[str, Any]) -> Any:

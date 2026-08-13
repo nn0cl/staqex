@@ -147,7 +147,7 @@ def _flatten_namespaces(decls: list) -> list:
 # itself: `sum`/`product` binders and the Pauli/hop atoms. An `Operator`
 # bind's factory-call heuristic must never treat these as an ordinary
 # function call, even when immediately followed by `(` (LISS-0051).
-_OPERATOR_DSL_RESERVED_ATOMS = {"Sigma", "Pi", "adjoint", "I", "X", "Y", "Z", "hop"}
+_OPERATOR_DSL_RESERVED_ATOMS = {"Sigma", "Pi", "ForAll", "adjoint", "I", "X", "Y", "Z", "hop"}
 # Algebra Calls that must parse as expression `Call` under `Operator … =`
 # (LISS-0207): reserved OpDSL atoms would otherwise become `OpCall` and lose
 # qubit domain when rebound through bare `Operator`.
@@ -2520,7 +2520,7 @@ class Parser:
         # directly in a classical/State expression, e.g. `coeff * Sigma
         # (...) { ... }`. Reuses `_op_binder`, which already dispatches to
         # `KetSumBinder` vs the Operator-DSL `OpBinder` based on domain shape.
-        if self._check(TokenKind.IDENT) and self._peek().lexeme in ("Sigma", "Pi"):
+        if self._check(TokenKind.IDENT) and self._peek().lexeme in ("Sigma", "Pi", "ForAll"):
             kind = self._peek().lexeme
             self._advance()
             return self._op_binder(kind, sp)
@@ -3241,7 +3241,7 @@ class Parser:
         if tok.kind == TokenKind.IDENT:
             name = tok.lexeme
             self._advance()
-            if name in {"Sigma", "Pi"}:
+            if name in {"Sigma", "Pi", "ForAll"}:
                 return self._op_binder(name, sp)
             if name in {"N", "Q", "P"}:
                 # LISS-0227: parse as OpVar so a local `Operator P = …; return P`
@@ -3419,10 +3419,18 @@ class Parser:
         variable = self._expect_ident_like()
         self._expect(TokenKind.IN_SET)
         domain = self._binder_domain()
-        if isinstance(domain, SetPowerDomain):
+        if kind == "Sigma" and isinstance(domain, SetPowerDomain):
             # LISS-0420: State-typed ket-sum -- `Sigma (x In {0,1}^n) { |x> }`.
             # Single-binding only (matching the target use case); body is
-            # always a bare ket referencing the bound variable.
+            # always a bare ket referencing the bound variable. LISS-0427:
+            # narrowed to `kind == "Sigma"` specifically -- previously any
+            # kind (including `Pi`, and now `ForAll`/`Min`) with a
+            # `{0,1}^n` domain silently became a `KetSumBinder` too (which
+            # doesn't even record `kind`, so it always summed regardless);
+            # a real pre-existing gap, though never exercised (no shipped
+            # `Pi (x In {0,1}^n)` usage existed). `Pi`/`ForAll`/`Min` over
+            # `{0,1}^n` now correctly fall through to the general
+            # multi-binding `OpBinder` path below instead.
             self._expect(TokenKind.RPAREN)
             self._expect(TokenKind.LBRACE)
             ket_tok = self._expect(TokenKind.KET)
