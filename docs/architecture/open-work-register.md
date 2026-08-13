@@ -673,7 +673,8 @@ Issue gives them a concrete scope:
   LISS-0420's own test file was rewritten (not patched) to assert the
   corrected semantics. Final state after LISS-0422: 1511 tests passed;
   spec verification 100.00% (161/161).
-  **Step 2 literal rewrite, 2026-08-13**: extensive Adjudicator Socratic
+  **Step 2 literal rewrite, 2026-08-13** (PR [#549](https://github.com/nn0cl/staqex/pull/549)):
+  extensive Adjudicator Socratic
   review of step 2's own equation
   ($\lvert\psi_{sel}\rangle=P_F\lvert\psi_0\rangle/\lVert
   P_F\lvert\psi_0\rangle\rVert$, $P_F=\sum_{x\in F}\lvert x\rangle\langle
