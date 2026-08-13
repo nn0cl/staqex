@@ -168,6 +168,7 @@ class TypeChecker:
         self._active_register_set: str | None = None
         self.has_entry_main: bool = False
         self.float_arrays: dict[str, tuple[int, ...]] = {}  # name → shape (LISS-0143/0144)
+        self.bool_arrays: dict[str, tuple[int, ...]] = {}  # name → shape (LISS-0432)
         self._binder_depth: int = 0
         # name → value for classical scalar binds resolvable at typecheck time
         # (LISS-0371); mirrors the runtime `scalars` dict trotter.py builds,
@@ -395,6 +396,18 @@ class TypeChecker:
                     and len(stmt.ty.args) >= 1
                 ):
                     self._check_float_array_bind(stmt)
+                    continue
+                # LISS-0432: `Bool[N][M]…` Host-bound coefficient array
+                # (e.g. `Bool[8][8] C = host("pairwise_compatible")`) --
+                # narrower than `Float[N]…`'s literal/partial-index forms
+                # since the confirmed S02 step 2 design only ever sources a
+                # Bool array from Host.
+                if (
+                    stmt.ty is not None
+                    and stmt.ty.name == "Bool"
+                    and len(stmt.ty.args) >= 1
+                ):
+                    self._check_bool_array_bind(stmt)
                     continue
                 # Enum / struct / class object binds
                 if stmt.ty is not None:
@@ -1893,6 +1906,71 @@ class TypeChecker:
         for n in stmt.names:
             self.env[n] = Ty("Classical", f"Float{label}", DIMLESS)
             self.float_arrays[n] = shape_t
+
+    def _check_bool_array_bind(self, stmt: StateBind) -> None:
+        """LISS-0432: `Bool[N]… name = host("…")` -- a Host-bound Bool
+        coefficient array (e.g. the confirmed S02 step 2 design's
+        `Bool[8][8] C = host("pairwise_compatible")`). Deliberately
+        narrower than `_check_float_array_bind`: only the `host("…")` RHS
+        is supported (no literal Bool-tensor list, no static partial
+        index) since no confirmed design needs either yet -- adding them
+        speculatively would be unused surface, not a real requirement."""
+        assert stmt.ty is not None
+        shape: list[int] = []
+        for arg in stmt.ty.args:
+            try:
+                dim = int(arg.name)
+            except ValueError:
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": stmt.span.line,
+                        "col": stmt.span.col,
+                        "message": "`Bool[N]…` requires positive integer lengths",
+                    }
+                )
+                return
+            if dim <= 0:
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": stmt.span.line,
+                        "col": stmt.span.col,
+                        "message": "`Bool[N]…` lengths must be positive",
+                    }
+                )
+                return
+            shape.append(dim)
+        shape_t = tuple(shape)
+        product = 1
+        for dim in shape_t:
+            product *= dim
+            if product > 1_000_000:
+                self.diagnostics.append(
+                    {
+                        "code": "BINDER_RESOURCE_ERROR",
+                        "line": stmt.span.line,
+                        "col": stmt.span.col,
+                        "message": (
+                            "`Bool[N]…` element count exceeds the Kernel resource budget"
+                        ),
+                    }
+                )
+                return
+        if not self._is_host_coefficient_call(stmt.expr):
+            self.diagnostics.append(
+                {
+                    "code": "TYPE_MISMATCH",
+                    "line": stmt.span.line,
+                    "col": stmt.span.col,
+                    "message": "`Bool[N]…` requires a `host(\"…\")` source",
+                }
+            )
+            return
+        label = "".join(f"[{d}]" for d in shape_t)
+        for n in stmt.names:
+            self.env[n] = Ty("Classical", f"Bool{label}", DIMLESS)
+            self.bool_arrays[n] = shape_t
 
     @staticmethod
     def _is_host_coefficient_call(expr: Any) -> bool:

@@ -1408,21 +1408,24 @@ class Parser:
         else:
             raise ParseError(f"expected type name, got `{tok.lexeme}`", tok.line, tok.col)
         args: list[TypeRef] = []
-        # LISS-0143 / LISS-0144: `Float[N]` / `Float[N][M]…` classical tensors
-        if name == "Float" and self._check(TokenKind.LBRACKET):
+        # LISS-0143 / LISS-0144: `Float[N]` / `Float[N][M]…` classical tensors.
+        # LISS-0432: `Bool[N][M]…` reuses the identical dims grammar for the
+        # Host-bound Bool-dtype coefficient arrays the confirmed S02 step 2
+        # design needs (`Bool[8][8] C = host("pairwise_compatible")`).
+        if name in ("Float", "Bool") and self._check(TokenKind.LBRACKET):
             dims: list[TypeRef] = []
             while self._match(TokenKind.LBRACKET):
                 n_tok = self._peek()
                 if n_tok.kind != TokenKind.INT:
                     raise ParseError(
-                        "`Float[N]…` requires positive integer lengths",
+                        f"`{name}[N]…` requires positive integer lengths",
                         n_tok.line,
                         n_tok.col,
                     )
                 self._advance()
                 self._expect(TokenKind.RBRACKET)
                 dims.append(TypeRef(name=str(n_tok.literal)))
-            return TypeRef(name="Float", args=dims)
+            return TypeRef(name=name, args=dims)
         if self._match(TokenKind.LT):
             args.append(self._type_ref())
             if self._match(TokenKind.RANGE):

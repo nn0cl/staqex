@@ -47,7 +47,6 @@ from .physics_ir_lower import lower_hir_to_physics_ir, verify_lowered_physics_ir
 from .quantum_semantic_ir import (
     QuantumSemanticInput,
     QuantumSemanticModule,
-    ProjectorRegion,
     TimingRegion,
     DynamicMeasurementRegion,
     DynamicControlRegion,
@@ -183,10 +182,6 @@ HARD_CODES = {
     "TARGET_CAPABILITY_REJECT",
     "NON_HERMITIAN_OPERATOR_ERROR",
     "H1_MEASURE_NOT_TERMINAL",
-    # LISS-0322 / ADR 0192: closed constraint-predicate vocabulary.
-    "S02_UNKNOWN_CONSTRAINT_PREDICATE",
-    # LISS-0329: reject a repeated predicate name in feasible(...).
-    "S02_DUPLICATE_CONSTRAINT_PREDICATE",
     # LISS-0381 / ADR 0193: malformed `dynamic qpu within …` timing clause.
     "DYNAMIC_TIMING_INTENT_MALFORMED",
 }
@@ -317,96 +312,16 @@ def _surface_transform_plan(unit: CompilationUnit) -> H1StateTransformPlan | Non
     return H1StateTransformPlan(steps=tuple(steps)) if steps else None
 
 
-# LISS-0322 / ADR 0192 Decision 2: closed constraint-predicate vocabulary.
-# Extending this set is a future ADR amendment, not a silent addition.
-_S02_KNOWN_CONSTRAINT_PREDICATES = frozenset(
-    {"exactly_selected", "pairwise_compatible", "diversity_at_least"}
-)
-
-
-def _append_selection_projector_region(
-    unit: CompilationUnit,
-    module: QuantumSemanticModule,
-) -> tuple[QuantumSemanticModule, list[dict[str, Any]]]:
-    """Retain an explicit S02 Projector witness in the semantic boundary.
-
-    ADR 0192: `constraint_ref` is derived from the actual recognized
-    predicate names in the `project ... onto feasible(...)` target, not a
-    hardcoded literal. An unrecognized predicate name -- or a target that is
-    not a call to `feasible` at all -- is a S02_UNKNOWN_CONSTRAINT_PREDICATE
-    diagnostic, not silent acceptance into a generic region.
-    """
-
-    diagnostics: list[dict[str, Any]] = []
-    predicate_names: set[str] = set()
-    has_projector = False
-
-    def visit(expr: Any) -> None:
-        nonlocal has_projector
-        if isinstance(expr, Call):
-            if hasattr(expr.callee, "name") and expr.callee.name == "project":
-                has_projector = True
-                if len(expr.args) >= 2:
-                    _collect_feasible_predicates(expr.args[1], diagnostics, predicate_names)
-            for arg in expr.args:
-                visit(arg)
-            for _, value in expr.kwargs or ():
-                visit(value)
-        elif isinstance(expr, WhenExpr):
-            visit(expr.ctrl)
-            for arm in expr.arms:
-                visit(arm.body)
-
-    if unit.main is None:
-        return module, diagnostics
-    for statement in unit.main.body.stmts:
-        if isinstance(statement, StateBind):
-            visit(statement.expr)
-    if not has_projector:
-        return module, diagnostics
-    if diagnostics:
-        # An unrecognized predicate was found: fail closed, no region.
-        return module, diagnostics
-
-    origin = SemanticOrigin(source_id="sqx", line=1, col=1)
-    space_id = SemanticId("space", "s02", len(module.acting_spaces))
-    input_id = SemanticId("value", "s02", len(module.values))
-    output_id = SemanticId("value", "s02", len(module.values) + 1)
-    region_id = SemanticId("region", "s02", len(module.regions))
-    space = ActingSpace(
-        space_id=space_id,
-        factors=(
-            ActingFactor(
-                factor_id=SemanticId("factor", "s02", 0),
-                dimension=2,
-                label="selection",
-            ),
-        ),
-        total_dimension=2,
-        origin=origin,
-    )
-    constraint_ref = "S02.feasible:" + ",".join(sorted(predicate_names))
-    region = ProjectorRegion(
-        region_id=region_id,
-        input_value_id=input_id,
-        output_value_id=output_id,
-        input_space_id=space_id,
-        output_space_id=space_id,
-        validity=RegionValidity("Declared"),
-        origin=origin,
-        constraint_ref=constraint_ref,
-    )
-    return (
-        replace(
-            module,
-            roots=module.roots + (region_id,),
-            region_roots=module.region_roots + (region_id,),
-            origins=module.origins + (origin,),
-            acting_spaces=module.acting_spaces + (space,),
-            regions=module.regions + (region,),
-        ),
-        diagnostics,
-    )
+# LISS-0432 / ADR 0207: the S02.feasible-specific ProjectorRegion witness
+# (ADR 0192 Decision 2's closed constraint-predicate vocabulary) and its
+# `_append_selection_projector_region`/`_collect_feasible_predicates`
+# implementation were retired here, together with `feasible(...)` itself --
+# ADR 0192/0194 are superseded by ADR 0207, and this mechanism existed
+# solely to serve `feasible(...)`'s own closed vocabulary (its output, a
+# `constraint_ref` string built from `feasible`'s own kwargs, has no
+# sensible equivalent for the general-Operator `project` target that
+# replaces it). See LISS-0431's own findings for the traversal gap this
+# mechanism already had before retirement.
 
 
 def _append_dynamic_timing_regions(
@@ -670,64 +585,6 @@ def _make_dynamic_control_witness(
     return control, origin
 
 
-def _collect_feasible_predicates(
-    target: Any,
-    diagnostics: list[dict[str, Any]],
-    predicate_names: set[str],
-) -> None:
-    """Validate a `project ... onto <target>` target against ADR 0192's
-    closed predicate vocabulary, recording unknown names as a fail-closed
-    diagnostic instead of silently accepting them."""
-
-    if not (isinstance(target, Call) and hasattr(target.callee, "name")):
-        diagnostics.append(
-            {
-                "code": "S02_UNKNOWN_CONSTRAINT_PREDICATE",
-                "line": target.span.line,
-                "col": target.span.col,
-                "message": "`project ... onto` target is not a recognized "
-                "constraint predicate call",
-            }
-        )
-        return
-    if target.callee.name != "feasible":
-        diagnostics.append(
-            {
-                "code": "S02_UNKNOWN_CONSTRAINT_PREDICATE",
-                "line": target.span.line,
-                "col": target.span.col,
-                "message": f"`{target.callee.name}` is not a recognized "
-                "constraint predicate wrapper; expected `feasible(...)`",
-            }
-        )
-        return
-    for name, _value in target.kwargs or ():
-        if name not in _S02_KNOWN_CONSTRAINT_PREDICATES:
-            diagnostics.append(
-                {
-                    "code": "S02_UNKNOWN_CONSTRAINT_PREDICATE",
-                    "line": target.span.line,
-                    "col": target.span.col,
-                    "message": f"`{name}` is not a recognized S02 "
-                    "constraint predicate (expected one of "
-                    f"{sorted(_S02_KNOWN_CONSTRAINT_PREDICATES)})",
-                }
-            )
-            continue
-        if name in predicate_names:
-            diagnostics.append(
-                {
-                    "code": "S02_DUPLICATE_CONSTRAINT_PREDICATE",
-                    "line": target.span.line,
-                    "col": target.span.col,
-                    "message": f"`{name}` is given more than once in "
-                    "`feasible(...)`",
-                }
-            )
-            continue
-        predicate_names.add(name)
-
-
 def _soft_lane_diagnostics(unit: CompilationUnit) -> list[dict[str, Any]]:
     """ADR 0178: soft warn when circuit constructs appear under experiment lane."""
     from .ast_nodes import ForEachStmt
@@ -841,10 +698,6 @@ def _analyze_unit(unit: CompilationUnit, diags: list[dict[str, Any]]) -> Compile
     diags.extend(physics_diags)
     quantum_semantic_ir, qsem_diags = _soft_quantum_semantic_ir(physics_ir)
     diags.extend(qsem_diags)
-    quantum_semantic_ir, projector_diags = _append_selection_projector_region(
-        unit, quantum_semantic_ir
-    )
-    diags.extend(projector_diags)
     quantum_semantic_ir = _append_dynamic_timing_regions(unit, quantum_semantic_ir)
     quantum_semantic_ir = _append_dynamic_mid_circuit_regions(
         unit, quantum_semantic_ir

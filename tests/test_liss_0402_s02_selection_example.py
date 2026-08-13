@@ -40,7 +40,7 @@ def _run_seed(seed: int, pairwise, diversity, activity_w, selectivity_w):
             "seed": seed,
             "inputs": {
                 "pairwise_compatible": pairwise,
-                "diversity_at_least": diversity,
+                "diversity": diversity,
                 "activity_weights": activity_w,
                 "selectivity_weights": selectivity_w,
             },

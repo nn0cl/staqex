@@ -60,7 +60,7 @@ State psi_sel = (project psi_0 onto P_F) / ||project psi_0 onto P_F||
 | 7 | [LISS-0429](../issues/LISS-0429-set-comprehension.md) | `Set F = { x In D : cond1, cond2, ... }` comprehension | S1, S2, S5, S6 | **complete** |
 | 8 | [LISS-0430](../issues/LISS-0430-sigma-over-set-projector.md) | `Sigma (x In F)` over general `Set` domain + bound-variable `\|x><x\|` (Pauli-Z decomposition) | S7 | **complete** |
 | 9 | [LISS-0431](../issues/LISS-0431-project-explicit-renorm.md) | `project` drops implicit renormalization entirely; accepts general multi-term `Operator` | S8 | **complete** |
-| 10 | LISS-TBD-S10 | retire `feasible(...)`; migrate to plain `host(...)`-bound arrays | S8 | pending |
+| 10 | [LISS-0432](../issues/LISS-0432-retire-feasible-and-host-bool-arrays.md) | retire `feasible(...)`; migrate to plain `host(...)`-bound arrays | S8 | **complete** |
 | 11 | LISS-TBD-S11 | rewrite `main_selection.sqx` step 2 to the confirmed final form; byte-identical terminal output | S1-S10 | pending |
 
 Execution order: **S1, S2, S3, S4 (any order) → S5, S6 (any order, after S1) → S7 → S8 → S9, S10 (any order, after S8) → S11.**

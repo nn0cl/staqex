@@ -282,9 +282,12 @@ class Evaluator:
 
     def _resolve_host_coefficient_arrays(self, unit: CompilationUnit) -> dict[str, Any]:
         """Wire HostInputPort into the ADR 0119 coefficient-tensor path
-        (LISS-0406): resolve every `Float[N]... = host("key")` placeholder
-        the source itself declares against `self.host_input`, fail closed
-        on anything missing or malformed."""
+        (LISS-0406): resolve every `Float[N]...`/`Bool[N]... = host("key")`
+        placeholder the source itself declares against `self.host_input`,
+        fail closed on anything missing or malformed. LISS-0432: dtype now
+        threads through to `CoefficientTensor` so a `Bool[N]…` array (e.g.
+        the confirmed S02 step 2 design's `pairwise_compatible`) round-trips
+        as `bool`, not silently coerced to `float`."""
         from ..finite_binder import _host_placeholder_keys, merge_host_coefficient_arrays
         from ..scientific_input import (
             CoefficientTensor,
@@ -296,7 +299,7 @@ class Evaluator:
         if not placeholders:
             return {}
         host_tensors: dict[str, Any] = {}
-        for _local_name, (host_key, shape) in placeholders.items():
+        for _local_name, (host_key, shape, dtype) in placeholders.items():
             if host_key in host_tensors:
                 continue
             raw = self.host_input.get(host_key) if self.host_input is not None else None
@@ -310,6 +313,7 @@ class Evaluator:
                     provenance=InputProvenance(
                         source_formula="HostInputPort", input_id=host_key
                     ),
+                    dtype=dtype,
                 )
             except ScientificInputValidationError as error:
                 raise KernelDiagnosticError(error.code, str(error)) from error
@@ -349,6 +353,13 @@ class Evaluator:
         self.operators = {
             alias: GridHamiltonianRef(alias) for alias in self.grid_hamiltonians
         }
+        # LISS-0432: `self.operators[name]` never rebinds mid-run, so a
+        # `project ... onto P` target compiled once via `compile_hamiltonian`
+        # (e.g. LISS-0430's P_F) is safe to reuse for every later `project`
+        # against the same name/width within this Evaluator instance --
+        # avoids literally recompiling the identical matrix a second time
+        # for the confirmed design's own `X / ||X||` literal repetition.
+        self._compiled_operator_cache: dict[tuple[str, int], Any] = {}
         from ..finite_binder import lower_finite_binder_operators
 
         host_arrays = self._resolve_host_coefficient_arrays(unit)
@@ -466,12 +477,13 @@ class Evaluator:
                     continue
                 if (
                     stmt.ty is not None
-                    and stmt.ty.name == "Float"
+                    and stmt.ty.name in ("Float", "Bool")
                     and len(stmt.ty.args) >= 1
                 ):
-                    # LISS-0406: `Float[N]…` coefficient-tensor declarations
-                    # (ADR 0119, literal or `host("key")`-sourced) are
-                    # compile-time coefficient data consumed only via the
+                    # LISS-0406/LISS-0432: `Float[N]…`/`Bool[N]…`
+                    # coefficient-tensor declarations (ADR 0119, literal or
+                    # `host("key")`-sourced) are compile-time coefficient
+                    # data consumed only via the
                     # Operator sum-binder lowering above (host_arrays) --
                     # they have no live Joint/scalar role.
                     continue
@@ -4647,30 +4659,7 @@ class Evaluator:
                     "projector |k⟩⟨k|, not a classical filter. "
                     "Write project(psi, 0) or project(psi, |0>)."
                 )
-            if (
-                isinstance(target, Call)
-                and isinstance(target.callee, Var)
-                and target.callee.name == "feasible"
-            ):
-                # ADR 0192/0194: closed-vocabulary structural predicate set,
-                # not an arbitrary classical Lambda -- distinct from the
-                # PREDICATE_PROJECTOR_ERROR case above.
-                sample = next(
-                    (
-                        world.assign.get(src_expr.name)
-                        for world in joint.worlds
-                        if isinstance(world.assign.get(src_expr.name), tuple)
-                    ),
-                    None,
-                )
-                if sample is None:
-                    raise KernelError(
-                        "project ... onto feasible(...) requires a "
-                        "tuple-valued selection state (from prepare_selection)"
-                    )
-                predicate = self._bind_feasible_predicate(target, len(sample))
-                projected = joint.project_coord(src_expr.name, predicate)
-            elif isinstance(target, Var) and target.name in self.operators:
+            if isinstance(target, Var) and target.name in self.operators:
                 # LISS-0431: `project psi onto P_F` -- a general (possibly
                 # multi-term) Operator, e.g. LISS-0430's literal
                 # $P_F=\sum_{x\in F}\lvert x\rangle\langle x\rvert$. Diagonal
@@ -4997,83 +4986,6 @@ class Evaluator:
 
         raise KernelError(f"unknown function `{op}`")
 
-    def _bind_feasible_predicate(
-        self, target: Call, n: int
-    ) -> Callable[[Any], bool]:
-        """Build a combined selection-pattern predicate from a
-        `feasible(...)` Call's kwargs (ADR 0192 closed vocabulary; ADR 0194
-        Host-input-backed `pairwise_compatible`/`diversity_at_least`).
-        Validates any required Host input once, eagerly -- fail-closed,
-        never a silent pass."""
-        from ..host_input_binding import validate_matrix_binding
-
-        exactly_selected: int | None = None
-        pairwise_matrix: Any = None
-        diversity_matrix: Any = None
-        diversity_threshold: float | None = None
-
-        for pred_name, value_expr in target.kwargs or ():
-            value = self._eval_value(value_expr, {})
-            if pred_name == "exactly_selected":
-                if type(value) is not int:
-                    raise KernelError("feasible: exactly_selected must be Int")
-                exactly_selected = value
-            elif pred_name == "pairwise_compatible":
-                if value is not True and value is not False:
-                    raise KernelError("feasible: pairwise_compatible must be Bool")
-                if value:
-                    bound = (
-                        self.host_input.get("pairwise_compatible")
-                        if self.host_input is not None
-                        else None
-                    )
-                    diags = validate_matrix_binding(
-                        "pairwise_compatible", bound, n, dtype=bool
-                    )
-                    if diags:
-                        raise KernelDiagnosticError(diags[0]["code"], diags[0]["message"])
-                    pairwise_matrix = bound
-            elif pred_name == "diversity_at_least":
-                if type(value) not in (int, float) or isinstance(value, bool):
-                    raise KernelError("feasible: diversity_at_least must be a number")
-                bound = (
-                    self.host_input.get("diversity_at_least")
-                    if self.host_input is not None
-                    else None
-                )
-                diags = validate_matrix_binding(
-                    "diversity_at_least", bound, n, dtype=float
-                )
-                if diags:
-                    raise KernelDiagnosticError(diags[0]["code"], diags[0]["message"])
-                diversity_matrix = bound
-                diversity_threshold = float(value)
-            else:
-                raise KernelError(f"feasible: unrecognized predicate `{pred_name}`")
-
-        def predicate(pattern: Any) -> bool:
-            if exactly_selected is not None and sum(pattern) != exactly_selected:
-                return False
-            if pairwise_matrix is not None:
-                for i in range(n):
-                    for j in range(i + 1, n):
-                        if pattern[i] and pattern[j] and not pairwise_matrix[i][j]:
-                            return False
-            if diversity_matrix is not None:
-                pairs = [
-                    (i, j)
-                    for i in range(n)
-                    for j in range(i + 1, n)
-                    if pattern[i] and pattern[j]
-                ]
-                if pairs:
-                    min_div = min(float(diversity_matrix[i][j]) for i, j in pairs)
-                    if min_div < diversity_threshold:
-                        return False
-            return True
-
-        return predicate
-
     def _bind_ket_sum_binder(self, joint: Joint, name: str, expr: KetSumBinder) -> Joint:
         """`Sigma (x In {0,1}^n) { |x> }` (LISS-0420, literal semantics per
         LISS-0422) -- the literal, unnormalized sum $\\sum_{x} |x\\rangle$:
@@ -5189,6 +5101,15 @@ class Evaluator:
                 return assign[expr.name]
             if expr.name in self.scalars:
                 return self.scalars[expr.name]
+            # LISS-0432: a Host-bound `Float[N]…`/`Bool[N]…` coefficient
+            # array (e.g. `C`/`D` in the confirmed S02 step 2 design) used
+            # inside a classical Sigma/ForAll/Min/Set-comprehension body --
+            # the same array store `activity_w`/`selectivity_w` already use
+            # inside an `Operator = Sigma(...) {...}` body, just made
+            # visible from the classical evaluation path too.
+            array_context = self._operator_array_context()
+            if expr.name in array_context:
+                return array_context[expr.name]
             raise KernelError(
                 f"classical Sigma/Pi: unbound name `{expr.name}`"
             )
@@ -5356,7 +5277,11 @@ class Evaluator:
                 "coordinate"
             )
         n = len(sample)
-        matrix = compile_hamiltonian(op_ast, env={}, n_qubits=n)
+        cache_key = (operator_name, n)
+        matrix = self._compiled_operator_cache.get(cache_key)
+        if matrix is None:
+            matrix = compile_hamiltonian(op_ast, env={}, n_qubits=n)
+            self._compiled_operator_cache[cache_key] = matrix
         dim = len(matrix)
         for i in range(dim):
             for j in range(dim):

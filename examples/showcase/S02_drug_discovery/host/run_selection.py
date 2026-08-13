@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Run main_selection.sqx with its required HostInputPort data (LISS-0402).
 
-pairwise_compatible / diversity_at_least matrices are Host-computed
-classical data (ADR 0194) -- the Kernel never sees candidate identity,
-only the finite width n and the terminal selection pattern.
+pairwise_compatible / diversity matrices are Host-computed classical data
+(ADR 0119 coefficient-tensor path, LISS-0432 generalized to Bool dtype)
+-- the Kernel never sees candidate identity, only the finite width n and
+the terminal selection pattern.
 """
 
 from __future__ import annotations
@@ -56,7 +57,7 @@ def main() -> int:
             "seed": 0,
             "inputs": {
                 "pairwise_compatible": pairwise,
-                "diversity_at_least": diversity,
+                "diversity": diversity,
                 "activity_weights": activity_w,
                 "selectivity_weights": selectivity_w,
             },

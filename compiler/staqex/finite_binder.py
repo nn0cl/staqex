@@ -819,16 +819,22 @@ def identity_acting_space_diagnostics(
     return diagnostics
 
 
-def _host_placeholder_keys(unit: CompilationUnit) -> dict[str, tuple[str, tuple[int, ...]]]:
-    """Map local Float name → (host key, declared shape) for `host(\"…\")` binds."""
-    out: dict[str, tuple[str, tuple[int, ...]]] = {}
+def _host_placeholder_keys(
+    unit: CompilationUnit,
+) -> dict[str, tuple[str, tuple[int, ...], str]]:
+    """Map local Float/Bool name → (host key, declared shape, dtype) for
+    `host(\"…\")` binds. LISS-0432: `Bool[N]…` reuses the identical
+    placeholder mechanism `Float[N]…` already had (ADR 0119/LISS-0406),
+    just carrying dtype through so the caller can validate/preserve Bool
+    leaves instead of coercing them to float."""
+    out: dict[str, tuple[str, tuple[int, ...], str]] = {}
     if unit.main is None:
         return out
     for stmt in unit.main.body.stmts:
         if not (
             isinstance(stmt, StateBind)
             and stmt.ty is not None
-            and stmt.ty.name == "Float"
+            and stmt.ty.name in ("Float", "Bool")
             and len(stmt.ty.args) >= 1
             and len(stmt.names) == 1
             and isinstance(stmt.expr, Call)
@@ -851,7 +857,11 @@ def _host_placeholder_keys(unit: CompilationUnit) -> dict[str, tuple[str, tuple[
                 break
             shape.append(dim)
         if ok:
-            out[stmt.names[0]] = (stmt.expr.args[0].value, tuple(shape))
+            out[stmt.names[0]] = (
+                stmt.expr.args[0].value,
+                tuple(shape),
+                stmt.ty.name,
+            )
     return out
 
 
@@ -879,7 +889,7 @@ def merge_host_coefficient_arrays(
                 }
             )
 
-    referenced_keys = {key for key, _shape in placeholders.values()}
+    referenced_keys = {key for key, _shape, _dtype in placeholders.values()}
     for key in sorted(host_keys - referenced_keys):
         if key in literal_names:
             continue  # already reported as HOST_COEFFICIENT_CONFLICT
@@ -890,7 +900,7 @@ def merge_host_coefficient_arrays(
             }
         )
 
-    for local_name, (host_key, shape) in placeholders.items():
+    for local_name, (host_key, shape, _dtype) in placeholders.items():
         tensor = host_tensors.get(host_key)
         if tensor is None:
             diagnostics.append(
