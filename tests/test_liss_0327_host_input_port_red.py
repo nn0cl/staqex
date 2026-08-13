@@ -13,11 +13,6 @@ if str(_REPO) not in sys.path:
 
 from compiler.staqex import host as host_module  # noqa: E402
 from compiler.staqex.host import run_source  # noqa: E402
-from compiler.staqex.host_input_binding import (  # noqa: E402
-    HOST_INPUT_BINDING_MISSING,
-    HOST_INPUT_BINDING_VALUE_ERROR,
-    validate_matrix_binding,
-)
 from compiler.staqex.host_input_port import MappingHostInputAdapter  # noqa: E402
 from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
 
@@ -34,45 +29,6 @@ def test_no_host_input_injected_defaults_to_none() -> None:
     evaluator = Evaluator(seed=0)
 
     assert evaluator.host_input is None
-
-
-def test_valid_symmetric_bool_matrix_passes_validation() -> None:
-    matrix = [
-        [True, True, False],
-        [True, True, True],
-        [False, True, True],
-    ]
-    diagnostics = validate_matrix_binding("m", matrix, 3, dtype=bool)
-
-    assert diagnostics == []
-
-
-def test_missing_binding_fails_closed() -> None:
-    diagnostics = validate_matrix_binding("m", None, 3, dtype=bool)
-
-    codes = {d["code"] for d in diagnostics}
-    assert HOST_INPUT_BINDING_MISSING in codes
-
-
-def test_non_square_matrix_fails_closed() -> None:
-    diagnostics = validate_matrix_binding(
-        "m", [[True, False], [False, True], [True, True]], 3, dtype=bool
-    )
-
-    codes = {d["code"] for d in diagnostics}
-    assert HOST_INPUT_BINDING_VALUE_ERROR in codes
-
-
-def test_asymmetric_matrix_fails_closed() -> None:
-    matrix = [
-        [True, True, False],
-        [False, True, True],
-        [False, True, True],
-    ]
-    diagnostics = validate_matrix_binding("m", matrix, 3, dtype=bool)
-
-    codes = {d["code"] for d in diagnostics}
-    assert HOST_INPUT_BINDING_VALUE_ERROR in codes
 
 
 @contextlib.contextmanager

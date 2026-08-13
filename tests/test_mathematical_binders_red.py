@@ -41,7 +41,7 @@ def test_product_is_not_an_imperative_runtime_loop() -> None:
         """
         package t
         pub fn main() -> Unit {
-            Operator H = Pi (i In Index<4>) {
+            Operator H = Pi (i In 0..4-1) {
                 log(i)
             }
             State<Int> observed = Coin()
@@ -106,7 +106,7 @@ def test_index_type_domain_requires_positive_finite_shape() -> None:
         """
         package t
         pub fn main() -> Unit {
-            Operator H = Sigma (i In Index<0>) { Z[i] }
+            Operator H = Sigma (i In 0..0-1) { Z[i] }
             State<Int> observed = Coin()
             Measure observed
         }

@@ -32,7 +32,7 @@ def test_inclusive_range_resolves_open_chain_to_concrete_pauli_terms() -> None:
     compiled = compile_source(
         _main(
             """
-            Sigma (i In Index<0..2>) {
+            Sigma (i In 0..2) {
                 1.0 * Z[i] * Z[next(i)]
             }
             """
@@ -54,7 +54,7 @@ def test_open_boundary_rejects_next_of_the_last_index() -> None:
     codes = _codes(
         _main(
             """
-            Sigma (i In Index<0..3>) {
+            Sigma (i In 0..3) {
                 1.0 * Z[i] * Z[next(i)]
             }
             """
@@ -68,7 +68,7 @@ def test_reversed_or_empty_inclusive_range_is_a_warning() -> None:
     codes = _codes(
         _main(
             """
-            Sigma (i In Index<2..1>) {
+            Sigma (i In 2..1) {
                 1.0 * Z[i]
             }
             """
@@ -83,7 +83,7 @@ def test_range_beyond_register_shape_is_a_domain_error() -> None:
     codes = _codes(
         _main(
             """
-            Sigma (i In Index<0..4>) {
+            Sigma (i In 0..4) {
                 1.0 * Z[i]
             }
             """
@@ -97,7 +97,7 @@ def test_expansion_budget_is_hard_error_without_truncation() -> None:
     codes = _codes(
         _main(
             """
-            Sigma (i In Index<0..1000000000>) {
+            Sigma (i In 0..1000000000) {
                 1.0 * Z[i]
             }
             """

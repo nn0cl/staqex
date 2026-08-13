@@ -86,6 +86,8 @@ from .ast_nodes import (
     ScientificScopeDecl,
     Span,
     KetSumBinder,
+    NormExpr,
+    SetComprehension,
     SetPowerDomain,
     StateBind,
     StructDecl,
@@ -146,7 +148,7 @@ def _flatten_namespaces(decls: list) -> list:
 # itself: `sum`/`product` binders and the Pauli/hop atoms. An `Operator`
 # bind's factory-call heuristic must never treat these as an ordinary
 # function call, even when immediately followed by `(` (LISS-0051).
-_OPERATOR_DSL_RESERVED_ATOMS = {"Sigma", "Pi", "adjoint", "I", "X", "Y", "Z", "hop"}
+_OPERATOR_DSL_RESERVED_ATOMS = {"Sigma", "Pi", "ForAll", "Min", "adjoint", "I", "X", "Y", "Z", "hop"}
 # Algebra Calls that must parse as expression `Call` under `Operator … =`
 # (LISS-0207): reserved OpDSL atoms would otherwise become `OpCall` and lose
 # qubit domain when rebound through bare `Operator`.
@@ -185,6 +187,12 @@ class Parser:
         }
         # LISS-0073 Slice F: Operator-context `[A, B]` → commutator (not ListExpr).
         self._commutator_bracket_context = False
+        # LISS-0426: depth counter so `_logical_or` doesn't greedily
+        # consume `||...||`'s own closing delimiter as a binary `||` --
+        # a State-typed norm argument never legitimately needs boolean
+        # `||` inside it, so this suppresses binary-`||` matching only
+        # while parsing between an unclosed pair.
+        self._norm_bars_depth = 0
         # ADR 0189: aliases become canonical only after a quantum-state bind;
         # ordinary/type-first names and Dirac paper labels keep source spelling.
         self._scientific_bindings: dict[str, str] = {}
@@ -1400,21 +1408,24 @@ class Parser:
         else:
             raise ParseError(f"expected type name, got `{tok.lexeme}`", tok.line, tok.col)
         args: list[TypeRef] = []
-        # LISS-0143 / LISS-0144: `Float[N]` / `Float[N][M]…` classical tensors
-        if name == "Float" and self._check(TokenKind.LBRACKET):
+        # LISS-0143 / LISS-0144: `Float[N]` / `Float[N][M]…` classical tensors.
+        # LISS-0432: `Bool[N][M]…` reuses the identical dims grammar for the
+        # Host-bound Bool-dtype coefficient arrays the confirmed S02 step 2
+        # design needs (`Bool[8][8] C = host("pairwise_compatible")`).
+        if name in ("Float", "Bool") and self._check(TokenKind.LBRACKET):
             dims: list[TypeRef] = []
             while self._match(TokenKind.LBRACKET):
                 n_tok = self._peek()
                 if n_tok.kind != TokenKind.INT:
                     raise ParseError(
-                        "`Float[N]…` requires positive integer lengths",
+                        f"`{name}[N]…` requires positive integer lengths",
                         n_tok.line,
                         n_tok.col,
                     )
                 self._advance()
                 self._expect(TokenKind.RBRACKET)
                 dims.append(TypeRef(name=str(n_tok.literal)))
-            return TypeRef(name="Float", args=dims)
+            return TypeRef(name=name, args=dims)
         if self._match(TokenKind.LT):
             args.append(self._type_ref())
             if self._match(TokenKind.RANGE):
@@ -2205,18 +2216,37 @@ class Parser:
         return self._pipe()
 
     def _pipe(self):
-        expr = self._logical_or()
+        expr = self._implies()
         while self._match(TokenKind.PIPE_OP):
             sp = self._span()
-            rhs = self._logical_or()
+            rhs = self._implies()
             expr = Pipe(lhs=expr, rhs=rhs, span=sp)
+        return expr
+
+    def _implies(self):
+        """LISS-0425: `A Implies B` for $\\Rightarrow$ -- lower precedence
+        than `&&`/`||` (matching logical implication's usual binding
+        looser than conjunction/disjunction). `->`/`=>` were both already
+        taken (function return types/lambdas; match arms, ADR 0197/
+        LISS-0382) so `Implies` follows this project's own convention of
+        a capitalized English name for a blackboard symbol (`Sigma`,
+        `Pi`, `In`), a contextual keyword like `Sigma`/`Pi` rather than a
+        new reserved token."""
+        expr = self._logical_or()
+        while self._check(TokenKind.IDENT) and self._peek().lexeme == "Implies":
+            self._advance()
+            sp = self._span()
+            rhs = self._logical_or()
+            expr = BinOp(op="Implies", lhs=expr, rhs=rhs, span=sp)
         return expr
 
     def _logical_or(self):
         """ADR 0196: general-expression `||` -- total pushforward, distinct
-        from the Operator-DSL's own `_op_guard` binder-guard `||`."""
+        from the Operator-DSL's own `_op_guard` binder-guard `||`. LISS-0426:
+        suppressed while inside an unclosed `||...||` norm expression, so
+        its own closing delimiter isn't consumed as a binary operator."""
         expr = self._logical_and()
-        while self._match(TokenKind.OR):
+        while self._norm_bars_depth == 0 and self._match(TokenKind.OR):
             sp = self._span()
             rhs = self._logical_and()
             expr = BinOp(op="||", lhs=expr, rhs=rhs, span=sp)
@@ -2473,13 +2503,28 @@ class Parser:
                 self._expect(TokenKind.RPAREN)
             return Vacuum(span=sp)
 
+        if self._match(TokenKind.OR):
+            # LISS-0426: `||state_expr||` -- only reachable here (a
+            # primary-expression position), so this can never collide
+            # with binary `||` (which is only ever consumed between two
+            # already-parsed operands, in `_logical_or`). The depth
+            # counter stops `_logical_or` from swallowing this norm's own
+            # closing `||` as a binary operator.
+            self._norm_bars_depth += 1
+            try:
+                inner = self._expression()
+            finally:
+                self._norm_bars_depth -= 1
+            self._expect(TokenKind.OR)
+            return NormExpr(state=inner, span=sp)
+
         # LISS-0420: `Sigma`/`Pi` reachable from general expression position
         # too (not just the Operator-DSL's own `_op_primary`), so a bare
         # State-typed ket-sum (`Sigma (x In {0,1}^n) { |x> }`) can appear
         # directly in a classical/State expression, e.g. `coeff * Sigma
         # (...) { ... }`. Reuses `_op_binder`, which already dispatches to
         # `KetSumBinder` vs the Operator-DSL `OpBinder` based on domain shape.
-        if self._check(TokenKind.IDENT) and self._peek().lexeme in ("Sigma", "Pi"):
+        if self._check(TokenKind.IDENT) and self._peek().lexeme in ("Sigma", "Pi", "ForAll", "Min"):
             kind = self._peek().lexeme
             self._advance()
             return self._op_binder(kind, sp)
@@ -2537,6 +2582,17 @@ class Parser:
             if nxt is not None and nxt.kind == TokenKind.LET:
                 body = self._evolve_body()
                 return BlockExpr(lets=body.lets, result=body.result, span=body.span)
+            # LISS-0429: `{ x In D : cond1, cond2, ... }` set comprehension
+            # -- disambiguated from `{A, B}` anticommutator / `{0,1}^n` by
+            # a distinctive 2-token lookahead (`{` IDENT `In`), which
+            # neither of those shapes can produce (an anticommutator/
+            # set-power operand is never immediately followed by `In`).
+            if (
+                nxt is not None
+                and nxt.kind == TokenKind.IDENT
+                and self._peek_at_kind(2) == TokenKind.IN_SET
+            ):
+                return self._set_comprehension(sp)
             self._advance()  # LBRACE
             items = self._comma_expr_items(TokenKind.RBRACE)
             # LISS-0417: `{0,1}^n` set-power domain -- disambiguated from
@@ -3061,7 +3117,36 @@ class Parser:
     # --- Operator expressions (Type-First `Operator H = …`) ---
 
     def _op_expression(self):
-        return self._op_comparison()
+        return self._op_implies()
+
+    def _op_guard_list(self):
+        """LISS-0428: comma-separated `where` conditions (implicit AND),
+        matching the equation's own set-builder/subscript convention --
+        e.g. $\\min_{i<j:\\,x_ix_j=1}$ separates "$i<j$" and "$x_ix_j=1$"
+        with nothing but a comma-shaped juxtaposition, never `&&`. Folds
+        into the same `OpBin(op="&&", ...)` shape writing `&&` explicitly
+        already produces, so no evaluator change was needed -- only the
+        parser gained an alternate spelling for conjunction here."""
+        expr = self._op_implies()
+        while self._match(TokenKind.COMMA):
+            sp = self._span()
+            rhs = self._op_implies()
+            expr = OpBin(op="&&", lhs=expr, rhs=rhs, span=sp)
+        return expr
+
+    def _op_implies(self):
+        """LISS-0425: `A Implies B` for $\\Rightarrow$, lowest precedence --
+        available in both binder bodies (classical `ForAll`/`Min`/`Sigma`
+        bodies need it, e.g. `(x[i]*x[j]==1) Implies (C[i][j]==1)`) and
+        `where` guards, since both route through this same entry point
+        now (`_op_expression`/`_op_guard` are unified)."""
+        expr = self._op_guard()
+        while self._check(TokenKind.IDENT) and self._peek().lexeme == "Implies":
+            self._advance()
+            sp = self._span()
+            rhs = self._op_guard()
+            expr = OpBin(op="Implies", lhs=expr, rhs=rhs, span=sp)
+        return expr
 
     def _op_guard(self):
         """Binder `where`: comparisons with `&&` (higher) and `||` (LISS-0145)."""
@@ -3155,6 +3240,15 @@ class Parser:
             expr = self._op_expression()
             self._expect(TokenKind.RPAREN)
             return expr
+        if self._check(TokenKind.KET):
+            # LISS-0430: `|x><x|` (bound-variable projector) inside a
+            # Sigma body over a Set domain -- reuses the same
+            # `_ket_or_outer` desugaring the general expression grammar
+            # already uses (ADR 0169: matching ket/bra labels ->
+            # `projector(Var(...))`), previously unreachable from the
+            # Operator-DSL's own body grammar at all.
+            tok = self._advance()
+            return self._ket_or_outer(tok, sp)
         if self._match(TokenKind.LBRACKET):
             # LISS-0073 Slice F: OpDSL `[A, B]` → commutator (expression Call).
             items = self._comma_op_expr_items(TokenKind.RBRACKET)
@@ -3186,7 +3280,7 @@ class Parser:
         if tok.kind == TokenKind.IDENT:
             name = tok.lexeme
             self._advance()
-            if name in {"Sigma", "Pi"}:
+            if name in {"Sigma", "Pi", "ForAll", "Min"}:
                 return self._op_binder(name, sp)
             if name in {"N", "Q", "P"}:
                 # LISS-0227: parse as OpVar so a local `Operator P = …; return P`
@@ -3305,7 +3399,10 @@ class Parser:
         )
 
     def _binder_domain(self):
-        """Parse a binder domain: Index<…>, rev(…), or named domain."""
+        """Parse a binder domain: `rev(…)`, a bare range `a..b` (LISS-0423:
+        `Index<…>` is retired as a binder-domain spelling -- hard cutover,
+        no back-compat alias, matching how `{0,1}^n` is already written
+        with no wrapper type), `{0,1}^n`, or a named domain."""
         sp = self._span()
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "rev":
             self._advance()
@@ -3314,51 +3411,31 @@ class Parser:
             self._expect(TokenKind.RPAREN)
             return RevDomain(inner=inner, span=sp)
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "Index":
-            self._advance()
-            self._expect(TokenKind.LT)
-            start = self._static_index_endpoint()
-            if self._match(TokenKind.RANGE):
-                end = self._static_index_endpoint()
-                if self._check(TokenKind.GT):
-                    self._advance()
-                elif self._check(TokenKind.GE):
-                    self._advance()
-                else:
-                    t = self._peek()
-                    raise ParseError(
-                        "expected `>` to close Index range", t.line, t.col
-                    )
-                return IndexDomain(start=start, end=end, span=sp)
-            # Index<N> single-arg form → TypeRef for compatibility
-            if not isinstance(start, OpLit):
-                raise ParseError(
-                    "`Index<N>` requires a literal size or use `Index<a..b>`",
-                    sp.line,
-                    sp.col,
-                )
-            args = [TypeRef(name=str(int(start.value)))]
-            while self._match(TokenKind.COMMA):
-                ep = self._static_index_endpoint()
-                if not isinstance(ep, OpLit):
-                    raise ParseError(
-                        "Index type arguments must be literals here",
-                        sp.line,
-                        sp.col,
-                    )
-                args.append(TypeRef(name=str(int(ep.value))))
-            if self._check(TokenKind.GT):
-                self._advance()
-            elif self._check(TokenKind.GE):
-                self._advance()
-            else:
-                t = self._peek()
-                raise ParseError("expected `>` to close type arguments", t.line, t.col)
-            return TypeRef(name="Index", args=args)
+            raise ParseError(
+                "`Index<a..b>` / `Index<N>` are retired as binder-domain "
+                "spellings (LISS-0423) -- write the bare range directly: "
+                "`a..b` for `Index<a..b>`, `0..N-1` for `Index<N>`. Matches "
+                "how `{0,1}^n` is already written with no wrapper type.",
+                sp.line,
+                sp.col,
+                code="BINDER_DOMAIN_INDEX_RETIRED",
+            )
         if self._check(TokenKind.IDENT) and self._peek_at_kind(1) == TokenKind.LT:
             return self._type_ref()
         if self._check(TokenKind.LBRACE):
             return self._set_power_domain()
-        return OpVar(name=self._expect_ident_like(), span=self._span())
+        start = self._static_index_endpoint()
+        if self._match(TokenKind.RANGE):
+            end = self._static_index_endpoint()
+            return IndexDomain(start=start, end=end, span=sp)
+        if isinstance(start, OpVar):
+            return start
+        raise ParseError(
+            "expected `..` to complete a bare-range binder domain "
+            "(e.g. `0..n-1`)",
+            sp.line,
+            sp.col,
+        )
 
     def _set_power_domain(self) -> SetPowerDomain:
         """`{0,1}^n` as a binder domain (LISS-0420) -- mirrors the
@@ -3376,15 +3453,43 @@ class Parser:
         width = self._power()
         return SetPowerDomain(labels=labels, width=width, span=sp)
 
+    def _set_comprehension(self, sp: Span) -> SetComprehension:
+        """`Set F = { x In D : cond1, cond2, ... }` (LISS-0429). Reuses
+        `_binder_domain()` for `D` (so `{0,1}^n` or a bare range both
+        work) and `_op_implies()` for each comma-separated condition --
+        the Operator-DSL expression grammar, which already supports
+        `x[i]` indexing (the general expression grammar does not,
+        confirmed during LISS-0424)."""
+        self._expect(TokenKind.LBRACE)
+        variable = self._expect_ident_like()
+        self._expect(TokenKind.IN_SET)
+        domain = self._binder_domain()
+        self._expect(TokenKind.COLON)
+        conditions = [self._op_implies()]
+        while self._match(TokenKind.COMMA):
+            conditions.append(self._op_implies())
+        self._expect(TokenKind.RBRACE)
+        return SetComprehension(
+            variable=variable, domain=domain, conditions=conditions, span=sp
+        )
+
     def _op_binder(self, kind: str, sp: Span):
         self._expect(TokenKind.LPAREN)
         variable = self._expect_ident_like()
         self._expect(TokenKind.IN_SET)
         domain = self._binder_domain()
-        if isinstance(domain, SetPowerDomain):
+        if kind == "Sigma" and isinstance(domain, SetPowerDomain):
             # LISS-0420: State-typed ket-sum -- `Sigma (x In {0,1}^n) { |x> }`.
             # Single-binding only (matching the target use case); body is
-            # always a bare ket referencing the bound variable.
+            # always a bare ket referencing the bound variable. LISS-0427:
+            # narrowed to `kind == "Sigma"` specifically -- previously any
+            # kind (including `Pi`, and now `ForAll`/`Min`) with a
+            # `{0,1}^n` domain silently became a `KetSumBinder` too (which
+            # doesn't even record `kind`, so it always summed regardless);
+            # a real pre-existing gap, though never exercised (no shipped
+            # `Pi (x In {0,1}^n)` usage existed). `Pi`/`ForAll`/`Min` over
+            # `{0,1}^n` now correctly fall through to the general
+            # multi-binding `OpBinder` path below instead.
             self._expect(TokenKind.RPAREN)
             self._expect(TokenKind.LBRACE)
             ket_tok = self._expect(TokenKind.KET)
@@ -3407,7 +3512,7 @@ class Parser:
         guard = None
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "where":
             self._advance()
-            guard = self._op_guard()
+            guard = self._op_guard_list()
         self._expect(TokenKind.LBRACE)
         body = self._op_expression()
         self._expect(TokenKind.RBRACE)

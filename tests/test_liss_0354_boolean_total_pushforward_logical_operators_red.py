@@ -120,7 +120,7 @@ def test_operator_dsl_binder_guard_and_or_unaffected() -> None:
     src = """
     pub fn main() -> Unit {
         QubitRegister<3> register = system()
-        Operator H = Sigma (i In Index<0..2>, j In Index<0..2>) where i < j && j < 2 {
+        Operator H = Sigma (i In 0..2, j In 0..2) where i < j && j < 2 {
             Z[i] * Z[j]
         }
         State a = |0>

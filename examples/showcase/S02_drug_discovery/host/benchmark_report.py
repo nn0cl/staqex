@@ -80,7 +80,7 @@ def run_shots(shots: int, base_seed: int) -> list[ShotOutcome]:
     host_input = MappingHostInputAdapter(
         {
             "pairwise_compatible": pairwise,
-            "diversity_at_least": diversity,
+            "diversity": diversity,
             "activity_weights": activity_w,
             "selectivity_weights": selectivity_w,
         }

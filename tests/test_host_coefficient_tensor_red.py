@@ -45,7 +45,7 @@ def test_host_placeholder_lowers_with_overlay() -> None:
     pub fn main() -> Unit {
         QubitRegister<2> register = system()
         Float[2][2] h = host("h")
-        Operator H = Sigma (p In Index<0..1>, q In Index<0..1>) {
+        Operator H = Sigma (p In 0..1, q In 0..1) {
             h[p][q] * Z[p] * Z[q]
         }
         State a = |0>
@@ -79,7 +79,7 @@ def test_missing_host_coefficient_is_diagnosed() -> None:
     pub fn main() -> Unit {
         QubitRegister<2> register = system()
         Float[2] J = host("J")
-        Operator H = Sigma (i In Index<0..0>) { J[i] * Z[i] }
+        Operator H = Sigma (i In 0..0) { J[i] * Z[i] }
         State a = |0>
         Measure a
     }

@@ -24,7 +24,7 @@ package t
 pub fn main() -> Unit {
     QubitRegister<3> register = system()
     Float[2] J = [1.0, 0.5]
-    Operator H = Sigma (i In Index<0..1>) {
+    Operator H = Sigma (i In 0..1) {
         J[i] * Z[i] * Z[next(i)]
     }
     State a = |0>
@@ -57,7 +57,7 @@ def test_indexed_coefficient_lowers_in_binder() -> None:
     pub fn main() -> Unit {
         QubitRegister<3> register = system()
         Float[2] J = [1.0, 0.5]
-        Operator H = Sigma (i In Index<0..1>) {
+        Operator H = Sigma (i In 0..1) {
             J[i] * Z[i] * Z[next(i)]
         }
         State a = |0>
@@ -80,7 +80,7 @@ def test_indexed_coefficient_evolve_runs() -> None:
     pub fn main() -> Unit {
         QubitRegister<2> register = system()
         Float[1] J = [1.0]
-        Operator H = Sigma (i In Index<0..0>) {
+        Operator H = Sigma (i In 0..0) {
             J[i] * Z[i] * Z[next(i)]
         }
         State a = |0>

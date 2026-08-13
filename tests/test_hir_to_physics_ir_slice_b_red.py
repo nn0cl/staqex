@@ -64,7 +64,7 @@ def test_binder_extraction_preserves_variables_domain_constraints_and_order() ->
         """
         package t
         pub fn main() -> Unit {
-            Operator H = Sigma (i In Index<4>) { Z[i] }
+            Operator H = Sigma (i In 0..4-1) { Z[i] }
             State<Int> observed = Coin()
             Measure observed
         }

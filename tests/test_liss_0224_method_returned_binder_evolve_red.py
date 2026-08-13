@@ -20,7 +20,7 @@ namespace G {
   pub class L {
     fn init() {}
     pub fn h() -> Operator {
-      Operator H = Sigma (i In Index<0..2>) { 1.0545718e-19 * Z[i] }
+      Operator H = Sigma (i In 0..2) { 1.0545718e-19 * Z[i] }
       return H
     }
   }
@@ -43,7 +43,7 @@ def _top_level_binder_source() -> str:
     return """
 package t
 pub fn main() -> Unit {
-  Operator H = Sigma (i In Index<0..2>) { 1.0545718e-19 * Z[i] }
+  Operator H = Sigma (i In 0..2) { 1.0545718e-19 * Z[i] }
   State a = |+>
   State b = |0>
   State c = |0>

@@ -673,6 +673,64 @@ Issue gives them a concrete scope:
   LISS-0420's own test file was rewritten (not patched) to assert the
   corrected semantics. Final state after LISS-0422: 1511 tests passed;
   spec verification 100.00% (161/161).
+  **Step 2 literal rewrite, 2026-08-13** (PR [#549](https://github.com/nn0cl/staqex/pull/549)):
+  extensive Adjudicator Socratic
+  review of step 2's own equation
+  ($\lvert\psi_{sel}\rangle=P_F\lvert\psi_0\rangle/\lVert
+  P_F\lvert\psi_0\rangle\rVert$, $P_F=\sum_{x\in F}\lvert x\rangle\langle
+  x\rvert$) found the same "opaque native primitive standing in for a
+  blackboard $\Sigma$" problem `prepare_selection(n)` was for step 1 —
+  `project ... onto feasible(exactly_selected=…, pairwise_compatible=…,
+  diversity_at_least=…)`'s closed vocabulary never represented $F$'s own
+  $\forall$/$\min$-based membership predicate or the projector's
+  renormalization as literal source. [ADR 0207](adr/0207-literal-set-builder-projector-transcription.md)
+  (Accepted, superseding [ADR 0192](adr/0192-s02-projector-selection-semantics.md)/
+  [ADR 0194](adr/0194-host-input-port-and-selection-predicate-semantics.md))
+  and [WP-0099](../work-plans/WP-0099-s02-step2-literal-transcription.md)
+  shipped ten new/changed language primitives across eleven Local Issues
+  (LISS-0423–0433): bare-range binder domains retiring `Index<...>`
+  (LISS-0423, hard cutover — corpus impact escalated to the Adjudicator
+  mid-Red when found to affect ~35 files, not just `objective_hamiltonian`
+  as assumed; confirmed proceeding); classical numeric `Sigma`/`Pi`
+  (LISS-0424); `Implies` (LISS-0425); `||State||` norm + `State/Float`
+  division (LISS-0426); `ForAll` (LISS-0427) and `Min` (LISS-0428) binders
+  with comma-separated-AND guards; `Set F = { x In D : cond1, cond2, ... }`
+  comprehension (LISS-0429); `Sigma (x In F) { |x><x| }` over a general
+  `Set` domain with bound-variable projector terms (LISS-0430 — found and
+  fixed a real, previously-dead lexer bug: `|x><x|` had never actually
+  worked anywhere since shipping, since `_can_start_primary` blocked `<`
+  from starting a bra literal immediately after a closed ket); `project`
+  dropping implicit renormalization entirely and accepting a general
+  multi-term Operator (LISS-0431); `feasible(...)` retired outright with
+  `Bool[N]…` Host-bound arrays generalizing the previously Float-only ADR
+  0119 coefficient-tensor path (LISS-0432 — found the batch's own "no new
+  Host contract" claim undersold the real surface: `Bool[N]…` needed four
+  independent, previously-nonexistent pieces wired, and Host-bound arrays
+  had no visibility from classical `ForAll`/`Min`/`Set`-comprehension
+  bodies at all, only `Operator` bodies); and a dedicated baseline
+  distributional-equivalence verification (LISS-0433). `main_selection.sqx`
+  step 2 is now a literal, term-by-term transcription of the confirmed
+  equation. LISS-0432 also found and root-caused a real, significant
+  performance defect while verifying the rewrite end to end: the
+  confirmed design's separate `psi_0`/`psi_sel` names (vs the old
+  program's same-name rebind, which structurally erased the pre-
+  projection coordinate) left `psi_0` lingering in every surviving
+  World's `assign` after `project`, fragmenting step 3's `Evolve` into
+  one Suzuki-Trotter exponential per surviving World (25, at this
+  fixture's $n=8$/$\lvert F\rvert=25$) instead of one batched exponential
+  — confirmed by direct profiling (54s+ → ~5.6s once fixed with an
+  explicit `trace_out(psi_0)`, per ADR 0173's own "no leftovers to trace
+  out" principle; confirmed numerically neutral). LISS-0433 then found a
+  real, non-floating-point discrepancy while verifying against the
+  pre-batch baseline, root-caused to an expected transient inconsistency
+  in the comparison commit itself (LISS-0431 had already stripped
+  `feasible(...)`'s own implicit renormalization there, but
+  `main_selection.sqx` hadn't yet been given an explicit `/ ||...||` for
+  it) rather than a defect in the rewrite — once compared correctly,
+  agreement is floating-point-exact (`1.46e-16`), and the sampled
+  measurement outcome is byte-identical to the pre-batch baseline across
+  ten tested seeds. Final state: 1537 tests passed; spec verification
+  100.00% (161/161); full `.sqx` corpus `staqex check` clean.
 - **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
   [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
   [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the

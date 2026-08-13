@@ -85,33 +85,8 @@ def test_controlled_is_not_lowered_to_mixture() -> None:
     assert "Mixture" not in kinds
 
 
-def test_projector_is_explicitly_lowered_from_selection_constraints() -> None:
-    source = """
-    package s02
-    pub fn main() -> Unit {
-      State candidates = finiteize(0.0, 1.0, 8, 16, 0)
-      State selection = prepare_selection(candidates)
-      State feasible = project selection onto feasible(
-        exactly_selected = 2,
-        pairwise_compatible = true,
-      )
-      Measure feasible
-    }
-    """
-
-    compiled = compile_source(source)
-
-    assert compiled.ok, compiled.diagnostics
-    assert compiled.quantum_semantic_ir is not None
-    assert any(
-        type(region).__name__ == "ProjectorRegion"
-        for region in compiled.quantum_semantic_ir.regions
-    )
-
-
 if __name__ == "__main__":
     test_removed_when_fails_without_mix_fallback()
     test_mix_is_the_state_valued_non_collapsing_surface()
     test_controlled_is_not_lowered_to_mixture()
-    test_projector_is_explicitly_lowered_from_selection_constraints()
     print("RED — S02 selection surface")

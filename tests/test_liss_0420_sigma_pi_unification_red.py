@@ -106,7 +106,7 @@ def test_operator_sigma_binder_still_works_with_In() -> None:
     package t
     pub fn main() -> Unit {
         Energy scale = 1.0.eV to J
-        Operator H_raw = Sigma (i In Index<0..1>) { Z[i] }
+        Operator H_raw = Sigma (i In 0..1) { Z[i] }
         Operator H = scale * H_raw
         State (a, b) = (|0>, |0>)
         State (a, b) = Evolve { (a, b) under H for 0.1.fs }.run()
@@ -124,7 +124,7 @@ def test_operator_pi_binder_still_works() -> None:
     package t
     pub fn main() -> Unit {
         Energy scale = 1.0.eV to J
-        Operator H_raw = Pi (i In Index<0..1>) { Z[i] }
+        Operator H_raw = Pi (i In 0..1) { Z[i] }
         Operator H = scale * H_raw
         State (a, b) = (|0>, |0>)
         State (a, b) = Evolve { (a, b) under H for 0.1.fs }.run()
@@ -142,7 +142,7 @@ def test_multi_binding_operator_sigma_with_guard_still_works() -> None:
     package t
     pub fn main() -> Unit {
         Energy scale = 1.0.eV to J
-        Operator H_raw = Sigma (i In Index<0..2>, j In Index<0..2>) where i < j {
+        Operator H_raw = Sigma (i In 0..2, j In 0..2) where i < j {
             Z[i] * Z[j]
         }
         Operator H = scale * H_raw

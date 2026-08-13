@@ -50,6 +50,8 @@ from ..ast_nodes import (
     MatchStmt,
     Measure,
     MeasureExpr,
+    NormExpr,
+    SetComprehension,
     OpBin,
     OpHop,
     OpLit,
@@ -280,9 +282,12 @@ class Evaluator:
 
     def _resolve_host_coefficient_arrays(self, unit: CompilationUnit) -> dict[str, Any]:
         """Wire HostInputPort into the ADR 0119 coefficient-tensor path
-        (LISS-0406): resolve every `Float[N]... = host("key")` placeholder
-        the source itself declares against `self.host_input`, fail closed
-        on anything missing or malformed."""
+        (LISS-0406): resolve every `Float[N]...`/`Bool[N]... = host("key")`
+        placeholder the source itself declares against `self.host_input`,
+        fail closed on anything missing or malformed. LISS-0432: dtype now
+        threads through to `CoefficientTensor` so a `Bool[N]…` array (e.g.
+        the confirmed S02 step 2 design's `pairwise_compatible`) round-trips
+        as `bool`, not silently coerced to `float`."""
         from ..finite_binder import _host_placeholder_keys, merge_host_coefficient_arrays
         from ..scientific_input import (
             CoefficientTensor,
@@ -294,7 +299,7 @@ class Evaluator:
         if not placeholders:
             return {}
         host_tensors: dict[str, Any] = {}
-        for _local_name, (host_key, shape) in placeholders.items():
+        for _local_name, (host_key, shape, dtype) in placeholders.items():
             if host_key in host_tensors:
                 continue
             raw = self.host_input.get(host_key) if self.host_input is not None else None
@@ -308,6 +313,7 @@ class Evaluator:
                     provenance=InputProvenance(
                         source_formula="HostInputPort", input_id=host_key
                     ),
+                    dtype=dtype,
                 )
             except ScientificInputValidationError as error:
                 raise KernelDiagnosticError(error.code, str(error)) from error
@@ -347,6 +353,13 @@ class Evaluator:
         self.operators = {
             alias: GridHamiltonianRef(alias) for alias in self.grid_hamiltonians
         }
+        # LISS-0432: `self.operators[name]` never rebinds mid-run, so a
+        # `project ... onto P` target compiled once via `compile_hamiltonian`
+        # (e.g. LISS-0430's P_F) is safe to reuse for every later `project`
+        # against the same name/width within this Evaluator instance --
+        # avoids literally recompiling the identical matrix a second time
+        # for the confirmed design's own `X / ||X||` literal repetition.
+        self._compiled_operator_cache: dict[tuple[str, int], Any] = {}
         from ..finite_binder import lower_finite_binder_operators
 
         host_arrays = self._resolve_host_coefficient_arrays(unit)
@@ -464,12 +477,13 @@ class Evaluator:
                     continue
                 if (
                     stmt.ty is not None
-                    and stmt.ty.name == "Float"
+                    and stmt.ty.name in ("Float", "Bool")
                     and len(stmt.ty.args) >= 1
                 ):
-                    # LISS-0406: `Float[N]…` coefficient-tensor declarations
-                    # (ADR 0119, literal or `host("key")`-sourced) are
-                    # compile-time coefficient data consumed only via the
+                    # LISS-0406/LISS-0432: `Float[N]…`/`Bool[N]…`
+                    # coefficient-tensor declarations (ADR 0119, literal or
+                    # `host("key")`-sourced) are compile-time coefficient
+                    # data consumed only via the
                     # Operator sum-binder lowering above (host_arrays) --
                     # they have no live Joint/scalar role.
                     continue
@@ -2487,6 +2501,30 @@ class Evaluator:
             return self._bind_ket(joint, name, expr)
         if isinstance(expr, KetSumBinder):
             return self._bind_ket_sum_binder(joint, name, expr)
+        if isinstance(expr, NormExpr):
+            # LISS-0426: `Float n = ||state_expr||` as a top-level bind
+            # (as opposed to the `<state> / ||<state>||` division case,
+            # handled separately below since that needs the numerator's
+            # own bind too).
+            norm = self._compute_norm(joint, expr.state)
+            return joint.bind_const(name, norm)
+        if isinstance(expr, SetComprehension):
+            # LISS-0429: `Set F = { x In D : cond1, cond2, ... }` -- a
+            # pure classical computation (the comprehension's own bound
+            # variable ranges over `D`, never a per-World assign value),
+            # so it needs no Joint access beyond the uniform `bind_const`
+            # wrapper every World shares.
+            elements = self._eval_set_comprehension(expr, {})
+            return joint.bind_const(name, elements)
+        if isinstance(expr, OpBinder):
+            # LISS-0424: an OpBinder reaching general `_bind` (as opposed
+            # to the separate `Operator H = ...` statement-level dispatch,
+            # which never calls `_bind` at all) means the surrounding
+            # declared type is non-Operator -- a classical numeric
+            # Sigma/Pi, e.g. `Int total = Sigma (i In 0..n-1) { x[i] }`.
+            return joint.bind_pushforward(
+                name, lambda a: self._eval_classical_op_binder(expr, a)
+            )
         if isinstance(expr, Dirac):
             if self._is_closed(expr.arg):
                 return joint.bind_const(name, self._eval_value(expr.arg, {}))
@@ -2513,6 +2551,15 @@ class Evaluator:
                 state_expr = expr.lhs if lhs_state else expr.rhs
                 scalar_expr = expr.rhs if lhs_state else expr.lhs
                 return self._bind_scaled_state(joint, name, state_expr, scalar_expr)
+        if isinstance(expr, BinOp) and expr.op == "/" and isinstance(expr.rhs, NormExpr):
+            # LISS-0426: `<state-expr> / ||<state-expr>||` -- the literal
+            # transcription of X/||X||. Binds the numerator's own
+            # sub-expression (whatever shape `_bind` already knows how to
+            # handle, e.g. a `project(...)` Call), computes the norm's
+            # inner expression as its own independent bind (matching the
+            # equation's own literal repetition of the numerator inside
+            # the norm bars), and divides every amplitude by that norm.
+            return self._bind_state_divided_by_norm(joint, name, expr.lhs, expr.rhs)
         if isinstance(expr, BinOp):
             return joint.bind_pushforward(name, lambda a: self._eval_value(expr, a))
         if isinstance(expr, Attr):
@@ -3199,7 +3246,11 @@ class Evaluator:
         return False
 
     def _resolve_operator_expr(
-        self, expr: Any, *, objects: Mapping[str, Any] | None = None
+        self,
+        expr: Any,
+        *,
+        objects: Mapping[str, Any] | None = None,
+        extra_arrays: Mapping[str, Any] | None = None,
     ) -> Any:
         """Resolve an explicit Operator value/factory without leaking locals.
 
@@ -3209,6 +3260,12 @@ class Evaluator:
         `attr_objects` here for a factory function's own local `Operator`
         binds, so `c.defect` resolves against the callee's parameter `c`,
         not a same-named (or absent) module-level object.
+        `extra_arrays` (LISS-0434): a factory's own param-name-rekeyed
+        `Float[N]…` arrays -- needed here (not only in the caller's later
+        `_materialize_op` pass) once a scalar-parameterized binder domain
+        (e.g. `Sigma (i In 0..n-1)` where `n` is this call's own scalar
+        parameter) makes this same call eagerly lower the binder's body
+        too, instead of leaving it for the deferred pass.
         """
         if isinstance(expr, OpVar) and expr.name in self.grid_hamiltonians:
             return GridHamiltonianRef(expr.name)
@@ -3225,7 +3282,9 @@ class Evaluator:
         # LISS-0139: Operator H = recv.method(…)
         if isinstance(expr, Call) and isinstance(expr.callee, Attr):
             return self._resolve_operator_method_call(expr)
-        return self._lower_operator_value(expr, objects=objects)
+        return self._lower_operator_value(
+            expr, objects=objects, extra_arrays=extra_arrays
+        )
 
     def _operator_array_context(self) -> dict[str, Any]:
         """Merged Float[N]… coefficient arrays (literal + Host-resolved,
@@ -3330,6 +3389,19 @@ class Evaluator:
                 return expr
             return OpPow(base=new_base, exp=expr.exp, span=expr.span)
         if isinstance(expr, OpBinder):
+            # LISS-0430: `Sigma (x In F) { |x><x| }` -- F is a named `Set`
+            # variable, not an Index/{0,1}^n domain, so the static
+            # `_lower_operator_expr` pass (bounded-integer-range only)
+            # cannot resolve it and already skips it (ValueError, caught
+            # upstream in `lower_finite_binder_operators`). Resolved here
+            # instead, where F's already-computed value is reachable.
+            if expr.kind == "Sigma" and isinstance(expr.domain, OpVar):
+                looked_up = self._lookup_set_comprehension_value(expr.domain.name)
+                if looked_up is not None:
+                    set_value, domain_width = looked_up
+                    return self._build_projector_sum_operator(
+                        set_value, expr.variable, expr.body, domain_width
+                    )
             unit = getattr(self, "_unit", None)
             if unit is None:
                 return expr
@@ -3343,6 +3415,114 @@ class Evaluator:
             except (IndexError, ValueError) as exc:
                 raise KernelError(f"cannot lower Operator binder: {exc}") from exc
         return expr
+
+    def _lookup_set_comprehension_value(
+        self, name: str
+    ) -> tuple[tuple[Any, ...], int] | None:
+        """LISS-0430: find `name`'s defining `Set name = { ... }` statement
+        in `main()` and re-evaluate its comprehension directly. Set
+        comprehensions are pure/deterministic (LISS-0429's own bound
+        variable never touches per-World data), so re-evaluating here --
+        rather than threading the live `Joint` through the whole Operator-
+        resolution call chain just to read one already-computed,
+        world-independent value back out of it -- gives the identical
+        answer with far less invasive plumbing. Also returns the domain's
+        own `n` (needed to materialize the empty-`F` identity below, since
+        an empty `elements` tuple carries no pattern to infer it from)."""
+        from ..ast_nodes import SetPowerDomain
+
+        unit = getattr(self, "_unit", None)
+        if unit is None or unit.main is None:
+            return None
+        for stmt in unit.main.body.stmts:
+            if (
+                isinstance(stmt, StateBind)
+                and stmt.names == [name]
+                and stmt.ty is not None
+                and stmt.ty.name == "Set"
+                and isinstance(stmt.expr, SetComprehension)
+            ):
+                elements = self._eval_set_comprehension(stmt.expr, {})
+                domain = stmt.expr.domain
+                width = (
+                    int(self._eval_value(domain.width, {}))
+                    if isinstance(domain, SetPowerDomain)
+                    else 0
+                )
+                return elements, width
+        return None
+
+    def _build_projector_sum_operator(
+        self,
+        elements: tuple[Any, ...],
+        bound_variable: str,
+        body: Any,
+        domain_width: int,
+    ) -> Any:
+        """$P_F=\\sum_{x\\in F}\\lvert x\\rangle\\langle x\\rvert$ (LISS-0430)
+        -- `body` must be exactly `|<bound_variable>><<bound_variable>|`
+        (parser-verified shape, matching `KetSumBinder`'s own body
+        restriction), desugared by `_ket_or_outer`/ADR 0169 to
+        `projector(Var(bound_variable))`. For each concrete `x` in
+        `elements`, lowers $\\lvert x\\rangle\\langle x\\rvert$ via the
+        standard Pauli-Z identity
+        $\\bigotimes_i\\frac{I+(-1)^{x_i}Z_i}{2}$ as a literal `OpBin`
+        product tree -- deliberately NOT manually expanded into a flat
+        Pauli-string sum; `hamiltonian.py`'s existing matrix compiler
+        already reduces arbitrary `OpBin(+)/OpBin(*)/OpPauli` trees to a
+        matrix (proven by the already-shipped `objective_hamiltonian`'s
+        own `Z[i] * Z[j]` coupling term), so the tensor-product structure
+        is left for that existing, tested path to resolve, not
+        reimplemented here."""
+        if not (
+            isinstance(body, Call)
+            and isinstance(body.callee, Var)
+            and body.callee.name == "projector"
+            and len(body.args) == 1
+            and isinstance(body.args[0], Var)
+            and body.args[0].name == bound_variable
+        ):
+            raise KernelError(
+                "Sigma (x In F) { ... } over a Set domain requires the "
+                "body to be exactly `|x><x|` (the bound variable's own "
+                "projector)"
+            )
+        if not elements:
+            return OpIdentity(
+                kind="Sigma", acting_space=domain_width, span=body.span
+            )
+        terms: list[Any] = []
+        for pattern in elements:
+            n = len(pattern)
+            factors = []
+            for i in range(n):
+                sign = -1.0 if pattern[i] else 1.0
+                z_term: Any = OpPauli(kind="Z", site=i, span=body.span)
+                if sign < 0:
+                    z_term = OpBin(
+                        op="*", lhs=OpLit(value=-1.0, span=body.span),
+                        rhs=z_term, span=body.span,
+                    )
+                factor = OpBin(
+                    op="*",
+                    lhs=OpLit(value=0.5, span=body.span),
+                    rhs=OpBin(
+                        op="+",
+                        lhs=OpPauli(kind="I", site=i, span=body.span),
+                        rhs=z_term,
+                        span=body.span,
+                    ),
+                    span=body.span,
+                )
+                factors.append(factor)
+            product = factors[0]
+            for factor in factors[1:]:
+                product = OpBin(op="*", lhs=product, rhs=factor, span=body.span)
+            terms.append(product)
+        result = terms[0]
+        for term in terms[1:]:
+            result = OpBin(op="+", lhs=result, rhs=term, span=body.span)
+        return result
 
     def _lower_operator_value(
         self,
@@ -3412,7 +3592,7 @@ class Evaluator:
         attr_objects: dict[str, Any] = dict(self.objects)
         attr_objects.update(local_objects)
 
-        def _materialize_op(raw: Any) -> Any:
+        def _fold_scalars_and_attrs(raw: Any) -> Any:
             folded = materialize_op_scalar_vars(
                 raw,
                 local_scalars,
@@ -3424,6 +3604,10 @@ class Evaluator:
                 )
             except OpAttrElaborationError as exc:
                 raise KernelError(str(exc)) from exc
+            return folded
+
+        def _materialize_op(raw: Any) -> Any:
+            folded = _fold_scalars_and_attrs(raw)
             return self._lower_operator_value(folded, extra_arrays=local_arrays)
 
         for stmt in fun.body.stmts:
@@ -3434,7 +3618,22 @@ class Evaluator:
                 # object scope (attr_objects), not module-level
                 # self.objects -- a factory-local `Operator H = c.field *
                 # ...` must see the callee's own parameter `c`.
-                raw = self._resolve_operator_expr(stmt.expr, objects=attr_objects)
+                # LISS-0434: fold this call's own scalar params/struct
+                # attrs (e.g. a width `n` used as a Sigma binder's own
+                # `0..n-1` range bound, or `w.activity` as a per-term
+                # coefficient inside the binder body, not just as an
+                # already-built Operator's outer scale) BEFORE resolving
+                # -- `_resolve_operator_expr` eagerly lowers the whole
+                # binder (domain and body) in one static pass, which fails
+                # closed on an unresolved name/OpAttr rather than
+                # deferring; substituting first, the same way `body`/
+                # `guard` are already substituted by `_map_op_tree`, avoids
+                # that instead of only folding the (already-crashed)
+                # result afterward.
+                pre_folded = _fold_scalars_and_attrs(stmt.expr)
+                raw = self._resolve_operator_expr(
+                    pre_folded, objects=attr_objects, extra_arrays=local_arrays
+                )
                 local_ops[stmt.names[0]] = _materialize_op(raw)
                 continue
             if (
@@ -4491,29 +4690,18 @@ class Evaluator:
                     "projector |k⟩⟨k|, not a classical filter. "
                     "Write project(psi, 0) or project(psi, |0>)."
                 )
-            if (
-                isinstance(target, Call)
-                and isinstance(target.callee, Var)
-                and target.callee.name == "feasible"
-            ):
-                # ADR 0192/0194: closed-vocabulary structural predicate set,
-                # not an arbitrary classical Lambda -- distinct from the
-                # PREDICATE_PROJECTOR_ERROR case above.
-                sample = next(
-                    (
-                        world.assign.get(src_expr.name)
-                        for world in joint.worlds
-                        if isinstance(world.assign.get(src_expr.name), tuple)
-                    ),
-                    None,
+            if isinstance(target, Var) and target.name in self.operators:
+                # LISS-0431: `project psi onto P_F` -- a general (possibly
+                # multi-term) Operator, e.g. LISS-0430's literal
+                # $P_F=\sum_{x\in F}\lvert x\rangle\langle x\rvert$. Diagonal
+                # projectors only for now (the confirmed target design
+                # never needs anything else); scales each World's
+                # amplitude by sqrt of the projector's diagonal entry at
+                # that World's own coordinate value, matching
+                # `bind_split`'s own probability->amplitude convention.
+                projected = self._project_onto_operator(
+                    joint, src_expr.name, target.name
                 )
-                if sample is None:
-                    raise KernelError(
-                        "project ... onto feasible(...) requires a "
-                        "tuple-valued selection state (from prepare_selection)"
-                    )
-                predicate = self._bind_feasible_predicate(target, len(sample))
-                projected = joint.project_coord(src_expr.name, predicate)
             else:
                 if isinstance(target, KetLit):
                     bits = target.label
@@ -4531,24 +4719,13 @@ class Evaluator:
                 projected = joint.project_coord(src_expr.name, lambda v, lab=label: v == lab)
             if projected.is_vacuum():
                 return Joint.empty()
-            # Renormalize after Lüders projection
-            from .joint import World, _coalesce
-
-            total = sum(abs(w.amp) ** 2 for w in projected.worlds)
-            if total <= EPS:
-                return Joint.empty()
-            scale = 1.0 / cmath.sqrt(total)
-            out = [
-                World(
-                    assign=dict(w.assign),
-                    amp=w.amp * scale,
-                    coord_phase=dict(w.coord_phase),
-                )
-                for w in projected.worlds
-            ]
-            return Joint(worlds=_coalesce(out)).bind_pushforward(
-                name, lambda a: a[src_expr.name]
-            )
+            # LISS-0431: `project` no longer renormalizes -- the result is
+            # the literal, generally-unnormalized $P\lvert\psi\rangle$;
+            # explicit renormalization is written at the call site via
+            # `/ ||...||` (LISS-0426), matching the equation's own
+            # separate $/\lVert\cdot\rVert$ factor instead of folding it
+            # silently into every `project`.
+            return projected.bind_pushforward(name, lambda a: a[src_expr.name])
 
         if op == "interfer":
             if not expr.args:
@@ -4840,83 +5017,6 @@ class Evaluator:
 
         raise KernelError(f"unknown function `{op}`")
 
-    def _bind_feasible_predicate(
-        self, target: Call, n: int
-    ) -> Callable[[Any], bool]:
-        """Build a combined selection-pattern predicate from a
-        `feasible(...)` Call's kwargs (ADR 0192 closed vocabulary; ADR 0194
-        Host-input-backed `pairwise_compatible`/`diversity_at_least`).
-        Validates any required Host input once, eagerly -- fail-closed,
-        never a silent pass."""
-        from ..host_input_binding import validate_matrix_binding
-
-        exactly_selected: int | None = None
-        pairwise_matrix: Any = None
-        diversity_matrix: Any = None
-        diversity_threshold: float | None = None
-
-        for pred_name, value_expr in target.kwargs or ():
-            value = self._eval_value(value_expr, {})
-            if pred_name == "exactly_selected":
-                if type(value) is not int:
-                    raise KernelError("feasible: exactly_selected must be Int")
-                exactly_selected = value
-            elif pred_name == "pairwise_compatible":
-                if value is not True and value is not False:
-                    raise KernelError("feasible: pairwise_compatible must be Bool")
-                if value:
-                    bound = (
-                        self.host_input.get("pairwise_compatible")
-                        if self.host_input is not None
-                        else None
-                    )
-                    diags = validate_matrix_binding(
-                        "pairwise_compatible", bound, n, dtype=bool
-                    )
-                    if diags:
-                        raise KernelDiagnosticError(diags[0]["code"], diags[0]["message"])
-                    pairwise_matrix = bound
-            elif pred_name == "diversity_at_least":
-                if type(value) not in (int, float) or isinstance(value, bool):
-                    raise KernelError("feasible: diversity_at_least must be a number")
-                bound = (
-                    self.host_input.get("diversity_at_least")
-                    if self.host_input is not None
-                    else None
-                )
-                diags = validate_matrix_binding(
-                    "diversity_at_least", bound, n, dtype=float
-                )
-                if diags:
-                    raise KernelDiagnosticError(diags[0]["code"], diags[0]["message"])
-                diversity_matrix = bound
-                diversity_threshold = float(value)
-            else:
-                raise KernelError(f"feasible: unrecognized predicate `{pred_name}`")
-
-        def predicate(pattern: Any) -> bool:
-            if exactly_selected is not None and sum(pattern) != exactly_selected:
-                return False
-            if pairwise_matrix is not None:
-                for i in range(n):
-                    for j in range(i + 1, n):
-                        if pattern[i] and pattern[j] and not pairwise_matrix[i][j]:
-                            return False
-            if diversity_matrix is not None:
-                pairs = [
-                    (i, j)
-                    for i in range(n)
-                    for j in range(i + 1, n)
-                    if pattern[i] and pattern[j]
-                ]
-                if pairs:
-                    min_div = min(float(diversity_matrix[i][j]) for i, j in pairs)
-                    if min_div < diversity_threshold:
-                        return False
-            return True
-
-        return predicate
-
     def _bind_ket_sum_binder(self, joint: Joint, name: str, expr: KetSumBinder) -> Joint:
         """`Sigma (x In {0,1}^n) { |x> }` (LISS-0420, literal semantics per
         LISS-0422) -- the literal, unnormalized sum $\\sum_{x} |x\\rangle$:
@@ -4944,6 +5044,150 @@ class Evaluator:
         labels = tuple(expr.domain.labels)
         patterns = list(itertools.product(labels, repeat=n))
         return joint.bind_split(name, {pattern: 1.0 for pattern in patterns})
+
+    def _eval_classical_op_binder(self, expr: "OpBinder", assign: dict[str, Any]) -> Any:
+        """LISS-0424/0427: classical numeric `Sigma`/`Pi` and the Bool-
+        valued `ForAll` -- alongside the existing Operator-typed
+        (`OpBinder` reached via the separate `Operator H = ...` statement
+        dispatch) and State-typed (`KetSumBinder`) forms. Folds the body
+        with `+` (Sigma), `*` (Pi), or logical AND with early exit
+        (ForAll) over a bare-range `IndexDomain` (LISS-0423), evaluating
+        the body/guard as plain classical expressions -- reuses the
+        Operator-DSL's existing `OpIndexed`/`OpBin`/`OpVar`/`OpLit`
+        grammar (already proven for classical array-indexed coefficients
+        like `activity_w[i] * Z[i]`) rather than requiring new general-
+        expression array-index syntax. Handles multi-binding
+        (`Sigma (i In D1, j In D2) where ... {...}`) by recursing into a
+        nested `OpBinder` body, matching how the parser itself nests
+        multi-binding binders (`parser.py::_op_binder`)."""
+        from ..ast_nodes import IndexDomain, RevDomain
+
+        domain = expr.domain
+        descending = False
+        while isinstance(domain, RevDomain):
+            descending = not descending
+            domain = domain.inner
+        if not isinstance(domain, IndexDomain):
+            raise KernelError(
+                "classical Sigma/Pi/ForAll requires a bare-range binder "
+                "domain (e.g. `0..n-1`), not an Operator/State-shaped domain"
+            )
+        start = int(self._eval_op_expr_classical(domain.start, assign))
+        end = int(self._eval_op_expr_classical(domain.end, assign))
+        indices = list(range(start, end + 1)) if end >= start else []
+        if descending:
+            indices.reverse()
+        if expr.kind == "Sigma":
+            acc: Any = 0
+        elif expr.kind == "Pi":
+            acc = 1
+        elif expr.kind == "ForAll":
+            acc = True
+        else:  # Min
+            # LISS-0428: min over an empty guarded domain is +infinity --
+            # the standard identity element for min-as-a-fold (matching
+            # sum's 0 / product's 1), and it reproduces the original
+            # `_bind_feasible_predicate`/`host/scoring.py::is_feasible`
+            # Python behavior exactly: "if pairs and min(...) < threshold"
+            # skips the diversity check entirely (vacuously satisfied)
+            # when no pair is selected -- `+inf >= theta` is always True,
+            # the same vacuous pass.
+            acc = float("inf")
+        for i in indices:
+            local = dict(assign)
+            local[expr.variable] = i
+            if expr.guard is not None and not bool(
+                self._eval_op_expr_classical(expr.guard, local)
+            ):
+                continue
+            if isinstance(expr.body, OpBinder):
+                term = self._eval_classical_op_binder(expr.body, local)
+            else:
+                term = self._eval_op_expr_classical(expr.body, local)
+            if expr.kind == "Sigma":
+                acc = acc + term
+            elif expr.kind == "Pi":
+                acc = acc * term
+            elif expr.kind == "ForAll":
+                acc = acc and bool(term)
+                if not acc:  # short-circuit on the first False
+                    break
+            else:  # Min
+                acc = term if term < acc else acc
+        return acc
+
+    def _eval_op_expr_classical(self, expr: Any, assign: dict[str, Any]) -> Any:
+        """Evaluate an Operator-DSL `OpExpr` node as a plain classical
+        value (LISS-0424) -- rejects genuine Operator/Pauli atoms with a
+        clear error, since those belong in an Operator-typed Sigma/Pi."""
+        if isinstance(expr, OpBinder):
+            # LISS-0429: a nested Sigma/Pi/ForAll/Min used as part of a
+            # larger classical expression, e.g. `Sigma (...) {...} == 3`
+            # as one condition inside a Set comprehension's list.
+            return self._eval_classical_op_binder(expr, assign)
+        if isinstance(expr, OpLit):
+            return expr.value
+        if isinstance(expr, OpVar):
+            if expr.name in assign:
+                return assign[expr.name]
+            if expr.name in self.scalars:
+                return self.scalars[expr.name]
+            # LISS-0432: a Host-bound `Float[N]…`/`Bool[N]…` coefficient
+            # array (e.g. `C`/`D` in the confirmed S02 step 2 design) used
+            # inside a classical Sigma/ForAll/Min/Set-comprehension body --
+            # the same array store `activity_w`/`selectivity_w` already use
+            # inside an `Operator = Sigma(...) {...}` body, just made
+            # visible from the classical evaluation path too.
+            array_context = self._operator_array_context()
+            if expr.name in array_context:
+                return array_context[expr.name]
+            raise KernelError(
+                f"classical Sigma/Pi: unbound name `{expr.name}`"
+            )
+        if isinstance(expr, OpIndexed):
+            base = self._eval_op_expr_classical(expr.base, assign)
+            index = int(self._eval_op_expr_classical(expr.index, assign))
+            try:
+                return base[index]
+            except (TypeError, IndexError, KeyError) as e:
+                raise KernelError(
+                    f"classical Sigma/Pi: index {index} out of range"
+                ) from e
+        if isinstance(expr, OpPow):
+            base = self._eval_op_expr_classical(expr.base, assign)
+            return base ** expr.exp
+        if isinstance(expr, OpBin):
+            if expr.op in ("&&", "||"):
+                lhs = bool(self._eval_op_expr_classical(expr.lhs, assign))
+                rhs = bool(self._eval_op_expr_classical(expr.rhs, assign))
+                return (lhs and rhs) if expr.op == "&&" else (lhs or rhs)
+            if expr.op == "Implies":
+                lhs = bool(self._eval_op_expr_classical(expr.lhs, assign))
+                rhs = bool(self._eval_op_expr_classical(expr.rhs, assign))
+                return (not lhs) or rhs
+            lhs = self._eval_op_expr_classical(expr.lhs, assign)
+            rhs = self._eval_op_expr_classical(expr.rhs, assign)
+            ops: dict[str, Any] = {
+                "+": lambda a, b: a + b,
+                "-": lambda a, b: a - b,
+                "*": lambda a, b: a * b,
+                "<": lambda a, b: a < b,
+                "<=": lambda a, b: a <= b,
+                ">": lambda a, b: a > b,
+                ">=": lambda a, b: a >= b,
+                "==": lambda a, b: a == b,
+                "!=": lambda a, b: a != b,
+            }
+            if expr.op not in ops:
+                raise KernelError(
+                    f"classical Sigma/Pi: unsupported operator `{expr.op}`"
+                )
+            return ops[expr.op](lhs, rhs)
+        raise KernelError(
+            f"classical Sigma/Pi body contains a non-classical term "
+            f"({type(expr).__name__}) -- Operator/Pauli atoms belong in "
+            "an Operator-typed Sigma/Pi, not a classical one"
+        )
 
     def _is_state_producing_bind_expr(self, expr: Expr) -> bool:
         """LISS-0420 (coefficient semantics corrected by LISS-0422): does
@@ -4988,6 +5232,157 @@ class Evaluator:
                 World(assign=assign, amp=w.amp * scale, coord_phase=dict(w.coord_phase))
             )
         return Joint(worlds=_coalesce(out))
+
+    def _bind_state_divided_by_norm(
+        self, joint: Joint, name: str, state_expr: Expr, norm_expr: NormExpr
+    ) -> Joint:
+        """`<state_expr> / ||<state_expr's own repetition>||` (LISS-0426) --
+        the literal transcription of
+        $P_F\\lvert\\psi_0\\rangle/\\lVert P_F\\lvert\\psi_0\\rangle\\rVert$.
+        Binds the numerator independently from the norm's own inner
+        expression (two separate `_bind` calls, matching the equation's
+        own literal repetition rather than trying to cleverly reuse one
+        computation), then scales every numerator world's amplitude by
+        `1/norm`. `project`'s own renormalization was removed in LISS-0431
+        specifically so this division is what performs it -- doing it here
+        too would double-normalize."""
+        from .joint import World, _coalesce
+
+        temp = f"__div_tmp_{id(state_expr)}"
+        sub = self._bind(joint, temp, state_expr)
+        norm = self._compute_norm(joint, norm_expr.state)
+
+        out: list[World] = []
+        for w in sub.worlds:
+            assign = {k: v for k, v in w.assign.items() if k != temp}
+            assign[name] = w.assign[temp]
+            out.append(
+                World(assign=assign, amp=w.amp / norm, coord_phase=dict(w.coord_phase))
+            )
+        return Joint(worlds=_coalesce(out))
+
+    def _compute_norm(self, joint: Joint, state_expr: Expr) -> float:
+        """$\\lVert\\text{state\\_expr}\\rVert = \\sqrt{\\sum_x\\lvert c_x\\rvert^2}$
+        (LISS-0426) -- binds `state_expr` as its own independent
+        sub-computation and sums squared amplitudes across every
+        resulting world."""
+        temp = f"__norm_tmp_{id(state_expr)}"
+        sub = self._bind(joint, temp, state_expr)
+        total = sum(abs(w.amp) ** 2 for w in sub.worlds)
+        if total <= EPS:
+            raise KernelError("||...|| of a zero-norm (vacuum) state")
+        return total**0.5
+
+    def _project_onto_operator(
+        self, joint: Joint, coord_name: str, operator_name: str
+    ) -> Joint:
+        """`project psi onto P` where `P` is a general (multi-term)
+        Operator (LISS-0431) -- compiles `P`'s already-resolved OpExpr
+        (`self.operators[operator_name]`, e.g. LISS-0430's Pauli-Z-
+        decomposed $P_F$) to a matrix and scales each World's amplitude
+        by the square root of `P`'s diagonal entry at that World's own
+        `coord_name` value (big-endian tuple-to-index, matching
+        `hamiltonian.py`'s own convention -- confirmed by direct
+        execution, not assumed). Diagonal-only: the confirmed target
+        design (a projector built from `Sigma (x In F) { |x><x| }`) is
+        always diagonal in the computational basis by construction; a
+        genuinely non-diagonal Operator target is out of scope and
+        rejected with a clear error rather than silently mishandled."""
+        from .hamiltonian import compile_hamiltonian
+        from .joint import World, _coalesce
+
+        op_ast = self.operators.get(operator_name)
+        if op_ast is None:
+            raise KernelError(f"project onto `{operator_name}`: unknown Operator")
+        sample = next(
+            (
+                world.assign.get(coord_name)
+                for world in joint.worlds
+                if isinstance(world.assign.get(coord_name), tuple)
+            ),
+            None,
+        )
+        if sample is None:
+            raise KernelError(
+                "project onto a general Operator requires a tuple-valued "
+                "coordinate"
+            )
+        n = len(sample)
+        cache_key = (operator_name, n)
+        matrix = self._compiled_operator_cache.get(cache_key)
+        if matrix is None:
+            matrix = compile_hamiltonian(op_ast, env={}, n_qubits=n)
+            self._compiled_operator_cache[cache_key] = matrix
+        dim = len(matrix)
+        for i in range(dim):
+            for j in range(dim):
+                if i != j and abs(matrix[i][j]) > EPS:
+                    raise KernelError(
+                        "project onto a general Operator currently supports "
+                        "diagonal projectors only (e.g. Sigma (x In F) "
+                        "{ |x><x| }); the given Operator has a non-zero "
+                        "off-diagonal entry"
+                    )
+
+        def _index(pattern: tuple[int, ...]) -> int:
+            idx = 0
+            for bit in pattern:
+                idx = idx * 2 + int(bit)
+            return idx
+
+        out: list[World] = []
+        for w in joint.worlds:
+            value = w.assign.get(coord_name)
+            if not isinstance(value, tuple):
+                continue
+            diag = matrix[_index(value)][_index(value)].real
+            if diag <= EPS:
+                continue
+            new_amp = w.amp * cmath.sqrt(diag)
+            if abs(new_amp) ** 2 <= EPS:
+                continue
+            out.append(
+                World(assign=dict(w.assign), amp=new_amp, coord_phase=dict(w.coord_phase))
+            )
+        if not out:
+            return Joint.empty()
+        return Joint(worlds=_coalesce(out))
+
+    def _eval_set_comprehension(
+        self, expr: "SetComprehension", assign: dict[str, Any]
+    ) -> tuple[Any, ...]:
+        """`{ x In D : cond1, cond2, ... }` (LISS-0429) -- enumerates `D`
+        (currently only `{0,1}^n`, matching the confirmed target design;
+        a bare-range `D` is deliberately out of scope for this Issue),
+        keeping only elements where every comma-separated condition
+        (implicit conjunction) holds. Reuses `_eval_op_expr_classical`
+        for conditions, the same leaf evaluator LISS-0424's classical
+        Sigma/Pi/ForAll/Min already use."""
+        from ..ast_nodes import SetPowerDomain
+
+        domain = expr.domain
+        if not isinstance(domain, SetPowerDomain):
+            raise KernelError(
+                "Set comprehension domain must be `{0,1}^n` (or a similar "
+                "set-power literal) -- a bare-range domain is not yet "
+                "supported"
+            )
+        width_raw = self._eval_value(domain.width, assign)
+        n = int(width_raw)
+        labels = tuple(domain.labels)
+
+        import itertools
+
+        matches: list[Any] = []
+        for element in itertools.product(labels, repeat=n):
+            local = dict(assign)
+            local[expr.variable] = element
+            if all(
+                bool(self._eval_op_expr_classical(cond, local))
+                for cond in expr.conditions
+            ):
+                matches.append(element)
+        return tuple(matches)
 
     def _bind_prepare_selection(self, joint: Joint, name: str, expr: Call) -> Joint:
         """prepare_selection(n: Int) -- equal superposition over all 2**n
@@ -5593,6 +5988,12 @@ class Evaluator:
             # ADR 0179 / LISS-0273: pure classical Calls as classical operands.
             # Thread assign so nested free-fn object args see the caller frame.
             return self._eval_classical_call(expr, assign)
+        if isinstance(expr, OpBinder):
+            # LISS-0424: classical numeric Sigma/Pi as a sub-expression
+            # (e.g. `Sigma (i In 0..n-1) { x[i] } == 3`), not just a bare
+            # top-level bind -- reuses the same fold `_bind`'s OpBinder
+            # case uses.
+            return self._eval_classical_op_binder(expr, assign)
         raise KernelError(f"cannot evaluate {type(expr).__name__} as value")
 
     def _expr_marginal(self, joint: Joint, expr: Expr) -> dict[Any, float]:
@@ -5703,6 +6104,9 @@ def _apply_op(op: str, l: Any, r: Any) -> Any:
         return bool(l) and bool(r)
     if op == "||":
         return bool(l) or bool(r)
+    if op == "Implies":
+        # LISS-0425: A => B, i.e. !A || B.
+        return (not bool(l)) or bool(r)
     raise KernelError(f"unknown op {op}")
 
 
