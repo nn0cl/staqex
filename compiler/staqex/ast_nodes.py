@@ -102,6 +102,19 @@ class KetSumBinder:
 
 
 @dataclass
+class NormExpr:
+    """`||state_expr||` (LISS-0426): $\\lVert\\cdot\\rVert$, the norm of a
+    State-producing expression -- a Float. Bracket/delimiter syntax
+    (matching how `|x><x|` denotes $\\lvert x\\rangle\\langle x\\rvert$
+    rather than a function call `norm(...)`), lexed as two `TokenKind.OR`
+    tokens and disambiguated from binary `||` purely by grammatical
+    position (only recognized where a primary expression is expected)."""
+
+    state: "Expr"
+    span: Span
+
+
+@dataclass
 class SetPowerDomain:
     """Literal set-power domain: `{0,1}^n` (LISS-0417) -- the Cartesian
     power of a small literal label set, e.g. `{0,1}^n` = all n-tuples over
@@ -518,6 +531,7 @@ Expr = Union[
     MeasureExpr,
     SetPowerDomain,
     KetSumBinder,
+    NormExpr,
 ]
 
 

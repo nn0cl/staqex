@@ -39,6 +39,7 @@ from .ast_nodes import (
     LitString,
     MeasureExpr,
     Measure,
+    NormExpr,
     OpBinder,
     OpCall,
     OpIndexed,
@@ -3007,6 +3008,23 @@ class TypeChecker:
         if isinstance(expr, UnaryNot):
             # Open-control marker; carrier follows inner wire
             return self._infer(expr.expr)
+        if isinstance(expr, NormExpr):
+            # LISS-0426: ||state_expr|| is a classical Float, matching
+            # $\lVert\cdot\rVert$ -- not a State (the fallback below would
+            # wrongly type it State<Any>, since it has no dedicated case).
+            inner = self._infer(expr.state)
+            if inner.kind != "State":
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": (
+                            f"`||...||` requires a State expression, got `{inner}`"
+                        ),
+                    }
+                )
+            return Ty("Classical", "Float", DIMLESS)
         return Ty("State", "Any", DIMLESS)
 
     def _infer_pipe(self, expr: Pipe) -> Ty:

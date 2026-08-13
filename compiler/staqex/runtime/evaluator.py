@@ -50,6 +50,7 @@ from ..ast_nodes import (
     MatchStmt,
     Measure,
     MeasureExpr,
+    NormExpr,
     OpBin,
     OpHop,
     OpLit,
@@ -2487,6 +2488,13 @@ class Evaluator:
             return self._bind_ket(joint, name, expr)
         if isinstance(expr, KetSumBinder):
             return self._bind_ket_sum_binder(joint, name, expr)
+        if isinstance(expr, NormExpr):
+            # LISS-0426: `Float n = ||state_expr||` as a top-level bind
+            # (as opposed to the `<state> / ||<state>||` division case,
+            # handled separately below since that needs the numerator's
+            # own bind too).
+            norm = self._compute_norm(joint, expr.state)
+            return joint.bind_const(name, norm)
         if isinstance(expr, OpBinder):
             # LISS-0424: an OpBinder reaching general `_bind` (as opposed
             # to the separate `Operator H = ...` statement-level dispatch,
@@ -2522,6 +2530,15 @@ class Evaluator:
                 state_expr = expr.lhs if lhs_state else expr.rhs
                 scalar_expr = expr.rhs if lhs_state else expr.lhs
                 return self._bind_scaled_state(joint, name, state_expr, scalar_expr)
+        if isinstance(expr, BinOp) and expr.op == "/" and isinstance(expr.rhs, NormExpr):
+            # LISS-0426: `<state-expr> / ||<state-expr>||` -- the literal
+            # transcription of X/||X||. Binds the numerator's own
+            # sub-expression (whatever shape `_bind` already knows how to
+            # handle, e.g. a `project(...)` Call), computes the norm's
+            # inner expression as its own independent bind (matching the
+            # equation's own literal repetition of the numerator inside
+            # the norm bars), and divides every amplitude by that norm.
+            return self._bind_state_divided_by_norm(joint, name, expr.lhs, expr.rhs)
         if isinstance(expr, BinOp):
             return joint.bind_pushforward(name, lambda a: self._eval_value(expr, a))
         if isinstance(expr, Attr):
@@ -5102,6 +5119,46 @@ class Evaluator:
                 World(assign=assign, amp=w.amp * scale, coord_phase=dict(w.coord_phase))
             )
         return Joint(worlds=_coalesce(out))
+
+    def _bind_state_divided_by_norm(
+        self, joint: Joint, name: str, state_expr: Expr, norm_expr: NormExpr
+    ) -> Joint:
+        """`<state_expr> / ||<state_expr's own repetition>||` (LISS-0426) --
+        the literal transcription of
+        $P_F\\lvert\\psi_0\\rangle/\\lVert P_F\\lvert\\psi_0\\rangle\\rVert$.
+        Binds the numerator independently from the norm's own inner
+        expression (two separate `_bind` calls, matching the equation's
+        own literal repetition rather than trying to cleverly reuse one
+        computation), then scales every numerator world's amplitude by
+        `1/norm`. `project`'s own renormalization was removed in LISS-0431
+        specifically so this division is what performs it -- doing it here
+        too would double-normalize."""
+        from .joint import World, _coalesce
+
+        temp = f"__div_tmp_{id(state_expr)}"
+        sub = self._bind(joint, temp, state_expr)
+        norm = self._compute_norm(joint, norm_expr.state)
+
+        out: list[World] = []
+        for w in sub.worlds:
+            assign = {k: v for k, v in w.assign.items() if k != temp}
+            assign[name] = w.assign[temp]
+            out.append(
+                World(assign=assign, amp=w.amp / norm, coord_phase=dict(w.coord_phase))
+            )
+        return Joint(worlds=_coalesce(out))
+
+    def _compute_norm(self, joint: Joint, state_expr: Expr) -> float:
+        """$\\lVert\\text{state\\_expr}\\rVert = \\sqrt{\\sum_x\\lvert c_x\\rvert^2}$
+        (LISS-0426) -- binds `state_expr` as its own independent
+        sub-computation and sums squared amplitudes across every
+        resulting world."""
+        temp = f"__norm_tmp_{id(state_expr)}"
+        sub = self._bind(joint, temp, state_expr)
+        total = sum(abs(w.amp) ** 2 for w in sub.worlds)
+        if total <= EPS:
+            raise KernelError("||...|| of a zero-norm (vacuum) state")
+        return total**0.5
 
     def _bind_prepare_selection(self, joint: Joint, name: str, expr: Call) -> Joint:
         """prepare_selection(n: Int) -- equal superposition over all 2**n

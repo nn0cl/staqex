@@ -86,6 +86,7 @@ from .ast_nodes import (
     ScientificScopeDecl,
     Span,
     KetSumBinder,
+    NormExpr,
     SetPowerDomain,
     StateBind,
     StructDecl,
@@ -185,6 +186,12 @@ class Parser:
         }
         # LISS-0073 Slice F: Operator-context `[A, B]` → commutator (not ListExpr).
         self._commutator_bracket_context = False
+        # LISS-0426: depth counter so `_logical_or` doesn't greedily
+        # consume `||...||`'s own closing delimiter as a binary `||` --
+        # a State-typed norm argument never legitimately needs boolean
+        # `||` inside it, so this suppresses binary-`||` matching only
+        # while parsing between an unclosed pair.
+        self._norm_bars_depth = 0
         # ADR 0189: aliases become canonical only after a quantum-state bind;
         # ordinary/type-first names and Dirac paper labels keep source spelling.
         self._scientific_bindings: dict[str, str] = {}
@@ -2231,9 +2238,11 @@ class Parser:
 
     def _logical_or(self):
         """ADR 0196: general-expression `||` -- total pushforward, distinct
-        from the Operator-DSL's own `_op_guard` binder-guard `||`."""
+        from the Operator-DSL's own `_op_guard` binder-guard `||`. LISS-0426:
+        suppressed while inside an unclosed `||...||` norm expression, so
+        its own closing delimiter isn't consumed as a binary operator."""
         expr = self._logical_and()
-        while self._match(TokenKind.OR):
+        while self._norm_bars_depth == 0 and self._match(TokenKind.OR):
             sp = self._span()
             rhs = self._logical_and()
             expr = BinOp(op="||", lhs=expr, rhs=rhs, span=sp)
@@ -2489,6 +2498,21 @@ class Parser:
             if self._match(TokenKind.LPAREN):
                 self._expect(TokenKind.RPAREN)
             return Vacuum(span=sp)
+
+        if self._match(TokenKind.OR):
+            # LISS-0426: `||state_expr||` -- only reachable here (a
+            # primary-expression position), so this can never collide
+            # with binary `||` (which is only ever consumed between two
+            # already-parsed operands, in `_logical_or`). The depth
+            # counter stops `_logical_or` from swallowing this norm's own
+            # closing `||` as a binary operator.
+            self._norm_bars_depth += 1
+            try:
+                inner = self._expression()
+            finally:
+                self._norm_bars_depth -= 1
+            self._expect(TokenKind.OR)
+            return NormExpr(state=inner, span=sp)
 
         # LISS-0420: `Sigma`/`Pi` reachable from general expression position
         # too (not just the Operator-DSL's own `_op_primary`), so a bare
