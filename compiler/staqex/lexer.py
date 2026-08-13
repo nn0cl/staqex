@@ -418,11 +418,21 @@ class Lexer:
             TokenKind.INT,
             TokenKind.FLOAT,
             TokenKind.STRING,
-            TokenKind.KET,
             TokenKind.BRA,
             TokenKind.RPAREN,
             TokenKind.RBRACKET,
         }
+        # LISS-0430: `TokenKind.KET` deliberately excluded -- `|x><x|`
+        # (outer product / matching-label projector, ADR 0169 "Slice D")
+        # needs `<` to start a fresh bra literal immediately after a
+        # closed ket, with no operator between them. Before this fix
+        # `_can_start_primary` always blocked that (treating the `<` as
+        # a stray comparison operator), so this syntax could never
+        # actually be reached despite `_ket_or_outer` already being
+        # written to handle it -- confirmed via a full corpus grep
+        # finding zero existing uses of `>` immediately followed by `<`,
+        # so this closes a real, previously-dead code path rather than
+        # risking any existing `<` comparison.
         return previous not in value_kinds
 
     @staticmethod

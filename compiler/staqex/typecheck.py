@@ -1534,7 +1534,22 @@ class TypeChecker:
                             "message": f"execution carrier `{domain_ty}` cannot be a theory domain",
                         }
                     )
-                elif domain_ty.kind not in {"Meta", "Discrete"}:
+                elif domain_ty.kind not in {"Meta", "Discrete"} and not (
+                    # LISS-0430: `Sigma (x In F)` where F is a `Set`
+                    # comprehension value (LISS-0429) -- a genuinely
+                    # finite, enumerable domain, just not the pre-existing
+                    # Index/Basis-shaped one this check was written for.
+                    # `F`'s own declared-type inference lands on
+                    # `Ty("State", "Set", ...)` (the generic Type-First
+                    # fallback for an unrecognized type head wraps
+                    # `_infer`'s payload in State kind, confirmed by
+                    # reading `checker.env` directly, not assumed) rather
+                    # than the `Ty("Classical", "Set", ...)`
+                    # `_infer_inner`'s own `SetComprehension` case returns
+                    # -- checking `payload == "Set"` alone is the
+                    # reliable signal.
+                    domain_ty.payload == "Set"
+                ):
                     self.diagnostics.append(
                         {
                             "code": "BINDER_DOMAIN_ERROR",

@@ -3237,6 +3237,15 @@ class Parser:
             expr = self._op_expression()
             self._expect(TokenKind.RPAREN)
             return expr
+        if self._check(TokenKind.KET):
+            # LISS-0430: `|x><x|` (bound-variable projector) inside a
+            # Sigma body over a Set domain -- reuses the same
+            # `_ket_or_outer` desugaring the general expression grammar
+            # already uses (ADR 0169: matching ket/bra labels ->
+            # `projector(Var(...))`), previously unreachable from the
+            # Operator-DSL's own body grammar at all.
+            tok = self._advance()
+            return self._ket_or_outer(tok, sp)
         if self._match(TokenKind.LBRACKET):
             # LISS-0073 Slice F: OpDSL `[A, B]` → commutator (expression Call).
             items = self._comma_op_expr_items(TokenKind.RBRACKET)

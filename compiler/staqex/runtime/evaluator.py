@@ -3365,6 +3365,19 @@ class Evaluator:
                 return expr
             return OpPow(base=new_base, exp=expr.exp, span=expr.span)
         if isinstance(expr, OpBinder):
+            # LISS-0430: `Sigma (x In F) { |x><x| }` -- F is a named `Set`
+            # variable, not an Index/{0,1}^n domain, so the static
+            # `_lower_operator_expr` pass (bounded-integer-range only)
+            # cannot resolve it and already skips it (ValueError, caught
+            # upstream in `lower_finite_binder_operators`). Resolved here
+            # instead, where F's already-computed value is reachable.
+            if expr.kind == "Sigma" and isinstance(expr.domain, OpVar):
+                looked_up = self._lookup_set_comprehension_value(expr.domain.name)
+                if looked_up is not None:
+                    set_value, domain_width = looked_up
+                    return self._build_projector_sum_operator(
+                        set_value, expr.variable, expr.body, domain_width
+                    )
             unit = getattr(self, "_unit", None)
             if unit is None:
                 return expr
@@ -3378,6 +3391,114 @@ class Evaluator:
             except (IndexError, ValueError) as exc:
                 raise KernelError(f"cannot lower Operator binder: {exc}") from exc
         return expr
+
+    def _lookup_set_comprehension_value(
+        self, name: str
+    ) -> tuple[tuple[Any, ...], int] | None:
+        """LISS-0430: find `name`'s defining `Set name = { ... }` statement
+        in `main()` and re-evaluate its comprehension directly. Set
+        comprehensions are pure/deterministic (LISS-0429's own bound
+        variable never touches per-World data), so re-evaluating here --
+        rather than threading the live `Joint` through the whole Operator-
+        resolution call chain just to read one already-computed,
+        world-independent value back out of it -- gives the identical
+        answer with far less invasive plumbing. Also returns the domain's
+        own `n` (needed to materialize the empty-`F` identity below, since
+        an empty `elements` tuple carries no pattern to infer it from)."""
+        from ..ast_nodes import SetPowerDomain
+
+        unit = getattr(self, "_unit", None)
+        if unit is None or unit.main is None:
+            return None
+        for stmt in unit.main.body.stmts:
+            if (
+                isinstance(stmt, StateBind)
+                and stmt.names == [name]
+                and stmt.ty is not None
+                and stmt.ty.name == "Set"
+                and isinstance(stmt.expr, SetComprehension)
+            ):
+                elements = self._eval_set_comprehension(stmt.expr, {})
+                domain = stmt.expr.domain
+                width = (
+                    int(self._eval_value(domain.width, {}))
+                    if isinstance(domain, SetPowerDomain)
+                    else 0
+                )
+                return elements, width
+        return None
+
+    def _build_projector_sum_operator(
+        self,
+        elements: tuple[Any, ...],
+        bound_variable: str,
+        body: Any,
+        domain_width: int,
+    ) -> Any:
+        """$P_F=\\sum_{x\\in F}\\lvert x\\rangle\\langle x\\rvert$ (LISS-0430)
+        -- `body` must be exactly `|<bound_variable>><<bound_variable>|`
+        (parser-verified shape, matching `KetSumBinder`'s own body
+        restriction), desugared by `_ket_or_outer`/ADR 0169 to
+        `projector(Var(bound_variable))`. For each concrete `x` in
+        `elements`, lowers $\\lvert x\\rangle\\langle x\\rvert$ via the
+        standard Pauli-Z identity
+        $\\bigotimes_i\\frac{I+(-1)^{x_i}Z_i}{2}$ as a literal `OpBin`
+        product tree -- deliberately NOT manually expanded into a flat
+        Pauli-string sum; `hamiltonian.py`'s existing matrix compiler
+        already reduces arbitrary `OpBin(+)/OpBin(*)/OpPauli` trees to a
+        matrix (proven by the already-shipped `objective_hamiltonian`'s
+        own `Z[i] * Z[j]` coupling term), so the tensor-product structure
+        is left for that existing, tested path to resolve, not
+        reimplemented here."""
+        if not (
+            isinstance(body, Call)
+            and isinstance(body.callee, Var)
+            and body.callee.name == "projector"
+            and len(body.args) == 1
+            and isinstance(body.args[0], Var)
+            and body.args[0].name == bound_variable
+        ):
+            raise KernelError(
+                "Sigma (x In F) { ... } over a Set domain requires the "
+                "body to be exactly `|x><x|` (the bound variable's own "
+                "projector)"
+            )
+        if not elements:
+            return OpIdentity(
+                kind="Sigma", acting_space=domain_width, span=body.span
+            )
+        terms: list[Any] = []
+        for pattern in elements:
+            n = len(pattern)
+            factors = []
+            for i in range(n):
+                sign = -1.0 if pattern[i] else 1.0
+                z_term: Any = OpPauli(kind="Z", site=i, span=body.span)
+                if sign < 0:
+                    z_term = OpBin(
+                        op="*", lhs=OpLit(value=-1.0, span=body.span),
+                        rhs=z_term, span=body.span,
+                    )
+                factor = OpBin(
+                    op="*",
+                    lhs=OpLit(value=0.5, span=body.span),
+                    rhs=OpBin(
+                        op="+",
+                        lhs=OpPauli(kind="I", site=i, span=body.span),
+                        rhs=z_term,
+                        span=body.span,
+                    ),
+                    span=body.span,
+                )
+                factors.append(factor)
+            product = factors[0]
+            for factor in factors[1:]:
+                product = OpBin(op="*", lhs=product, rhs=factor, span=body.span)
+            terms.append(product)
+        result = terms[0]
+        for term in terms[1:]:
+            result = OpBin(op="+", lhs=result, rhs=term, span=body.span)
+        return result
 
     def _lower_operator_value(
         self,
