@@ -42,10 +42,16 @@
     "compiler/staqex/typecheck.py",
     "compiler/staqex/finite_binder.py",
     "compiler/staqex/unitarity_check.py",
+    "compiler/staqex/lexer.py",
+    "compiler/staqex/pipeline.py",
+    "compiler/staqex/scientific_input.py",
+    "compiler/staqex/host_input_binding.py",
     "compiler/staqex/runtime/evaluator.py",
     "compiler/staqex/runtime/hamiltonian.py",
     "compiler/staqex/runtime/sparse_pauli.py",
     "compiler/staqex/runtime/joint.py",
+    "compiler/staqex/runtime/op_attr_elaboration.py",
+    "examples/showcase/S01_quantum_disaster_response/grid/block_costs.sqx",
     "examples/showcase/S02_drug_discovery/**",
     "tests/**",
     "docs/issues/LISS-0423*",
@@ -59,6 +65,7 @@
     "docs/issues/LISS-0431*",
     "docs/issues/LISS-0432*",
     "docs/issues/LISS-0433*",
+    "docs/issues/LISS-0434*",
     "docs/work-plans/WP-0099*",
     "docs/architecture/adr/0207-*",
     "docs/architecture/open-work-register.md",
@@ -66,7 +73,8 @@
   ],
   "disallowed_paths_notes": [
     "S02 steps 1/3/4/5 of main_selection.sqx are out of scope beyond what step 2's rewrite mechanically requires (e.g. psi_0/psi_sel variable naming at the step-1/step-2 boundary)",
-    "No other example's .sqx files should need touching -- Index<...> retirement (S1) is confirmed by corpus grep to affect only objective_hamiltonian's three binders before Green; if Green finds a wider corpus impact, that is an invalidating trigger, not silent scope creep"
+    "No other example's .sqx files should need touching -- Index<...> retirement (S1) is confirmed by corpus grep to affect only objective_hamiltonian's three binders before Green; if Green finds a wider corpus impact, that is an invalidating trigger, not silent scope creep",
+    "2026-08-13 CI reconciliation: the Repository sanity check (scripts/check-execution-batch-reviews.py) caught 7 files touched on this branch that this record's own allowed_paths never listed, even though each was already disclosed in its own Issue doc (and S1's block_costs.sqx was the file the very invalidating trigger above already covers, live-escalated and Adjudicator-confirmed mid-S1): compiler/staqex/lexer.py (LISS-0430), pipeline.py/scientific_input.py/host_input_binding.py (LISS-0432), examples/showcase/S01_quantum_disaster_response/grid/block_costs.sqx (LISS-0423). A 7th pair -- compiler/staqex/runtime/op_attr_elaboration.py and docs/issues/LISS-0434* -- is different in kind: LISS-0434 was never part of this batch's own approved_scope at all (a standalone Issue, its own branch/PR #550), but ended up merged into this batch branch because it depended on this branch's own unmerged content; allowed_paths was widened to include it too rather than left failing, per the Adjudicator's explicit 2026-08-13 instruction to fix CI and merge. All 7 additions reconcile the record with what was already done and disclosed; none authorize further new work."
   ],
   "allowed_phases": ["phase-1-red", "phase-2-green", "phase-3-refactor"],
   "allowed_operations": [
