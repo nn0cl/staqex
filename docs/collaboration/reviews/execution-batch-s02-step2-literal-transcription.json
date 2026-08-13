@@ -8,7 +8,7 @@
   "approved_at": "2026-08-13T00:00:00Z",
   "expires_at": "2026-08-27T00:00:00Z",
   "execution_branch": "batch/s02-step2-literal-transcription",
-  "approval_commit": null,
+  "approval_commit": "cbb36f52aab064d63b15c2285aa9579485f08f5b",
   "issue_ids": [
     "LISS-TBD-S1",
     "LISS-TBD-S2",
