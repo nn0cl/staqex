@@ -39,13 +39,29 @@ struct ObjectiveWeights {
 // factory shape (LISS-0408) -- the form a physicist would naturally
 // reach for: a struct of named weights, an array of per-candidate
 // values, combined inside one function.
-fn objective_hamiltonian(w: ObjectiveWeights, activity_w: Float[8], selectivity_w: Float[8]) -> Operator {
-    Operator z_field = Sigma (i In 0..7) { activity_w[i] * Z[i] }
-    Operator x_field = Sigma (i In 0..7) { selectivity_w[i] * X[i] }
-    Operator coupling = Sigma (i In 0..7, j In 0..7) where i < j {
-        Z[i] * Z[j]
+// LISS-0434: literal transcription of
+// H_obj/scale = w_activity*Sum_i activity_w_i*Z_i
+//             + w_selectivity*Sum_i selectivity_w_i*X_i
+//             + w_diversity*Sum_{i<j} Z_i*Z_j
+// term for term -- `n` (not a hardcoded `0..7`) is the same width step 2
+// names, each Sigma's own range is `0..n-1`/`0..n-1, ... where i<j`, and
+// each w_* is written as the Sigma's own per-term coefficient (alongside
+// activity_w[i]/selectivity_w[i]), not pulled out as a post-hoc scale of
+// an already-built Operator -- the previous `w.activity * z_field` shape
+// was mathematically equivalent (distributivity) but not literal: every
+// other per-term factor lived inside the Sigma, so w_activity being the
+// one exception outside it was a real, if invisible-until-pointed-at,
+// asymmetry. `Float[8]` (not `Float[n]`) stays a literal fixture-width
+// hardcode -- `Float[n]` parameterized array-length types do not parse
+// today (confirmed by direct testing), a real, deeper compiler gap this
+// Issue does not open.
+fn objective_hamiltonian(w: ObjectiveWeights, n: Int, activity_w: Float[8], selectivity_w: Float[8]) -> Operator {
+    Operator z_field = Sigma (i In 0..n-1) { w.activity * activity_w[i] * Z[i] }
+    Operator x_field = Sigma (i In 0..n-1) { w.selectivity * selectivity_w[i] * X[i] }
+    Operator coupling = Sigma (i In 0..n-1, j In 0..n-1) where i < j {
+        w.diversity * Z[i] * Z[j]
     }
-    return w.activity * z_field + w.selectivity * x_field + w.diversity * coupling
+    return z_field + x_field + coupling
 }
 
 pub fn main() -> Unit {
@@ -112,7 +128,7 @@ pub fn main() -> Unit {
         activity: 2.0, selectivity: 1.0, diversity: 1.0
     }
     Energy scale = 1.0.eV to J
-    Operator H_obj = scale * objective_hamiltonian(weights, activity_w, selectivity_w)
+    Operator H_obj = scale * objective_hamiltonian(weights, n, activity_w, selectivity_w)
     Time dur = 0.6.fs
     State psi_sel = Evolve { psi_sel under H_obj for dur }.run()
 
