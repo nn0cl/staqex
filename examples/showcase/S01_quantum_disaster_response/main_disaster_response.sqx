@@ -190,10 +190,14 @@ pub fn main() -> Unit {
     }
 
     State plan1 = |+>
-    State (plan0, plan1) = Evolve { (plan0, plan1) under H_drive for dur_drive using Suzuki(order = 2, steps = 4) }.run()
-    State (plan0, plan1) = Evolve { (plan0, plan1) under H_damage for dur_damage using Suzuki(order = 2, steps = 4) }.run()
-    State (plan0, plan1) = Evolve { (plan0, plan1) under H_flood for dur_flood using Suzuki(order = 2, steps = 2) }.run()
-    State (plan0, plan1) = Evolve { (plan0, plan1) under H_corridor for dur_corridor using Suzuki(order = 2, steps = 2) }.run()
+    Operator U_drive = exp(-i * H_drive * dur_drive / hbar)
+    State (plan0, plan1) = Evolve() { U_drive * (plan0, plan1) }.run()
+    Operator U_damage = exp(-i * H_damage * dur_damage / hbar)
+    State (plan0, plan1) = Evolve() { U_damage * (plan0, plan1) }.run()
+    Operator U_flood = exp(-i * H_flood * dur_flood / hbar)
+    State (plan0, plan1) = Evolve() { U_flood * (plan0, plan1) }.run()
+    Operator U_corridor = exp(-i * H_corridor * dur_corridor / hbar)
+    State (plan0, plan1) = Evolve() { U_corridor * (plan0, plan1) }.run()
 
     State zz = expect(ZZ, plan0, plan1)
 

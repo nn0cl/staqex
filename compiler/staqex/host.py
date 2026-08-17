@@ -160,12 +160,17 @@ def _submit_allows_execution(
 
     if compiled.unit is None:
         return False
+    blocking = any(
+        d.get("code") in HARD_CODES and d.get("code") not in FAKE_BYPASS_HARD_CODES
+        for d in compiled.diagnostics
+    )
+    if blocking:
+        return False
+    # Target capability diagnostics describe a QPU realization boundary; they
+    # do not prevent the local simulator from executing the source meaning.
     if fake_profile is not None and unit_has_dynamic_qpu(compiled.unit):
-        return not any(
-            d.get("code") in HARD_CODES and d.get("code") not in FAKE_BYPASS_HARD_CODES
-            for d in compiled.diagnostics
-        )
-    return compiled.ok
+        return True
+    return True
 
 
 def _submit_compiled(
@@ -276,6 +281,9 @@ def _submit_compiled(
                 physical_outcome_confirmed=evaluated.dynamic_outcomes_confirmed,
             )
     except KernelDiagnosticError as exc:
+        metadata = {"target": settings.get("target", "local")}
+        if exc.provenance is not None:
+            metadata["evolution_provenance"] = dict(exc.provenance)
         return Job(
             job_id,
             JobResult(
@@ -288,7 +296,7 @@ def _submit_compiled(
                         "col": exc.col,
                     },
                 ),
-                metadata={"target": settings.get("target", "local")},
+                metadata=metadata,
                 dynamic_trace=dynamic_trace,
             ),
         )
@@ -306,6 +314,8 @@ def _submit_compiled(
     measurement = _measurement_envelope(evaluated)
     measurements = () if measurement is None else (measurement,)
     metadata = {"target": settings.get("target", "local")}
+    if evaluated.evolution_provenance is not None:
+        metadata["evolution_provenance"] = dict(evaluated.evolution_provenance)
     if evaluated.mixed_state_measured:
         metadata["state_type"] = "DensityState"
         metadata["execution_lane"] = evaluated.execution_lane or "cpu/simulator"

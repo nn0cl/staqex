@@ -14,8 +14,10 @@ pub fn main() -> Unit {
 
     State left = |+>
     State right = |+>
-    State left = phase(left, 0.35)
-    State right = phase(right, -0.35)
+    // The board's a-b contrast is the relative phase; split it symmetrically
+    // so the source shows how classical route metadata drives both amplitudes.
+    State left = phase(left, phase_delta / 2.0)
+    State right = phase(right, -phase_delta / 2.0)
     State corr = expect(ZZ, left, right)
     State viewed_corr = Inspect(corr)
     Measure left tracing_out right

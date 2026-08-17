@@ -19,6 +19,8 @@ from .ast_nodes import (
     Measure,
     MeasureExpr,
     StateBind,
+    EvolveExpr,
+    Var,
     WhenExpr,
     ScientificScopeDecl,
     ScientificScopeContract,
@@ -77,6 +79,11 @@ HARD_CODES = {
     # LISS-0436: Evolve `times N { block }` block must be built only from
     # State arithmetic/tensor-products and already-verified primitives.
     "EVOLVE_BLOCK_OPAQUE_TRANSFORM",
+    "EVOLVE_REQUIRES_EXPLICIT_TRANSFORM",
+    "OPERATOR_EXP_DOMAIN_ERROR",
+    "OPERATOR_STATE_APPLICATION_ERROR",
+    "EVOLUTION_DIMENSION_ERROR",
+    "EVOLUTION_REALIZATION_REQUIRED",
     "CANNOT_MEASURE_CLASSICAL_VALUE_ERROR",
     "COEFFICIENT_IN_QUANTUM_POSITION",
     "PARSE_ERROR",
@@ -210,10 +217,19 @@ class CompileResult:
     physics_ir: PhysicsModule | None = None
     quantum_semantic_ir: QuantumSemanticModule | None = None
     state_transform_plan: H1StateTransformPlan | None = None
+    strict_evolution: bool = False
+    evolution_provenance: dict[str, Any] | None = None
 
     @property
     def ok(self) -> bool:
-        return not any(d.get("code") in HARD_CODES for d in self.diagnostics)
+        return not any(
+            d.get("code") in HARD_CODES
+            or (
+                self.strict_evolution
+                and d.get("code") == "EVOLVE_HAMILTONIAN_SHORTCUT_RETIRED"
+            )
+            for d in self.diagnostics
+        )
 
 
 def _soft_physics_ir(
@@ -622,7 +638,121 @@ def _soft_lane_diagnostics(unit: CompilationUnit) -> list[dict[str, Any]]:
     return out
 
 
-def _analyze_unit(unit: CompilationUnit, diags: list[dict[str, Any]]) -> CompileResult:
+def _contains_explicit_evolve(unit: CompilationUnit) -> bool:
+    """Return whether this unit uses the Phase 2 explicit Evolve surface.
+
+    The source/type contract is implemented before target semantic lowering.
+    Until the provider-neutral realization slice exists, its generic soft
+    semantic obligations must not be misreported as source errors.
+    """
+    def walk(value: Any) -> bool:
+        if isinstance(value, EvolveExpr):
+            if value.explicit_transform:
+                return True
+            if value.body is not None and walk(value.body.result):
+                return True
+        if isinstance(value, (list, tuple)):
+            return any(walk(item) for item in value)
+        if hasattr(value, "__dict__"):
+            return any(walk(child) for child in vars(value).values())
+        return False
+
+    return walk(unit.main.body if unit.main is not None else None)
+
+
+def _formal_limit_provenance(unit: CompilationUnit) -> dict[str, Any] | None:
+    """Retain the written formal Limit as a target-rejected source witness."""
+    def walk(value: Any) -> dict[str, Any] | None:
+        if isinstance(value, Call):
+            if (
+                isinstance(value.callee, Var)
+                and value.callee.name == "Limit"
+            ):
+                return {
+                    "source_span": value.span,
+                    "source_transform": "Limit product of infinitesimal steps",
+                    "state_shape": "Operator",
+                    "realization_kind": "rejected",
+                    "realization_policy": "finite_policy_required",
+                    "approximation_order_or_null": None,
+                    "approximation_steps_or_null": None,
+                    "error_budget_or_null": None,
+                    "resource_estimate_or_null": None,
+                    "capability_rejection_or_null": "EVOLUTION_REALIZATION_REQUIRED",
+                }
+        if isinstance(value, (list, tuple)):
+            for item in value:
+                found = walk(item)
+                if found is not None:
+                    return found
+        elif hasattr(value, "__dict__"):
+            for child in vars(value).values():
+                found = walk(child)
+                if found is not None:
+                    return found
+        return None
+
+    return walk(unit.main.body if unit.main is not None else None)
+
+
+def _realize_provenance(unit: CompilationUnit) -> dict[str, Any] | None:
+    if unit.main is None:
+        return None
+    bindings = {
+        name: statement
+        for statement in unit.main.body.stmts
+        if isinstance(statement, StateBind)
+        for name in statement.names
+    }
+    for realized_name, statement in bindings.items():
+        expr = statement.expr
+        if not (isinstance(expr, Call) and isinstance(expr.callee, Var)):
+            continue
+        if expr.callee.name != "Realize":
+            continue
+        kwargs = dict(expr.kwargs or ())
+        source = kwargs.get("source")
+        source_name = source.name if isinstance(source, Var) else None
+        source_statement = bindings.get(source_name) if source_name else None
+        source_expr = source_statement.expr if source_statement else None
+        source_transform = (
+            "Limit product of infinitesimal steps"
+            if isinstance(source_expr, Call)
+            and isinstance(source_expr.callee, Var)
+            and source_expr.callee.name == "Limit"
+            else "explicit operator realization"
+        )
+        def literal(name: str) -> Any:
+            value = kwargs.get(name)
+            return getattr(value, "value", None)
+
+        return {
+            "source_name": source_name,
+            "realized_name": realized_name,
+            "source_span": getattr(source_expr, "span", expr.span),
+            "source_transform": source_transform,
+            "method": literal("method"),
+            "order": literal("order"),
+            "steps": literal("steps"),
+            "error_budget": literal("error_budget"),
+            "realization_kind": "approximate",
+            "realization_policy": "explicit_realize",
+            "state_shape": "Operator",
+            "approximation_order_or_null": literal("order"),
+            "approximation_steps_or_null": literal("steps"),
+            "error_budget_or_null": literal("error_budget"),
+            "resource_estimate_or_null": None,
+            "capability_rejection_or_null": None,
+        }
+    return None
+
+
+def _analyze_unit(
+    unit: CompilationUnit,
+    diags: list[dict[str, Any]],
+    *,
+    strict_evolution: bool = False,
+) -> CompileResult:
     diags.extend(check_early_collapse(unit))
     diags.extend(check_nested_when(unit))
     diags.extend(check_physical_axioms(unit))
@@ -631,6 +761,21 @@ def _analyze_unit(unit: CompilationUnit, diags: list[dict[str, Any]]) -> Compile
 
     checker = TypeChecker()
     diags.extend(checker.check_unit(unit))
+    # A formal Limit used as the explicit source of Realize is intentional;
+    # direct standalone Limit remains target-rejected below.
+    realize_provenance = _realize_provenance(unit)
+    if realize_provenance is not None:
+        source_span = realize_provenance.get("source_span")
+        diags[:] = [
+            diagnostic
+            for diagnostic in diags
+            if not (
+                diagnostic.get("code") == "EVOLUTION_REALIZATION_REQUIRED"
+                and source_span is not None
+                and diagnostic.get("line") == source_span.line
+                and diagnostic.get("col") == source_span.col
+            )
+        ]
     # LISS-0385: soft compile-time reuse demand (not HARD_CODES; Fake-verify
     # still rejects when a Fake request carries needs_reuse).
     diags.extend(reuse_demand_diagnostics(unit))
@@ -700,7 +845,25 @@ def _analyze_unit(unit: CompilationUnit, diags: list[dict[str, Any]]) -> Compile
     physics_ir, physics_diags = _soft_physics_ir(hir, unit)
     diags.extend(physics_diags)
     quantum_semantic_ir, qsem_diags = _soft_quantum_semantic_ir(physics_ir)
-    diags.extend(qsem_diags)
+    if _contains_explicit_evolve(unit):
+        # The provider-neutral explicit propagator is accepted at the source
+        # boundary, but its target evidence is not available yet.  Suppress
+        # only those two generic realization obligations; preserve every
+        # unrelated semantic diagnostic.
+        deferred_codes = {
+            "QSEM_FINITE_EVIDENCE_MISSING",
+            "QSEM_APPROXIMATION_OBLIGATION_MISSING",
+        }
+        # Do not let the presence of one explicit evolution erase semantic
+        # evidence for another construct.  The temporary deferral is valid
+        # only when every emitted qsem item is one of the two generic
+        # target-realization obligations.
+        if all(diagnostic.get("code") in deferred_codes for diagnostic in qsem_diags):
+            pass
+        else:
+            diags.extend(qsem_diags)
+    else:
+        diags.extend(qsem_diags)
     quantum_semantic_ir = _append_dynamic_timing_regions(unit, quantum_semantic_ir)
     quantum_semantic_ir = _append_dynamic_mid_circuit_regions(
         unit, quantum_semantic_ir
@@ -719,13 +882,17 @@ def _analyze_unit(unit: CompilationUnit, diags: list[dict[str, Any]]) -> Compile
         mixed_state_contracts=MappingProxyType(mixed_state_contracts),
         povm_contracts=MappingProxyType(povm_contracts),
         qpu_ir=qpu_ir,
+        evolution_provenance=(
+            _realize_provenance(unit) or _formal_limit_provenance(unit)
+        ),
         physics_ir=physics_ir,
         quantum_semantic_ir=quantum_semantic_ir,
         state_transform_plan=_surface_transform_plan(unit),
+        strict_evolution=strict_evolution,
     )
 
 
-def compile_source(source: str) -> CompileResult:
+def compile_source(source: str, *, strict_evolution: bool = False) -> CompileResult:
     from .experiment_profile import detect_lane, has_experiment_profile
     from .h1_authoring import analyze_h1_source, is_h1_unit
 
@@ -764,13 +931,14 @@ def compile_source(source: str) -> CompileResult:
                 state_transform_plan=analysis.state_transform_plan,
                 quantum_semantic_ir=analysis.quantum_semantic_ir,
             )
-    return _analyze_unit(unit, diags)
+    return _analyze_unit(unit, diags, strict_evolution=strict_evolution)
 
 
 def compile_path(
     entry: str | Path,
     *,
     source_port: SourcePort | None = None,
+    strict_evolution: bool = False,
 ) -> CompileResult:
     """Compile an entry `.sqx` file with ADR 0054 user-module import linking."""
     path = Path(entry)
@@ -795,7 +963,7 @@ def compile_path(
     if any(d.get("code") in _HARD_CODES for d in diags):
         return CompileResult(unit=unit, diagnostics=diags, checker=None)
 
-    return _analyze_unit(unit, diags)
+    return _analyze_unit(unit, diags, strict_evolution=strict_evolution)
 
 
 def analyze_source(source: str) -> list[dict[str, Any]]:

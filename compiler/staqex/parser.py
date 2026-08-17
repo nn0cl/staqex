@@ -2074,6 +2074,11 @@ class Parser:
                     self._commutator_bracket_context = False
             elif (
                 self._peek().kind == TokenKind.IDENT
+                and self._peek().lexeme == "Limit"
+            ):
+                expr = self._expression()
+            elif (
+                self._peek().kind == TokenKind.IDENT
                 and (
                     self._peek().lexeme not in _OPERATOR_DSL_RESERVED_ATOMS
                     or self._peek().lexeme in self._function_names
@@ -2552,6 +2557,25 @@ class Parser:
         if self._match(TokenKind.SUPERPOSE):
             return self._superpose_expr(sp)
 
+        if self._check(TokenKind.IDENT) and self._peek().lexeme == "Limit":
+            # Blackboard-preserving MVP surface. The target realization is
+            # intentionally deferred; typecheck emits the explicit
+            # EVOLUTION_REALIZATION_REQUIRED diagnostic.
+            self._advance()
+            self._expect_ident_like()  # finite-product index, e.g. N
+            self._expect(TokenKind.ARROW)
+            infinity = self._expect_ident_like()
+            if infinity != "Infinity":
+                raise ParseError("Limit requires `Infinity` as its bound", sp.line, sp.col)
+            self._expect(TokenKind.LBRACE)
+            body = self._expression()
+            self._expect(TokenKind.RBRACE)
+            return Call(
+                callee=Var(name="Limit", span=sp),
+                args=[body],
+                span=sp,
+            )
+
         if self._match(TokenKind.EVOLVE):
             return self._evolve_expr(sp)
 
@@ -2769,6 +2793,8 @@ class Parser:
             return self._evolve_hamiltonian_block(sp)
 
         if self._match(TokenKind.LPAREN):
+            if self._match(TokenKind.RPAREN):
+                return self._evolve_explicit_block(sp)
             seeds = [self._expression()]
             while self._match(TokenKind.COMMA):
                 seeds.append(self._expression())
@@ -2818,6 +2844,64 @@ class Parser:
             tok.col,
         )
 
+    def _evolve_explicit_block(self, sp: Span) -> EvolveExpr:
+        """Parse explicit transform, optionally with bounded `until`."""
+        body, until_predicate, max_steps = self._evolve_bounded_body()
+        self._expect(TokenKind.DOT)
+        run_tok = self._peek()
+        run_name = self._expect_ident_like()
+        if run_name != "run":
+            raise ParseError(
+                f"Evolve() must be followed by `.run()`, got `.{run_name}`",
+                run_tok.line,
+                run_tok.col,
+                code="EVOLVE_REQUIRES_BLOCK_RUN",
+            )
+        self._expect(TokenKind.LPAREN)
+        self._expect(TokenKind.RPAREN)
+        return EvolveExpr(
+            seeds=[],
+            times=1,
+            body=body,
+            span=sp,
+            explicit_transform=True,
+            until_predicate=until_predicate,
+            max_steps=max_steps,
+        )
+
+    def _evolve_bounded_body(self) -> tuple[EvolveBody, Expr | None, Expr | None]:
+        sp = self._span()
+        self._expect(TokenKind.LBRACE)
+        lets: list[LetBind] = []
+        result = None
+        while not self._check(TokenKind.RBRACE) and not self._check(TokenKind.EOF):
+            if self._match(TokenKind.LET):
+                lsp = self._span()
+                name = self._expect_ident_like()
+                self._expect(TokenKind.EQ)
+                lets.append(LetBind(name=name, expr=self._expression(), span=lsp))
+                continue
+            result = self._expression()
+            break
+        if result is None:
+            tok = self._peek()
+            raise ParseError("evolve body missing result expression", tok.line, tok.col)
+        until_predicate = None
+        max_steps = None
+        if self._match(TokenKind.UNTIL):
+            until_predicate = self._expression()
+            if not self._match(TokenKind.MAX):
+                tok = self._peek()
+                raise ParseError(
+                    "bounded explicit evolve requires `max N`",
+                    tok.line,
+                    tok.col,
+                    code="EVOLVE_UNTIL_BOUND_ERROR",
+                )
+            max_steps = self._expression()
+        self._expect(TokenKind.RBRACE)
+        return EvolveBody(lets=lets, result=result, span=sp), until_predicate, max_steps
+
     def _evolve_hamiltonian_block(self, sp: Span) -> EvolveExpr:
         """`evolve { psi under H for t [using Suzuki(...)] [until pred
         [max N]] }.run()` (LISS-0414). Produces the identical `EvolveExpr`
@@ -2838,10 +2922,14 @@ class Parser:
         suzuki = self._suzuki_policy()
         until_predicate = None
         max_steps = None
+        until_tok = self._peek()
         if self._match(TokenKind.UNTIL):
-            until_predicate = self._expression()
-            if self._match(TokenKind.MAX):
-                max_steps = self._expression()
+            raise ParseError(
+                "`until` is only valid in explicit Evolve() transform mode",
+                until_tok.line,
+                until_tok.col,
+                code="EVOLVE_UNTIL_MODE_ERROR",
+            )
         self._expect(TokenKind.RBRACE)
         self._expect(TokenKind.DOT)
         run_tok = self._peek()

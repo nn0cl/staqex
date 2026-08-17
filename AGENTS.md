@@ -83,6 +83,77 @@ a future ship ADR is Accepted.
 6. Execute only the requested phase.
 7. Report Red, Green, Refactor, or Fast Path status honestly.
 
+Before design or implementation, consult
+`docs/collaboration/independent-review-perspectives.md`. Select applicable
+review lenses, use them as a pre-review checklist, and state them in the
+design note or work trace.
+
+## User-triggered Independent Context Review Loop
+
+The user may trigger an independent review loop at any time with a request
+such as “独立コンテキストレビュー”, “レビュー・修正ループ”, or an
+equivalent explicit instruction. This is a reusable process, not a one-time
+exception for a particular Issue.
+
+When triggered, the agent must:
+
+1. Identify the review scope, current Issue/ADR/Spec/WP, branch, phase, and
+   allowed files from repository artifacts.
+2. Spawn a fresh independent context for a read-only reviewer. The reviewer
+   must not edit the worktree, grant approval, or perform implementation.
+3. Ask the reviewer to return prioritized findings, evidence paths, a
+   readiness verdict, and reusable reviewer perspectives. Do not request or
+   record hidden chain-of-thought.
+4. Record the review in `docs/collaboration/reviews/` and the AI routing and
+   evidence in `docs/collaboration/traces/`.
+5. Map findings to the reusable review lenses and promote new recurring
+   concerns into the perspectives ledger.
+6. Disposition each finding as `accepted`, `rejected`, or `deferred`. The
+   primary agent may make this disposition under the existing accepted
+   ADR/Spec/Issue/phase boundaries. Accept only design-preserving corrections;
+   reject only unsupported, duplicate, non-applicable, or already-contract-
+   conflicting findings. Record evidence and rationale for every decision.
+   Ask the user only when the disposition would require a design deviation,
+   new architecture/technology, Issue or phase change, conflicting user
+   intent, or an unresolved physics/safety decision.
+7. Apply only accepted, in-scope corrections in the main agent context. A
+   correction is not a phase or implementation approval.
+8. Re-run the review in a new independent context after accepted corrections.
+   Every re-review must use the current artifacts, not the previous reviewer's
+   context. Repeat the review/correction cycle until a terminal state is
+   reached.
+9. End the loop explicitly in exactly one of these terminal states:
+
+   - `COMPLETE`: the latest independent review is ready, all findings are
+     accepted/resolved or explicitly rejected with recorded authority, and no
+     review blocker remains. This only completes the review loop; it does not
+     approve a phase, ADR, technology, or implementation.
+   - `ABORT`: no action is required, the user stops the review, or a user/
+     Adjudicator decision is required because the existing design cannot
+     determine the disposition. Record the unresolved decision and stop; do
+     not continue by assumption.
+
+   A `NOT READY` result with accepted actionable findings is not terminal; it
+   transitions to correction and then to a fresh re-review. A `NOT READY`
+   result with AI-rejected findings can transition after the evidence and
+   rationale are recorded. A reviewer can report `READY` but
+   cannot approve a phase, ADR, technology, or implementation.
+10. Before moving to the next phase, record the user's or Adjudicator's typed
+    approval separately.
+
+Each iteration must state whether it is read-only review, finding disposition,
+documentation correction, Red-test creation, implementation, or verification.
+The loop must stop and ask the user when a finding changes an accepted
+architecture, technology choice, Issue scope, or requested phase. The agent
+must not use the loop to bypass branch, approval, implementation, or
+human-review gates.
+
+The minimum review record includes: trigger/request, independent context
+boundary, inspected artifacts, findings with priority and disposition,
+disposition authority, corrections applied, remaining blockers, reviewer
+perspective, next review condition, terminal state (`COMPLETE` or `ABORT`),
+and approval status. See `docs/templates/independent-context-review.md`.
+
 ## Session Entry
 
 - Treat each new session as having no prior chat context.
@@ -199,6 +270,7 @@ The common scaffold is:
 - Included and omitted AI context:
 - Task routing (model/assistant/tool):
 - Input/output evidence contract when AI output is involved:
+- Independent review lenses selected and why:
 - Verification plan:
 ```
 

@@ -93,14 +93,15 @@ fn objective_hamiltonian(w: ObjectiveWeights, activity_w: Float[8], selectivity_
 $\lvert\psi_{sel}(t)\rangle = U(t)\lvert\psi_{sel}(0)\rangle,\quad
 U(t)=e^{-iH_{obj}t/\hbar}$
 
-`Evolve { ... }.run()` *is* this operator-on-ket application — `under H
-for t` is how $U(t)$ gets built (Hamiltonian + duration, via
-exponentiation), not a distinct physical operation from `apply(U, psi)`.
+`Evolve() { U_t * psi_sel }.run()` *is* this operator-on-ket application.
+The generator, duration, and exponential are written explicitly in the
+source; `Evolve` is only the execution boundary.
 
 ```staqex
 Operator H_obj = scale * objective_hamiltonian(weights, activity_w, selectivity_w)
 Time dur = 0.6.fs
-State psi_sel = Evolve { psi_sel under H_obj for dur }.run()
+Operator U_t = exp(-i * H_obj * dur / hbar)
+State psi_final = Evolve() { U_t * psi_sel }.run()
 ```
 
 ### 5. Terminal measurement (Born rule)
@@ -108,7 +109,7 @@ State psi_sel = Evolve { psi_sel under H_obj for dur }.run()
 $P(x) = \lvert\langle x\rvert\psi_{sel}(t)\rangle\rvert^2$
 
 ```staqex
-Measure psi_sel
+Measure psi_final
 ```
 
 Note: step 4's $H_{obj}$ contains `X[i]` terms, which do not commute with

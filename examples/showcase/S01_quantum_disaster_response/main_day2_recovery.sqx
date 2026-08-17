@@ -1,6 +1,6 @@
 // staqex-lane: experiment
-// CH-day2 — Day-2 recovery / continued rescue (Suzuki S4). Locked scenario seat.
-// Arc: recovery drive H + S4 policy → day-2 plan sample (not tonight re-run).
+// CH-day2 — Day-2 recovery / continued rescue with an explicit propagator.
+// Arc: recovery drive H + explicit propagator → day-2 plan sample (not tonight re-run).
 // WP-0089 / LISS-0289: parent-relative import (ADR 0183) + selective names.
 
 package examples.showcase.s01_disaster.day2_lane
@@ -90,8 +90,9 @@ pub fn main() -> Unit {
     // inline while scaling, no H_raw intermediate needed.
     Operator H = scale * recovery_hamiltonian(coeffs)
     Float coeff_sum = named_coeff_sum(coeffs)
-    // Suzuki order is the evolve clause itself (no fake suzuki_*_tag).
-    Float suzuki_order = 4.0
+    // This example writes the exact propagator form. A finite target
+    // approximation must be introduced separately through explicit Realize;
+    // no unused Suzuki order is presented as executable policy here.
 
     HonestyDossier dossier = HonestyDossier(1.0, 5.0)
     Float honesty_v = dossier.sim_lane
@@ -114,7 +115,8 @@ pub fn main() -> Unit {
 
     State plan1 = |+>
     Time dur = 0.9.fs
-    State (plan0, plan1) = Evolve { (plan0, plan1) under H for dur using Suzuki(order = 4, steps = 8) }.run()
+    Operator U_t = exp(-i * H * dur / hbar)
+    State (plan0, plan1) = Evolve() { U_t * (plan0, plan1) }.run()
     State zz = expect(ZZ, plan0, plan1)
     // Sparse notebook peek (not Float-tag flood).
     State viewed_zz = Inspect(zz)

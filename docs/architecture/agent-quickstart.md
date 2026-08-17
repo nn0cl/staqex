@@ -90,6 +90,11 @@ architecture or process decision is required.
 Every user request starts with a design note before tests or implementation.
 Size the note to the selected operating path.
 
+Before writing the design note, read
+`docs/collaboration/independent-review-perspectives.md`. Select the applicable
+lenses and carry their checklist into the design. Work is prepared on the
+assumption that an independent reviewer will inspect those lenses later.
+
 The design note selects:
 
 - target behavior.
@@ -101,6 +106,7 @@ The design note selects:
 - task routing to model, assistant, or deterministic tool.
 - input, output, and reasoning evidence contracts when AI or model output is
   involved.
+- applicable independent-review lenses and why they apply.
 
 Fast Path may omit non-applicable VO/DTO, ports/adapters, and AI output
 contract fields when it explicitly states that they are not involved.
@@ -115,6 +121,19 @@ Only execute the phase explicitly requested by the Adjudicator.
 
 Phase transitions require Adjudicator approval. Do not start Phase 2 from
 unreviewed Phase 1 tests.
+
+### Optional user-triggered independent review loop
+
+The user may explicitly trigger an independent-context review at any point,
+for example with “独立コンテキストレビュー” or “レビュー・修正ループ”.
+The agent then sends the current scoped artifacts to a fresh, read-only
+reviewer context, records prioritized findings, applies only in-scope fixes,
+and repeats with a new context until the user stops or no blocking findings
+remain. The reviewer cannot edit files or grant approval. The next phase still
+requires its own typed Adjudicator approval. Record each iteration under
+`docs/collaboration/reviews/` and `docs/collaboration/traces/`; use the
+template at `docs/templates/independent-context-review.md`, classify findings
+against the perspectives ledger, and update it for new recurring concerns.
 
 **Claude Code exception (non-normative pointer, ADR 0112 / ADR 0113):** for
 named-Issue Feature Path work and for Issues named by an approved bounded

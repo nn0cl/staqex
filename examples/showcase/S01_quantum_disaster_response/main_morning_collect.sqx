@@ -146,7 +146,8 @@ pub fn main() -> Unit {
     Energy scale = ops_energy_scale()
     Operator H = scale * Z
     Time dur = 0.4.fs
-    State status = Evolve { status under H for dur }.run()
+    Operator U_t = exp(-i * H * dur / hbar)
+    State status = Evolve() { U_t * status }.run()
     State peeked = expect(Z, status)
     // Sparse chapter peek only (SE-01: Host logs preferred; scorecard inspect seat).
     State viewed_peek = Inspect(peeked)

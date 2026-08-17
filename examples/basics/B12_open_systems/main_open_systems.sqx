@@ -2,6 +2,7 @@
 // staqex-lane: open
 
 Operator H = X
+Float decay_rate = 0.1
 
 DensityState<Qubit> rho = DensityState(
     RawMatrix([
@@ -17,7 +18,7 @@ DensityState<Qubit> observed = lindblad(
         [0.0, 1.0],
         [0.0, 0.0]
     ])]),
-    0.1
+    decay_rate
 )
 
 // lindblad already moved the source density; terminal measure on observed.

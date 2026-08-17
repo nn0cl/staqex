@@ -58,7 +58,7 @@ def test_s1_source_exercises_required_surfaces() -> None:
     assert "expect(" in blob
     assert "Inspect(" in blob
     assert "Measure " in blob
-    assert "Evolve " in blob
+    assert "Evolve()" in blob
     assert "Float " in blob
     assert "Operator " in blob
     assert "struct " in blob or "namespace " in blob

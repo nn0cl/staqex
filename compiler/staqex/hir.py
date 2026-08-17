@@ -569,6 +569,13 @@ def _analyze_block(
             diag = _check_state_bind(stmt, module_symbols, state)
             if diag is not None:
                 diags.append(diag)
+            if isinstance(stmt.expr, EvolveExpr) and stmt.expr.explicit_transform:
+                # Explicit Evolve consumes the State operand of its written
+                # `Operator * State` transform. Keep this in the existing
+                # linear-use pass so the execution boundary does not create
+                # an implicit discard or weaken ownership checks.
+                _mark_all_linear_vars(stmt.expr, state)
+                _revive_explicit_evolve_outputs(stmt, state)
             reuse_diag = _check_finiteize_continuous_reuse(stmt, state)
             if reuse_diag is not None:
                 diags.append(reuse_diag)
@@ -644,6 +651,10 @@ def _expr_children(expr: object) -> tuple[object, ...]:
 
     ``BinOp`` uses ``lhs``/``rhs``; ``TensorExpr`` uses ``left``/``right``.
     """
+    if isinstance(expr, EvolveExpr):
+        if not expr.explicit_transform or expr.body is None:
+            return tuple(expr.seeds)
+        return tuple(expr.seeds) + tuple(let.expr for let in expr.body.lets) + (expr.body.result,)
     if isinstance(expr, (WhenExpr, SuperposeExpr)):
         return (expr.ctrl, *(arm.body for arm in expr.arms))
     if isinstance(expr, Call):
@@ -674,6 +685,44 @@ def _mark_all_linear_vars(expr: object, state: _LinearUseState) -> None:
         return
     for child in _expr_children(expr):
         _mark_all_linear_vars(child, state)
+
+
+def _revive_explicit_evolve_outputs(
+    stmt: StateBind, state: _LinearUseState
+) -> None:
+    """Reopen the linear carriers produced by an explicit Evolve bind.
+
+    The written ``Operator * State`` operand is a move, but Evolve also
+    produces the transformed carrier.  For an in-place bind the same root is
+    therefore consumed and immediately revived; for renamed outputs a new
+    output root is introduced after the input root is consumed.  This mirrors
+    the existing in-place transform rule for gate/application calls and keeps
+    terminal ``tracing_out`` valid for tuple-valued evolution.
+    """
+    expr = stmt.expr
+    if not isinstance(expr, EvolveExpr) or expr.body is None:
+        return
+    result = expr.body.result
+    if not isinstance(result, BinOp) or result.op != "*":
+        return
+    operand = result.rhs
+    if isinstance(operand, TupleExpr):
+        sources = operand.items
+    else:
+        sources = (operand,)
+    if len(sources) != len(stmt.names):
+        return
+    for output, source in zip(stmt.names, sources):
+        if not isinstance(source, Var):
+            continue
+        root = _linear_root(source.name, state.aliases)
+        if output == source.name:
+            state.consumed.discard(root)
+            state.introduced[output] = stmt.span
+            state.aliases[output] = output
+            continue
+        state.introduced[output] = stmt.span
+        state.aliases[output] = output
 
 
 def _consume_when_linear_uses(expr: object, state: _LinearUseState) -> None:

@@ -25,7 +25,8 @@ pub fn main() -> Unit {
     // ADR 0174 struct-field units aren't recognized by evolve's
     // fail-closed check directly (LISS-0335) -- bind to a local first.
     Time dur = config.duration
-    State site = Evolve { site under Hssh for dur }.run()
+    Operator U_t = exp(-i * Hssh * dur / hbar)
+    State site = Evolve() { U_t * site }.run()
 
     QubitRegister<3> register = system()
     ForEach q in register {
