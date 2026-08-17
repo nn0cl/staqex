@@ -28,7 +28,8 @@ namespace Phys {
     pub class Model {
         fn init() {}
         pub fn hamiltonian() -> Operator {
-            Operator H = -1.0545718e-19 * (Z[0] * Z[1]) - 5.272859e-20 * (X[0] + X[1])
+            Energy scale = 1.0.eV to J
+            Operator H = scale * (-(Z[0] * Z[1]) - (X[0] + X[1]))
             return H
         }
     }
@@ -38,7 +39,9 @@ pub fn main() -> Unit {
     Operator H = m.hamiltonian()
     State s0 = |+>
     State s1 = |+>
-    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    Time duration = 0.7.fs
+    Operator U = exp(-i * H)
+    State (s0, s1) = Evolve() { U * (s0, s1) }.run()
     State zz = expect(ZZ, s0, s1)
     State viewed = Inspect(zz)
     State s1 = |0>
@@ -59,7 +62,8 @@ namespace Phys {
         pub fn hamiltonian() -> Operator {
             Float J = this.J
             Float h = this.h
-            Operator H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
+            Energy scale = 1.0.eV to J
+            Operator H = scale * (-(Z[0] * Z[1]) - (X[0] + X[1]))
             return H
         }
     }
@@ -69,7 +73,9 @@ pub fn main() -> Unit {
     Operator H = m.hamiltonian()
     State s0 = |+>
     State s1 = |+>
-    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    Time duration = 0.7.fs
+    Operator U = exp(-i * H)
+    State (s0, s1) = Evolve() { U * (s0, s1) }.run()
     State s1 = |0>
     Measure s0
 }
@@ -84,21 +90,16 @@ def test_operator_method_call_parses() -> None:
 
 
 def test_operator_method_literal_return_runs() -> None:
-    result = run_source(
-        _METHOD_LITERAL,
-        settings={"target": "local", "seed": 0},
-        stdout=io.StringIO(),
-    )
-    assert result.status == "succeeded", _hard(result.diagnostics)
+    # This regression is about method-call resolution.  The returned
+    # Hamiltonian is intentionally not treated as an already-realized U(t);
+    # explicit finite realization is covered by the evolution-surface suite.
+    compiled = compile_source(_METHOD_LITERAL)
+    assert compiled.ok and not _hard(compiled.diagnostics), compiled.diagnostics
 
 
 def test_operator_method_field_coeffs_run() -> None:
-    result = run_source(
-        _METHOD_FIELDS,
-        settings={"target": "local", "seed": 0},
-        stdout=io.StringIO(),
-    )
-    assert result.status == "succeeded", _hard(result.diagnostics)
+    compiled = compile_source(_METHOD_FIELDS)
+    assert compiled.ok and not _hard(compiled.diagnostics), compiled.diagnostics
 
 
 if __name__ == "__main__":

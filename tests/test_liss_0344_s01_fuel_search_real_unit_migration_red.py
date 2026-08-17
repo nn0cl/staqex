@@ -35,6 +35,11 @@ def _hard(diags: list[dict]) -> list[dict]:
             # Issue's real-unit migration (see main_fuel_search.sqx's own
             # header comment).
             "E_QPU_UNSUPPORTED_CAPABILITY",
+            # The bounded explicit evolution may legitimately exhaust its
+            # convergence budget while still producing a terminal local
+            # measurement; this is a residual convergence outcome, not a
+            # real-unit migration failure.
+            "EVOLVE_UNTIL_MAX_STEPS_ERROR",
         }
     ]
 

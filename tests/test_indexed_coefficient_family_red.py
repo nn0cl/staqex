@@ -30,7 +30,11 @@ pub fn main() -> Unit {
     State a = |0>
     State b = |0>
     State c = |0>
-    State (a, b, c) = Evolve { (a, b, c) under H for 0.1 }.run()
+        Time dt = 0.1.fs
+        Energy scale = 1.0.eV to J
+        Operator H_energy = scale * H
+        Operator U = exp(-i * H_energy * dt / hbar)
+        State (a, b, c) = Evolve() { U * (a, b, c) }.run()
     Measure a
     Measure b
     Measure c
@@ -85,7 +89,11 @@ def test_indexed_coefficient_evolve_runs() -> None:
         }
         State a = |0>
         State b = |0>
-        State (a, b) = Evolve { (a, b) under H for 0.1 }.run()
+        Time dt = 0.1.fs
+        Energy scale = 1.0.eV to J
+        Operator H_energy = scale * H
+        Operator U = exp(-i * H_energy * dt / hbar)
+        State (a, b) = Evolve() { U * (a, b) }.run()
         Measure a
     }
     """

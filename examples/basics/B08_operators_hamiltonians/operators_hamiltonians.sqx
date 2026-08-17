@@ -1,5 +1,5 @@
 // staqex-profile: experiment
-// B08 — Operator Hamiltonians and exact propagator spelling (minimal dialect face).
+// B08 — Operator Hamiltonians and exact propagator spelling (local lane).
 // WP-0089 / LISS-0290: ADR 0180 ty-fill; LISS-0305 multi-bind (ADR 0184).
 // Leftover leaves via tracing_out (ADR 0173).
 

@@ -21,7 +21,10 @@ namespace Test {
         var v: Float = 0.0
         fn init(x: Float) { this.v = x }
         pub fn get() -> Float { return this.v }
-        pub fn h() -> Operator { return 1.05e-19 * Z[0] }
+        pub fn h() -> Operator {
+            Energy scale = 1.0.eV to J
+            return scale * Z[0]
+        }
     }
     pub class Outer {
         pub val inner: Test.Inner
@@ -75,7 +78,9 @@ def test_nested_receiver_operator_returning_method() -> None:
     Test.Outer o = Test.Outer(i)
     Operator H = o.inner.h()
     State s = |+>
-    State s = Evolve {{ s under H for 1.0.fs }}.run()
+    Time duration = 1.0.fs
+    Operator U = exp(-i * H * duration / hbar)
+    State s = Evolve() {{ U * s }}.run()
     Measure s
     """
     compiled = compile_source(src)
@@ -94,7 +99,9 @@ def test_single_level_receiver_still_works() -> None:
     Float direct = i.get()
     Operator H = i.h()
     State s = |+>
-    State s = Evolve {{ s under H for 1.0.fs }}.run()
+    Time duration = 1.0.fs
+    Operator U = exp(-i * H * duration / hbar)
+    State s = Evolve() {{ U * s }}.run()
     State answer = Dirac(direct == 2.0)
     Measure answer tracing_out s
     """

@@ -122,7 +122,9 @@ def test_operator_dsl_power_is_unaffected() -> None:
         Operator H_raw = Z ^ 2
         Operator H = scale * H_raw
         State a = |0>
-        State a = Evolve { a under H for 0.1.fs }.run()
+        Time duration = 0.1.fs
+        Operator U = exp(-i * H * duration / hbar)
+        State a = Evolve() { U * a }.run()
         Measure a
     }
     """
