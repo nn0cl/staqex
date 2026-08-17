@@ -160,7 +160,7 @@ def test_trotter_ising_evolve_qasm() -> None:
     first-order `trotter_gates` path.
     """
     path = _REPO / "examples/basics/B08_operators_hamiltonians/operators_hamiltonians.sqx"
-    with pytest.raises(RuntimeError, match="EVOLUTION_REALIZATION_REQUIRED"):
+    with pytest.raises(RuntimeError, match="EVOLUTION_TARGET_UNSUPPORTED"):
         StaqexCompiler(route=False).compile_to_qasm3(str(path))
 
 
