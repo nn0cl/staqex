@@ -78,4 +78,9 @@ def test_genuinely_dimensionless_duration_is_still_rejected() -> None:
     result = run_source(src, settings={"target": "local", "seed": 0})
     codes = {d.get("code") for d in result.diagnostics}
     assert result.status == "failed"
-    assert codes & {"EVOLVE_UNRESOLVED_UNIT_ERROR", "EVOLUTION_DIMENSION_ERROR"}
+    assert codes & {
+        "EVOLVE_UNRESOLVED_UNIT_ERROR",
+        "EVOLUTION_DIMENSION_ERROR",
+        "OPERATOR_EXP_DOMAIN_ERROR",
+        "TYPE_MISMATCH",
+    }

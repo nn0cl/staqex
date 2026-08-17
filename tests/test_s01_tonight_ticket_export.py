@@ -151,7 +151,11 @@ def test_pauli_evolve_preserves_sibling_joint_coords() -> None:
         pub fn main() -> Unit {
             State plan = |0>
             State fuel = |0>
-            State fuel = Evolve { fuel under X for pi / 2.0 until converged(fuel) max 64 }.run()
+            Time duration = 0.1.fs
+            Energy scale = 1.0.eV to J
+            Operator H = scale * X
+            Operator U = exp(-i * H * duration / hbar)
+            State fuel = Evolve() { U * fuel }.run()
             Measure plan
         }
         """

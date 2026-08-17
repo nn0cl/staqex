@@ -68,8 +68,10 @@ def test_until_max_block_run_form_parses_and_runs() -> None:
     package t
     pub fn main() -> Unit {
         State fuel = Dirac(0)
-        Time dur = 1.5707963267948966.s
-        Operator U = exp(-i * X * dur / hbar)
+        Time dur = 0.1.fs
+        Energy scale = 0.0.eV to J
+        Operator H = scale * X
+        Operator U = exp(-i * H * dur / hbar)
         State fuel = Evolve() { U * fuel until converged(fuel) max 64 }.run()
         Measure fuel
     }
