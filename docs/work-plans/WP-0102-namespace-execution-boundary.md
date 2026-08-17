@@ -2,9 +2,10 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready — Phase 3 inventory verified; no example rewrite required** |
+| Status | **complete — PR #553; Phase 3 inventory verified; no example rewrite required** |
 | Purpose | Define a language boundary in which `namespace` contains declarations, while executable behavior begins at an explicit `pub fn main(...) -> Unit` or a named callable invoked from it. |
 | Local Issue | [LISS-0440](../issues/LISS-0440-namespace-execution-boundary.md) |
+| Completion | **complete — PR #553** |
 | Related specification | [Staqex language specification](../specs/staqex-language-specification.md) |
 | Related ADR | [ADR 0209](../architecture/adr/0209-explicit-blackboard-evolution-surface.md), [ADR 0210](../architecture/adr/0210-formal-limit-finite-realization-policy.md) |
 | Related WP | [WP-0100](WP-0100-explicit-evolution-surface.md), [WP-0101](WP-0101-example-equation-fidelity.md) |

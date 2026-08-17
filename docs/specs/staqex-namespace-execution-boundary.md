@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted scope — final-review-ready** |
+| Status | **Accepted scope — complete in PR #553** |
 | Issue | [LISS-0440](../issues/LISS-0440-namespace-execution-boundary.md) |
 | WorkPlan | [WP-0102](../work-plans/WP-0102-namespace-execution-boundary.md) |
 | Authority | Existing language specification and `pub fn main` contract; Phase 2 implementation and Phase 3 review approved 2026-08-17 |

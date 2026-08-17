@@ -2,7 +2,7 @@
 
 ## Metadata
 
-- Status: **final-review-ready / independently reviewed READY (2026-08-17)**
+- Status/phase: **complete** / independently reviewed READY (2026-08-17)
 - Type: Feature / Architecture bounded example slice
 - WorkPlan: [WP-0101](../work-plans/WP-0101-example-equation-fidelity.md)
 - Related: [LISS-0437](LISS-0437-explicit-evolution-surface.md)
@@ -52,8 +52,7 @@ must be visible in source and the examples must remain compile-checkable.
 ## Completion gate
 
 - Final review approval: user-approved 2026-08-17
-- Completion PR: not yet opened
-- Until a PR number is recorded, this Issue remains `final-review-ready`.
+- Completion PR: **PR #553**
   at the selected seed/parameters; its source grammar and compile boundary are
   valid, and the example explicitly documents the bounded dynamic lane.
 - Review record: [2026-08-17 LISS-0439 review](../collaboration/reviews/2026-08-17-liss-0439-example-equation-fidelity-review.md)

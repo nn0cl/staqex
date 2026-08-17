@@ -2,12 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready — Phase 3 inventory verified; no example rewrite required** |
+| Status/phase | **complete** — Phase 3 inventory verified; no example rewrite required |
 | WorkPlan | [WP-0103](../work-plans/WP-0103-classical-quantum-realization-boundaries.md) |
 | Specification | [Classical/quantum/realization boundaries](../specs/staqex-classical-quantum-realization-boundaries.md) |
 | Scope approval | User approval recorded 2026-08-17 |
 | Phase approval | Phase 1 Red approved by user 2026-08-17 |
 | Implementation approval | Phase 2 approved by user 2026-08-17; existing implementation satisfies the approved boundary |
+| Completion PR | **PR #553** |
+
+Status/phase: **complete**
 
 ## Objective
 

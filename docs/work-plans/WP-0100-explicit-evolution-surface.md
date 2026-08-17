@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready — Phase 3 finite Realize/Suzuki closeout (2026-08-17)** |
+| Status | **complete — PR #553 (Phase 3 finite Realize/Suzuki closeout, 2026-08-17)** |
 | Purpose | Let physicists write the construction of a quantum evolution explicitly, while keeping `Evolve` as the execution boundary rather than a hidden Hamiltonian shorthand. |
 | Local Issue | [LISS-0437](../issues/LISS-0437-explicit-evolution-surface.md) |
 | Proposed ADR | [ADR 0209](../architecture/adr/0209-explicit-blackboard-evolution-surface.md) |

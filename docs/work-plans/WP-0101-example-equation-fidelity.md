@@ -2,10 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready / independently reviewed READY (2026-08-17)** |
+| Status | **complete — PR #553 / independently reviewed READY (2026-08-17)** |
 | Purpose | Ensure official examples let a researcher write/read the blackboard equation naturally and let a programmer recover operators, parameters, approximation policy, and semantic boundaries from source. |
 | Local Issue | [LISS-0439](../issues/LISS-0439-example-equation-fidelity.md) |
 | Related Issue | [LISS-0437](../issues/LISS-0437-explicit-evolution-surface.md) |
+| Completion | **complete — PR #553** |
 | Specification | [Staqex explicit evolution surface](../specs/staqex-explicit-evolution-surface.md) |
 | ADR boundary | [ADR 0210](../architecture/adr/0210-formal-limit-finite-realization-policy.md) |
 | Branch | `codex/wp-0100-explicit-evolution-surface` |

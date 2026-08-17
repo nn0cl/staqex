@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0437
-- Status: **final-review-ready; finite Realize/Suzuki closeout complete; residual work split to LISS-0438**
+- Status/phase: **complete** — finite Realize/Suzuki closeout complete; residual work split to LISS-0438
 - Type: Architecture Path
 - Planning size: **L**
 - Parent WorkPlan: [WP-0100](../work-plans/WP-0100-explicit-evolution-surface.md)
@@ -109,5 +109,4 @@ submission, and provider SDK work remain outside this slice.
 ## Completion gate
 
 - Final review approval: user-approved 2026-08-17
-- Completion PR: not yet opened
-- Until a PR number is recorded, this Issue remains `final-review-ready`.
+- Completion PR: **PR #553**

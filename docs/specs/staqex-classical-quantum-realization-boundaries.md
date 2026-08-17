@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted scope — final-review-ready** |
+| Status | **Accepted scope — complete in PR #553** |
 | Issue | [LISS-0441](../issues/LISS-0441-classical-quantum-realization-boundaries.md) |
 | WorkPlan | [WP-0103](../work-plans/WP-0103-classical-quantum-realization-boundaries.md) |
 | Authority | Adjudicator language vision, explicit evolution surface, QPU honesty, and finite Realize policy; Phase 2 implementation and Phase 3 review approved 2026-08-17 |

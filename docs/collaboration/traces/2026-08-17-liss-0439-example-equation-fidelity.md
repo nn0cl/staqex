@@ -7,7 +7,7 @@
 - Verification: 31/31 runnable main checks, 161/161 spec verification,
   focused evolution/Realize regression, and `git diff --check` passed.
 - Independent review: Tesla, fresh read-only context, final `READY`.
-- Terminal state: `COMPLETE` for the review loop; completion packet remains
-  `final-review-ready` until a PR number is recorded.
+- Terminal state: `COMPLETE` for the review loop. Completion packet: `PR #553`,
+  `complete`.
 - Non-blocking observation: S01 fuel's bounded runtime can exhaust max steps;
   this does not invalidate its current grammar or compile-readiness contract.

@@ -49,14 +49,11 @@
 
 The user approved Phase 1 Red, Phase 2 Green, Phase 3, and the final review on
 2026-08-17. The independent review loop is terminal `COMPLETE`; the
-synchronized Issue, WP, Spec, review, and trace remain `final-review-ready`
-until a completion PR number is available. S02 migration, provider SDK, and
-live QPU work remain excluded.
+synchronized Issue, WP, Spec, review, and trace are complete in PR #553. S02
+migration, provider SDK, and live QPU work remain excluded.
 
 ## Completion gate
 
 - Final review approval: user-approved 2026-08-17
-- Completion PR: not yet opened
-- Required next step: open the completion PR, record its number, then update
-  the synchronized Issue/WP/trace packet to `complete` and run
-  `python3 scripts/check-completion-packet.py`.
+- Completion PR: **PR #553**
+- Completion packet status: **complete**
