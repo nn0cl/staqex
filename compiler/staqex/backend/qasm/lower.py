@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+import re
+
 from ...ast_nodes import (
     Attr,
     BinOp,
@@ -10,6 +13,7 @@ from ...ast_nodes import (
     CompilationUnit,
     Dirac,
     EvolveExpr,
+    Expr,
     ExprStmt,
     ForEachStmt,
     FunDecl,
@@ -19,12 +23,15 @@ from ...ast_nodes import (
     Measure,
     OpExpr,
     StateBind,
+    Span,
+    SuzukiPolicy,
     TupleExpr,
     TypeRef,
     UnitConvert,
     Var,
     WhenExpr,
 )
+from ...ast_nodes import OpBin, OpBinder
 from ...ir.dag import Dag, lower_source_ast
 from ...second_quantization import SecondQuantizationMappingError, resolve_mapping_expr
 from ...finite_binder import lower_finite_binder_operators
@@ -66,6 +73,33 @@ _QASM_EVOLVE_UNTIL_UNSUPPORTED_MESSAGE = (
     "QASM emission does not support runtime evolve-until repetition"
 )
 
+EVOLUTION_TARGET_UNSUPPORTED = "EVOLUTION_TARGET_UNSUPPORTED"
+EVOLUTION_MAPPING_MISSING = "binder_register_mapping_missing"
+EVOLUTION_BUDGET_EXCEEDED = "resource_budget_exceeded"
+EVOLUTION_LIMIT_REALIZATION_PENDING = "formal_limit_realization_pending"
+_EVOLUTION_TARGET_UNSUPPORTED_MESSAGE = (
+    "the QPU backend does not yet lower the explicit `Operator * State` "
+    "evolution surface; no circuit was emitted"
+)
+
+
+@dataclass(frozen=True)
+class EvolutionTargetProfile:
+    """Target-owned realization policy; never inferred from source physics."""
+
+    suzuki_order: int = 2
+    suzuki_steps: int = 1
+    realization_mode: str = "approximate"
+    resource_budget_qubits: int | None = None
+    capability_limitations: tuple[str, ...] = ()
+    # Explicit logical-register witness for finite binder realization. The
+    # mapping is target input; it is never inferred from source binder names.
+    register_mapping: dict[str, str] | None = None
+    limit_realization_method: str | None = None
+    limit_order: int | None = None
+    limit_steps: int | None = None
+    limit_error_budget: float | None = None
+
 # LISS-0074 Slice E: never silently embed qudit carriers as qubit OPENQASM.
 UNSUPPORTED_LOCAL_DIMENSION = "UNSUPPORTED_LOCAL_DIMENSION"
 _UNSUPPORTED_LOCAL_DIMENSION_MESSAGE = (
@@ -99,19 +133,292 @@ def qudit_capability_reject(unit: CompilationUnit) -> Circuit | None:
     return None
 
 
-def lower_unit_to_circuit(unit: CompilationUnit) -> Circuit:
+def explicit_evolution_capability_reject(
+    unit: CompilationUnit,
+    target_profile: EvolutionTargetProfile | None,
+) -> Circuit | None:
+    """Reject before allocation so unsupported evolution cannot leak a
+    partially lowered circuit."""
+    if unit.main is None:
+        return None
+    for stmt in unit.main.body.stmts:
+        if not (
+            isinstance(stmt, StateBind)
+            and isinstance(stmt.expr, EvolveExpr)
+            and stmt.expr.explicit_transform
+        ):
+            continue
+        if stmt.expr.until_predicate is not None:
+            return _rejected_target_circuit(
+                QASM_EVOLVE_UNTIL_UNSUPPORTED,
+                _generic_explicit_provenance(stmt, "runtime_evolve_until_unsupported"),
+            )
+        if target_profile is None:
+            return _rejected_target_circuit(
+                EVOLUTION_TARGET_UNSUPPORTED,
+                _generic_explicit_provenance(stmt, "target_profile_required"),
+            )
+        if target_profile.realization_mode != "approximate":
+            return _rejected_target_circuit(
+                EVOLUTION_TARGET_UNSUPPORTED,
+                _generic_explicit_provenance(stmt, "unsupported_realization_mode"),
+            )
+    return None
+
+
+def lower_unit_to_circuit(
+    unit: CompilationUnit,
+    *,
+    target_profile: EvolutionTargetProfile | None = None,
+) -> Circuit:
     """Prefer structural AST patterns; else DAG-driven heuristic."""
     rejected = qudit_capability_reject(unit)
     if rejected is not None:
         return rejected
-    circ = _from_ast_patterns(unit)
+    rejected = formal_limit_capability_reject(unit, target_profile)
+    if rejected is not None:
+        return rejected
+    rejected = explicit_evolution_capability_reject(unit, target_profile)
+    if rejected is not None:
+        return rejected
+    circ = _from_ast_patterns(unit, target_profile=target_profile)
     if circ is not None:
         return circ
     dag = lower_source_ast(unit)
     return _from_dag(dag)
 
 
-def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
+def formal_limit_capability_reject(
+    unit: CompilationUnit,
+    target_profile: EvolutionTargetProfile | None = None,
+) -> Circuit | None:
+    """Preserve a written formal Limit and reject it before target allocation."""
+    explicit_source_names = {
+        source.name
+        for statement in (unit.main.body.stmts if unit.main is not None else ())
+        if isinstance(statement, StateBind)
+        and isinstance(statement.expr, Call)
+        and isinstance(statement.expr.callee, Var)
+        and statement.expr.callee.name == "Realize"
+        for key, source in (statement.expr.kwargs or ())
+        if key == "source" and isinstance(source, Var)
+    }
+    explicit_limit_spans = {
+        (statement.expr.span.line, statement.expr.span.col)
+        for statement in (unit.main.body.stmts if unit.main is not None else ())
+        if isinstance(statement, StateBind)
+        and statement.names
+        and statement.names[0] in explicit_source_names
+        and isinstance(statement.expr, Call)
+        and isinstance(statement.expr.callee, Var)
+        and statement.expr.callee.name == "Limit"
+    }
+
+    def walk(value):
+        if isinstance(value, Call) and isinstance(value.callee, Var):
+            if value.callee.name == "Limit":
+                if (value.span.line, value.span.col) in explicit_limit_spans:
+                    return None
+                method = target_profile.limit_realization_method if target_profile else None
+                order = target_profile.limit_order if target_profile else None
+                steps = target_profile.limit_steps if target_profile else None
+                error_budget = target_profile.limit_error_budget if target_profile else None
+                provenance = {
+                    "source_span": value.span,
+                    "source_transform": "Limit product of infinitesimal steps",
+                    "state_shape": "Operator",
+                    "realization_kind": "rejected",
+                    "realization_policy": "finite_policy_required",
+                    "approximation_order_or_null": None,
+                    "approximation_steps_or_null": None,
+                    "error_budget_or_null": None,
+                    "resource_estimate_or_null": None,
+                    "capability_rejection_or_null": "EVOLUTION_REALIZATION_REQUIRED",
+                }
+                if method is not None or order is not None or steps is not None:
+                    provenance.update(
+                        {
+                            "limit_method": method,
+                            "limit_order": order,
+                            "limit_steps": steps,
+                            "limit_error_budget": error_budget,
+                        }
+                    )
+                return _rejected_target_circuit(
+                    "EVOLUTION_REALIZATION_REQUIRED", provenance
+                )
+        if isinstance(value, (list, tuple)):
+            for item in value:
+                result = walk(item)
+                if result is not None:
+                    return result
+        elif hasattr(value, "__dict__"):
+            for child in vars(value).values():
+                result = walk(child)
+                if result is not None:
+                    return result
+        return None
+
+    return walk(unit.main.body if unit.main is not None else None)
+
+
+def _limit_source_for_bind(
+    bind: StateBind,
+    binds: list[StateBind],
+    source_operator_env: dict[str, OpExpr],
+) -> Call | None:
+    ev = bind.expr
+    if not (isinstance(ev, EvolveExpr) and ev.body is not None):
+        return None
+    result = ev.body.result
+    if not (isinstance(result, BinOp) and isinstance(result.lhs, Var)):
+        return None
+    source = source_operator_env.get(result.lhs.name)
+    if isinstance(source, Call) and isinstance(source.callee, Var) and source.callee.name == "Limit":
+        return source
+    if isinstance(source, Call) and isinstance(source.callee, Var) and source.callee.name == "Realize":
+        for key, value in source.kwargs or ():
+            if key == "source" and isinstance(value, Var):
+                formal = source_operator_env.get(value.name)
+                if isinstance(formal, Call) and isinstance(formal.callee, Var) and formal.callee.name == "Limit":
+                    return formal
+    return None
+
+
+def _realize_call_for_bind(
+    bind: StateBind, source_operator_env: dict[str, OpExpr]
+) -> Call | None:
+    ev = bind.expr
+    if not (isinstance(ev, EvolveExpr) and ev.body is not None):
+        return None
+    result = ev.body.result
+    if not (isinstance(result, BinOp) and isinstance(result.lhs, Var)):
+        return None
+    source = source_operator_env.get(result.lhs.name)
+    if isinstance(source, Call) and isinstance(source.callee, Var):
+        if source.callee.name == "Realize":
+            return source
+    return None
+
+
+def _profile_from_realize(
+    realize: Call, target: EvolutionTargetProfile
+) -> EvolutionTargetProfile:
+    values = dict(realize.kwargs or ())
+
+    def literal(name: str):
+        return getattr(values.get(name), "value", None)
+
+    return EvolutionTargetProfile(
+        suzuki_order=target.suzuki_order,
+        suzuki_steps=target.suzuki_steps,
+        realization_mode=target.realization_mode,
+        resource_budget_qubits=target.resource_budget_qubits,
+        capability_limitations=target.capability_limitations,
+        register_mapping=target.register_mapping,
+        limit_realization_method=literal("method"),
+        limit_order=literal("order"),
+        limit_steps=literal("steps"),
+        limit_error_budget=literal("error_budget"),
+    )
+
+
+def _limit_formula_parts(limit: Call) -> tuple[Expr, Expr] | None:
+    if len(limit.args) != 1:
+        return None
+    formula = limit.args[0]
+    if not (isinstance(formula, BinOp) and formula.op == "^"):
+        return None
+    value = formula.lhs
+    if isinstance(value, BinOp) and value.op == "-":
+        value = value.rhs
+    if not (isinstance(value, BinOp) and value.op == "/"):
+        return None
+    numerator = value.lhs
+    if not (isinstance(numerator, BinOp) and numerator.op == "*"):
+        return None
+    left = numerator.lhs
+    if not (isinstance(left, BinOp) and left.op == "*"):
+        return None
+    h_term = left.rhs
+    duration = numerator.rhs
+    if not isinstance(h_term, Var):
+        return None
+    return h_term, duration
+
+
+def _lower_formal_limit(
+    bind: StateBind,
+    limit: Call,
+    qubit_of: dict[str, int],
+    alloc,
+    op_env: dict[str, OpExpr],
+    scalars: dict[str, float],
+    profile: EvolutionTargetProfile,
+) -> tuple[list[Gate], dict[str, object]]:
+    parts = _limit_formula_parts(limit)
+    if parts is None:
+        raise TrotterError(
+            EVOLUTION_TARGET_UNSUPPORTED,
+            "formal Limit has no supported finite product shape",
+        )
+    h_term, duration = parts
+    result = bind.expr.body.result  # type: ignore[union-attr]
+    assert isinstance(result, BinOp) and isinstance(result.rhs, Var)
+    order = 1 if profile.limit_realization_method == "product" else profile.limit_order
+    assert profile.limit_steps is not None
+    policy_span = limit.span
+    synthetic = EvolveExpr(
+        seeds=[result.rhs],
+        times=1,
+        body=None,
+        span=limit.span,
+        duration=duration,
+        hamiltonian=h_term,
+        suzuki=SuzukiPolicy(
+            order=LitInt(value=order or 1, span=policy_span),
+            steps=LitInt(value=profile.limit_steps, span=policy_span),
+            tolerance=None,
+            error_mode=None,
+            span=policy_span,
+        ),
+    )
+    synthetic_bind = StateBind(
+        names=bind.names,
+        expr=synthetic,
+        span=bind.span,
+        ty=bind.ty,
+    )
+    gates = _lower_evolve_under(
+        synthetic_bind, qubit_of, alloc, op_env, scalars
+    )
+    provenance = {
+        "source_span": limit.span,
+        "source_transform": "Limit product of infinitesimal steps",
+        "state_shape": "State",
+        "realization_kind": "approximate",
+        "realization_policy": "finite_limit",
+        "limit_method": profile.limit_realization_method,
+        "limit_order": order,
+        "limit_steps": profile.limit_steps,
+        "limit_error_budget": profile.limit_error_budget,
+        "approximation_order_or_null": order,
+        "approximation_steps_or_null": profile.limit_steps,
+        "error_budget_or_null": profile.limit_error_budget,
+        "resource_estimate_or_null": {
+            "qubits": max(qubit_of.values(), default=-1) + 1,
+            "gates": len(gates),
+        },
+        "capability_rejection_or_null": None,
+    }
+    return gates, provenance
+
+
+def _from_ast_patterns(
+    unit: CompilationUnit,
+    *,
+    target_profile: EvolutionTargetProfile | None = None,
+) -> Circuit | None:
     if unit.main is None:
         return None
     stmts = unit.main.body.stmts
@@ -122,6 +429,7 @@ def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
 
     # Classical / Operator env for Trotter (LISS-0008)
     op_env: dict[str, OpExpr] = {}
+    source_operator_env: dict[str, OpExpr] = {}
     scalars: dict[str, float] = {}
     from ...stdlib.prelude import PRELUDE_CONSTANTS
 
@@ -140,6 +448,7 @@ def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
     _, _, static_objects = collect_static_operator_context(unit)
     for b in binds:
         if b.ty is not None and b.ty.name == "Operator" and len(b.names) == 1:
+            source_operator_env[b.names[0]] = b.expr  # type: ignore[assignment]
             op_env[b.names[0]] = lowered_binders.get(b.names[0], b.expr)  # type: ignore[assignment]
         elif b.ty is not None and b.ty.name in {"Float", "Int"} and len(b.names) == 1:
             if isinstance(b.expr, LitFloat):
@@ -216,11 +525,23 @@ def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
         except (ValueError, TypeError, KeyError):
             pass
 
+    # Target realization must be completely preflighted before the static
+    # forEach elaboration below can allocate logical qubits.
+    if target_profile is not None:
+        for bind in binds:
+            if isinstance(bind.expr, EvolveExpr) and bind.expr.explicit_transform:
+                target_rejection = _explicit_target_rejection(
+                    bind, binds, source_operator_env, target_profile
+                )
+                if target_rejection is not None:
+                    return target_rejection
+
     # Map state names → logical qubit ids as we allocate
     qubit_of: dict[str, int] = {}
     gates: list[Gate] = []
     next_q = 0
     notes: list[str] = []
+    evolution_provenance: dict[str, object] | None = None
     reject_code: str | None = None
 
     def alloc(name: str) -> int:
@@ -233,9 +554,9 @@ def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
     def reject(code: str, message: str) -> Circuit:
         notes.append(f"{code}: {message}")
         return Circuit(
-            n_qubits=max(next_q, 1),
+            n_qubits=1,
             n_bits=1,
-            gates=gates,
+            gates=[],
             notes=notes,
             reject_code=code,
         )
@@ -301,6 +622,80 @@ def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
                 QASM_FUNCTION_CALL_UNSUPPORTED,
                 _QASM_FUNCTION_CALL_UNSUPPORTED_MESSAGE,
             )
+        if isinstance(b.expr, EvolveExpr) and b.expr.explicit_transform:
+            if b.expr.until_predicate is not None:
+                return reject(
+                    QASM_EVOLVE_UNTIL_UNSUPPORTED,
+                    _QASM_EVOLVE_UNTIL_UNSUPPORTED_MESSAGE,
+                )
+            if target_profile is None:
+                return reject(
+                    EVOLUTION_TARGET_UNSUPPORTED,
+                    _EVOLUTION_TARGET_UNSUPPORTED_MESSAGE,
+                )
+            try:
+                realization_order = target_profile.suzuki_order
+                realization_steps = target_profile.suzuki_steps
+                limit_source = _limit_source_for_bind(b, binds, source_operator_env)
+                if limit_source is not None:
+                    realize_call = _realize_call_for_bind(b, source_operator_env)
+                    realize_profile = (
+                        _profile_from_realize(realize_call, target_profile)
+                        if realize_call is not None
+                        else target_profile
+                    )
+                    if realize_profile.limit_realization_method == "product":
+                        return _rejected_target_circuit(
+                            EVOLUTION_TARGET_UNSUPPORTED,
+                            {
+                                "source_span": limit_source.span,
+                                "source_transform": "Limit product of infinitesimal steps",
+                                "state_shape": "State",
+                                "realization_kind": "rejected",
+                                "realization_policy": "explicit_realize",
+                                "limit_method": "product",
+                                "approximation_order_or_null": None,
+                                "approximation_steps_or_null": realize_profile.limit_steps,
+                                "error_budget_or_null": realize_profile.limit_error_budget,
+                                "limit_steps": realize_profile.limit_steps,
+                                "limit_error_budget": realize_profile.limit_error_budget,
+                                    "capability_rejection_or_null": "EVOLUTION_PRODUCT_NOT_UNITARY_QPU",
+                                "resource_estimate_or_null": None,
+                            },
+                        )
+                    t_gates, evolution_provenance = _lower_formal_limit(
+                        b, limit_source, qubit_of, alloc, op_env, scalars, realize_profile
+                    )
+                    realization_order = evolution_provenance["limit_order"]
+                    realization_steps = evolution_provenance["limit_steps"]
+                else:
+                    t_gates = _lower_explicit_evolve(
+                        b, qubit_of, alloc, op_env, scalars, target_profile
+                    )
+                gates.extend(t_gates)
+                notes.append(
+                    "explicit evolution realization: approximate "
+                    f"Suzuki S{realization_order} "
+                    f"steps={realization_steps}; "
+                    f"resource_estimate=gates~{len(t_gates)}, "
+                    f"qubits~{max(next_q, 1)}"
+                )
+                if target_profile.capability_limitations:
+                    notes.append(
+                        "target capability limitations: "
+                        + ", ".join(target_profile.capability_limitations)
+                    )
+                if (
+                    target_profile.resource_budget_qubits is not None
+                    and next_q > target_profile.resource_budget_qubits
+                ):
+                    return reject(
+                        EVOLUTION_TARGET_UNSUPPORTED,
+                        "explicit evolution exceeds the target profile qubit budget",
+                    )
+            except TrotterError as e:
+                return reject(e.code, e.message)
+            continue
         if isinstance(b.expr, EvolveExpr) and b.expr.hamiltonian is not None:
             if b.expr.until_predicate is not None:
                 return reject(
@@ -315,6 +710,16 @@ def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
             except TrotterError as e:
                 return reject(e.code, e.message)
             continue
+        if isinstance(b.expr, EvolveExpr) and b.expr.explicit_transform:
+            if b.expr.until_predicate is not None:
+                return reject(
+                    QASM_EVOLVE_UNTIL_UNSUPPORTED,
+                    _QASM_EVOLVE_UNTIL_UNSUPPORTED_MESSAGE,
+                )
+            return reject(
+                EVOLUTION_TARGET_UNSUPPORTED,
+                _EVOLUTION_TARGET_UNSUPPORTED_MESSAGE,
+            )
         if isinstance(b.expr, Coin):
             q = alloc(b.name)
             gates.append(Gate("h", (q,), comment=f"coin() → |+⟩ on {b.name}"))
@@ -445,7 +850,240 @@ def _from_ast_patterns(unit: CompilationUnit) -> Circuit | None:
     gates.append(Gate("measure", (q,), bits=(0,), comment="terminal measure"))
     n_q = max(next_q, 1)
     return Circuit(
-        n_qubits=n_q, n_bits=1, gates=gates, notes=notes, reject_code=reject_code
+        n_qubits=n_q,
+        n_bits=1,
+        gates=gates,
+        notes=notes,
+        reject_code=reject_code,
+        provenance=evolution_provenance,
+    )
+
+
+def _lower_explicit_evolve(
+    bind: StateBind,
+    qubit_of: dict[str, int],
+    alloc,
+    op_env: dict[str, OpExpr],
+    scalars: dict[str, float],
+    profile: EvolutionTargetProfile,
+) -> list[Gate]:
+    ev = bind.expr
+    assert isinstance(ev, EvolveExpr) and ev.body is not None
+    result = ev.body.result
+    if not (isinstance(result, BinOp) and result.op == "*"):
+        raise TrotterError(
+            EVOLUTION_TARGET_UNSUPPORTED,
+            "explicit QPU lowering requires `propagator * state`",
+        )
+    propagator = result.lhs
+    if isinstance(propagator, Var):
+        propagator = op_env.get(propagator.name)
+    if not (
+        isinstance(propagator, Call)
+        and isinstance(propagator.callee, Var)
+        and propagator.callee.name == "exp"
+        and len(propagator.args) == 1
+    ):
+        raise TrotterError(
+            EVOLUTION_TARGET_UNSUPPORTED,
+            "QPU lowering requires a canonical explicit exponential propagator",
+        )
+    exponent = propagator.args[0]
+    if not (
+        isinstance(exponent, BinOp)
+        and exponent.op == "/"
+        and isinstance(exponent.lhs, BinOp)
+        and exponent.lhs.op == "*"
+        and isinstance(exponent.lhs.lhs, BinOp)
+            and exponent.lhs.lhs.op == "*"
+    ):
+        raise TrotterError(
+            EVOLUTION_TARGET_UNSUPPORTED,
+            "QPU lowering requires `exp(-i * H * duration / hbar)`",
+        )
+    signed_i = exponent.lhs.lhs.lhs
+    if not (
+        isinstance(signed_i, BinOp)
+        and signed_i.op == "-"
+        and isinstance(signed_i.rhs, Var)
+        and signed_i.rhs.name == "i"
+        and isinstance(signed_i.lhs, LitFloat)
+        and signed_i.lhs.value == 0.0
+    ):
+        raise TrotterError(
+            EVOLUTION_TARGET_UNSUPPORTED,
+            "QPU lowering refuses an exponential whose written phase is not `-i`",
+        )
+    if not (isinstance(exponent.rhs, Var) and exponent.rhs.name == "hbar"):
+        raise TrotterError(
+            EVOLUTION_TARGET_UNSUPPORTED,
+            "QPU lowering requires the written denominator `hbar`",
+        )
+    hamiltonian = exponent.lhs.lhs.rhs
+    duration = exponent.lhs.rhs
+    policy_span = Span(line=ev.span.line, col=ev.span.col)
+    policy = SuzukiPolicy(
+        order=LitInt(value=profile.suzuki_order, span=policy_span),
+        steps=LitInt(value=profile.suzuki_steps, span=policy_span),
+        tolerance=None,
+        error_mode=None,
+        span=policy_span,
+    )
+    lowered = EvolveExpr(
+        seeds=[result.rhs],
+        times=1,
+        body=None,
+        span=ev.span,
+        duration=duration,
+        hamiltonian=hamiltonian,
+        suzuki=policy,
+    )
+    lowered_bind = StateBind(
+        names=bind.names,
+        expr=lowered,
+        span=bind.span,
+        ty=bind.ty,
+    )
+    return _lower_evolve_under(lowered_bind, qubit_of, alloc, op_env, scalars)
+
+
+def _explicit_target_rejection(
+    bind: StateBind,
+    binds: list[StateBind],
+    source_operator_env: dict[str, OpExpr],
+    profile: EvolutionTargetProfile,
+) -> Circuit | None:
+    """Preflight typed mapping and budget before any QPU allocation."""
+    ev = bind.expr
+    assert isinstance(ev, EvolveExpr) and ev.body is not None
+    result = ev.body.result
+    propagator_name = result.lhs.name if isinstance(result, BinOp) and isinstance(result.lhs, Var) else None
+    propagator = next(
+        (b.expr for b in binds if propagator_name and b.names == [propagator_name]),
+        None,
+    )
+    h_name = None
+    if (
+        isinstance(propagator, Call)
+        and isinstance(propagator.callee, Var)
+        and propagator.callee.name == "Realize"
+    ):
+        source_name = next(
+            (value.name for key, value in propagator.kwargs or ()
+             if key == "source" and isinstance(value, Var)),
+            None,
+        )
+        formal = source_operator_env.get(source_name or "")
+        if isinstance(formal, Call) and isinstance(formal.callee, Var) and formal.callee.name == "Limit":
+            parts = _limit_formula_parts(formal)
+            h_name = parts[0].name if parts and isinstance(parts[0], Var) else None
+    elif isinstance(propagator, Call) and propagator.args:
+        exponent = propagator.args[0]
+        if isinstance(exponent, BinOp) and isinstance(exponent.lhs, BinOp):
+            h_term = exponent.lhs.lhs.rhs if isinstance(exponent.lhs.lhs, BinOp) else None
+            h_name = h_term.name if isinstance(h_term, Var) else None
+    source_h = source_operator_env.get(h_name or "")
+    binder = _find_operator_binder(source_h)
+    if binder is None:
+        return None
+    domain = binder.domain
+    start = getattr(getattr(domain, "start", None), "value", None)
+    end = getattr(getattr(domain, "end", None), "value", None)
+    qubits = int(end - start + 1) if isinstance(start, (int, float)) and isinstance(end, (int, float)) else 0
+    domain_text = f"{int(start)}..{int(end)}" if qubits else "unknown"
+    mapping = profile.register_mapping or {}
+    acting_register = mapping.get(binder.kind)
+    estimate = {"qubits": qubits, "gates": max(qubits, 1)}
+    provenance = {
+        "source_span": bind.span,
+        "source_transform": "exp(-i * H * duration / hbar) * State",
+        "state_shape": "State",
+        "realization_kind": "rejected",
+        "realization_policy": "approximate_suzuki",
+        "binder_kind": binder.kind,
+        "binder_domain": domain_text,
+        "bound_symbols": [binder.variable],
+        "acting_register": acting_register or "missing",
+        "operator_family": "PauliSum",
+        "register_mapping": acting_register or "missing",
+        "approximation_order_or_null": profile.suzuki_order,
+        "approximation_steps_or_null": profile.suzuki_steps,
+        "error_budget_or_null": None,
+        "resource_estimate_or_null": estimate,
+        "resource_budget": {"qubits": profile.resource_budget_qubits},
+        "capability_rejection_or_null": None,
+    }
+    mapping_match = (
+        re.fullmatch(r"q\[(\d+)\.\.(\d+)\]", acting_register)
+        if acting_register
+        else None
+    )
+    mapping_covers_domain = bool(
+        mapping_match
+        and qubits
+        and int(mapping_match.group(1)) == int(start)
+        and int(mapping_match.group(2)) == int(end)
+    )
+    if not mapping_covers_domain:
+        provenance["capability_rejection_or_null"] = EVOLUTION_MAPPING_MISSING
+        return _rejected_target_circuit(EVOLUTION_TARGET_UNSUPPORTED, provenance)
+    if profile.resource_budget_qubits is not None and qubits > profile.resource_budget_qubits:
+        return _rejected_resource_budget_circuit(
+            EVOLUTION_TARGET_UNSUPPORTED,
+            f"required {qubits} qubits exceeds target budget {profile.resource_budget_qubits}",
+        )
+    return None
+
+
+def _find_operator_binder(expr: OpExpr | None) -> OpBinder | None:
+    if isinstance(expr, OpBinder):
+        return expr
+    if isinstance(expr, OpBin):
+        return _find_operator_binder(expr.lhs) or _find_operator_binder(expr.rhs)
+    return None
+
+
+def _generic_explicit_provenance(
+    bind: StateBind, rejection: str
+) -> dict[str, object]:
+    return {
+        "source_span": bind.span,
+        "source_transform": "explicit operator * state",
+        "state_shape": "State",
+        "realization_kind": "rejected",
+        "realization_policy": "target_capability_required",
+        "approximation_order_or_null": None,
+        "approximation_steps_or_null": None,
+        "error_budget_or_null": None,
+        "resource_estimate_or_null": None,
+        "capability_rejection_or_null": rejection,
+    }
+
+
+def _rejected_target_circuit(code: str, provenance: dict[str, object]) -> Circuit:
+    provenance = dict(provenance)
+    return Circuit(
+        n_qubits=0,
+        n_bits=0,
+        gates=[],
+        notes=[f"{code}: target realization rejected before allocation"],
+        reject_code=code,
+        provenance=provenance,
+    )
+
+
+def _rejected_resource_budget_circuit(code: str, message: str) -> Circuit:
+    """Reject before allocation without leaking partial target evidence."""
+    return Circuit(
+        n_qubits=0,
+        n_bits=0,
+        gates=[],
+        notes=[f"{code}: {message}"],
+        reject_code=code,
+        provenance=None,
+        allocation_started=False,
+        allocated_qubits=(),
+        partial_program=None,
     )
 
 

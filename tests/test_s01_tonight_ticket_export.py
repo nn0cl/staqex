@@ -58,8 +58,9 @@ def test_build_tonight_ticket_happy_path_schema() -> None:
     assert ticket["job"]["seed"] == 0
     assert ticket["provenance"]["tool"] == "s01-host-export"
     assert "generated_at" in ticket["provenance"]
-    codes = {d.get("code") for d in ticket["diagnostics"]}
-    assert codes  # soft QPU / QSEM diags may remain; do not invent a clean story
+    # A clean local execution is valid; if diagnostics exist they must still
+    # be preserved in the exported ticket rather than invented or discarded.
+    assert ticket["diagnostics"] == list(result.diagnostics)
 
 
 def test_build_tonight_ticket_vacuum_fail_closed() -> None:
@@ -150,7 +151,11 @@ def test_pauli_evolve_preserves_sibling_joint_coords() -> None:
         pub fn main() -> Unit {
             State plan = |0>
             State fuel = |0>
-            State fuel = Evolve { fuel under X for pi / 2.0 until converged(fuel) max 64 }.run()
+            Time duration = 0.1.fs
+            Energy scale = 1.0.eV to J
+            Operator H = scale * X
+            Operator U = exp(-i * H * duration / hbar)
+            State fuel = Evolve() { U * fuel }.run()
             Measure plan
         }
         """

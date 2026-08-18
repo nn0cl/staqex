@@ -27,6 +27,12 @@ class Circuit:
     notes: list[str] = field(default_factory=list)
     # Set when lowering cannot produce a faithful gate circuit (LISS-0008).
     reject_code: str | None = None
+    # Typed target-boundary evidence.  Rejections carry this envelope even
+    # when no circuit allocation has started.
+    provenance: dict[str, object] | None = None
+    allocation_started: bool = False
+    allocated_qubits: tuple[int, ...] = ()
+    partial_program: object | None = None
 
     def add(self, gate: Gate) -> None:
         self.gates.append(gate)

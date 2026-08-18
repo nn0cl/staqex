@@ -130,8 +130,28 @@ pub fn main() -> Unit {
     Energy scale = 1.0.eV to J
     Operator H_obj = scale * objective_hamiltonian(weights, n, activity_w, selectivity_w)
     Time dur = 0.6.fs
-    State psi_sel = Evolve { psi_sel under H_obj for dur }.run()
+    // Blackboard-visible propagator: Evolve executes the transform already
+    // written here; it does not infer H_obj, dur, hbar, or the exponential.
+    Operator U_t = exp(-i * H_obj * dur / hbar)
 
-    // ADR 0173: no leftovers to trace out -- psi_sel is the only coordinate.
-    Measure psi_sel
+    // --- Finite target lane (plan only; never used by the exact simulator) ---
+    // The blackboard's formal limit and target-dependent finite conversion
+    // remain separate named operators. The local result deliberately uses
+    // U_t; U_qpu is evidence for a later provider-neutral target plan.
+    Operator U_formal = Limit N -> Infinity {
+        (I - i * H_obj * dur / (N * hbar)) ^ N
+    }
+    Operator U_qpu = Realize(
+        source = U_formal,
+        method = "suzuki",
+        order = 2,
+        steps = 8,
+        error_budget = 1e-6
+    )
+
+    State psi_final = Evolve() { U_t * psi_sel }.run()
+
+    // ADR 0173: psi_0 was traced above; the evolved selected state is terminal.
+    Measure psi_final
+
 }

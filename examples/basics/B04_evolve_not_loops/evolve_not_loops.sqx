@@ -1,12 +1,14 @@
 // B04 — repetition uses `evolve times N` / evolve-under, not classical loops (axiom 4).
 
-// ADR 0195 / LISS-0339: the legacy bare-Pauli-letter evolve form is not
-// hbar-divided (its duration is a rotation angle, not physical time) --
-// declared in seconds only to satisfy the Kernel's real-Time-unit check.
-Time dur = 1.5707963267948966.s
+// The finite evolution is written as an explicit propagator so the source
+// retains the blackboard distinction between H and U(t).
+Time dur = 1.5707963267948966.fs
+Energy scale = 1.0.eV to J
 
 State psi = |+>
-State psi = Evolve { psi under Z for dur }.run()
+Operator H = scale * Z
+Operator U_dur = exp(-i * H * dur / hbar)
+State psi = Evolve() { U_dur * psi }.run()
 State ez = expect(Z, psi)
 State viewed = Inspect(ez)
 

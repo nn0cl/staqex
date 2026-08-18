@@ -28,7 +28,7 @@ def _hard(diags: list[dict]) -> list[dict]:
     ]
 
 
-@pytest.mark.parametrize("op", ["sin", "cos", "exp", "sqrt", "abs", "log", "tan"])
+@pytest.mark.parametrize("op", ["sin", "cos", "sqrt", "abs", "log", "tan"])
 def test_math_op_usable_as_classical_scalar(op: str) -> None:
     src = f"""
     fn use_op(x: Float) -> Float {{

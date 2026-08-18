@@ -151,7 +151,7 @@ Logs belong on Host — not as an `inspect` flood in the spine.
 |---|---|---|
 | `main_disaster_response.sqx` | CH-tonight-spine | Domain pressures → named H / when → one plan sample (`tracing_out`) |
 | `main_morning_collect.sqx` | CH-morning | Field morning fields → status sample (sparse peek; Host logs preferred) |
-| `main_day2_recovery.sqx` | CH-day2 | Morning carry + recovery H (Suzuki S4) → day-2 plan sample |
+| `main_day2_recovery.sqx` | CH-day2 | Morning carry + recovery H with explicit propagator → day-2 plan sample |
 | `main_comms_channel.sqx` | CH-comms | Noisy order channel (Lindblad toy) → observed priority bit |
 | `main_burst_spectrum.sqx` | CH-burst | QFT/cqft burst on register → correlation peek → measure (circuit lane) |
 | `main_tri_register.sqx` | CH-tri | Rescue×logistics×fire registers couple → multi-register measure |

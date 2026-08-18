@@ -1,0 +1,17 @@
+{
+  "seed": 0,
+  "source_sha256": "aa2913616b71945ef4d54fef65eac170b76ea63c4f812642ad2df98b181e3511",
+  "distribution": {
+    "terminal_selection": [0, 1, 1, 1, 1, 1, 0, 0],
+    "feasible_pattern_count": 25,
+    "probability_min_documented": 1.4e-11,
+    "probability_max_documented": 0.0399
+  },
+  "benchmark_metrics": {
+    "shots": 20,
+    "infeasible_shots": 6,
+    "top_k_overlap": 0.33,
+    "reproducibility_verified": true
+  },
+  "status": "pre-migration-reference"
+}

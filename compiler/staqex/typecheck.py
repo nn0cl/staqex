@@ -43,8 +43,10 @@ from .ast_nodes import (
     SetComprehension,
     OpBinder,
     OpCall,
+    OpAttr,
     OpIndexed,
     OpLit,
+    OpNumber,
     OpExpr,
     OpBin,
     OpVar,
@@ -386,6 +388,28 @@ class TypeChecker:
                             self._check_operator_expr(stmt.expr)
                         finally:
                             self._active_register_set = previous_register_set
+                    # Preserve the physical dimension carried by an explicit
+                    # Operator expression (for example `scale * X`).  The
+                    # operator's identifier is not a type annotation: a name
+                    # such as `H` must not be treated as a Hamiltonian by
+                    # convention.
+                    inferred_value = (
+                        self._infer_operator_value(stmt.expr)
+                        if isinstance(stmt.expr, OpExpr)
+                        else self._infer(stmt.expr)
+                        if not isinstance(stmt.expr, Call)
+                        else declared_operator
+                    )
+                    if (
+                        inferred_value.kind == "Operator"
+                        and not stmt.ty.args
+                    ):
+                        declared_operator = Ty(
+                            "Operator",
+                            declared_operator.payload,
+                            inferred_value.dim,
+                            unit=inferred_value.unit,
+                        )
                     for n in stmt.names:
                         self.env[n] = declared_operator
                     continue
@@ -2189,8 +2213,10 @@ class TypeChecker:
             "commutator",
             "anticommutator",
         }:
-            self._infer(expr)
-            return Ty("State", "Any", DIMLESS)
+            # `_infer` is the authoritative path for generic operator calls
+            # such as `exp` and `Limit`; return its result so callers do not
+            # infer the same call twice (and duplicate its diagnostics).
+            return self._infer(expr)
         args = [self._infer(arg) for arg in expr.args]
         kinds = [self._operator_value_kind(arg) for arg in expr.args]
         if name == "adjoint" and (len(args) != 1 or kinds[0] != "Operator"):
@@ -2698,9 +2724,22 @@ class TypeChecker:
             elif isinstance(stmt, StateBind):
                 if stmt.ty is not None and stmt.ty.name == "Operator":
                     # Operator locals must remain visible to later return
-                    # expressions so their declared type can be checked.
+                    # expressions, while retaining any physical coefficient
+                    # dimension inferred from their operator AST. Treating
+                    # every declared local as dimensionless loses Energy
+                    # through helper functions such as `build_hamiltonian`.
+                    inferred_operator = (
+                        self._infer_operator_value(stmt.expr)
+                        if isinstance(stmt.expr, OpExpr)
+                        else self._infer(stmt.expr)
+                    )
+                    ty = (
+                        inferred_operator
+                        if inferred_operator.kind == "Operator"
+                        else self._ty_from_ref(stmt.ty)
+                    )
                     for name in stmt.names:
-                        self.env[name] = self._ty_from_ref(stmt.ty)
+                        self.env[name] = ty
                     continue
                 inferred = self._infer(stmt.expr)
                 ty = inferred
@@ -2738,8 +2777,21 @@ class TypeChecker:
                 }
             )
         elif return_stmt is not None:
-            inferred = self._infer(return_stmt.expr)
             declared = self._ty_from_ref(fun.return_type)  # type: ignore[arg-type]
+            inferred = (
+                self._infer_operator_value(return_stmt.expr)
+                if declared.kind == "Operator"
+                and isinstance(return_stmt.expr, OpExpr)
+                else self._infer(return_stmt.expr)
+            )
+            if declared.kind == "Operator" and inferred.kind == "Operator":
+                # `Operator` is a domain declaration, not a dimensionless
+                # scalar declaration. Preserve the inferred coefficient
+                # dimension for later callers (notably an explicit
+                # `exp(-i * H * t / hbar)` in the caller).
+                updated = (fun, inferred)
+                self.fun_returns[fun.name] = updated
+                self.fun_returns[fun.qualified_name] = updated
             # LISS-0133: numeric literals infer as State<Float>; Classical return
             # heads (ADR 0114 elaboration coefficients) accept them.
             if (
@@ -2784,7 +2836,10 @@ class TypeChecker:
                             "message": f"`{fun.name}` returns {inferred}, declared {declared}",
                         }
                     )
-            if not declared.dim.matches(inferred.dim):
+            if (
+                declared.kind != "Operator"
+                and not declared.dim.matches(inferred.dim)
+            ):
                 self._dim_error(
                     return_stmt.span.line,
                     return_stmt.span.col,
@@ -2972,7 +3027,16 @@ class TypeChecker:
             # adjoint lowering is deferred to later LISS-0073 slices.
             return Ty("State", "Qubit", DIMLESS)
         if isinstance(expr, Var):
-            return self.env.get(expr.name, Ty("State", "Any", DIMLESS))
+            if expr.name == "i":
+                return Ty("Classical", "ComplexUnit", DIMLESS)
+            if expr.name == "hbar":
+                return Ty(
+                    "Classical",
+                    "Action",
+                    TYPE_DIMS["Energy"].mul(TYPE_DIMS["Time"]),
+                )
+            ty = self.env.get(expr.name, Ty("State", "Any", DIMLESS))
+            return ty
         if isinstance(expr, MeasureExpr):
             self.diagnostics.append(
                 {
@@ -3445,6 +3509,57 @@ class TypeChecker:
         )
         return inner
 
+    def _infer_operator_value(self, expr: OpExpr) -> Ty:
+        """Infer the physical coefficient dimension of an Operator AST."""
+        if isinstance(expr, OpVar):
+            ty = self.env.get(expr.name)
+            if ty is not None and ty.kind == "Classical":
+                return Ty("Operator", "Hamiltonian", ty.dim, unit=ty.unit)
+            if ty is not None and ty.kind == "Operator":
+                return ty
+            return Ty("Operator", "Hamiltonian", DIMLESS)
+        if isinstance(expr, OpAttr):
+            # Operator syntax keeps coefficient field access as OpAttr rather
+            # than the value-expression Attr node. Preserve a dimensioned
+            # struct field (for example `p.J: Energy`) when that field scales
+            # a Pauli/operator tree; otherwise a function-returned
+            # Hamiltonian is silently reclassified as dimensionless and an
+            # explicit `exp(-i * H * t / hbar)` is rejected later.
+            if isinstance(expr.obj, OpVar):
+                obj_ty = self.env.get(expr.obj.name)
+                if obj_ty is not None:
+                    struct = self.struct_meta.get(obj_ty.payload)
+                    if struct is not None:
+                        field = next(
+                            (f for f in struct.fields if f.name == expr.name),
+                            None,
+                        )
+                        if field is not None:
+                            field_ty = self._ty_from_ref(field.ty)
+                            return Ty(
+                                "Operator",
+                                "Hamiltonian",
+                                field_ty.dim,
+                                unit=field_ty.unit,
+                            )
+            return Ty("Operator", "Hamiltonian", DIMLESS)
+        if isinstance(expr, OpBin):
+            left = self._infer_operator_value(expr.lhs)
+            right = self._infer_operator_value(expr.rhs)
+            if expr.op in {"+", "-"}:
+                if left.dim.is_dimensionless() and not right.dim.is_dimensionless():
+                    return Ty("Operator", right.payload, right.dim)
+                if right.dim.is_dimensionless() and not left.dim.is_dimensionless():
+                    return Ty("Operator", left.payload, left.dim)
+                return Ty("Operator", left.payload, left.dim)
+            if expr.op == "*":
+                return Ty("Operator", left.payload, left.dim.mul(right.dim))
+            if expr.op == "/":
+                return Ty("Operator", left.payload, left.dim.div(right.dim))
+        if isinstance(expr, (OpNumber, OpLit)):
+            return Ty("Operator", "Hamiltonian", DIMLESS)
+        return Ty("Operator", "Hamiltonian", DIMLESS)
+
     def _infer_binop(self, expr: BinOp) -> Ty:
         if expr.op in {"*", "/"} and (
             isinstance(expr.lhs, TensorExpr) or isinstance(expr.rhs, TensorExpr)
@@ -3489,6 +3604,23 @@ class TypeChecker:
         ):
             left = Ty("Classical", left.payload, left.dim)
         if left.kind == "Operator" or right.kind == "Operator":
+            if left.kind == "Operator" and right.kind == "State" and expr.op == "*":
+                return Ty("State", right.payload, right.dim)
+            if right.kind == "Operator" and left.kind == "State" and expr.op == "*":
+                self.diagnostics.append(
+                    {
+                        "code": "OPERATOR_STATE_APPLICATION_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "state application requires `Operator * State`, not `State * Operator`",
+                    }
+                )
+                return Ty("State", left.payload, left.dim)
+            if left.kind == "Operator" and right.kind == "Classical" and expr.op in {"*", "/"}:
+                dim = left.dim.mul(right.dim) if expr.op == "*" else left.dim.div(right.dim)
+                return Ty("Operator", left.payload, dim)
+            if right.kind == "Operator" and left.kind == "Classical" and expr.op == "*":
+                return Ty("Operator", right.payload, left.dim.mul(right.dim))
             if left.kind != "Operator" or right.kind != "Operator":
                 self.diagnostics.append(
                     {
@@ -3770,6 +3902,118 @@ class TypeChecker:
         # Math.sin(x) / sin(x) / cis(theta): argument must be dimensionless
         op_name = _call_op_name(expr)
         self._check_call_effects(expr)
+        if op_name == "Realize":
+            kwargs = dict(expr.kwargs or ())
+            allowed = {"source", "method", "order", "steps", "error_budget"}
+            unknown = sorted(set(kwargs) - allowed)
+            if unknown:
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_REALIZATION_POLICY_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "unknown Realize argument(s): " + ", ".join(unknown),
+                    }
+                )
+            method = kwargs.get("method")
+            method_value = method.value if isinstance(method, LitString) else None
+            required = {"source", "method", "steps", "error_budget"}
+            if method_value == "suzuki":
+                required.add("order")
+            missing = sorted(required - set(kwargs))
+            if missing:
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_REALIZATION_POLICY_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Realize requires: " + ", ".join(missing),
+                    }
+                )
+                return Ty("Operator", "Propagator", DIMLESS)
+            source_ty = self._infer(kwargs["source"])
+            if source_ty.kind != "Operator":
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_REALIZE_SOURCE_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Realize source must be an Operator",
+                    }
+                )
+            if not isinstance(method, LitString) or method.value not in {"product", "suzuki"}:
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_REALIZATION_POLICY_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Realize method must be `product` or `suzuki`",
+                    }
+                )
+            names = ("order", "steps") if method_value == "suzuki" else ("steps",)
+            for name in names:
+                value = kwargs[name]
+                if not isinstance(value, LitInt) or value.value <= 0:
+                    self.diagnostics.append(
+                        {
+                            "code": "EVOLUTION_REALIZATION_POLICY_ERROR",
+                            "line": expr.span.line,
+                            "col": expr.span.col,
+                            "message": f"Realize {name} must be a positive integer",
+                        }
+                    )
+            error_budget = kwargs["error_budget"]
+            if not isinstance(error_budget, (LitInt, LitFloat)) or error_budget.value <= 0:
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_REALIZATION_POLICY_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Realize error_budget must be positive",
+                    }
+                )
+            return Ty("Operator", "Propagator", DIMLESS)
+        if op_name == "Limit":
+            self.diagnostics.append(
+                {
+                    "code": "EVOLUTION_REALIZATION_REQUIRED",
+                    "line": expr.span.line,
+                    "col": expr.span.col,
+                    "message": "formal Limit is source-preserving but requires an explicit finite target realization",
+                }
+            )
+            return Ty("Operator", "Propagator", DIMLESS)
+        if op_name == "exp":
+            if len(expr.args) != 1:
+                self.diagnostics.append(
+                    {
+                        "code": "OPERATOR_EXP_DOMAIN_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "operator `exp` requires exactly one Operator exponent",
+                    }
+                )
+                return Ty("Operator", "Propagator", DIMLESS)
+            exponent = self._infer(expr.args[0])
+            if exponent.kind != "Operator":
+                self.diagnostics.append(
+                    {
+                        "code": "OPERATOR_EXP_DOMAIN_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "operator `exp` requires an Operator exponent",
+                    }
+                )
+            elif not exponent.dim.is_dimensionless():
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_DIMENSION_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": f"operator exponent must be dimensionless, got {exponent.dim}",
+                    }
+                )
+            return Ty("Operator", "Propagator", DIMLESS)
         if (
             op_name == "tomography"
             and isinstance(expr.callee, Var)
@@ -4092,6 +4336,48 @@ class TypeChecker:
         return Ty("State", "Any", DIMLESS)
 
     def _infer_evolve(self, expr: EvolveExpr) -> Ty:
+        if expr.explicit_transform:
+            if expr.body is None:
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLVE_REQUIRES_EXPLICIT_TRANSFORM",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Evolve() requires an explicit state-transforming expression",
+                    }
+                )
+                return Ty("State", "Any", DIMLESS)
+            for let in expr.body.lets:
+                self.env[let.name] = self._infer(let.expr)
+            diagnostic_start = len(self.diagnostics)
+            result_ty = self._infer(expr.body.result)
+            valid_application = (
+                isinstance(expr.body.result, BinOp)
+                and expr.body.result.op == "*"
+                and self._infer(expr.body.result.lhs).kind == "Operator"
+                and self._infer(expr.body.result.rhs).kind == "State"
+            )
+            if result_ty.kind != "State" or not valid_application:
+                # Inside explicit Evolve, the enclosing diagnostic is the
+                # actionable contract.  Do not also emit the operand-order
+                # diagnostic for the same malformed application.
+                self.diagnostics[diagnostic_start:] = [
+                    diagnostic
+                    for diagnostic in self.diagnostics[diagnostic_start:]
+                    if diagnostic.get("code")
+                    != "OPERATOR_STATE_APPLICATION_ERROR"
+                ]
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLVE_REQUIRES_EXPLICIT_TRANSFORM",
+                        "line": expr.body.result.span.line,
+                        "col": expr.body.result.span.col,
+                        "message": "Evolve() body must end with `Operator * State`",
+                    }
+                )
+            if expr.until_predicate is not None:
+                self._check_evolve_until_contract(expr)
+            return result_ty if result_ty.kind == "State" else Ty("State", "Any", DIMLESS)
         allow_mvp_d3 = (
             expr.hamiltonian is not None
             and self._expr_is_identity_atom(expr.hamiltonian)
@@ -4109,6 +4395,17 @@ class TypeChecker:
         if expr.until_predicate is not None:
             self._check_evolve_until_contract(expr)
         if expr.hamiltonian is not None:
+            self.diagnostics.append(
+                {
+                    "code": "EVOLVE_HAMILTONIAN_SHORTCUT_RETIRED",
+                    "line": expr.span.line,
+                    "col": expr.span.col,
+                    "message": (
+                        "the implicit Hamiltonian Evolve form is migration-only; "
+                        "write `exp(-i * H * t / hbar) * psi` inside `Evolve()`"
+                    ),
+                }
+            )
             hamiltonian_ty = self._infer(expr.hamiltonian)
             self._check_unsupported_qudit_runtime_ty(
                 hamiltonian_ty, expr.span.line, expr.span.col

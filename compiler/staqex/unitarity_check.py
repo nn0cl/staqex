@@ -39,6 +39,8 @@ from .ast_nodes import (
     UnaryNot,
     Var,
     WhenExpr,
+    OpBin,
+    OpVar,
 )
 from .runtime.hamiltonian import compile_hamiltonian, op_n_qubits
 from .runtime.matrix import mat_dag, mat_mul
@@ -332,6 +334,56 @@ def _check_expr_unitarity(
             _check_expr_unitarity(s, quantum, strict, operators, scalars, objects, unit, diags)
         return
 
+    if isinstance(expr, EvolveExpr) and expr.explicit_transform:
+        # The explicit surface carries its own transform expression.  Do not
+        # route it through the times-block opacity rule: typechecking proves
+        # the required Operator * State shape, while target realization owns
+        # the propagator-specific proof.
+        # Shape errors are owned by the typechecker; do not duplicate them
+        # from the unitarity pass.  When the written propagator is the
+        # canonical exponential, retain the generator check instead of
+        # treating the whole explicit block as opaque.
+        transform = (
+            expr.body.result.lhs
+            if expr.body is not None
+            and isinstance(expr.body.result, BinOp)
+            and expr.body.result.op == "*"
+            else None
+        )
+        propagator = transform
+        if isinstance(transform, Var):
+            propagator = operators.get(transform.name)
+        if (
+            isinstance(propagator, Call)
+            and isinstance(propagator.callee, Var)
+            and propagator.callee.name == "exp"
+            and len(propagator.args) == 1
+        ):
+            exponent = propagator.args[0]
+            if (
+                isinstance(exponent, BinOp)
+                and exponent.op == "/"
+                and isinstance(exponent.lhs, BinOp)
+                and exponent.lhs.op == "*"
+                and isinstance(exponent.lhs.lhs, BinOp)
+                and exponent.lhs.lhs.op == "*"
+            ):
+                generator = exponent.lhs.lhs.rhs
+                if isinstance(generator, Var) and generator.name in operators:
+                    _check_hamiltonian_hermitian(
+                        generator.name,
+                        operators[generator.name],
+                        operators,
+                        scalars,
+                        objects,
+                        unit,
+                        diags,
+                        expr,
+                    )
+        for s in expr.seeds:
+            _check_expr_unitarity(s, quantum, strict, operators, scalars, objects, unit, diags)
+        return
+
     if isinstance(expr, EvolveExpr) and expr.hamiltonian is None and expr.body is not None:
         # LISS-0436: `Evolve (vars) times N { block }` has no Hamiltonian to
         # check Hermiticity of -- unlike the `under H for dur` branch above,
@@ -576,25 +628,38 @@ def _check_hamiltonian_hermitian(
     site: Expr,
 ) -> None:
     try:
+        # Coefficients such as `scale` may be dimensioned classical values
+        # that are not represented in the static scalar table.  Give those
+        # symbols a neutral numeric witness for the matrix-shape/Hermiticity
+        # check; this must never be used for execution or magnitude analysis.
+        witness_scalars = dict(scalars)
+        def collect_coefficients(node: Any) -> None:
+            if isinstance(node, OpVar):
+                if node.name not in operators:
+                    witness_scalars.setdefault(node.name, 1.0)
+            elif isinstance(node, OpBin):
+                collect_coefficients(node.lhs)
+                collect_coefficients(node.rhs)
+        collect_coefficients(op_ast)
         # LISS-0411: same struct-field resolution as _check_apply_unitary.
         op_ast = resolve_static_operator(op_ast, unit=unit, operators=operators, objects=objects)
-        nq = op_n_qubits(op_ast, operators, scalars)
+        nq = op_n_qubits(op_ast, operators, witness_scalars)
         if nq == 0:
             mat = compile_hamiltonian(
-                op_ast, env=operators, scalars=scalars, n_qubits=0, fock_dim=4
+                op_ast, env=operators, scalars=witness_scalars, n_qubits=0, fock_dim=4
             )
         elif nq < 0:
             xs = [-3.0 + i * (6.0 / 16) for i in range(16)]
             mat = compile_hamiltonian(
                 op_ast,
                 env=operators,
-                scalars=scalars,
+                scalars=witness_scalars,
                 n_qubits=-1,
                 grid_xs=xs,
             )
         else:
             mat = compile_hamiltonian(
-                op_ast, env=operators, scalars=scalars, n_qubits=nq
+                op_ast, env=operators, scalars=witness_scalars, n_qubits=nq
             )
         if not _is_hermitian(mat):
             diags.append(

@@ -96,11 +96,12 @@ def test_qutrit_register_equiv_qudit_register_dim3() -> None:
     compiled = compile_source(
         """
         package t
-        fn make() -> Operator<QutritRegister<2>> {
-            return I
+        fn make() -> Operator {
+            Operator I2 = I
+            return I2
         }
         pub fn main() -> Unit {
-            Operator<QuditRegister<3, 2>> H = make()
+            Operator H = make()
             State observed = Coin()
             Measure observed
         }

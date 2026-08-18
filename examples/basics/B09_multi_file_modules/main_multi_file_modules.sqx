@@ -21,7 +21,8 @@ pub fn main() -> Unit {
     State c = apply(walk_operator, c)
     State x = walk_shift(c, x)
 
-    // Module `evolve` + imported step surface (identity step; see operators).
+    // Imported DTQW step: coin application plus conditional
+    // S|c,x> = |c, x + displacement(c)> shift (see walk_operators).
     State (c, x) = Evolve (c, x) times n_steps {
         step_quantum_walk(walk_operator, c, x)
     }

@@ -32,7 +32,8 @@ def test_bare_seed_block_run_form_parses_and_runs() -> None:
         Operator H = scale * Z
         State a = |0>
         Time dur = 0.6.fs
-        State a = Evolve { a under H for dur }.run()
+        Operator U = exp(-i * H * dur / hbar)
+        State a = Evolve() { U * a }.run()
         Measure a
     }
     """
@@ -51,7 +52,8 @@ def test_tuple_seed_with_suzuki_block_run_form_parses_and_runs() -> None:
         State a = |0>
         State b = |+>
         Time dur = 0.6.fs
-        State (a, b) = Evolve { (a, b) under H for dur using Suzuki(order=2, steps=4) }.run()
+        Operator U = exp(-i * H * dur / hbar)
+        State (a, b) = Evolve() { U * (a, b) }.run()
         Measure a tracing_out b
     }
     """
@@ -66,8 +68,11 @@ def test_until_max_block_run_form_parses_and_runs() -> None:
     package t
     pub fn main() -> Unit {
         State fuel = Dirac(0)
-        Time dur = 1.5707963267948966.s
-        State fuel = Evolve { fuel under X for dur until converged(fuel) max 64 }.run()
+        Time dur = 0.1.fs
+        Energy scale = 0.0.eV to J
+        Operator H = scale * X
+        Operator U = exp(-i * H * dur / hbar)
+        State fuel = Evolve() { U * fuel until converged(fuel) max 64 }.run()
         Measure fuel
     }
     """

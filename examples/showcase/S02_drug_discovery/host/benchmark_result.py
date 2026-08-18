@@ -44,6 +44,16 @@ class BenchmarkResult:
     reranked_score: float | None = None
     quality_metrics: dict[str, Any] = field(default_factory=dict)
     warnings: tuple[str, ...] = ()
+    # LISS-0438: keep exact-local output, finite-target plan evidence, and
+    # rejection diagnostics as separate channels.  These fields are additive
+    # so existing single-shot callers retain their prior contract.
+    exact_local: dict[str, Any] = field(default_factory=dict)
+    finite_target: dict[str, Any] = field(default_factory=dict)
+    realization_provenance: dict[str, Any] = field(default_factory=dict)
+    diagnostic_rejection_evidence: dict[str, Any] | None = None
+    target_plan_provenance: dict[str, Any] | None = None
+    capability_rejection: str | None = None
+    partial_program: Any | None = None
 
 
 def build_benchmark_result(job_result: JobResult) -> BenchmarkResult:

@@ -276,12 +276,10 @@ Measure ez
         )
 
     # --- Official example files compile+run ---
-    # LISS-0337: B08_operators_hamiltonians is a WP-0095-tracked,
-    # not-yet-migrated example (still bare-float evolve durations) --
-    # expected to keep failing here with EVOLVE_UNRESOLVED_UNIT_ERROR
-    # until its own WP-0095 work unit lands. Catch KernelError too so
-    # that known, tracked failure reports as a graceful FAIL instead of
-    # crashing this whole suite (masking every other case's result).
+    # LISS-0437: B08_operators_hamiltonians now writes its propagator
+    # explicitly. Catch KernelError here so a runtime boundary reports as a
+    # graceful FAIL instead of crashing this whole suite and masking every
+    # other case's result.
     try:
         from compiler.staqex.runtime.evaluator import KernelError
 

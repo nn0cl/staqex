@@ -313,6 +313,7 @@ class EvolveExpr:
     until_predicate: "Expr | None" = None
     max_steps: "Expr | None" = None
     suzuki: SuzukiPolicy | None = None
+    explicit_transform: bool = False
 
 
 @dataclass

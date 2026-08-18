@@ -10,16 +10,17 @@ import .operators.hp_oracle.{ground_conformation_index}
 
 pub fn main() -> Unit {
     LatticeToy lattice = LatticeToy(4, 1)
-    // Classical oracle harvest; phase mark uses a literal ground index
-    // (namespace Float return is not yet a reliable runtime bind for `phase`).
-    Float harvested = ground_conformation_index()
-    Float ground = 1.0
+    // The Host oracle produces the candidate index, but this fixture keeps
+    // the quantum phase mark on the documented ground index because a
+    // namespace Float return is not yet a reliable runtime bind for phase.
+    Float harvested_ground = ground_conformation_index()
+    Float ground_fixture_index = 1.0
 
     State b0 = Coin()
     State b1 = Coin()
     State conf = b0 * 2 + b1
 
-    State marked = phase(conf, pi, ground)
+    State marked = phase(conf, pi, ground_fixture_index)
     State amplified = grover_diffuse(marked)
     State viewed = Inspect(amplified)
 

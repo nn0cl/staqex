@@ -8,6 +8,7 @@ from types import MappingProxyType
 from typing import Any, Iterator, Mapping
 
 from .ast_nodes import (
+    BinOp,
     Call,
     CompilationUnit,
     DynamicQpuStmt,
@@ -541,6 +542,66 @@ def _lowering_policy_projection(unit: CompilationUnit) -> dict[str, Any] | None:
     }
 
 
+def _explicit_evolution_projection(unit: CompilationUnit) -> dict[str, Any] | None:
+    """Retain source-backed evolution intent at the provider-neutral boundary."""
+    if unit.main is None:
+        return None
+    operator_exprs = {
+        stmt.names[0]: stmt.expr
+        for stmt in unit.main.body.stmts
+        if isinstance(stmt, StateBind)
+        and stmt.ty is not None
+        and stmt.ty.name == "Operator"
+        and len(stmt.names) == 1
+    }
+    for stmt in unit.main.body.stmts:
+        if not (
+            isinstance(stmt, StateBind)
+            and isinstance(stmt.expr, EvolveExpr)
+            and stmt.expr.explicit_transform
+            and stmt.expr.body is not None
+        ):
+            continue
+        result = stmt.expr.body.result
+        if not (isinstance(result, BinOp) and result.op == "*"):
+            continue
+        propagator = result.lhs
+        generator = None
+        duration = None
+        if isinstance(propagator, Var):
+            candidate = operator_exprs.get(propagator.name)
+            if isinstance(candidate, Call) and candidate.args:
+                exponent = candidate.args[0]
+                if isinstance(exponent, BinOp) and exponent.op == "/":
+                    duration = getattr(exponent.lhs, "rhs", None)
+                    duration = getattr(duration, "name", type(duration).__name__)
+                    if isinstance(exponent.lhs, BinOp) and isinstance(exponent.lhs.lhs, BinOp):
+                        term = exponent.lhs.lhs.rhs
+                        generator = getattr(term, "name", type(term).__name__)
+            if generator is None:
+                generator = propagator.name
+        elif isinstance(propagator, Call) and isinstance(propagator.callee, Var):
+            if propagator.callee.name == "exp" and propagator.args:
+                exponent = propagator.args[0]
+                if isinstance(exponent, BinOp) and exponent.op == "/":
+                    duration = getattr(exponent.lhs, "rhs", None)
+                    duration = getattr(duration, "name", type(duration).__name__)
+                    if isinstance(exponent.lhs, BinOp) and isinstance(exponent.lhs.lhs, BinOp):
+                        term = exponent.lhs.lhs.rhs
+                        generator = getattr(term, "name", type(term).__name__)
+        return {
+            "source_equation": "exp(-i * H * dur / hbar) * State",
+            "source_span": (stmt.expr.span.line, stmt.expr.span.col),
+            "propagator": getattr(propagator, "name", type(propagator).__name__),
+            "generator": generator,
+            "duration": duration,
+            "realization": "target_profile_required",
+            "approximation_policy": "target_owned",
+            "capability_decision": "deferred_to_target_lowering",
+        }
+    return None
+
+
 def build_qpu_ir(
     unit: CompilationUnit, symbolic_ir: dict[str, Any]
 ) -> QpuProgram:
@@ -565,6 +626,9 @@ def build_qpu_ir(
     lowering_policy = _lowering_policy_projection(unit)
     if lowering_policy is not None:
         projection["lowering_policy"] = lowering_policy
+    explicit_evolution = _explicit_evolution_projection(unit)
+    if explicit_evolution is not None:
+        projection["explicit_evolution"] = explicit_evolution
     binder_lowering, _ = lower_finite_binders(unit)
     if binder_lowering:
         projection["binder_lowering"] = binder_lowering

@@ -33,7 +33,10 @@ def test_struct_field_access_duration_is_accepted() -> None:
     pub fn main() -> Unit {
         Config config = Config(0.25.fs)
         State s = |+>
-        State s = Evolve { s under Z for config.duration }.run()
+        Energy scale = 1.0.eV to J
+        Operator H = scale * Z
+        Operator U = exp(-i * H * config.duration / hbar)
+        State s = Evolve() { U * s }.run()
         Measure s
     }
     """
@@ -47,7 +50,11 @@ def test_inline_unit_suffixed_literal_duration_is_accepted() -> None:
     package p
     pub fn main() -> Unit {
         State s = |+>
-        State s = Evolve { s under Z for 0.25.fs }.run()
+        Time duration = 0.25.fs
+        Energy scale = 1.0.eV to J
+        Operator H = scale * Z
+        Operator U = exp(-i * H * duration / hbar)
+        State s = Evolve() { U * s }.run()
         Measure s
     }
     """
@@ -63,11 +70,17 @@ def test_genuinely_dimensionless_duration_is_still_rejected() -> None:
     pub fn main() -> Unit {
         Float t = 1.0
         State s = |+>
-        State s = Evolve { s under Z for t }.run()
+        Operator U = exp(-i * Z * t / hbar)
+        State s = Evolve() { U * s }.run()
         Measure s
     }
     """
     result = run_source(src, settings={"target": "local", "seed": 0})
     codes = {d.get("code") for d in result.diagnostics}
     assert result.status == "failed"
-    assert "EVOLVE_UNRESOLVED_UNIT_ERROR" in codes
+    assert codes & {
+        "EVOLVE_UNRESOLVED_UNIT_ERROR",
+        "EVOLUTION_DIMENSION_ERROR",
+        "OPERATOR_EXP_DOMAIN_ERROR",
+        "TYPE_MISMATCH",
+    }

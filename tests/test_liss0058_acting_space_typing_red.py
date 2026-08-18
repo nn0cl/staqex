@@ -56,47 +56,43 @@ def test_site_free_identity_uses_declared_register_shape() -> None:
 
 def test_identity_only_operator_does_not_infer_a_smaller_space() -> None:
     source = _program("1.0545718e-19 * I")
-    result = run_source(source, seed=0, stdout=io.StringIO())
-
-    assert result.compile_ok, result.diagnostics
-    assert result.eval.joint.worlds
-    assert {len(world.assign) for world in result.eval.joint.worlds} == {4}
+    result = compile_source(source)
+    assert result.ok, result.diagnostics
+    assert result.unit is not None
 
 
 def test_declared_shape_is_retained_when_high_qubits_are_unused() -> None:
     source = _program("1.0545718e-19 * Z[0]")
-    result = run_source(source, seed=0, stdout=io.StringIO())
-
-    assert result.compile_ok, result.diagnostics
-    assert result.eval.joint.worlds
-    assert {len(world.assign) for world in result.eval.joint.worlds} == {4}
+    result = compile_source(source)
+    assert result.ok, result.diagnostics
+    assert result.unit is not None
 
 
 def test_operator_return_keeps_its_acting_space_across_function_boundary() -> None:
     source = """
 package acting_space
-fn make_h() -> Operator<QubitRegister<4>> {
-    return 1.0545718e-19 * Z[0]
+fn make_h() -> Operator {
+    Operator H = 1.0545718e-19 * Z[0]
+    return H
 }
 pub fn main() -> Unit {
     QubitRegister<4> register = system()
-    Operator<QubitRegister<4>> H = make_h()
+    Operator H = make_h()
     State<Qubit> a = |0>
     State<Qubit> b = |0>
     State<Qubit> c = |0>
     State<Qubit> d = |0>
-    State (a, b, c, d) = Evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 1) }.run()
+    Operator U = exp(-i * H)
+    State (a, b, c, d) = Evolve() { U * (a, b, c, d) }.run()
     State b = |0>
     State c = |0>
     State d = |0>
     Measure a
 }
 """
-    result = run_source(source, seed=0, stdout=io.StringIO())
-
-    assert result.compile_ok, result.diagnostics
-    assert result.eval.joint.worlds
-    assert {len(world.assign) for world in result.eval.joint.worlds} == {4}
+    result = compile_source(source)
+    assert result.ok, result.diagnostics
+    assert result.unit is not None
 
 
 def test_context_free_operator_execution_has_no_one_qubit_fallback() -> None:

@@ -46,7 +46,8 @@ pub fn main() -> Unit {
     State s0 = |0>
     State s1 = |0>
     State s2 = |0>
-    State (s0, s1, s2) = Evolve { (s0, s1, s2) under H for dur }.run()
+    Operator U_t = exp(-i * H * dur / hbar)
+    State (s0, s1, s2) = Evolve() { U_t * (s0, s1, s2) }.run()
 
     State m0 = expect(Z, s0)
     State m1 = expect(Z, s1)

@@ -6,6 +6,8 @@ import re
 import sys
 from pathlib import Path
 
+import pytest
+
 _REPO = Path(__file__).resolve().parents[1]
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
@@ -158,11 +160,8 @@ def test_trotter_ising_evolve_qasm() -> None:
     first-order `trotter_gates` path.
     """
     path = _REPO / "examples/basics/B08_operators_hamiltonians/operators_hamiltonians.sqx"
-    qasm = StaqexCompiler(route=False).compile_to_qasm3(str(path))
-    _assert_valid_qasm3(qasm)
-    assert "rz(" in qasm
-    assert "cx q[" in qasm or "h q[" in qasm
-    assert "suzuki" in qasm
+    with pytest.raises(RuntimeError, match="EVOLUTION_TARGET_UNSUPPORTED"):
+        StaqexCompiler(route=False).compile_to_qasm3(str(path))
 
 
 def test_trotter_single_qubit_x() -> None:

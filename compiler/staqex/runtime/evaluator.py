@@ -182,6 +182,7 @@ class EvalResult:
     # collapse found a recorded controller binding physically unreachable
     # (the run vacuumed). True (default) when unchecked or all confirmed.
     dynamic_outcomes_confirmed: bool = True
+    evolution_provenance: dict[str, Any] | None = None
 
 
 class KernelError(Exception):
@@ -198,11 +199,26 @@ class KernelDiagnosticError(KernelError):
         *,
         line: int = 0,
         col: int = 0,
+        provenance: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(message)
         self.code = code
         self.line = line
         self.col = col
+        self.provenance = provenance
+
+
+@dataclass(frozen=True)
+class ExplicitPropagator:
+    """Runtime provenance for `exp(-i * H * duration / hbar)`.
+
+    The source-level operator remains explicit; this small runtime value only
+    records the already-written generator and duration so the Kernel can
+    realize the expression without reintroducing an implicit Evolve policy.
+    """
+
+    hamiltonian: Expr
+    duration: Expr
 
 
 class Evaluator:
@@ -348,6 +364,7 @@ class Evaluator:
         # LISS-0389: True until a dynamic-lane mid-circuit collapse finds a
         # recorded controller binding physically unreachable (vacuumed).
         self._dynamic_outcomes_confirmed = True
+        self.evolution_provenance = None
         self._this = None
         self._unit = unit
         self.operators = {
@@ -493,9 +510,12 @@ class Evaluator:
                     declared_space = operator_declared_space(stmt.ty)
                     if declared_space is not None:
                         self.operator_spaces[stmt.names[0]] = declared_space
+                    explicit_propagator = self._explicit_propagator(stmt.expr)
                     op_val = (
                         lowered_binders[stmt.names[0]]
                         if stmt.names[0] in lowered_binders
+                        else explicit_propagator
+                        if explicit_propagator is not None
                         else self._resolve_operator_expr(stmt.expr)
                     )
                     # LISS-0229: materialize outer(psi, phi) against the live Joint.
@@ -731,6 +751,7 @@ class Evaluator:
             last_poly_fusion=self.last_poly_fusion,
             data_parallel_workers=self.data_parallel_workers,
             dynamic_outcomes_confirmed=self._dynamic_outcomes_confirmed,
+            evolution_provenance=self.evolution_provenance,
         )
 
     @staticmethod
@@ -1689,6 +1710,8 @@ class Evaluator:
         return n
 
     def _bind_evolve(self, joint: Joint, names: list[str], expr: EvolveExpr) -> Joint:
+        if expr.explicit_transform:
+            return self._bind_explicit_evolve(joint, names, expr)
         if len(expr.seeds) != len(names):
             raise KernelError(
                 f"evolve seeds {len(expr.seeds)} != bind names {len(names)}"
@@ -1751,13 +1774,166 @@ class Evaluator:
         # ADR 0142: drop evolve-local let axes (and other non-live coords).
         return self._trace_out_dead_fn_locals(joint, pre_live, names)
 
+    def _bind_explicit_evolve(
+        self, joint: Joint, names: list[str], expr: EvolveExpr
+    ) -> Joint:
+        """Realize the Phase 2 `Operator * State` application.
+
+        The explicit source form is intentionally narrow in this phase.  A
+        propagator must have been declared from the canonical exponential;
+        arbitrary operator/state products fail closed until their target
+        realization is specified.
+        """
+        if not names or expr.body is None:
+            raise KernelDiagnosticError(
+                "EVOLUTION_RUNTIME_UNSUPPORTED",
+                "explicit Evolve currently requires one State result and one block result",
+                line=expr.span.line,
+                col=expr.span.col,
+            )
+        result = expr.body.result
+        if not (isinstance(result, BinOp) and result.op == "*"):
+            raise KernelDiagnosticError(
+                "EVOLUTION_RUNTIME_UNSUPPORTED",
+                "explicit Evolve runtime requires `propagator * state`",
+                line=result.span.line,
+                col=result.span.col,
+            )
+        propagator = (
+            self.operators.get(result.lhs.name)
+            if isinstance(result.lhs, Var)
+            else self._explicit_propagator(result.lhs)
+        )
+        if not isinstance(propagator, ExplicitPropagator):
+            raise KernelDiagnosticError(
+                "EVOLUTION_RUNTIME_UNSUPPORTED",
+                "explicit Operator * State runtime requires an `exp(-i * H * t / hbar)` propagator",
+                line=result.span.line,
+                col=result.span.col,
+            )
+        seed_expr = result.rhs
+        if isinstance(seed_expr, TupleExpr):
+            seeds = list(seed_expr.items)
+        else:
+            seeds = [seed_expr]
+        if len(seeds) != len(names):
+            raise KernelDiagnosticError(
+                "EVOLUTION_RUNTIME_UNSUPPORTED",
+                "explicit Evolve tuple arity must match the State bind",
+                line=result.span.line,
+                col=result.span.col,
+            )
+        normalized_seeds: list[Expr] = []
+        for seed, name in zip(seeds, names):
+            if not isinstance(seed, Var):
+                raise KernelDiagnosticError(
+                    "EVOLUTION_RUNTIME_UNSUPPORTED",
+                    "explicit Evolve currently requires named State operands",
+                    line=result.span.line,
+                    col=result.span.col,
+                )
+            if seed.name != name:
+                joint = joint.rename_coord(seed.name, name)
+            normalized_seeds.append(Var(name=name, span=seed.span))
+        lowered = EvolveExpr(
+            seeds=normalized_seeds,
+            times=1,
+            body=None,
+            span=expr.span,
+            duration=propagator.duration,
+            hamiltonian=propagator.hamiltonian,
+        )
+        max_steps = self._eval_max_steps(expr.max_steps) if expr.until_predicate else 1
+        previous = joint
+        for iteration in range(1, max_steps + 1):
+            joint = self._bind_evolve_hamiltonian(joint, names, lowered)
+            if expr.until_predicate is None:
+                break
+            if self._eval_until_predicate(
+                joint, names, expr.until_predicate, previous=previous,
+                allow_single_alias=True,
+            ):
+                self.evolution_provenance = {
+                    "source_transform": "Operator * State",
+                    "predicate": "converged",
+                    "metric": "full_state_l2_difference",
+                    "numeric_type": "Float64",
+                    "tolerance": 1e-9,
+                    "iteration_count": iteration,
+                    "max_steps": max_steps,
+                    "stop_reason": "predicate",
+                    "realization": "simulator_exact_step",
+                    "predicate_effect": "non_collapsing",
+                }
+                return joint
+            previous = joint
+        if expr.until_predicate is not None:
+            provenance = {
+                "source_transform": "Operator * State",
+                "predicate": "converged",
+                "metric": "full_state_l2_difference",
+                "numeric_type": "Float64",
+                "tolerance": 1e-9,
+                "iteration_count": max_steps,
+                "max_steps": max_steps,
+                "stop_reason": "max_exhausted",
+                "realization": "simulator_exact_step",
+                "predicate_effect": "non_collapsing",
+            }
+            self.evolution_provenance = provenance
+            raise KernelDiagnosticError(
+                "EVOLVE_UNTIL_MAX_STEPS_ERROR",
+                "evolve until reached max steps without predicate success",
+                line=expr.span.line,
+                col=expr.span.col,
+                provenance=provenance,
+            )
+        return joint
+
+    @staticmethod
+    def _explicit_propagator(expr: Expr) -> ExplicitPropagator | None:
+        """Recognize only the canonical written propagator expression."""
+        if not (
+            isinstance(expr, Call)
+            and isinstance(expr.callee, Var)
+            and expr.callee.name == "exp"
+            and len(expr.args) == 1
+        ):
+            return None
+        exponent = expr.args[0]
+        if not (
+            isinstance(exponent, BinOp)
+            and exponent.op == "/"
+            and isinstance(exponent.rhs, Var)
+            and exponent.rhs.name == "hbar"
+            and isinstance(exponent.lhs, BinOp)
+            and exponent.lhs.op == "*"
+            and isinstance(exponent.lhs.lhs, BinOp)
+            and exponent.lhs.lhs.op == "*"
+        ):
+            return None
+        signed_generator = exponent.lhs.lhs.lhs
+        hamiltonian = exponent.lhs.lhs.rhs
+        duration = exponent.lhs.rhs
+        if not (
+            isinstance(signed_generator, BinOp)
+            and signed_generator.op == "-"
+            and isinstance(signed_generator.rhs, Var)
+            and signed_generator.rhs.name == "i"
+            and isinstance(signed_generator.lhs, (LitInt, LitFloat))
+            and signed_generator.lhs.value == 0
+        ):
+            return None
+        return ExplicitPropagator(hamiltonian=hamiltonian, duration=duration)
+
     def _eval_max_steps(self, max_steps: Expr | None) -> int:
         if not isinstance(max_steps, LitInt) or max_steps.value <= 0:
             raise KernelError("evolve until requires a positive compile-time `max` bound")
         return max_steps.value
 
     def _eval_until_predicate(
-        self, joint: Joint, names: list[str], predicate: Expr
+        self, joint: Joint, names: list[str], predicate: Expr,
+        *, previous: Joint | None = None, allow_single_alias: bool = False,
     ) -> bool:
         """Pure Kernel predicate: no RNG, measure, or outer mutation (ADR 0079)."""
         if isinstance(predicate, LitBool):
@@ -1768,13 +1944,30 @@ class Evaluator:
                     raise KernelError("converged requires one state variable")
                 coord = predicate.args[0].name
                 if coord not in names:
-                    raise KernelError(
-                        f"converged predicate may reference evolve seeds only, got `{coord}`"
-                    )
-                return len(joint.amplitude_marginal(coord)) == 1
+                    if not allow_single_alias and coord not in joint.variables():
+                        raise KernelError(
+                            f"converged predicate may reference evolve seeds only, got `{coord}`"
+                        )
+                if previous is None:
+                    return len(joint.amplitude_marginal(coord)) == 1
+                return self._joint_l2_distance(previous, joint) <= 1e-9
         raise KernelError(
             "evolve until predicates support `converged(state)` or literal booleans only"
         )
+
+    @staticmethod
+    def _joint_l2_distance(left: Joint, right: Joint) -> float:
+        def amplitudes(joint: Joint) -> dict[str, complex]:
+            result: dict[str, complex] = {}
+            for world in joint.worlds:
+                key = repr(sorted(world.assign.items(), key=lambda item: item[0]))
+                result[key] = result.get(key, 0j) + world.amp
+            return result
+
+        lhs = amplitudes(left)
+        rhs = amplitudes(right)
+        keys = set(lhs) | set(rhs)
+        return sum(abs(lhs.get(key, 0j) - rhs.get(key, 0j)) ** 2 for key in keys) ** 0.5
 
     def _bind_evolve_hamiltonian(
         self, joint: Joint, names: list[str], expr: EvolveExpr
