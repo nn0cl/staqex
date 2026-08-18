@@ -2,7 +2,7 @@
 
 ## Status and authority
 
-- Status: **Phase 3 complete; final-review-ready; completion PR/CI pending** (2026-08-18)
+- Status: **Complete for bounded LISS-0438 slice** (PR #554, CI run 32114315690, 2026-08-18)
 - Local Issue: [LISS-0438](../issues/LISS-0438-explicit-evolution-residual-reconciliation.md)
 - Parent WorkPlan: [WP-0100](../work-plans/WP-0100-explicit-evolution-surface.md)
 - This specification does not amend [ADR 0210](../architecture/adr/0210-formal-limit-finite-realization-policy.md).
@@ -168,6 +168,5 @@ exact and finite realization verified through target-plan evidence.
 
 ## Next gate
 
-This specification has completed the bounded Phase 3 review preparation for
-the S02 slice. Completion still requires the final review/PR/CI packet; no
-scope expansion is approved.
+This specification records the completed bounded S02 slice. No scope
+expansion is approved by this specification.

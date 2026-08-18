@@ -3,7 +3,9 @@
 ## Metadata
 
 - Local issue ID: LISS-0438
-- Status: **final-review-ready; Phase 3 complete; completion PR/CI pending**
+- Status/phase: **complete**
+- Completion evidence: PR #554, CI run 32114315690 passed Repository sanity,
+  Kernel root suites, and Spec verification.
 - Type: Architecture Path follow-up
 - Parent WorkPlan: [WP-0100](../work-plans/WP-0100-explicit-evolution-surface.md)
 - Related Issue: [LISS-0437](LISS-0437-explicit-evolution-surface.md)
@@ -53,4 +55,5 @@ approval to change the compiler or deploy to a QPU.
    review (recorded); independent Green re-review is complete.
 4. Fixed-seed, benchmark, provenance, and scope-boundary verification plan.
 
-Until those gates are recorded, LISS-0438 remains a roadmap item only.
+The bounded LISS-0438 slice is complete. S02 numerical migration, live QPU,
+provider SDK, and broader corpus migration remain separate future work.

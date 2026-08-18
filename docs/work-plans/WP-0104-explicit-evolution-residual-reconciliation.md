@@ -18,7 +18,7 @@ and keeping target realization visibly separate.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| LISS-0438 | final-review-ready; Phase 3 complete; completion PR/CI pending | M | M | AIP-0438-001 | LISS-0437 / ADR 0210 | completion PR/final review | `codex/liss-0438-residual-reconciliation` |
+| LISS-0438 | complete; PR #554; CI run 32114315690 passed | M | M | AIP-0438-001 | LISS-0437 / ADR 0210 | none for bounded slice | `codex/liss-0438-residual-reconciliation` |
 
 ## Design Note
 
@@ -26,7 +26,7 @@ and keeping target realization visibly separate.
   distinguishable in the S02 representative fixture; retain exact `U_t` for
   local execution and reserve `U_qpu` for finite target-plan evidence.
 - Phase executed: Phase 3 refactor/final-review preparation, approved by the
-  user on 2026-08-18; completion PR/final review remains pending.
+  user on 2026-08-18; bounded slice complete in PR #554.
 - Context included: LISS-0438, ADR 0210, accepted explicit evolution Spec,
   `main_selection.sqx`, S02 README, existing S02 regression and benchmark
   tests, independent review perspectives.
@@ -56,8 +56,15 @@ and keeping target realization visibly separate.
 - Issue: LISS-0438
 - Reason it is unblocked: parent finite realization slice is complete and the
   residual boundary is isolated.
-- Adjudicator approval needed: final review/merge packet; seed and metric
+- Adjudicator approval needed: none for the bounded slice; seed and metric
   evidence is frozen in the Phase 2 and Phase 3 traces.
+
+### [LISS-0438] Completion
+
+- Status: complete.
+- PR: PR #554.
+- CI: run 32114315690 passed Repository sanity, Kernel root suites, and Spec
+  verification.
 
 ## Risks
 
@@ -80,6 +87,5 @@ and keeping target realization visibly separate.
 
 ## Approval boundary
 
-This WorkPlan records the approved bounded Phase 3 refactor/final-review
-preparation. It does not authorize scope expansion or completion/merge claims
-before the required PR, final review, CI, and completion packet.
+This WorkPlan records the completed bounded Phase 3 refactor/final-review
+packet in PR #554. It does not authorize scope expansion.
