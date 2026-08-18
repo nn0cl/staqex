@@ -2,7 +2,7 @@
 
 ## Status and authority
 
-- Status: **Design and independent review complete; Phase 1 and implementation not approved** (2026-08-18)
+- Status: **Phase 3 complete; final-review-ready; completion PR/CI pending** (2026-08-18)
 - Local Issue: [LISS-0438](../issues/LISS-0438-explicit-evolution-residual-reconciliation.md)
 - Parent WorkPlan: [WP-0100](../work-plans/WP-0100-explicit-evolution-surface.md)
 - This specification does not amend [ADR 0210](../architecture/adr/0210-formal-limit-finite-realization-policy.md).
@@ -35,7 +35,8 @@ In scope for this design:
 
 Out of scope:
 
-- implementation or test changes in this design phase;
+- implementation beyond the bounded Phase 2 Green slice recorded in the
+  approval and trace; Phase 3/refactor and scope expansion remain excluded;
 - S02 numerical-model migration, retuning, or algorithm redesign;
 - changing candidate data, Host scoring, feasibility predicates, or objective
   weights;
@@ -162,11 +163,11 @@ was performed.
 2. Whether future broad corpus inventory deserves a separate Issue.
 
 The exact-local/finite-target lane choice is no longer open for this slice:
-Phase 1 planning uses separate `U_t` and `U_qpu` names, with local execution
-remaining exact and finite realization verified through target-plan evidence.
+Phase 1 uses separate `U_t` and `U_qpu` names, with local execution remaining
+exact and finite realization verified through target-plan evidence.
 
 ## Next gate
 
-This specification is ready for independent review only. A reviewer cannot
-approve Phase 1 or implementation. After review, the user/Adjudicator must
-separately approve Phase 1 Red and then implementation.
+This specification has completed the bounded Phase 3 review preparation for
+the S02 slice. Completion still requires the final review/PR/CI packet; no
+scope expansion is approved.

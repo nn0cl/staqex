@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0438
-- Status: **Design and independent review complete; Phase 1 and implementation not approved**
+- Status: **final-review-ready; Phase 3 complete; completion PR/CI pending**
 - Type: Architecture Path follow-up
 - Parent WorkPlan: [WP-0100](../work-plans/WP-0100-explicit-evolution-surface.md)
 - Related Issue: [LISS-0437](LISS-0437-explicit-evolution-surface.md)
@@ -13,6 +13,8 @@
 - WorkPlan: [WP-0104](../work-plans/WP-0104-explicit-evolution-residual-reconciliation.md)
 - Design trace: [2026-08-18 intake](../collaboration/traces/2026-08-18-liss-0438-design-intake.md)
 - Design review: [2026-08-18 review 02](../collaboration/reviews/2026-08-18-liss-0438-design-review-02.md)
+- Phase 2 review: [2026-08-18 Phase 2 Green review](../collaboration/reviews/2026-08-18-liss-0438-phase2-green-review.md)
+- Phase 3 trace: [2026-08-18 Phase 3 refactor](../collaboration/traces/2026-08-18-liss-0438-phase3-refactor.md)
 
 ## Purpose
 
@@ -33,7 +35,9 @@ approval to change the compiler or deploy to a QPU.
 
 ## Explicit exclusions
 
-- No implementation is authorized by this Issue.
+- No implementation beyond the bounded Phase 2 Green slice recorded in the
+  approval and trace is authorized by this Issue; Phase 3 and scope expansion
+  require a separate approval.
 - No live QPU submission.
 - No provider SDK, credentials, network, or adapter work.
 - No change to ADR 0210's source-visible `Realize` boundary.
@@ -45,7 +49,8 @@ approval to change the compiler or deploy to a QPU.
 1. An acceptance specification and design note for the selected residual
    slice.
 2. Independent review of that specification.
-3. Explicit user/Adjudicator phase and implementation approval.
+3. Explicit user/Adjudicator Phase 2 implementation approval after the Red
+   review (recorded); independent Green re-review is complete.
 4. Fixed-seed, benchmark, provenance, and scope-boundary verification plan.
 
 Until those gates are recorded, LISS-0438 remains a roadmap item only.

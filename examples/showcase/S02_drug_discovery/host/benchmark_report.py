@@ -43,6 +43,10 @@ from run_selection import (  # noqa: E402
 from scoring import build_candidate_scores, classical_score, is_feasible  # noqa: E402
 
 from compiler.staqex.pipeline import compile_path  # noqa: E402
+from compiler.staqex.backend.qasm.lower import (  # noqa: E402
+    EvolutionTargetProfile,
+    lower_unit_to_circuit,
+)
 from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
 from compiler.staqex.host_input_port import MappingHostInputAdapter  # noqa: E402
 
@@ -55,6 +59,58 @@ TOP_K = 3
 # exists today; disclosed, not invented): 8 Z[i] + 8 X[i] + 28 Z[i]*Z[j].
 LOGICAL_WIDTH = N  # psi_sel's own width; no separate objective coordinate
 HAMILTONIAN_TERM_COUNT = N + N + (N * (N - 1)) // 2
+
+
+def _explicit_evolution_comparison() -> dict[str, Any]:
+    """Build provider-neutral evidence for S02's two named execution lanes.
+
+    The exact local lane is executed by this report.  The finite lane is only
+    a source/compiler target-plan witness in this slice; no QPU or provider
+    is contacted and no circuit is submitted here.
+    """
+
+    compiled = compile_path(str(_SQX))
+    assert compiled.unit is not None, compiled.diagnostics
+    provenance = dict(compiled.evolution_provenance or {})
+    target = lower_unit_to_circuit(
+        compiled.unit,
+        target_profile=EvolutionTargetProfile(
+            limit_realization_method="suzuki",
+            limit_order=2,
+            limit_steps=8,
+            limit_error_budget=1e-6,
+        ),
+    )
+    target_plan_provenance = dict(target.provenance or {}) or None
+    diagnostic_rejection_evidence = None
+    if target.reject_code is not None:
+        diagnostic_rejection_evidence = {
+            "code": target.reject_code,
+            "notes": tuple(target.notes),
+            "partial_program": target.partial_program,
+            "target_plan_provenance": None,
+        }
+    return {
+        "exact_local": {
+            "operator": "U_t",
+            "execution": "simulator",
+            "source_transform": "exp(-i * H_obj * dur / hbar)",
+        },
+        "finite_target": {
+            "operator": "U_qpu",
+            "execution": "target-plan-only",
+            "submitted": False,
+            "status": "realized" if target_plan_provenance else "capability-rejected",
+        },
+        "realization_provenance": provenance,
+        # Rejection evidence is populated only when a target lowering is
+        # attempted and rejected; it must not be confused with successful
+        # target-plan provenance.
+        "diagnostic_rejection_evidence": diagnostic_rejection_evidence,
+        "target_plan_provenance": target_plan_provenance,
+        "capability_rejection": target.reject_code,
+        "partial_program": target.partial_program,
+    }
 
 
 def _manifest_id(pairwise: list[list[bool]], diversity: list[list[float]]) -> str:
@@ -110,6 +166,7 @@ def check_reproducibility(seed: int) -> bool:
 
 
 def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkResult:
+    comparison = _explicit_evolution_comparison()
     pairwise, diversity = build_predicate_matrices()
     manifest_id = _manifest_id(pairwise, diversity)
     candidate_scores = build_candidate_scores(N)
@@ -173,6 +230,7 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
             quality_metrics={"shots": shots, "feasibility_rate": feasibility_rate},
             warnings=tuple(warnings)
             or (("all shots Vacuum",) if not non_vacuum else ()),
+            **comparison,
         )
 
     objective_scores = [
@@ -232,6 +290,7 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
             "reproducibility_verified": reproducible,
         },
         warnings=tuple(warnings),
+        **comparison,
     )
 
 

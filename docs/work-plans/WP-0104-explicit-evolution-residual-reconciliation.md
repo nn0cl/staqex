@@ -18,15 +18,15 @@ and keeping target realization visibly separate.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| LISS-0438 | design and independent review complete; Phase 1 pending | M | M | AIP-0438-001 | LISS-0437 / ADR 0210 | Phase 1 Red | `codex/liss-0438-residual-reconciliation` |
+| LISS-0438 | final-review-ready; Phase 3 complete; completion PR/CI pending | M | M | AIP-0438-001 | LISS-0437 / ADR 0210 | completion PR/final review | `codex/liss-0438-residual-reconciliation` |
 
 ## Design Note
 
 - Target behavior: make formal, exact-local, and finite-target evolution lanes
   distinguishable in the S02 representative fixture; retain exact `U_t` for
   local execution and reserve `U_qpu` for finite target-plan evidence.
-- Phase to execute next: Phase 1 Red, pending typed user/Adjudicator approval;
-  no AT-TDD phase has been approved.
+- Phase executed: Phase 3 refactor/final-review preparation, approved by the
+  user on 2026-08-18; completion PR/final review remains pending.
 - Context included: LISS-0438, ADR 0210, accepted explicit evolution Spec,
   `main_selection.sqx`, S02 README, existing S02 regression and benchmark
   tests, independent review perspectives.
@@ -46,18 +46,18 @@ and keeping target realization visibly separate.
 1. Review this WorkPlan and the residual acceptance specification independently.
 2. Freeze Phase 1 Red scenarios for source fidelity, baseline stability,
    explicit Realize provenance, and fail-closed target rejection.
-3. Obtain explicit Phase 1 approval.
-4. Create Red tests only; stop for review and implementation approval.
-5. Implement the minimum approved reconciliation.
-6. Run fixed-seed and benchmark verification, then independent review.
+3. Create Red tests only; stop for independent review and implementation
+   approval.
+4. Implement the minimum approved reconciliation after typed approval.
+5. Run fixed-seed and benchmark verification, then independent review.
 
 ## Current Next Issue
 
 - Issue: LISS-0438
 - Reason it is unblocked: parent finite realization slice is complete and the
   residual boundary is isolated.
-- Adjudicator approval needed: typed Phase 1 Red approval and separate
-  implementation approval; seed/metric authority must be frozen in Phase 1.
+- Adjudicator approval needed: final review/merge packet; seed and metric
+  evidence is frozen in the Phase 2 and Phase 3 traces.
 
 ## Risks
 
@@ -80,5 +80,6 @@ and keeping target realization visibly separate.
 
 ## Approval boundary
 
-This WorkPlan authorizes design review only. It does not authorize source,
-compiler, test, benchmark, or example changes.
+This WorkPlan records the approved bounded Phase 3 refactor/final-review
+preparation. It does not authorize scope expansion or completion/merge claims
+before the required PR, final review, CI, and completion packet.
