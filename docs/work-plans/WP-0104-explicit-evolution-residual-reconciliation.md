@@ -18,7 +18,7 @@ and keeping target realization visibly separate.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| LISS-0438 | complete; PR #554; CI run 32114315690 passed | M | M | AIP-0438-001 | LISS-0437 / ADR 0210 | none for bounded slice | `codex/liss-0438-residual-reconciliation` |
+| LISS-0438 | complete; PR #554; CI run 32115995867 passed | M | M | AIP-0438-001 | LISS-0437 / ADR 0210 | none for bounded slice | `codex/liss-0438-residual-reconciliation` |
 
 ## Design Note
 
@@ -63,7 +63,7 @@ and keeping target realization visibly separate.
 
 - Status: complete.
 - PR: PR #554.
-- CI: run 32114315690 passed Repository sanity, Kernel root suites, and Spec
+- CI: run 32115995867 passed Repository sanity, Kernel root suites, and Spec
   verification.
 
 ## Risks

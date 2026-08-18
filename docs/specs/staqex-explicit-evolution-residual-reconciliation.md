@@ -2,7 +2,7 @@
 
 ## Status and authority
 
-- Status: **Complete for bounded LISS-0438 slice** (PR #554, CI run 32114315690, 2026-08-18)
+- Status: **Complete for bounded LISS-0438 slice** (PR #554, CI run 32115995867, 2026-08-18)
 - Local Issue: [LISS-0438](../issues/LISS-0438-explicit-evolution-residual-reconciliation.md)
 - Parent WorkPlan: [WP-0100](../work-plans/WP-0100-explicit-evolution-surface.md)
 - This specification does not amend [ADR 0210](../architecture/adr/0210-formal-limit-finite-realization-policy.md).

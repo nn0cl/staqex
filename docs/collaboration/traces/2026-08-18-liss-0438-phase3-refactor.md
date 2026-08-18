@@ -37,7 +37,7 @@
 ## Final-review gate
 
 - Issue/WP/spec status: `complete` for the bounded slice.
-- Completion evidence: PR #554; CI run 32114315690 passed Repository sanity,
+- Completion evidence: PR #554; CI run 32115995867 passed Repository sanity,
   Kernel root suites, and Spec verification.
 - Phase 3 implementation/refactor approval: satisfied.
 - Phase 4 or scope expansion: not approved.
