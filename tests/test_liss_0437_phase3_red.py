@@ -232,13 +232,13 @@ def test_s02_source_contains_full_blackboard_derivation_before_numeric_migration
     assert "Time dur" in source
     has_exp_form = "exp(-i * H_obj * dur / hbar)" in source
     has_limit_form = (
-        "Operator U_dt" in source
+        ("Operator U_formal" in source or "Operator U_dt" in source)
         and "Limit N -> Infinity" in source
         and "(I - i * H_obj * dur / (N * hbar)) ^ N" in source
     )
     assert has_exp_form, "S02 currently selects the canonical executable exp form"
     if has_limit_form:
-        assert "Operator U_dt" in source
+        assert "Operator U_formal" in source or "Operator U_dt" in source
         assert "(I - i * H_obj * dur / (N * hbar)) ^ N" in source
     else:
         assert "Limit N -> Infinity" not in source
