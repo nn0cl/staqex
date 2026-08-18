@@ -18,8 +18,9 @@ and the [expressiveness review](../../../docs/specs/staqex-v1-s02-expressiveness
    exactly; the explicit coefficient is what normalizes it, mirroring the
    blackboard equation's own separate `1/sqrt(2^n)` prefactor — same
    terminal distribution as the earlier `prepare_selection(n)` primitive
-   it replaces) restricted by `project ... onto feasible(exactly_selected
-   = 3, pairwise_compatible = true, diversity_at_least = 0.3)`.
+   it replaces). The source then builds the set `F`, the literal projector
+   `P_F = Sigma (x In F) { |x><x| }`, and writes the projection plus its
+   explicit norm division.
 2. **Soft-objective evolution** — `psi_sel` itself evolved under a
    Hamiltonian built from named weighted terms (`activity`/`selectivity`/
    `diversity`), reusing S01's own energy-scale idiom
@@ -60,11 +61,9 @@ diversity-separated — see `host/finite_boundary.py`/`host/scoring.py` for
 how $F$ is defined Host-side).
 
 ```staqex
-State psi_sel = project psi_sel onto feasible(
-    exactly_selected = 3,
-    pairwise_compatible = true,
-    diversity_at_least = 0.3
-)
+Set F = { ... }
+Operator P_F = Sigma (x In F) { |x><x| }
+State psi_sel = (project psi_0 onto P_F) / ||project psi_0 onto P_F||
 ```
 
 ### 3. Objective Hamiltonian (soft objective, per-candidate weighted)
@@ -78,13 +77,13 @@ where $a_i$/$s_i$ are the Host-supplied per-candidate `activity_w`/
 `ObjectiveWeights` struct fields.
 
 ```staqex
-fn objective_hamiltonian(w: ObjectiveWeights, activity_w: Float[8], selectivity_w: Float[8]) -> Operator {
-    Operator z_field = Sigma (i In 0..7) { activity_w[i] * Z[i] }
-    Operator x_field = Sigma (i In 0..7) { selectivity_w[i] * X[i] }
-    Operator coupling = Sigma (i In 0..7, j In 0..7) where i < j {
-        Z[i] * Z[j]
+fn objective_hamiltonian(w: ObjectiveWeights, n: Int, activity_w: Float[8], selectivity_w: Float[8]) -> Operator {
+    Operator z_field = Sigma (i In 0..n-1) { w.activity * activity_w[i] * Z[i] }
+    Operator x_field = Sigma (i In 0..n-1) { w.selectivity * selectivity_w[i] * X[i] }
+    Operator coupling = Sigma (i In 0..n-1, j In 0..n-1) where i < j {
+        w.diversity * Z[i] * Z[j]
     }
-    return w.activity * z_field + w.selectivity * x_field + w.diversity * coupling
+    return z_field + x_field + coupling
 }
 ```
 
@@ -98,7 +97,7 @@ The generator, duration, and exponential are written explicitly in the
 source; `Evolve` is only the execution boundary.
 
 ```staqex
-Operator H_obj = scale * objective_hamiltonian(weights, activity_w, selectivity_w)
+Operator H_obj = scale * objective_hamiltonian(weights, n, activity_w, selectivity_w)
 Time dur = 0.6.fs
 Operator U_t = exp(-i * H_obj * dur / hbar)
 State psi_final = Evolve() { U_t * psi_sel }.run()
@@ -112,6 +111,19 @@ $P(x) = \lvert\langle x\rvert\psi_{sel}(t)\rangle\rvert^2$
 Measure psi_final
 ```
 
+For a finite target, the formal blackboard construction and conversion are a
+separate target lane; they do not replace the exact local `U_t` lane:
+
+```staqex
+Operator U_formal = Limit N -> Infinity {
+    (I - i * H_obj * dur / (N * hbar)) ^ N
+}
+Operator U_qpu = Realize(
+    source = U_formal, method = "suzuki", order = 2,
+    steps = 8, error_budget = 1e-6
+)
+```
+
 Note: step 4's $H_{obj}$ contains `X[i]` terms, which do not commute with
 step 2's projector $P_F$ — so the terminal distribution is **not**
 guaranteed to stay inside $F$. This is a real, disclosed effect (see
@@ -122,8 +134,8 @@ side-by-side.
 
 ```bash
 # Local Kernel-only compile check (no Host input -- project ... onto
-# feasible(...) needs pairwise_compatible/diversity_at_least at runtime,
-# so this only checks compilation, not full execution):
+# Host-supplied predicate matrices are required for full execution, so this
+# only checks compilation:
 python3 -m compiler.staqex check examples/showcase/S02_drug_discovery/main_selection.sqx
 
 # Full run, with the required HostInputPort data supplied:
@@ -176,7 +188,7 @@ python3 examples/showcase/S02_drug_discovery/host/benchmark_report.py
   particular overlap value was ever guaranteed.
 - **Feasibility-leakage finding (LISS-0406), fixed, not just disclosed:**
   `H_obj`'s `X[i]` field terms do not commute with `project onto
-  feasible(...)`'s projector — `X` flips a candidate's selected bit,
+  `P_F` projector — `X` flips a candidate's selected bit,
   changing Hamming weight, so real unitary evolution under a Hamiltonian
   containing `X` terms can leak probability mass outside the 25-pattern
   feasible subspace (a `Z`/`ZZ`-only Hamiltonian leaks nothing, being

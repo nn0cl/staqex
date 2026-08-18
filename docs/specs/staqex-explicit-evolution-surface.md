@@ -501,16 +501,19 @@ error budget, and must not rewrite the written `Limit` to `exp`.
 The bounded QPU realization slice accepts explicit Suzuki plans as
 provider-neutral finite gate plans. The written finite `product` is not treated
 as a unitary QPU gate sequence and is rejected with an explicit capability
-diagnostic. Budget rejection leaves no gates, allocation, partial program, or
-provenance envelope.
+diagnostic. Diagnostic/rejection evidence is distinct from target-plan
+provenance. A missing or malformed policy may retain diagnostic evidence, but
+resource-budget rejection leaves no gates, allocation, partial program, or
+target-plan provenance envelope.
 
 **P8 — binder-aware target rejection**
 
 Given a finite operator binder with a declared domain and no target register
-mapping or approximation policy, lowering returns a rejected provenance
-envelope and no circuit. Given a supported capability witness, lowering
-retains the binder domain, register mapping, order/steps or error budget, and
-resource estimate in the target-neutral result.
+mapping or approximation policy, lowering returns a diagnostic rejection record
+and no circuit. That diagnostic record is not a target-plan provenance
+envelope. Given a supported capability witness, lowering retains the binder
+domain, register mapping, order/steps or error budget, and resource estimate in
+the target-neutral result.
 
 **P9 — S02 migration boundary**
 
@@ -524,9 +527,10 @@ families.
 
 Given a supported binder and operator family whose estimated qubit or gate
 resource exceeds the declared target budget, lowering returns
-`EVOLUTION_TARGET_UNSUPPORTED` with `realization_kind = "rejected"`, the
-resource estimate, and the requested budget. Allocation has not started and
-the result contains no partial circuit.
+`EVOLUTION_TARGET_UNSUPPORTED` as a diagnostic rejection. Allocation has not
+started and the result contains no gates, qubits, partial circuit, or
+target-plan provenance. The requested budget and estimate may appear only in
+the transient diagnostic/reporting path, not in a retained provenance object.
 
 ### I — S02 exposes the complete time-evolution equation
 

@@ -100,7 +100,8 @@ Costs and open boundaries:
 
 ## Required acceptance tests after ADR approval
 
-- Missing policy remains `EVOLUTION_REALIZATION_REQUIRED` with provenance.
+- Missing policy remains `EVOLUTION_REALIZATION_REQUIRED` with diagnostic
+  rejection evidence; this is not successful target-plan provenance.
 - Invalid or incomplete policy is rejected before allocation.
 - Explicit `method`, order/steps, and error budget are retained in the target
   plan and provenance.
@@ -130,6 +131,24 @@ For the first implementation slice:
 
 Acceptance artifact:
 `tests/test_liss_0437_limit_realization_red.py`.
+
+## Clarifying amendment — diagnostic rejection versus target-plan provenance
+
+**Accepted 2026-08-18 by the user/Adjudicator.** This amendment resolves the
+P8/P10 wording ambiguity without changing the finite-realization boundary.
+
+- Diagnostic/rejection evidence is not target-plan provenance.
+- Missing or malformed policy may retain a diagnostic rejection record so the
+  failure reason is observable.
+- Resource-budget overflow is stricter: after rejection, no gates, qubits,
+  partial program, or target-plan provenance is retained. Any estimate or
+  requested-budget values used to construct the diagnostic are transient and
+  are not published as provenance.
+- Successful finite realization continues to publish the full target-plan
+  provenance required by this ADR.
+
+This clarification is the authoritative interpretation for P8/P10 in the
+accepted explicit evolution specification.
 
 ## Approval record
 
