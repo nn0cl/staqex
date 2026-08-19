@@ -2,13 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green correction complete — independent re-review pending** |
+| Status | **Phase 2 Green correction complete — re-review NOT READY; closeout blocked** |
 | Local Issue | [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Predecessor | [WP-0105](WP-0105-s02-corpus-migration-inventory.md) |
 | Implementation permission | **Phase 2 Green completed; Phase 3 not approved** |
 | Phase 1 trace | [2026-08-19 Phase 1 Red](../collaboration/traces/2026-08-19-liss-0443-phase1-red.md) |
 | Phase 2 review | [2026-08-19 Phase 2 Green review](../collaboration/reviews/2026-08-19-liss-0443-phase2-green-review.md) |
+| Phase 2 re-review | [2026-08-19 Phase 2 re-review](../collaboration/reviews/2026-08-19-liss-0443-phase2-rereview-01.md) |
 
 ## [DESIGN CHECK]
 
@@ -54,4 +55,5 @@ Phase 1 Red is complete. After typed approval, the minimum Phase 2 Green
 implementation records the composite `numeric_identity` in S02 numeric result
 metadata without changing numerical behavior. Independent re-review remains
 pending; full LISS-0403 pytest evidence is still unavailable in the current
-environment.
+environment. Phase 3 and closeout remain blocked until the LISS-0403 evidence
+path is resolved.

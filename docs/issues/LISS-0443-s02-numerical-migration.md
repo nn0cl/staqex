@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status/phase | **Phase 2 Green correction complete — independent re-review pending** |
+| Status/phase | **Phase 2 Green correction complete — re-review NOT READY; closeout blocked** |
 | WorkPlan | [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Related inventory | [LISS-0442](LISS-0442-s02-corpus-migration-inventory.md) / [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md) |
@@ -10,6 +10,7 @@
 | Approval status | Phase 2 Green approved; independent review pending; Phase 3 not approved |
 | Phase 1 trace | [2026-08-19 Phase 1 Red](../collaboration/traces/2026-08-19-liss-0443-phase1-red.md) |
 | Phase 2 review | [2026-08-19 Phase 2 Green review](../collaboration/reviews/2026-08-19-liss-0443-phase2-green-review.md) |
+| Phase 2 re-review | [2026-08-19 Phase 2 re-review](../collaboration/reviews/2026-08-19-liss-0443-phase2-rereview-01.md) |
 
 ## Objective
 
@@ -59,4 +60,5 @@ realization policy, baseline, and scoring logic were not changed.
 The independent Phase 2 review returned `NOT READY`. The composite numeric
 identity finding was accepted and corrected after user approval. The full
 LISS-0403 regression evidence gap remains open pending a provisioned pytest
-environment or an explicitly accepted alternative.
+environment or an explicitly accepted alternative. Phase 3 and closeout
+remain blocked.
