@@ -2,11 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 3 review correction in progress — re-review pending** |
+| Status | **final-review-approved — PR/merge pending** |
 | Local Issue | [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Predecessor | [WP-0105](WP-0105-s02-corpus-migration-inventory.md) |
-| Implementation permission | **Phase 3 refactor completed; final review pending** |
+| Implementation permission | **Phase 3 refactor completed; final review approved** |
 | Phase 1 trace | [2026-08-19 Phase 1 Red](../collaboration/traces/2026-08-19-liss-0443-phase1-red.md) |
 | Phase 2 review | [2026-08-19 Phase 2 Green review](../collaboration/reviews/2026-08-19-liss-0443-phase2-green-review.md) |
 | Phase 2 re-review | [2026-08-19 Phase 2 re-review](../collaboration/reviews/2026-08-19-liss-0443-phase2-rereview-01.md) |
@@ -61,4 +61,6 @@ refactor. Phase 3 improves helper naming, responsibility separation, and test
 readability without changing assertions or behavior. The WP is
 The first Phase 3 review identified a missing review record and two test names
 that overstated `numeric_identity` responsibility. Both were corrected without
-changing assertions or behavior; a fresh re-review is pending.
+changing assertions or behavior; the fresh re-review returned READY. Final
+human review is approved, but the completion packet awaits a PR number and
+merge confirmation.

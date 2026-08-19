@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 3 refactor complete — final review pending** |
+| Status | **final review approved — PR/merge pending** |
 | Issue | [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md) |
 | WorkPlan | [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 | Predecessor inventory | [LISS-0442](../issues/LISS-0442-s02-corpus-migration-inventory.md) |

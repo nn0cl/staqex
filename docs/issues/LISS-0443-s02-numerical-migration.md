@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status/phase | **Phase 3 review correction in progress — re-review pending** |
+| Status/phase | **final-review-approved — PR/merge pending** |
 | WorkPlan | [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Related inventory | [LISS-0442](LISS-0442-s02-corpus-migration-inventory.md) / [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md) |
 | Related implementation | [LISS-0438](LISS-0438-explicit-evolution-residual-reconciliation.md) / [WP-0104](../work-plans/WP-0104-explicit-evolution-residual-reconciliation.md) |
-| Approval status | Phase 3 refactor approved and complete; final review pending |
+| Approval status | Final human review approved; PR/merge pending |
 | Phase 1 trace | [2026-08-19 Phase 1 Red](../collaboration/traces/2026-08-19-liss-0443-phase1-red.md) |
 | Phase 2 review | [2026-08-19 Phase 2 Green review](../collaboration/reviews/2026-08-19-liss-0443-phase2-green-review.md) |
 | Phase 2 re-review | [2026-08-19 Phase 2 re-review](../collaboration/reviews/2026-08-19-liss-0443-phase2-rereview-01.md) |
@@ -68,8 +68,13 @@ Phase 3 refactor is complete: numeric identity construction is split into
 named baseline, realization, and canonical-digest responsibilities, and the
 tests now describe the Green contract rather than the historical Red state.
 Behavior, assertions, numerical values, baseline, and realization boundaries
-are unchanged. The Issue is `final-review-ready`; final review is pending.
+are unchanged. The Issue reached `final-review-ready` before final human
+approval.
 
 The first Phase 3 review identified a missing review record and two test names
 that overstated `numeric_identity` responsibility. Both were corrected without
-changing assertions or behavior; a fresh re-review is pending.
+changing assertions or behavior; the fresh re-review returned READY.
+
+The user approved final review on 2026-08-19. The Issue is now
+`final-review-approved`; it is not marked complete because no PR number or
+merge confirmation exists yet.
