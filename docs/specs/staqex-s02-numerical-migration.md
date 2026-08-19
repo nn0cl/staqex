@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **final review approved — PR/merge pending** |
+| Status | **complete** |
 | Issue | [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md) |
 | WorkPlan | [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 | Predecessor inventory | [LISS-0442](../issues/LISS-0442-s02-corpus-migration-inventory.md) |
@@ -44,3 +44,12 @@ planning boundary, not permission to change source, tests, or benchmark data.
 The concrete Red scenarios, allowed files, and tolerances must be reviewed
 before Phase 1 begins. They are intentionally not invented in this planning
 split.
+
+## Completion evidence
+
+PR #555 was merged into `main` at commit
+`bf20db97923524f2142eadfbee823e3335f79590` after CI run
+[#32259031015](https://github.com/nn0cl/staqex/actions/runs/32259031015)
+passed all three checks. The approved scope is complete. Live QPU submission,
+provider SDK integration, and additional S02 numerical migration remain
+outside this specification.

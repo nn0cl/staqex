@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-approved — PR/merge pending** |
+| Status | **complete** |
 | Local Issue | [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Predecessor | [WP-0105](WP-0105-s02-corpus-migration-inventory.md) |
@@ -58,9 +58,11 @@ implementation records the composite `numeric_identity` in S02 numeric result
 metadata without changing numerical behavior. The repository `.venv` resolved
 the evidence path: LISS-0403 pytest completed 4/4 in 188.66s after the Phase 3
 refactor. Phase 3 improves helper naming, responsibility separation, and test
-readability without changing assertions or behavior. The WP is
+readability without changing assertions or behavior. The WP is complete.
 The first Phase 3 review identified a missing review record and two test names
 that overstated `numeric_identity` responsibility. Both were corrected without
 changing assertions or behavior; the fresh re-review returned READY. Final
-human review is approved, but the completion packet awaits a PR number and
-merge confirmation.
+human review was approved, PR #555 was merged after all three CI checks
+passed, and the completion packet is synchronized with main commit
+`bf20db97923524f2142eadfbee823e3335f79590` and CI run
+[#32259031015](https://github.com/nn0cl/staqex/actions/runs/32259031015).

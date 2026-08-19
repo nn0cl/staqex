@@ -1,13 +1,16 @@
 # LISS-0443: S02 numerical migration after explicit evolution reconciliation
 
+Status/phase: **complete**
+
 | Field | Value |
 |---|---|
-| Status/phase | **final-review-approved — PR/merge pending** |
+| Status/phase | **complete** |
 | WorkPlan | [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Related inventory | [LISS-0442](LISS-0442-s02-corpus-migration-inventory.md) / [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md) |
 | Related implementation | [LISS-0438](LISS-0438-explicit-evolution-residual-reconciliation.md) / [WP-0104](../work-plans/WP-0104-explicit-evolution-residual-reconciliation.md) |
-| Approval status | Final human review approved; PR/merge pending |
+| Approval status | Final human review approved; PR #555 merged after all CI checks passed |
+| Completion evidence | PR #555; merged main commit `bf20db97923524f2142eadfbee823e3335f79590`; CI run [#32259031015](https://github.com/nn0cl/staqex/actions/runs/32259031015) — 3/3 checks passed |
 | Phase 1 trace | [2026-08-19 Phase 1 Red](../collaboration/traces/2026-08-19-liss-0443-phase1-red.md) |
 | Phase 2 review | [2026-08-19 Phase 2 Green review](../collaboration/reviews/2026-08-19-liss-0443-phase2-green-review.md) |
 | Phase 2 re-review | [2026-08-19 Phase 2 re-review](../collaboration/reviews/2026-08-19-liss-0443-phase2-rereview-01.md) |
@@ -75,6 +78,6 @@ The first Phase 3 review identified a missing review record and two test names
 that overstated `numeric_identity` responsibility. Both were corrected without
 changing assertions or behavior; the fresh re-review returned READY.
 
-The user approved final review on 2026-08-19. The Issue is now
-`final-review-approved`; it is not marked complete because no PR number or
-merge confirmation exists yet.
+The user approved final review on 2026-08-19. PR #555 was merged after all
+three CI checks passed. The Issue is complete; live QPU submission, provider
+SDK integration, and further S02 numerical migration remain excluded.
