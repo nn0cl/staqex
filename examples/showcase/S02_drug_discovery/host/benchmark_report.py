@@ -18,6 +18,7 @@ already-shipped BenchmarkResult DTO shape (LISS-0323) additively.
 from __future__ import annotations
 
 import hashlib
+import json
 import sys
 from collections import Counter
 from dataclasses import dataclass, field
@@ -59,6 +60,73 @@ TOP_K = 3
 # exists today; disclosed, not invented): 8 Z[i] + 8 X[i] + 28 Z[i]*Z[j].
 LOGICAL_WIDTH = N  # psi_sel's own width; no separate objective coordinate
 HAMILTONIAN_TERM_COUNT = N + N + (N * (N - 1)) // 2
+_BASELINE = (
+    _REPO
+    / "examples/showcase/S02_drug_discovery/baseline/"
+    / "s02_explicit_evolution_baseline.json"
+)
+
+
+def _digest_canonical_json(value: Any) -> str:
+    payload = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _baseline_identity() -> dict[str, str]:
+    baseline = json.loads(_BASELINE.read_text(encoding="utf-8"))
+    return {
+        "file_sha256": hashlib.sha256(_BASELINE.read_bytes()).hexdigest(),
+        "source_sha256": baseline["source_sha256"],
+    }
+
+
+def _realization_identity(comparison: dict[str, Any]) -> dict[str, Any]:
+    policy = comparison["realization_provenance"]
+    return {
+        "exact_local": dict(comparison["exact_local"]),
+        "finite_target": dict(comparison["finite_target"]),
+        "method": policy.get("method"),
+        "order": policy.get("order"),
+        "steps": policy.get("steps"),
+        "error_budget": policy.get("error_budget"),
+        "capability_rejection": comparison["capability_rejection"],
+    }
+
+
+def _build_numeric_identity(
+    *,
+    pairwise: list[list[bool]],
+    diversity: list[list[float]],
+    activity_weights: list[float],
+    selectivity_weights: list[float],
+    shots: int,
+    base_seed: int,
+    source_sha256: str,
+    comparison: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "source_sha256": source_sha256,
+        "host_input_sha256": _digest_canonical_json(
+            {
+                "pairwise_compatible": pairwise,
+                "diversity": diversity,
+                "activity_weights": activity_weights,
+                "selectivity_weights": selectivity_weights,
+            }
+        ),
+        "seed": {
+            "base": base_seed,
+            "shots": shots,
+            "schedule": "base+i",
+        },
+        "baseline": _baseline_identity(),
+        "realization": _realization_identity(comparison),
+    }
 
 
 def _explicit_evolution_comparison() -> dict[str, Any]:
@@ -167,9 +235,21 @@ def check_reproducibility(seed: int) -> bool:
 
 def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkResult:
     comparison = _explicit_evolution_comparison()
+    source_sha256 = hashlib.sha256(_SQX.read_bytes()).hexdigest()
     pairwise, diversity = build_predicate_matrices()
     manifest_id = _manifest_id(pairwise, diversity)
     candidate_scores = build_candidate_scores(N)
+    activity_w, selectivity_w = build_objective_weight_arrays()
+    numeric_identity = _build_numeric_identity(
+        pairwise=pairwise,
+        diversity=diversity,
+        activity_weights=activity_w,
+        selectivity_weights=selectivity_w,
+        shots=shots,
+        base_seed=base_seed,
+        source_sha256=source_sha256,
+        comparison=comparison,
+    )
 
     feasible = exact_feasible_patterns(pairwise, diversity)
     baseline_best = max(feasible, key=lambda p: classical_score(p, candidate_scores))
@@ -227,7 +307,13 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
             terminal_selection=(non_vacuum[-1].selection if non_vacuum else None),
             resource_metadata=_resource_metadata(),
             baseline_score=baseline_score,
-            quality_metrics={"shots": shots, "feasibility_rate": feasibility_rate},
+            numeric_identity=numeric_identity,
+            quality_metrics={
+                "shots": shots,
+                "base_seed": base_seed,
+                "source_sha256": source_sha256,
+                "feasibility_rate": feasibility_rate,
+            },
             warnings=tuple(warnings)
             or (("all shots Vacuum",) if not non_vacuum else ()),
             **comparison,
@@ -279,9 +365,12 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
         baseline_score=baseline_score,
         objective_score=mean_objective,
         reranked_score=reranked_score,
+        numeric_identity=numeric_identity,
         quality_metrics={
             "manifest_id": manifest_id,
             "shots": shots,
+            "base_seed": base_seed,
+            "source_sha256": source_sha256,
             "feasibility_rate": feasibility_rate,
             "infeasible_shots": infeasible_shots,
             "mean_objective_score": mean_objective,
