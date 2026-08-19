@@ -2,11 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 0 complete — independent review READY; Phase 1 Red not approved** |
+| Status | **complete — independent review READY; inventory closed** |
 | Local Issue | [LISS-0442](../issues/LISS-0442-s02-corpus-migration-inventory.md) |
 | Specification | [S02 and representative-example migration inventory](../specs/staqex-s02-corpus-migration-inventory.md) |
 | Planning size | S/M documentation and evidence slice |
 | Implementation permission | **No** |
+| Follow-up | [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md) / [WP-0106](WP-0106-s02-numerical-migration.md) |
 
 ## [DESIGN CHECK]
 
@@ -50,13 +51,11 @@ support/partial/unsupported/intentional-scope boundaries. The deterministic
 evidence and the pytest-environment limitation are recorded there as well.
 
 The first reviews were `NOT READY`; the final fresh independent review returned
-`READY` after the correction loop. Phase 0 is complete. Phase 1 Red remains a
-separate approval gate.
+`READY` after the correction loop. The inventory is complete and this WP is
+closed. The S02 numerical migration is a separate planned task under
+LISS-0443/WP-0106.
 
 ## Exits and next gate
 
-Phase 0 exits with a reviewed inventory and no code changes. A future Phase 1
-Red request must name its Issue, accepted scenarios, allowed paths, exclusions,
-and whether it concerns example migration, compiler semantics, or numerical
-behavior. S02 numerical migration, Provider SDK, and live QPU remain separate
-approval gates.
+This WP exits with a reviewed inventory and no code changes. Provider SDK and
+live QPU remain outside the follow-up task and require separate approval.

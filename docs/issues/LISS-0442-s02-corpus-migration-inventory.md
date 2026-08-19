@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status/phase | **Phase 0 complete — Phase 1 Red not approved** |
+| Status/phase | **complete — Phase 0 inventory and evidence closed** |
 | WorkPlan | [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md) |
 | Specification | [S02 and representative-example migration inventory](../specs/staqex-s02-corpus-migration-inventory.md) |
 | Scope approval | User approval recorded 2026-08-18 |
@@ -10,6 +10,7 @@
 | Independent review | [2026-08-19 Phase 0 review](../collaboration/reviews/2026-08-19-liss-0442-phase0-review.md) |
 | Re-review | [2026-08-19 Phase 0 re-review](../collaboration/reviews/2026-08-19-liss-0442-phase0-rereview-02.md) |
 | Final review | [2026-08-19 Phase 0 final review](../collaboration/reviews/2026-08-19-liss-0442-phase0-rereview-03.md) |
+| Follow-up | [LISS-0443 S02 numerical migration](LISS-0443-s02-numerical-migration.md) / [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 
 ## Objective
 
@@ -59,5 +60,6 @@ implementation, numerical migration, Provider SDK work, or live QPU submit.
 
 The subsequent correction loop reached `COMPLETE`: the final independent
 review returned `READY`, all findings were resolved in documentation/evidence,
-and no review blocker remains. This closes only LISS-0442 Phase 0. Phase 1
-Red and implementation remain unapproved.
+and no review blocker remains. This closes LISS-0442 and WP-0105. The
+remaining S02 numerical migration is separated into LISS-0443/WP-0106 and
+requires its own reviewed acceptance scenarios and phase approval.

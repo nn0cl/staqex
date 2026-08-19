@@ -2,11 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 0 complete — independent review READY; Phase 1 Red not approved** |
+| Status | **complete — independent review READY; inventory closed** |
 | Purpose | Inventory the remaining example/S02 migration work without changing source semantics or benchmark results. |
 | Related Issue | [LISS-0442](../issues/LISS-0442-s02-corpus-migration-inventory.md) |
 | Related Work Plan | [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md) |
 | Existing boundaries | [ADR 0210](../architecture/adr/0210-formal-limit-finite-realization-policy.md), [WP-0100](../work-plans/WP-0100-explicit-evolution-surface.md), [WP-0104](../work-plans/WP-0104-explicit-evolution-residual-reconciliation.md) |
+| Follow-up | [LISS-0443 S02 numerical migration](../issues/LISS-0443-s02-numerical-migration.md) / [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 
 ## [DESIGN CHECK]
 
@@ -159,5 +160,6 @@ This Phase 0 does not alter or claim to revalidate the baseline numerical
 metrics.
 
 The README's `diversity_at_least` is the semantic predicate name, whereas the
-current HostInputPort key is `diversity`; this is recorded as a documentation
-consistency gap and is not silently changed by this inventory.
+current HostInputPort key is `diversity`; this remains recorded as a
+documentation consistency gap and is not silently changed by this inventory.
+Numerical migration is separated into LISS-0443/WP-0106.
