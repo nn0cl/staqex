@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 0 review correction in progress — independent review: NOT READY** |
+| Status | **Phase 0 complete — independent review READY; Phase 1 Red not approved** |
 | Purpose | Inventory the remaining example/S02 migration work without changing source semantics or benchmark results. |
 | Related Issue | [LISS-0442](../issues/LISS-0442-s02-corpus-migration-inventory.md) |
 | Related Work Plan | [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md) |

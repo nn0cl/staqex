@@ -56,3 +56,17 @@
 - **Terminal state:** `NOT READY`; next review required
 - **Post-review requirement:** no phase transition until a fresh review returns
   READY and the user separately approves the next phase
+
+## Iteration 4 — final review
+
+- **Reviewer:** fresh context `01a019c2-4bde-71a3-a4fa-c7ccbfd98481`
+- **Verdict:** `READY`
+- **Findings:** none remaining; all accepted corrections resolved
+- **Evidence:** 11-row evidence-complete matrix; SV-09 26 + docs case;
+  SV 161/161; S02 compile/Host/baseline; LISS-0438 5/5; hash and pytest
+  limitations; diff check
+- **Disposition authority:** primary agent within approved Phase 0 scope
+- **Terminal state:** `COMPLETE` for the review loop and Phase 0 only
+- **Approval gate:** Phase 1 Red and implementation remain unapproved
+- **Next condition:** user must separately approve Phase 1 Red with Issue,
+  scenarios, allowed paths, exclusions, and verification items

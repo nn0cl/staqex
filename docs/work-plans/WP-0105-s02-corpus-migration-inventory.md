@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 0 review correction in progress — independent review NOT READY** |
+| Status | **Phase 0 complete — independent review READY; Phase 1 Red not approved** |
 | Local Issue | [LISS-0442](../issues/LISS-0442-s02-corpus-migration-inventory.md) |
 | Specification | [S02 and representative-example migration inventory](../specs/staqex-s02-corpus-migration-inventory.md) |
 | Planning size | S/M documentation and evidence slice |
@@ -49,8 +49,9 @@ Host-dependent showcase lane, and G-01 through G-06 capture the current
 support/partial/unsupported/intentional-scope boundaries. The deterministic
 evidence and the pytest-environment limitation are recorded there as well.
 
-The first independent review was `NOT READY`; this WP remains in review
-correction and requires a fresh independent review before it can exit Phase 0.
+The first reviews were `NOT READY`; the final fresh independent review returned
+`READY` after the correction loop. Phase 0 is complete. Phase 1 Red remains a
+separate approval gate.
 
 ## Exits and next gate
 
