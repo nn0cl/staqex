@@ -53,7 +53,7 @@ def test_numeric_identity_captures_reproducibility_inputs() -> None:
     assert identity["realization"]["error_budget"] == 1e-6
 
 
-def test_numeric_identity_preserves_the_realization_policy_used() -> None:
+def test_realization_comparison_preserves_the_policy_used() -> None:
     """R2: comparison evidence must expose the policy actually inspected."""
 
     _with_host_dir()
@@ -69,7 +69,7 @@ def test_numeric_identity_preserves_the_realization_policy_used() -> None:
     assert provenance["error_budget"] == 1e-6
 
 
-def test_numeric_identity_keeps_rejected_finite_lane_atomic() -> None:
+def test_finite_lane_rejection_remains_atomic() -> None:
     """R3: capability rejection must not become numerical target evidence."""
 
     _with_host_dir()

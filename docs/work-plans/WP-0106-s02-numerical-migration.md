@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready — Phase 3 refactor complete; final review pending** |
+| Status | **Phase 3 review correction in progress — re-review pending** |
 | Local Issue | [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Predecessor | [WP-0105](WP-0105-s02-corpus-migration-inventory.md) |
@@ -58,4 +58,6 @@ metadata without changing numerical behavior. The repository `.venv` resolved
 the evidence path: LISS-0403 pytest completed 4/4 in 188.66s after the Phase 3
 refactor. Phase 3 improves helper naming, responsibility separation, and test
 readability without changing assertions or behavior. The WP is
-`final-review-ready`; final review is pending.
+The first Phase 3 review identified a missing review record and two test names
+that overstated `numeric_identity` responsibility. Both were corrected without
+changing assertions or behavior; a fresh re-review is pending.
