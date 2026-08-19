@@ -11,6 +11,7 @@
 | Phase 2 review | [2026-08-19 Phase 2 Green review](../collaboration/reviews/2026-08-19-liss-0443-phase2-green-review.md) |
 | Phase 2 re-review | [2026-08-19 Phase 2 re-review](../collaboration/reviews/2026-08-19-liss-0443-phase2-rereview-01.md) |
 | Final review | [2026-08-19 final Phase 2 review](../collaboration/reviews/2026-08-19-liss-0443-phase2-rereview-02.md) |
+| Phase 3 re-review | [2026-08-19 Phase 3 re-review](../collaboration/reviews/2026-08-19-liss-0443-phase3-rereview-01.md) |
 
 ## [DESIGN CHECK]
 
