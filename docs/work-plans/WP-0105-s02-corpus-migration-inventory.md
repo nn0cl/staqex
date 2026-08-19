@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 0 in progress — investigation only** |
+| Status | **Phase 0 review correction in progress — independent review NOT READY** |
 | Local Issue | [LISS-0442](../issues/LISS-0442-s02-corpus-migration-inventory.md) |
 | Specification | [S02 and representative-example migration inventory](../specs/staqex-s02-corpus-migration-inventory.md) |
 | Planning size | S/M documentation and evidence slice |
@@ -20,7 +20,9 @@
 - **Applicable constraints:** Physicist-first source, explicit evolution,
   terminal measurement, no hidden realization, and approval gates.
 - **Independent review lenses:** Contract completeness; source fidelity;
-  realization honesty; regression safety; evidence hygiene; phase discipline.
+  realization honesty; regression safety; evidence hygiene; phase discipline;
+  architecture/boundary integrity; type/dimension/validity closure; and
+  state/physics safety.
 - **Verification:** direct S02 compile, focused LISS-0437/LISS-0438/LISS-0402/
   LISS-0403 checks, full spec verification, and diff/link inspection.
 
@@ -38,6 +40,17 @@
 5. **Independent review preparation:** record selected review lenses and
    evidence; do not treat reviewer readiness as phase approval.
 
+## Phase 0 result
+
+Work units 1–4 are now recorded in the Spec’s “Phase 0 inventory result”:
+the 31 SV-09 entrypoints are the official runnable corpus, S02 is a separate
+Host-dependent showcase lane, and G-01 through G-06 capture the current
+support/partial/unsupported/intentional-scope boundaries. The deterministic
+evidence and the pytest-environment limitation are recorded there as well.
+
+The first independent review was `NOT READY`; this WP remains in review
+correction and requires a fresh independent review before it can exit Phase 0.
+
 ## Exits and next gate
 
 Phase 0 exits with a reviewed inventory and no code changes. A future Phase 1
@@ -45,4 +58,3 @@ Red request must name its Issue, accepted scenarios, allowed paths, exclusions,
 and whether it concerns example migration, compiler semantics, or numerical
 behavior. S02 numerical migration, Provider SDK, and live QPU remain separate
 approval gates.
-
