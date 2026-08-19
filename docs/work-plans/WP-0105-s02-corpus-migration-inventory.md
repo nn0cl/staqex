@@ -43,7 +43,8 @@
 ## Phase 0 result
 
 Work units 1–4 are now recorded in the Spec’s “Phase 0 inventory result”:
-the 31 SV-09 entrypoints are the official runnable corpus, S02 is a separate
+the 26 SV-09 entrypoints plus one README case are the official runnable
+corpus, S02 is a separate
 Host-dependent showcase lane, and G-01 through G-06 capture the current
 support/partial/unsupported/intentional-scope boundaries. The deterministic
 evidence and the pytest-environment limitation are recorded there as well.

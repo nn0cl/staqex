@@ -8,6 +8,20 @@
 | Verdict | **NOT READY** |
 | Approval status | Phase 0 correction only; Phase 1 Red and implementation not approved |
 
+## Review protocol metadata
+
+- **Branch:** `codex/liss-0438-residual-reconciliation`
+- **Current phase:** LISS-0442 Phase 0 review correction
+- **Allowed paths:** the LISS-0442 Issue/Spec/WP and this review/trace record
+- **Excluded paths/operations:** compiler, tests, examples, numerical migration,
+  Provider SDK, live QPU, credentials, network, and implementation approval
+- **Context mode:** independent read-only review
+- **Disposition authority:** primary agent under the accepted LISS-0442
+  Phase 0 scope; user approval remains required for Phase 1 or design changes
+- **Terminal state:** `NOT READY` (re-review required)
+- **Deterministic checks observed:** `git diff --check`; S02 compile; SV-09/SV
+  verification; direct LISS-0438/S02 scripts; pytest unavailable
+
 ## Inspected artifacts
 
 - `docs/issues/LISS-0442-s02-corpus-migration-inventory.md`
@@ -64,10 +78,24 @@
 - **Disposition:** accepted.
 - **Correction:** These lenses are now selected in the Spec and WP.
 
+## Iteration 2 correction findings
+
+The subsequent independent read-only re-review found these additional
+documentation defects, all accepted for Phase 0 correction:
+
+- SV-09 is 26 entrypoints (15 Basics + 11 Applied), plus one README case, not
+  31 entrypoints.
+- The README's semantic predicate name `diversity_at_least` differs from the
+  current HostInputPort key `diversity`; the inventory now records the gap
+  without changing source or README.
+- Evidence is now command-specific, and the pre-migration source hash is
+  explicitly distinguished from the current source hash.
+- Review metadata now records branch, phase, allowed/excluded paths,
+  disposition authority, deterministic checks, and terminal state.
+
 ## Re-review condition
 
 Run a fresh independent read-only review against the corrected Spec, Issue,
 WP, and this record. The loop may reach `COMPLETE` only when the reviewer
 confirms the inventory and evidence are sufficient. It must not be treated as
 Phase 1 or implementation approval.
-

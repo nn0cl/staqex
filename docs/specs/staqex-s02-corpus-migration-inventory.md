@@ -67,12 +67,13 @@ and a separate Issue recommendation where implementation would be required.
 
 ### Corpus boundary
 
-The official runnable corpus for this inventory is the 31 entrypoints listed
+The official runnable corpus for this inventory is the 26 entrypoints listed
 in `tests/spec_verification/suites/sv09_examples.py`: 15 Basics entries and
-16 Applied entries. S02 is a separate showcase lane and is not silently added
-to SV-09; it is inventoried separately because it requires HostInputPort data
-and has a finite-target comparison lane. S01 support files are included only
-through their SV-09/main entrypoints or the named showcase source under review.
+11 Applied entries. The SV-09 documentation check is a separate 27th case.
+S02 is a separate showcase lane and is not silently added to SV-09; it is
+inventoried separately because it requires HostInputPort data and has a
+finite-target comparison lane. S01 support files are included only through
+their SV-09/main entrypoints or the named showcase source under review.
 
 The exact SV-09 set is the source-of-truth list at
 `tests/spec_verification/suites/sv09_examples.py:19-51`:
@@ -80,7 +81,7 @@ The exact SV-09 set is the source-of-truth list at
 | Set | Entries | Current status | Evidence |
 |---|---:|---|---|
 | Basics | 15 | supported for compile/run regression | `tests/spec_verification/suites/sv09_examples.py:19-35`; SV-09 result 15/15 |
-| Applied | 16 | supported for compile/run regression | `tests/spec_verification/suites/sv09_examples.py:37-51`; SV-09 result 16/16 |
+| Applied | 11 | supported for compile/run regression | `tests/spec_verification/suites/sv09_examples.py:37-51`; SV-09 result 11/11 |
 | S02 showcase | 1 | partial: source/Host exact lane works; finite target is capability-rejected and not submitted | `examples/showcase/S02_drug_discovery/main_selection.sqx`; `tests/test_liss_0438_residual_reconciliation_red.py` |
 
 ### Representative semantic-role map
@@ -96,7 +97,7 @@ The exact SV-09 set is the source-of-truth list at
 | A05 `qaoa_portfolio` | repeated named cost/mixer propagators; not an automatic QAOA solver claim | supported as expression example | `examples/applied/A05_qaoa_portfolio/main_qaoa_portfolio.sqx`; SV-09 |
 | A07 `open_system_sensor` | open-system Host/simulator example | partial by design | `examples/applied/A07_open_system_sensor/main_open_system_sensor.sqx`; SV-09; adaptive/QPU follow-up deferred |
 | A11 `noether_forge` | multi-register state evolution with explicit source operators | supported for local lane | `examples/applied/A11_noether_forge/main_static.sqx`; SV-09/SV-19 |
-| S02 `main_selection` | mathematical `Sigma`/`Set`/projector, exact `U_t`, formal `Limit`, explicit finite `Realize`, Host inputs | partial | source/README, LISS-0438 regression, baseline; broad numerical migration is separate |
+| S02 `main_selection` | mathematical `Sigma`/`Set`/projector, exact `U_t`, formal `Limit`, explicit finite `Realize`, Host inputs | partial | source/README, LISS-0438 regression, baseline; broad numerical migration is separate; current Host key is `host("diversity")`, while README predicate prose says `diversity_at_least` |
 
 Unlisted helper modules are not independent runnable programs; they are
 covered through their importing entrypoint unless a future Issue explicitly
@@ -118,8 +119,12 @@ promotes one to a public example.
 | Check | Result |
 |---|---|
 | `python3 -m compiler.staqex check examples/showcase/S02_drug_discovery/main_selection.sqx` | PASS: no hard compile diagnostics |
-| `python3 tests/spec_verification/run_all.py` | PASS: SV compliance 161/161; SV-09 official corpus passes |
-| Direct LISS-0437/LISS-0438/S02 scripts | PASS in repository harness; pytest module is not installed in this environment |
+| `python3 tests/spec_verification/run_all.py` | PASS: SV compliance 161/161; SV-09 has 26 entrypoint cases plus 1 README case |
+| `python3 tests/test_liss_0438_residual_reconciliation_red.py` | PASS: 5/5 direct tests |
+| `python3 tests/test_liss_0402_s02_selection_example.py` | NOT a test-runner result: module exits without executing pytest assertions |
+| `python3 tests/test_liss_0403_s02_benchmark_report.py` | NOT a test-runner result: module exits without executing pytest assertions; long benchmark evidence is separately noted below |
+| LISS-0437 direct script | Not rerun in this review correction; prior completion evidence is retained in WP-0104 |
+| `python3 -m pytest ...` | NOT RUN: `pytest` module is not installed in this environment |
 | S02 single Host run | PASS; selection pattern produced, non-vacuum result |
 | S02 classical baseline | PASS; feasible patterns 25/256 |
 | `git diff --check` | PASS |
@@ -127,4 +132,12 @@ promotes one to a public example.
 
 The S02 fixed-seed reference remains
 `examples/showcase/S02_drug_discovery/baseline/s02_explicit_evolution_baseline.json`;
-this Phase 0 does not alter or claim to revalidate its numerical metrics.
+its `source_sha256` is intentionally a **pre-migration reference hash**, not a
+claim that the current post-migration source has the same hash. The current
+source hash is `d2d548637955a71e50d5db49103abd2f187f0a55d0f08d1e0668117285359ddd`.
+This Phase 0 does not alter or claim to revalidate the baseline numerical
+metrics.
+
+The README's `diversity_at_least` is the semantic predicate name, whereas the
+current HostInputPort key is `diversity`; this is recorded as a documentation
+consistency gap and is not silently changed by this inventory.

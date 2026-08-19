@@ -8,6 +8,7 @@
 | Scope approval | User approval recorded 2026-08-18 |
 | Implementation approval | **Not granted** |
 | Independent review | [2026-08-19 Phase 0 review](../collaboration/reviews/2026-08-19-liss-0442-phase0-review.md) |
+| Re-review | [2026-08-19 Phase 0 re-review](../collaboration/reviews/2026-08-19-liss-0442-phase0-rereview-02.md) |
 
 ## Objective
 
@@ -24,7 +25,8 @@ finite-realization, and Host responsibilities explicit.
 - future migration priorities and separate Issue recommendations.
 
 The Phase 0 inventory result is recorded in the linked Spec under “Phase 0
-inventory result”. The official corpus boundary is the 31 SV-09 entrypoints;
+inventory result”. The official corpus boundary is the 26 SV-09 entrypoints
+plus one README case;
 S02 is a separate showcase lane because it needs HostInputPort data and has a
 finite-target comparison lane.
 
