@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **planned specification — not approved for implementation** |
+| Status | **Phase 2 Green complete — independent review NOT READY; Phase 3 not approved** |
 | Issue | [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md) |
 | WorkPlan | [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 | Predecessor inventory | [LISS-0442](../issues/LISS-0442-s02-corpus-migration-inventory.md) |
