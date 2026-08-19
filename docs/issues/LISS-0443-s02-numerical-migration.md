@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status/phase | **Phase 2 Green correction complete — re-review NOT READY; closeout blocked** |
+| Status/phase | **Phase 2 Green evidence complete — final re-review pending** |
 | WorkPlan | [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Related inventory | [LISS-0442](LISS-0442-s02-corpus-migration-inventory.md) / [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md) |
@@ -59,6 +59,6 @@ realization policy, baseline, and scoring logic were not changed.
 
 The independent Phase 2 review returned `NOT READY`. The composite numeric
 identity finding was accepted and corrected after user approval. The full
-LISS-0403 regression evidence gap remains open pending a provisioned pytest
-environment or an explicitly accepted alternative. Phase 3 and closeout
-remain blocked.
+LISS-0403 regression evidence gap was then closed using the repository
+`.venv`: 4 pytest tests passed in 184.57s. Final independent re-review remains
+pending before Phase 3 or closeout.
