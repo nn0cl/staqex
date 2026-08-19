@@ -28,6 +28,26 @@
 - **Remaining blockers:** representative matrix and complete review metadata
 - **Next review condition:** fresh read-only review after those corrections
 
+## Required review-loop fields
+
+- **Reviewer task:** assess the corrected Phase 0 inventory for contract
+  completeness, source/domain fidelity, realization honesty, migration safety,
+  evidence hygiene, and approval discipline; do not edit or approve a phase.
+- **Applicable lenses and rationale:** all nine AGENTS lenses apply because
+  the matrix covers classical, mathematical, quantum, finite, Host, State,
+  measurement, and target-capability boundaries.
+- **Requested approval:** none from the reviewer; Phase 0 correction only.
+- **Approval authority:** user/Adjudicator retains Phase 1 and implementation
+  authority; reviewer has no approval authority.
+- **Finding disposition rule:** primary agent may accept only
+  design-preserving documentation corrections; design/technology/scope
+  deviations require the user.
+- **Terminal decision basis:** `NOT READY` because the evidence-complete
+  matrix and audit metadata were not yet confirmed complete. Evidence paths
+  are listed above and in the current Spec.
+- **Post-review requirement:** fresh independent read-only re-review after
+  accepted corrections; no phase transition is implied.
+
 ## Findings
 
 1. **P0 — incorrect corpus count.** The current SV-09 list contains 26

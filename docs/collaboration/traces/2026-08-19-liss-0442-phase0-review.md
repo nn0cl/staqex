@@ -39,3 +39,20 @@
   completed re-review metadata
 - **Next condition:** fresh independent read-only review; Phase 1 remains
   unapproved
+
+## Iteration 3 gate record
+
+- **Reviewer task:** read-only verification of the evidence-complete matrix
+  and review-loop metadata; no edits or phase approval
+- **Applicable lenses:** all nine AGENTS lenses; rationale is the five-way
+  semantic boundary plus State/measurement and finite-target evidence
+- **Approval requested:** none from reviewer; Phase 0 correction only
+- **Approval authority:** user/Adjudicator for Phase 1 and implementation
+- **Disposition authority:** primary agent only for design-preserving doc fixes
+- **Evidence paths:** current Spec matrix, SV-09 suite, S02 source/README/
+  Host/baseline, LISS-0438 test, and `git diff --check`
+- **Remaining blockers:** fresh reviewer confirmation of every matrix role and
+  template metadata
+- **Terminal state:** `NOT READY`; next review required
+- **Post-review requirement:** no phase transition until a fresh review returns
+  READY and the user separately approves the next phase
