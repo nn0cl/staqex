@@ -10,6 +10,24 @@
 | Implementation approval | Not granted |
 | Terminal state | `NOT READY`; another correction/re-review cycle is required |
 
+## Review protocol metadata
+
+- **Current phase:** LISS-0442 Phase 0 review correction
+- **Allowed paths:** LISS-0442 Issue/Spec/WP and collaboration review/trace records
+- **Excluded operations:** source/compiler/test changes, numerical migration,
+  Provider SDK, credentials, network, live QPU, and phase approval
+- **Inspected artifacts:** current Issue, Spec, WP, first review, first trace,
+  this re-review record, S02 source/README/Host/baseline, SV-09 suite, ADR 0210
+- **Disposition authority:** primary agent within the user-approved Phase 0
+  scope; user approval remains required for Phase 1
+- **Deterministic checks:** `git diff --check`, S02 compile, SV verification,
+  LISS-0438 direct script, S02 Host run, classical baseline, hash comparison;
+  pytest is unavailable
+- **Corrections applied before this review:** corpus count, Host-key
+  discrepancy, hash meaning, and evidence limitations
+- **Remaining blockers:** representative matrix and complete review metadata
+- **Next review condition:** fresh read-only review after those corrections
+
 ## Findings
 
 1. **P0 — incorrect corpus count.** The current SV-09 list contains 26
@@ -42,4 +60,3 @@
 No finding requires Phase 1 Red, implementation, an ADR change, numerical S02
 migration, Provider SDK work, or live QPU submission. The accepted corrections
 remain documentation/evidence-only.
-

@@ -103,6 +103,26 @@ Unlisted helper modules are not independent runnable programs; they are
 covered through their importing entrypoint unless a future Issue explicitly
 promotes one to a public example.
 
+### Evidence-complete representative matrix
+
+The following matrix satisfies the seven-field inventory contract for each
+representative lane. `N/A` means the property is intentionally not claimed,
+not that evidence is missing.
+
+| Representative | Equation and source construct | Classical / mathematical / quantum / finite / Host roles | Compile/run evidence | Provenance | Diagnostic boundary | Baseline preservation |
+|---|---|---|---|---|---|---|
+| B04 | `U_dur = exp(-i*H*dur/hbar)`; `Evolve() { U_dur * psi }` at `examples/basics/B04_evolve_not_loops/evolve_not_loops.sqx:1-15` | `dur` classical; `H`/`exp` quantum meaning; `Evolve` execution; no Host input | SV-09 B04; SV-13 evolve checks | exact local propagator; no finite claim | `evolve times`/state boundary; QPU limitations are not hidden | N/A; teaching fixture has no numerical baseline |
+| B08 | Named `H_chain`, exact `U_dur`, state application at `examples/basics/B08_operators_hamiltonians/operators_hamiltonians.sqx:1-20` | constants/`dur` classical; operator algebra mathematical/quantum; terminal measure | SV-09 B08; SV-19 operator/exponential checks | exact simulator lane | non-unitary/unsupported target lowering fails through existing diagnostics | N/A; no migration baseline |
+| B10 | Static target operation and terminal observation at `examples/basics/B10_static_qpu_lane/main_static_qpu_lane.sqx:1-9` | resource profile is Host/target control; observed state is quantum; gate lane is finite target realization | SV-09 B10; SV-10 target-QPU emission | provider-neutral finite static lane; no live submission | target capability/QASM rejection remains explicit | N/A; no numerical migration |
+| B12 | Density/open-system source at `examples/basics/B12_open_systems/main_open_systems.sqx:1-25` | coefficients classical; Lindblad structure mathematical/quantum; RK4 is simulator realization; no provider Host | SV-09 B12; SV-19 open-system checks where applicable | exact declared simulator contract, not QPU claim | adaptive/QPU execution remains intentionally unsupported | N/A; no numerical migration |
+| B13 | Host `Job`/measurement boundary at `examples/basics/B13_host_job_api/main_host_job.sqx:1-6` | job metadata/shots are Host; measured state is quantum→classical terminal result | SV-09 B13 | local/provider-neutral Host DTO boundary | provider submission remains outside this inventory | N/A; API fixture |
+| B14 | Resource profile and terminal measurement at `examples/basics/B14_resource_profile/main_resource_profile.sqx:1-6` | resource budget is Host control; state/measure are quantum | SV-09 B14; resource checks | local resource enforcement; no provider price/SDK | budget/capability rejection remains fail-closed | N/A; resource fixture |
+| A03 | H₂-style `H`, `U_t = exp(-i*H*dur/hbar)`, tuple state at `examples/applied/A03_h2_vqe/main_h2_vqe.sqx:1-46` | molecular coefficients classical; Hamiltonian/operator algebra quantum; terminal partial measure | SV-09 A03; SV-19 arbitrary-H checks | exact local evolution; no chemistry/QPU claim | unsupported target lowering remains explicit | N/A; applied example has no locked baseline |
+| A05 | Named mixer/cost exponentials and repeated `Evolve` at `examples/applied/A05_qaoa_portfolio/main_qaoa_portfolio.sqx:1-38` | layer durations/parameters classical; cost/mixer mathematical/quantum; repetition is quantum transform, not Host sweep | SV-09 A05 | exact local propagators; not a QAOA optimizer or finite-QPU claim | target limits are existing capability boundaries | N/A; no quality baseline claimed |
+| A07 | Open-system sensor and terminal observation at `examples/applied/A07_open_system_sensor/main_open_system_sensor.sqx:1-33` | sensor inputs classical/Host; density evolution quantum; simulator realization | SV-09 A07 | simulator-only partial support | adaptive/QPU follow-up is intentionally unsupported | N/A; no benchmark baseline |
+| A11 | Named `U_t` and tuple-state evolution at `examples/applied/A11_noether_forge/main_static.sqx:1-73` | parameters classical; Noether/Hamiltonian expressions mathematical/quantum; explicit state transform; module imports are declarations | SV-09 A11; SV-19 evolution checks; import/link checks | exact local lane; no live target claim | module/link and target capability diagnostics remain explicit | N/A; no migration baseline |
+| S02 | `psi_0`, `P_F`, `psi_sel`, exact `U_t`, formal `Limit`, explicit `Realize` at `examples/showcase/S02_drug_discovery/main_selection.sqx:75-155` | Host arrays/baseline classical; `Sigma`/`Set` mathematical; `State`/`Operator` quantum; `Realize` finite target; Host runner controls inputs/shots | direct S02 compile; SV-09 excludes S02; LISS-0438 5/5; Host run; baseline 25/256 | exact local `U_t`; finite `U_qpu` plan is capability-rejected and not submitted | `QASM_TROTTER_UNSUPPORTED_H`; no partial target artifacts/provenance | pre-migration hash/metrics are preserved as reference; current source hash is recorded separately |
+
 ### Boundary and gap register
 
 | ID | Boundary/gap | Classification | Priority | Follow-up |

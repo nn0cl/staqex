@@ -25,3 +25,17 @@
 - **Lens mapping:** 1, 2, 3, 6, 7, 8, 9
 - **Correction scope:** documentation and evidence only
 - **Next condition:** fresh independent re-review after the current correction
+
+## Iteration 3 preparation
+
+- **Current phase:** Phase 0 review correction
+- **Allowed paths:** LISS-0442 Issue/Spec/WP and review/trace records
+- **Excluded operations:** implementation, test edits, numerical migration,
+  Provider SDK, credentials, network, and live QPU
+- **Inspected/current evidence:** representative source paths, SV-09 suite,
+  S02 source/README/Host/baseline, direct checks, and review template
+- **Disposition authority:** primary agent within approved Phase 0 scope
+- **Remaining blockers:** none beyond the fresh review of the new matrix and
+  completed re-review metadata
+- **Next condition:** fresh independent read-only review; Phase 1 remains
+  unapproved
