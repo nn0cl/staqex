@@ -2,11 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red complete — Phase 2 Green not approved** |
+| Status | **Phase 2 Green complete — independent review pending** |
 | Local Issue | [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Predecessor | [WP-0105](WP-0105-s02-corpus-migration-inventory.md) |
-| Implementation permission | **No** |
+| Implementation permission | **Phase 2 Green completed; Phase 3 not approved** |
 | Phase 1 trace | [2026-08-19 Phase 1 Red](../collaboration/traces/2026-08-19-liss-0443-phase1-red.md) |
 
 ## [DESIGN CHECK]
@@ -49,6 +49,7 @@
 WP-0105 closes with the inventory and evidence needed to make this task
 reviewable. It does not authorize any work unit above.
 
-Phase 1 Red is complete. The first scenario is intentionally failing against
-the current report; Phase 2 Green requires separate approval after review of
-the test contract.
+Phase 1 Red is complete. After typed approval, the minimum Phase 2 Green
+implementation records `source_sha256` and `base_seed` in the S02 numeric
+result metadata without changing numerical behavior. Independent review and
+any Phase 3 refactor remain pending.

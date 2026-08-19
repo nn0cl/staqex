@@ -167,6 +167,7 @@ def check_reproducibility(seed: int) -> bool:
 
 def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkResult:
     comparison = _explicit_evolution_comparison()
+    source_sha256 = hashlib.sha256(_SQX.read_bytes()).hexdigest()
     pairwise, diversity = build_predicate_matrices()
     manifest_id = _manifest_id(pairwise, diversity)
     candidate_scores = build_candidate_scores(N)
@@ -227,7 +228,12 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
             terminal_selection=(non_vacuum[-1].selection if non_vacuum else None),
             resource_metadata=_resource_metadata(),
             baseline_score=baseline_score,
-            quality_metrics={"shots": shots, "feasibility_rate": feasibility_rate},
+            quality_metrics={
+                "shots": shots,
+                "base_seed": base_seed,
+                "source_sha256": source_sha256,
+                "feasibility_rate": feasibility_rate,
+            },
             warnings=tuple(warnings)
             or (("all shots Vacuum",) if not non_vacuum else ()),
             **comparison,
@@ -282,6 +288,8 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
         quality_metrics={
             "manifest_id": manifest_id,
             "shots": shots,
+            "base_seed": base_seed,
+            "source_sha256": source_sha256,
             "feasibility_rate": feasibility_rate,
             "infeasible_shots": infeasible_shots,
             "mean_objective_score": mean_objective,

@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status/phase | **Phase 1 Red complete — Phase 2 Green not approved** |
+| Status/phase | **Phase 2 Green complete — independent review pending** |
 | WorkPlan | [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Related inventory | [LISS-0442](LISS-0442-s02-corpus-migration-inventory.md) / [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md) |
 | Related implementation | [LISS-0438](LISS-0438-explicit-evolution-residual-reconciliation.md) / [WP-0104](../work-plans/WP-0104-explicit-evolution-residual-reconciliation.md) |
-| Approval status | Scope/documentation split approved; separate phase and implementation approval required |
+| Approval status | Phase 2 Green approved; independent review pending; Phase 3 not approved |
 | Phase 1 trace | [2026-08-19 Phase 1 Red](../collaboration/traces/2026-08-19-liss-0443-phase1-red.md) |
 
 ## Objective
@@ -46,7 +46,11 @@ distinct from a finite target plan.
 ## Phase 1 Red result
 
 The reviewed Red suite is recorded at
-`tests/test_liss_0443_s02_numerical_migration_red.py`. R1 currently fails
-because the report does not expose `source_sha256` and `base_seed` in its
-numeric result record; R2 and R3 preserve the already-shipped realization and
-atomic-rejection evidence. Phase 2 Green remains unapproved.
+`tests/test_liss_0443_s02_numerical_migration_red.py`. R1 initially failed
+because the report did not expose `source_sha256` and `base_seed` in its
+numeric result record; R2 and R3 preserved the already-shipped realization and
+atomic-rejection evidence.
+
+Phase 2 Green added only `source_sha256` and `base_seed` to the S02 numeric
+result metadata, including the failed-result path. The source meaning,
+realization policy, baseline, and scoring logic were not changed.
