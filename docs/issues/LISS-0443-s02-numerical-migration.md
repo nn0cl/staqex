@@ -2,12 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status/phase | **planned — implementation and numerical execution not approved** |
+| Status/phase | **Phase 1 Red complete — Phase 2 Green not approved** |
 | WorkPlan | [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Related inventory | [LISS-0442](LISS-0442-s02-corpus-migration-inventory.md) / [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md) |
 | Related implementation | [LISS-0438](LISS-0438-explicit-evolution-residual-reconciliation.md) / [WP-0104](../work-plans/WP-0104-explicit-evolution-residual-reconciliation.md) |
 | Approval status | Scope/documentation split approved; separate phase and implementation approval required |
+| Phase 1 trace | [2026-08-19 Phase 1 Red](../collaboration/traces/2026-08-19-liss-0443-phase1-red.md) |
 
 ## Objective
 
@@ -41,3 +42,11 @@ distinct from a finite target plan.
 - numerical changes, if any, are explained with reproducible evidence;
 - a later independent review confirms exact/finite provenance and rejection
   boundaries remain visible.
+
+## Phase 1 Red result
+
+The reviewed Red suite is recorded at
+`tests/test_liss_0443_s02_numerical_migration_red.py`. R1 currently fails
+because the report does not expose `source_sha256` and `base_seed` in its
+numeric result record; R2 and R3 preserve the already-shipped realization and
+atomic-rejection evidence. Phase 2 Green remains unapproved.

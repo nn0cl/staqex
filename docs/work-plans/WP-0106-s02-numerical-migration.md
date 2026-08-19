@@ -2,11 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status | **planned — awaiting independent design review and phase approval** |
+| Status | **Phase 1 Red complete — Phase 2 Green not approved** |
 | Local Issue | [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Predecessor | [WP-0105](WP-0105-s02-corpus-migration-inventory.md) |
 | Implementation permission | **No** |
+| Phase 1 trace | [2026-08-19 Phase 1 Red](../collaboration/traces/2026-08-19-liss-0443-phase1-red.md) |
 
 ## [DESIGN CHECK]
 
@@ -31,8 +32,8 @@
 
 1. Freeze the numerical input, seed, source identity, and baseline contract.
 2. Define exact-local and finite-target comparison records and tolerances.
-3. Create reviewed Phase 1 Red tests only after the scenarios and paths are
-   approved.
+3. Create reviewed Phase 1 Red tests for source identity, actual realization
+   policy, and atomic finite-lane rejection.
 4. Request separate Phase 2 implementation approval.
 5. Re-run numerical and full regression evidence, then request independent
    review.
@@ -47,3 +48,7 @@
 
 WP-0105 closes with the inventory and evidence needed to make this task
 reviewable. It does not authorize any work unit above.
+
+Phase 1 Red is complete. The first scenario is intentionally failing against
+the current report; Phase 2 Green requires separate approval after review of
+the test contract.
