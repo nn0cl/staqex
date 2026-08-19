@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-"""Phase 1 Red acceptance tests for LISS-0443.
+"""Regression tests for LISS-0443's numeric identity contract.
 
-These tests freeze the numerical-comparison evidence contract before any
-implementation or benchmark rerun is changed.  The first scenario is
-intentionally Red against the current report: the report has realization
-provenance, but does not yet expose the source identity and seed used for the
-numeric comparison in its result record.
+These tests preserve the reviewed numerical-comparison evidence contract
+through Phase 2 Green and Phase 3 refactoring.
 """
 
 from __future__ import annotations
@@ -25,8 +22,8 @@ def _with_host_dir() -> None:
         sys.path.insert(0, str(_HOST))
 
 
-def test_numeric_report_records_source_identity_and_seed() -> None:
-    """R1: a numerical result must be reproducible from its evidence record."""
+def test_numeric_identity_captures_reproducibility_inputs() -> None:
+    """R1: a numerical result must be reproducible from its identity."""
 
     _with_host_dir()
     from benchmark_report import build_report
@@ -56,7 +53,7 @@ def test_numeric_report_records_source_identity_and_seed() -> None:
     assert identity["realization"]["error_budget"] == 1e-6
 
 
-def test_numeric_report_preserves_the_realization_policy_used() -> None:
+def test_numeric_identity_preserves_the_realization_policy_used() -> None:
     """R2: comparison evidence must expose the policy actually inspected."""
 
     _with_host_dir()
@@ -72,7 +69,7 @@ def test_numeric_report_preserves_the_realization_policy_used() -> None:
     assert provenance["error_budget"] == 1e-6
 
 
-def test_numeric_report_keeps_rejected_finite_lane_atomic() -> None:
+def test_numeric_identity_keeps_rejected_finite_lane_atomic() -> None:
     """R3: capability rejection must not become numerical target evidence."""
 
     _with_host_dir()

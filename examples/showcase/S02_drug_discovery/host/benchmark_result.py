@@ -43,6 +43,8 @@ class BenchmarkResult:
     objective_score: float | None = None
     reranked_score: float | None = None
     quality_metrics: dict[str, Any] = field(default_factory=dict)
+    # Numeric reproducibility identity is separate from derived quality
+    # metrics so callers can distinguish inputs/provenance from outcomes.
     numeric_identity: dict[str, Any] = field(default_factory=dict)
     warnings: tuple[str, ...] = ()
     # LISS-0438: keep exact-local output, finite-target plan evidence, and

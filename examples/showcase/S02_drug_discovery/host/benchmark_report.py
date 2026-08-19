@@ -67,7 +67,7 @@ _BASELINE = (
 )
 
 
-def _canonical_digest(value: Any) -> str:
+def _digest_canonical_json(value: Any) -> str:
     payload = json.dumps(
         value,
         sort_keys=True,
@@ -77,7 +77,28 @@ def _canonical_digest(value: Any) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
-def _numeric_identity(
+def _baseline_identity() -> dict[str, str]:
+    baseline = json.loads(_BASELINE.read_text(encoding="utf-8"))
+    return {
+        "file_sha256": hashlib.sha256(_BASELINE.read_bytes()).hexdigest(),
+        "source_sha256": baseline["source_sha256"],
+    }
+
+
+def _realization_identity(comparison: dict[str, Any]) -> dict[str, Any]:
+    policy = comparison["realization_provenance"]
+    return {
+        "exact_local": dict(comparison["exact_local"]),
+        "finite_target": dict(comparison["finite_target"]),
+        "method": policy.get("method"),
+        "order": policy.get("order"),
+        "steps": policy.get("steps"),
+        "error_budget": policy.get("error_budget"),
+        "capability_rejection": comparison["capability_rejection"],
+    }
+
+
+def _build_numeric_identity(
     *,
     pairwise: list[list[bool]],
     diversity: list[list[float]],
@@ -88,11 +109,9 @@ def _numeric_identity(
     source_sha256: str,
     comparison: dict[str, Any],
 ) -> dict[str, Any]:
-    baseline = json.loads(_BASELINE.read_text(encoding="utf-8"))
-    policy = comparison["realization_provenance"]
     return {
         "source_sha256": source_sha256,
-        "host_input_sha256": _canonical_digest(
+        "host_input_sha256": _digest_canonical_json(
             {
                 "pairwise_compatible": pairwise,
                 "diversity": diversity,
@@ -105,19 +124,8 @@ def _numeric_identity(
             "shots": shots,
             "schedule": "base+i",
         },
-        "baseline": {
-            "file_sha256": hashlib.sha256(_BASELINE.read_bytes()).hexdigest(),
-            "source_sha256": baseline["source_sha256"],
-        },
-        "realization": {
-            "exact_local": dict(comparison["exact_local"]),
-            "finite_target": dict(comparison["finite_target"]),
-            "method": policy.get("method"),
-            "order": policy.get("order"),
-            "steps": policy.get("steps"),
-            "error_budget": policy.get("error_budget"),
-            "capability_rejection": comparison["capability_rejection"],
-        },
+        "baseline": _baseline_identity(),
+        "realization": _realization_identity(comparison),
     }
 
 
@@ -232,7 +240,7 @@ def build_report(shots: int = DEFAULT_SHOTS, base_seed: int = 0) -> BenchmarkRes
     manifest_id = _manifest_id(pairwise, diversity)
     candidate_scores = build_candidate_scores(N)
     activity_w, selectivity_w = build_objective_weight_arrays()
-    numeric_identity = _numeric_identity(
+    numeric_identity = _build_numeric_identity(
         pairwise=pairwise,
         diversity=diversity,
         activity_weights=activity_w,
