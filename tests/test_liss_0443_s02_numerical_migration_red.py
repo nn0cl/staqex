@@ -40,6 +40,21 @@ def test_numeric_report_records_source_identity_and_seed() -> None:
     assert report.quality_metrics["source_sha256"] == expected_source_sha256
     assert report.quality_metrics["base_seed"] == base_seed
 
+    identity = report.numeric_identity
+    assert identity["source_sha256"] == expected_source_sha256
+    assert len(identity["host_input_sha256"]) == 64
+    assert identity["seed"] == {
+        "base": base_seed,
+        "shots": 6,
+        "schedule": "base+i",
+    }
+    assert len(identity["baseline"]["file_sha256"]) == 64
+    assert identity["baseline"]["source_sha256"]
+    assert identity["realization"]["method"] == "suzuki"
+    assert identity["realization"]["order"] == 2
+    assert identity["realization"]["steps"] == 8
+    assert identity["realization"]["error_budget"] == 1e-6
+
 
 def test_numeric_report_preserves_the_realization_policy_used() -> None:
     """R2: comparison evidence must expose the policy actually inspected."""

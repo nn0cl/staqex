@@ -43,6 +43,7 @@ class BenchmarkResult:
     objective_score: float | None = None
     reranked_score: float | None = None
     quality_metrics: dict[str, Any] = field(default_factory=dict)
+    numeric_identity: dict[str, Any] = field(default_factory=dict)
     warnings: tuple[str, ...] = ()
     # LISS-0438: keep exact-local output, finite-target plan evidence, and
     # rejection diagnostics as separate channels.  These fields are additive

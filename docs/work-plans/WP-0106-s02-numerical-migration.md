@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete — independent review NOT READY; Phase 3 blocked** |
+| Status | **Phase 2 Green correction complete — independent re-review pending** |
 | Local Issue | [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Predecessor | [WP-0105](WP-0105-s02-corpus-migration-inventory.md) |
@@ -51,8 +51,7 @@ WP-0105 closes with the inventory and evidence needed to make this task
 reviewable. It does not authorize any work unit above.
 
 Phase 1 Red is complete. After typed approval, the minimum Phase 2 Green
-implementation records `source_sha256` and `base_seed` in the S02 numeric
-result metadata without changing numerical behavior. Independent review and
-any Phase 3 refactor are blocked by the review findings: the composite numeric
-identity is incomplete and full LISS-0403 pytest evidence is unavailable in
-the current environment.
+implementation records the composite `numeric_identity` in S02 numeric result
+metadata without changing numerical behavior. Independent re-review remains
+pending; full LISS-0403 pytest evidence is still unavailable in the current
+environment.

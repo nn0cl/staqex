@@ -21,7 +21,7 @@
 - **Disposition:** `accepted` as a documentation correction. No architecture
   or implementation change is required.
 
-### P1 — Numeric identity is incomplete
+### P1 — Numeric identity was incomplete
 
 - **Evidence:** The Spec/Issue require input, seed, duration, weights, shots,
   baseline identity, tolerance, and provenance. `source_sha256` and
@@ -30,9 +30,10 @@
   path's manifest/baseline identity.
 - **Lenses:** Contract completeness; Migration/regression safety; Evidence and
   context hygiene.
-- **Disposition:** `deferred — user decision required`. Completing this would
-  expand the approved Phase 2 result contract beyond the typed approval and
-  requires deciding the canonical composite identity and failure-path schema.
+- **Disposition:** `accepted` after user approval of the composite identity
+  proposal. The correction is design-preserving: it makes the existing
+  numerical comparison contract explicit without changing source meaning,
+  benchmark values, or realization policy.
 
 ### P1 — LISS-0403 full regression evidence is unavailable locally
 

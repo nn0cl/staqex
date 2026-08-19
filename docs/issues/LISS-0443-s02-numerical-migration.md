@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status/phase | **Phase 2 Green complete — independent review NOT READY; Phase 3 blocked** |
+| Status/phase | **Phase 2 Green correction complete — independent re-review pending** |
 | WorkPlan | [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) |
 | Specification | [S02 numerical migration](../specs/staqex-s02-numerical-migration.md) |
 | Related inventory | [LISS-0442](LISS-0442-s02-corpus-migration-inventory.md) / [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md) |
@@ -56,6 +56,7 @@ Phase 2 Green added only `source_sha256` and `base_seed` to the S02 numeric
 result metadata, including the failed-result path. The source meaning,
 realization policy, baseline, and scoring logic were not changed.
 
-The independent Phase 2 review returned `NOT READY`. Phase 3 and closeout are
-blocked until the composite numeric identity and the full LISS-0403 regression
-evidence path are decided.
+The independent Phase 2 review returned `NOT READY`. The composite numeric
+identity finding was accepted and corrected after user approval. The full
+LISS-0403 regression evidence gap remains open pending a provisioned pytest
+environment or an explicitly accepted alternative.

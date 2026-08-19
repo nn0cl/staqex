@@ -29,11 +29,14 @@ planning boundary, not permission to change source, tests, or benchmark data.
 ## Future acceptance outline
 
 - Given frozen S02 inputs and seed, the exact-local lane produces a reproducible
-  comparison record.
+  comparison record with a deterministic `numeric_identity` containing the
+  source hash, Host-input digest, seed schedule, baseline identity, and
+  realization policy.
 - Given the same source meaning, a finite target lane is either explicitly
   realized with recorded policy fields or explicitly capability-rejected.
 - When a numerical metric changes, the record identifies the source hash,
-  policy, inputs, seed, tolerance, and provenance.
+  policy, Host-input digest, baseline identity, inputs, seed, tolerance, and
+  provenance. Success and failure records use the same identity shape.
 - A rejected finite lane produces diagnostics only and no partial execution
   artifacts.
 - No provider-specific submission is required for this task.
