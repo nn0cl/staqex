@@ -10,7 +10,7 @@
 | WorkPlan | [WP-0113](../work-plans/WP-0113-semantic-ir-meaning-preservation.md) |
 | Specification | [Scientific Semantic IR Meaning Preservation](../specs/staqex-semantic-ir-meaning-preservation.md) |
 | Dependencies | [LISS-0449](LISS-0449-ideal-expression-realization-boundary.md) design direction |
-| Related authority | ADR 0211; adjudicator language vision |
+| Related authority | ADR 0211, [ADR 0212](../architecture/adr/0212-ideal-meaning-and-finite-realization-boundary.md); adjudicator language vision |
 | Implementation approval | not granted |
 
 ## Objective

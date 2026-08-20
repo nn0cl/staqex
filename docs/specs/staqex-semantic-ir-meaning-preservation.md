@@ -5,7 +5,7 @@
 | Status | **proposed** |
 | Issue | [LISS-0450](../issues/LISS-0450-semantic-ir-meaning-preservation.md) |
 | WorkPlan | [WP-0113](../work-plans/WP-0113-semantic-ir-meaning-preservation.md) |
-| Authority | ADR 0211; adjudicator language vision |
+| Authority | ADR 0211, [ADR 0212](../architecture/adr/0212-ideal-meaning-and-finite-realization-boundary.md); adjudicator language vision |
 
 ## [DESIGN CHECK]
 

@@ -5,7 +5,7 @@
 | Status | **proposed** |
 | Issue | [LISS-0449](../issues/LISS-0449-ideal-expression-realization-boundary.md) |
 | WorkPlan | [WP-0112](../work-plans/WP-0112-ideal-expression-realization-boundary-review.md) |
-| Authority | ADR 0209, ADR 0210, ADR 0211 |
+| Authority | ADR 0209, ADR 0210, ADR 0211, [ADR 0212](../architecture/adr/0212-ideal-meaning-and-finite-realization-boundary.md) |
 
 ## [DESIGN CHECK]
 

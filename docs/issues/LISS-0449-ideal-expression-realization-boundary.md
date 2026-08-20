@@ -9,7 +9,7 @@
 | Current size | XL |
 | WorkPlan | [WP-0112](../work-plans/WP-0112-ideal-expression-realization-boundary-review.md) |
 | Specification | [Ideal Expression and Finite Realization Boundary](../specs/staqex-ideal-expression-realization-boundary.md) |
-| Related authority | ADR 0209, ADR 0210, ADR 0211 |
+| Related authority | ADR 0209, ADR 0210, ADR 0211, [ADR 0212](../architecture/adr/0212-ideal-meaning-and-finite-realization-boundary.md) |
 | Dependencies | none |
 | Implementation approval | not granted |
 
