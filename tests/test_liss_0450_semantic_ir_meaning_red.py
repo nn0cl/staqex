@@ -38,6 +38,11 @@ def test_mixture_preserves_children_state_role_and_provenance() -> None:
 def test_missing_target_projection_does_not_erase_ideal_meaning() -> None:
     compiled = compile_path(FIXTURE)
     assert compiled.scientific_semantic_ir is not None
+    assert compiled.unit is not None
+    from compiler.staqex.backend.qasm.lower import EvolutionTargetProfile, lower_unit_to_circuit
+
+    circuit = lower_unit_to_circuit(compiled.unit, target_profile=EvolutionTargetProfile())
+    assert circuit.reject_code == "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE"
     assert compiled.scientific_semantic_ir.ideal_meaning is not None
     assert compiled.scientific_semantic_ir.ideal_meaning.source_fingerprint
 

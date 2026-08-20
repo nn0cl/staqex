@@ -68,7 +68,9 @@ def test_liss_0451_unresolved_rotation_uses_exact_code() -> None:
         Measure q
     }
     """
-    compiled = __import__("compiler.staqex.pipeline", fromlist=["compile_source"]).compile_source(source)
+    from compiler.staqex.pipeline import compile_source
+
+    compiled = compile_source(source)
     assert compiled.ok, compiled.diagnostics
     emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
     assert emitted.circuit is not None
