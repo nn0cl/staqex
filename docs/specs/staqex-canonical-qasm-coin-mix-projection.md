@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **proposed** |
+| Status | **proposed — aligned to meaning-preservation direction** |
 | Issue | [LISS-0448](../issues/LISS-0448-canonical-qasm-coin-mix-projection.md) |
 | WorkPlan | [WP-0111](../work-plans/WP-0111-canonical-qasm-coin-mix-projection.md) |
 | Related authority | [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |
@@ -21,19 +21,15 @@
 - **Verification:** first a design review, then Red tests, an approved Green
   implementation, independent review, and full spec verification.
 
-## Decision required
+## Design direction
 
-The Spec remains proposed until one of these is accepted:
+`Coin`/`Mix` must remain representable in the ideal language and Scientific
+Semantic IR. The QPU/QASM boundary may reject them only when no explicit,
+meaning-preserving finite realization exists. This is not a choice between
+removing source meaning and restoring an AST fallback.
 
-| Option | Meaning | Consequence |
-|---|---|---|
-| A | Add canonical `Coin`/`Mix` projection | Extend Scientific Semantic IR and QPU projection with an explicit, source-owned meaning; preserve no-fallback rule |
-| B | Declare this subset unsupported | Update SV-10/SV-11 to assert explicit capability rejection and empty artifacts; no semantic extension |
-
-The implementation agent must not choose A or B silently. Option A requires an
-architecture decision if the projection changes ADR 0211 or QPU capability
-semantics. Option B requires acceptance that the existing conformance promise
-is narrowed.
+An architecture decision is required if adding the canonical semantic form
+changes ADR 0211 or the QPU capability model.
 
 ## Invariants for either option
 

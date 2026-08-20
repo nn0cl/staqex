@@ -5,7 +5,8 @@
 | Status | **proposed** |
 | Phase | **phase-0-design** |
 | Size | M |
-| Related Issue | New Issue required before Phase 1 Red |
+| Issue | [LISS-0451](../issues/LISS-0451-qpu-capability-rejection-contract.md) |
+| Specification | [QPU Capability Rejection Contract](../specs/staqex-qpu-capability-rejection-contract.md) |
 | Related authority | ADR 0085, ADR 0210, ADR 0211 |
 | Depends on | WP-0112 and WP-0113 design directions |
 | Branch | `codex/liss-0438-residual-reconciliation` (design intake only) |

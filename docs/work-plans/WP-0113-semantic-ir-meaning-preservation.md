@@ -4,8 +4,9 @@
 |---|---|
 | Status | **proposed** |
 | Phase | **phase-0-design** |
-| Size | L |
-| Related Issue | New Issue required before Phase 1 Red |
+| Size | XL |
+| Issue | [LISS-0450](../issues/LISS-0450-semantic-ir-meaning-preservation.md) |
+| Specification | [Scientific Semantic IR Meaning Preservation](../specs/staqex-semantic-ir-meaning-preservation.md) |
 | Related authority | ADR 0211 and the physicist-first language vision |
 | Depends on | WP-0112 design direction |
 | Branch | `codex/liss-0438-residual-reconciliation` (design intake only) |

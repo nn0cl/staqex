@@ -23,9 +23,10 @@
 
 ## Proposed phases
 
-1. **Phase 0 Design:** decide Option A or B in the Spec and capture an ADR if
-   the architecture boundary changes.
-2. **Phase 1 Red:** add only focused tests for the accepted direction.
+1. **Phase 0 Design:** define the source-owned `Coin`/`Mix` semantic form and
+   capture an ADR if the architecture boundary changes.
+2. **Phase 1 Red:** add focused tests proving semantic preservation first and
+   finite QPU projection behavior separately.
 3. **Phase 2 Green:** implement the canonical projection or explicit rejection
    under a new approval.
 4. **Phase 3 Refactor:** simplify only after independent review and green full

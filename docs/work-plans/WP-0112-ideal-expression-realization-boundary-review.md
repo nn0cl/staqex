@@ -4,8 +4,9 @@
 |---|---|
 | Status | **proposed** |
 | Phase | **phase-0-design** |
-| Size | L |
-| Related Issue | New Issue required before Phase 1 Red |
+| Size | XL |
+| Issue | [LISS-0449](../issues/LISS-0449-ideal-expression-realization-boundary.md) |
+| Specification | [Ideal Expression and Finite Realization Boundary](../specs/staqex-ideal-expression-realization-boundary.md) |
 | Related authority | ADR 0209, ADR 0210, ADR 0211 |
 | Depends on | none |
 | Branch | `codex/liss-0438-residual-reconciliation` (design intake only) |

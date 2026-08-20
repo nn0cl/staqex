@@ -5,7 +5,8 @@
 | Status | **proposed** |
 | Phase | **phase-0-design** |
 | Size | M |
-| Related Issue | New Issue required before Phase 1 Red |
+| Issue | [LISS-0452](../issues/LISS-0452-s02-example-boundary-alignment.md) |
+| Specification | [S02 Example Blackboard/Realization Boundary](../specs/staqex-s02-example-boundary-alignment.md) |
 | Related authority | WP-0105, WP-0112, WP-0113, WP-0114 |
 | Depends on | WP-0112–WP-0114 design decisions |
 | Branch | `codex/liss-0438-residual-reconciliation` (design intake only) |

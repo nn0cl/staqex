@@ -23,11 +23,11 @@ design-boundary CI failure rather than reintroducing an implicit fallback.
 
 ## Objective
 
-Design and, after separate phase approval, implement a source-owned canonical
-projection for the supported `Coin`/`Mix` subset, or formally revise the
-conformance contract to classify that subset as an explicit capability
-rejection. The result must preserve the same blackboard meaning and must not
-silently finiteize or invent a QPU interpretation.
+Design and, after separate phase approval, implement source-owned canonical
+meaning for `Coin`/`Mix`, followed by an explicit target projection only when a
+meaning-preserving finite realization exists. The language and semantic IR must
+not remove `Coin`/`Mix` merely because a QPU target is currently unable to run
+them.
 
 ## Acceptance direction
 
@@ -35,8 +35,9 @@ silently finiteize or invent a QPU interpretation.
   production implementation.
 - If supported, `Coin`/`Mix` semantics are represented in the canonical
   Scientific Semantic IR and projected to QPU IR without an AST fallback.
-- If unsupported, SV-10/SV-11 assert the explicit capability rejection and the
-  complete empty artifact envelope.
+- If the finite target realization is unsupported, SV-10/SV-11 assert the
+  explicit capability rejection while the ideal semantic representation remains
+  available.
 - No QASM, gate, allocation, or partial program is produced on rejection.
 - The local spec verification gate is green with no hidden compatibility path.
 
@@ -47,6 +48,8 @@ silently finiteize or invent a QPU interpretation.
 - Do not change ADR 0211 or the explicit Realize/Limit policy implicitly.
 - Architecture/User judgment is required if supporting `Coin`/`Mix` changes the
   canonical IR model, QPU capability boundary, or existing ADR contract.
+- LISS-0449 and LISS-0450 define the shared boundary and meaning contract;
+  this Issue must not independently narrow the language surface.
 
 ## Current evidence
 
