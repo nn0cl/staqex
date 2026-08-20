@@ -31,7 +31,7 @@ removing source meaning and restoring an AST fallback.
 An architecture decision is required if adding the canonical semantic form
 changes ADR 0211 or the QPU capability model.
 
-## Invariants for either option
+## Invariants
 
 1. Source structure and intended quantum meaning remain inspectable.
 2. QASM is emitted only from Scientific Semantic IR → QPU IR.
@@ -40,3 +40,24 @@ changes ADR 0211 or the QPU capability model.
    empty.
 5. Provider SDK, live submission, S02 numerical migration, and solver work stay
    excluded.
+
+## Canonical semantic field mapping
+
+The ideal projection must expose this structure before any QPU capability
+decision:
+
+| Meaning | Required canonical fields |
+|---|---|
+| `Coin` | `kind=coin`, `source_node_id`, state role, preparation intent, provenance |
+| `Mix` | `kind=mixture`, control/branch relation, child node IDs, branch weights or declared mixture rule, state role, provenance |
+| `when` | `kind=branch`, controlling node ID, arm node IDs, branch relation, provenance |
+
+The QPU projection may reject these meanings, but may not replace them with a
+unitary operation without an explicit meaning-preserving realization.
+
+## Phase 1 Red cases
+
+- `test_liss_0448_coin_builds_structural_semantic_node`;
+- `test_liss_0448_mix_preserves_branch_children_and_provenance`;
+- `test_liss_0448_qpu_rejection_preserves_ideal_semantic_result`;
+- fixture: `tests/fixtures/canonical_coin_mix/mixture_semantics.sqx`.

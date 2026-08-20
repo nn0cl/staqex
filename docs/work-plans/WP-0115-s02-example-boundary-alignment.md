@@ -59,3 +59,10 @@ Each selected example must distinguish:
 The corpus audit must first establish the equation/source/realization/QPU
 four-stage mapping for `main_selection.sqx` and selected S02 examples. It must
 not change source files during the audit.
+
+## Design audit deliverable
+
+The first deliverable is a read-only inventory and trace, not a Red test or
+source change. It must map `main_selection.sqx` and selected examples to the
+four stages and record README/source/verification mismatches before any Phase
+1 Red request.

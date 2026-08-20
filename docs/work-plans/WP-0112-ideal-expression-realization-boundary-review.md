@@ -60,3 +60,12 @@ from the finite realization boundary.
 Before Phase 1 Red, the acceptance suite must cover ideal `Limit`, exact
 exponential structure, explicit `Realize` provenance, and atomic target
 rejection as listed in the Specification.
+
+## Fixed Phase 1 Red inventory
+
+- `tests/test_liss_0449_ideal_realization_boundary_red.py`;
+- fixtures `tests/fixtures/ideal_realization/ideal_limit.sqx` and
+  `tests/fixtures/ideal_realization/explicit_realize.sqx`;
+- cases `limit_preserved_before_target_rejection`,
+  `exact_exponential_preserved_without_gates`, and
+  `realize_provenance_is_source_owned`.

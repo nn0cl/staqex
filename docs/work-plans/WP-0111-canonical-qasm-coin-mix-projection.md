@@ -40,6 +40,13 @@
   accepted implementation or accepted conformance update.
 - `git diff --check` and independent context review are required.
 
+## Fixed Phase 1 Red inventory
+
+- `tests/test_liss_0448_coin_mix_semantic_red.py`;
+- fixture `tests/fixtures/canonical_coin_mix/mixture_semantics.sqx`;
+- structural `Coin`/`Mix`/branch fields and QPU rejection preservation;
+- no QASM/gates/allocation/partial program on unsupported finite projection.
+
 ## Stop conditions
 
 Stop and request Architecture/User judgment if the chosen implementation

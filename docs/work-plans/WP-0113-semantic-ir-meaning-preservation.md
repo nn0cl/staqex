@@ -44,6 +44,15 @@ mathematical, quantum, and mixed expressions before any QPU projection.
 The WP is XL because the inventory is broad, but no single phase may claim all
 families are implemented.
 
+## Fixed Phase 1 Red inventory
+
+- `tests/test_liss_0450_semantic_ir_meaning_red.py`;
+- fixture `tests/fixtures/semantic_meaning/mixture_and_product.sqx`;
+- common-field cases for role, state kind, child identity, dimensions,
+  exactness, intent, and provenance;
+- separate family markers so `Coin/Mix` completion cannot imply product,
+  continuous, open-system, or measurement completion.
+
 ## Out of scope
 
 - QPU gate synthesis itself.

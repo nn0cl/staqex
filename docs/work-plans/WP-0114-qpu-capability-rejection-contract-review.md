@@ -46,7 +46,9 @@ language but cannot be represented by a finite QPU circuit.
 - Rejection applies to the finite target transition, not to the ideal meaning.
 - Every rejection names the unsupported realization/capability and source
   provenance.
-- No implicit AST, unitary, Suzuki, or discretization fallback remains.
+- No implicit AST, unitary, Suzuki, or discretization fallback remains. An
+  explicitly source-declared finite Suzuki policy may continue through the
+  reviewed compatibility lowering path; it is not a fallback.
 - Existing resource preflight guarantees remain intact.
 
 ## Verification and gates
@@ -60,3 +62,10 @@ language but cannot be represented by a finite QPU circuit.
 The rejection matrix must include ideal-vs-QPU separation, non-unitary
 `product`, `until`, resource preflight, deterministic provenance, and the empty
 artifact envelope before Phase 1 Red approval.
+
+## Fixed Phase 1 Red inventory
+
+- `tests/test_liss_0451_qpu_capability_rejection_red.py`;
+- fixtures `tests/fixtures/capability_rejection/ideal_limit.sqx`,
+  `non_unitary_product.sqx`, and `resource_overflow.sqx`;
+- exact code/reason/provenance assertions from the Specification.
