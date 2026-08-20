@@ -54,3 +54,9 @@ from the finite realization boundary.
   realization-boundary lenses.
 - Phase 1 Red approval only after the acceptance Spec is accepted.
 - No implementation approval is implied by this WP.
+
+## Red preparation gate
+
+Before Phase 1 Red, the acceptance suite must cover ideal `Limit`, exact
+exponential structure, explicit `Realize` provenance, and atomic target
+rejection as listed in the Specification.

@@ -54,3 +54,9 @@ language but cannot be represented by a finite QPU circuit.
 - Rejection matrix and artifact-envelope tests designed before implementation.
 - Independent review of capability honesty and safety boundaries.
 - No phase or implementation authorization is implied by this WP.
+
+## Red preparation gate
+
+The rejection matrix must include ideal-vs-QPU separation, non-unitary
+`product`, `until`, resource preflight, deterministic provenance, and the empty
+artifact envelope before Phase 1 Red approval.

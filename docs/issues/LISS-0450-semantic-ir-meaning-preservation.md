@@ -37,3 +37,6 @@ redesign are excluded.
 
 Because this may change ADR 0211's canonical data model, architecture review
 and a reviewed acceptance Spec are required before Phase 1 Red.
+
+The broad family inventory is not a blanket implementation approval. The
+common contract and each meaning family require separate acceptance evidence.

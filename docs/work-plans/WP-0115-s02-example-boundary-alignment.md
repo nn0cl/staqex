@@ -53,3 +53,9 @@ Each selected example must distinguish:
 - Read-only corpus audit first.
 - Independent review focused on researcher readability and boundary honesty.
 - Any source change requires its own reviewed Spec and phase approval.
+
+## Red preparation gate
+
+The corpus audit must first establish the equation/source/realization/QPU
+four-stage mapping for `main_selection.sqx` and selected S02 examples. It must
+not change source files during the audit.

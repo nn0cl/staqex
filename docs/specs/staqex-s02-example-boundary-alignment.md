@@ -26,3 +26,10 @@ finite realization, and QPU/QASM projection or rejection.
 - Unsupported target behavior does not delete the ideal formula.
 - Each example is classified with evidence as supported, partial, unsupported,
   or intentional scope.
+
+## Phase 1 Red audit cases
+
+- `main_selection.sqx` has a recoverable blackboard equation;
+- ideal source and finite `Realize` parameters are distinguishable;
+- QPU scope/rejection is documented without deleting the ideal formula;
+- README, source, and verification inventory agree on the same stage boundary.

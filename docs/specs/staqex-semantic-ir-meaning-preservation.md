@@ -21,6 +21,18 @@
 and measurement boundaries remain identifiable in Scientific Semantic IR.
 Mixture is never silently rewritten as unitary superposition.
 
+## Meaning-family decomposition
+
+The XL scope is decomposed into independently reviewable slices:
+
+1. `Coin`/`Mix`/`when` mixture and branch meaning (LISS-0448);
+2. operator products, tensor structure, and non-unitary meaning;
+3. continuous and open-system state/operator meaning;
+4. measurement and terminal-collapse boundaries.
+
+The common IR contract is designed first. No family slice may claim completion
+for another family, and each slice requires its own Red/Green acceptance.
+
 ## Acceptance
 
 - Source structure, state kind, branch relations, parameters, dimensions,
@@ -28,3 +40,11 @@ Mixture is never silently rewritten as unitary superposition.
 - Target consumers consume canonical IR only.
 - Missing QPU projection does not imply missing ideal meaning.
 - ADR 0211 changes require architecture approval.
+
+## Phase 1 Red cases
+
+- `Coin/Mix` produces a structural mixture node, not a unitary gate node;
+- branch conditions and child source identities are preserved;
+- non-unitary `product` remains a mathematical/operator meaning;
+- absent QPU projection does not remove the ideal semantic result;
+- source provenance and state/mixture role survive projection.

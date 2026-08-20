@@ -33,6 +33,17 @@ mathematical, quantum, and mixed expressions before any QPU projection.
 - Distinction between ideal semantic execution and QPU projection.
 - Capability-independent inspection and diagnostics.
 
+## Execution decomposition
+
+1. Define and review the common semantic-role/provenance contract only.
+2. Complete the `Coin`/`Mix`/`when` slice through LISS-0448.
+3. Design separate follow-up slices for product/tensor, continuous/open-system,
+   and measurement boundaries; do not implement them implicitly in this WP.
+4. Reconcile each slice with the common contract through independent review.
+
+The WP is XL because the inventory is broad, but no single phase may claim all
+families are implemented.
+
 ## Out of scope
 
 - QPU gate synthesis itself.

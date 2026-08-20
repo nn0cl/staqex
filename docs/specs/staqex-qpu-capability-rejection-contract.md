@@ -27,3 +27,11 @@ qudits, unresolved parameters, and resource budgets.
 - Resource overflow is detected before gate/bit allocation.
 - The classification matrix distinguishes ideal, simulator, finite, QPU, and
   intentional-scope status.
+
+## Phase 1 Red cases
+
+- ideal `Limit` without finite realization rejects only at QPU projection;
+- non-unitary `product` retains ideal meaning and rejects at QPU capability;
+- unsupported `until` rejects without partial target artifacts;
+- resource overflow is rejected before gate or qubit allocation;
+- every rejection records deterministic code, source provenance, and reason.
