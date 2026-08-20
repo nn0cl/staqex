@@ -20,6 +20,7 @@ phase request, and the required ports/adapters review described in
 | Area | Current status | Tracking | Boundary / acceptance note |
 |---|---|---|---|
 | Explicit blackboard evolution / finite `Realize` | **Finite Realize/Suzuki target slice, LISS-0438 reconciliation, and LISS-0442/WP-0105 inventory complete; S02 numerical migration separately planned** | [LISS-0437](../issues/LISS-0437-explicit-evolution-surface.md); [ADR 0210](adr/0210-formal-limit-finite-realization-policy.md); [WP-0100](../work-plans/WP-0100-explicit-evolution-surface.md); [LISS-0438](../issues/LISS-0438-explicit-evolution-residual-reconciliation.md); [WP-0104](../work-plans/WP-0104-explicit-evolution-residual-reconciliation.md); [LISS-0442](../issues/LISS-0442-s02-corpus-migration-inventory.md); [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md); [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md); [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) | Direct `Limit` remains rejected; explicit `Realize`/Suzuki produces a provider-neutral finite plan; non-unitary `product` is rejected at the QPU gate boundary; budget overflow rejects before allocation. LISS-0438 reconciliation and LISS-0442/WP-0105 inventory are complete. LISS-0443/WP-0106 is planning only; provider SDK and live QPU submission remain separate, unapproved work. |
+| Scientific Semantic Core / IR authority | **Bounded Phase 2 Green complete; consumer-wide migration design intake** | [LISS-0444](../issues/LISS-0444-scientific-semantic-core.md); [LISS-0445](../issues/LISS-0445-scientific-semantic-consumer-migration.md); [ADR 0211](adr/0211-scientific-semantic-core-and-ir-authority.md); [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md); [WP-0108](../work-plans/WP-0108-scientific-semantic-consumer-migration.md) | Explicit evolution is fail-closed before QASM AST fallback; finite Suzuki/binder canonical projection is complete for the bounded slice. Consumer-wide QASM fallback retirement, non-explicit `symbolic_ir` migration, and remaining AST/DTO classification are planned in LISS-0445/WP-0108. Provider SDK, live QPU, and S02 numerical migration remain excluded. |
 | **QPex → Staqex rename** | **complete** | [LISS-0113](documentation-compression-map.md) | Renamed project from `QPex` to `Staqex`, `.sqx` → `.sqx`; 43 example files, ~136 Python import paths, ~340 doc files, agent instruction files; PR #118 merged 2026-07-29. |
 |---|---|---|---|
 | Function signatures / returns | Complete | [LISS-0021](documentation-compression-map.md); ADR 0064, ADR 0068 | Explicit return types, terminal `return`, `main -> Unit`, and arity/type checks are shipped and normative. QASM function-call lowering split to LISS-0049; an Operator-return typecheck gap split to LISS-0048. |
@@ -1804,6 +1805,15 @@ category (b)/(a)/static-evasion/contract-gap respectively).
 Historical note: the 2026-08-01 operations review recorded ~50 root failures and
 no CI tests ([WP-0069](../work-plans/WP-0069-operations-review-intake.md)); that
 floor was closed by WP-0079–0080 and WP-0086.
+
+**2026-08-20, LISS-0444/WP-0107 bounded projection update:** the canonical
+Scientific Semantic IR now carries and the QPU projection consumes
+`lowering_policy`, `explicit_evolution`, and `binder_lowering`, with source
+identity, provenance, semantic fingerprint coverage, and executable-projection
+mutation rejection. This closes only the bounded projection batch. The old AST
+helpers, diagnostic-time binder re-lowering, QASM AST fallback, and parallel
+`symbolic_ir` path remain open under the consumer-wide migration; no provider,
+live-QPU, or S02 work is implied.
 
 ## Status rule
 

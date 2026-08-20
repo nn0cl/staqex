@@ -88,7 +88,12 @@ def cmd_run(args: argparse.Namespace) -> int:
             topo = profile
         elif profile in {"linear", "grid", "grid-2x2", "grid-3x3"}:
             topo = profile
-        emitted = emit_openqasm3(compiled.unit, topology=topo, route=True)
+        emitted = emit_openqasm3(
+            compiled.unit,
+            semantic_ir=compiled.scientific_semantic_ir,
+            topology=topo,
+            route=True,
+        )
         for n in emitted.notes:
             print(f"// note: {n}", file=sys.stderr)
         if not emitted.ok:
@@ -245,7 +250,10 @@ def cmd_emit_qasm(args: argparse.Namespace) -> int:
     if compiled.unit is None or any(d.get("code") in HARD_CODES for d in compiled.diagnostics):
         _print_diags(compiled.diagnostics)
         return 1
-    emitted = emit_openqasm3(compiled.unit)
+    emitted = emit_openqasm3(
+        compiled.unit,
+        semantic_ir=compiled.scientific_semantic_ir,
+    )
     for n in emitted.notes:
         print(f"// note: {n}", file=sys.stderr)
     if not emitted.ok:

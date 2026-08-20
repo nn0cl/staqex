@@ -1,0 +1,14 @@
+// SSC-007: finite realization is source-visible and policy-bearing.
+Energy scale = 1.0.eV to J
+Operator H = scale * X
+Time duration = 0.6.fs
+Operator formal = Limit N -> Infinity {
+    (I - i * H * duration / (N * hbar)) ^ N
+}
+Operator realized = Realize(
+    source = formal,
+    method = "suzuki",
+    order = 2,
+    steps = 4,
+    error_budget = 1e-3
+)

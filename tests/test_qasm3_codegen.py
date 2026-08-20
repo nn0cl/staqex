@@ -160,7 +160,7 @@ def test_trotter_ising_evolve_qasm() -> None:
     first-order `trotter_gates` path.
     """
     path = _REPO / "examples/basics/B08_operators_hamiltonians/operators_hamiltonians.sqx"
-    with pytest.raises(RuntimeError, match="EVOLUTION_TARGET_UNSUPPORTED"):
+    with pytest.raises(RuntimeError, match="E_QPU_CANONICAL_PROVENANCE"):
         StaqexCompiler(route=False).compile_to_qasm3(str(path))
 
 
@@ -189,7 +189,7 @@ def test_trotter_rejects_fock_hamiltonian() -> None:
         StaqexCompiler(route=False).compile_to_qasm3(str(path))
         raise AssertionError("expected RuntimeError for Fock H")
     except RuntimeError as e:
-        assert "QASM_TROTTER_UNSUPPORTED_H" in str(e)
+        assert "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE" in str(e)
 
 
 if __name__ == "__main__":

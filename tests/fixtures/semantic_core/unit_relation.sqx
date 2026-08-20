@@ -1,0 +1,4 @@
+// SSC-002: unit-bearing relation with source provenance.
+Energy h = 0.5.eV to J
+Time duration = 2.0.fs
+Energy action = h * duration

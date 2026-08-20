@@ -1,0 +1,7 @@
+// SSC-006: exact/symbolic inspection; no finite target is selected.
+Energy scale = 1.0.eV to J
+Operator H = scale * X
+Time duration = 0.6.fs
+Operator formal = Limit N -> Infinity {
+    (I - i * H * duration / (N * hbar)) ^ N
+}

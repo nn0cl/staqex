@@ -1,0 +1,9 @@
+package residual.missing_realize_policy
+
+pub fn main() -> Unit {
+    Operator U_formal = Limit N -> Infinity {
+        (I - i * X / N) ^ N
+    }
+    State psi = |0>
+    Measure psi
+}
