@@ -66,3 +66,7 @@ The first deliverable is a read-only inventory and trace, not a Red test or
 source change. It must map `main_selection.sqx` and selected examples to the
 four stages and record README/source/verification mismatches before any Phase
 1 Red request.
+
+Planned evidence: `docs/collaboration/traces/` corpus-audit record plus a
+source/README/verification inventory. This audit is separate from S02
+numerical migration and does not change the examples.

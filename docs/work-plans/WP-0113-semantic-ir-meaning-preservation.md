@@ -53,6 +53,13 @@ families are implemented.
 - separate family markers so `Coin/Mix` completion cannot imply product,
   continuous, open-system, or measurement completion.
 
+Given/When/Then cases:
+
+- Given `mixture_and_product.sqx`, when semantic IR is built, then mixture and
+  product roles remain distinct structural nodes.
+- Given the same source, when a target projection is unavailable, then the
+  semantic result retains child identity, role, and provenance.
+
 ## Out of scope
 
 - QPU gate synthesis itself.

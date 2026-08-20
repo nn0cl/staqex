@@ -32,13 +32,13 @@ qudits, unresolved parameters, and resource budgets.
 
 | Case | Code | Required reason | Required provenance |
 |---|---|---|---|
-| ideal `Limit` without finite realization | `E_QPU_CANONICAL_PROJECTION_UNAVAILABLE` | `missing_finite_realization` | `source_node_id`, source span |
+| ideal `Limit` without finite realization | `EVOLUTION_REALIZATION_REQUIRED` | `missing_finite_realization` | diagnostic evidence: source node/span; no target-plan provenance |
 | exact exponential without target realization | `E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED` | `finite_projection_unavailable` | evolution source node and operator provenance |
 | `Coin/Mix` without finite projection | `E_QPU_CANONICAL_PROJECTION_UNAVAILABLE` | `mixture_projection_unavailable` | mixture node, branch children, source span |
 | non-unitary `product` | `E_QPU_UNSUPPORTED_CAPABILITY` | `non_unitary_target` | product node and operand provenance |
 | `evolve ... until` | `E_QPU_UNSUPPORTED_CAPABILITY` | `until_requires_dynamic_target` | evolve node and predicate provenance |
-| resource budget overflow | `E_QPU_RESOURCE_UNSUPPORTED` | `resource_budget_exceeded_before_allocation` | estimate, profile, source nodes |
-| unresolved rotation/parameter | `QASM_ROTATION_ANGLE_UNRESOLVED` or existing target-specific code | `parameter_unresolved` | operation node and parameter provenance |
+| resource budget overflow | `EVOLUTION_TARGET_UNSUPPORTED` | `resource_budget_exceeded_before_allocation` | transient estimate/profile/source evidence only; no retained target-plan provenance |
+| unresolved rotation angle | `QASM_ROTATION_ANGLE_UNRESOLVED` | `parameter_unresolved` | operation node and parameter provenance |
 
 These codes/reasons are the Phase 1 acceptance contract. A new code requires a
 Spec/ADR update before implementation.
@@ -61,3 +61,10 @@ Spec/ADR update before implementation.
   allocation.
 - `tests/fixtures/capability_rejection/resource_overflow.sqx`: Given an input
   exceeding the target budget, projection allocates no gate or qubit.
+
+Test IDs:
+
+- `test_liss_0451_limit_rejection_uses_accepted_code_and_empty_artifacts`;
+- `test_liss_0451_non_unitary_product_rejection_is_provenance_bearing`;
+- `test_liss_0451_resource_overflow_precedes_allocation`;
+- `test_liss_0451_unresolved_rotation_uses_exact_code`.

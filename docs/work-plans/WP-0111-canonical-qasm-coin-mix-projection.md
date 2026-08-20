@@ -18,6 +18,8 @@
 ## Exclusions
 
 - No AST fallback restoration.
+- Explicit source-declared finite Suzuki/binder compatibility lowering remains
+  allowed; implicit Suzuki inference remains prohibited.
 - No provider SDK, live QPU, credentials, network, S02, solver, or syntax work.
 - No merge of PR #557 based on this planning record.
 
@@ -46,6 +48,12 @@
 - fixture `tests/fixtures/canonical_coin_mix/mixture_semantics.sqx`;
 - structural `Coin`/`Mix`/branch fields and QPU rejection preservation;
 - no QASM/gates/allocation/partial program on unsupported finite projection.
+
+Test IDs:
+
+- `test_liss_0448_coin_builds_structural_semantic_node`;
+- `test_liss_0448_mix_preserves_branch_children_and_provenance`;
+- `test_liss_0448_qpu_rejection_preserves_ideal_semantic_result`.
 
 ## Stop conditions
 

@@ -14,7 +14,9 @@
 - **Inspected:** LISS-0446/LISS-0447 artifacts, Scientific Semantic IR,
   QPU IR/QASM emitters, SV-10/SV-11 suites, and PR #557 CI logs.
 - **Boundary:** QASM may consume only the compile-owned canonical projection;
-  no ordinary AST fallback or hidden finiteization is permitted.
+  no ordinary AST fallback or hidden finiteization is permitted. An explicitly
+  source-declared finite Suzuki/binder policy may use the reviewed compatibility
+  lowering path; that path is not an implicit fallback.
 - **Review lenses:** physicist-first source meaning, canonical authority,
   projection conservation, capability honesty, atomic rejection, and phase
   discipline.
@@ -61,3 +63,11 @@ unitary operation without an explicit meaning-preserving realization.
 - `test_liss_0448_mix_preserves_branch_children_and_provenance`;
 - `test_liss_0448_qpu_rejection_preserves_ideal_semantic_result`;
 - fixture: `tests/fixtures/canonical_coin_mix/mixture_semantics.sqx`.
+
+### Given/When/Then
+
+- Given `mixture_semantics.sqx`, when semantic IR is built, then `Coin`/`Mix`
+  nodes contain the mapped fields and branch child identities.
+- Given the same source, when QPU projection has no finite realization, then
+  ideal semantic output remains available and the target artifact envelope is
+  empty.

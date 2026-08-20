@@ -69,3 +69,10 @@ rejection as listed in the Specification.
 - cases `limit_preserved_before_target_rejection`,
   `exact_exponential_preserved_without_gates`, and
   `realize_provenance_is_source_owned`.
+
+Given/When/Then cases:
+
+- Given an ideal `Limit`, when the QPU lane is invoked without `Realize`, then
+  `EVOLUTION_REALIZATION_REQUIRED` is returned and no target artifact exists.
+- Given exact exponential source, when no finite target policy exists, then
+  structure remains in semantic IR and no gates are created.
