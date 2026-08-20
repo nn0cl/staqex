@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Status | **proposed** |
-| Phase | **phase-0-design** |
+| Phase | **phase-1-red** |
 | Size | XL |
 | Issue | [LISS-0449](../issues/LISS-0449-ideal-expression-realization-boundary.md) |
 | Specification | [Ideal Expression and Finite Realization Boundary](../specs/staqex-ideal-expression-realization-boundary.md) |

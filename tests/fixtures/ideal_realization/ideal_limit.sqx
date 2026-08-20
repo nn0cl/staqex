@@ -1,0 +1,12 @@
+package fixtures.ideal_realization
+
+pub fn main() -> Unit {
+    Operator H = X + Z
+    Time dur = 0.6.fs
+    Operator U_formal = Limit N -> Infinity {
+        (I - i * H * dur / (N * hbar)) ^ N
+    }
+    State psi = |0>
+    State result = Evolve() { U_formal * psi }.run()
+    Measure result
+}

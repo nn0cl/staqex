@@ -1,0 +1,11 @@
+package fixtures.semantic_meaning
+
+pub fn main() -> Unit {
+    State bit = Coin()
+    State mixed = Mix (bit) {
+        0 -> |0>,
+        else -> |+>,
+    }
+    Operator mathematical_product = X * Z
+    Measure mixed
+}

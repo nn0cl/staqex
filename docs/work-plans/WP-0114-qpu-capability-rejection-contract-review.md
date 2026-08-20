@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Status | **proposed** |
-| Phase | **phase-0-design** |
+| Phase | **phase-1-red** |
 | Size | M |
 | Issue | [LISS-0451](../issues/LISS-0451-qpu-capability-rejection-contract.md) |
 | Specification | [QPU Capability Rejection Contract](../specs/staqex-qpu-capability-rejection-contract.md) |

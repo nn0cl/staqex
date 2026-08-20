@@ -1,0 +1,9 @@
+package fixtures.capability_rejection
+
+pub fn main() -> Unit {
+    Operator H = X + Z
+    Operator U_formal = Limit N -> Infinity { (I - i * H / N) ^ N }
+    State psi = |0>
+    State result = Evolve() { U_formal * psi }.run()
+    Measure result
+}

@@ -1,0 +1,8 @@
+package fixtures.capability_rejection
+
+pub fn main() -> Unit {
+    Operator mathematical_product = X * Z
+    State psi = |0>
+    State result = Evolve() { mathematical_product * psi }.run()
+    Measure result
+}

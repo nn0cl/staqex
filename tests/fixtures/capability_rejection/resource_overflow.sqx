@@ -1,0 +1,10 @@
+package fixtures.capability_rejection
+
+pub fn main() -> Unit {
+    QubitRegister<4> register = allocate(4)
+    ForEach q in register {
+        apply(H, q)
+    }
+    State<Int> observed = Coin()
+    Measure observed
+}

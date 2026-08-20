@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Status | **proposed** |
-| Phase | **phase-0-design** |
+| Phase | **phase-1-red** |
 | Size | XL |
 | Issue | [LISS-0450](../issues/LISS-0450-semantic-ir-meaning-preservation.md) |
 | Specification | [Scientific Semantic IR Meaning Preservation](../specs/staqex-semantic-ir-meaning-preservation.md) |
