@@ -56,6 +56,24 @@ class EmitResult:
     circuit: Circuit | None = None
 
 
+def _empty_rejection_circuit(
+    code: str,
+    *,
+    provenance: dict[str, object] | None = None,
+) -> Circuit:
+    """Create the single empty envelope used by every target rejection."""
+    return Circuit(
+        n_qubits=0,
+        n_bits=0,
+        gates=[],
+        reject_code=code,
+        provenance=provenance,
+        allocation_started=False,
+        allocated_qubits=(),
+        partial_program=None,
+    )
+
+
 class QASM3Emitter:
     def __init__(
         self,
@@ -84,14 +102,7 @@ class QASM3Emitter:
                     "belong to the supplied compilation unit"
                 ],
                 ok=False,
-                circuit=Circuit(
-                    n_qubits=0,
-                    n_bits=0,
-                    reject_code="E_QPU_CANONICAL_PROVENANCE",
-                    allocation_started=False,
-                    allocated_qubits=(),
-                    partial_program=None,
-                ),
+                circuit=_empty_rejection_circuit("E_QPU_CANONICAL_PROVENANCE"),
             )
         decision = enforce_optional_budget(
             resource_profile,
@@ -105,11 +116,8 @@ class QASM3Emitter:
                     qasm="",
                     notes=notes,
                     ok=False,
-                    circuit=Circuit(
-                        n_qubits=0,
-                        n_bits=0,
-                        gates=[],
-                        reject_code="EVOLUTION_TARGET_UNSUPPORTED",
+                    circuit=_empty_rejection_circuit(
+                        "EVOLUTION_TARGET_UNSUPPORTED",
                         provenance={
                             "reason": "resource_budget_exceeded_before_allocation",
                             "source_evidence": {
@@ -119,9 +127,6 @@ class QASM3Emitter:
                             },
                             "target_plan": None,
                         },
-                        allocation_started=False,
-                        allocated_qubits=(),
-                        partial_program=None,
                     ),
                 )
         rejected = qudit_capability_reject(unit)
@@ -140,7 +145,11 @@ class QASM3Emitter:
         )
         if qpu_result is not None:
             return qpu_result
-        if "instructions" in canonical:
+        has_executable_instructions = any(
+            instruction.opcode != "Measure"
+            for instruction in canonical.get("instructions", ())
+        )
+        if has_executable_instructions:
             return EmitResult(
                 qasm="",
                 notes=[
@@ -148,17 +157,12 @@ class QASM3Emitter:
                     "instructions cannot be emitted without a matching projection"
                 ],
                 ok=False,
-                circuit=Circuit(
-                    n_qubits=0,
-                    n_bits=0,
-                    reject_code="E_QPU_CANONICAL_FINITE_PROJECTION_UNAVAILABLE",
+                circuit=_empty_rejection_circuit(
+                    "E_QPU_CANONICAL_FINITE_PROJECTION_UNAVAILABLE",
                     provenance={
                         "reason": "canonical_instruction_projection_unavailable",
                         "target_plan": None,
                     },
-                    allocation_started=False,
-                    allocated_qubits=(),
-                    partial_program=None,
                 ),
             )
         if canonical.get("lowering_policy") is not None or canonical.get(
@@ -171,17 +175,12 @@ class QASM3Emitter:
                     "canonical projection produced no executable instructions"
                 ],
                 ok=False,
-                circuit=Circuit(
-                    n_qubits=0,
-                    n_bits=0,
-                    reject_code="E_QPU_CANONICAL_FINITE_PROJECTION_UNAVAILABLE",
+                circuit=_empty_rejection_circuit(
+                    "E_QPU_CANONICAL_FINITE_PROJECTION_UNAVAILABLE",
                     provenance={
                         "reason": "canonical_instruction_projection_unavailable",
                         "target_plan": None,
                     },
-                    allocation_started=False,
-                    allocated_qubits=(),
-                    partial_program=None,
                 ),
             )
         diagnostics = qpu_ir_diagnostics(
@@ -205,10 +204,8 @@ class QASM3Emitter:
                 qasm="",
                 notes=[str(first.get("message", first.get("code", "")))],
                 ok=False,
-                circuit=Circuit(
-                    n_qubits=0,
-                    n_bits=0,
-                    reject_code=diagnostic_code or "E_QPU_UNSUPPORTED_CAPABILITY",
+                circuit=_empty_rejection_circuit(
+                    diagnostic_code or "E_QPU_UNSUPPORTED_CAPABILITY",
                     provenance={
                         "reason": "missing_finite_realization"
                         if source_node_id
@@ -216,9 +213,6 @@ class QASM3Emitter:
                         "source_node_id": source_node_id,
                         "target_plan": None,
                     },
-                    allocation_started=False,
-                    allocated_qubits=(),
-                    partial_program=None,
                 ),
             )
         if canonical.get("explicit_evolution") is None:
@@ -237,14 +231,7 @@ class QASM3Emitter:
             qasm="",
             notes=[message],
             ok=False,
-            circuit=Circuit(
-                n_qubits=0,
-                n_bits=0,
-                reject_code=code,
-                allocation_started=False,
-                allocated_qubits=(),
-                partial_program=None,
-            ),
+            circuit=_empty_rejection_circuit(code),
         )
 
     def emit_qpu_program(
@@ -270,18 +257,13 @@ class QASM3Emitter:
                     qasm="",
                     notes=validation_error.notes,
                     ok=False,
-                    circuit=Circuit(
-                        n_qubits=0,
-                        n_bits=0,
-                        reject_code="E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
+                    circuit=_empty_rejection_circuit(
+                        "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
                         provenance={
                             "reason": "missing_finite_realization",
                             "source_node_id": source_node_id,
                             "target_plan": None,
                         },
-                        allocation_started=False,
-                        allocated_qubits=(),
-                        partial_program=None,
                     ),
                 )
             return validation_error
@@ -312,18 +294,13 @@ class QASM3Emitter:
                         f"opcode `{instruction.opcode}` is not supported by OpenQASM"
                     ],
                     ok=False,
-                    circuit=Circuit(
-                        n_qubits=0,
-                        n_bits=0,
-                        reject_code="E_QPU_UNSUPPORTED_CAPABILITY",
+                    circuit=_empty_rejection_circuit(
+                        "E_QPU_UNSUPPORTED_CAPABILITY",
                         provenance={
                             "reason": "unsupported_opcode",
                             "source_node_id": instruction.provenance.get("source_node_id", ""),
                             "target_plan": None,
                         },
-                        allocation_started=False,
-                        allocated_qubits=(),
-                        partial_program=None,
                     ),
                 )
             angle = instruction.parameter if name in {"rx", "ry", "rz"} else None
@@ -337,10 +314,8 @@ class QASM3Emitter:
                         f"QASM_ROTATION_ANGLE_UNRESOLVED: {reason}: {angle}"
                     ],
                     ok=False,
-                    circuit=Circuit(
-                        n_qubits=0,
-                        n_bits=0,
-                        reject_code="QASM_ROTATION_ANGLE_UNRESOLVED",
+                    circuit=_empty_rejection_circuit(
+                        "QASM_ROTATION_ANGLE_UNRESOLVED",
                         provenance={
                             "reason": reason,
                             "source_node_id": instruction.provenance.get(
@@ -404,14 +379,7 @@ class QASM3Emitter:
                     qasm="",
                     notes=[message],
                     ok=False,
-                    circuit=Circuit(
-                        n_qubits=0,
-                        n_bits=0,
-                        reject_code="E_QPU_CANONICAL_PROVENANCE",
-                        allocation_started=False,
-                        allocated_qubits=(),
-                        partial_program=None,
-                    ),
+                    circuit=_empty_rejection_circuit("E_QPU_CANONICAL_PROVENANCE"),
                 )
             source_node_ids = set(program.source_node_ids)
             if instruction_fingerprint(tuple(program.get("instructions", ()))) != program.get(
@@ -425,14 +393,7 @@ class QASM3Emitter:
                     qasm="",
                     notes=[message],
                     ok=False,
-                    circuit=Circuit(
-                        n_qubits=0,
-                        n_bits=0,
-                        reject_code="E_QPU_CANONICAL_PROVENANCE",
-                        allocation_started=False,
-                        allocated_qubits=(),
-                        partial_program=None,
-                    ),
+                    circuit=_empty_rejection_circuit("E_QPU_CANONICAL_PROVENANCE"),
                 )
             canonical_operations = getattr(canonical.qpu_projection, "operations", ())
             finite_gate_projection = any(
@@ -476,14 +437,7 @@ class QASM3Emitter:
                     qasm="",
                     notes=[message],
                     ok=False,
-                    circuit=Circuit(
-                        n_qubits=0,
-                        n_bits=0,
-                        reject_code="E_QPU_CANONICAL_PROVENANCE",
-                        allocation_started=False,
-                        allocated_qubits=(),
-                        partial_program=None,
-                    ),
+                    circuit=_empty_rejection_circuit("E_QPU_CANONICAL_PROVENANCE"),
                 )
             expected_measurements = tuple(
                 (
@@ -514,14 +468,7 @@ class QASM3Emitter:
                     qasm="",
                     notes=[message],
                     ok=False,
-                    circuit=Circuit(
-                        n_qubits=0,
-                        n_bits=0,
-                        reject_code="E_QPU_CANONICAL_PROVENANCE",
-                        allocation_started=False,
-                        allocated_qubits=(),
-                        partial_program=None,
-                    ),
+                    circuit=_empty_rejection_circuit("E_QPU_CANONICAL_PROVENANCE"),
                 )
             missing = [
                 instruction.opcode
@@ -543,14 +490,7 @@ class QASM3Emitter:
             qasm="",
             notes=[message],
             ok=False,
-            circuit=Circuit(
-                n_qubits=0,
-                n_bits=0,
-                reject_code=reject_code,
-                allocation_started=False,
-                allocated_qubits=(),
-                partial_program=None,
-            ),
+            circuit=_empty_rejection_circuit(reject_code),
         )
 
     def _emit_from_qpu_ir_when_available(

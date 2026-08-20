@@ -224,6 +224,25 @@ def test_qasm_without_canonical_projection_rejects_atomically() -> None:
     assert emitted.circuit is not None
     assert emitted.circuit.reject_code == "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE"
     assert emitted.circuit.gates == []
+
+
+def test_measure_only_canonical_projection_keeps_projection_diagnostic() -> None:
+    compiled = compile_source(
+        """
+        package t
+        pub fn main() -> Unit {
+            QubitRegister<1> reg = system()
+            State observed = |0>
+            Measure observed
+        }
+        """
+    )
+    assert compiled.ok, compiled.diagnostics
+    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    assert emitted.ok is False
+    assert emitted.circuit is not None
+    assert emitted.circuit.reject_code == "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE"
+    assert emitted.circuit.gates == []
     assert emitted.circuit.allocation_started is False
     assert emitted.circuit.allocated_qubits == ()
     assert emitted.circuit.partial_program is None

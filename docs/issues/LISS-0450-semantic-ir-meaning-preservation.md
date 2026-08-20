@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **open** |
-| Phase | **phase-2-green** |
+| Status | **final-review-ready** |
+| Phase | **phase-3-refactor** |
 | Type / priority | architecture / P0 |
 | Initial size | XL |
 | Current size | XL |
@@ -41,6 +41,9 @@ and a reviewed acceptance Spec are required before Phase 1 Red.
 The broad family inventory is not a blanket implementation approval. For this
 phase, only the accepted Coin/when meaning preservation, ExactExponential
 metadata, ideal fingerprint, and canonical consumer boundary are included.
-Phase 3 and additional meaning families require separate approval.
+The behavior-preserving Phase 3 Refactor is complete for this bounded slice;
+additional meaning families require separate approval. The result is ready
+for the completion PR and final Adjudicator review.
 
 Approval evidence: `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.
+Phase 3 evidence: `docs/collaboration/traces/2026-08-21-liss-0449-0451-phase3-refactor.md`.

@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **open** |
-| Phase | **phase-2-green** |
+| Status | **final-review-ready** |
+| Phase | **phase-3-refactor** |
 | Type / priority | architecture / P1 |
 | Initial size | M |
 | Current size | M |
@@ -36,6 +36,9 @@ S02 migration, and solver work are excluded.
 
 The rejection matrix is implemented for the approved Phase 2 Green cases. It
 must not be used to justify removing ideal-language or semantic-IR support.
-Phase 3 and new capability cases require separate approval.
+The behavior-preserving Phase 3 Refactor is complete for this bounded
+rejection matrix. The result is ready for the completion PR and final
+Adjudicator review. New capability cases require separate approval.
 
 Approval evidence: `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.
+Phase 3 evidence: `docs/collaboration/traces/2026-08-21-liss-0449-0451-phase3-refactor.md`.

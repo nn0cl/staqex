@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **proposed** |
-| Phase | **phase-1-red** |
+| Status | **final-review-ready** |
+| Phase | **phase-3-refactor** |
 | Size | M |
 | Issue | [LISS-0451](../issues/LISS-0451-qpu-capability-rejection-contract.md) |
 | Specification | [QPU Capability Rejection Contract](../specs/staqex-qpu-capability-rejection-contract.md) |
 | Related authority | ADR 0085, ADR 0210, ADR 0211 |
 | Depends on | WP-0112 and WP-0113 design directions |
-| Branch | `codex/liss-0438-residual-reconciliation` (design intake only) |
+| Branch | `codex/liss-0438-residual-reconciliation` |
 
 ## Objective
 
@@ -69,3 +69,12 @@ artifact envelope before Phase 1 Red approval.
 - fixtures `tests/fixtures/capability_rejection/ideal_limit.sqx`,
   `non_unitary_product.sqx`, and `resource_overflow.sqx`;
 - exact code/reason/provenance assertions from the Specification.
+
+## Phase 2/3 evidence
+
+- Phase 2 Green implementation and regression: trace
+  `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.
+- Phase 3 Refactor, verification, and independent READY review: trace
+  `docs/collaboration/traces/2026-08-21-liss-0449-0451-phase3-refactor.md`.
+- Completion state: `final-review-ready`; completion PR and final Adjudicator
+  review remain required.

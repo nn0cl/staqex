@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **open** |
-| Phase | **phase-2-green** |
+| Status | **final-review-ready** |
+| Phase | **phase-3-refactor** |
 | Type / priority | architecture / P0 |
 | Initial size | XL |
 | Current size | XL |
@@ -35,8 +35,10 @@ production implementation are excluded.
 
 ## Approval boundary
 
-Phase 1 Red is complete. The user approved Phase 2 Green for the bounded
-implementation and regression tests recorded in the work trace. Phase 3,
-merge/push, and any provider/live-QPU work remain unapproved.
+Phase 1 Red, Phase 2 Green, and the behavior-preserving Phase 3 Refactor are
+complete for this bounded slice. The result is ready for the completion PR and
+final Adjudicator review. Merge/push and any provider/live-QPU work remain
+separately gated.
 
 Approval evidence: `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.
+Phase 3 evidence: `docs/collaboration/traces/2026-08-21-liss-0449-0451-phase3-refactor.md`.
