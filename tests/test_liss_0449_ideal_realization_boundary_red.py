@@ -14,16 +14,21 @@ from compiler.staqex.pipeline import compile_path
 
 
 IDEAL = REPO / "tests/fixtures/ideal_realization/ideal_limit.sqx"
+EXACT = REPO / "tests/fixtures/ideal_realization/exact_exponential.sqx"
 REALIZED = REPO / "tests/fixtures/ideal_realization/explicit_realize.sqx"
+
+
+def test_limit_has_its_own_ideal_semantic_identity() -> None:
+    compiled = compile_path(IDEAL)
+    assert compiled.unit is not None, compiled.diagnostics
+    assert compiled.scientific_semantic_ir is not None
+    assert any(node.kind == "Limit" for node in compiled.scientific_semantic_ir.nodes)
 
 
 def test_limit_preserved_before_target_rejection() -> None:
     compiled = compile_path(IDEAL)
     assert compiled.unit is not None, compiled.diagnostics
     assert compiled.scientific_semantic_ir is not None
-    # The current compiler exposes Limit only as a generic Call; the Red
-    # contract requires a first-class ideal-expression identity.
-    assert any(node.kind == "Call" for node in compiled.scientific_semantic_ir.nodes)
     circuit = lower_unit_to_circuit(compiled.unit, target_profile=EvolutionTargetProfile())
     assert circuit.reject_code == "EVOLUTION_REALIZATION_REQUIRED"
     assert circuit.provenance["reason"] == "missing_finite_realization"
@@ -32,11 +37,28 @@ def test_limit_preserved_before_target_rejection() -> None:
     assert circuit.partial_program is None
 
 
-def test_exact_exponential_preserved_without_gates() -> None:
-    compiled = compile_path(IDEAL)
+def test_exact_exponential_has_its_own_semantic_identity() -> None:
+    compiled = compile_path(EXACT)
+    assert compiled.ok, compiled.diagnostics
+    assert compiled.unit is not None
     assert compiled.scientific_semantic_ir is not None
     assert any(node.kind == "EvolveExpr" for node in compiled.scientific_semantic_ir.nodes)
-    assert compiled.scientific_semantic_ir.explicit_evolution["exact"] is True
+    assert any(
+        node.kind == "ExactExponential"
+        for node in compiled.scientific_semantic_ir.nodes
+    )
+
+
+def test_exact_exponential_preserved_without_gates() -> None:
+    compiled = compile_path(EXACT)
+    assert compiled.ok, compiled.diagnostics
+    assert compiled.unit is not None
+    circuit = lower_unit_to_circuit(
+        compiled.unit,
+        target_profile=EvolutionTargetProfile(),
+    )
+    assert circuit.reject_code == "E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED"
+    assert circuit.gates == []
     assert compiled.scientific_semantic_ir.qpu_projection is None
 
 
@@ -56,7 +78,9 @@ def test_realize_provenance_is_source_owned() -> None:
 
 if __name__ == "__main__":
     for test in (
+        test_limit_has_its_own_ideal_semantic_identity,
         test_limit_preserved_before_target_rejection,
+        test_exact_exponential_has_its_own_semantic_identity,
         test_exact_exponential_preserved_without_gates,
         test_realize_provenance_is_source_owned,
     ):

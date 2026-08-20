@@ -1,8 +1,10 @@
 package fixtures.capability_rejection
 
 pub fn main() -> Unit {
-    Operator mathematical_product = X * Z
+    // Scalar-operator product with scale 2 is mathematical meaning, not a
+    // unitary gate. The target lane must reject it without rewriting it.
+    Operator Bad = 2.0 * X
     State psi = |0>
-    State result = Evolve() { mathematical_product * psi }.run()
+    State result = Evolve() { Bad * psi }.run()
     Measure result
 }

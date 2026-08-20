@@ -6,6 +6,9 @@ pub fn main() -> Unit {
         0 -> |0>,
         else -> |+>,
     }
-    Operator mathematical_product = X * Z
-    Measure mixed
+    // A scalar/operator product remains mathematical operator algebra; it is
+    // not an implicit unitary gate sequence.
+    Operator mathematical_product = 2.0 * X
+    State evolved = Evolve() { mathematical_product * mixed }.run()
+    Measure evolved
 }

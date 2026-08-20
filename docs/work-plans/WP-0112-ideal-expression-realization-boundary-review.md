@@ -64,7 +64,8 @@ rejection as listed in the Specification.
 ## Fixed Phase 1 Red inventory
 
 - `tests/test_liss_0449_ideal_realization_boundary_red.py`;
-- fixtures `tests/fixtures/ideal_realization/ideal_limit.sqx` and
+- fixtures `tests/fixtures/ideal_realization/ideal_limit.sqx`,
+  `tests/fixtures/ideal_realization/exact_exponential.sqx`, and
   `tests/fixtures/ideal_realization/explicit_realize.sqx`;
 - cases `limit_preserved_before_target_rejection`,
   `exact_exponential_preserved_without_gates`, and
