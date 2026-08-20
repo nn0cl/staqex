@@ -78,11 +78,54 @@ def test_liss_0451_unresolved_rotation_uses_exact_code() -> None:
     assert emitted.circuit.provenance["reason"] == "parameter_unresolved"
 
 
+def test_liss_0451_two_state_allocations_are_preflighted_before_gates() -> None:
+    from compiler.staqex.pipeline import compile_source
+
+    compiled = compile_source(
+        """
+        package fixtures.capability_rejection
+        pub fn main() -> Unit {
+            State first = |0>
+            State second = |1>
+            State result = cnot(first, second)
+            Measure result
+        }
+        """
+    )
+    assert compiled.ok, compiled.diagnostics
+    circuit = lower_unit_to_circuit(
+        compiled.unit,
+        target_profile=EvolutionTargetProfile(resource_budget_qubits=1),
+    )
+    _assert_empty_target(circuit, "EVOLUTION_TARGET_UNSUPPORTED")
+    assert circuit.provenance["reason"] == "resource_budget_exceeded_before_allocation"
+
+
+def test_liss_0451_coin_is_not_silently_rewritten_as_hadamard() -> None:
+    from compiler.staqex.pipeline import compile_source
+
+    compiled = compile_source(
+        """
+        package fixtures.capability_rejection
+        pub fn main() -> Unit {
+            State mixed_state = Coin()
+            Measure mixed_state
+        }
+        """
+    )
+    assert compiled.ok, compiled.diagnostics
+    circuit = lower_unit_to_circuit(compiled.unit)
+    _assert_empty_target(circuit, "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE")
+    assert circuit.provenance["reason"] == "mixture_projection_unavailable"
+
+
 if __name__ == "__main__":
     for test in (
         test_liss_0451_limit_rejection_uses_accepted_code_and_empty_artifacts,
         test_liss_0451_non_unitary_product_rejection_is_provenance_bearing,
         test_liss_0451_resource_overflow_precedes_allocation,
         test_liss_0451_unresolved_rotation_uses_exact_code,
+        test_liss_0451_two_state_allocations_are_preflighted_before_gates,
+        test_liss_0451_coin_is_not_silently_rewritten_as_hadamard,
     ):
         test()

@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Status | **open** |
-| Phase | **phase-0-design** |
+| Phase | **phase-2-green** |
 | Type / priority | architecture / P0 |
 | Initial size | XL |
 | Current size | XL |
@@ -11,7 +11,7 @@
 | Specification | [Scientific Semantic IR Meaning Preservation](../specs/staqex-semantic-ir-meaning-preservation.md) |
 | Dependencies | [LISS-0449](LISS-0449-ideal-expression-realization-boundary.md) design direction |
 | Related authority | ADR 0211, [ADR 0212](../architecture/adr/0212-ideal-meaning-and-finite-realization-boundary.md); adjudicator language vision |
-| Implementation approval | not granted |
+| Implementation approval | granted for Phase 2 Green; Phase 3 not granted |
 
 ## Objective
 
@@ -38,5 +38,9 @@ redesign are excluded.
 Because this may change ADR 0211's canonical data model, architecture review
 and a reviewed acceptance Spec are required before Phase 1 Red.
 
-The broad family inventory is not a blanket implementation approval. The
-common contract and each meaning family require separate acceptance evidence.
+The broad family inventory is not a blanket implementation approval. For this
+phase, only the accepted Coin/when meaning preservation, ExactExponential
+metadata, ideal fingerprint, and canonical consumer boundary are included.
+Phase 3 and additional meaning families require separate approval.
+
+Approval evidence: `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.

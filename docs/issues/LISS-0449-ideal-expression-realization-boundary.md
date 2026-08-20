@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Status | **open** |
-| Phase | **phase-0-design** |
+| Phase | **phase-2-green** |
 | Type / priority | architecture / P0 |
 | Initial size | XL |
 | Current size | XL |
@@ -11,7 +11,7 @@
 | Specification | [Ideal Expression and Finite Realization Boundary](../specs/staqex-ideal-expression-realization-boundary.md) |
 | Related authority | ADR 0209, ADR 0210, ADR 0211, [ADR 0212](../architecture/adr/0212-ideal-meaning-and-finite-realization-boundary.md) |
 | Dependencies | none |
-| Implementation approval | not granted |
+| Implementation approval | granted for Phase 2 Green; Phase 3 not granted |
 
 ## Objective
 
@@ -35,5 +35,8 @@ production implementation are excluded.
 
 ## Approval boundary
 
-This Issue authorizes design intake only. Phase 1 Red, ADR acceptance, and
-implementation require separate approval.
+Phase 1 Red is complete. The user approved Phase 2 Green for the bounded
+implementation and regression tests recorded in the work trace. Phase 3,
+merge/push, and any provider/live-QPU work remain unapproved.
+
+Approval evidence: `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.

@@ -35,6 +35,19 @@ _QASM_GATE_NAMES = {
 }
 
 
+def _source_scalar_bindings(unit: CompilationUnit) -> dict[str, float]:
+    """Resolve closed classical scalar bindings for rotation emission."""
+    if unit.main is None:
+        return {}
+    bindings: dict[str, float] = {}
+    for statement in unit.main.body.stmts:
+        names = getattr(statement, "names", ())
+        value = getattr(getattr(statement, "expr", None), "value", None)
+        if len(names) == 1 and isinstance(value, (int, float)):
+            bindings[names[0]] = float(value)
+    return bindings
+
+
 @dataclass
 class EmitResult:
     qasm: str
@@ -72,9 +85,12 @@ class QASM3Emitter:
                 ],
                 ok=False,
                 circuit=Circuit(
-                    n_qubits=1,
-                    n_bits=1,
+                    n_qubits=0,
+                    n_bits=0,
                     reject_code="E_QPU_CANONICAL_PROVENANCE",
+                    allocation_started=False,
+                    allocated_qubits=(),
+                    partial_program=None,
                 ),
             )
         decision = enforce_optional_budget(
@@ -90,9 +106,22 @@ class QASM3Emitter:
                     notes=notes,
                     ok=False,
                     circuit=Circuit(
-                        n_qubits=max(resource_estimate.logical_qubits, 1),
-                        n_bits=1,
-                        reject_code="SIMULATOR_RESOURCE_ERROR",
+                        n_qubits=0,
+                        n_bits=0,
+                        gates=[],
+                        reject_code="EVOLUTION_TARGET_UNSUPPORTED",
+                        provenance={
+                            "reason": "resource_budget_exceeded_before_allocation",
+                            "source_evidence": {
+                                "logical_qubits": resource_estimate.logical_qubits,
+                                "estimated_bytes": resource_estimate.estimated_bytes,
+                                "memory_limit_bytes": resource_profile.simulator.memory_limit_bytes,
+                            },
+                            "target_plan": None,
+                        },
+                        allocation_started=False,
+                        allocated_qubits=(),
+                        partial_program=None,
                     ),
                 )
         rejected = qudit_capability_reject(unit)
@@ -105,58 +134,91 @@ class QASM3Emitter:
             )
         semantic_ir = semantic_ir or build_scientific_semantic_ir(unit)
         canonical = build_qpu_ir(unit, semantic_ir)
-        qpu_result = self._emit_from_qpu_ir_when_available(canonical)
+        qpu_result = self._emit_from_qpu_ir_when_available(
+            canonical,
+            parameter_values=_source_scalar_bindings(unit),
+        )
         if qpu_result is not None:
             return qpu_result
-        # A finite Suzuki/binder projection still uses the established finite
-        # lowering implementation until its instruction projection is moved
-        # in a separately reviewed slice. Unresolved ideal evolution never
-        # enters this compatibility boundary.
+        if "instructions" in canonical:
+            return EmitResult(
+                qasm="",
+                notes=[
+                    "E_QPU_CANONICAL_FINITE_PROJECTION_UNAVAILABLE: canonical "
+                    "instructions cannot be emitted without a matching projection"
+                ],
+                ok=False,
+                circuit=Circuit(
+                    n_qubits=0,
+                    n_bits=0,
+                    reject_code="E_QPU_CANONICAL_FINITE_PROJECTION_UNAVAILABLE",
+                    provenance={
+                        "reason": "canonical_instruction_projection_unavailable",
+                        "target_plan": None,
+                    },
+                    allocation_started=False,
+                    allocated_qubits=(),
+                    partial_program=None,
+                ),
+            )
         if canonical.get("lowering_policy") is not None or canonical.get(
             "binder_lowering"
         ):
-            if not canonical.get("instructions"):
-                return EmitResult(
-                    qasm="",
-                    notes=[
-                        "E_QPU_CANONICAL_FINITE_PROJECTION_UNAVAILABLE: "
-                        "finite canonical projection produced no instructions"
-                    ],
-                    ok=False,
-                    circuit=Circuit(
-                        n_qubits=1,
-                        n_bits=1,
-                        reject_code="E_QPU_CANONICAL_FINITE_PROJECTION_UNAVAILABLE",
-                    ),
-                )
-            fallback_note = (
-                "W_QPU_FINITE_COMPAT_LOWERING: canonical finite policy is "
-                "validated; instruction projection remains deferred"
+            return EmitResult(
+                qasm="",
+                notes=[
+                    "E_QPU_CANONICAL_FINITE_PROJECTION_UNAVAILABLE: finite "
+                    "canonical projection produced no executable instructions"
+                ],
+                ok=False,
+                circuit=Circuit(
+                    n_qubits=0,
+                    n_bits=0,
+                    reject_code="E_QPU_CANONICAL_FINITE_PROJECTION_UNAVAILABLE",
+                    provenance={
+                        "reason": "canonical_instruction_projection_unavailable",
+                        "target_plan": None,
+                    },
+                    allocation_started=False,
+                    allocated_qubits=(),
+                    partial_program=None,
+                ),
             )
-            logical = lower_unit_to_circuit(unit)
-            notes = [fallback_note, *logical.notes]
-            if logical.reject_code:
-                return EmitResult(qasm="", notes=notes, ok=False, circuit=logical)
-            circ = logical
-            if self.route:
-                topo = self._resolve_topo(logical.n_qubits)
-                circ = route_circuit(logical, topo)
-                notes.extend(circ.notes)
-            return EmitResult(qasm=self.render(circ), notes=notes, ok=True, circuit=circ)
         diagnostics = qpu_ir_diagnostics(
             unit,
             canonical.get("canonical_semantic_ir"),
         )
         if diagnostics:
             first = diagnostics[0]
+            diagnostic_code = str(first.get("code", ""))
+            if diagnostic_code.startswith("E_ALGORITHM_PLAN_CANONICAL_PROVENANCE"):
+                diagnostic_code = "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE"
+            source_node_id = next(
+                (
+                    node.node_id
+                    for node in semantic_ir.nodes
+                    if node.kind == "Limit"
+                ),
+                "",
+            )
             return EmitResult(
                 qasm="",
                 notes=[str(first.get("message", first.get("code", "")))],
                 ok=False,
                 circuit=Circuit(
-                    n_qubits=1,
-                    n_bits=1,
-                    reject_code=str(first.get("code", "E_QPU_UNSUPPORTED_CAPABILITY")),
+                    n_qubits=0,
+                    n_bits=0,
+                    reject_code=diagnostic_code or "E_QPU_UNSUPPORTED_CAPABILITY",
+                    provenance={
+                        "reason": "missing_finite_realization"
+                        if source_node_id
+                        else "canonical_projection_rejected",
+                        "source_node_id": source_node_id,
+                        "target_plan": None,
+                    },
+                    allocation_started=False,
+                    allocated_qubits=(),
+                    partial_program=None,
                 ),
             )
         if canonical.get("explicit_evolution") is None:
@@ -176,9 +238,12 @@ class QASM3Emitter:
             notes=[message],
             ok=False,
             circuit=Circuit(
-                n_qubits=1,
-                n_bits=1,
+                n_qubits=0,
+                n_bits=0,
                 reject_code=code,
+                allocation_started=False,
+                allocated_qubits=(),
+                partial_program=None,
             ),
         )
 
@@ -191,10 +256,41 @@ class QASM3Emitter:
         """Consume the immutable provider-neutral QPU IR directly."""
         validation_error = self._validate_canonical_qpu_program(program)
         if validation_error is not None:
+            projection_error = str(program.get("projection_error", ""))
+            if projection_error.startswith("E_ALGORITHM_PLAN_CANONICAL_PROVENANCE"):
+                source_node_id = next(
+                    (
+                        node.node_id
+                        for node in getattr(program.get("canonical_semantic_ir"), "nodes", ())
+                        if node.kind == "Limit"
+                    ),
+                    "",
+                )
+                return EmitResult(
+                    qasm="",
+                    notes=validation_error.notes,
+                    ok=False,
+                    circuit=Circuit(
+                        n_qubits=0,
+                        n_bits=0,
+                        reject_code="E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
+                        provenance={
+                            "reason": "missing_finite_realization",
+                            "source_node_id": source_node_id,
+                            "target_plan": None,
+                        },
+                        allocation_started=False,
+                        allocated_qubits=(),
+                        partial_program=None,
+                    ),
+                )
             return validation_error
         shape = program["hilbert_shape"]
         n_qubits = int(shape.get("logical_qubits", 0)) or 1
         resolved_values = dict(parameter_values or {})
+        declared_parameters = {
+            str(item.get("name")) for item in program.get("parameters", ())
+        }
         gates: list[Gate] = []
         for instruction in program["instructions"]:
             if instruction.opcode == "Measure":
@@ -217,14 +313,42 @@ class QASM3Emitter:
                     ],
                     ok=False,
                     circuit=Circuit(
-                        n_qubits=n_qubits,
-                        n_bits=1,
+                        n_qubits=0,
+                        n_bits=0,
                         reject_code="E_QPU_UNSUPPORTED_CAPABILITY",
+                        provenance={
+                            "reason": "unsupported_opcode",
+                            "source_node_id": instruction.provenance.get("source_node_id", ""),
+                            "target_plan": None,
+                        },
+                        allocation_started=False,
+                        allocated_qubits=(),
+                        partial_program=None,
                     ),
                 )
             angle = instruction.parameter if name in {"rx", "ry", "rz"} else None
             if isinstance(angle, str) and angle in resolved_values:
                 angle = float(resolved_values[angle])
+            elif isinstance(angle, str) and angle not in declared_parameters:
+                reason = "parameter_unresolved"
+                return EmitResult(
+                    qasm="",
+                    notes=[
+                        f"QASM_ROTATION_ANGLE_UNRESOLVED: {reason}: {angle}"
+                    ],
+                    ok=False,
+                    circuit=Circuit(
+                        n_qubits=0,
+                        n_bits=0,
+                        reject_code="QASM_ROTATION_ANGLE_UNRESOLVED",
+                        provenance={
+                            "reason": reason,
+                            "source_node_id": instruction.provenance.get(
+                                "source_node_id", ""
+                            ),
+                        },
+                    ),
+                )
             gates.append(
                 Gate(
                     name,  # type: ignore[arg-type]
@@ -281,9 +405,12 @@ class QASM3Emitter:
                     notes=[message],
                     ok=False,
                     circuit=Circuit(
-                        n_qubits=1,
-                        n_bits=1,
+                        n_qubits=0,
+                        n_bits=0,
                         reject_code="E_QPU_CANONICAL_PROVENANCE",
+                        allocation_started=False,
+                        allocated_qubits=(),
+                        partial_program=None,
                     ),
                 )
             source_node_ids = set(program.source_node_ids)
@@ -299,9 +426,12 @@ class QASM3Emitter:
                     notes=[message],
                     ok=False,
                     circuit=Circuit(
-                        n_qubits=1,
-                        n_bits=1,
+                        n_qubits=0,
+                        n_bits=0,
                         reject_code="E_QPU_CANONICAL_PROVENANCE",
+                        allocation_started=False,
+                        allocated_qubits=(),
+                        partial_program=None,
                     ),
                 )
             canonical_operations = getattr(canonical.qpu_projection, "operations", ())
@@ -347,9 +477,12 @@ class QASM3Emitter:
                     notes=[message],
                     ok=False,
                     circuit=Circuit(
-                        n_qubits=1,
-                        n_bits=1,
+                        n_qubits=0,
+                        n_bits=0,
                         reject_code="E_QPU_CANONICAL_PROVENANCE",
+                        allocation_started=False,
+                        allocated_qubits=(),
+                        partial_program=None,
                     ),
                 )
             expected_measurements = tuple(
@@ -382,9 +515,12 @@ class QASM3Emitter:
                     notes=[message],
                     ok=False,
                     circuit=Circuit(
-                        n_qubits=1,
-                        n_bits=1,
+                        n_qubits=0,
+                        n_bits=0,
                         reject_code="E_QPU_CANONICAL_PROVENANCE",
+                        allocation_started=False,
+                        allocated_qubits=(),
+                        partial_program=None,
                     ),
                 )
             missing = [
@@ -407,12 +543,24 @@ class QASM3Emitter:
             qasm="",
             notes=[message],
             ok=False,
-            circuit=Circuit(n_qubits=1, n_bits=1, reject_code=reject_code),
+            circuit=Circuit(
+                n_qubits=0,
+                n_bits=0,
+                reject_code=reject_code,
+                allocation_started=False,
+                allocated_qubits=(),
+                partial_program=None,
+            ),
         )
 
-    def _emit_from_qpu_ir_when_available(self, program: QpuProgram) -> EmitResult | None:
+    def _emit_from_qpu_ir_when_available(
+        self,
+        program: QpuProgram,
+        *,
+        parameter_values: dict[str, float] | None = None,
+    ) -> EmitResult | None:
         if program.get("projection_error"):
-            return self.emit_qpu_program(program)
+            return self.emit_qpu_program(program, parameter_values=parameter_values)
         instructions = tuple(
             instruction
             for instruction in program.get("instructions", ())
@@ -420,7 +568,7 @@ class QASM3Emitter:
         )
         if not instructions:
             return None
-        return self.emit_qpu_program(program)
+        return self.emit_qpu_program(program, parameter_values=parameter_values)
 
     def _resolve_topo(self, n_logical: int) -> Topology:
         n = self.n_physical or n_logical

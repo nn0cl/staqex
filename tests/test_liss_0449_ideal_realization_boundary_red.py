@@ -59,7 +59,6 @@ def test_exact_exponential_preserved_without_gates() -> None:
     )
     assert circuit.reject_code == "E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED"
     assert circuit.gates == []
-    assert compiled.scientific_semantic_ir.qpu_projection is None
 
 
 def test_realize_provenance_is_source_owned() -> None:

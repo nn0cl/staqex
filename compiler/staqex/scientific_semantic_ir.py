@@ -7,10 +7,10 @@ remain explicit and are not treated as alternate authorities.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import hashlib
 import json
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 if TYPE_CHECKING:
     from .algorithm_plan_ir import AlgorithmPlanModule
@@ -69,6 +69,13 @@ class CanonicalQpuProjection:
     projection_error: str | None = None
 
 
+class SemanticProvenance(NamedTuple):
+    source: str
+    line: int
+    col: int
+    source_node_id: str
+
+
 @dataclass(frozen=True, slots=True)
 class SemanticNode:
     node_id: str
@@ -79,7 +86,10 @@ class SemanticNode:
     dimensions: str
     exactness: str
     intent: str
-    provenance: tuple[str, int, int]
+    provenance: SemanticProvenance
+    meaning_kind: str = "expression"
+    state_role: str = "unspecified"
+    child_source_node_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -117,6 +127,14 @@ class ScientificSemanticIR:
     source_unit_identity: int | None = None
     realize_source_node_id: str | None = None
     finite_realization_record: FiniteRealizationRecord | None = None
+    ideal_meaning: "IdealMeaning | None" = None
+
+
+@dataclass(frozen=True, slots=True)
+class IdealMeaning:
+    """Stable source-owned identity for ideal meaning before target projection."""
+
+    source_fingerprint: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -166,6 +184,9 @@ def semantic_fingerprint(core: ScientificSemanticIR) -> str:
                 "exactness": node.exactness,
                 "intent": node.intent,
                 "provenance": node.provenance,
+                "meaning_kind": node.meaning_kind,
+                "state_role": node.state_role,
+                "child_source_node_ids": node.child_source_node_ids,
             }
             for node in core.nodes
         ],
@@ -216,6 +237,26 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
     nodes: list[SemanticNode] = []
     counter = 0
 
+    def is_quantum_exponential(call: Call) -> bool:
+        if len(call.args) != 1:
+            return False
+        names: set[str] = set()
+
+        def collect(value: Any) -> None:
+            if isinstance(value, Var):
+                names.add(value.name)
+                return
+            if isinstance(value, (tuple, list)):
+                for item in value:
+                    collect(item)
+                return
+            if hasattr(value, "__dataclass_fields__"):
+                for field_name in value.__dataclass_fields__:
+                    collect(getattr(value, field_name))
+
+        collect(call.args[0])
+        return "i" in names and len(names) >= 2
+
     def visit(value: Any, parent: str | None = None) -> None:
         nonlocal counter
         if value is None or isinstance(value, (str, int, float, bool, bytes)):
@@ -230,8 +271,12 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
         counter += 1
         node_id = f"ssc:{counter}"
         name = type(value).__name__
+        if isinstance(value, Call) and isinstance(value.callee, Var):
+            if value.callee.name == "Limit":
+                name = "Limit"
+            elif value.callee.name == "exp" and is_quantum_exponential(value):
+                name = "ExactExponential"
         role = _role_for(name)
-        origin = ("sqx", getattr(span, "line", 0), getattr(span, "col", 0))
         child_start = len(nodes)
         for field_name in value.__dataclass_fields__:
             visit(getattr(value, field_name), node_id)
@@ -244,16 +289,36 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
                 role_lane=role,
                 type=_type_for(name),
                 dimensions="unknown",
-                exactness="exact" if name in {"Limit", "EvolveExpr"} else "unresolved",
+                exactness="exact"
+                if name in {"Limit", "ExactExponential", "EvolveExpr"}
+                else "unresolved",
                 intent=_intent_for(name),
-                provenance=origin,
+                provenance=SemanticProvenance(
+                    "sqx",
+                    getattr(span, "line", 0),
+                    getattr(span, "col", 0),
+                    node_id,
+                ),
+                meaning_kind=_meaning_kind(name),
+                state_role=_state_role(name),
+                child_source_node_ids=children,
             )
         )
 
     visit(unit)
     if not nodes:
         nodes.append(
-            SemanticNode("ssc:unit", "CompilationUnit", (), "mathematical", "Unit", "", "exact", "source", ("sqx", 0, 0))
+            SemanticNode(
+                "ssc:unit",
+                "CompilationUnit",
+                (),
+                "mathematical",
+                "Unit",
+                "",
+                "exact",
+                "source",
+                SemanticProvenance("sqx", 0, 0, "ssc:unit"),
+            )
         )
     relation_kind = "binder" if any("Binder" in node.kind or node.kind in {"Sigma", "Pi"} for node in nodes) else "source"
     core = ScientificSemanticIR(
@@ -267,7 +332,7 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
     realize_source_node_id, finite_realization_record, realization_errors = (
         _build_finite_realization_record(unit, core)
     )
-    return ScientificSemanticIR(
+    result = ScientificSemanticIR(
         schema=core.schema,
         authority=core.authority,
         nodes=core.nodes,
@@ -290,6 +355,35 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
         source_unit_identity=id(unit),
         realize_source_node_id=realize_source_node_id,
         finite_realization_record=finite_realization_record,
+    )
+    ideal_payload = json.dumps(
+        {
+            "nodes": [
+                (
+                    node.node_id,
+                    node.kind,
+                    node.children,
+                    node.role_lane,
+                    node.type,
+                    node.dimensions,
+                    node.exactness,
+                    node.intent,
+                    node.provenance,
+                    node.meaning_kind,
+                    node.state_role,
+                    node.child_source_node_ids,
+                )
+                for node in result.nodes
+            ],
+            "relations": result.relations,
+        },
+        sort_keys=True,
+        default=str,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return replace(
+        result,
+        ideal_meaning=IdealMeaning(hashlib.sha256(ideal_payload).hexdigest()),
     )
 
 
@@ -1052,7 +1146,7 @@ def _build_finite_realization_record(
 def _role_for(name: str) -> str:
     if "Measure" in name:
         return "terminal_classical"
-    if name in {"Limit", "EvolveExpr"}:
+    if name in {"Limit", "ExactExponential", "EvolveExpr"}:
         return "evolution"
     if "Operator" in name or "State" in name:
         return "quantum"
@@ -1062,7 +1156,7 @@ def _role_for(name: str) -> str:
 
 
 def _type_for(name: str) -> str:
-    if "State" in name or name in {"EvolveExpr", "Limit"}:
+    if "State" in name or name in {"EvolveExpr", "Limit", "ExactExponential"}:
         return "State<T>"
     if "Operator" in name:
         return "Operator"
@@ -1074,9 +1168,31 @@ def _intent_for(name: str) -> str:
         return "formal_evolution"
     if name == "EvolveExpr":
         return "evolution"
+    if name == "ExactExponential":
+        return "exact_evolution"
     if "Measure" in name:
         return "measurement"
     return "expression"
+
+
+def _meaning_kind(name: str) -> str:
+    if name == "Limit":
+        return "ideal_limit"
+    if name == "ExactExponential":
+        return "exact_exponential"
+    if name == "WhenExpr":
+        return "mixture"
+    if name in {"OpBin", "BinOp"}:
+        return "mathematical_product"
+    return "expression"
+
+
+def _state_role(name: str) -> str:
+    if name == "WhenExpr":
+        return "mixed_state"
+    if name in {"Limit", "ExactExponential", "EvolveExpr"}:
+        return "evolution_operator"
+    return "unspecified"
 
 
 def _has_realize_call(value: Any) -> bool:

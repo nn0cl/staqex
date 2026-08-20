@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Status | **open** |
-| Phase | **phase-0-design** |
+| Phase | **phase-2-green** |
 | Type / priority | architecture / P1 |
 | Initial size | M |
 | Current size | M |
@@ -11,7 +11,7 @@
 | Specification | [QPU Capability Rejection Contract](../specs/staqex-qpu-capability-rejection-contract.md) |
 | Dependencies | LISS-0449 and LISS-0450 design decisions |
 | Related authority | ADR 0085, ADR 0210, ADR 0211 |
-| Implementation approval | not granted |
+| Implementation approval | granted for Phase 2 Green; Phase 3 not granted |
 
 ## Objective
 
@@ -34,5 +34,8 @@ S02 migration, and solver work are excluded.
 
 ## Approval boundary
 
-The rejection matrix is design-only until reviewed. It must not be used to
-justify removing ideal-language or semantic-IR support.
+The rejection matrix is implemented for the approved Phase 2 Green cases. It
+must not be used to justify removing ideal-language or semantic-IR support.
+Phase 3 and new capability cases require separate approval.
+
+Approval evidence: `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.

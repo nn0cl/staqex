@@ -47,10 +47,51 @@ def test_missing_target_projection_does_not_erase_ideal_meaning() -> None:
     assert compiled.scientific_semantic_ir.ideal_meaning.source_fingerprint
 
 
+def test_exact_exponential_is_exact_and_unrelated_binder_does_not_authorize_it() -> None:
+    from compiler.staqex.backend.qasm.lower import EvolutionTargetProfile, lower_unit_to_circuit
+    from compiler.staqex.pipeline import compile_source
+
+    compiled = compile_source(
+        """
+        package fixtures.semantic_meaning
+        pub fn main() -> Unit {
+            Operator H = X
+            Operator unrelated = Sigma (i In 0..1) { Z[i] }
+            Operator U = exp(-i * H)
+            State psi = |0>
+            State result = Evolve() { U * psi }.run()
+            Measure result
+        }
+        """
+    )
+    assert compiled.ok, compiled.diagnostics
+    assert compiled.scientific_semantic_ir is not None
+    exact = next(
+        node
+        for node in compiled.scientific_semantic_ir.nodes
+        if node.kind == "ExactExponential"
+    )
+    assert exact.exactness == "exact"
+    circuit = lower_unit_to_circuit(
+        compiled.unit,
+        target_profile=EvolutionTargetProfile(
+            suzuki_order=2,
+            suzuki_steps=1,
+            realization_mode="approximate",
+            resource_budget_qubits=4,
+        ),
+    )
+    assert circuit.reject_code == "E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED"
+    assert circuit.gates == []
+    assert circuit.n_qubits == 0
+    assert circuit.allocation_started is False
+
+
 if __name__ == "__main__":
     for test in (
         test_mixture_and_product_remain_distinct_structural_meanings,
         test_mixture_preserves_children_state_role_and_provenance,
         test_missing_target_projection_does_not_erase_ideal_meaning,
+        test_exact_exponential_is_exact_and_unrelated_binder_does_not_authorize_it,
     ):
         test()
