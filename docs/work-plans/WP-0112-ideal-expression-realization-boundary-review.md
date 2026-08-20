@@ -1,0 +1,55 @@
+# WP-0112: Ideal Expression and Finite Realization Boundary Review
+
+| Field | Value |
+|---|---|
+| Status | **proposed** |
+| Phase | **phase-0-design** |
+| Size | L |
+| Related Issue | New Issue required before Phase 1 Red |
+| Related authority | ADR 0209, ADR 0210, ADR 0211 |
+| Depends on | none |
+| Branch | `codex/liss-0438-residual-reconciliation` (design intake only) |
+
+## Objective
+
+Ensure that ideal blackboard expressions remain writable and source-owned even
+when a QPU target cannot execute them. Separate the language/semantic boundary
+from the finite realization boundary.
+
+## Questions to resolve
+
+- Can formal `Limit` and exact exponential expressions be represented in the
+  ideal semantic IR without being accepted by QPU lowering?
+- Is `Realize` an explicit target transition rather than a prerequisite for
+  expressing the ideal equation?
+- Which exact expressions are CPU/simulator-executable, symbolic-only, or
+  QPU-capability-rejected?
+- How are exactness, approximation method, order, steps, and error budget
+  preserved from source to target diagnostics?
+
+## In scope
+
+- Issue/Spec/ADR design for ideal expression versus finite realization.
+- `Limit`, `exp(-iHt/ℏ)`, `Evolve`, `Realize`, Suzuki, and target diagnostics.
+- Source-to-IR provenance and explicit transition records.
+- Blackboard/source examples and acceptance matrix.
+
+## Out of scope
+
+- Provider SDK, live QPU submission, credentials, and network.
+- S02 numerical migration and solver implementation.
+- Syntax implementation, parser changes, and production code.
+
+## Acceptance conditions for design
+
+- Ideal expressions can be represented without implicit finiteization.
+- QPU lowering requires an explicit finite realization policy where needed.
+- Direct target rejection does not erase the ideal semantic representation.
+- Any architecture change is recorded in an accepted ADR before implementation.
+
+## Verification and gates
+
+- Independent design review using physicist-first, canonical-authority, and
+  realization-boundary lenses.
+- Phase 1 Red approval only after the acceptance Spec is accepted.
+- No implementation approval is implied by this WP.
