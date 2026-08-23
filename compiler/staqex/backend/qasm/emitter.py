@@ -11,7 +11,10 @@ from ...qpu_ir import (
     instruction_fingerprint,
     qpu_ir_diagnostics,
 )
-from ...scientific_semantic_ir import ScientificSemanticIR
+from ...scientific_semantic_ir import (
+    MIXTURE_PROJECTION_REJECTION_CODE,
+    ScientificSemanticIR,
+)
 from ...scientific_semantic_ir import build_scientific_semantic_ir, semantic_fingerprint
 from ...resource_enforcement import enforce_optional_budget
 from ...resource_profile import ResourceProfile, SimulationResourceEstimate
@@ -264,6 +267,43 @@ class QASM3Emitter:
                             "source_node_id": source_node_id,
                             "target_plan": None,
                         },
+                    ),
+                )
+            if projection_error.startswith(f"{MIXTURE_PROJECTION_REJECTION_CODE}:"):
+                _code, _separator, reason = projection_error.partition(":")
+                canonical = program.get("canonical_semantic_ir")
+                mixture = next(
+                    (
+                        node
+                        for node in getattr(canonical, "nodes", ())
+                        if node.kind == "WhenExpr"
+                    ),
+                    None,
+                )
+                branch_ids = tuple(
+                    node.node_id
+                    for node in getattr(canonical, "nodes", ())
+                    if node.kind == "WhenArm"
+                    and mixture is not None
+                    and node.node_id in mixture.child_source_node_ids
+                )
+                provenance = {
+                    "reason": reason,
+                    "target_plan": None,
+                    "source_node_id": mixture.node_id if mixture is not None else "",
+                    "branch_source_node_ids": branch_ids,
+                    "source_span": {
+                        "line": mixture.provenance.line if mixture is not None else 0,
+                        "col": mixture.provenance.col if mixture is not None else 0,
+                    },
+                }
+                return EmitResult(
+                    qasm="",
+                    notes=validation_error.notes,
+                    ok=False,
+                    circuit=_empty_rejection_circuit(
+                        MIXTURE_PROJECTION_REJECTION_CODE,
+                        provenance=provenance,
                     ),
                 )
             return validation_error

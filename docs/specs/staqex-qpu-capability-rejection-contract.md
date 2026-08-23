@@ -2,10 +2,10 @@
 
 | Field | Value |
 |---|---|
-| Status | **proposed** |
+| Status | **Accepted for the canonical mixture/QPU boundary — user approved 2026-08-23** |
 | Issue | [LISS-0451](../issues/LISS-0451-qpu-capability-rejection-contract.md) |
 | WorkPlan | [WP-0114](../work-plans/WP-0114-qpu-capability-rejection-contract-review.md) |
-| Authority | ADR 0085, ADR 0210, ADR 0211 |
+| Authority | ADR 0085, ADR 0210, ADR 0211, ADR 0213 |
 
 ## [DESIGN CHECK]
 
@@ -42,6 +42,14 @@ qudits, unresolved parameters, and resource budgets.
 
 These codes/reasons are the Phase 1 acceptance contract. A new code requires a
 Spec/ADR update before implementation.
+
+## Acceptance record
+
+- User accepted this rejection contract as the normative companion for the
+  canonical mixture/QPU boundary on 2026-08-23.
+- ADR 0213 adds the branch-meaning and no-unitary-fallback requirements for
+  `Coin`/`Mix`; this contract supplies the deterministic rejection envelope
+  and provenance obligations.
 
 ## Phase 1 Red cases
 

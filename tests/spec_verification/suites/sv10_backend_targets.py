@@ -31,21 +31,31 @@ Measure result
 def run() -> list[CaseResult]:
     out: list[CaseResult] = []
 
-    # Pattern → H + CX + measure
+    # Coin/Mix remains ideal mixture meaning; static QASM rejects it.
     try:
         compiled = compile_source(PORTABLE)
         if compiled.unit is None:
             raise AssertionFailure("PARSE_ERROR", str(compiled.diagnostics))
         emitted = emit_openqasm3(compiled.unit)
-        qasm = emitted.qasm
-        for needle in ("OPENQASM 3.0", "h q[0]", "cx q[0], q[1]", "measure"):
-            if needle not in qasm:
-                raise AssertionFailure("PARSE_ERROR", f"missing {needle!r} in {qasm}")
+        if emitted.ok:
+            raise AssertionFailure("PARSE_ERROR", "Coin/Mix must not emit a unitary fallback")
+        if emitted.qasm:
+            raise AssertionFailure("PARSE_ERROR", emitted.qasm)
+        if emitted.circuit is None:
+            raise AssertionFailure("PARSE_ERROR", "missing rejection circuit")
+        if emitted.circuit.reject_code != "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE":
+            raise AssertionFailure("PARSE_ERROR", str(emitted.circuit.reject_code))
+        if emitted.circuit.provenance is None:
+            raise AssertionFailure("PARSE_ERROR", "missing rejection provenance")
+        if emitted.circuit.provenance.get("reason") != "mixture_projection_unavailable":
+            raise AssertionFailure("PARSE_ERROR", str(emitted.circuit.provenance))
+        if emitted.circuit.gates or emitted.circuit.allocation_started:
+            raise AssertionFailure("PARSE_ERROR", "rejection retained target artifacts")
         out.append(
             CaseResult(
                 "SV-10",
                 "sv10-openqasm-bell",
-                "Coin/when/Measure → OpenQASM H+CX",
+                "Coin/Mix → explicit capability rejection",
                 True,
                 ["emit_openqasm3"],
             )
@@ -72,10 +82,10 @@ def run() -> list[CaseResult]:
 
         with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(err):
             code = cmd_emit_qasm(args)
-        if code != 0:
-            raise AssertionFailure("PARSE_ERROR", err.getvalue())
-        if "h q[0]" not in buf.getvalue():
-            raise AssertionFailure("PARSE_ERROR", buf.getvalue())
+        if code != 1:
+            raise AssertionFailure("PARSE_ERROR", f"exit={code}: {err.getvalue()}")
+        if buf.getvalue() or "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE" not in err.getvalue():
+            raise AssertionFailure("PARSE_ERROR", f"stdout={buf.getvalue()} stderr={err.getvalue()}")
         out.append(
             CaseResult(
                 "SV-10",
@@ -140,17 +150,17 @@ def run() -> list[CaseResult]:
 
         with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(err):
             code = cmd_run(args)
-        if code != 0:
-            raise AssertionFailure("PARSE_ERROR", err.getvalue())
-        if "OPENQASM 3.0" not in buf.getvalue():
-            raise AssertionFailure("PARSE_ERROR", buf.getvalue())
+        if code != 1:
+            raise AssertionFailure("PARSE_ERROR", f"exit={code}: {err.getvalue()}")
+        if buf.getvalue() or "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE" not in err.getvalue():
+            raise AssertionFailure("PARSE_ERROR", f"stdout={buf.getvalue()} stderr={err.getvalue()}")
         if "import" in PORTABLE and "backend" in PORTABLE:
             raise AssertionFailure("FORBIDDEN_KEYWORD", "source must stay portable")
         out.append(
             CaseResult(
                 "SV-10",
                 "sv10-target-qpu-emit",
-                "staqex run --target qpu:* emits QASM; source portable",
+                "staqex run --target qpu:* rejects unsupported Coin/Mix projection",
                 True,
                 ["--target qpu"],
             )

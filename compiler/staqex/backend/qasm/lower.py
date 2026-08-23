@@ -902,13 +902,7 @@ def _from_ast_patterns(
         if isinstance(b.expr, WhenExpr) and isinstance(b.expr.ctrl, Var):
             ctrl_name = b.expr.ctrl.name
             if ctrl_name not in qubit_of:
-                notes.append(f"when ctrl `{ctrl_name}` unbound; skip CX pattern")
-                continue
-            if _is_copy_when(b.expr):
-                tgt = alloc(b.name)
-                ctrl = qubit_of[ctrl_name]
-                gates.append(Gate("cx", (ctrl, tgt), comment=f"when-copy {ctrl_name}→{b.name}"))
-                continue
+                notes.append(f"when ctrl `{ctrl_name}` unbound; reject mixture")
             return _rejected_target_circuit(
                 "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
                 {

@@ -168,6 +168,7 @@ class WhenArm:
     pat: Any  # literal value or None for else
     body: "Expr"
     is_else: bool = False
+    span: Span | None = None
 
 
 @dataclass
