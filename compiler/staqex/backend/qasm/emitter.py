@@ -144,6 +144,16 @@ class QASM3Emitter:
                     ok=False,
                     circuit=_empty_rejection_circuit("QASM_TROTTER_STEPS_REQUIRED"),
                 )
+            if statement.expr.until_predicate is not None:
+                return EmitResult(
+                    qasm="",
+                    notes=[
+                        "E_QPU_UNSUPPORTED_CAPABILITY: dynamic evolve-until is "
+                        "not supported by the static QPU IR"
+                    ],
+                    ok=False,
+                    circuit=_empty_rejection_circuit("E_QPU_UNSUPPORTED_CAPABILITY"),
+                )
         decision = enforce_optional_budget(
             resource_profile,
             resource_estimate,

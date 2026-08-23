@@ -97,3 +97,18 @@ allowed phase is recorded in the subsequent work trace.
 The full pytest root suite remains the remote CI gate because pytest is not
 installed in the local runtime. The branch must be pushed for a CI-equivalent
 retry before any merge decision.
+
+## Follow-up correction: dynamic evolve-until boundary
+
+- `.venv` was used to run the CI-equivalent command. The first full run
+  reproduced one failure in `tests/test_evolve_until_red.py`: dynamic
+  `Evolve ... until converged(...) max N` reached QASM emission as if it were
+  a static projection.
+- The failure was corrected in `compiler/staqex/backend/qasm/emitter.py` by
+  rejecting `until_predicate` before canonical instruction emission with the
+  existing `E_QPU_UNSUPPORTED_CAPABILITY` contract.
+- Focused verification: `tests/test_evolve_until_red.py` **5 passed**.
+- A subsequent `.venv` full-suite run reached **851 passed** with no further
+  failure, then was interrupted at the long-running S02 numerical case
+  `test_feasibility_leak_is_detected_and_excluded_from_scoring`; this is a
+  runtime-duration blocker, not a new assertion failure.
