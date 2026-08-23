@@ -21,6 +21,10 @@ The current direct test harness reports four intended Red failures and four pass
 
 The fresh reviewer confirmed that the Red tests and all three fixtures are self-contained. One accepted documentation/test correction remains: arm source-line expectations must match fixture lines 6 and 7. The canonical IR fields, arm provenance, fail-closed legacy projection, and fingerprint failures remain intentionally Red implementation targets.
 
+## Review 04 disposition
+
+The final fresh review confirmed the committed Red boundary. The working tree retains prior Phase 2/3 implementation changes by design; this loop records the current working-tree baseline and does not claim that `b9ae0ff5` alone is a complete implementation baseline. The stale review count was corrected to 4 failures and 4 passes. The Red review loop is `COMPLETE`; Phase 2 approval remains separate.
+
 ## State
 
-`RE_REVIEW` — correction in progress; no Phase 2 transition.
+`COMPLETE` — Red review loop complete; no Phase 2 transition.
