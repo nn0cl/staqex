@@ -40,6 +40,10 @@ mixture rejection literals. Both are in-scope preserving corrections and are
 being re-verified. The legacy-caller inventory remains deferred follow-up work
 and is explicitly recorded in ADR 0213.
 
+The fresh re-review confirmed the constant correction and the post-correction
+report generation. Phase 3 review is `COMPLETE`; the Issue remains
+`final-review-ready` pending the separate completion packet and merge gates.
+
 ## Remaining risks
 
 - Direct legacy lowerer callers still require inventory and eventual

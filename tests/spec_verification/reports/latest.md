@@ -1,6 +1,6 @@
 # Staqex Spec Compliance Report
 
-- Generated: `2026-08-23T15:35:07.785932+00:00`
+- Generated: `2026-08-23T15:37:35.877465+00:00`
 - Spec Compliance Rate: **100.0%**
 - Gate: **PASS** (161/161 passed)
 
