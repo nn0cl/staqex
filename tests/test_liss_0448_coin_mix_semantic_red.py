@@ -113,8 +113,8 @@ def test_liss_0448_branch_arms_retain_source_spans() -> None:
     ]
 
     assert [(arm.provenance.line, arm.provenance.col) for arm in arm_nodes] == [
-        (5, 5),
         (6, 5),
+        (7, 5),
     ]
 
 
