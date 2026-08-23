@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ...ast_nodes import CompilationUnit
+from ...ast_nodes import Call, CompilationUnit, EvolveExpr, FunDecl, StateBind, Var
 from ...qpu_ir import (
     QpuProgram,
     build_qpu_ir,
@@ -107,6 +107,43 @@ class QASM3Emitter:
                 ok=False,
                 circuit=_empty_rejection_circuit("E_QPU_CANONICAL_PROVENANCE"),
             )
+        main_body = getattr(getattr(unit, "main", None), "body", None)
+        user_fn_names = {
+            declaration.name
+            for declaration in getattr(unit, "decls", ())
+            if isinstance(declaration, FunDecl)
+        }
+        for statement in getattr(main_body, "stmts", ()):
+            if (
+                isinstance(statement, StateBind)
+                and isinstance(statement.expr, Call)
+                and isinstance(statement.expr.callee, Var)
+                and statement.expr.callee.name in user_fn_names
+            ):
+                return EmitResult(
+                    qasm="",
+                    notes=[
+                        "QASM_FUNCTION_CALL_UNSUPPORTED: Emitting QASM for "
+                        "function calls is currently unsupported. Please "
+                        "inline the function logic manually."
+                    ],
+                    ok=False,
+                    circuit=_empty_rejection_circuit("QASM_FUNCTION_CALL_UNSUPPORTED"),
+                )
+            if not isinstance(statement, StateBind) or not isinstance(statement.expr, EvolveExpr):
+                continue
+            if statement.expr.hamiltonian is not None and statement.expr.suzuki is None:
+                return EmitResult(
+                    qasm="",
+                    notes=[
+                        "QASM_TROTTER_STEPS_REQUIRED: emitting QASM for "
+                        "`evolve ... under H for t` requires an explicit "
+                        "step-count policy. Add `using Suzuki(order = 2, "
+                        "steps = N)` or an explicit tolerance policy."
+                    ],
+                    ok=False,
+                    circuit=_empty_rejection_circuit("QASM_TROTTER_STEPS_REQUIRED"),
+                )
         decision = enforce_optional_budget(
             resource_profile,
             resource_estimate,
@@ -120,7 +157,7 @@ class QASM3Emitter:
                     notes=notes,
                     ok=False,
                     circuit=_empty_rejection_circuit(
-                        "EVOLUTION_TARGET_UNSUPPORTED",
+                        "SIMULATOR_RESOURCE_ERROR",
                         provenance={
                             "reason": "resource_budget_exceeded_before_allocation",
                             "source_evidence": {
@@ -541,11 +578,7 @@ class QASM3Emitter:
     ) -> EmitResult | None:
         if program.get("projection_error"):
             return self.emit_qpu_program(program, parameter_values=parameter_values)
-        instructions = tuple(
-            instruction
-            for instruction in program.get("instructions", ())
-            if instruction.opcode != "Measure"
-        )
+        instructions = tuple(program.get("instructions", ()))
         if not instructions:
             return None
         return self.emit_qpu_program(program, parameter_values=parameter_values)

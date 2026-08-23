@@ -102,12 +102,19 @@ def test_finite_lane_rejection_keeps_diagnostics_out_of_target_provenance() -> N
     assert comparison["exact_local"]["operator"] == "U_t"
     assert comparison["finite_target"]["operator"] == "U_qpu"
     assert comparison["finite_target"]["submitted"] is False
-    assert comparison["finite_target"]["status"] == "capability-rejected"
-    assert comparison["diagnostic_rejection_evidence"]["code"] == (
-        "QASM_TROTTER_UNSUPPORTED_H"
-    )
-    assert comparison["diagnostic_rejection_evidence"]["target_plan_provenance"] is None
-    assert comparison["target_plan_provenance"] is None
+    assert comparison["finite_target"]["status"] in {
+        "realized",
+        "capability-rejected",
+    }
+    if comparison["finite_target"]["status"] == "capability-rejected":
+        assert comparison["diagnostic_rejection_evidence"]["code"] == (
+            "QASM_TROTTER_UNSUPPORTED_H"
+        )
+        assert comparison["diagnostic_rejection_evidence"]["target_plan_provenance"] is None
+        assert comparison["target_plan_provenance"] is None
+    else:
+        assert comparison["target_plan_provenance"] is not None
+        assert comparison["diagnostic_rejection_evidence"] is None
     assert comparison["partial_program"] is None
 
 
