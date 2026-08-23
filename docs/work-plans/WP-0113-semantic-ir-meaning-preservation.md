@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready** |
-| Phase | **phase-3-refactor** |
+| Status | **bounded Coin/when slice complete; follow-up slices open** |
+| Phase | **phase-3-refactor complete for the approved bounded slice** |
 | Size | XL |
 | Issue | [LISS-0450](../issues/LISS-0450-semantic-ir-meaning-preservation.md) |
 | Specification | [Scientific Semantic IR Meaning Preservation](../specs/staqex-semantic-ir-meaning-preservation.md) |
 | Related authority | ADR 0211 and the physicist-first language vision |
 | Depends on | WP-0112 design direction |
-| Branch | `codex/liss-0438-residual-reconciliation` |
+| Branch | Merged through PRs #557, #558, and #559 |
 
 ## Objective
 
@@ -87,5 +87,8 @@ Given/When/Then cases:
   `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.
 - Phase 3 Refactor, verification, and independent READY review: trace
   `docs/collaboration/traces/2026-08-21-liss-0449-0451-phase3-refactor.md`.
-- Completion state: `final-review-ready`; completion PR and final Adjudicator
-  review remain required.
+- Completion state: the approved bounded Coin/when/ExactExponential and
+  canonical-consumer slice is merged through PRs #557–#559. Final CI recovery
+  run #1181 passed all three checks.
+- Follow-up product/tensor, continuous/open-system, and measurement slices are
+  not completed by this work plan and require separate design/approval.

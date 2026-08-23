@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready** |
-| Phase | **phase-3-refactor** |
+| Status | **bounded slice complete; follow-up meaning families remain open** |
+| Phase | **phase-3-refactor complete for the approved bounded slice** |
 | Type / priority | architecture / P0 |
 | Initial size | XL |
 | Current size | XL |
@@ -11,7 +11,7 @@
 | Specification | [Scientific Semantic IR Meaning Preservation](../specs/staqex-semantic-ir-meaning-preservation.md) |
 | Dependencies | [LISS-0449](LISS-0449-ideal-expression-realization-boundary.md) design direction |
 | Related authority | ADR 0211, [ADR 0212](../architecture/adr/0212-ideal-meaning-and-finite-realization-boundary.md); adjudicator language vision |
-| Implementation approval | granted for Phase 2 Green; Phase 3 not granted |
+| Implementation approval | Phase 2 Green and bounded Phase 3 Refactor approved; no approval for additional meaning families |
 
 ## Objective
 
@@ -43,7 +43,10 @@ phase, only the accepted Coin/when meaning preservation, ExactExponential
 metadata, ideal fingerprint, and canonical consumer boundary are included.
 The behavior-preserving Phase 3 Refactor is complete for this bounded slice;
 additional meaning families require separate approval. The result is ready
-for the completion PR and final Adjudicator review.
+for the completion record. PRs #557, #558, and #559 merged the bounded slice
+into `main`; final CI recovery run #1181 passed all three checks. This does not
+close the broader product/tensor, continuous/open-system, or measurement
+follow-up families.
 
 Approval evidence: `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.
 Phase 3 evidence: `docs/collaboration/traces/2026-08-21-liss-0449-0451-phase3-refactor.md`.
