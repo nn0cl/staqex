@@ -1,0 +1,6 @@
+package canonical_coin_mix
+
+pub fn main() -> Unit {
+  State<Int> q = Coin()
+  Measure q
+}
