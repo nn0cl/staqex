@@ -1,0 +1,10 @@
+package canonical_coin_mix
+
+pub fn main() -> Unit {
+  State<Int> q = |0>
+  State<Int> result = Mix (q) {
+    0 -> Dirac(0),
+    else -> Dirac(1),
+  }
+  Measure result
+}

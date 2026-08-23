@@ -1,0 +1,10 @@
+package canonical_coin_mix
+
+pub fn main() -> Unit {
+  State<Int> coin_state = Coin()
+  State<Int> mixture_state = Mix (coin_state) {
+    0 -> Dirac(0),
+    else -> Dirac(1),
+  }
+  Measure mixture_state
+}

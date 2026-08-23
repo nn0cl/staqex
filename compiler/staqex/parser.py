@@ -2697,11 +2697,19 @@ class Parser:
         self._expect(TokenKind.LBRACE)
         arms: list[WhenArm] = []
         while not self._check(TokenKind.RBRACE) and not self._check(TokenKind.EOF):
+            arm_tok = self._peek()
             if self._match(TokenKind.ELSE):
                 self._expect(TokenKind.ARROW)
                 body = self._expression()
                 self._match(TokenKind.COMMA)
-                arms.append(WhenArm(pat=None, body=body, is_else=True))
+                arms.append(
+                    WhenArm(
+                        pat=None,
+                        body=body,
+                        is_else=True,
+                        span=Span(line=arm_tok.line, col=arm_tok.col),
+                    )
+                )
                 continue
             # pattern: literal or ident
             pat_tok = self._peek()
@@ -2729,7 +2737,14 @@ class Parser:
             self._expect(TokenKind.ARROW)
             body = self._expression()
             self._match(TokenKind.COMMA)
-            arms.append(WhenArm(pat=pat, body=body, is_else=False))
+            arms.append(
+                WhenArm(
+                    pat=pat,
+                    body=body,
+                    is_else=False,
+                    span=Span(line=pat_tok.line, col=pat_tok.col),
+                )
+            )
         self._expect(TokenKind.RBRACE)
         return WhenExpr(ctrl=ctrl, arms=arms, span=sp)
 

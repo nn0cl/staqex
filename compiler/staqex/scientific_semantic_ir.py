@@ -40,6 +40,8 @@ from .backend.qasm.trotter import suzuki_gates
 from .stdlib.prelude import PRELUDE_CONSTANTS
 
 QPU_PROJECTION_MAX_QUBITS = 1024
+MIXTURE_PROJECTION_REJECTION_CODE = "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE"
+MIXTURE_PROJECTION_REJECTION_REASON = "mixture_projection_unavailable"
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,6 +92,8 @@ class SemanticNode:
     meaning_kind: str = "expression"
     state_role: str = "unspecified"
     child_source_node_ids: tuple[str, ...] = ()
+    control_source_node_id: str | None = None
+    branch_rules: tuple[tuple[tuple[str, Any], ...], ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -187,6 +191,8 @@ def semantic_fingerprint(core: ScientificSemanticIR) -> str:
                 "meaning_kind": node.meaning_kind,
                 "state_role": node.state_role,
                 "child_source_node_ids": node.child_source_node_ids,
+                "control_source_node_id": node.control_source_node_id,
+                "branch_rules": node.branch_rules,
             }
             for node in core.nodes
         ],
@@ -236,6 +242,7 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
 
     nodes: list[SemanticNode] = []
     counter = 0
+    source_node_ids: dict[int, str] = {}
 
     def is_quantum_exponential(call: Call) -> bool:
         if len(call.args) != 1:
@@ -270,6 +277,7 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
         span = getattr(value, "span", None)
         counter += 1
         node_id = f"ssc:{counter}"
+        source_node_ids[id(value)] = node_id
         name = type(value).__name__
         if isinstance(value, Call) and isinstance(value.callee, Var):
             if value.callee.name == "Limit":
@@ -281,6 +289,28 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
         for field_name in value.__dataclass_fields__:
             visit(getattr(value, field_name), node_id)
         children = tuple(node.node_id for node in nodes[child_start:])
+        control_source_node_id = None
+        branch_rules: tuple[tuple[tuple[str, Any], ...], ...] = ()
+        if name == "WhenExpr":
+            control_value = value.ctrl
+            if isinstance(control_value, Var) and unit.main is not None:
+                for statement in unit.main.body.stmts:
+                    if (
+                        isinstance(statement, StateBind)
+                        and statement.names
+                        and statement.names[0] == control_value.name
+                    ):
+                        control_value = statement.expr
+                        break
+            control_source_node_id = source_node_ids.get(id(control_value))
+            branch_rules = tuple(
+                (
+                    ("pattern", arm.pat),
+                    ("is_else", arm.is_else),
+                    ("source_node_id", source_node_ids.get(id(arm), "")),
+                )
+                for arm in value.arms
+            )
         nodes.append(
             SemanticNode(
                 node_id=node_id,
@@ -302,6 +332,8 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
                 meaning_kind=_meaning_kind(name),
                 state_role=_state_role(name),
                 child_source_node_ids=children,
+                control_source_node_id=control_source_node_id,
+                branch_rules=branch_rules,
             )
         )
 
@@ -320,7 +352,12 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
                 SemanticProvenance("sqx", 0, 0, "ssc:unit"),
             )
         )
-    relation_kind = "binder" if any("Binder" in node.kind or node.kind in {"Sigma", "Pi"} for node in nodes) else "source"
+    if any(node.kind == "WhenExpr" for node in nodes):
+        relation_kind = "mixture"
+    elif any("Binder" in node.kind or node.kind in {"Sigma", "Pi"} for node in nodes):
+        relation_kind = "binder"
+    else:
+        relation_kind = "source"
     core = ScientificSemanticIR(
         schema="ssc-semantic-v1",
         authority="scientific_semantic_ir",
@@ -372,6 +409,8 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
                     node.meaning_kind,
                     node.state_role,
                     node.child_source_node_ids,
+                    node.control_source_node_id,
+                    node.branch_rules,
                 )
                 for node in result.nodes
             ],
@@ -669,6 +708,11 @@ def _build_qpu_projection(unit: Any, core: ScientificSemanticIR) -> CanonicalQpu
         projection_error = (
             "E_QPU_RESOURCE_UNSUPPORTED: canonical QPU projection exceeds "
             f"{QPU_PROJECTION_MAX_QUBITS} logical qubits"
+        )
+    elif any(node.kind == "WhenExpr" for node in core.nodes):
+        projection_error = (
+            f"{MIXTURE_PROJECTION_REJECTION_CODE}:"
+            f"{MIXTURE_PROJECTION_REJECTION_REASON}"
         )
     return CanonicalQpuProjection(logical_qubits, tuple(operations), projection_error)
 
@@ -1146,6 +1190,8 @@ def _build_finite_realization_record(
 def _role_for(name: str) -> str:
     if "Measure" in name:
         return "terminal_classical"
+    if name in {"Coin", "WhenExpr"}:
+        return "quantum"
     if name in {"Limit", "ExactExponential", "EvolveExpr"}:
         return "evolution"
     if "Operator" in name or "State" in name:
@@ -1164,6 +1210,8 @@ def _type_for(name: str) -> str:
 
 
 def _intent_for(name: str) -> str:
+    if name == "Coin":
+        return "coin_preparation"
     if name == "Limit":
         return "formal_evolution"
     if name == "EvolveExpr":
@@ -1176,6 +1224,8 @@ def _intent_for(name: str) -> str:
 
 
 def _meaning_kind(name: str) -> str:
+    if name == "Coin":
+        return "coin"
     if name == "Limit":
         return "ideal_limit"
     if name == "ExactExponential":
@@ -1188,6 +1238,8 @@ def _meaning_kind(name: str) -> str:
 
 
 def _state_role(name: str) -> str:
+    if name == "Coin":
+        return "mixture_source"
     if name == "WhenExpr":
         return "mixed_state"
     if name in {"Limit", "ExactExponential", "EvolveExpr"}:
