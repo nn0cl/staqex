@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete; independent post-Green review pending** |
+| Status | **Phase 2 Green complete; post-Green review complete; Phase 3 pending** |
 | Phase | **phase-2-green** |
 | Type / priority | feature follow-up / P1 |
 | Initial size | M |

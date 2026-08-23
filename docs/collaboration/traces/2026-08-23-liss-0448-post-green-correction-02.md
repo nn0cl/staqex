@@ -21,4 +21,4 @@ Regenerated:
 
 ## State
 
-`RE_REVIEW` — awaiting fresh post-Green review; Phase 3 remains unapproved.
+`COMPLETE` — fresh post-Green re-review is ready; Phase 3 remains unapproved.

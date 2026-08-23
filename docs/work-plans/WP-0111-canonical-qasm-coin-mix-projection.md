@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete; independent post-Green review pending** |
+| Status | **Phase 2 Green complete; post-Green review complete; Phase 3 pending** |
 | Issue | [LISS-0448](../issues/LISS-0448-canonical-qasm-coin-mix-projection.md) |
 | Specification | [Canonical QASM `Coin`/`Mix` Projection](../specs/staqex-canonical-qasm-coin-mix-projection.md) |
 | Related | [WP-0109](WP-0109-qasm-public-entry-canonical-sharing.md), [WP-0110](WP-0110-residual-semantic-consumer-reconciliation.md) |
