@@ -39,37 +39,58 @@
 | Stage | Evidence | Audit result |
 |---|---|---|
 | Blackboard equation | README sections “Physics ↔ program” 1–5; equations for `psi_0`, `P_F`, `H_obj`, `U(t)`, and terminal Born-rule measurement | **Present.** The README identifies assumptions, the 8-candidate/3-selection fixture, Host-owned predicates, objective weights, duration, and terminal measurement. |
-| Ideal source/meaning | `main_selection.sqx` lines 74–135: normalized ket sum, literal feasible-set projector, projection normalization, weighted Hamiltonian, and exact `exp(-i * H_obj * dur / hbar)` | **Present.** Source preserves the equation structure and keeps the exact local `U_t` lane separate from the finite target lane. `Measure psi_final` remains terminal. |
+| Ideal source/meaning | `main_selection.sqx` lines 74–135: normalized ket sum, literal feasible-set projector, projection normalization, weighted Hamiltonian, and exact `exp(-i * H_obj * dur / hbar)` | **Present, with documentation mismatch.** Source preserves the equation structure and keeps the exact local `U_t` lane separate from the finite target lane. `Measure psi_final` remains terminal. README prose uses `psi_sel` for the initial state and `psi_sel(t)` for the evolved state, while source uses `psi_0`, `psi_sel`, and `psi_final`; this requires a later example/documentation correction. |
 | Explicit finite realization | `main_selection.sqx` lines 138–148: `U_formal = Limit ...` and `U_qpu = Realize(source = U_formal, method = "suzuki", order = 2, steps = 8, error_budget = 1e-6)` | **Present.** Method, order, steps, and error budget are source-visible. The finite operation is named separately and is not used as the exact simulator evolution. |
-| QPU/QASM scope | README finite-target note and `host/benchmark_report.py` finite-target result fields | **Present with an honesty condition.** Documentation says SIM-only and no live QPU. The host report treats the finite lane as a plan witness and records `realized` versus `capability-rejected`; this distinction must remain covered by future Phase 1 evidence. |
+| QPU/QASM scope | README finite-target note; `host/benchmark_report.py` finite-target result fields; `tests/test_liss_0438_residual_reconciliation_red.py` | **Partial / capability-rejected.** The deterministic host comparison returned `status=capability-rejected`, code `QASM_TROTTER_UNSUPPORTED_H`, `submitted=False`, `partial_program=None`, and no target-plan provenance. Documentation says SIM-only and no live QPU. |
+
+## Corpus classification
+
+The current S02 directory contains one `.sqx` source example:
+`main_selection.sqx`. The Python host files and baseline JSON are supporting
+artifacts, not additional Staqex source examples. The selected corpus is
+therefore classified as follows:
+
+| Artifact | Classification | Evidence |
+|---|---|---|
+| `main_selection.sqx` | **partial** | Exact local simulator lane and explicit finite `Realize` are present; the finite target attempt is capability-rejected and no live/provider QPU lane exists. |
+| `README.md` + host report | **partial / documentation support** | Four stages and SIM-only boundary are documented, but state-name terminology needs alignment and the rejection evidence is now recorded explicitly. |
 
 ## Mismatch and risk inventory
 
-1. **No source/README four-stage mismatch found.** The source and README use
-   the same `U_formal`/`U_qpu` separation and the same `U_t` exact-local lane.
+1. **State-name mismatch accepted for follow-up correction.** README sections
+   2–4 use `psi_sel`/`psi_sel(t)` where the source distinguishes `psi_0`,
+   `psi_sel`, and terminal `psi_final`. This audit records the discrepancy but
+   does not edit the example or README because source/example changes require
+   separate Phase 1 approval.
 2. **Finite target is not live execution.** The example is intentionally
    unsupported as a live/provider submission; future verification must not
    promote a plan witness to QPU execution.
-3. **Finite-plan outcome needs explicit evidence.** The current compile check
-   proves source reachability only (`ok — no hard compile diagnostics`); it
-   does not prove that the finite plan is executable for every target profile.
-   Phase 1 should assert the exact realized-or-rejected contract and empty
-   artifact behavior on rejection.
+3. **Finite-plan outcome is now recorded precisely.** The current target
+   lowering is `capability-rejected` with `QASM_TROTTER_UNSUPPORTED_H`; no
+   target plan provenance or partial program is produced, and no QPU/provider
+   was contacted. Phase 1 should freeze this contract if it remains the
+   accepted boundary.
 4. **Numerical benchmark claims remain separate.** The README discloses
    feasibility leakage and SIM-only status; this audit does not validate or
    alter the numerical baseline, score, or top-k claims.
 
 ## Audit conclusion
 
-`main_selection.sqx` is **design-ready for Phase 1 preparation**, not approved
-for source changes. The four-stage boundary is recoverable and physicist-first
-in the current source/document pair. The next safe step is independent
-read-only review of this inventory, followed by explicit Phase 1 Red approval
-for boundary tests only. No provider integration, numerical migration, or
-example rewrite is authorized by this audit.
+`main_selection.sqx` remains **NOT READY for Phase 1 Red**. The exact-local
+versus explicit-realization boundary is recoverable and physicist-first, but
+the README/source state-name mismatch remains an explicitly deferred
+documentation correction. The current corpus is classified as a partial,
+SIM-only example with deterministic target rejection. A fresh independent
+review is required after these documentation corrections; only then may the
+Adjudicator consider explicit Phase 1 Red approval. No provider integration,
+numerical migration, or example rewrite is authorized by this audit.
 
 ## Evidence
 
 - Local command: `./.venv/bin/python -m compiler.staqex check examples/showcase/S02_drug_discovery/main_selection.sqx`
 - Result: `ok — no hard compile diagnostics`
+- Target comparison: `capability-rejected QASM_TROTTER_UNSUPPORTED_H False None None`
+  (`status`, `capability_rejection`, `submitted`, `partial_program`,
+  `target_plan_provenance`)
+- Focused regression: `tests/test_liss_0438_residual_reconciliation_red.py` — **5 passed**
 - No production/example source files changed by this audit.
