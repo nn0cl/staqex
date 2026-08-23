@@ -170,7 +170,7 @@ def test_qpu_lowering_rejects_explicit_evolution_without_partial_circuit() -> No
         }
     """
     circuit = lower_unit_to_circuit(compile_source(source).unit)
-    assert circuit.reject_code == "EVOLUTION_TARGET_UNSUPPORTED"
+    assert circuit.reject_code == "E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED"
     assert not circuit.gates
 
 

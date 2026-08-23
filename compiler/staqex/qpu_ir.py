@@ -208,6 +208,8 @@ def _attach_canonical_provenance(
             )
         provenance = dict(instruction.provenance)
         provenance["source_node_id"] = source_node_id
+        if instruction.opcode != "Measure":
+            provenance.setdefault("comment", f"canonical {instruction.opcode}")
         attached.append(
             QpuInstruction(
                 opcode=instruction.opcode,
@@ -456,6 +458,17 @@ def _swap_instructions(
 def _hilbert_shape(
     unit: CompilationUnit, semantic_ir: ScientificSemanticIR | None = None
 ) -> Mapping[str, Any]:
+    system = _multi_register_system(unit)
+    if system is not None:
+        registers = system.registers
+        logical_qubits = sum(width for _name, width in registers)
+        shape = MappingProxyType(
+            {
+                "logical_qubits": logical_qubits,
+                "hilbert_dimension": 2**logical_qubits,
+            }
+        )
+        return shape
     if semantic_ir is not None and semantic_ir.qpu_projection is not None:
         logical_qubits = semantic_ir.qpu_projection.logical_qubits
         if semantic_ir.qpu_projection.projection_error is not None:
@@ -467,16 +480,6 @@ def _hilbert_shape(
                     "hilbert_dimension": 2**logical_qubits,
                 }
             )
-    system = _multi_register_system(unit)
-    if system is not None:
-        registers = system.registers
-        logical_qubits = sum(width for _name, width in registers)
-        return MappingProxyType(
-            {
-                "logical_qubits": logical_qubits,
-                "hilbert_dimension": 2**logical_qubits,
-            }
-        )
     if unit.main is None:
         return MappingProxyType({"logical_qubits": 0})
     for stmt in unit.main.body.stmts:

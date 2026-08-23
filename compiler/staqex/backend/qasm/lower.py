@@ -208,14 +208,23 @@ def explicit_evolution_capability_reject(
             and source_expr.callee.name == "exp"
             and not exponential_hamiltonian_has_binder(source_expr)
         ):
-            return _rejected_target_circuit(
-                "E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED",
-                _explicit_provenance(
-                    stmt,
-                    "finite_projection_unavailable",
-                    "exp(-i * H * duration / hbar)",
-                ),
+            explicit_finite_policy = target_profile is not None and (
+                target_profile.suzuki_order != 2
+                or target_profile.suzuki_steps != 1
+                or target_profile.limit_realization_method is not None
+                or target_profile.limit_order is not None
+                or target_profile.limit_steps is not None
+                or target_profile.limit_error_budget is not None
             )
+            if not explicit_finite_policy:
+                return _rejected_target_circuit(
+                    "E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED",
+                    _explicit_provenance(
+                        stmt,
+                        "finite_projection_unavailable",
+                        "exp(-i * H * duration / hbar)",
+                    ),
+                )
         if isinstance(state_expr, WhenExpr):
             return _rejected_target_circuit(
                 MIXTURE_PROJECTION_REJECTION_CODE,
