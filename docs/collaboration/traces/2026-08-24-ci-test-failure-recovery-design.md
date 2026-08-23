@@ -112,3 +112,20 @@ retry before any merge decision.
   failure, then was interrupted at the long-running S02 numerical case
   `test_feasibility_leak_is_detected_and_excluded_from_scoring`; this is a
   runtime-duration blocker, not a new assertion failure.
+
+## CI failure follow-up and local closure
+
+- CI run for `d568116e` reported six failures after 1701 passes. The failure
+  log showed that the emitter guard had been placed too broadly and that
+  Measure-only and finite-target compatibility paths were unintentionally
+  changed.
+- Corrections were narrowed as follows: user-function rejection is applied
+  only when no canonical executable instruction exists; plain non-Fock
+  Hamiltonian Evolve requires an explicit Suzuki policy; Fock Hamiltonians
+  retain canonical projection rejection; ordinary untyped qubit Measure-only
+  programs retain the legacy QASM path; finite target profiles retain their
+  accepted realization behavior; canonical gate instructions receive a
+  deterministic fallback comment when source provenance has none.
+- `.venv/bin/python -m pytest tests/ -q`: **1707 passed**.
+- `.venv/bin/python tests/spec_verification/run_all.py`: **161/161 (100%)**.
+- `.venv` `py_compile` and `git diff --check`: passed.

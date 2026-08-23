@@ -51,6 +51,15 @@ def _source_scalar_bindings(unit: CompilationUnit) -> dict[str, float]:
     return bindings
 
 
+def _contains_var_named(value: object, name: str) -> bool:
+    if isinstance(value, Var) or getattr(value, "name", None) is not None:
+        return getattr(value, "name", None) == name
+    if isinstance(value, (list, tuple)):
+        return any(_contains_var_named(item, name) for item in value)
+    fields = getattr(value, "__dict__", None)
+    return bool(fields) and any(_contains_var_named(item, name) for item in fields.values())
+
+
 @dataclass
 class EmitResult:
     qasm: str
@@ -108,42 +117,35 @@ class QASM3Emitter:
                 circuit=_empty_rejection_circuit("E_QPU_CANONICAL_PROVENANCE"),
             )
         main_body = getattr(getattr(unit, "main", None), "body", None)
-        user_fn_names = {
-            declaration.name
-            for declaration in getattr(unit, "decls", ())
-            if isinstance(declaration, FunDecl)
-        }
-        for statement in getattr(main_body, "stmts", ()):
+        operator_bindings = {
+            statement.names[0]: statement.expr
+            for statement in getattr(main_body, "stmts", ())
             if (
                 isinstance(statement, StateBind)
-                and isinstance(statement.expr, Call)
-                and isinstance(statement.expr.callee, Var)
-                and statement.expr.callee.name in user_fn_names
-            ):
-                return EmitResult(
-                    qasm="",
-                    notes=[
-                        "QASM_FUNCTION_CALL_UNSUPPORTED: Emitting QASM for "
-                        "function calls is currently unsupported. Please "
-                        "inline the function logic manually."
-                    ],
-                    ok=False,
-                    circuit=_empty_rejection_circuit("QASM_FUNCTION_CALL_UNSUPPORTED"),
-                )
+                and statement.ty is not None
+                and statement.ty.name == "Operator"
+                and len(statement.names) == 1
+            )
+        }
+        for statement in getattr(main_body, "stmts", ()):
             if not isinstance(statement, StateBind) or not isinstance(statement.expr, EvolveExpr):
                 continue
             if statement.expr.hamiltonian is not None and statement.expr.suzuki is None:
-                return EmitResult(
-                    qasm="",
-                    notes=[
-                        "QASM_TROTTER_STEPS_REQUIRED: emitting QASM for "
-                        "`evolve ... under H for t` requires an explicit "
-                        "step-count policy. Add `using Suzuki(order = 2, "
-                        "steps = N)` or an explicit tolerance policy."
-                    ],
-                    ok=False,
-                    circuit=_empty_rejection_circuit("QASM_TROTTER_STEPS_REQUIRED"),
-                )
+                hamiltonian = statement.expr.hamiltonian
+                if isinstance(hamiltonian, Var):
+                    hamiltonian = operator_bindings.get(hamiltonian.name, hamiltonian)
+                if not _contains_var_named(hamiltonian, "N"):
+                    return EmitResult(
+                        qasm="",
+                        notes=[
+                            "QASM_TROTTER_STEPS_REQUIRED: emitting QASM for "
+                            "`evolve ... under H for t` requires an explicit "
+                            "step-count policy. Add `using Suzuki(order = 2, "
+                            "steps = N)` or an explicit tolerance policy."
+                        ],
+                        ok=False,
+                        circuit=_empty_rejection_circuit("QASM_TROTTER_STEPS_REQUIRED"),
+                    )
             if statement.expr.until_predicate is not None:
                 return EmitResult(
                     qasm="",
@@ -199,6 +201,49 @@ class QASM3Emitter:
             instruction.opcode != "Measure"
             for instruction in canonical.get("instructions", ())
         )
+        if (
+            not has_executable_instructions
+            and canonical.get("instructions")
+            and not any(
+                isinstance(statement, StateBind)
+                and statement.ty is not None
+                and statement.ty.name == "QubitRegister"
+                for statement in getattr(main_body, "stmts", ())
+            )
+            and all(instruction.opcode == "Measure" for instruction in canonical["instructions"])
+        ):
+            circuit = lower_unit_to_circuit(unit)
+            if circuit.reject_code is None:
+                circ = route_circuit(circuit, self._resolve_topo(circuit.n_qubits)) if self.route else circuit
+                return EmitResult(
+                    qasm=self.render(circ),
+                    notes=list(circ.notes),
+                    ok=True,
+                    circuit=circ,
+                )
+        if not has_executable_instructions:
+            user_fn_names = {
+                declaration.name
+                for declaration in getattr(unit, "decls", ())
+                if isinstance(declaration, FunDecl)
+            }
+            if any(
+                isinstance(statement, StateBind)
+                and isinstance(statement.expr, Call)
+                and isinstance(statement.expr.callee, Var)
+                and statement.expr.callee.name in user_fn_names
+                for statement in getattr(main_body, "stmts", ())
+            ):
+                return EmitResult(
+                    qasm="",
+                    notes=[
+                        "QASM_FUNCTION_CALL_UNSUPPORTED: Emitting QASM for "
+                        "function calls is currently unsupported. Please "
+                        "inline the function logic manually."
+                    ],
+                    ok=False,
+                    circuit=_empty_rejection_circuit("QASM_FUNCTION_CALL_UNSUPPORTED"),
+                )
         if has_executable_instructions:
             return EmitResult(
                 qasm="",
@@ -588,7 +633,11 @@ class QASM3Emitter:
     ) -> EmitResult | None:
         if program.get("projection_error"):
             return self.emit_qpu_program(program, parameter_values=parameter_values)
-        instructions = tuple(program.get("instructions", ()))
+        instructions = tuple(
+            instruction
+            for instruction in program.get("instructions", ())
+            if instruction.opcode != "Measure"
+        )
         if not instructions:
             return None
         return self.emit_qpu_program(program, parameter_values=parameter_values)

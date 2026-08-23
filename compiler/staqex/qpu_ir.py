@@ -208,6 +208,8 @@ def _attach_canonical_provenance(
             )
         provenance = dict(instruction.provenance)
         provenance["source_node_id"] = source_node_id
+        if instruction.opcode != "Measure":
+            provenance.setdefault("comment", f"canonical {instruction.opcode}")
         attached.append(
             QpuInstruction(
                 opcode=instruction.opcode,
