@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete; post-Green review complete; Phase 3 pending** |
+| Status | **final-review-ready** |
 | Issue | [LISS-0448](../issues/LISS-0448-canonical-qasm-coin-mix-projection.md) |
 | Specification | [Canonical QASM `Coin`/`Mix` Projection](../specs/staqex-canonical-qasm-coin-mix-projection.md) |
 | Related | [WP-0109](WP-0109-qasm-public-entry-canonical-sharing.md), [WP-0110](WP-0110-residual-semantic-consumer-reconciliation.md) |
@@ -104,3 +104,10 @@ semantics, explicit Realize/Limit policy, or the language surface.
 - Full spec verification: **161/161 passed (100%)**.
 - Required next review: independent post-Green review; Phase 3 remains
   separately gated.
+
+## Phase 3 Refactor closeout
+
+- User approved Phase 3 Refactor on 2026-08-24.
+- Refactor is limited to rejection-policy readability in the legacy lowerer;
+  no semantic or target behavior changed.
+- Status is `final-review-ready` pending final review and completion packet.

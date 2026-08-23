@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete; post-Green review complete; Phase 3 pending** |
-| Phase | **phase-2-green** |
+| Status | **final-review-ready** |
+| Phase | **phase-3-refactor** |
 | Type / priority | feature follow-up / P1 |
 | Initial size | M |
 | Current size | M |
@@ -128,3 +128,13 @@ the accepted capability rejection; they must not restore H+CX fallback.
 - User approved Phase 2 Green and implementation on 2026-08-23.
 - Next safe action: independent post-Green review; Phase 3 remains separately
   gated.
+
+## Phase 3 Refactor closeout
+
+- User approved Phase 3 Refactor on 2026-08-24.
+- Consolidated the legacy Coin/Mix rejection payload in a named helper and
+  removed the obsolete copy-pattern detector that could no longer be a valid
+  realization path.
+- Behavior and reviewed assertions are unchanged.
+- Exact verification and remaining risks are recorded in the Phase 3 trace.
+- Status is `final-review-ready`; no merge or completion claim is made.

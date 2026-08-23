@@ -46,6 +46,10 @@ from .trotter import (
 )
 from ...static_hilbert import MVP_MAX_LOGICAL_QUBITS
 from ...kernel_literals import SECOND_QUANTIZED_FAMILIES as _SECOND_QUANTIZED_FAMILIES
+from ...scientific_semantic_ir import (
+    MIXTURE_PROJECTION_REJECTION_CODE,
+    MIXTURE_PROJECTION_REJECTION_REASON,
+)
 
 # LISS-0050 (Architecture Path, 2026-07-25, ADR 0094): a plain
 # `evolve ... under H for t` with no `using Suzuki(...)` policy has no
@@ -801,18 +805,10 @@ def _from_ast_patterns(
                 _EVOLUTION_TARGET_UNSUPPORTED_MESSAGE,
             )
         if isinstance(b.expr, Coin):
-            return _rejected_target_circuit(
-                "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
-                {
-                    "source_span": b.span,
-                    "source_transform": "Coin() mixture",
-                    "state_shape": "State",
-                    "realization_kind": "rejected",
-                    "realization_policy": "finite_projection_required",
-                    "capability_rejection_or_null": "mixture_projection_unavailable",
-                    "reason": "mixture_projection_unavailable",
-                    "source_node_id": f"ast:{b.span.line}:{b.span.col}",
-                },
+            return _reject_mixture_projection(
+                source_span=b.span,
+                source_transform="Coin() mixture",
+                source_node_id=f"ast:{b.span.line}:{b.span.col}",
             )
         if isinstance(b.expr, KetLit):
             q = alloc(b.name)
@@ -903,18 +899,10 @@ def _from_ast_patterns(
             ctrl_name = b.expr.ctrl.name
             if ctrl_name not in qubit_of:
                 notes.append(f"when ctrl `{ctrl_name}` unbound; reject mixture")
-            return _rejected_target_circuit(
-                "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
-                {
-                    "source_span": b.span,
-                    "source_transform": "when mixture",
-                    "state_shape": "State",
-                    "realization_kind": "rejected",
-                    "realization_policy": "finite_projection_required",
-                    "capability_rejection_or_null": "mixture_projection_unavailable",
-                    "reason": "mixture_projection_unavailable",
-                    "source_node_id": f"ast:{b.span.line}:{b.span.col}",
-                },
+            return _reject_mixture_projection(
+                source_span=b.span,
+                source_transform="when mixture",
+                source_node_id=f"ast:{b.span.line}:{b.span.col}",
             )
         if isinstance(b.expr, Dirac) or isinstance(b.expr, LitInt):
             q = alloc(b.name)
@@ -1449,24 +1437,26 @@ def _from_dag(dag: Dag) -> Circuit:
     return Circuit(n_qubits=max(next_q, 1), n_bits=1, gates=gates, notes=notes)
 
 
-def _is_copy_when(w: WhenExpr) -> bool:
-    zero_arm = else_arm = None
-    for arm in w.arms:
-        if arm.is_else:
-            else_arm = arm.body
-        elif arm.pat == 0:
-            zero_arm = arm.body
-    if zero_arm is None or else_arm is None:
-        return False
-    return _is_dirac_or_lit(zero_arm, 0) and _is_dirac_or_lit(else_arm, 1)
-
-
-def _is_dirac_or_lit(expr, value: int) -> bool:
-    if isinstance(expr, LitInt) and expr.value == value:
-        return True
-    if isinstance(expr, Dirac):
-        return _is_dirac_or_lit(expr.arg, value)
-    return False
+def _reject_mixture_projection(
+    *,
+    source_span: Span,
+    source_transform: str,
+    source_node_id: str,
+) -> Circuit:
+    """Reject a Coin/Mix realization without allocating target artifacts."""
+    return _rejected_target_circuit(
+        MIXTURE_PROJECTION_REJECTION_CODE,
+        {
+            "source_span": source_span,
+            "source_transform": source_transform,
+            "state_shape": "State",
+            "realization_kind": "rejected",
+            "realization_policy": "finite_projection_required",
+            "capability_rejection_or_null": MIXTURE_PROJECTION_REJECTION_REASON,
+            "reason": MIXTURE_PROJECTION_REJECTION_REASON,
+            "source_node_id": source_node_id,
+        },
+    )
 
 
 def _dirac_bit(expr) -> int:
