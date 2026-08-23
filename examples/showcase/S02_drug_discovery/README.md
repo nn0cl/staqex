@@ -49,7 +49,7 @@ $\lvert\psi_0\rangle = \dfrac{1}{\sqrt{2^n}}\sum_{x\in\{0,1\}^n}\lvert x\rangle$
 
 ```staqex
 Int n = 8
-State psi_sel = (1.0 / sqrt(2.0 ^ n)) * Sigma (x In {0,1}^n) { |x> }
+State psi_0 = (1.0 / sqrt(2.0 ^ n)) * Sigma (x In {0,1}^n) { |x> }
 ```
 
 ### 2. Project onto the feasible subspace (hard constraint)
@@ -89,7 +89,7 @@ fn objective_hamiltonian(w: ObjectiveWeights, n: Int, activity_w: Float[8], sele
 
 ### 4. Time evolution under $H_{obj}$
 
-$\lvert\psi_{sel}(t)\rangle = U(t)\lvert\psi_{sel}(0)\rangle,\quad
+$\lvert\psi_{final}\rangle = U(t)\lvert\psi_{sel}\rangle,\quad
 U(t)=e^{-iH_{obj}t/\hbar}$
 
 `Evolve() { U_t * psi_sel }.run()` *is* this operator-on-ket application.
@@ -105,7 +105,7 @@ State psi_final = Evolve() { U_t * psi_sel }.run()
 
 ### 5. Terminal measurement (Born rule)
 
-$P(x) = \lvert\langle x\rvert\psi_{sel}(t)\rangle\rvert^2$
+$P(x) = \lvert\langle x\rvert\psi_{final}\rangle\rvert^2$
 
 ```staqex
 Measure psi_final
