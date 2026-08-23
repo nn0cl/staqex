@@ -218,10 +218,10 @@ def explicit_evolution_capability_reject(
             )
         if isinstance(state_expr, WhenExpr):
             return _rejected_target_circuit(
-                "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
+                MIXTURE_PROJECTION_REJECTION_CODE,
                 _explicit_provenance(
                     stmt,
-                    "mixture_projection_unavailable",
+                    MIXTURE_PROJECTION_REJECTION_REASON,
                     "Coin/Mix/when mixture",
                 ),
             )

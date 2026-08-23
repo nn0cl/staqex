@@ -32,6 +32,14 @@
 - `git diff --check` passed.
 - Reviewed tests and assertions were unchanged.
 
+## Final review correction
+
+The first final review found two evidence/readability issues: report timestamps
+predated the refactor and one explicit-evolution preflight path duplicated the
+mixture rejection literals. Both are in-scope preserving corrections and are
+being re-verified. The legacy-caller inventory remains deferred follow-up work
+and is explicitly recorded in ADR 0213.
+
 ## Remaining risks
 
 - Direct legacy lowerer callers still require inventory and eventual
