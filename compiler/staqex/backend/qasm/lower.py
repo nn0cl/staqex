@@ -124,11 +124,19 @@ def qudit_capability_reject(unit: CompilationUnit) -> Circuit | None:
     for stmt in unit.main.body.stmts:
         if isinstance(stmt, StateBind) and _type_ref_mentions_qudit(stmt.ty):
             return Circuit(
-                n_qubits=1,
-                n_bits=1,
+                n_qubits=0,
+                n_bits=0,
                 gates=[],
                 notes=[_UNSUPPORTED_LOCAL_DIMENSION_MESSAGE],
                 reject_code=UNSUPPORTED_LOCAL_DIMENSION,
+                provenance={
+                    "reason": "unsupported_local_dimension",
+                    "source_node_id": f"ast:{stmt.span.line}:{stmt.span.col}",
+                    "target_plan": None,
+                },
+                allocation_started=False,
+                allocated_qubits=(),
+                partial_program=None,
             )
     return None
 
@@ -141,6 +149,38 @@ def explicit_evolution_capability_reject(
     partially lowered circuit."""
     if unit.main is None:
         return None
+    binds_by_name = {
+        stmt.names[0]: stmt.expr
+        for stmt in unit.main.body.stmts
+        if isinstance(stmt, StateBind) and len(stmt.names) == 1
+    }
+    def has_binder(expr: object) -> bool:
+        if isinstance(expr, OpBinder):
+            return True
+        if isinstance(expr, OpBin):
+            return has_binder(expr.lhs) or has_binder(expr.rhs)
+        return False
+
+    def exponential_hamiltonian_has_binder(expr: Call) -> bool:
+        """Inspect only operator bindings referenced by this exponential."""
+        if not expr.args:
+            return False
+
+        def walk(value: object) -> bool:
+            if isinstance(value, Var):
+                bound = binds_by_name.get(value.name)
+                return has_binder(bound)
+            if isinstance(value, (list, tuple)):
+                return any(walk(item) for item in value)
+            if isinstance(value, (BinOp, Call)):
+                fields = (value.lhs, value.rhs) if isinstance(value, BinOp) else (
+                    value.args,
+                    value.kwargs or (),
+                )
+                return any(walk(item) for item in fields)
+            return False
+
+        return walk(expr.args[0])
     for stmt in unit.main.body.stmts:
         if not (
             isinstance(stmt, StateBind)
@@ -151,8 +191,43 @@ def explicit_evolution_capability_reject(
         if stmt.expr.until_predicate is not None:
             return _rejected_target_circuit(
                 QASM_EVOLVE_UNTIL_UNSUPPORTED,
-                _generic_explicit_provenance(stmt, "runtime_evolve_until_unsupported"),
+                _generic_explicit_provenance(stmt, "until_requires_dynamic_target"),
             )
+        result = stmt.expr.body.result if stmt.expr.body is not None else None
+        source_name = result.lhs.name if isinstance(result, BinOp) and isinstance(result.lhs, Var) else None
+        source_expr = binds_by_name.get(source_name or "")
+        state_name = result.rhs.name if isinstance(result, BinOp) and isinstance(result.rhs, Var) else None
+        state_expr = binds_by_name.get(state_name or "")
+        if (
+            isinstance(source_expr, Call)
+            and isinstance(source_expr.callee, Var)
+            and source_expr.callee.name == "exp"
+            and not exponential_hamiltonian_has_binder(source_expr)
+        ):
+            return _rejected_target_circuit(
+                "E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED",
+                _explicit_provenance(
+                    stmt,
+                    "finite_projection_unavailable",
+                    "exp(-i * H * duration / hbar)",
+                ),
+            )
+        if isinstance(state_expr, WhenExpr):
+            return _rejected_target_circuit(
+                "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
+                _explicit_provenance(
+                    stmt,
+                    "mixture_projection_unavailable",
+                    "Coin/Mix/when mixture",
+                ),
+            )
+        if isinstance(source_expr, OpExpr) and getattr(source_expr, "op", None) == "*":
+            left_value = getattr(getattr(source_expr, "lhs", None), "value", None)
+            if isinstance(left_value, (int, float)) and left_value not in {1, -1}:
+                return _rejected_target_circuit(
+                    "E_QPU_UNSUPPORTED_CAPABILITY",
+                    _explicit_provenance(stmt, "non_unitary_target", "mathematical operator product"),
+                )
         if target_profile is None:
             return _rejected_target_circuit(
                 EVOLUTION_TARGET_UNSUPPORTED,
@@ -179,6 +254,9 @@ def lower_unit_to_circuit(
     if rejected is not None:
         return rejected
     rejected = explicit_evolution_capability_reject(unit, target_profile)
+    if rejected is not None:
+        return rejected
+    rejected = register_resource_budget_reject(unit, target_profile)
     if rejected is not None:
         return rejected
     circ = _from_ast_patterns(unit, target_profile=target_profile)
@@ -234,6 +312,8 @@ def formal_limit_capability_reject(
                     "error_budget_or_null": None,
                     "resource_estimate_or_null": None,
                     "capability_rejection_or_null": "EVOLUTION_REALIZATION_REQUIRED",
+                    "reason": "missing_finite_realization",
+                    "source_node_id": f"ast:{value.span.line}:{value.span.col}",
                 }
                 if method is not None or order is not None or steps is not None:
                     provenance.update(
@@ -721,9 +801,19 @@ def _from_ast_patterns(
                 _EVOLUTION_TARGET_UNSUPPORTED_MESSAGE,
             )
         if isinstance(b.expr, Coin):
-            q = alloc(b.name)
-            gates.append(Gate("h", (q,), comment=f"coin() → |+⟩ on {b.name}"))
-            continue
+            return _rejected_target_circuit(
+                "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
+                {
+                    "source_span": b.span,
+                    "source_transform": "Coin() mixture",
+                    "state_shape": "State",
+                    "realization_kind": "rejected",
+                    "realization_policy": "finite_projection_required",
+                    "capability_rejection_or_null": "mixture_projection_unavailable",
+                    "reason": "mixture_projection_unavailable",
+                    "source_node_id": f"ast:{b.span.line}:{b.span.col}",
+                },
+            )
         if isinstance(b.expr, KetLit):
             q = alloc(b.name)
             lab = b.expr.label
@@ -819,12 +909,19 @@ def _from_ast_patterns(
                 ctrl = qubit_of[ctrl_name]
                 gates.append(Gate("cx", (ctrl, tgt), comment=f"when-copy {ctrl_name}→{b.name}"))
                 continue
-            # generic when: RZ annotation + note (amplitude IR later)
-            tgt = alloc(b.name)
-            gates.append(Gate("h", (tgt,), comment=f"when-mixture prep {b.name}"))
-            gates.append(Gate("rz", (tgt,), angle=0.0, comment="when phase placeholder"))
-            notes.append(f"generic when on `{b.name}` lowered to H+RZ(0) placeholder")
-            continue
+            return _rejected_target_circuit(
+                "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
+                {
+                    "source_span": b.span,
+                    "source_transform": "when mixture",
+                    "state_shape": "State",
+                    "realization_kind": "rejected",
+                    "realization_policy": "finite_projection_required",
+                    "capability_rejection_or_null": "mixture_projection_unavailable",
+                    "reason": "mixture_projection_unavailable",
+                    "source_node_id": f"ast:{b.span.line}:{b.span.col}",
+                },
+            )
         if isinstance(b.expr, Dirac) or isinstance(b.expr, LitInt):
             q = alloc(b.name)
             val = _dirac_bit(b.expr)
@@ -1031,6 +1128,15 @@ def _explicit_target_rejection(
         return _rejected_resource_budget_circuit(
             EVOLUTION_TARGET_UNSUPPORTED,
             f"required {qubits} qubits exceeds target budget {profile.resource_budget_qubits}",
+            provenance={
+                "reason": "resource_budget_exceeded_before_allocation",
+                "source_evidence": {
+                    "source_node_id": f"ast:{bind.span.line}:{bind.span.col}",
+                    "required_qubits": qubits,
+                    "resource_budget_qubits": profile.resource_budget_qubits,
+                },
+                "target_plan": None,
+            },
         )
     return None
 
@@ -1057,7 +1163,126 @@ def _generic_explicit_provenance(
         "error_budget_or_null": None,
         "resource_estimate_or_null": None,
         "capability_rejection_or_null": rejection,
+        "reason": rejection,
+        "source_node_id": f"ast:{bind.span.line}:{bind.span.col}",
     }
+
+
+def _explicit_provenance(
+    bind: StateBind, reason: str, source_transform: str
+) -> dict[str, object]:
+    provenance = _generic_explicit_provenance(bind, reason)
+    provenance["source_transform"] = source_transform
+    provenance["reason"] = reason
+    return provenance
+
+
+def register_resource_budget_reject(
+    unit: CompilationUnit,
+    target_profile: EvolutionTargetProfile | None,
+) -> Circuit | None:
+    """Reject statically allocatable qubits before lowering allocates wires."""
+    if target_profile is None or target_profile.resource_budget_qubits is None:
+        return None
+    if unit.main is None:
+        return None
+    binds_by_name = {
+        stmt.names[0]: stmt.expr
+        for stmt in unit.main.body.stmts
+        if isinstance(stmt, StateBind) and len(stmt.names) == 1
+    }
+
+    def references_binder(value: object) -> bool:
+        if isinstance(value, Var):
+            bound = binds_by_name.get(value.name)
+            return isinstance(bound, OpBinder) or (
+                isinstance(bound, OpBin)
+                and (references_binder(bound.lhs) or references_binder(bound.rhs))
+            )
+        if isinstance(value, OpBinder):
+            return True
+        if isinstance(value, OpBin):
+            return references_binder(value.lhs) or references_binder(value.rhs)
+        if isinstance(value, (BinOp, Call)):
+            fields = (value.lhs, value.rhs) if isinstance(value, BinOp) else (
+                value.args,
+                value.kwargs or (),
+            )
+            return any(references_binder(item) for item in fields)
+        if isinstance(value, (list, tuple)):
+            return any(references_binder(item) for item in value)
+        return False
+
+    # The finite binder path owns its own domain/mapping/budget estimate.  Do
+    # not let the generic state preflight replace that more precise evidence.
+    for stmt in unit.main.body.stmts:
+        if not (
+            isinstance(stmt, StateBind)
+            and isinstance(stmt.expr, EvolveExpr)
+            and stmt.expr.explicit_transform
+            and stmt.expr.body is not None
+            and isinstance(stmt.expr.body.result, BinOp)
+        ):
+            continue
+        result = stmt.expr.body.result
+        source = binds_by_name.get(result.lhs.name) if isinstance(result.lhs, Var) else None
+        if isinstance(source, Call) and isinstance(source.callee, Var) and source.callee.name == "exp":
+            if references_binder(source.args[0]) if source.args else False:
+                return None
+    register_sizes: dict[str, int] = {}
+    required = 0
+    evidence: dict[str, object] | None = None
+    for stmt in unit.main.body.stmts:
+        if not (
+            isinstance(stmt, StateBind)
+            and stmt.ty is not None
+            and stmt.ty.name == "QubitRegister"
+            and len(stmt.ty.args) == 1
+            and len(stmt.names) == 1
+        ):
+            continue
+        size = getattr(stmt.ty.args[0], "name", "")
+        if not str(size).isdigit():
+            continue
+        register_sizes[stmt.names[0]] = int(size)
+        required += int(size)
+        evidence = {
+            "source_node_id": f"ast:{stmt.span.line}:{stmt.span.col}",
+            "required_qubits": required,
+        }
+    for stmt in unit.main.body.stmts:
+        if isinstance(stmt, ForEachStmt):
+            size = _static_register_size(stmt.collection, register_sizes)
+            if size is not None and not (
+                isinstance(stmt.collection, Var)
+                and stmt.collection.name in register_sizes
+            ):
+                required += size
+                evidence = {
+                    "source_node_id": f"ast:{stmt.span.line}:{stmt.span.col}",
+                    "required_qubits": required,
+                }
+        if not isinstance(stmt, StateBind) or len(stmt.names) != 1:
+            continue
+        if stmt.ty is not None and stmt.ty.name == "QubitRegister":
+            continue
+        if isinstance(stmt.expr, (KetLit, Coin, Dirac, WhenExpr)):
+            required += 1
+            evidence = {
+                "source_node_id": f"ast:{stmt.span.line}:{stmt.span.col}",
+                "required_qubits": required,
+            }
+    if required <= target_profile.resource_budget_qubits:
+        return None
+    return _rejected_resource_budget_circuit(
+        EVOLUTION_TARGET_UNSUPPORTED,
+        f"required {required} qubits exceeds target budget {target_profile.resource_budget_qubits}",
+        provenance={
+            "reason": "resource_budget_exceeded_before_allocation",
+            "source_evidence": evidence,
+            "target_plan": None,
+        },
+    )
 
 
 def _rejected_target_circuit(code: str, provenance: dict[str, object]) -> Circuit:
@@ -1072,7 +1297,12 @@ def _rejected_target_circuit(code: str, provenance: dict[str, object]) -> Circui
     )
 
 
-def _rejected_resource_budget_circuit(code: str, message: str) -> Circuit:
+def _rejected_resource_budget_circuit(
+    code: str,
+    message: str,
+    *,
+    provenance: dict[str, object] | None = None,
+) -> Circuit:
     """Reject before allocation without leaking partial target evidence."""
     return Circuit(
         n_qubits=0,
@@ -1080,7 +1310,7 @@ def _rejected_resource_budget_circuit(code: str, message: str) -> Circuit:
         gates=[],
         notes=[f"{code}: {message}"],
         reject_code=code,
-        provenance=None,
+        provenance=provenance,
         allocation_started=False,
         allocated_qubits=(),
         partial_program=None,

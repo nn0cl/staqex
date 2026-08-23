@@ -178,7 +178,9 @@ def test_qpu_budget_rejection_is_distinct_from_mapping_rejection() -> None:
         ),
     )
     assert circuit.reject_code == "EVOLUTION_TARGET_UNSUPPORTED"
-    assert getattr(circuit, "provenance", None) is None
+    assert circuit.provenance is not None
+    assert circuit.provenance["reason"] == "resource_budget_exceeded_before_allocation"
+    assert circuit.provenance["target_plan"] is None
     assert getattr(circuit, "n_qubits", None) == 0
     assert not circuit.gates
     assert getattr(circuit, "allocation_started", False) is False

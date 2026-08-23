@@ -504,6 +504,12 @@ class QuantumSemanticModule:
         default_factory=tuple
     )
 
+    @property
+    def source_node_ids(self) -> tuple[str, ...]:
+        """Stable source identities exposed by the canonical projection."""
+        values = tuple(str(origin.source_id) for origin in self.origins)
+        return values or ("qsem:canonical-source",)
+
     def __post_init__(self) -> None:
         object.__setattr__(self, "roots", tuple(self.roots))
         object.__setattr__(self, "region_roots", tuple(self.region_roots))

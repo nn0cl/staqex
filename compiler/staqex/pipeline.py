@@ -60,8 +60,18 @@ from .quantum_semantic_ir import (
     lower_physics_to_quantum_semantic_ir,
 )
 from .typecheck import TypeChecker
+from .algorithm_plan_ir import AlgorithmPlanModule
 from .unitarity_check import check_unitarity
 from .dynamic_capability import reuse_demand_diagnostics
+from .scientific_semantic_ir import (
+    ScientificSemanticIR,
+    SemanticInspectionResult,
+    SemanticRejection,
+    build_algorithm_plan,
+    build_inspection,
+    build_rejection,
+    build_scientific_semantic_ir,
+)
 
 HARD_CODES = {
     "FORBIDDEN_KEYWORD",
@@ -216,6 +226,13 @@ class CompileResult:
     qpu_ir: Mapping[str, Any] | None = None
     physics_ir: PhysicsModule | None = None
     quantum_semantic_ir: QuantumSemanticModule | None = None
+    scientific_semantic_ir: ScientificSemanticIR | None = None
+    semantic_inspection: SemanticInspectionResult | None = None
+    semantic_snapshot: SemanticInspectionResult | None = None
+    semantic_rejection: SemanticRejection | None = None
+    algorithm_plan: AlgorithmPlanModule | None = None
+    execution_authority: str | None = None
+    h1_authority: None = None
     state_transform_plan: H1StateTransformPlan | None = None
     strict_evolution: bool = False
     evolution_provenance: dict[str, Any] | None = None
@@ -830,9 +847,20 @@ def _analyze_unit(
     povm_contracts, povm_diags = resolve_measurement_contracts(unit)
     diags.extend(povm_diags)
 
-    symbolic_ir = build_symbolic_ir(unit)
-    diags.extend(qpu_ir_diagnostics(unit))
-    qpu_ir = build_qpu_ir(unit, symbolic_ir)
+    scientific_semantic_ir = build_scientific_semantic_ir(unit)
+    # The explicit-evolution QPU path has a canonical source projection and no
+    # longer exposes Symbolic IR as a parallel live authority. Other, not-yet-
+    # migrated symbolic consumers retain the compatibility projection until a
+    # separately approved simulator migration removes that module entirely.
+    symbolic_ir = (
+        None
+        if scientific_semantic_ir.explicit_evolution is not None
+        else build_symbolic_ir(unit)
+    )
+    semantic_inspection = build_inspection(scientific_semantic_ir)
+    algorithm_plan = build_algorithm_plan(scientific_semantic_ir)
+    diags.extend(qpu_ir_diagnostics(unit, scientific_semantic_ir))
+    qpu_ir = build_qpu_ir(unit, scientific_semantic_ir)
 
     # LISS-0114 Slice A: fold HirLinearVerifier into compile diagnostics.
     hir = build_hir(
@@ -868,6 +896,9 @@ def _analyze_unit(
     quantum_semantic_ir = _append_dynamic_mid_circuit_regions(
         unit, quantum_semantic_ir
     )
+    semantic_rejection = build_rejection(scientific_semantic_ir, diags)
+    if semantic_rejection is not None and not scientific_semantic_ir.has_explicit_realize:
+        algorithm_plan = None
 
     return CompileResult(
         unit=unit,
@@ -887,6 +918,12 @@ def _analyze_unit(
         ),
         physics_ir=physics_ir,
         quantum_semantic_ir=quantum_semantic_ir,
+        scientific_semantic_ir=scientific_semantic_ir,
+        semantic_inspection=semantic_inspection,
+        semantic_snapshot=semantic_inspection,
+        semantic_rejection=semantic_rejection,
+        algorithm_plan=algorithm_plan,
+        execution_authority="scientific_semantic_ir",
         state_transform_plan=_surface_transform_plan(unit),
         strict_evolution=strict_evolution,
     )
@@ -923,13 +960,18 @@ def compile_source(source: str, *, strict_evolution: bool = False) -> CompileRes
         unit.lane = detect_lane(source)
         if is_h1_unit(unit):
             analysis = analyze_h1_source(source, unit=unit)
+            scientific_semantic_ir = build_scientific_semantic_ir(unit)
             return CompileResult(
                 unit=unit,
                 diagnostics=diags + analysis.diagnostics,
-                symbolic_ir={"surface": "h1-hamiltonian-authoring"},
+                symbolic_ir=None,
                 physics_ir=analysis.physics_ir,
                 state_transform_plan=analysis.state_transform_plan,
                 quantum_semantic_ir=analysis.quantum_semantic_ir,
+                scientific_semantic_ir=scientific_semantic_ir,
+                semantic_inspection=build_inspection(scientific_semantic_ir),
+                semantic_snapshot=build_inspection(scientific_semantic_ir),
+                execution_authority="scientific_semantic_ir",
             )
     return _analyze_unit(unit, diags, strict_evolution=strict_evolution)
 

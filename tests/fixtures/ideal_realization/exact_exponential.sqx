@@ -1,0 +1,11 @@
+package fixtures.ideal_realization
+
+pub fn main() -> Unit {
+    Energy J = 1.0.eV to J
+    Operator H = J * X
+    Time dur = 0.6.fs
+    Operator U_exact = exp(-i * H * dur / hbar)
+    State psi = |+>
+    State result = Evolve() { U_exact * psi }.run()
+    Measure result
+}

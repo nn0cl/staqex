@@ -1,0 +1,3 @@
+// SSC-001: classical arithmetic relation.
+Energy mass = 2.0.eV to J
+Energy energy = mass * 3.0

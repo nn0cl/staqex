@@ -1,0 +1,11 @@
+theory Ising {
+  parameter J: Energy
+  parameter h: Energy
+  operator H(J, h) = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
+}
+experiment run(J = 1.0, h = 0.5) {
+  State psi = |+>
+  psi |> Evolve under Ising.H(J, h) for 0.7
+  observable energy = expect(Ising.H, psi)
+  Measure psi
+}

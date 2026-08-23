@@ -84,6 +84,9 @@ class AlgorithmPlanModule:
     resources: tuple[ResourceExpr, ...]
     repetitions: tuple[str, ...]
     witnesses: tuple[str, ...]
+    # Compatibility view for existing source/provenance callers. The module
+    # remains the single executable plan authority.
+    provenance: Any | None = None
 
 
 def _diagnostic(code: str, message: str, **details: Any) -> Diagnostic:
