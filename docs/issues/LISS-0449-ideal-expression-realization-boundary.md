@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready** |
-| Phase | **phase-3-refactor** |
+| Status | **complete** (PR #559 merged 2026-08-24) |
+| Phase | **complete** |
 | Type / priority | architecture / P0 |
 | Initial size | XL |
 | Current size | XL |
@@ -42,3 +42,7 @@ separately gated.
 
 Approval evidence: `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.
 Phase 3 evidence: `docs/collaboration/traces/2026-08-21-liss-0449-0451-phase3-refactor.md`.
+
+Completion PR #559 merged the bounded implementation and refactor into
+`main` after the reviewed CI and final approval gates. Provider/live-QPU work
+remains separately gated.

@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready** |
+| Status | **complete** (PR #559 merged 2026-08-24) |
 | Phase | **phase-3-refactor** |
 | Size | XL |
 | Issue | [LISS-0449](../issues/LISS-0449-ideal-expression-realization-boundary.md) |
 | Specification | [Ideal Expression and Finite Realization Boundary](../specs/staqex-ideal-expression-realization-boundary.md) |
 | Related authority | ADR 0209, ADR 0210, ADR 0211 |
 | Depends on | none |
-| Branch | `codex/liss-0438-residual-reconciliation` |
+| Branch | `codex/liss-0438-residual-reconciliation` (merged by PR #559) |
 
 ## Objective
 
@@ -84,5 +84,5 @@ Given/When/Then cases:
   `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.
 - Phase 3 Refactor, verification, and independent READY review: trace
   `docs/collaboration/traces/2026-08-21-liss-0449-0451-phase3-refactor.md`.
-- Completion state: `final-review-ready`; completion PR and final Adjudicator
-  review remain required.
+- Completion state: `complete`; the work was included in PR #559 and merged
+  after the reviewed CI and final approval gates.
