@@ -149,7 +149,11 @@ def _explicit_evolution_comparison() -> dict[str, Any]:
             limit_error_budget=1e-6,
         ),
     )
-    target_plan_provenance = dict(target.provenance or {}) or None
+    target_plan_provenance = (
+        dict(target.provenance or {}) or None
+        if target.reject_code is None
+        else None
+    )
     diagnostic_rejection_evidence = None
     if target.reject_code is not None:
         diagnostic_rejection_evidence = {
