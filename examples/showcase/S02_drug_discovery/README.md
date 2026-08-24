@@ -124,6 +124,24 @@ Operator U_qpu = Realize(
 )
 ```
 
+## Blackboard / realization boundary inventory
+
+**Classification: partial.** The exact local simulator lane is
+implemented and the finite target lane is explicit, but the current finite
+target profile rejects this Hamiltonian rather than claiming a QPU circuit.
+
+- **Blackboard equation:** the equations above state the initial ket,
+  feasible-subspace projector, objective Hamiltonian, propagator, and terminal
+  Born-rule measurement.
+- **Ideal Staqex expression:** `psi_0`, `psi_sel`, `H_obj`, and exact `U_t`
+  preserve the ideal source meaning before target projection.
+- **Explicit finite realization:** `U_formal` and `U_qpu = Realize(...)`
+  expose the method, order, steps, and error budget in source.
+- **QPU/QASM projection:** the current result is
+  `capability-rejected` with code `QASM_TROTTER_UNSUPPORTED_H`; the target
+  report records `submitted=False` and no partial program or target-plan
+  provenance. This is a plan/rejection witness only: **no live QPU** is used.
+
 Note: step 4's $H_{obj}$ contains `X[i]` terms, which do not commute with
 step 2's projector $P_F$ — so the terminal distribution is **not**
 guaranteed to stay inside $F$. This is a real, disclosed effect (see
