@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready** |
+| Status | **complete** (PR #559 merged 2026-08-24) |
 | Phase | **phase-3-refactor** |
 | Size | M |
 | Issue | [LISS-0451](../issues/LISS-0451-qpu-capability-rejection-contract.md) |
@@ -76,5 +76,6 @@ artifact envelope before Phase 1 Red approval.
   `docs/collaboration/traces/2026-08-20-liss-0449-0451-phase2-green.md`.
 - Phase 3 Refactor, verification, and independent READY review: trace
   `docs/collaboration/traces/2026-08-21-liss-0449-0451-phase3-refactor.md`.
-- Completion state: `final-review-ready`; completion PR and final Adjudicator
-  review remain required.
+- Completion state: `complete`; the bounded rejection matrix was included in
+  PR #559 and merged after the reviewed CI and final approval gates. New
+  capability cases remain separately gated.
