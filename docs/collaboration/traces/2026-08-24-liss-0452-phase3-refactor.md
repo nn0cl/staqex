@@ -108,6 +108,7 @@ passed
 
 ## Remaining gate
 
-Issue and WorkPlan are synchronized to `final-review-ready`. Completion PR and
-final Adjudicator review remain. This trace does not mark the Issue complete and
-does not approve Phase 1 for any new S02 behavior.
+Issue and WorkPlan are now synchronized to `complete` after PR #561 merged into
+`main` with all three CI checks successful and final Adjudicator approval.
+This completion record does not approve Phase 1 for any new S02 behavior;
+numerical migration and provider integration remain separate work.

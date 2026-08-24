@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready** |
-| Phase | **phase-3-refactor** |
+| Status | **complete** (PR #561 merged 2026-08-24) |
+| Phase | **complete** |
 | Type / priority | documentation / P1 |
 | Initial size | M |
 | Current size | M |
@@ -45,5 +45,6 @@ separate reviewed Spec and phase approval.
   focused S02 regression and compile check passed.
 - Phase 3 Refactor: documentation readability closeout recorded in
   `docs/collaboration/traces/2026-08-24-liss-0452-phase3-refactor.md`.
-- Completion PR and final Adjudicator review remain required; this Issue is
-  not yet marked complete.
+- Completion PR #561 was merged into `main` after all three CI checks passed
+  and final Adjudicator approval. The Issue is complete; broad numerical
+  migration and provider integration remain separately gated follow-up work.
