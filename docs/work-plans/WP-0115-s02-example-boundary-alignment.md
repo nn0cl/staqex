@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready** |
-| Phase | **phase-3-refactor** |
+| Status | **complete** (PR #561 merged 2026-08-24) |
+| Phase | **complete** |
 | Size | M |
 | Issue | [LISS-0452](../issues/LISS-0452-s02-example-boundary-alignment.md) |
 | Specification | [S02 Example Blackboard/Realization Boundary](../specs/staqex-s02-example-boundary-alignment.md) |
 | Related authority | WP-0105, WP-0112, WP-0113, WP-0114 |
 | Depends on | WP-0112–WP-0114 design decisions |
-| Branch | `docs/liss-0452-corpus-audit` (Phase 0 corpus audit) |
+| Branch | `docs/liss-0452-corpus-audit` (merged by PR #561) |
 
 ## Objective
 
@@ -78,4 +78,5 @@ numerical migration and does not change the examples.
 - No runtime, language, provider, or numerical behavior changed.
 - Verification: LISS-0452 plus residual S02 boundary tests — **9 passed**;
   source compile check and `git diff --check` passed.
-- Completion PR and final Adjudicator review remain required.
+- Completion PR #561 merged into `main` after all three CI checks passed and
+  final Adjudicator approval. This WorkPlan is complete.
