@@ -28,8 +28,7 @@
 - Phase 3 implementation/refactor is complete for the bounded slice.
 - Independent Post-Green review 01 returned **NOT READY**. See
   `docs/collaboration/reviews/2026-08-23-liss-0448-post-green-review-01.md`.
-- The review loop is **ABORT pending Architecture/User decision** on whether
-  the proposed canonical projection Spec has separate acceptance authority or
-  is covered by the existing ADR boundary.
-- Final merge remains blocked until the review findings are dispositioned and a
-  fresh review reaches READY.
+- The review findings were dispositioned under the accepted canonical
+  projection boundary and the completion PR #558 was merged into `main`.
+- The Issue and WorkPlan are now synchronized to `complete`; broader mixture
+  realization and provider integration remain separately gated.

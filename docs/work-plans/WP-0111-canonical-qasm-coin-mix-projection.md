@@ -2,11 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready** |
+| Status | **complete** (PR #558 merged 2026-08-24) |
 | Issue | [LISS-0448](../issues/LISS-0448-canonical-qasm-coin-mix-projection.md) |
 | Specification | [Canonical QASM `Coin`/`Mix` Projection](../specs/staqex-canonical-qasm-coin-mix-projection.md) |
 | Related | [WP-0109](WP-0109-qasm-public-entry-canonical-sharing.md), [WP-0110](WP-0110-residual-semantic-consumer-reconciliation.md) |
-| Branch | `codex/liss-0448-canonical-qasm-coin-mix-projection` |
+| Branch | `codex/liss-0448-canonical-qasm-coin-mix-projection` (merged by PR #558) |
 
 ## Approved current scope
 
@@ -110,4 +110,5 @@ semantics, explicit Realize/Limit policy, or the language surface.
 - User approved Phase 3 Refactor on 2026-08-24.
 - Refactor is limited to rejection-policy readability in the legacy lowerer;
   no semantic or target behavior changed.
-- Status is `final-review-ready` pending final review and completion packet.
+- Completion PR #558 merged into `main` after the reviewed CI and final
+  approval gates. This WorkPlan is complete.

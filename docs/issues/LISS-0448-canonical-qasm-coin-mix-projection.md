@@ -2,16 +2,16 @@
 
 | Field | Value |
 |---|---|
-| Status | **final-review-ready** |
-| Phase | **phase-3-refactor** |
+| Status | **complete** (PR #558 merged 2026-08-24) |
+| Phase | **complete** |
 | Type / priority | feature follow-up / P1 |
 | Initial size | M |
 | Current size | M |
 | Owner | Staqex compiler maintainers |
 | Parent / related | Related to [LISS-0446](LISS-0446-qasm-public-entry-canonical-sharing.md) and [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | WorkPlan | [WP-0111](../work-plans/WP-0111-canonical-qasm-coin-mix-projection.md) |
-| GitHub | Not created |
-| Branch | `codex/liss-0448-canonical-qasm-coin-mix-projection` |
+| GitHub | [PR #558](https://github.com/nn0cl/staqex/pull/558), merged |
+| Branch | `codex/liss-0448-canonical-qasm-coin-mix-projection` (merged) |
 
 ## Problem
 
@@ -137,4 +137,6 @@ the accepted capability rejection; they must not restore H+CX fallback.
   realization path.
 - Behavior and reviewed assertions are unchanged.
 - Exact verification and remaining risks are recorded in the Phase 3 trace.
-- Status is `final-review-ready`; no merge or completion claim is made.
+- Completion PR #558 was merged into `main` after the reviewed CI and final
+  approval gates. The Issue is complete; provider integration and any broader
+  mixture realization remain separately gated follow-up work.
