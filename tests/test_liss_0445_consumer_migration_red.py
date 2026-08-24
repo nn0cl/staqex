@@ -1,7 +1,7 @@
-"""LISS-0445 consumer-wide migration — Phase 1 Red contract.
+"""Bounded consumer-migration contracts for the canonical binder slice.
 
-These tests intentionally describe migration gaps. They may fail until a
-separately approved Green slice changes production consumers.
+The file retains the historical Red-contract name because its excluded
+Algorithm Plan, H1, and ordinary-QASM cases remain future migration gates.
 """
 
 from __future__ import annotations
