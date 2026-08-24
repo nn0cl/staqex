@@ -71,6 +71,20 @@ passed
 - A future maintainer can see that this is a partial, SIM-only example and
   that numerical migration and provider integration remain separate tasks.
 
+## Independent Phase 3 review outcome
+
+- Review: `docs/collaboration/reviews/2026-08-24-liss-0452-phase3-review-01.md`.
+- Verdict: **NOT READY**; terminal state **ABORT**.
+- P1 unresolved decision: direct finite-target rejection currently reports an
+  empty gate/program envelope but `n_qubits=1` and no provenance, while the
+  generic QPU rejection contract expects zero qubits and provenance-bearing
+  rejection. Whether the one-qubit shell is intentional or must be removed is
+  an unresolved contract decision; no implementation change is inferred.
+- Additional P2 observations: source and host realization parameters are
+  duplicated without a comparison assertion; WP branch wording still says
+  “Phase 0 corpus audit”. These are not corrected while the P1 contract
+  decision remains unresolved.
+
 ## Remaining gate
 
 Issue and WorkPlan are synchronized to `final-review-ready`. Completion PR,
