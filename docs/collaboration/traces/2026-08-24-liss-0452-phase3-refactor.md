@@ -85,9 +85,29 @@ passed
   “Phase 0 corpus audit”. These are not corrected while the P1 contract
   decision remains unresolved.
 
+## User decision and accepted correction
+
+- User decision: choose the generic fail-closed rejection contract (option 2).
+- Correction commit: `6f65e6cd` (`fix: make S02 target rejection fail closed`).
+- Changed lowering rejection envelopes to `n_qubits=0`, `n_bits=0`, empty
+  gates, no allocation, no allocated qubits, no partial program, and
+  rejection provenance containing the code and `target_plan=None`.
+- Updated the S02 host report so rejection provenance cannot be interpreted as
+  successful target-plan provenance.
+- Added a direct S02 lowering contract test covering the complete envelope.
+
+## Independent Phase 3 re-review outcome
+
+- Review: `docs/collaboration/reviews/2026-08-24-liss-0452-phase3-review-02.md`.
+- Verdict: **READY** for Phase 3 closeout / final Adjudicator review.
+- Terminal state: **COMPLETE** for the independent review loop.
+- P1 blocker: resolved. Remaining P2 observations are explicitly deferred and
+  are not blockers for this bounded S02 boundary slice.
+- Verification: focused suites 16 passed, additional boundary suites 53
+  passed, and the full `.venv` suite 1712 passed.
+
 ## Remaining gate
 
-Issue and WorkPlan are synchronized to `final-review-ready`. Completion PR,
-final independent Phase 3 review, and final Adjudicator review remain. This
-trace does not mark the Issue complete and does not approve Phase 1 for any
-new S02 behavior.
+Issue and WorkPlan are synchronized to `final-review-ready`. Completion PR and
+final Adjudicator review remain. This trace does not mark the Issue complete and
+does not approve Phase 1 for any new S02 behavior.
