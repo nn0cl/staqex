@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **proposed** |
-| Phase | **phase-0-design** |
+| Status | **final-review-ready** |
+| Phase | **phase-3-refactor** |
 | Size | M |
 | Issue | [LISS-0452](../issues/LISS-0452-s02-example-boundary-alignment.md) |
 | Specification | [S02 Example Blackboard/Realization Boundary](../specs/staqex-s02-example-boundary-alignment.md) |
 | Related authority | WP-0105, WP-0112, WP-0113, WP-0114 |
 | Depends on | WP-0112–WP-0114 design decisions |
-| Branch | `codex/liss-0438-residual-reconciliation` (design intake only) |
+| Branch | `docs/liss-0452-corpus-audit` (Phase 0 corpus audit) |
 
 ## Objective
 
@@ -70,3 +70,12 @@ four stages and record README/source/verification mismatches before any Phase
 Planned evidence: `docs/collaboration/traces/` corpus-audit record plus a
 source/README/verification inventory. This audit is separate from S02
 numerical migration and does not change the examples.
+
+## Phase 3 closeout
+
+- The README now presents the blackboard equation, ideal source meaning,
+  explicit finite realization, and QPU/QASM rejection as separate stages.
+- No runtime, language, provider, or numerical behavior changed.
+- Verification: LISS-0452 plus residual S02 boundary tests — **9 passed**;
+  source compile check and `git diff --check` passed.
+- Completion PR and final Adjudicator review remain required.

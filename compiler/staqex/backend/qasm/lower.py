@@ -647,11 +647,19 @@ def _from_ast_patterns(
     def reject(code: str, message: str) -> Circuit:
         notes.append(f"{code}: {message}")
         return Circuit(
-            n_qubits=1,
-            n_bits=1,
+            n_qubits=0,
+            n_bits=0,
             gates=[],
             notes=notes,
             reject_code=code,
+            provenance={
+                "reason": "lowering_rejected_before_allocation",
+                "reject_code": code,
+                "target_plan": None,
+            },
+            allocation_started=False,
+            allocated_qubits=(),
+            partial_program=None,
         )
 
     register_sizes: dict[str, int] = {}

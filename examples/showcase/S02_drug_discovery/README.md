@@ -49,7 +49,7 @@ $\lvert\psi_0\rangle = \dfrac{1}{\sqrt{2^n}}\sum_{x\in\{0,1\}^n}\lvert x\rangle$
 
 ```staqex
 Int n = 8
-State psi_sel = (1.0 / sqrt(2.0 ^ n)) * Sigma (x In {0,1}^n) { |x> }
+State psi_0 = (1.0 / sqrt(2.0 ^ n)) * Sigma (x In {0,1}^n) { |x> }
 ```
 
 ### 2. Project onto the feasible subspace (hard constraint)
@@ -89,7 +89,7 @@ fn objective_hamiltonian(w: ObjectiveWeights, n: Int, activity_w: Float[8], sele
 
 ### 4. Time evolution under $H_{obj}$
 
-$\lvert\psi_{sel}(t)\rangle = U(t)\lvert\psi_{sel}(0)\rangle,\quad
+$\lvert\psi_{final}\rangle = U(t)\lvert\psi_{sel}\rangle,\quad
 U(t)=e^{-iH_{obj}t/\hbar}$
 
 `Evolve() { U_t * psi_sel }.run()` *is* this operator-on-ket application.
@@ -105,7 +105,7 @@ State psi_final = Evolve() { U_t * psi_sel }.run()
 
 ### 5. Terminal measurement (Born rule)
 
-$P(x) = \lvert\langle x\rvert\psi_{sel}(t)\rangle\rvert^2$
+$P(x) = \lvert\langle x\rvert\psi_{final}\rangle\rvert^2$
 
 ```staqex
 Measure psi_final
@@ -123,6 +123,24 @@ Operator U_qpu = Realize(
     steps = 8, error_budget = 1e-6
 )
 ```
+
+## Blackboard / realization boundary inventory
+
+**Classification: partial.** The exact local simulator lane is
+implemented and the finite target lane is explicit, but the current finite
+target profile rejects this Hamiltonian rather than claiming a QPU circuit.
+
+- **Blackboard equation:** the equations above state the initial ket,
+  feasible-subspace projector, objective Hamiltonian, propagator, and terminal
+  Born-rule measurement.
+- **Ideal Staqex expression:** `psi_0`, `psi_sel`, `H_obj`, and exact `U_t`
+  preserve the ideal source meaning before target projection.
+- **Explicit finite realization:** `U_formal` and `U_qpu = Realize(...)`
+  expose the method, order, steps, and error budget in source.
+- **QPU/QASM projection:** the current result is
+  `capability-rejected` with code `QASM_TROTTER_UNSUPPORTED_H`; the target
+  report records `submitted=False` and no partial program or target-plan
+  provenance. This is a plan/rejection witness only: **no live QPU** is used.
 
 Note: step 4's $H_{obj}$ contains `X[i]` terms, which do not commute with
 step 2's projector $P_F$ — so the terminal distribution is **not**
