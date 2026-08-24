@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status/phase | **Phase 2 Green complete — binder slice; LISS-0446 parked** |
+| Status/phase | **Phase 3 refactor complete — binder slice final-review-ready; LISS-0446 parked** |
 | WorkPlan | [WP-0108](../work-plans/WP-0108-scientific-semantic-consumer-migration.md) |
 | Specification | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md) |
 | Parent design | [LISS-0444](LISS-0444-scientific-semantic-core.md) / [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |

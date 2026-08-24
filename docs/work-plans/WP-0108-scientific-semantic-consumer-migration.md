@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete — binder slice; LISS-0446 parked** |
+| Status | **Phase 3 refactor complete — binder slice final-review-ready; LISS-0446 parked** |
 | Issue | [LISS-0445](../issues/LISS-0445-scientific-semantic-consumer-migration.md) |
 | Specification | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md) |
 | Parent | [WP-0107](WP-0107-scientific-semantic-core.md) / [LISS-0444](../issues/LISS-0444-scientific-semantic-core.md) |
@@ -123,3 +123,12 @@ edits.
 - Binder canonical projection slice: **complete** after independent review.
 - LISS-0446 tracks the deferred public QASM facade ownership boundary; it is
   parked and has no implementation authorization.
+
+## Phase 3 Refactor closeout
+
+- The approved binder slice retains one compile-owned canonical
+  `ScientificSemanticIR` projection for QPU/QASM diagnostics.
+- No additional production refactor was required; Algorithm Plan, H1,
+  ordinary QASM fallback, and public facade migration remain excluded or
+  parked boundaries.
+- Phase 3 is `final-review-ready` pending completion-record review.
