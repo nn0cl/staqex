@@ -2,11 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 3 Refactor final-review-ready** |
 | Discovered in | LISS-0445 related regression and LISS-0446 closeout |
 | Specification | [Residual Semantic Consumer Reconciliation](../specs/staqex-residual-semantic-consumer-reconciliation.md) |
 | WorkPlan | [WP-0110](../work-plans/WP-0110-residual-semantic-consumer-reconciliation.md) |
 | Authority | [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |
+
+- Status/phase: **complete** (PR #567, 2026-08-25)
 
 ## Objective
 
@@ -61,4 +62,16 @@ Phase 2 Green batch is also complete after its independent review. The
 ordinary-QASM Phase 2 Green batch is complete after its independent review.
 The H1 batch passed its post-correction independent review and is complete.
 The ordinary-QASM Green implementation passed its independent review. Phase 3
-removed the obsolete ordinary AST fallback and is ready for final review.
+removed the obsolete ordinary AST fallback. The bounded reconciliation is
+complete in PR #567 after final review approval and successful CI.
+
+## Completion packet
+
+- PR: **#567**
+- Completion date: **2026-08-25**
+- Verification: focused residual-consumer suite **9 passed**; recorded Phase 3
+  suite **69 passed**; `git diff --check` passed.
+- Final review: independent Phase 3 review **READY / COMPLETE**; CI **3
+  successful checks**; no merge conflicts.
+- Follow-up boundary: the known LISS-0446 Limit expected-code mismatch remains
+  outside this Issue and requires its own approval.

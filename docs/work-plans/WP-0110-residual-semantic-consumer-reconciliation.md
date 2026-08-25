@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 3 Refactor final-review-ready** |
+| Status | **complete** (PR #567, 2026-08-25) |
 | Issue | [LISS-0447](../issues/LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | Specification | [Residual Semantic Consumer Reconciliation](../specs/staqex-residual-semantic-consumer-reconciliation.md) |
 | Parent | [WP-0108](WP-0108-scientific-semantic-consumer-migration.md) |
@@ -86,5 +86,15 @@ after their independent reviews.
 AlgorithmPlan Phase 2 Green passed independent review and is complete. H1
 Phase 2 Green is complete after its independent review. Ordinary-QASM Phase 2
 Green implementation passed independent review and is complete. Phase 3
-Refactor removed the obsolete ordinary AST fallback and is ready for final
-review.
+Refactor removed the obsolete ordinary AST fallback. The bounded work is
+complete in PR #567 after final review approval and successful CI.
+
+## Completion packet
+
+- PR: **#567**
+- Completion date: **2026-08-25**
+- Verification: focused residual-consumer suite **9 passed**; recorded Phase 3
+  suite **69 passed**; `git diff --check` passed.
+- CI: **3 successful checks**; no merge conflicts.
+- Follow-up boundary: LISS-0446's known Limit diagnostic mismatch remains
+  separately scoped and unapproved.
