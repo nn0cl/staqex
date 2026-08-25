@@ -2,6 +2,7 @@
 
 - Current phase: Architecture Path / design intake
 - User scope approval: proceed with policy design and branch reassessment plan
+- Architecture approval: granted 2026-08-25 for ADR 0214 and the design boundary
 - Implementation permission: not granted
 - Deletion permission: not granted by this design intake
 
@@ -21,9 +22,9 @@
 - Applicable constraints: blackboard spelling is primary; ideal meaning and
   finite/QPU realization remain separate; no phase skipping; no implementation
   without reviewed acceptance specification; no direct revival of settled rows.
-- Decisions, assumptions, and unresolved ambiguities: ADR 0214 is proposed;
-  Architecture approval is unresolved. A useful branch may require a new
-  Issue/WP/Spec/ADR rather than a merge.
+- Decisions, assumptions, and unresolved ambiguities: ADR 0214 was accepted by
+  Architecture approval on 2026-08-25. A useful branch may still require a
+  new Issue/WP/Spec/ADR rather than a merge.
 - Included and omitted AI context: included current operating rules, canonical
   register, review lenses, and deterministic branch metadata; omitted private
   data, secrets, provider logs, and unrelated source trees.
@@ -49,6 +50,6 @@ None is authorized for direct merge by this intake.
 
 ## Next gate
 
-Fresh independent review of this design packet, followed by typed Architecture
-approval or correction. Do not delete the remaining unmerged branches until
-their disposition has been recorded under the accepted policy.
+Independent review of the accepted design packet, followed by candidate-by-
+candidate inventory and disposition. Do not delete the remaining unmerged
+branches until their disposition has been recorded under ADR 0214.

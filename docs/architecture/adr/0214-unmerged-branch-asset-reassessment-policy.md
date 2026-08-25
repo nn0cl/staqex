@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **proposed — Architecture approval required** |
+| Status | **Accepted** (Architecture approval 2026-08-25) |
 | Scope | Project operation and design-asset lifecycle |
 | Issue | [LISS-0453](../../issues/LISS-0453-unmerged-branch-asset-reassessment.md) |
 | WorkPlan | [WP-0116](../../work-plans/WP-0116-unmerged-branch-asset-reassessment.md) |
@@ -40,6 +40,7 @@ worktree safety are recorded.
 
 ## Approval boundary
 
-This is a proposed process decision. It does not approve any branch content,
-implementation, technology, phase, merge, or deletion. Architecture approval
-and a reviewed acceptance record are required before it becomes normative.
+Architecture approval accepts this process boundary only. It does not approve
+any branch content, implementation, technology, phase, merge, or deletion.
+Each redesign candidate still requires its own current Issue/WP/Spec and typed
+phase approval.

@@ -1,6 +1,6 @@
 # LISS-0453: Unmerged Branch Asset Reassessment
 
-- Status/phase: **design intake**
+- Status/phase: **architecture approved — design intake; implementation not approved**
 - Type / priority: architecture / P1
 - WorkPlan: [WP-0116](../work-plans/WP-0116-unmerged-branch-asset-reassessment.md)
 - Specification: [Unmerged Branch Asset Reassessment](../specs/staqex-unmerged-branch-asset-reassessment.md)
@@ -39,6 +39,6 @@ from finite realization and QPU capability.
 
 ## Gate
 
-Architecture review and acceptance of ADR 0214/Spec are required before any
-policy change or implementation-oriented port. Each redesign candidate then
-requires its own Issue/WP/Spec and typed phase approval.
+ADR 0214 and this design boundary were accepted on 2026-08-25. Each redesign
+candidate still requires its own Issue/WP/Spec and typed phase approval before
+implementation-oriented porting.

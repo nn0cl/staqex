@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **design intake** |
+| Status | **architecture approved — design inventory only** |
 | Issue | [LISS-0453](../issues/LISS-0453-unmerged-branch-asset-reassessment.md) |
 | Specification | [Unmerged Branch Asset Reassessment](../specs/staqex-unmerged-branch-asset-reassessment.md) |
 | Proposed authority | [ADR 0214](../architecture/adr/0214-unmerged-branch-asset-reassessment-policy.md) |
@@ -31,6 +31,6 @@ reference.
 
 ## Approval boundary
 
-This WP authorizes design inventory only after Architecture approval. It does
-not authorize implementation, phase transition, ADR acceptance, or deletion
-of an unmerged branch before its disposition is recorded.
+Architecture approved this WP for design inventory only on 2026-08-25. It does
+not authorize implementation, phase transition, or deletion of an unmerged
+branch before its disposition is recorded.
