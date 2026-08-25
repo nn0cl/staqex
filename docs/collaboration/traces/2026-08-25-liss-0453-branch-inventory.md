@@ -8,7 +8,8 @@
   `git merge-tree`, changed-file inspection, and current canonical-document
   comparison.
 - Implementation permission: not granted
-- Deletion permission: not granted by this inventory alone
+- Deletion permission: granted by the Adjudicator after PR #569 was merged;
+  only branches explicitly classified below as `duplicate` are in scope.
 
 ## Disposition vocabulary
 
@@ -59,9 +60,17 @@ but their worktrees remain active and require separate cleanup:
 
 ## Next disposition gate
 
-The 13 `duplicate` branches may be deleted after this inventory is reviewed
-and merged, provided no worktree depends on them. The 12 `reference` branches
-remain until the Adjudicator confirms whether each historical design has a
-current requirement; any reuse must create or update a current Issue/WP/Spec
-and, where required, ADR before implementation. No branch is a merge
-candidate from this inventory alone.
+The inventory contains 15 `duplicate` branches (the original count of 13
+omitted `docs/documentation-canonicalization-delete` and
+`docs/trace-topic-consolidation`). After PR #569 was reviewed and merged, the
+Adjudicator approved deletion of those 15 local branches, provided no worktree
+depends on them. The 12 `reference` branches remain until the Adjudicator
+confirms whether each historical design has a current requirement; any reuse
+must create or update a current Issue/WP/Spec and, where required, ADR before
+implementation. No branch is a merge candidate from this inventory alone.
+
+## Correction record
+
+- 2026-08-25: corrected the duplicate count from 13 to 15 and recorded the
+  two omitted duplicate rows already present in the table.
+- 2026-08-25: recorded explicit deletion approval after PR #569 merge.
