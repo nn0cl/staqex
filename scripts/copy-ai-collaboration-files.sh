@@ -142,34 +142,37 @@ escape_perl_replacement() {
   printf '%s' "$1" | sed 's/[\/&]/\\&/g'
 }
 
-replace_placeholders() {
-  [ "$dry_run" = true ] && return
+write_project_conventions() {
+  local form="$repo_root/docs/templates/project-conventions.md"
+  local dest="$target/docs/collaboration/project-conventions.md"
 
-  local project_replacement="$project_name"
-  if [ -n "$project_name" ] && [ -n "$domain_summary" ]; then
-    project_replacement="$project_name: $domain_summary"
+  if [ ! -f "$form" ]; then
+    echo "Missing template: docs/templates/project-conventions.md" >&2
+    exit 1
   fi
 
-  local file
-  for file in "${copied_files[@]}"; do
-    case "$file" in
-      *.md|*.mdc|*.yml|*.yaml)
-        local full="$target/$file"
-        [ -f "$full" ] || continue
-        if [ -n "$project_replacement" ]; then
-          perl -0pi -e "s/<PROJECT_NAME: one-line description of the product and its\\ndomain>/$(escape_perl_replacement "$project_replacement")/g" "$full"
-          perl -0pi -e "s/<PROJECT_NAME: one-line description of the product and its domain>/$(escape_perl_replacement "$project_replacement")/g" "$full"
-        fi
-        if [ -n "$project_name" ]; then
-          perl -0pi -e "s/<PROJECT_NAME>/$(escape_perl_replacement "$project_name")/g" "$full"
-        fi
-        if [ -n "$stack" ]; then
-          perl -0pi -e "s/<FILL IN: e\\.g\\. backend language,\\nfrontend framework, package manager>/$(escape_perl_replacement "$stack")/g" "$full"
-          perl -0pi -e "s/<FILL IN: e\\.g\\. backend language, frontend framework, package manager>/$(escape_perl_replacement "$stack")/g" "$full"
-        fi
-        ;;
-    esac
-  done
+  if [ -e "$dest" ]; then
+    echo "skip existing docs/collaboration/project-conventions.md"
+    return
+  fi
+
+  echo "create docs/collaboration/project-conventions.md"
+  if [ "$dry_run" = true ]; then
+    return
+  fi
+
+  mkdir -p "$(dirname "$dest")"
+  cp "$form" "$dest"
+
+  if [ -n "$project_name" ]; then
+    perl -0pi -e "s/<PROJECT_NAME>/$(escape_perl_replacement "$project_name")/g" "$dest"
+  fi
+  if [ -n "$domain_summary" ]; then
+    perl -0pi -e "s/<one-line domain summary>/$(escape_perl_replacement "$domain_summary")/g" "$dest"
+  fi
+  if [ -n "$stack" ]; then
+    perl -0pi -e "s/<FILL IN: e\\.g\\. backend language, frontend framework, package manager>/$(escape_perl_replacement "$stack")/g" "$dest"
+  fi
 }
 
 write_version_marker() {
@@ -193,7 +196,7 @@ for rel in "${paths[@]}"; do
   copy_path "$rel"
 done
 
-replace_placeholders
+write_project_conventions
 write_version_marker
 
 cat <<SUMMARY
@@ -204,6 +207,8 @@ Existing files were $([ "$force" = true ] && echo "overwritten when matched" || 
 Recorded sync point in .collaboration-template-version for future updates.
 
 Next:
+  Fill docs/collaboration/project-conventions.md (copy may have filled name/stack).
+  scripts/configure-ai-collaboration.sh --target "$target"
   cd "$target"
   scripts/init-llm-context.sh .
 

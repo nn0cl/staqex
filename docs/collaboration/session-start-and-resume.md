@@ -22,6 +22,18 @@ Continuity must come from repository artifacts:
 3. accepted specification under `docs/specs/`.
 4. feature branch, PR, or changed files on disk.
 
+For document state, use this order after the cited handoff or trace:
+
+1. `docs/collaboration/canonical-document-register.md` when present.
+2. The relevant Entry and Current Canonical document.
+3. Only the Evidence needed for the current decision or verification.
+4. Archive material only when the Register or Canonical document explicitly
+   points to it for historical context.
+
+Never use an Archive document as the initial authority for current behavior.
+When no target-owned register exists yet, record that as a design-intake gap;
+do not infer current requirements from the newest-looking historical file.
+
 Do not treat chat memory, an old session summary, or README prose as
 authoritative state.
 
@@ -110,8 +122,9 @@ Before sending the first message in any session, confirm:
 When the Adjudicator message references ongoing work, read in this order:
 
 1. cited handoff note or trace under `docs/collaboration/traces/`.
-2. cited issue or work plan.
-3. cited specification or ADR.
+2. cited specification or ADR.
+3. cited issue or work plan only when resuming that work or updating the
+   ledger. Do not open ISSUES or work plans as the source of current rules.
 4. branch diff or changed files if needed to confirm current state.
 5. documents required by the selected operating path in agent-quickstart.
 
@@ -122,7 +135,7 @@ default.
 
 When work pauses before completion, leave resumable evidence:
 
-- use `docs/templates/agent-handoff.md` in the final response, or
+- follow `.agents/skills/agent-handoff/SKILL.md` in the final response, or
 - add or update a trace under `docs/collaboration/traces/` when the trace
   policy requires it.
 
@@ -133,7 +146,16 @@ verification status, blockers, and the next safe action.
 
 | Situation | Aid |
 |-----------|-----|
-| First session after adoption | `scripts/init-llm-context.sh` |
+| First session after adoption | `scripts/configure-ai-collaboration.sh`, then `scripts/init-llm-context.sh` |
+| Project facts and extra rules | `docs/collaboration/project-conventions.md` |
+| Review / implementation routing | `docs/collaboration/runtime-routing.md` and the live toml when present |
+| Process lessons | `.agents/skills/process-lessons/SKILL.md` |
+| Closing an issue or work plan | `.agents/skills/process-review/SKILL.md` |
+| Design intake | `.agents/skills/design-intake/SKILL.md` |
+| Same-context agent review | `.agents/skills/same-context-review/SKILL.md` |
+| Adjudicator approval request | `.agents/skills/adjudicator-review/SKILL.md` |
+| AI work trace | `.agents/skills/ai-work-trace/SKILL.md` |
+| Bounded execution batch | `.agents/skills/execution-batch/SKILL.md` |
 | Deeper first assessment | `docs/templates/examples/adoption-prompts.md` |
 | Daily resume or new task | This guide plus a short Adjudicator message |
 | Contract reload only | No script required; contract files load per tool |
@@ -146,6 +168,6 @@ first message.
 
 - Adoption: `docs/collaboration/adoption-guide.md`
 - Project startup: `docs/collaboration/project-start-guide.md`
-- Handoff template: `docs/templates/agent-handoff.md`
+- Handoff: `.agents/skills/agent-handoff/SKILL.md`
 - Collaboration loop: `docs/collaboration/ai-human-scheme.md`
 - Agent entry: `docs/architecture/agent-quickstart.md`

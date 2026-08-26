@@ -40,10 +40,19 @@ jobs:
             ".cursor/rules/01-quickstart.mdc"
             ".cursor/rules/02-architecture-boundaries.mdc"
             ".cursor/rules/03-collaboration-and-completion.mdc"
+            ".agents/skills/design-intake/SKILL.md"
+            ".agents/skills/process-review/SKILL.md"
+            ".agents/skills/same-context-review/SKILL.md"
+            ".agents/skills/agent-handoff/SKILL.md"
+            ".agents/skills/process-lessons/SKILL.md"
+            ".agents/skills/adjudicator-review/SKILL.md"
+            ".agents/skills/ai-work-trace/SKILL.md"
+            ".agents/skills/execution-batch/SKILL.md"
             "docs/at-tdd/process.md"
             "docs/collaboration/ai-human-scheme.md"
             "docs/collaboration/source-code-quality.md"
             "docs/collaboration/definition-of-done.md"
+            "docs/collaboration/document-lifecycle.md"
             "docs/collaboration/adoption-guide.md"
             "docs/collaboration/template-benefits.md"
             "docs/collaboration/project-start-guide.md"
@@ -57,6 +66,12 @@ jobs:
             "docs/collaboration/local-issue-planning.md"
             "docs/collaboration/prompt-instruction-change-control.md"
             "docs/collaboration/session-start-and-resume.md"
+            "docs/collaboration/runtime-routing.md"
+            "docs/collaboration/process-lessons.md"
+            "docs/collaboration/process-review.md"
+            "docs/collaboration/project-conventions.md"
+            "docs/collaboration/reviews/.gitkeep"
+            "docs/collaboration/template-feedback/.gitkeep"
             "docs/architecture/README.md"
             "docs/architecture/project-structure.md"
             "docs/architecture/testing-strategy.md"
@@ -74,7 +89,15 @@ jobs:
             "docs/templates/gherkin-feature.md"
             "docs/templates/adr.md"
             "docs/templates/contract-file-sync-prompt.md"
+            "docs/templates/canonical-document-register.md"
+            "docs/templates/review-summary.md"
             "docs/templates/execution-batch-review.md"
+            "docs/templates/runtime-routing.toml"
+            "docs/templates/same-context-review.md"
+            "docs/templates/process-lesson.md"
+            "docs/templates/process-review-record.md"
+            "docs/templates/template-feedback.md"
+            "docs/templates/project-conventions.md"
             "docs/collaboration/traces/.gitkeep"
             "docs/issues/.gitkeep"
             "docs/work-plans/.gitkeep"
@@ -82,8 +105,10 @@ jobs:
             "docs/evaluation/criteria/.gitkeep"
             "scripts/copy-ai-collaboration-files.sh"
             "scripts/update-ai-collaboration-files.sh"
+            "scripts/configure-ai-collaboration.sh"
             "scripts/init-llm-context.sh"
             "scripts/check-execution-batch-reviews.py"
+            "scripts/check-document-lifecycle.py"
             "scripts/lib/collaboration-template-paths.sh"
           )
 
@@ -95,17 +120,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for file in \
-            docs/architecture/decision-themes/dec-0001-governance-and-collaboration.md \
-            docs/architecture/decision-themes/dec-0002-state-first-semantics-and-measurement.md \
-            docs/architecture/decision-themes/dec-0003-language-surface-and-physicist-first-dx.md \
-            docs/architecture/decision-themes/dec-0004-type-first-scientific-model.md \
-            docs/architecture/decision-themes/dec-0005-quantum-operations-and-runtime.md \
-            docs/architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md \
-            docs/architecture/decision-themes/dec-0007-documentation-and-decision-records.md \
-            docs/architecture/adr/0187-documentation-source-record-compaction.md \
-            docs/architecture/adr/0188-decision-theme-canonical-surface.md; do
-            test -f "$file"
+          for n in 0001 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018; do
+            ls "docs/architecture/adr/${n}-"*.md >/dev/null
           done
 
       - name: Check script syntax
@@ -115,6 +131,7 @@ jobs:
           bash -n \
             scripts/copy-ai-collaboration-files.sh \
             scripts/update-ai-collaboration-files.sh \
+            scripts/configure-ai-collaboration.sh \
             scripts/init-llm-context.sh \
             scripts/lib/collaboration-template-paths.sh
 
@@ -124,6 +141,12 @@ jobs:
           set -euo pipefail
           python3 scripts/check-execution-batch-reviews.py \
             --branch "${GITHUB_HEAD_REF:-}"
+
+      - name: Check document lifecycle registers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/check-document-lifecycle.py
 
       - name: Check unresolved conflict markers
         shell: bash
@@ -152,24 +175,80 @@ jobs:
           test -f "$tmp/target/docs/issues/.gitkeep"
           test -f "$tmp/target/docs/collaboration/traces/.gitkeep"
           test -f "$tmp/target/docs/specs/.gitkeep"
+          test -f "$tmp/target/docs/templates/runtime-routing.toml"
+          test -f "$tmp/target/scripts/configure-ai-collaboration.sh"
+          test -f "$tmp/target/.agents/skills/design-intake/SKILL.md"
+          test -f "$tmp/target/.agents/skills/process-review/SKILL.md"
+          test -f "$tmp/target/.agents/skills/same-context-review/SKILL.md"
+          test -f "$tmp/target/.agents/skills/agent-handoff/SKILL.md"
+          test -f "$tmp/target/.agents/skills/process-lessons/SKILL.md"
+          test -f "$tmp/target/.agents/skills/adjudicator-review/SKILL.md"
+          test -f "$tmp/target/.agents/skills/ai-work-trace/SKILL.md"
+          test -f "$tmp/target/.agents/skills/execution-batch/SKILL.md"
+          test -f "$tmp/target/scripts/check-document-lifecycle.py"
+          test ! -f "$tmp/target/docs/collaboration/runtime-routing.toml"
           ! ls "$tmp/target/docs/issues/"LISS-*.md >/dev/null 2>&1
           ! ls "$tmp/target/docs/collaboration/traces/"*.md >/dev/null 2>&1
+          ! ls "$tmp/target/docs/work-plans/"WP-*.md >/dev/null 2>&1
+          ! ls "$tmp/target/docs/collaboration/reviews/"*.md >/dev/null 2>&1
           test ! -f "$tmp/target/docs/specs/template-rollout.md"
+          test ! -f "$tmp/target/docs/collaboration/process-lessons-log.md"
+          test -f "$tmp/target/docs/collaboration/project-conventions.md"
+          grep -q 'Smoke App' "$tmp/target/docs/collaboration/project-conventions.md"
+          grep -q 'template smoke test' "$tmp/target/docs/collaboration/project-conventions.md"
+          grep -q 'test stack' "$tmp/target/docs/collaboration/project-conventions.md"
+          if grep -R -n -E 'LISS-[0-9]{4}|WP-[0-9]{4}' \
+            "$tmp/target/docs/collaboration" \
+            "$tmp/target/docs/at-tdd" \
+            "$tmp/target/docs/templates" \
+            "$tmp/target/AGENTS.md" \
+            "$tmp/target/CLAUDE.md" \
+            "$tmp/target/.github/copilot-instructions.md" \
+            "$tmp/target/.grok/rules" \
+            "$tmp/target/.cursor/rules" \
+            "$tmp/target/.agents/skills" \
+            "$tmp/target/scripts" \
+            | grep -v -E 'LISS-0000|LISS-\*|LISS-0001-short-title|LISS-0002-short-title|AIP-0000'; then
+            echo "Context files cite ISSUE or work-plan IDs." >&2
+            exit 1
+          fi
+          scripts/configure-ai-collaboration.sh \
+            --target "$tmp/target" \
+            --non-interactive
+          test -f "$tmp/target/docs/collaboration/runtime-routing.toml"
+          grep -q 'isolation = "same_context"' "$tmp/target/docs/collaboration/runtime-routing.toml"
+          grep -q 'isolation = "host"' "$tmp/target/docs/collaboration/runtime-routing.toml"
+          if scripts/configure-ai-collaboration.sh \
+            --target "$tmp/target" \
+            --non-interactive; then
+            echo "configure should refuse to overwrite without --force." >&2
+            exit 1
+          fi
+          scripts/configure-ai-collaboration.sh \
+            --target "$tmp/target" \
+            --non-interactive \
+            --review-isolation separate_context \
+            --review-model "host-review-model" \
+            --implementation-isolation ask \
+            --force
+          grep -q 'isolation = "separate_context"' "$tmp/target/docs/collaboration/runtime-routing.toml"
+          grep -q 'model = "host-review-model"' "$tmp/target/docs/collaboration/runtime-routing.toml"
+          grep -q 'isolation = "ask"' "$tmp/target/docs/collaboration/runtime-routing.toml"
           if grep -R -n -E '<PROJECT_NAME: one-line description|<FILL IN: e\.g\. backend' \
             "$tmp/target/AGENTS.md" \
             "$tmp/target/CLAUDE.md" \
             "$tmp/target/.github/copilot-instructions.md" \
             "$tmp/target/.grok/rules" \
-            "$tmp/target/.cursor/rules"; then
-            echo "Copy script left basic project placeholders unfilled." >&2
+            "$tmp/target/.cursor/rules" \
+            "$tmp/target/.agents/skills"; then
+            echo "Template context files still contain project placeholders." >&2
             exit 1
           fi
-
-      - name: Check coverage ledger / Open Topics consistency
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 scripts/check-coverage-ledger-consistency.py
+          if grep -n -E '<PROJECT_NAME>|<one-line domain summary>|<FILL IN: e\.g\. backend' \
+            "$tmp/target/docs/collaboration/project-conventions.md"; then
+            echo "Copy did not fill project-conventions.md from flags." >&2
+            exit 1
+          fi
 
       - name: Check agent operating contract change traceability
         if: github.event_name == 'pull_request'
@@ -188,7 +267,7 @@ jobs:
               docs/collaboration/traces/*.md)
                 trace_added=true
                 ;;
-              AGENTS.md|CLAUDE.md|.github/copilot-instructions.md|.grok/rules/*.md|.cursor/rules/*.mdc|docs/at-tdd/process.md|docs/architecture/agent-quickstart.md|docs/collaboration/*.md|docs/templates/*.md)
+              AGENTS.md|CLAUDE.md|.github/copilot-instructions.md|.grok/rules/*.md|.cursor/rules/*.mdc|.agents/skills/*/SKILL.md|docs/at-tdd/process.md|docs/collaboration/*.md|docs/templates/*.md)
                 contract_changed=true
                 ;;
             esac
@@ -199,35 +278,26 @@ jobs:
             exit 1
           fi
 
-  kernel-tests:
-    name: Kernel root suites
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Set up Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-
-      - name: Install pytest (CI runner only)
-        run: python3 -m pip install --upgrade pip pytest
-
-      - name: Run root suites
-        run: python3 -m pytest tests/ -q
-
-  spec-verification:
-    name: Spec verification
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Set up Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-
-      - name: Run spec verification
-        run: python3 tests/spec_verification/run_all.py
+  # Add stack-specific jobs here once the implementation exists, for example:
+  #
+  # backend:
+  #   name: Backend checks
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v7
+  #     - name: Run tests
+  #       run: <your test command>
+  #     - name: Run dependency policy check
+  #       run: <e.g. cargo deny check, npm audit, pip-audit>
+  #
+  # frontend:
+  #   name: Front-end checks
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v7
+  #     - name: Run checks
+  #       run: <your lint/test command>
+  #
+  # Keep each job conditional on the relevant manifest existing
+  # (e.g. `if: hashFiles('backend/Cargo.toml') != ''`) so this workflow stays
+  # valid before the corresponding project is scaffolded.

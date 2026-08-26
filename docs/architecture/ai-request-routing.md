@@ -17,6 +17,10 @@ The design step must produce:
 - files and documents required as AI payload context.
 - files and documents intentionally omitted.
 - model or assistant class for each subtask.
+- review and implementation isolation from
+  `docs/collaboration/runtime-routing.toml` when that file exists.
+- applicable meta-level process lessons from
+  `docs/collaboration/process-lessons-log.md` when that file exists.
 - ambiguity boundaries.
 
 This design step does not replace AT-TDD. It prepares the payload and task

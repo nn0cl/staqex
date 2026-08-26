@@ -1,7 +1,12 @@
 # Model and Tool Capability Matrix
 
 Use this matrix to route AI-TDD collaboration tasks. It does not name specific
-commercial models; it defines capability classes.
+commercial models; it defines capability classes. An adopting project may map
+a class to a host-displayed model identifier in
+`docs/collaboration/runtime-routing.toml` (see
+`docs/collaboration/runtime-routing.md`). Empty or missing identifiers keep
+this class-based routing. The template does not ship commercial model names
+as defaults.
 
 ## Capability Classes
 

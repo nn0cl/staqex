@@ -35,6 +35,9 @@ Task:
 - Do not implement, refactor, delete, or overwrite existing project behavior.
 - Do not infer the target domain model, datastore, provider, external API, or
   LLM model without an accepted specification, ADR, or Adjudicator decision.
+- If `docs/collaboration/runtime-routing.toml` is missing, recommend
+  `scripts/configure-ai-collaboration.sh` rather than inventing isolation or
+  model names.
 
 Output:
 
@@ -69,7 +72,7 @@ Adjudicator decision:
 
 Target project facts approved by the Adjudicator:
 
-- Project name: `Staqex`
+- Project name: `<PROJECT_NAME>`
 - Domain summary: `<ONE_LINE_DOMAIN_SUMMARY>`
 - Selected stack: `<STACK_SUMMARY_OR_CURRENT_NON_DECISION>`
 - Known external resources: `<EXTERNAL_RESOURCE_LIST_OR_CURRENT_NON_DECISION>`

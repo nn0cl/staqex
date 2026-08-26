@@ -60,55 +60,6 @@ User request
 The loop can stop at any point when the Adjudicator asks for clarification, changes
 scope, rejects an assumption, or requests a new ADR.
 
-## User-triggered independent review loop
-
-The Adjudicator may start an additional review loop at any point by explicitly
-asking for an independent-context review or review/correction loop. The loop
-is available during design, Red, Green, Refactor, or final review, but does not
-change the current phase or grant a later approval.
-
-```text
-User trigger
-  -> fresh read-only reviewer context
-  -> prioritized findings and readiness verdict
-  -> finding disposition: accepted / rejected / deferred
-  -> scoped corrections for accepted findings
-  -> fresh reviewer context
-  -> repeat until COMPLETE or ABORT
-  -> typed human approval for the next phase
-```
-
-The reviewer must not edit files or approve the phase. The primary agent must
-not treat “ready” as implementation permission. The primary agent may decide a
-finding under the existing accepted design: accept an in-scope preserving
-correction, reject an unsupported/duplicate/non-applicable finding or one that
-conflicts with an accepted contract, and defer a non-blocking item outside the
-current scope. The agent records evidence and rationale for every decision.
-
-The agent asks the user only when accepting or rejecting would change an
-accepted ADR/Spec/architecture/technology/Issue/phase, resolve conflicting
-physics or safety requirements, or require guessing the user's intent. In that
-case the loop enters `ABORT` until the user decides. `deferred` remains an
-open blocker for `COMPLETE`. Every iteration records the independent context,
-artifacts inspected, findings, dispositions, corrections, remaining blockers,
-terminal state, and next safe action under `docs/collaboration/reviews/` and
-`docs/collaboration/traces/`.
-
-### Independent review loop states
-
-| State | Meaning | Next transition |
-|---|---|---|
-| `REVIEW` | Fresh context performs read-only review | `DISPOSITION` |
-| `DISPOSITION` | Findings receive accepted/rejected/deferred status and authority | `CORRECT`, `RE_REVIEW`, or `ABORT` |
-| `CORRECT` | Primary agent applies only accepted in-scope corrections | `RE_REVIEW` |
-| `RE_REVIEW` | A new independent context verifies current artifacts | `DISPOSITION` |
-| `COMPLETE` | No unresolved review blocker remains | Stop; separate typed approval may follow |
-| `ABORT` | No action is needed, user stopped, or a user decision is required | Stop; await user decision |
-
-The loop may not transition directly from `READY` to implementation or a new
-phase. A terminal `COMPLETE` record is evidence for a later approval request,
-not the approval itself.
-
 ## Approval Model
 
 Approval is typed and scoped. The following are distinct decisions:
@@ -137,11 +88,6 @@ record consistency but is not human approval.
 
 Every task should leave enough evidence for another human or agent to continue.
 
-For design and implementation work, consult the Independent Review
-Perspectives Ledger before acting. Record selected lenses, applicable risks,
-and the evidence plan in the design note or work trace so the work remains
-review-ready before a review is explicitly triggered.
-
 Required for design-only work:
 
 - design note.
@@ -166,7 +112,11 @@ Required for Phase 3:
 
 - refactor summary.
 - verification output summary.
-- reviewer empathy summary.
+- reviewer empathy summary, using the review isolation in
+  `docs/collaboration/runtime-routing.md` when an agent review packet is
+  required.
+- meta-level process lessons when the review should change later work
+  (`docs/collaboration/process-lessons.md`).
 
 ## Decision Gates
 
@@ -192,8 +142,6 @@ or final answer:
 - `Omitted`: relevant-looking context intentionally excluded.
 - `Assumptions`: assumptions made for this phase.
 - `Open decisions`: questions for Adjudicator or future ADR.
-- `Review lenses`: selected perspectives from the Independent Review
-  Perspectives Ledger and the evidence planned for each.
 - `Verification`: deterministic checks run or not run.
 - `Issue links`: local issue IDs, GitHub issue links, and work plan links.
 

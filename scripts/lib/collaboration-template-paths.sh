@@ -11,6 +11,7 @@ collaboration_template_paths=(
   ".github/copilot-instructions.md"
   ".grok/rules"
   ".cursor/rules"
+  ".agents/skills"
   ".github/dependabot.yml"
   ".github/pull_request_template.md"
   ".github/ISSUE_TEMPLATE"
@@ -25,8 +26,10 @@ collaboration_template_paths=(
   "docs/work-plans"
   "scripts/copy-ai-collaboration-files.sh"
   "scripts/update-ai-collaboration-files.sh"
+  "scripts/configure-ai-collaboration.sh"
   "scripts/init-llm-context.sh"
   "scripts/check-execution-batch-reviews.py"
+  "scripts/check-document-lifecycle.py"
   "scripts/lib/collaboration-template-paths.sh"
 )
 
@@ -34,7 +37,13 @@ collaboration_template_paths=(
 # copied into adopting projects as target-owned planning history.
 collaboration_template_exclude_paths=(
   "docs/collaboration/traces/*.md"
+  "docs/collaboration/runtime-routing.toml"
+  "docs/collaboration/project-conventions.md"
+  "docs/collaboration/process-lessons-log.md"
+  "docs/collaboration/reviews/*.md"
+  "docs/collaboration/template-feedback/*.md"
   "docs/issues/LISS-*.md"
+  "docs/work-plans/WP-*.md"
   "docs/specs/template-rollout.md"
 )
 
@@ -49,19 +58,7 @@ is_collaboration_template_excluded() {
   return 1
 }
 
-# Tier 2: the five agent persona/contract files that carry adopter-filled
-# placeholders (project name, stack, domain boundaries, external resources).
-# A mechanical text merge or blind overwrite on these can destroy or bury
-# adopter-specific facts, so update-ai-collaboration-files.sh routes conflicts
-# on these to AI-assisted reconciliation instead (see
-# docs/templates/contract-file-sync-prompt.md) rather than to `git merge-file`
-# or an unconditional overwrite. Everything else in
-# collaboration_template_paths is Tier 1: the template is fully authoritative.
-is_contract_persona_file() {
-  local rel="$1"
-  case "$rel" in
-    AGENTS.md|CLAUDE.md|.github/copilot-instructions.md) return 0 ;;
-    .grok/rules/*|.cursor/rules/*) return 0 ;;
-    *) return 1 ;;
-  esac
-}
+# All collaboration_template_paths files are template-authoritative on later
+# sync. Project facts live in the target-owned
+# docs/collaboration/project-conventions.md (excluded above), not in
+# AGENTS.md / CLAUDE.md / Copilot / Grok / Cursor contract files.

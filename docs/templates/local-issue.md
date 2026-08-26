@@ -16,11 +16,11 @@
 
 ## Summary
 
-- 
+-
 
 ## Acceptance Notes
 
-- 
+-
 
 ## Dependencies
 
@@ -31,7 +31,7 @@
 
 ## Adjudicator Decision Points
 
-- 
+-
 
 ## Context
 
@@ -72,8 +72,17 @@
 
 ## Work Notes
 
-- 
+-
 
 ## Verification
 
-- 
+-
+
+## Process Review
+
+<!-- Required when status becomes done. Same context. Meta-level only.
+     Policy: docs/collaboration/process-review.md -->
+
+- Outcome: no deviation | deviation (class) | not yet
+- Lesson written: yes | no | not applicable
+- Template-feedback path: none | path
