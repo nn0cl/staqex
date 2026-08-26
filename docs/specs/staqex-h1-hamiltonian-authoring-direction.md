@@ -87,6 +87,12 @@ An implementation of H1 must produce:
 - one target-capability rejection;
 - comparison showing the source is not dependent on Java/Kotlin-style classes.
 
+The “one simulator result” evidence is split by the realization boundary:
+exact/symbolic inspection produces only a non-collapsing
+`SemanticInspectionResult` with no finite allocation; a numeric simulator
+result requires a source-visible finite `Realize` policy and carries its
+method, finite parameters, error budget, target, and provenance.
+
 ## 4. Open decisions before Red
 
 - exact syntax for indexed sums and lattice domains;

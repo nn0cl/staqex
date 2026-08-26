@@ -32,8 +32,8 @@ specification and does not authorize implementation.
 
 ## First bounded acceptance slice: H1
 
-The H1 slice reuses the existing acceptance authority rather than creating a
-second package:
+The H1 slice reuses the existing H1 design and phase-gated acceptance inputs;
+this matrix does not create a second normative acceptance authority:
 
 - H1-01/H1-02: `docs/specs/staqex-h1-hamiltonian-authoring-direction.md`;
 - parser/AST structure: `docs/specs/staqex-h1-2-parser-ast-acceptance.md`;
@@ -93,8 +93,14 @@ technology selection, general automatic quantization, and a new mandatory
 - executable projection fingerprint tests covering opcode, wires, parameters,
   source/provenance identity, symmetric expected/actual filtering, and a
   separate terminal `Measure` check. The deterministic fingerprint contract
-  is the canonical tuple `(source_node_id, opcode, wires, parameters,
-  provenance_digest)` serialized in field order with explicit numeric
-  normalization; expected and actual instructions are filtered by the same
-  source/provenance boundary. Mutation, legacy-fallback invocation, or
-  terminal-Measure mutation must fail closed before artifact emission.
+  canonicalizes an ordered instruction list (preserving order and duplicate
+  instructions) as a length-prefixed sequence of field tuples:
+  `(source_node_id, opcode, wires, parameters, role, type, dimensions,
+  exactness, intent, provenance_digest)`. Numeric parameters use one explicit
+  normalized representation; absent values and empty lists have distinct
+  encodings; `provenance_digest` covers the same source/provenance fields.
+  The canonical byte serialization is the comparison authority and its
+  SHA-256 digest is only a transport/cache projection. Expected and actual
+  instructions are filtered by the same source/provenance boundary. Mutation,
+  legacy-fallback invocation, or terminal-Measure mutation must fail closed
+  before artifact emission.

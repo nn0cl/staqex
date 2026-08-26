@@ -63,6 +63,11 @@ Then it contains a source-backed H1Operator node
 And the node retains operator atoms, parameters, carrier, and provenance
 ```
 
+**Canonical authority note:** H1-3-05 consumes the source-derived Scientific
+Semantic IR through a typed Physics IR projection. Physics IR does not own
+independent meaning and cannot bypass canonical dispatch or authorize an
+artifact when source identity, structural children, or provenance are absent.
+
 ## 3. Design boundary
 
 The H1-3 implementation may reuse existing `OpBin`, `OpPauli`, `OpVar`,

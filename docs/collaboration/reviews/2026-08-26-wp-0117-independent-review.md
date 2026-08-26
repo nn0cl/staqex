@@ -89,3 +89,29 @@ implementation.
   and Design Check context updated.
 - Next state: `RE_REVIEW` after this correction; no Phase 1 or implementation
   approval inferred.
+
+## Iteration 4: fresh independent re-review
+
+- Verdict: `NOT READY`.
+- P0: none.
+- P1 findings accepted for correction:
+  1. H1-2/H1-3 must state normatively that Physics IR is generated only from
+     compile-owned Scientific Semantic IR and is not an authority.
+  2. H1 numeric simulator evidence must be explicitly tied to source-visible
+     finite `Realize`; exact/symbolic inspection remains non-finite and
+     non-collapsing.
+  3. The executable fingerprint must define ordered instruction-list
+     serialization, duplicate/order preservation, field encoding,
+     normalization, provenance digest inputs, and the terminal Measure
+     boundary.
+  4. PR #574 needs a complete path-level selected/rejected manifest, not only
+     representative paths.
+- P2 findings accepted for correction:
+  - distinguish H1 design inputs from pending phase-gated acceptance authority;
+  - remove ambiguity between inspection-only results and numeric simulator
+    results.
+- Corrections applied: H1-2/H1-3 canonical-authority notes, H1 numeric evidence
+  contract, ordered fingerprint contract, and the complete PR #574 path
+  manifest were added. The H1 status wording is constrained to design input;
+  implementation approval remains absent.
+- Next state: `RE_REVIEW` after this correction.

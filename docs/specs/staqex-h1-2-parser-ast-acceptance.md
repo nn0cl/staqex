@@ -64,6 +64,13 @@ And source provenance identifies the original H1 declaration spans
 And the normal compile pipeline remains available for diagnostics
 ```
 
+**Canonical authority note:** The Physics IR named by H1-2-03 is a
+consumer-facing, compile-owned projection generated from the source-derived
+Scientific Semantic IR defined by ADR 0211. It is not an independent semantic
+authority. The projection must retain the canonical source identity,
+structural children, carrier, and provenance; caller-injected Physics IR
+cannot authorize execution.
+
 ### H1-2-04 — Legacy scientific scopes remain compatible
 
 ```gherkin

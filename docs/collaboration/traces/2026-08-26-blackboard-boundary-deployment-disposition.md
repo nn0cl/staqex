@@ -6,6 +6,7 @@
 - Source tip: `e87937ea3da73beb840652fb308b31072f3bd9c0`
 - Base: `origin/main` at design intake
 - PR: #574, currently open and conflicted; not merged
+- Exact path manifest: `2026-08-26-pr-574-path-disposition-manifest.md`
 - Deterministic inventory: 6 commits, 318 changed files, 1,790 additions,
   13,559 deletions, and a dirty merge state against `main`.
 - Merge-base: `9ca049f6d27af871a8ce02e0ba8df87c61efca8c`
@@ -51,7 +52,9 @@ canonical Issue, Spec, WP, or ADR before migration.
    The current baseline is `origin/main=c179a2c7`, merge-base `9ca049f6`,
    with source commits `42e76708`, `1c713ebc`, `3f71458d`, `227b65a5`,
    `5642a69`, and `e87937ea` recorded in the commit inventory below.
-2. Current canonical Issue/Spec/WP/ADR mapping for every selected asset.
+2. Exact path-level selected/rejected manifest:
+   `2026-08-26-pr-574-path-disposition-manifest.md`; current canonical
+   Issue/Spec/WP/ADR mapping for every selected asset.
 3. Negative evidence that legacy DTOs, caller-injected objects, soft
    diagnostics, or AST-pattern shortcuts cannot create executable meaning.
 4. Projection evidence covering semantic payload and emitted instruction
