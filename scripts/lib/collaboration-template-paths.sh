@@ -36,12 +36,12 @@ collaboration_template_paths=(
 # Files that are useful inside this template repository but should not be
 # copied into adopting projects as target-owned planning history.
 collaboration_template_exclude_paths=(
-  "docs/collaboration/traces/*.md"
+  "docs/collaboration/traces/*"
   "docs/collaboration/runtime-routing.toml"
   "docs/collaboration/project-conventions.md"
   "docs/collaboration/process-lessons-log.md"
-  "docs/collaboration/reviews/*.md"
-  "docs/collaboration/template-feedback/*.md"
+  "docs/collaboration/reviews/*"
+  "docs/collaboration/template-feedback/*"
   "docs/issues/LISS-*.md"
   "docs/work-plans/WP-*.md"
   "docs/specs/template-rollout.md"
@@ -50,6 +50,13 @@ collaboration_template_exclude_paths=(
 is_collaboration_template_excluded() {
   local rel="$1"
   local pattern
+
+  case "$rel" in
+    docs/collaboration/traces/.gitkeep|docs/collaboration/reviews/.gitkeep|docs/collaboration/template-feedback/.gitkeep)
+      return 1
+      ;;
+  esac
+
   for pattern in "${collaboration_template_exclude_paths[@]}"; do
     case "$rel" in
       $pattern) return 0 ;;

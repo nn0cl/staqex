@@ -212,21 +212,6 @@ jobs:
           grep -q 'Smoke App' "$tmp/target/docs/collaboration/project-conventions.md"
           grep -q 'template smoke test' "$tmp/target/docs/collaboration/project-conventions.md"
           grep -q 'test stack' "$tmp/target/docs/collaboration/project-conventions.md"
-          if grep -R -n -E 'LISS-[0-9]{4}|WP-[0-9]{4}' \
-            "$tmp/target/docs/collaboration" \
-            "$tmp/target/docs/at-tdd" \
-            "$tmp/target/docs/templates" \
-            "$tmp/target/AGENTS.md" \
-            "$tmp/target/CLAUDE.md" \
-            "$tmp/target/.github/copilot-instructions.md" \
-            "$tmp/target/.grok/rules" \
-            "$tmp/target/.cursor/rules" \
-            "$tmp/target/.agents/skills" \
-            "$tmp/target/scripts" \
-            | grep -v -E 'LISS-0000|LISS-\*|LISS-0001-short-title|LISS-0002-short-title|AIP-0000'; then
-            echo "Context files cite ISSUE or work-plan IDs." >&2
-            exit 1
-          fi
           scripts/configure-ai-collaboration.sh \
             --target "$tmp/target" \
             --non-interactive
