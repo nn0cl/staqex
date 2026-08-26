@@ -62,7 +62,8 @@ Blackboard meaning
         |
         v
 Semantic and realization boundary
-  AST -> semantic authority -> Physics IR -> explicit Realize plan
+  AST -> Scientific Semantic IR (canonical authority)
+       -> typed consumer projections -> explicit Realize plan
         |
         v
 Execution and deployment boundary
@@ -77,11 +78,16 @@ artifact emission.
 ## Ordered design batch
 
 1. Complete the PR #574 asset disposition and duplicate/overlap evidence.
-2. Freeze the blackboard-to-boundary vocabulary and ownership matrix.
-3. Write the H1 acceptance package for the smallest source-preserving slice.
-4. Define the realization/deployment contract without selecting a provider.
-5. Request independent read-only review and record dispositions.
-6. Request separate Phase 1 approval before creating Red tests.
+2. Freeze the blackboard-to-boundary vocabulary and ownership matrix around
+   ADR 0211's Scientific Semantic IR authority.
+3. Map the H1 slice to the existing H1-01 through H1-06 specifications and
+   canonical-dispatch/no-early-return contract; do not create a second H1
+   acceptance authority.
+4. Define the exact/symbolic inspection versus finite `Realize` contract.
+5. Keep deployment explicitly deferred for H1 unless a future provider-neutral
+   delivery-port contract is separately accepted.
+6. Request independent read-only review and record dispositions.
+7. Request separate Phase 1 approval before creating Red tests.
 
 ## Stop conditions
 

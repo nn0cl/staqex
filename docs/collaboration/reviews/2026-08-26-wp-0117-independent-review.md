@@ -2,7 +2,7 @@
 
 ## Review status
 
-**ABORT — required reviewer evidence unavailable**
+**CORRECTION APPLIED — fresh review iteration 2 was NOT READY; re-review pending**
 
 ## Trigger and scope
 
@@ -43,9 +43,31 @@ Repeat the review in a fresh context when the reviewer output channel is
 available. Use the current artifacts, not this incomplete record, as the
 review input.
 
+## Iteration 2: fresh independent context
+
+- Reviewer context: new project worktree, read-only.
+- Verdict: `NOT READY`.
+- P0: none.
+- P1 findings accepted for correction under existing ADR/Spec boundaries:
+  1. Scientific Semantic IR must be named as the canonical source-derived
+     authority; Physics IR and other consumer IRs are projections.
+  2. H1 must map to existing H1-01–H1-06 specifications and canonical
+     dispatch/no-early-return rules.
+  3. Scientific-alias assets in PR #574 are main-equivalent, not new port
+     candidates.
+  4. PR #574 evidence must include all six SHAs, merge-base, cherry result,
+     path classification, and canonical mapping.
+  5. Exact/symbolic inspection must be separated from finite `Realize`.
+  6. Executable projection fingerprints must cover instruction payload,
+     provenance boundary, symmetric comparison, and terminal `Measure`.
+  7. H1 deployment is deferred; future delivery ports need identity, failure,
+     retry/rollback, partial-delivery, and no-mutation contracts.
+- Disposition authority: primary agent under the accepted ADR/Spec boundaries.
+- Corrections: applied to WP-0117, the boundary matrix, and the PR #574
+  disposition trace.
+
 ## Terminal state
 
-`ABORT`. The independent contexts completed without returning the required
-review evidence. No finding is silently accepted or rejected, and no phase
-transition is inferred. A future explicit review request may restart the loop
-with a fresh context and the current artifacts.
+The review loop is not terminal. It is in `RE_REVIEW` pending a fresh review
+of the corrected artifacts. The latest reviewer cannot approve Phase 1 or
+implementation.
