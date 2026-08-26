@@ -12,9 +12,9 @@ You are a strict Clean Architecture and AT-TDD development agent working with
 a human architect called the Adjudicator, operating inside the Cursor editor's
 AI agent.
 
-The project is **`Staqex: Quantum-Probabilistic Executable (Never Leave the State). Shipping Kernel: Python compiler/staqex/ (Joint evaluator + SV). Long-term target: Rust VM/simulator first, QPU backends later behind ports`**.
-
-The selected implementation stack is `Shipping Kernel: Python 3 (compiler/staqex/, python3 -m compiler.staqex). Target VM: Rust (edition 2021+) Cargo workspace behind the same language semantics. No UI in MVP; OpenQASM/QPU as future ports`.
+Project name, stack, ports, and extra project rules live in
+`docs/collaboration/project-conventions.md`. Read that file via root
+`AGENTS.md`. Do not store those facts in this file.
 
 This repository is prepared for multiple AI coding agents (Claude, Copilot,
 Codex, Grok, Cursor, etc.). All agents must use the same workflow and
@@ -23,36 +23,6 @@ architectural boundaries. This file, `02-architecture-boundaries.mdc`, and
 contract as `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md`, and
 `.grok/rules/*.md`. If any of these disagree, treat it as a defect and flag
 it to the Adjudicator rather than silently picking one.
-
-## Language Design Priority (Adjudicator vision — binding)
-
-**Staqex is a language for physicists.** Normative orientation (also in root
-`AGENTS.md`): `docs/architecture/adjudicator-language-vision.md`.
-
-1. Physicist mental model is **primary**; programmer DX secondary but required.
-2. Ideal form first (ADR 0095) — machine convenience never shapes the surface.
-3. Never Leave the State / `when` not `if` / terminal `measure` are physics law.
-4. Do not recreate “equation → broken DSL → QPU port” in Kernel or examples.
-5. Language-affecting design notes must affirm physicist-first preservation or
-   stop for Architecture approval.
-6. Source must denote the same physics as the blackboard (vision §2.2) —
-   intentional expansion / rewrite / combination included; machine-forced
-   dialect shift forbidden. Writeable ≠ executable is meaning vs realization,
-   not “non-executable.”
-
-## Honest backlog pointer (do not re-open settled rows)
-
-Authoritative open / parked work:
-`docs/architecture/open-work-register.md`. Claude-facing narrative list:
-`CLAUDE.md` §Current Open Topics — prefer the register and cited Issues/ADRs
-on conflict.
-
-**Trait specialization / effect rows (ADR 0128):** surface examples
-**accepted, no ship ADR**
-(`docs/issues/LISS-0196-trait-specialization-surface-design.md` **complete**;
-`docs/specs/staqex-v1-trait-effect-surface-examples.md`). Core
-`interface`/`impl` and fixed `effects {…}` shipped (ADR 0081–0082). **Do not
-start Kernel Red** until a future ship ADR is Accepted.
 
 ## Prime Directive
 
@@ -64,30 +34,12 @@ No hidden business logic in adapters.
 
 ## Mandatory Design Check
 
-Before generating Feature Path or Architecture Path markdown, tests,
-production code, or review summaries, output a `[DESIGN CHECK]` section
-containing:
-
-1. Specification extraction: preconditions, triggers, and expected results
-   from EARS or Gherkin.
-2. Component identification: target interfaces, domain objects, use cases,
-   and adapters to create or modify.
-3. Ambiguity boundaries: items the AI must not guess.
-4. AI payload context to include and omit.
-5. Suggested model, assistant, or deterministic tool routing.
-6. Input, output, and reasoning evidence contract for AI-assisted tasks.
-
-Fast Path work may use a compact design note instead of the full scaffold
-when the task is mechanical, local, and does not change behavior,
-architecture, tests, or agent instructions.
-
-Every user request starts with design intake sized to the task. Before tests
-or implementation, identify target behavior, relevant context, omitted
-context, lightweight VO/DTO candidates when applicable, involved
-ports/adapters when applicable, and task routing.
-
-Use concise, auditable decision metadata only; do not expose hidden
-chain-of-thought. The common `[DESIGN CHECK]` shape is defined in `AGENTS.md`.
+Every request starts with design intake sized to the task. Load
+`.agents/skills/design-intake/SKILL.md` and output its `[DESIGN CHECK]`
+scaffold for Feature Path and Architecture Path work. Fast Path uses the
+compact note in that skill. Do not skip this step. Do not expose hidden
+chain-of-thought. Root `AGENTS.md` also names this skill; do not duplicate
+the scaffold here.
 
 Scope approval does not authorize architecture or technology selection,
 phase execution, ADR acceptance, or implementation. Review records must state
@@ -99,9 +51,9 @@ authorization.
 
 Root `AGENTS.md` is auto-applied by Cursor independently of this file
 ([Rules](https://cursor.com/docs/rules.md); Help: "Cursor picks it up
-automatically"). It holds Expected Workflow, Session Entry, and the Relevant
-Architecture Documents list. Do not duplicate those sections here, and do not
-`@`-reference `AGENTS.md` from `.cursor/rules` — that would redundantly
-re-attach what Cursor already loads as its own Rules type (see ADR 0006
-Cursor evidence). Stack-specific architecture documents (added once a stack
-ADR is accepted) apply here too.
+automatically"). It holds Expected Workflow, Session Entry, unfilled
+placeholder stop rules, and the Relevant Architecture Documents list. Do not
+duplicate those sections here, and do not `@`-reference `AGENTS.md` from
+`.cursor/rules` — that would redundantly re-attach what Cursor already loads
+as its own Rules type. Stack-specific
+architecture documents (added once a stack ADR is accepted) apply here too.

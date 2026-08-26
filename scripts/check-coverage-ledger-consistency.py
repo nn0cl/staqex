@@ -15,6 +15,7 @@ _REPO = Path(__file__).resolve().parents[1]
 
 LEDGER = _REPO / "docs/specs/staqex-v1-language-coverage-ledger.md"
 CLAUDE = _REPO / "CLAUDE.md"
+PROJECT_CONVENTIONS = _REPO / "docs/collaboration/project-conventions.md"
 PERMANENT_OUT = _REPO / "docs/specs/staqex-v1-open-topics-permanent-out.md"
 QPU_HONESTY = _REPO / "docs/specs/staqex-v1-qpu-capability-honesty.md"
 ADR_0115 = _REPO / "docs/architecture/decision-themes/dec-0002-state-first-semantics-and-measurement.md"
@@ -35,7 +36,16 @@ def _fail(messages: list[str]) -> None:
 def main() -> None:
     errors: list[str] = []
 
-    for path in (LEDGER, CLAUDE, PERMANENT_OUT, QPU_HONESTY, ADR_0115, OPEN_WORK, MISSION):
+    for path in (
+        LEDGER,
+        CLAUDE,
+        PROJECT_CONVENTIONS,
+        PERMANENT_OUT,
+        QPU_HONESTY,
+        ADR_0115,
+        OPEN_WORK,
+        MISSION,
+    ):
         if not path.is_file():
             errors.append(f"missing required artifact: {path.relative_to(_REPO)}")
     if errors:
@@ -43,6 +53,7 @@ def main() -> None:
 
     ledger = _read(LEDGER)
     claude = _read(CLAUDE)
+    project_conventions = _read(PROJECT_CONVENTIONS)
     open_work = _read(OPEN_WORK)
     mission = _read(MISSION)
 
@@ -61,8 +72,10 @@ def main() -> None:
     if "S1 authorize unblocked" not in ledger and "ready for Adjudicator authorize" not in ledger:
         errors.append("ledger gate implication must unblock S1 authorize")
 
-    if "LISS-0129 typed surface **shipped**" not in claude:
-        errors.append("CLAUDE.md must record LISS-0129 typed surface as shipped")
+    if "LISS-0129 typed surface **shipped**" not in project_conventions:
+        errors.append(
+            "project-conventions.md must record LISS-0129 typed surface as shipped"
+        )
 
     if re.search(
         r"Typed surface annotations.*\*\*not shipped\*\*",
