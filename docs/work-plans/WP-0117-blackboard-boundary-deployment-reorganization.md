@@ -2,7 +2,7 @@
 
 ## Status
 
-**Phase 2 Green — minimum implementation for reviewed Red tests**
+**Phase 3 — final-review-ready**
 
 ## [DESIGN CHECK]
 
@@ -108,6 +108,7 @@ artifact emission.
 - Phase 1 approval: granted by user on 2026-08-26 for failing tests only.
 - Phase 2 approval: granted by user on 2026-08-26 for the reviewed Red slice.
 - Implementation approval: granted for this bounded Phase 2 slice only.
+- Phase 3 approval: granted by user on 2026-08-26 for refactoring only.
 - Post-review: completed; latest independent review is `COMPLETE` / `READY`.
 
 ## Phase 1 execution record
@@ -135,3 +136,19 @@ artifact emission.
   rejection, instruction order, and duplicate preservation; `py_compile` and
   `git diff --check` passed. pytest remains unavailable in this environment.
 - Test changes: reviewed Phase 1 tests were not modified.
+
+## Phase 3 closeout
+
+- Typed approval: user message `承認`, 2026-08-26.
+- Refactor scope: split canonical float, sequence, and mapping encoding into
+  named helpers without changing the fingerprint byte contract or assertions.
+- Verification: `py_compile`, direct fingerprint smoke checks, and
+  `git diff --check` passed. pytest remains unavailable in this environment.
+- Reviewer empathy summary: the serializer's type dispatch is now easier to
+  scan, finite-number policy is isolated, and recursive collection handling is
+  explicit. The remaining review focus is the exact serialization contract
+  and terminal Measure boundary; no deployment or provider behavior was added.
+- Remaining risk: the repository environment lacks pytest, so the full CI
+  acceptance suite still requires execution in CI or a pytest-enabled review
+  environment.
+- Status: `final-review-ready`; no completion or merge claim is made.

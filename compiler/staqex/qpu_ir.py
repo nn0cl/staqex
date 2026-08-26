@@ -107,6 +107,31 @@ def _canonical_string(value: str) -> bytes:
     return b"S" + _length(len(normalized)) + normalized
 
 
+def _canonical_float(value: float) -> bytes:
+    if not math.isfinite(value):
+        raise ValueError("fingerprint numeric values must be finite")
+    if value == 0.0:
+        value = 0.0
+    return b"F" + struct.pack(">d", value)
+
+
+def _canonical_sequence(value: tuple[Any, ...] | list[Any]) -> bytes:
+    return b"A" + _length(len(value)) + b"".join(
+        _canonical_value(item) for item in value
+    )
+
+
+def _canonical_mapping(value: Mapping[Any, Any]) -> bytes:
+    entries = [
+        (_canonical_value(key), _canonical_value(item))
+        for key, item in value.items()
+    ]
+    entries.sort(key=lambda pair: pair[0])
+    return b"M" + _length(len(entries)) + b"".join(
+        key + item for key, item in entries
+    )
+
+
 def _canonical_value(value: Any) -> bytes:
     """Encode supported fingerprint values with explicit type tags."""
     if value is None:
@@ -120,21 +145,13 @@ def _canonical_value(value: Any) -> bytes:
     if isinstance(value, int):
         return b"I" + struct.pack(">q", value)
     if isinstance(value, float):
-        if not math.isfinite(value):
-            raise ValueError("fingerprint numeric values must be finite")
-        if value == 0.0:
-            value = 0.0
-        return b"F" + struct.pack(">d", value)
+        return _canonical_float(value)
     if isinstance(value, complex):
-        return b"C" + _canonical_value(float(value.real)) + _canonical_value(float(value.imag))
+        return b"C" + _canonical_float(value.real) + _canonical_float(value.imag)
     if isinstance(value, (tuple, list)):
-        return b"A" + _length(len(value)) + b"".join(_canonical_value(item) for item in value)
+        return _canonical_sequence(value)
     if isinstance(value, Mapping):
-        entries = [(_canonical_value(key), _canonical_value(item)) for key, item in value.items()]
-        entries.sort(key=lambda pair: pair[0])
-        return b"M" + _length(len(entries)) + b"".join(
-            key + item for key, item in entries
-        )
+        return _canonical_mapping(value)
     raise TypeError(f"unsupported fingerprint value: {type(value).__name__}")
 
 
