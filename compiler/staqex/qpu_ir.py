@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
-import json
 import math
+import struct
+import unicodedata
 from types import MappingProxyType
 from typing import Any, Iterator, Mapping
 
@@ -83,18 +84,101 @@ class QpuProgram(Mapping[str, Any]):
 
 
 def instruction_fingerprint(instructions: tuple[QpuInstruction, ...]) -> str:
-    """Digest the executable projection, including wires and parameters."""
-    payload = [
-        {
-            "opcode": instruction.opcode,
-            "qubits": instruction.qubits,
-            "parameter": instruction.parameter,
-            "provenance": dict(instruction.provenance),
-        }
-        for instruction in instructions
+    """Digest the executable projection using the canonical byte contract.
+
+    The serializer is deliberately structural: instruction order and duplicate
+    operations are significant, strings are NFC-normalized, and non-finite
+    numeric values are rejected before an executable artifact can be
+    fingerprinted.
+    """
+    encoded = _canonical_value(
+        tuple(_instruction_fingerprint_payload(instruction) for instruction in instructions)
+    )
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _length(value: int) -> bytes:
+    """Encode a count or byte length as an unsigned big-endian u64."""
+    return struct.pack(">Q", value)
+
+
+def _canonical_string(value: str) -> bytes:
+    normalized = unicodedata.normalize("NFC", value).encode("utf-8")
+    return b"S" + _length(len(normalized)) + normalized
+
+
+def _canonical_float(value: float) -> bytes:
+    if not math.isfinite(value):
+        raise ValueError("fingerprint numeric values must be finite")
+    if value == 0.0:
+        value = 0.0
+    return b"F" + struct.pack(">d", value)
+
+
+def _canonical_sequence(value: tuple[Any, ...] | list[Any]) -> bytes:
+    return b"A" + _length(len(value)) + b"".join(
+        _canonical_value(item) for item in value
+    )
+
+
+def _canonical_mapping(value: Mapping[Any, Any]) -> bytes:
+    entries = [
+        (_canonical_value(key), _canonical_value(item))
+        for key, item in value.items()
     ]
-    encoded = json.dumps(payload, sort_keys=True, default=str, separators=(",", ":"))
-    return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+    entries.sort(key=lambda pair: pair[0])
+    return b"M" + _length(len(entries)) + b"".join(
+        key + item for key, item in entries
+    )
+
+
+def _canonical_value(value: Any) -> bytes:
+    """Encode supported fingerprint values with explicit type tags."""
+    if value is None:
+        return b"N"
+    if isinstance(value, bool):
+        return b"B" + (b"\x01" if value else b"\x00")
+    if isinstance(value, str):
+        return _canonical_string(value)
+    if isinstance(value, bytes):
+        return b"Y" + _length(len(value)) + value
+    if isinstance(value, int):
+        return b"I" + struct.pack(">q", value)
+    if isinstance(value, float):
+        return _canonical_float(value)
+    if isinstance(value, complex):
+        return b"C" + _canonical_float(value.real) + _canonical_float(value.imag)
+    if isinstance(value, (tuple, list)):
+        return _canonical_sequence(value)
+    if isinstance(value, Mapping):
+        return _canonical_mapping(value)
+    raise TypeError(f"unsupported fingerprint value: {type(value).__name__}")
+
+
+def _instruction_fingerprint_payload(instruction: QpuInstruction) -> tuple[Any, ...]:
+    provenance = instruction.provenance
+    source_node_id = provenance.get("source_node_id")
+    provenance_fields = (
+        source_node_id,
+        provenance.get("role"),
+        provenance.get("type"),
+        provenance.get("dimensions"),
+        provenance.get("exactness"),
+        provenance.get("intent"),
+    )
+    provenance_digest = hashlib.sha256(_canonical_value(provenance_fields)).digest()
+    return (
+        source_node_id,
+        instruction.opcode,
+        instruction.qubits,
+        instruction.parameter,
+        provenance.get("role"),
+        provenance.get("type"),
+        provenance.get("dimensions"),
+        provenance.get("exactness"),
+        provenance.get("intent"),
+        provenance_digest,
+    )
 
 
 def _parameter_projection(unit: CompilationUnit) -> list[dict[str, str]]:
