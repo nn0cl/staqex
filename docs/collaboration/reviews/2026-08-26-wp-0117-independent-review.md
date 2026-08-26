@@ -2,7 +2,7 @@
 
 ## Review status
 
-**CORRECTION APPLIED — latest fresh review was NOT READY; re-review pending**
+**COMPLETE — latest fresh independent review READY; no review blocker remains**
 
 ## Trigger and scope
 
@@ -68,9 +68,10 @@ review input.
 
 ## Terminal state
 
-The review loop is not terminal. It is in `RE_REVIEW` pending a fresh review
-of the corrected artifacts. The latest reviewer cannot approve Phase 1 or
-implementation.
+The independent review loop is `COMPLETE`. The latest reviewer returned
+`READY` with no P0/P1/P2 findings. This completes review of the design
+artifacts only; it does not approve Phase 1, implementation, technology
+selection, or merge.
 
 ## Iteration 3: fresh independent re-review
 
@@ -139,3 +140,19 @@ implementation.
   grammar and provenance digest order; H1 documents now carry the design-input
   status note; the complete 318-path manifest was regenerated and checked.
 - Next state: `RE_REVIEW`; no Phase 1 or implementation approval inferred.
+
+## Terminal independent re-review
+
+- Verdict: `READY`.
+- P0/P1/P2: none.
+- Evidence checked: deterministic fingerprint grammar, all six H1 design-input
+  status notes, synchronized review status, and the complete 318-row PR #574
+  manifest with exact Git path-set equality and clean whitespace.
+- Reusable lenses: contract completeness, architecture boundaries,
+  source/domain fidelity, physics safety, fail-closed realization, migration
+  safety, canonical authority, executable projection integrity, evidence
+  hygiene, and phase discipline.
+- No finding changes accepted architecture, technology selection, Issue scope,
+  or requested phase.
+- Approval status: Phase 1 and implementation approval remain ungranted.
+- Terminal state: `COMPLETE`.
