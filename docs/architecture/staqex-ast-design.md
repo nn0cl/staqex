@@ -1,7 +1,7 @@
 # Staqex AST design note
 
 Status: **Accepted design baseline** (updated 2026-07-23 for ADR 0024
-Kotlin DX / packages / `when` / `class`).
+Kotlin DX / packages / `mix` / `class`).
 Phase 2.1 reference implementation: `compiler/staqex/` (Python).
 Hold unsealed for Kernel PoC / parser / AST / typechecker (ADR 0034).
 
@@ -59,7 +59,7 @@ Expr        = Coin
             | Lit(LitCarrier)                   // elaborates via lift → Dirac
             | Var(Ident)
             | BinOp { op: BinOp, lhs: Expr, rhs: Expr }
-            | WhenExpr { ctrl: Expr, arms: PatternMatchArms }  // surface `when`
+            | WhenExpr { ctrl: Expr, arms: PatternMatchArms }  // surface `mix`
             | Span { … }                        // deprecated alias ≡ WhenExpr
             | Evolve { seeds: [Expr], body: Block }
             | BlockExpr(Block)
@@ -108,7 +108,7 @@ BinOp       = Add | Sub | Mul | Eq | Ne | Lt | Le | Gt | Ge  // → State<Bool>
 Vacuum      = …                         // State.vacuum() prep (ADR 0034)
 ```
 
-Surface `when (c) { 0 -> e0; 1 -> e1; else -> e2 }` parses to `WhenExpr`.
+Surface `mix (c) { 0 -> e0; 1 -> e1; else -> e2 }` parses to `WhenExpr`.
 Historical `span` sugar maps to the same node. There is **no** `New` expr.
 
 ### Rejected nodes (do not add)
@@ -123,8 +123,8 @@ Historical `span` sugar maps to the same node. There is **no** `New` expr.
 | `Measure` not last in `MainDecl` | Early Collapse Error (ADR 0027) |
 | Classical `Int` return from `main` | Use MeasureSinkPort; no int main |
 | `Throw` / `Try` / `Catch` | Non-local escape; breaks norm / early collapse (ADR 0025) |
-| `Null` / `None` literals as bottoms | Use `when` basis labels / `Error` arms |
-| `Thread` / `Async` / `Await` / `Spawn` / `Mutex` | Concurrency = `when` / joint (ADR 0028) |
+| `Null` / `None` literals as bottoms | Use `mix` basis labels / `Error` arms |
+| `Thread` / `Async` / `Await` / `Spawn` / `Mutex` | Concurrency = `mix` / joint (ADR 0028) |
 | Mid-pure `File.write` / socket send of State | Early collapse (ADR 0029) |
 | Using `Measure` as a debug print of a PMF | Use `Inspect` (ADR 0030) |
 | In-place field assignment / mutable `this` | Immutable capsules (ADR 0033) |
@@ -142,7 +142,7 @@ become `Ident`. Active keywords drive grammar terminals.
 | Curried apply | `Call` | Spec TBD |
 | `map` / `project` / `interfer` | `Map` / `Project` / `Interfer` | ADR 0021 |
 | `package` / `import` | `PackageDecl` / `ImportDecl` | ADR 0024 |
-| `when` | `WhenExpr` | ADR 0024 (≡ §Span) |
+| `mix` | `WhenExpr` | ADR 0024 (≡ §Span) |
 | `class` / `interface` / `fn` | `ClassDecl` / `TraitDef` / `FnDecl` | ADR 0024 |
 | Extension `fn T.f` | `ExtFnDecl` | ADR 0024 |
 | Keyword `system` / `span` / `fn` | aliases → Class / When / Fun | Retired surface |
@@ -159,7 +159,7 @@ See `staqex-language-spec.md`, `staqex-abstraction-model.md`, `staqex-stdlib-com
 | `state p = e` | `StateBind` | §1–2 | Extend/replace coordinates via pushforward |
 | `coin()` / `dirac(c)` | `Coin` / `Dirac` | §1 | Bernoulli / Dirac prep |
 | `x ⊕ y` | `BinOp` | §2 | Pushforward; correlation law |
-| `when (c) { arms }` | `WhenExpr` | §3 | Controlled mixture; all positive arms kept |
+| `mix (c) { arms }` | `WhenExpr` | §3 | Controlled mixture; all positive arms kept |
 | `span …` (legacy) | `WhenExpr` | §3 | Alias only |
 | `{ let …; e }` | `BlockExpr` / `Block` | §4 | Pure kernel; locals traced out |
 | `evolve (…) {…}` | `Evolve` | §5 | Seed + Block + outer bind |

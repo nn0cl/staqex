@@ -52,7 +52,7 @@ def test_density_state_implicit_discard_hard_fails() -> None:
     compiled = compile_source(
         _DENSITY.format(
             name="leftover",
-            tail="State<Int> q = coin()\n    measure q",
+            tail="State<Int> q = Coin()\n    Measure q",
         )
     )
     assert "LINEAR_IMPLICIT_DISCARD" in _codes(compiled.diagnostics), (
@@ -67,8 +67,8 @@ def test_density_state_alias_is_duplicate_use() -> None:
             name="d",
             tail=(
                 "DensityState<Qubit> alias = d\n"
-                "    State<Int> q = coin()\n"
-                "    measure q"
+                "    State<Int> q = Coin()\n"
+                "    Measure q"
             ),
         )
     )
@@ -80,7 +80,7 @@ def test_density_state_alias_is_duplicate_use() -> None:
 
 def test_density_state_measure_consumes() -> None:
     compiled = compile_source(
-        _DENSITY.format(name="rho", tail="measure rho")
+        _DENSITY.format(name="rho", tail="Measure rho")
     )
     assert "LINEAR_IMPLICIT_DISCARD" not in _codes(compiled.diagnostics), (
         f"measured DensityState must not discard, got {compiled.diagnostics}"

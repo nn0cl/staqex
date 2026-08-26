@@ -43,11 +43,11 @@ Host adapters may still use `io_uring` / `epoll` for **boundary** file reads
 
 ### 2.1 Compile / lower — build a DAG (no execute)
 
-While the programmer writes `when` / `map` / `step`, the engine **need not**
+While the programmer writes `mix` / `map` / `step`, the engine **need not**
 evaluate. It records dependencies:
 
 ```text
-sys0 ── when ─┬─▶ worldline_A.step ─┐
+sys0 ── mix ─┬─▶ worldline_A.step ─┐
               └─▶ worldline_B.step ─┴─▶ sys_final
 ```
 

@@ -21,6 +21,7 @@ class TokenKind(Enum):
     STATE = auto()
     LET = auto()
     WHEN = auto()
+    SUPERPOSE = auto()
     COIN = auto()
     DIRAC = auto()
     VACUUM = auto()
@@ -52,6 +53,9 @@ class TokenKind(Enum):
     IN = auto()
     UNTIL = auto()
     MAX = auto()
+    ONTO = auto()
+    IN_SET = auto()  # `In` (LISS-0416): Sigma/Pi binder-domain membership,
+    # distinct from lowercase `in` (forEach's classical collection iteration)
 
     # Forbidden (hard error — still emitted so diagnostics have spans)
     FORBIDDEN = auto()
@@ -66,11 +70,11 @@ class TokenKind(Enum):
     STRING = auto()
 
     PIPE_OP = auto()  # |>
-    TENSOR_OP = auto()  # *|* or ⊗ (LISS-0069 dual-accept)
+    TENSOR_OP = auto()  # *|* (ASCII source form)
     CARET = auto()  # ^
-    KET = auto()  # |0>, |+>, |01>, … or |0⟩ (Unicode close)
-    BRA = auto()  # ⟨0| (LISS-0069 Slice A lexer)
-    DAGGER = auto()  # † postfix (LISS-0069 dual-accept → adjoint)
+    KET = auto()  # |0>, |+>, |01>, …
+    BRA = auto()  # <0| (ASCII source form)
+    DAGGER = auto()  # postfix adjoint token (reserved for future ASCII form)
 
     PLUS = auto()
     MINUS = auto()
@@ -87,6 +91,7 @@ class TokenKind(Enum):
     GT = auto()
     GE = auto()
     ARROW = auto()  # ->
+    FAT_ARROW = auto()  # => — match arms (ADR 0197 / LISS-0382)
 
     LPAREN = auto()
     RPAREN = auto()
@@ -115,19 +120,20 @@ ACTIVE: dict[str, TokenKind] = {
     "struct": TokenKind.STRUCT,
     "fn": TokenKind.FUN,
     "return": TokenKind.RETURN,
-    "forEach": TokenKind.FOREACH,
     "dynamic": TokenKind.DYNAMIC,
-    "state": TokenKind.STATE,
     "let": TokenKind.LET,
-    "when": TokenKind.WHEN,
-    "coin": TokenKind.COIN,
-    "dirac": TokenKind.DIRAC,
-    "vacuum": TokenKind.VACUUM,
-    "evolve": TokenKind.EVOLVE,
-    "measure": TokenKind.MEASURE,
-    "snapshot": TokenKind.SNAPSHOT,
-    "inspect": TokenKind.INSPECT,
     "this": TokenKind.THIS,
+    # LISS-0419 (ADR 0191 amendment): capitalized blackboard-verb keywords.
+    "ForEach": TokenKind.FOREACH,
+    "Mix": TokenKind.WHEN,
+    "Superpose": TokenKind.SUPERPOSE,
+    "Coin": TokenKind.COIN,
+    "Dirac": TokenKind.DIRAC,
+    "Vacuum": TokenKind.VACUUM,
+    "Evolve": TokenKind.EVOLVE,
+    "Measure": TokenKind.MEASURE,
+    "Snapshot": TokenKind.SNAPSHOT,
+    "Inspect": TokenKind.INSPECT,
     "val": TokenKind.VAL,
     "var": TokenKind.VAR,
     "module": TokenKind.MODULE,
@@ -148,6 +154,8 @@ CONTEXTUAL: dict[str, TokenKind] = {
     "in": TokenKind.IN,
     "until": TokenKind.UNTIL,
     "max": TokenKind.MAX,
+    "onto": TokenKind.ONTO,
+    "In": TokenKind.IN_SET,
 }
 
 FORBIDDEN: set[str] = {
@@ -168,11 +176,23 @@ FORBIDDEN: set[str] = {
 }
 
 RETIRED: dict[str, str] = {
-    "observe": "measure",
-    "span": "when",
+    "observe": "Measure",
+    "span": "Mix",
+    "when": "Mix",
     "fun": "fn",
     "public": "pub",
     "trait": "interface",
+    # LISS-0419 (ADR 0191 amendment): capitalized blackboard-verb keywords.
+    "forEach": "ForEach",
+    "mix": "Mix",
+    "superpose": "Superpose",
+    "coin": "Coin",
+    "dirac": "Dirac",
+    "vacuum": "Vacuum",
+    "evolve": "Evolve",
+    "measure": "Measure",
+    "snapshot": "Snapshot",
+    "inspect": "Inspect",
 }
 
 FORBIDDEN_MESSAGES: dict[str, str] = {
@@ -192,13 +212,13 @@ FORBIDDEN_MESSAGES: dict[str, str] = {
     "break": "Syntax Error: 'break' is forbidden; early exit tears the joint.",
     "return": "Syntax Error: 'return' is forbidden; use block result / evolve.",
     "new": "Syntax Error: Construct with Foo(args); 'new' is forbidden.",
-    "null": "Syntax Error: Use Result / when basis labels / empty(); 'null' is forbidden.",
-    "try": "Syntax Error: Exceptions are forbidden; use Result + when.",
-    "catch": "Syntax Error: Exceptions are forbidden; use Result + when.",
-    "throw": "Syntax Error: Exceptions are forbidden; use Result + when.",
-    "Thread": "Syntax Error: Concurrency is when / joint product; threads are forbidden.",
-    "async": "Syntax Error: Concurrency is when / joint product; async is forbidden.",
-    "await": "Syntax Error: Concurrency is when / joint product; await is forbidden.",
+    "null": "Syntax Error: Use Result / mix basis labels / empty(); 'null' is forbidden.",
+    "try": "Syntax Error: Exceptions are forbidden; use Result + mix.",
+    "catch": "Syntax Error: Exceptions are forbidden; use Result + mix.",
+    "throw": "Syntax Error: Exceptions are forbidden; use Result + mix.",
+    "Thread": "Syntax Error: Concurrency is mix / joint product; threads are forbidden.",
+    "async": "Syntax Error: Concurrency is mix / joint product; async is forbidden.",
+    "await": "Syntax Error: Concurrency is mix / joint product; await is forbidden.",
     "protected": (
         "FORBIDDEN_CONSTRUCT: `protected` requires inheritance; Staqex uses "
         "composition + `pub` / leading `_` instead (ADR 0058)."

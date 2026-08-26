@@ -1,79 +1,10 @@
-// Spectroscopy-oriented protocol ownership for structure-factor style intents.
+// Secondary readout: turns the stressed-vs-healthy signal gap into a
+// simple confidence score (0..1, saturating) for the detection dossier.
 
 package examples.applied.noether_forge.application
 
 namespace Forge.Spectroscopy {
-    pub enum ProbeKind {
-        LocalKick,
-        MomentumResolved,
-        ReturnAmplitude
+    pub fn confidence_score(gap: Float) -> Float {
+        return gap / (gap + 1.0)
     }
-
-    pub struct ProbeWindow {
-        val start: Float
-        val stop: Float
-    }
-
-    pub struct SpectroscopyProtocol {
-        val probe: ProbeKind
-        val window: ProbeWindow
-        val momentum_bins: Int
-    }
-
-    pub fn local_kick(start: Float, stop: Float) -> SpectroscopyProtocol {
-        return SpectroscopyProtocol(ProbeKind.LocalKick, ProbeWindow(start, stop), 1)
-    }
-
-    pub fn momentum_resolved(bins: Int) -> SpectroscopyProtocol {
-        return SpectroscopyProtocol(ProbeKind.MomentumResolved, ProbeWindow(0.0, 1.0), bins)
-    }
-
-    pub fn return_amplitude() -> SpectroscopyProtocol {
-        return SpectroscopyProtocol(ProbeKind.ReturnAmplitude, ProbeWindow(0.0, 0.35), 1)
-    }
-
-    pub fn review_default() -> SpectroscopyProtocol {
-        return local_kick(0.0, 0.35)
-    }
-
-    pub fn window_length(p: SpectroscopyProtocol) -> Float {
-        return p.window.stop - p.window.start
-    }
-
-    pub fn is_momentum(p: SpectroscopyProtocol) -> Bool {
-        return p.probe == ProbeKind.MomentumResolved
-    }
-
-    pub fn bins_ok(p: SpectroscopyProtocol) -> Bool {
-        return p.momentum_bins >= 1 && p.momentum_bins <= 64
-    }
-
-    pub fn smoke_bins() -> Int {
-        return 4
-    }
-
-    pub fn research_momentum() -> SpectroscopyProtocol {
-        return momentum_resolved(16)
-    }
-
-    pub fn smoke_kick() -> SpectroscopyProtocol {
-        return local_kick(0.0, 0.2)
-    }
-
-    pub fn probe_of(p: SpectroscopyProtocol) -> ProbeKind {
-        return p.probe
-    }
-
-    pub fn bins_of(p: SpectroscopyProtocol) -> Int {
-        return p.momentum_bins
-    }
-
-    pub fn window_start(p: SpectroscopyProtocol) -> Float {
-        return p.window.start
-    }
-
-    pub fn window_stop(p: SpectroscopyProtocol) -> Float {
-        return p.window.stop
-    }
-
 }

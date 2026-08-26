@@ -158,14 +158,32 @@ class Lowerer:
                 times_attr = {"var": expr.times.name}
             else:
                 times_attr = type(expr.times).__name__
-            attrs: dict = {"times": times_attr}
+            attrs: dict = {
+                "times": times_attr,
+                "explicit_transform": bool(expr.explicit_transform),
+                "source_span": (expr.span.line, expr.span.col),
+            }
             if expr.hamiltonian is not None:
                 attrs["under"] = True
                 inputs.append(self._lower_expr(expr.hamiltonian))
             if expr.duration is not None:
                 inputs.append(self._lower_expr(expr.duration))
             if expr.body is not None:
-                inputs.append(self._lower_expr(expr.body.result))
+                result_id = self._lower_expr(expr.body.result)
+                inputs.append(result_id)
+                if expr.explicit_transform:
+                    attrs["application"] = "operator_state"
+                    attrs["provenance"] = {
+                        "source_span": (expr.body.result.span.line, expr.body.result.span.col),
+                        "transform": result_id,
+                        "generator": "written_in_operand",
+                        "exponent": "written_in_propagator",
+                        "propagator": (
+                            result_id,
+                            "lhs",
+                        ),
+                        "state": (result_id, "rhs"),
+                    }
             return self.dag.add("evolve", attrs=attrs, inputs=inputs)
         if isinstance(expr, TupleExpr):
             items = [self._lower_expr(i) for i in expr.items]

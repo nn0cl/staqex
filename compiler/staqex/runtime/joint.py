@@ -259,6 +259,30 @@ class Joint:
             ]
         )
 
+    def rename_coord(self, src: str, dest: str) -> Joint:
+        """Rename a live coordinate without tracing or changing amplitudes."""
+        if src == dest or self.is_vacuum():
+            return self
+        if any(dest in w.assign for w in self.worlds):
+            raise ValueError(f"cannot rename `{src}` to occupied coordinate `{dest}`")
+        return Joint(
+            worlds=[
+                World(
+                    assign={
+                        (dest if key == src else key): value
+                        for key, value in w.assign.items()
+                    },
+                    amp=w.amp,
+                    coord_phase={
+                        (dest if key == src else key): value
+                        for key, value in w.coord_phase.items()
+                    },
+                )
+                for w in self.worlds
+                if src in w.assign
+            ]
+        )
+
     def trace_out(self, name: str) -> Joint:
         """Partial trace over coordinate `name` (Born sum → √p amplitudes).
 

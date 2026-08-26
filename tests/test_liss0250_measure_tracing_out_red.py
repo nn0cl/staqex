@@ -1,33 +1,33 @@
-"""AT-TDD Phase 1 Red: LISS-0250 — `measure … tracing_out …` (ADR 0173).
+"""AT-TDD Phase 1 Red: LISS-0250 — `Measure … tracing_out …` (ADR 0173).
 
 Gherkin (Then clauses drive assertions):
 
-Feature: terminal measure with explicit leftover partial trace
+Feature: terminal Measure with explicit leftover partial trace
   Scenario: dialect ideal path compiles and runs without |0> hand-kill
     Given two live State carriers s0 and s1
-    When main ends with `measure s0 tracing_out s1`
+    When main ends with `Measure s0 tracing_out s1`
     Then compile has no LINEAR_IMPLICIT_DISCARD / PARSE_ERROR
-    And seed-0 evaluation yields a non-vacuum measure of s0
+    And seed-0 evaluation yields a non-Vacuum Measure of s0
     And the residual joint has no s1 coordinate
 
   Scenario: unnamed leftover still discarded illegally
-    Given s0, s1, s2 live and `measure s0 tracing_out s1`
+    Given s0, s1, s2 live and `Measure s0 tracing_out s1`
     Then LINEAR_IMPLICIT_DISCARD names s2
 
   Scenario: empty tracing_out list is rejected
-    When `measure s0 tracing_out`
+    When `Measure s0 tracing_out`
     Then PARSE_ERROR (or equivalent fail-closed diagnostic)
 
   Scenario: primary listed as leftover is rejected
-    When `measure s0 tracing_out s0`
+    When `Measure s0 tracing_out s0`
     Then LINEAR_DUPLICATE_USE (or TRACING_OUT_* with same obligation)
 
   Scenario: duplicate leftover names are rejected
-    When `measure s0 tracing_out s1, s1`
+    When `Measure s0 tracing_out s1, s1`
     Then LINEAR_DUPLICATE_USE (or TRACING_OUT_*)
 
   Scenario: Classical-bound trace_out consumes the State argument
-    Given `Classical<Float> _t = trace_out(s1)` then `measure s0`
+    Given `Classical<Float> _t = trace_out(s1)` then `Measure s0`
     Then no LINEAR_IMPLICIT_DISCARD on s1
     And seed-0 evaluation succeeds
 """
@@ -78,9 +78,9 @@ def test_measure_tracing_out_compiles_without_hand_kill() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
-        state s1 = coin()
-        measure s0 tracing_out s1
+        State s0 = Coin()
+        State s1 = Coin()
+        Measure s0 tracing_out s1
     }
     """
     hard = _hard(src)
@@ -93,9 +93,9 @@ def test_measure_tracing_out_runs_seed_zero_and_drops_leftover_coord() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = |+>
-        state s1 = |+>
-        measure s0 tracing_out s1
+        State s0 = |+>
+        State s1 = |+>
+        Measure s0 tracing_out s1
     }
     """
     result = run_source(src, seed=0, stdout=io.StringIO())
@@ -112,10 +112,10 @@ def test_unnamed_leftover_still_linear_implicit_discard() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
-        state s1 = coin()
-        state s2 = coin()
-        measure s0 tracing_out s1
+        State s0 = Coin()
+        State s1 = Coin()
+        State s2 = Coin()
+        Measure s0 tracing_out s1
     }
     """
     assert "LINEAR_IMPLICIT_DISCARD" in _codes(src)
@@ -127,8 +127,8 @@ def test_empty_tracing_out_list_is_rejected() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
-        measure s0 tracing_out
+        State s0 = Coin()
+        Measure s0 tracing_out
     }
     """
     codes = _codes(src)
@@ -143,8 +143,8 @@ def test_primary_in_tracing_out_list_is_rejected() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
-        measure s0 tracing_out s0
+        State s0 = Coin()
+        Measure s0 tracing_out s0
     }
     """
     codes = _codes(src)
@@ -159,9 +159,9 @@ def test_duplicate_tracing_out_names_are_rejected() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
-        state s1 = coin()
-        measure s0 tracing_out s1, s1
+        State s0 = Coin()
+        State s1 = Coin()
+        Measure s0 tracing_out s1, s1
     }
     """
     codes = _codes(src)
@@ -176,10 +176,10 @@ def test_classical_bound_trace_out_consumes_state_argument() -> None:
     src = """
     package t
     pub fn main() -> Unit {
-        state s0 = coin()
-        state s1 = coin()
+        State s0 = Coin()
+        State s1 = Coin()
         Classical<Float> _t = trace_out(s1)
-        measure s0
+        Measure s0
     }
     """
     hard_discards = [

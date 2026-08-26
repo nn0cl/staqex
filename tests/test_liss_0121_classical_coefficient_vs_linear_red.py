@@ -3,7 +3,7 @@
 Physicist-first: ``Float J`` (and struct fields) used only as Operator /
 binder coefficients must not be treated as linear quantum resources.
 True ``state`` values remain LINEAR. Fail-closed when coefficients are
-misused as measure/when subjects or depend on unmeasured quantum state.
+misused as Measure/when subjects or depend on unmeasured quantum state.
 """
 
 from __future__ import annotations
@@ -42,21 +42,20 @@ _NAMED_IN_BINDER = """
 package t
 pub fn main() -> Unit {
     QubitRegister<4> register = system()
-    Float J = 1.0
-    Operator H = sum (i in Index<0..2>) {
+    Float J = 1.0545718e-19
+    Operator H = Sigma (i In 0..2) {
         J * Z[i] * Z[next(i)]
     }
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state d = |0>
-    state (a, b, c, d) = evolve (a, b, c, d) under H for 0.1
-        using Suzuki(order = 2, steps = 4)
-    state b = |0>
-        state b = |0>
-    state c = |0>
-    state d = |0>
-measure a
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State d = |0>
+    State (a, b, c, d) = Evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+        State b = |0>
+    State c = |0>
+    State d = |0>
+Measure a
 }
 """
 
@@ -64,41 +63,40 @@ _LITERAL_IN_BINDER = """
 package t
 pub fn main() -> Unit {
     QubitRegister<4> register = system()
-    Operator H = sum (i in Index<0..2>) {
-        1.0 * Z[i] * Z[next(i)]
+    Operator H = Sigma (i In 0..2) {
+        1.0545718e-19 * Z[i] * Z[next(i)]
     }
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state d = |0>
-    state (a, b, c, d) = evolve (a, b, c, d) under H for 0.1
-        using Suzuki(order = 2, steps = 4)
-    state b = |0>
-        state b = |0>
-    state c = |0>
-    state d = |0>
-measure a
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State d = |0>
+    State (a, b, c, d) = Evolve { (a, b, c, d) under H for 0.1.fs using Suzuki(order = 2, steps = 4) }.run()
+    State b = |0>
+        State b = |0>
+    State c = |0>
+    State d = |0>
+Measure a
 }
 """
 
 _NAMED_OUTSIDE_BINDER = """
 package t
 pub fn main() -> Unit {
-    Float hx = 0.25
+    Float hx = 2.6364295e-20
     Operator H = hx * X
-    state psi = |+>
-    state psi = evolve psi under H for 0.1
-    measure psi
+    State psi = |+>
+    State psi = Evolve { psi under H for 0.1.fs }.run()
+    Measure psi
 }
 """
 
 _LITERAL_OUTSIDE_BINDER = """
 package t
 pub fn main() -> Unit {
-    Operator H = 0.25 * X
-    state psi = |+>
-    state psi = evolve psi under H for 0.1
-    measure psi
+    Operator H = 2.6364295e-20 * X
+    State psi = |+>
+    State psi = Evolve { psi under H for 0.1.fs }.run()
+    Measure psi
 }
 """
 
@@ -110,11 +108,11 @@ namespace Dom {
     }
 }
 pub fn main() -> Unit {
-    Dom.Couplings c = Dom.Couplings(0.25)
+    Dom.Couplings c = Dom.Couplings(2.6364295e-20)
     Operator H = c.h_x * X
-    state psi = |+>
-    state psi = evolve psi under H for 0.1
-    measure psi
+    State psi = |+>
+    State psi = Evolve { psi under H for 0.1.fs }.run()
+    Measure psi
 }
 """
 
@@ -185,9 +183,9 @@ def test_struct_field_coefficient_in_operator_compiles_and_runs() -> None:
 _DISCARDED_STATE = """
 package t
 pub fn main() -> Unit {
-    state q = |+>
-    state viewed = inspect(|0>)
-    measure viewed
+    State q = |+>
+    State viewed = Inspect(|0>)
+    Measure viewed
 }
 """
 
@@ -201,11 +199,11 @@ def test_unconsumed_quantum_state_still_linear_implicit_discard() -> None:
 _QUANTUM_DEPENDENT_COEFF = """
 package t
 pub fn main() -> Unit {
-    state amp = |+>
+    State amp = |+>
     Operator H = amp * X
-    state psi = |0>
-    state psi = evolve psi under H for 0.1
-    measure psi
+    State psi = |0>
+    State psi = Evolve { psi under H for 0.1 }.run()
+    Measure psi
 }
 """
 
@@ -216,13 +214,13 @@ def test_quantum_dependent_coefficient_is_explicitly_rejected() -> None:
     assert compiled.diagnostics, "expected an explicit diagnostic, not silence"
 
 
-# --- EARS 4: misuse as measure / when subject -------------------------------
+# --- EARS 4: misuse as Measure / when subject -------------------------------
 
 _MEASURE_COEFFICIENT = """
 package t
 pub fn main() -> Unit {
     Float J = 1.0
-    measure J
+    Measure J
 }
 """
 
@@ -230,11 +228,11 @@ _WHEN_ON_COEFFICIENT = """
 package t
 pub fn main() -> Unit {
     Float J = 1.0
-    state label = when (J) {
+    State label = Mix (J) {
       0 -> 0,
       else -> 1,
     }
-    measure label
+    Measure label
 }
 """
 

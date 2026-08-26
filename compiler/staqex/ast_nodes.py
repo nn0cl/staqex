@@ -73,7 +73,7 @@ class KetLit:
 
 @dataclass
 class BraLit:
-    """Dirac bra literal: `⟨0|`, `⟨+|`, … (LISS-0073 Slice A)."""
+    """Dirac bra literal: `<0|`, `<+|`, … (ASCII source form)."""
 
     label: str
     span: Span
@@ -81,6 +81,68 @@ class BraLit:
 
 @dataclass
 class Vacuum:
+    span: Span
+
+
+@dataclass
+class KetSumBinder:
+    """`Sigma (x In {0,1}^n) { |x> }` (LISS-0420): a State built as an
+    equal-weight sum over a literal bit-tuple domain -- structurally
+    identical to `prepare_selection(n)` for this case, expressed via
+    general Sigma-notation instead of a named primitive. The body is
+    always a bare `|<bound-var>>` ket; a per-term coefficient belongs
+    OUTSIDE the Sigma (multiplying the whole sum), matching the
+    equation's own layout. A per-term coefficient *inside* the body
+    (`w[x] * |x>`) is out of scope -- it would need indexing a classical
+    array by a tuple-valued variable, a separate future capability."""
+
+    variable: str
+    domain: "SetPowerDomain"
+    span: Span
+
+
+@dataclass
+class NormExpr:
+    """`||state_expr||` (LISS-0426): $\\lVert\\cdot\\rVert$, the norm of a
+    State-producing expression -- a Float. Bracket/delimiter syntax
+    (matching how `|x><x|` denotes $\\lvert x\\rangle\\langle x\\rvert$
+    rather than a function call `norm(...)`), lexed as two `TokenKind.OR`
+    tokens and disambiguated from binary `||` purely by grammatical
+    position (only recognized where a primary expression is expected)."""
+
+    state: "Expr"
+    span: Span
+
+
+@dataclass
+class SetComprehension:
+    """`Set F = { x In D : cond1, cond2, ... }` (LISS-0429) -- a domain
+    value built by filtering `D` (typically `{0,1}^n`) to the elements
+    satisfying every comma-separated condition (implicit conjunction,
+    matching the equation's own set-builder notation -- `,` not `&&`,
+    the same convention `where` guards adopted in LISS-0428). Conditions
+    are parsed via the Operator-DSL expression grammar (`_op_implies`),
+    since they need `x[i]`-style indexing (`OpIndexed`), which the
+    general expression grammar does not support (confirmed during
+    LISS-0424). Consumed by `Sigma (x In F) { ... }` (LISS-0430)."""
+
+    variable: str
+    domain: "SetPowerDomain | IndexDomain | RevDomain | TypeRef | OpVar"
+    conditions: list["OpExpr"]
+    span: Span
+
+
+@dataclass
+class SetPowerDomain:
+    """Literal set-power domain: `{0,1}^n` (LISS-0417) -- the Cartesian
+    power of a small literal label set, e.g. `{0,1}^n` = all n-tuples over
+    {0,1}. `labels` are the literal set members (usually `[0, 1]`, but
+    `{0,1,2}^n` for a qudit domain parses the same way); `width` is the
+    power exponent expression. Reserved ahead of its consumer (LISS-0420's
+    `Sigma`/`Pi` binder domain) -- not evaluated at runtime yet."""
+
+    labels: list[int]
+    width: "Expr"
     span: Span
 
 
@@ -106,12 +168,34 @@ class WhenArm:
     pat: Any  # literal value or None for else
     body: "Expr"
     is_else: bool = False
+    span: Span | None = None
 
 
 @dataclass
 class WhenExpr:
     ctrl: "Expr"
     arms: list[WhenArm]
+    span: Span
+
+
+@dataclass
+class SuperposeArm:
+    """LISS-0320: coherent-lane arm, structurally parallel to `WhenArm` but
+    never unioned with it — `superpose` is not `mix`."""
+
+    pat: Any  # literal value or None for else
+    body: "Expr"
+    is_else: bool = False
+
+
+@dataclass
+class SuperposeExpr:
+    """LISS-0320: `superpose (control) { pat -> expr, … }` ordinary-surface
+    grammar. Distinct from `WhenExpr` (mix) and from the shallow
+    `H1Superposition` H1-authoring heuristic (PR #344)."""
+
+    ctrl: "Expr"
+    arms: list[SuperposeArm]
     span: Span
 
 
@@ -230,6 +314,7 @@ class EvolveExpr:
     until_predicate: "Expr | None" = None
     max_steps: "Expr | None" = None
     suzuki: SuzukiPolicy | None = None
+    explicit_transform: bool = False
 
 
 @dataclass
@@ -450,6 +535,7 @@ Expr = Union[
     BinOp,
     Call,
     WhenExpr,
+    SuperposeExpr,
     Pipe,
     Lambda,
     Attr,
@@ -463,6 +549,10 @@ Expr = Union[
     TensorExpr,
     UnaryNot,
     MeasureExpr,
+    SetPowerDomain,
+    KetSumBinder,
+    NormExpr,
+    SetComprehension,
 ]
 
 
@@ -538,6 +628,43 @@ class DynamicQpuStmt:
 
     body: "Block"
     span: Span
+    # ADR 0193 / LISS-0381: optional `dynamic qpu within <name>` timing intent.
+    timing_intent: str | None = None
+
+
+@dataclass
+class MatchArm:
+    """One finite feed-forward arm: `<pattern> => { … }` (ADR 0197)."""
+
+    pattern: str
+    body: "Block"
+    span: Span
+
+
+@dataclass
+class MatchStmt:
+    """Lane-local finite `match` over a Controller token (ADR 0197 / LISS-0382).
+
+    `match` is a contextual soft keyword (not a global hard keyword).
+    """
+
+    scrutinee: str
+    arms: list[MatchArm]
+    span: Span
+
+
+@dataclass
+class ResetStmt:
+    """Lane-local `reset wire` (ADR 0199 Amendment, LISS-0390).
+
+    `reset` is a contextual soft keyword (not a global hard keyword),
+    mirroring `match`. Re-prepares `target` as |0> after tracing it out --
+    a genuinely different operation from the Static Kernel's same-name
+    `state x = |0>` idiom, which verifies rather than forces.
+    """
+
+    target: str
+    span: Span
 
 
 Stmt = Union[
@@ -548,6 +675,7 @@ Stmt = Union[
     ExprStmt,
     ForEachStmt,
     DynamicQpuStmt,
+    MatchStmt,
 ]
 
 
@@ -779,15 +907,48 @@ class H1OperatorDecl:
 
 
 @dataclass
+class H1BasisDecl:
+    """Formal `basis <name> = <expr>` domain declaration in a theory body."""
+
+    name: str
+    expression: object | None
+    source_tokens: tuple[str, ...]
+    span: Span
+
+
+@dataclass
+class H1CoordinateDecl:
+    """Formal `coordinate <name>: <Kind><Size>` domain declaration in a
+    theory body (e.g. `coordinate site: Lattice<128>`)."""
+
+    name: str
+    kind: str
+    size: int | None
+    span: Span
+
+
+@dataclass
+class H1RealizeDecl:
+    """Top-level `realize qpu:<target>` H1 target-selection declaration."""
+
+    target: str
+    span: Span
+
+
+@dataclass
 class H1Prepare:
     source_tokens: tuple[str, ...]
     span: Span
+    state_name: str | None = None
+    bound_to: tuple[str, str] | None = None
 
 
 @dataclass
 class H1Evolve:
     source_tokens: tuple[str, ...]
     span: Span
+    state_name: str | None = None
+    theory_name: str | None = None
 
 
 @dataclass
@@ -805,6 +966,14 @@ class H1Measure:
 @dataclass
 class H1Mixture:
     """H1 probabilistic/classified state composition via `when`."""
+
+    source_tokens: tuple[str, ...]
+    span: Span
+
+
+@dataclass
+class H1Superposition:
+    """H1 coherent amplitude composition, distinct from probabilistic `mix`."""
 
     source_tokens: tuple[str, ...]
     span: Span
@@ -850,6 +1019,8 @@ class TheoryDecl:
     parameters: list[H1ParameterDecl]
     operators: list[H1OperatorDecl]
     span: Span
+    basis: H1BasisDecl | None = None
+    coordinate: H1CoordinateDecl | None = None
 
 
 @dataclass

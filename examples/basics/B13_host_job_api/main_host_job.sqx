@@ -1,6 +1,6 @@
 // staqex-lane: experiment
 // B13 — terminal measure program submitted through the Host Job boundary (H-lane API).
 
-State<Int> answer = dirac(42)
-State<Int> viewed = inspect(answer)
-measure viewed
+State<Int> answer = Dirac(42)
+State<Int> viewed = Inspect(answer)
+Measure viewed

@@ -1,103 +1,14 @@
-// Typed coupling parameters for Ising / XY / Heisenberg-like models.
+// Real, dimensioned sensor-array coupling parameters (ADR 0195).
+//
+// Physically plausible order-of-magnitude for NV-center-like sensors, not
+// traced to one specific cited measurement (same honesty category as
+// A06/A10's SSH treatment). See the README "Units and interpretation".
 
 package examples.applied.noether_forge.domain
 
 namespace Forge.Couplings {
-    pub enum CouplingFamily {
-        IsingZZ,
-        XYExchange,
-        HeisenbergXXX,
-        FieldBias
+    pub struct SensorCouplings {
+        val defect: Energy
+        val dip: Energy
     }
-
-    pub struct BondCoupling {
-        val family: CouplingFamily
-        val strength: Float
-        val left: Int
-        val right: Int
-    }
-
-    pub struct OnSiteField {
-        val axis: CouplingFamily
-        val strength: Float
-        val site: Int
-    }
-
-    pub struct CouplingSet {
-        val j_zz: Float
-        val j_xy: Float
-        val h_z: Float
-        val h_x: Float
-    }
-
-    pub fn ising_bond(left: Int, right: Int, strength: Float) -> BondCoupling {
-        return BondCoupling(CouplingFamily.IsingZZ, strength, left, right)
-    }
-
-    pub fn xy_bond(left: Int, right: Int, strength: Float) -> BondCoupling {
-        return BondCoupling(CouplingFamily.XYExchange, strength, left, right)
-    }
-
-    pub fn heisenberg_bond(left: Int, right: Int, strength: Float) -> BondCoupling {
-        return BondCoupling(CouplingFamily.HeisenbergXXX, strength, left, right)
-    }
-
-    pub fn z_field(site: Int, strength: Float) -> OnSiteField {
-        return OnSiteField(CouplingFamily.FieldBias, strength, site)
-    }
-
-    pub fn default_review_set() -> CouplingSet {
-        return CouplingSet(1.0, 0.25, 0.5, 0.25)
-    }
-
-    pub fn quench_target_set() -> CouplingSet {
-        return CouplingSet(0.5, 0.5, 0.1, 0.4)
-    }
-
-    pub fn is_interaction(bond: BondCoupling) -> Bool {
-        return bond.family != CouplingFamily.FieldBias
-    }
-
-    pub fn absolute_strength(bond: BondCoupling) -> Float {
-        if bond.strength < 0.0 {
-            return 0.0 - bond.strength
-        }
-        return bond.strength
-    }
-
-    pub fn spans_neighbors(bond: BondCoupling) -> Bool {
-        return bond.right == bond.left + 1 || bond.left == bond.right + 1
-    }
-
-    pub fn review_drive_weight() -> Float {
-        return 0.25
-    }
-
-    pub fn scale_set(set: CouplingSet, factor: Float) -> CouplingSet {
-        return CouplingSet(set.j_zz * factor, set.j_xy * factor, set.h_z * factor, set.h_x * factor)
-    }
-
-    pub fn zero_drive(set: CouplingSet) -> CouplingSet {
-        return CouplingSet(set.j_zz, set.j_xy, set.h_z, 0.0)
-    }
-
-    pub fn dominant_interaction(set: CouplingSet) -> CouplingFamily {
-        if set.j_zz >= set.j_xy {
-            return CouplingFamily.IsingZZ
-        }
-        return CouplingFamily.XYExchange
-    }
-
-    pub fn field_dominated(set: CouplingSet) -> Bool {
-        return set.h_z + set.h_x > set.j_zz + set.j_xy
-    }
-
-    pub fn bond_sites_ok(bond: BondCoupling, sites: Int) -> Bool {
-        return bond.left >= 0 && bond.right >= 0 && bond.left < sites && bond.right < sites
-    }
-
-    pub fn review_interaction_weight() -> Float {
-        return 1.0
-    }
-
 }

@@ -18,9 +18,9 @@ def test_symbolic_ir_retains_binder_and_source_span() -> None:
         package t
         pub fn main() -> Unit {
             Dimension sites = 4
-            Operator H = sum (i in sites) { Z[i] * Z[next(i)] }
-            State<Int> observed = coin()
-            measure observed
+            Operator H = Sigma (i In sites) { Z[i] * Z[next(i)] }
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -38,8 +38,8 @@ def test_symbolic_ir_has_no_provider_sdk_objects() -> None:
         package t
         pub fn main() -> Unit {
             Operator H = commutator(X, Z)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -55,9 +55,9 @@ def test_lowering_provenance_records_approximation_metadata() -> None:
         pub fn main() -> Unit {
             Operator H = X + Z
             State<Qubit> q = |0>
-            state q = |0>
-            state out = evolve q under H for 0.5
-            measure out
+            State q = |0>
+            State out = Evolve { q under H for 0.5 }.run()
+            Measure out
         }
         """
     )
@@ -72,8 +72,8 @@ def test_symbolic_nodes_have_stable_ids_and_resolved_links() -> None:
         package t
         pub fn main() -> Unit {
             Operator H = X + Z
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     first = compile_source(source).symbolic_ir
@@ -91,8 +91,8 @@ def test_provenance_has_explicit_approximation_and_mapping_slots() -> None:
         package t
         pub fn main() -> Unit {
             Operator H = X
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

@@ -25,7 +25,6 @@ _GOLDEN_NAMES = (
     "adjoint_simple.sqx",
     "pipeline_preserved.sqx",
     "comments_preserved.sqx",
-    "idempotent_unicode.sqx",
 )
 
 
@@ -77,8 +76,7 @@ def test_format_source_matches_migration_goldens() -> None:
 
 
 def test_format_round_trip_preserves_structural_ast() -> None:
-    # ket_basic stays Call/Var-shaped. adjoint_simple formats `adjoint(X)` → `X†`,
-    # which reparses as OpCall — golden text coverage owns that rewrite.
+    # ASCII source remains lossless and reparses to the same AST.
     for name in ("ket_basic.sqx",):
         source = (_V01 / name).read_text(encoding="utf-8")
         formatted = _format(source)
@@ -92,7 +90,7 @@ def test_format_round_trip_preserves_structural_ast() -> None:
 def test_format_adjoint_dagger_rewrite_still_compiles() -> None:
     source = (_V01 / "adjoint_simple.sqx").read_text(encoding="utf-8")
     formatted = _format(source)
-    assert "†" in formatted or "adjoint" in formatted
+    assert formatted == source
     original = compile_source(source)
     reparsed = compile_source(formatted)
     assert original.ok, original.diagnostics
@@ -133,12 +131,12 @@ def test_format_write_rewrites_temp_file_in_place() -> None:
         assert target.read_text(encoding="utf-8") == expected
 
 
-def test_format_check_exits_one_on_ascii_drift() -> None:
+def test_format_check_accepts_canonical_ascii_source() -> None:
     path = _V01 / "ket_basic.sqx"
 
     code, stdout, _stderr = _run_format([str(path), "--check"])
 
-    assert code == 1
+    assert code == 0
     assert stdout == ""
 
 

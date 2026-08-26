@@ -7,18 +7,34 @@
 - Phase: Architecture Path → Feature Path boundary slice complete
 - Type: language semantics / dynamic circuit boundary
 - Priority: P1
-- Related: ADR 0065, ADR 0069, ADR 0071, LISS-0016, LISS-0019
+- Related: ADR 0065, ADR 0069, ADR 0071, [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md) (Accepted 2026-08-05), [LISS-0381](LISS-0381-dynamic-qpu-timing-region-intent.md), [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md) (**Accepted**), [LISS-0382](LISS-0382-dynamic-mid-circuit-feed-forward.md) (**complete**), [ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md) (**Accepted**), [LISS-0384](LISS-0384-dynamic-jobresult-trace.md), [ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md) (**Accepted**; Option B declined), [LISS-0385](LISS-0385-dynamic-reuse-reset-demand.md), [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md), LISS-0016, LISS-0019
 
 ## Acceptance specification
 
-- [ ] Mid-circuit measurement and classical feed-forward have explicit
+- [x] Mid-circuit measurement and classical feed-forward have explicit
       semantics distinct from terminal `measure`.
+      Meaning Accepted via
+      [ADR 0197](../architecture/adr/0197-dynamic-mid-circuit-feed-forward.md)
+      (2026-08-09); Kernel surface + QSem witnesses shipped by
+      [LISS-0382](LISS-0382-dynamic-mid-circuit-feed-forward.md)
+      (**complete** 2026-08-09). Fake-exec / physical execution remain out
+      of scope (ADR 0197 Decision 7).
 - [x] Dynamic control is syntactically and semantically separate from static
       `forEach`.
 - [x] A target capability profile is required before submission.
 - [x] Unsupported dynamic features fail explicitly; no hidden Host fallback.
 - [ ] Timing, qubit reuse, controller values, and JobResult composition are
-      specified.
+      specified. **Partial → laws Accepted; Kernel/Host Issues pending:**
+      timing shipped (ADR 0193 / LISS-0381); controllers / mid-circuit
+      shipped (ADR 0197 / LISS-0382). JobResult law **Accepted**
+      ([ADR 0198](../architecture/adr/0198-dynamic-jobresult-composition.md);
+      [LISS-0384](LISS-0384-dynamic-jobresult-trace.md) Plan pending).
+      Reuse/reset law **Accepted**
+      ([ADR 0199](../architecture/adr/0199-dynamic-qubit-reuse-reset.md);
+      Option B declined;
+      [LISS-0385](LISS-0385-dynamic-reuse-reset-demand.md) Plan pending).
+      Fake-exec Plan drafted as
+      [LISS-0383](LISS-0383-dynamic-fake-executor-wire.md).
 - [ ] CPU simulator and QPU lowering share an observable semantic contract.
 
 ## Non-goals
@@ -46,8 +62,12 @@
 - Status: **Complete for the rejection/capability boundary; follow-up open**.
 - Added explicit dynamic-lane teaching documentation and preserved the
   terminal-measure/static-Kernel separation.
-- Remaining: mid-circuit semantics, timing, qubit reuse, capability DTO, and
-  observable JobResult contract.
+- Remaining: later OpenQASM dynamic / live provider; optional Host
+  auto-attach of inferred reuse into Fake requests; profile-enable for
+  real reset/reuse. Mid-circuit Kernel **complete** (LISS-0382); JobResult
+  Host channel **complete** (LISS-0384); Fake-exec wire **complete**
+  (LISS-0383); reuse/reset demand inference **complete** (LISS-0385);
+  reuse/reset law Accepted (ADR 0199); timing **complete** (LISS-0381).
 
 ## Phase 3 review record
 

@@ -1,0 +1,157 @@
+// CH-selection-spine — S02 finite candidate-selection experiment (LISS-0408).
+// Hard constraints (Projector) and soft objective (Hamiltonian evolution)
+// act on the SAME quantum coordinate: LISS-0404 (ADR 0205) shipped
+// Pauli-term Hamiltonian evolution on tuple-valued coordinates, so
+// psi_sel (LISS-0431's renormalized projection of psi_0) can itself be
+// evolved directly -- no separate, disconnected objective qubit pair
+// (LISS-0402's original two-coordinate design, superseded by LISS-0405).
+// Step 2 (the hard-constraint selection subspace) is ADR 0207's literal,
+// term-by-term transcription of |psi_sel> = P_F|psi_0> / ||P_F|psi_0>||,
+// P_F = Sum_{x in F} |x><x| -- superseding the earlier closed-vocabulary
+// `project ... onto feasible(...)` primitive (ADR 0192/0194, LISS-0432
+// retired it outright).
+// Field terms carry genuine per-candidate weight (LISS-0406): activity_w/
+// selectivity_w are Host-computed per-candidate arrays (ADR 0119
+// coefficient tensor, wired to HostInputPort) -- the SAME values
+// host/scoring.py's classical baseline scores against, not one scalar
+// shared by every position (LISS-0405's disclosed gap).
+// Host owns the candidate manifest, HostInputPort predicate/weight
+// arrays, and the classical baseline (host/run_selection.py,
+// host/classical_baseline.py, host/scoring.py).
+// SIM-only; not a chemistry, clinical, or quantum-advantage claim.
+//
+// Written in its natural physicist form (LISS-0408, using LISS-0407 /
+// ADR 0206's unified Operator resolution): a named ObjectiveWeights
+// struct, a reusable objective_hamiltonian(...) factory taking both the
+// struct and the per-candidate Host arrays as parameters, called inline
+// while scaling (`scale * objective_hamiltonian(...)`).
+
+package examples.showcase.s02_drug_discovery
+
+struct ObjectiveWeights {
+    activity: Float,
+    selectivity: Float,
+    diversity: Float
+}
+
+// Named weighted objective terms (S02 expressiveness review P1 finding),
+// with genuine per-candidate field weights (LISS-0406) and a reusable
+// factory shape (LISS-0408) -- the form a physicist would naturally
+// reach for: a struct of named weights, an array of per-candidate
+// values, combined inside one function.
+// LISS-0434: literal transcription of
+// H_obj/scale = w_activity*Sum_i activity_w_i*Z_i
+//             + w_selectivity*Sum_i selectivity_w_i*X_i
+//             + w_diversity*Sum_{i<j} Z_i*Z_j
+// term for term -- `n` (not a hardcoded `0..7`) is the same width step 2
+// names, each Sigma's own range is `0..n-1`/`0..n-1, ... where i<j`, and
+// each w_* is written as the Sigma's own per-term coefficient (alongside
+// activity_w[i]/selectivity_w[i]), not pulled out as a post-hoc scale of
+// an already-built Operator -- the previous `w.activity * z_field` shape
+// was mathematically equivalent (distributivity) but not literal: every
+// other per-term factor lived inside the Sigma, so w_activity being the
+// one exception outside it was a real, if invisible-until-pointed-at,
+// asymmetry. `Float[8]` (not `Float[n]`) stays a literal fixture-width
+// hardcode -- `Float[n]` parameterized array-length types do not parse
+// today (confirmed by direct testing), a real, deeper compiler gap this
+// Issue does not open.
+fn objective_hamiltonian(w: ObjectiveWeights, n: Int, activity_w: Float[8], selectivity_w: Float[8]) -> Operator {
+    Operator z_field = Sigma (i In 0..n-1) { w.activity * activity_w[i] * Z[i] }
+    Operator x_field = Sigma (i In 0..n-1) { w.selectivity * selectivity_w[i] * X[i] }
+    Operator coupling = Sigma (i In 0..n-1, j In 0..n-1) where i < j {
+        w.diversity * Z[i] * Z[j]
+    }
+    return z_field + x_field + coupling
+}
+
+pub fn main() -> Unit {
+    // --- Hard-constraint selection subspace ---
+    // Fixture: 8 candidates (spec "Fixture limits" minimum), select exactly 3.
+    // C / D are Host-supplied coefficient arrays via HostInputPort (ADR
+    // 0119, LISS-0432 generalized the dtype to Bool) -- see
+    // host/run_selection.py.
+    Int n = 8
+    // LISS-0421/0422: literal transcription of the blackboard equation
+    // term for term -- |psi_0> = (1/sqrt(2^n)) * sum_{x in {0,1}^n} |x>.
+    // Sigma itself is the literal, unnormalized ket sum (each |x> gets
+    // amplitude 1); the explicit (1.0/sqrt(2.0^n)) coefficient is what
+    // normalizes it, exactly mirroring the blackboard's own separate
+    // prefactor.
+    State psi_0 = (1.0 / sqrt(2.0 ^ n)) * Sigma (x In {0,1}^n) { |x> }
+
+    // LISS-0432: C/D replace the old closed-vocabulary `feasible(...)`
+    // kwargs -- the SAME Host-supplied matrices (pairwise_compatible /
+    // diversity), now literal Host-bound arrays the F predicate itself
+    // indexes, matching C in{0,1}^(nxn), D in R^(nxn) on the blackboard.
+    Bool[8][8] C = host("pairwise_compatible")
+    Float[8][8] D = host("diversity")
+    Float theta = 0.3
+
+    // LISS-0429: F = the confirmed blackboard set-builder, term for term --
+    // exactly-3 selected, every selected pair compatible (C), and the
+    // minimum diversity (D) among selected pairs at least theta.
+    Set F = {
+        x In {0,1}^n :
+            Sigma (i In 0..n-1) { x[i] } == 3,
+            ForAll (i In 0..n-1, j In 0..n-1) where i < j {
+                (x[i] * x[j] == 1) Implies (C[i][j] == 1)
+            },
+            Min (i In 0..n-1, j In 0..n-1) where i < j, x[i] * x[j] == 1 {
+                D[i][j]
+            } >= theta
+    }
+    // LISS-0430: P_F = sum_{x in F} |x><x|, the literal projector.
+    Operator P_F = Sigma (x In F) { |x><x| }
+    // LISS-0431/0426: project keeps only the literal (unnormalized)
+    // projection; the equation's own separate /||...|| factor renormalizes.
+    State psi_sel = (project psi_0 onto P_F) / ||project psi_0 onto P_F||
+    // ADR 0173: psi_0 is fully consumed above (both reads); psi_0 and
+    // psi_sel are now distinct names (unlike the old design, which reused
+    // one name and so never carried a leftover). Without this, psi_0
+    // lingers as an extra per-World key, which fragments the step-3
+    // Evolve below into one Hamiltonian exponential per surviving World
+    // instead of one batched exponential -- confirmed by direct
+    // profiling: ~25x slower (54s -> ~7s at this fixture's |F|=25) with
+    // an identical marginal distribution either way.
+    trace_out(psi_0)
+
+    // --- Soft-objective evolution, directly on psi_sel (LISS-0404 / ADR 0205) ---
+    Float[8] activity_w = host("activity_weights")
+    Float[8] selectivity_w = host("selectivity_weights")
+    // Re-tuned from LISS-0405's 0.02/0.01/0.01 (empirical sweep, LISS-0406
+    // Design verification): the per-candidate signal in activity_w/
+    // selectivity_w (range ~0.2-0.6) needs enough magnitude relative to
+    // the projector/evolution structure to actually shift which feasible
+    // pattern gets sampled -- confirmed by direct execution across
+    // several weight/duration combinations, not guessed.
+    ObjectiveWeights weights = ObjectiveWeights {
+        activity: 2.0, selectivity: 1.0, diversity: 1.0
+    }
+    Energy scale = 1.0.eV to J
+    Operator H_obj = scale * objective_hamiltonian(weights, n, activity_w, selectivity_w)
+    Time dur = 0.6.fs
+    // Blackboard-visible propagator: Evolve executes the transform already
+    // written here; it does not infer H_obj, dur, hbar, or the exponential.
+    Operator U_t = exp(-i * H_obj * dur / hbar)
+
+    // --- Finite target lane (plan only; never used by the exact simulator) ---
+    // The blackboard's formal limit and target-dependent finite conversion
+    // remain separate named operators. The local result deliberately uses
+    // U_t; U_qpu is evidence for a later provider-neutral target plan.
+    Operator U_formal = Limit N -> Infinity {
+        (I - i * H_obj * dur / (N * hbar)) ^ N
+    }
+    Operator U_qpu = Realize(
+        source = U_formal,
+        method = "suzuki",
+        order = 2,
+        steps = 8,
+        error_budget = 1e-6
+    )
+
+    State psi_final = Evolve() { U_t * psi_sel }.run()
+
+    // ADR 0173: psi_0 was traced above; the evolved selected state is terminal.
+    Measure psi_final
+
+}

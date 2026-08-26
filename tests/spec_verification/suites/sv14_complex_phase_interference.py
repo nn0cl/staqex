@@ -1,4 +1,4 @@
-"""SV-14: Complex amplitudes — phase, cis, destructive interfer → vacuum."""
+"""SV-14: Complex amplitudes — phase, cis, destructive interfer → Vacuum."""
 
 from __future__ import annotations
 
@@ -42,27 +42,27 @@ def run() -> list[CaseResult]:
     # Opposite phases cancel completely under interfer
     try:
         src = as_main("""
-state z = dirac(0)
-state zp = phase(z, pi)
-state out = interfer(z, zp)
-measure out
+State z = Dirac(0)
+State zp = phase(z, pi)
+State out = interfer(z, zp)
+Measure out
 """)
         result = _eval(src)
         if not result.joint.is_vacuum():
             raise AssertionFailure(
                 "SUPERPOSITION_MISMATCH",
-                f"expected vacuum after cancel, joint={result.joint.support_rows()}",
+                f"expected Vacuum after cancel, joint={result.joint.support_rows()}",
             )
         if result.measure is None or not result.measure.vacuum:
             raise AssertionFailure(
                 "SUPERPOSITION_MISMATCH",
-                f"measure should report vacuum, got {result.measure}",
+                f"Measure should report Vacuum, got {result.measure}",
             )
         out.append(
             CaseResult(
                 "SV-14",
-                "sv14-destructive-vacuum",
-                "e^{i0} + e^{iπ} → interfer → vacuum",
+                "sv14-destructive-Vacuum",
+                "e^{i0} + e^{iπ} → interfer → Vacuum",
                 True,
                 ["assertVacuum"],
             )
@@ -71,8 +71,8 @@ measure out
         out.append(
             CaseResult(
                 "SV-14",
-                "sv14-destructive-vacuum",
-                "destructive interfer → vacuum",
+                "sv14-destructive-Vacuum",
+                "destructive interfer → Vacuum",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -82,10 +82,10 @@ measure out
     # Same phase constructively reinforces (renormalized Dirac)
     try:
         src = as_main("""
-state a = dirac(7)
-state b = phase(a, 0.0)
-state out = interfer(a, b)
-measure out
+State a = Dirac(7)
+State b = phase(a, 0.0)
+State out = interfer(a, b)
+Measure out
 """)
         result = _eval(src)
         st = State(result.joint.marginal("out"), payload_type=int)
@@ -94,7 +94,7 @@ measure out
         out.append(
             CaseResult(
                 "SV-14",
-                "sv14-constructive-dirac",
+                "sv14-constructive-Dirac",
                 "same-phase interfer → Dirac(7)",
                 True,
                 ["assertSuperposition", "assertNormEquals"],
@@ -104,7 +104,7 @@ measure out
         out.append(
             CaseResult(
                 "SV-14",
-                "sv14-constructive-dirac",
+                "sv14-constructive-Dirac",
                 "constructive interfer",
                 False,
                 error_code=e.code,
@@ -117,8 +117,8 @@ measure out
         if abs(cis(math.pi) - (-1 + 0j)) > 1e-9:
             raise AssertionFailure("NORM_MISMATCH", f"cis(π)={cis(math.pi)}")
         src = as_main("""
-state u = Complex.cis(pi)
-measure u
+State u = Complex.cis(pi)
+Measure u
 """)
         result = _eval(src)
         rows = result.joint.support_rows()

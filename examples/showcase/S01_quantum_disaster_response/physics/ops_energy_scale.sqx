@@ -1,0 +1,12 @@
+// Shared, uniform problem-defined energy scale (WP-0095 / LISS-0344/0345).
+// Given real Energy dimensions to satisfy the Kernel's fail-closed evolve
+// requirement (ADR 0195), but this magnitude is an arbitrary
+// problem-defined normalization shared by every coefficient-1 constraint
+// Hamiltonian in this showcase -- not a physical energy or a
+// literature-traced constant (contrast with A03_h2_vqe / A06 / A10 / A11).
+
+package examples.showcase.s01_disaster.physics
+
+pub fn ops_energy_scale() -> Energy {
+    return 1.0.eV to J
+}

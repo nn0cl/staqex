@@ -1,0 +1,14 @@
+package fixtures.semantic_meaning
+
+pub fn main() -> Unit {
+    State bit = Coin()
+    State mixed = Mix (bit) {
+        0 -> |0>,
+        else -> |+>,
+    }
+    // A scalar/operator product remains mathematical operator algebra; it is
+    // not an implicit unitary gate sequence.
+    Operator mathematical_product = 2.0 * X
+    State evolved = Evolve() { mathematical_product * mixed }.run()
+    Measure evolved
+}

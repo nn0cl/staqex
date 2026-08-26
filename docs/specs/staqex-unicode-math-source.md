@@ -1,4 +1,8 @@
-# Staqex Unicode mathematical source (LISS-0069)
+# Staqex Unicode mathematical source (LISS-0069 historical)
+
+> Superseded for source syntax by [ADR 0191](../architecture/adr/0191-ascii-quantum-notation-and-lexical-boundary.md).
+> This document is retained only as migration history; Unicode forms are no
+> longer accepted by the lexer.
 
 | Field | Value |
 |---|---|

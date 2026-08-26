@@ -35,8 +35,8 @@ def test_ascii_commutator_alias_has_the_same_meaning_as_brackets() -> None:
         package t
         pub fn main() -> Unit {
             Operator C = [X, Y]
-            state observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -45,8 +45,8 @@ def test_ascii_commutator_alias_has_the_same_meaning_as_brackets() -> None:
         package t
         pub fn main() -> Unit {
             Operator C = cm(X, Y)
-            state observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -65,8 +65,8 @@ def test_ascii_scientific_state_alias_normalizes_to_blackboard_symbol() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = |+>
-            measure psi
+            State psi = |+>
+            Measure psi
         }
         """
     )
@@ -74,30 +74,30 @@ def test_ascii_scientific_state_alias_normalizes_to_blackboard_symbol() -> None:
     assert _bind(compiled, "psi").name == "psi"
 
 
-def test_unicode_and_ascii_wavefunction_names_share_one_binding_identity() -> None:
+def test_ascii_wavefunction_name_is_the_canonical_binding_identity() -> None:
     compiled = compile_source(
         """
         package t
         pub fn main() -> Unit {
-            state ψ = |+>
-            measure psi
+            State psi = |+>
+            Measure psi
         }
         """
     )
 
     binds = _main_binds(compiled)
-    assert [bind.name for bind in binds if bind.name in {"ψ", "psi"}] == ["ψ"]
+    assert [bind.name for bind in binds if bind.name == "psi"] == ["psi"]
     assert compiled.unit is not None and compiled.unit.main is not None
     measures = [
         stmt for stmt in compiled.unit.main.body.stmts if isinstance(stmt, Measure)
     ]
     assert len(measures) == 1
     assert isinstance(measures[0].expr, Var)
-    assert measures[0].expr.name == "ψ"
+    assert measures[0].expr.name == "psi"
 
 
 if __name__ == "__main__":
     test_ascii_commutator_alias_has_the_same_meaning_as_brackets()
     test_ascii_scientific_state_alias_normalizes_to_blackboard_symbol()
-    test_unicode_and_ascii_wavefunction_names_share_one_binding_identity()
+    test_ascii_wavefunction_name_is_the_canonical_binding_identity()
     print("RED - compact scientific symbol aliases are not implemented")

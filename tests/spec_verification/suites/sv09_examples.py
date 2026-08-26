@@ -100,8 +100,8 @@ def run() -> list[CaseResult]:
             if not result.compile_ok:
                 raise AssertionFailure("PARSE_ERROR", str(result.diagnostics))
             if result.eval.measure is None and not result.eval.joint.is_vacuum():
-                # must have terminal measure outcome (vacuum measure OK)
-                raise AssertionFailure("EARLY_COLLAPSE_ERROR", "missing measure result")
+                # must have terminal Measure outcome (Vacuum Measure OK)
+                raise AssertionFailure("EARLY_COLLAPSE_ERROR", "missing Measure result")
 
             out.append(
                 CaseResult(

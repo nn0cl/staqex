@@ -15,7 +15,7 @@ from compiler.staqex.finite_binder import (
 )
 from compiler.staqex.pipeline import compile_source
 
-KET = "\u27e9"  # ⟩
+KET = ">"
 
 
 def _codes(compiled) -> set[str]:
@@ -38,8 +38,8 @@ def test_qutrit_register_identity_resolves_acting_space() -> None:
         package t
         pub fn main() -> Unit {
             Operator<QutritRegister<2>> H = I
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -58,8 +58,8 @@ def test_silent_qubit_operator_on_qutrit_register_rejected() -> None:
         pub fn main() -> Unit {
             QutritRegister<2> r = system()
             Operator<QubitRegister<2>> H = I
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -81,8 +81,8 @@ def test_qubit_operator_return_not_assignable_to_qutrit_register() -> None:
         }
         pub fn main() -> Unit {
             Operator<QutritRegister<2>> H = make()
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -96,13 +96,14 @@ def test_qutrit_register_equiv_qudit_register_dim3() -> None:
     compiled = compile_source(
         """
         package t
-        fn make() -> Operator<QutritRegister<2>> {
-            return I
+        fn make() -> Operator {
+            Operator I2 = I
+            return I2
         }
         pub fn main() -> Unit {
-            Operator<QuditRegister<3, 2>> H = make()
-            State observed = coin()
-            measure observed
+            Operator H = make()
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -120,8 +121,8 @@ def test_typed_qubit_qutrit_product_accepted() -> None:
             State<Qubit> q0 = |0{KET}
             State<Qutrit> t0 = |0{KET}
             State<(Qubit, Qutrit)> (q, t) = q0 *|* t0
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )

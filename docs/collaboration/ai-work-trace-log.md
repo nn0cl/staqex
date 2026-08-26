@@ -37,6 +37,24 @@ Create or update a trace when:
 Trace is optional for tiny documentation-only changes when the final response
 already includes enough context.
 
+## Retention and compression
+
+Create a new Trace only when it records a new decision boundary, an unresolved
+matter, a distinct approval, or unique review/verification evidence. If the
+same Issue, Work Plan, or topic already has a representative Trace, update or
+link that representative instead of creating a duplicate.
+
+When work completes, summarize the decision, evidence, verification, remaining
+blockers, and next action in the representative Trace or a Review Summary.
+Keep detailed Traces as Evidence when they are needed for recovery, but do not
+make reviewers read every Trace to learn current status. If a Trace is
+compressed or moved, record its source path and recovery commit in the
+Canonical Register's consolidation ledger.
+
+Use `docs/templates/review-summary.md` as the review entry point for larger
+work. It should link to the Canonical documents and representative Trace, not
+duplicate their full contents.
+
 An execution attempt is one cohesive run against the current plan. Start a new
 attempt when deterministic verification fails and replanning is needed, work is
 stopped unresolved and later resumed, the executing environment changes, or a

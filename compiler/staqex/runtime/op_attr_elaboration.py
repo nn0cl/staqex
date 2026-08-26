@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 from ..ast_nodes import (
+    IndexDomain,
     OpAttr,
     OpBin,
     OpBinder,
@@ -19,6 +20,7 @@ from ..ast_nodes import (
     OpLit,
     OpPow,
     OpVar,
+    RevDomain,
 )
 
 
@@ -26,11 +28,39 @@ class OpAttrElaborationError(ValueError):
     """Struct field could not be elaborated as a numeric Operator coefficient."""
 
 
-def materialize_op_attrs(op: OpExpr, objects: Mapping[str, Any]) -> OpExpr:
-    """Rewrite ``OpAttr`` nodes to ``OpLit`` using runtime struct field values."""
+def materialize_op_attrs(
+    op: OpExpr,
+    objects: Mapping[str, Any],
+    *,
+    operators: Mapping[str, OpExpr] | None = None,
+    _seen: frozenset[str] = frozenset(),
+) -> OpExpr:
+    """Rewrite ``OpAttr`` nodes to ``OpLit`` using runtime struct field values.
+
+    LISS-0407: when ``operators`` is given, also recurses through an
+    ``OpVar`` naming another bound Operator (e.g. ``Operator H = G +
+    X[0]`` where ``G``'s own tree still has a raw ``OpAttr`` leaf) --
+    closes the indirection gap where a struct-field coefficient hidden
+    behind an intermediate named Operator variable never got elaborated.
+    ``_seen`` guards against a self-referential Operator name cycle.
+    """
     if isinstance(op, OpAttr):
         return OpLit(value=float(_op_attr_float(op, objects)), span=op.span)
-    return _map_op_tree(op, lambda child: materialize_op_attrs(child, objects))
+    if (
+        isinstance(op, OpVar)
+        and operators is not None
+        and op.name in operators
+        and op.name not in _seen
+    ):
+        return materialize_op_attrs(
+            operators[op.name],
+            objects,
+            operators=operators,
+            _seen=_seen | {op.name},
+        )
+    return _map_op_tree(
+        op, lambda child: materialize_op_attrs(child, objects, operators=operators, _seen=_seen)
+    )
 
 
 def materialize_op_scalar_vars(
@@ -87,7 +117,7 @@ def _map_op_tree(op: OpExpr, map_child) -> OpExpr:
         return OpBinder(
             kind=op.kind,
             variable=op.variable,
-            domain=op.domain,
+            domain=_map_binder_domain(op.domain, map_child),
             body=map_child(op.body),
             span=op.span,
             guard=None if op.guard is None else map_child(op.guard),
@@ -100,6 +130,28 @@ def _map_op_tree(op: OpExpr, map_child) -> OpExpr:
             span=op.span,
         )
     return op
+
+
+def _map_binder_domain(domain: Any, map_child) -> Any:
+    """LISS-0434: an `IndexDomain`'s own `start`/`end` (e.g. the `n` in
+    `0..n-1`) are OpExpr leaves too -- a scalar factory parameter used as
+    a binder's own range bound needs the same fold-before-lowering
+    `materialize_op_scalar_vars`/`materialize_op_attrs` already give a
+    binder's body/guard, or the static lowering pass that runs after
+    folding sees an unresolved name and fails closed. Named-Set domains
+    (`OpVar`) and `TypeRef` (`Basis<N>`/literal `Index<N>`) carry no
+    OpExpr sub-nodes to fold; left unchanged."""
+    if isinstance(domain, IndexDomain):
+        return IndexDomain(
+            start=map_child(domain.start),
+            end=map_child(domain.end),
+            span=domain.span,
+        )
+    if isinstance(domain, RevDomain):
+        return RevDomain(
+            inner=_map_binder_domain(domain.inner, map_child), span=domain.span
+        )
+    return domain
 
 
 def _resolve_op_attr_host(expr: OpExpr, objects: Mapping[str, Any]) -> Any:

@@ -1,0 +1,4 @@
+// SSC-004: operator/state relation; the carrier remains State<T>.
+State psi = |0>
+Operator H = Z[0]
+State evolved = Evolve() { H * psi }.run()

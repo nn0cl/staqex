@@ -1,4 +1,4 @@
-"""Dense complex matrices + expm(-i H t) without NumPy (ℏ = 1)."""
+"""Dense complex matrices + expm(-i H t / hbar) without NumPy (ADR 0195: real hbar)."""
 
 from __future__ import annotations
 
@@ -59,17 +59,23 @@ def frobenius_norm(a: Matrix) -> float:
 
 
 def expm_ih(h: Matrix, t: float) -> Matrix:
-    """U = exp(-i H t) via scaling-and-squaring + Taylor (H Hermitian assumed)."""
+    """U = exp(-i H t / hbar) via scaling-and-squaring + Taylor (H Hermitian
+    assumed; ADR 0195 -- real hbar, H in Joules, t in seconds)."""
+    from ..stdlib.prelude import HBAR_SI
+
     n = len(h)
-    # A = -i t H
-    a = mat_scale(h, -1j * float(t))
-    # Scale so ||A||/2^s is small
+    # A = -i t H / hbar
+    a = mat_scale(h, -1j * float(t) / HBAR_SI)
+    # Scale so ||A||/2^s is small. Real hbar division can push ||A|| many
+    # orders of magnitude larger than the old hbar=1 convention ever did,
+    # so the halving count is computed directly from the norm (standard
+    # scaling-and-squaring) rather than a small fixed cap that silently
+    # left ||A||/2^s >> 1 and overflowed the Taylor series below.
     norm = frobenius_norm(a)
-    s = 0
-    while norm > 1.0 and s < 12:
-        a = mat_scale(a, 0.5)
-        norm *= 0.5
-        s += 1
+    s = max(0, math.ceil(math.log2(norm))) if norm > 1.0 else 0
+    if s > 0:
+        a = mat_scale(a, 2.0**-s)
+        norm *= 2.0**-s
     # Taylor of exp(A)
     term = eye(n)
     total = eye(n)

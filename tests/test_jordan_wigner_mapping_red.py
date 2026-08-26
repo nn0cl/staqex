@@ -54,22 +54,21 @@ def _emit_ok(source: str) -> bool:
 _NUMBER_OPERATOR_JW = """
 package t
 pub fn main() -> Unit {
-    FermionOperator<Orbitals> H = create[0] * annihilate[0]
+    FermionOperator<Orbitals> H = 1.0545718e-19 * create[0] * annihilate[0]
     QubitOperator<Qubits> mapped = map(H, JordanWigner)
-    state psi = |+>
-    state psi = evolve psi under mapped for 1.0
-        using Suzuki(order = 2, steps = 8)
-    measure psi
+    State psi = |+>
+    State psi = Evolve { psi under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
+    Measure psi
 }
 """
 
 _NUMBER_OPERATOR_HAND_WRITTEN = """
 package t
 pub fn main() -> Unit {
-    Operator H = 0.5 * I - 0.5 * Z[0]
-    state psi = |+>
-    state psi = evolve psi under H for 1.0
-    measure psi
+    Operator H = 5.272859e-20 * I - 5.272859e-20 * Z[0]
+    State psi = |+>
+    State psi = Evolve { psi under H for 1.0.fs }.run()
+    Measure psi
 }
 """
 
@@ -97,26 +96,25 @@ def test_diagonal_number_operator_emits_qasm() -> None:
 _HOPPING_ADJACENT_JW = """
 package t
 pub fn main() -> Unit {
-    FermionOperator<Orbitals> H = create[0] * annihilate[1] + create[1] * annihilate[0]
+    FermionOperator<Orbitals> H = 1.0545718e-19 * create[0] * annihilate[1] + 1.0545718e-19 * create[1] * annihilate[0]
     QubitOperator<Qubits> mapped = map(H, JordanWigner)
-    state a = |+>
-    state b = |0>
-    state (a, b) = evolve (a, b) under mapped for 1.0
-        using Suzuki(order = 2, steps = 8)
-    state b = |0>
-    measure a
+    State a = |+>
+    State b = |0>
+    State (a, b) = Evolve { (a, b) under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
+    State b = |0>
+    Measure a
 }
 """
 
 _HOPPING_ADJACENT_HAND_WRITTEN = """
 package t
 pub fn main() -> Unit {
-    Operator H = 0.5 * (X[0] * X[1]) + 0.5 * (Y[0] * Y[1])
-    state a = |+>
-    state b = |0>
-    state (a, b) = evolve (a, b) under H for 1.0
-    state b = |0>
-    measure a
+    Operator H = 5.272859e-20 * (X[0] * X[1]) + 5.272859e-20 * (Y[0] * Y[1])
+    State a = |+>
+    State b = |0>
+    State (a, b) = Evolve { (a, b) under H for 1.0.fs }.run()
+    State b = |0>
+    Measure a
 }
 """
 
@@ -143,30 +141,29 @@ def test_adjacent_hopping_term_emits_qasm() -> None:
 _HOPPING_WITH_PARITY_JW = """
 package t
 pub fn main() -> Unit {
-    FermionOperator<Orbitals> H = create[0] * annihilate[2] + create[2] * annihilate[0]
+    FermionOperator<Orbitals> H = 1.0545718e-19 * create[0] * annihilate[2] + 1.0545718e-19 * create[2] * annihilate[0]
     QubitOperator<Qubits> mapped = map(H, JordanWigner)
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state (a, b, c) = evolve (a, b, c) under mapped for 1.0
-        using Suzuki(order = 2, steps = 8)
-    state b = |0>
-    state c = |0>
-    measure a
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State (a, b, c) = Evolve { (a, b, c) under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
+    State b = |0>
+    State c = |0>
+    Measure a
 }
 """
 
 _HOPPING_WITH_PARITY_HAND_WRITTEN = """
 package t
 pub fn main() -> Unit {
-    Operator H = 0.5 * (X[0] * Z[1] * X[2]) + 0.5 * (Y[0] * Z[1] * Y[2])
-    state a = |+>
-    state b = |0>
-    state c = |0>
-    state (a, b, c) = evolve (a, b, c) under H for 1.0
-    state b = |0>
-    state c = |0>
-    measure a
+    Operator H = 5.272859e-20 * (X[0] * Z[1] * X[2]) + 5.272859e-20 * (Y[0] * Z[1] * Y[2])
+    State a = |+>
+    State b = |0>
+    State c = |0>
+    State (a, b, c) = Evolve { (a, b, c) under H for 1.0.fs }.run()
+    State b = |0>
+    State c = |0>
+    Measure a
 }
 """
 
@@ -198,26 +195,25 @@ def test_nonadjacent_hopping_term_emits_qasm() -> None:
 _TWO_BODY_DENSITY_JW = """
 package t
 pub fn main() -> Unit {
-    FermionOperator<Orbitals> H = create[0] * create[1] * annihilate[1] * annihilate[0]
+    FermionOperator<Orbitals> H = 1.0545718e-19 * create[0] * create[1] * annihilate[1] * annihilate[0]
     QubitOperator<Qubits> mapped = map(H, JordanWigner)
-    state a = |+>
-    state b = |+>
-    state (a, b) = evolve (a, b) under mapped for 1.0
-        using Suzuki(order = 2, steps = 8)
-    state b = |0>
-    measure a
+    State a = |+>
+    State b = |+>
+    State (a, b) = Evolve { (a, b) under mapped for 1.0.fs using Suzuki(order = 2, steps = 8) }.run()
+    State b = |0>
+    Measure a
 }
 """
 
 _TWO_BODY_DENSITY_HAND_WRITTEN = """
 package t
 pub fn main() -> Unit {
-    Operator H = 0.25 * I - 0.25 * Z[0] - 0.25 * Z[1] + 0.25 * (Z[0] * Z[1])
-    state a = |+>
-    state b = |+>
-    state (a, b) = evolve (a, b) under H for 1.0
-    state b = |0>
-    measure a
+    Operator H = 2.6364295e-20 * I - 2.6364295e-20 * Z[0] - 2.6364295e-20 * Z[1] + 2.6364295e-20 * (Z[0] * Z[1])
+    State a = |+>
+    State b = |+>
+    State (a, b) = Evolve { (a, b) under H for 1.0.fs }.run()
+    State b = |0>
+    Measure a
 }
 """
 
@@ -271,8 +267,8 @@ package t
 pub fn main() -> Unit {
     BosonOperator<Modes> H = create[0] * annihilate[0]
     QubitOperator<Qubits> mapped = map(H, JordanWigner)
-    state psi = |0>
-    measure psi
+    State psi = |0>
+    Measure psi
 }
 """
 

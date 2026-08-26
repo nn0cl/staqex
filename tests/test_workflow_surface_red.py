@@ -29,8 +29,8 @@ def test_workflow_declarations_resolve_independently_of_source_order() -> None:
         theory Ising { Operator H = X + Z }
         experiment GroundState { theory = Ising }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -59,8 +59,8 @@ def test_workflow_declares_named_host_update_callback() -> None:
         experiment GroundState { theory = Ising }
         theory Ising { Operator H = X + Z }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -81,8 +81,8 @@ def test_workflow_cannot_reference_provider_or_kernel_job_values() -> None:
         theory Ising { Operator H = X + Z }
         experiment GroundState { theory = Ising }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -101,8 +101,8 @@ def test_workflow_validates_experiment_param_type_and_until_target() -> None:
             until unknown <= 0.01
         }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -122,8 +122,8 @@ def test_workflow_rejects_non_comparison_until_expression() -> None:
         experiment GroundState { theory = Ising }
         theory Ising { Operator H = X + Z }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -144,8 +144,8 @@ def test_workflow_rejects_inline_update_expression() -> None:
         experiment GroundState { theory = Ising }
         theory Ising { Operator H = X + Z }
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

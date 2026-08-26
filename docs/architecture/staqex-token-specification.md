@@ -37,7 +37,7 @@ evolve  measure  snapshot  inspect
 | `fn` | Function / method / extension |
 | `state` | Joint coordinate bind |
 | `let` | Block / evolve local only |
-| `when` | Controlled mixture |
+| `mix` | Controlled mixture |
 | `coin` / `dirac` / `vacuum` | Preparation (may also appear as prelude calls) |
 | `evolve` | Pure evolution block |
 | `measure` | Terminal collapse |
@@ -80,7 +80,7 @@ Suggested diagnostics (stable `code` ids later):
 | `break` / `return` | `… Early exit is forbidden; use block result / evolve …` |
 | `new` | `… Construct with Foo(args); 'new' is forbidden.` |
 | `null` | `… Use Result / when basis labels / Vacuum; 'null' is forbidden.` |
-| `try` / `catch` / `throw` | `… Exceptions are forbidden; use Result + when / project.` |
+| `try` / `catch` / `throw` | `… Exceptions are forbidden; use Result + mix / project.` |
 | `Thread` / `async` / `await` | `… Concurrency is when / joint product; threads/async are forbidden.` |
 
 **Note (ADR 0037):** bare C-style `for (` loops remain rejected by the
@@ -103,7 +103,8 @@ must not treat them as Active grammar**. Linter / `staqex check` warns:
 | Retired | Suggest |
 |---------|---------|
 | `observe` | `measure` |
-| `span` | `when` |
+| `span` | `mix` |
+| `when` | `mix` (hard diagnostic; no compatibility alias) |
 | `fun` | `fn` |
 | `trait` | `interface` |
 

@@ -19,6 +19,13 @@ phase request, and the required ports/adapters review described in
 
 | Area | Current status | Tracking | Boundary / acceptance note |
 |---|---|---|---|
+| Explicit blackboard evolution / finite `Realize` | **Finite Realize/Suzuki target slice, LISS-0438 reconciliation, and LISS-0442/WP-0105 inventory complete; S02 numerical migration separately planned** | [LISS-0437](../issues/LISS-0437-explicit-evolution-surface.md); [ADR 0210](adr/0210-formal-limit-finite-realization-policy.md); [WP-0100](../work-plans/WP-0100-explicit-evolution-surface.md); [LISS-0438](../issues/LISS-0438-explicit-evolution-residual-reconciliation.md); [WP-0104](../work-plans/WP-0104-explicit-evolution-residual-reconciliation.md); [LISS-0442](../issues/LISS-0442-s02-corpus-migration-inventory.md); [WP-0105](../work-plans/WP-0105-s02-corpus-migration-inventory.md); [LISS-0443](../issues/LISS-0443-s02-numerical-migration.md); [WP-0106](../work-plans/WP-0106-s02-numerical-migration.md) | Direct `Limit` remains rejected; explicit `Realize`/Suzuki produces a provider-neutral finite plan; non-unitary `product` is rejected at the QPU gate boundary; budget overflow rejects before allocation. LISS-0438 reconciliation and LISS-0442/WP-0105 inventory are complete. LISS-0443/WP-0106 is planning only; provider SDK and live QPU submission remain separate, unapproved work. |
+| Scientific Semantic Core / IR authority | **Bounded Phase 2 Green complete; consumer-wide migration design intake** | [LISS-0444](../issues/LISS-0444-scientific-semantic-core.md); [LISS-0445](../issues/LISS-0445-scientific-semantic-consumer-migration.md); [ADR 0211](adr/0211-scientific-semantic-core-and-ir-authority.md); [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md); [WP-0108](../work-plans/WP-0108-scientific-semantic-consumer-migration.md) | Explicit evolution is fail-closed before QASM AST fallback; finite Suzuki/binder canonical projection is complete for the bounded slice. Consumer-wide QASM fallback retirement, non-explicit `symbolic_ir` migration, and remaining AST/DTO classification are planned in LISS-0445/WP-0108. Provider SDK, live QPU, and S02 numerical migration remain excluded. |
+| Canonical QASM `Coin`/`Mix` projection | **complete** (PR #558 merged 2026-08-24) | [LISS-0448](../issues/LISS-0448-canonical-qasm-coin-mix-projection.md); [WP-0111](../work-plans/WP-0111-canonical-qasm-coin-mix-projection.md); [ADR 0213](adr/0213-canonical-mixture-branch-meaning-and-qpu-boundary.md) | Canonical IR preserves branch pattern/control/rule meaning and arm provenance; unsupported finite QPU realization rejects atomically; no generic `Mix`→unitary fallback. Broader mixture realization remains separately gated. |
+| Ideal expression / finite realization boundary review | **complete** (PR #559 merged 2026-08-24) | [LISS-0449](../issues/LISS-0449-ideal-expression-realization-boundary.md); [ADR 0212](adr/0212-ideal-meaning-and-finite-realization-boundary.md); [WP-0112](../work-plans/WP-0112-ideal-expression-realization-boundary-review.md) | Ideal meaning remains representable; `Realize` is the explicit finite transition and QPU rejection never deletes source meaning. Provider/live-QPU work remains separately gated. |
+| Classical/quantum meaning preservation | **bounded Coin/when slice complete; follow-up families open** | [LISS-0450](../issues/LISS-0450-semantic-ir-meaning-preservation.md); [WP-0113](../work-plans/WP-0113-semantic-ir-meaning-preservation.md) | PRs #557–#559 establish source-derived Coin/Mix/when meaning preservation, ExactExponential metadata, provenance, canonical consumer authority, and fail-closed QPU projection. Product/tensor, continuous/open-system, and measurement meaning require separate design and approval. |
+| QPU capability rejection contract | **bounded matrix complete** (PR #559 merged 2026-08-24) | [LISS-0451](../issues/LISS-0451-qpu-capability-rejection-contract.md); [WP-0114](../work-plans/WP-0114-qpu-capability-rejection-contract-review.md); [ADR 0213](adr/0213-canonical-mixture-branch-meaning-and-qpu-boundary.md) | The approved rejection matrix preserves ideal meaning and retains atomic no-artifact, provenance, and pre-allocation guarantees; new capability cases remain separately gated. |
+| S02 example boundary alignment | **complete** (PR #561 merged 2026-08-24) | [LISS-0452](../issues/LISS-0452-s02-example-boundary-alignment.md); [WP-0115](../work-plans/WP-0115-s02-example-boundary-alignment.md) | Blackboard equation, ideal source, explicit realization, QPU scope, and example documentation are aligned; numerical migration remains separately gated. |
 | **QPex → Staqex rename** | **complete** | [LISS-0113](documentation-compression-map.md) | Renamed project from `QPex` to `Staqex`, `.sqx` → `.sqx`; 43 example files, ~136 Python import paths, ~340 doc files, agent instruction files; PR #118 merged 2026-07-29. |
 |---|---|---|---|
 | Function signatures / returns | Complete | [LISS-0021](documentation-compression-map.md); ADR 0064, ADR 0068 | Explicit return types, terminal `return`, `main -> Unit`, and arity/type checks are shipped and normative. QASM function-call lowering split to LISS-0049; an Operator-return typecheck gap split to LISS-0048. |
@@ -30,7 +37,8 @@ phase request, and the required ports/adapters review described in
 | Kernel classical boundary / static `forEach` | Historical slice complete; superseded surface tracked | [LISS-0026](documentation-compression-map.md); [ADR 0069](decision-themes/dec-0005-quantum-operations-and-runtime.md) | Static elaboration remains shipped; normative `QubitRegister<N>` migration/resource boundary is complete in LISS-0029. |
 | Static Hilbert Kernel type surface | Phase 3 reviewed | [LISS-0029](documentation-compression-map.md); ADR 0069 | `QubitRegister<N>` is normative; MVP logical-shape/resource checks are explicit; target routing profiles remain separate. |
 | Parametric Circuit | **Runtime complete** | [LISS-0027](../issues/LISS-0027-parametric-circuit.md); ADR 0070 | Symbolic parameters in QPU IR/OpenQASM; Host binding validation before submission. |
-| Dynamic QPU lane | Phase 3 reviewed | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); ADR 0071 | Rejection/capability boundary complete; mid-circuit semantics, timing, and JobResult composition remain open. |
+| Dynamic QPU lane | Phase 3 reviewed; timing + mid-circuit + Host `dynamic_trace` + Fake-exec wire + reuse demand + Host auto-attach + real mid-circuit execution + reuse capability repurposing + outcome confirmation + `reset` keyword + OpenQASM dynamic-lane emission all **complete**; live/provider still gated | [LISS-0028](../issues/LISS-0028-dynamic-qpu-lane.md); ADR 0071; [ADR 0193](adr/0193-dynamic-qpu-timing-region-intent.md) / [LISS-0381](../issues/LISS-0381-dynamic-qpu-timing-region-intent.md); [ADR 0197](adr/0197-dynamic-mid-circuit-feed-forward.md) / [LISS-0382](../issues/LISS-0382-dynamic-mid-circuit-feed-forward.md); [ADR 0198](adr/0198-dynamic-jobresult-composition.md) / [LISS-0384](../issues/LISS-0384-dynamic-jobresult-trace.md) (**complete**); [ADR 0199](adr/0199-dynamic-qubit-reuse-reset.md) / [LISS-0385](../issues/LISS-0385-dynamic-reuse-reset-demand.md) (**complete**); [LISS-0383](../issues/LISS-0383-dynamic-fake-executor-wire.md) (**complete**; amended by LISS-0386 and LISS-0388); [LISS-0386](../issues/LISS-0386-dynamic-host-auto-attach-demand.md) (**complete**); [ADR 0200](adr/0200-dynamic-lane-real-kernel-execution.md) (**Accepted**) / [LISS-0387](../issues/LISS-0387-dynamic-real-mid-circuit-measure.md) (**complete**); [LISS-0388](../issues/LISS-0388-dynamic-reuse-capability-followup2.md) (**complete**); [ADR 0198 Amendment](adr/0198-dynamic-jobresult-composition.md#amendment-accepted-2026-08-09-physical-outcome-confirmation) (**Accepted**) / [LISS-0389](../issues/LISS-0389-dynamic-outcome-confirmation.md) (**complete**); [ADR 0199 Amendment](adr/0199-dynamic-qubit-reuse-reset.md#amendment-accepted-2026-08-10-reset-keyword-option-b-revisited) (**Accepted**) / [LISS-0390](../issues/LISS-0390-dynamic-reset-keyword.md) (**complete**); [ADR 0201](adr/0201-openqasm-dynamic-lane-emission.md) (**Accepted** — separate `dynamic_emitter.py` lowering path, native QASM3 `bit`/`if`/`reset` vocabulary, no `physical_execution_claimed` claim, available without any Fake profile gate) / [LISS-0391](../issues/LISS-0391-openqasm-dynamic-emission.md) (**complete**); [LISS-0394](../issues/LISS-0394-dynamic-match-arm-linear-check.md) (**complete** — `hir.py` linear-use checker now visits `match` arm bodies via a shared-state design, not a seeded nested scope; closes the disclosed LISS-0387/0390 gap where `reset`/discard inside arms was invisible); [LISS-0395](../issues/LISS-0395-dynamic-lane-arm-body-unification.md) (**complete** — `_run_dynamic_arm_body`/`_run_dynamic_qpu_block` unified into one recursive statement dispatcher, fixing a confirmed silent wire-leak (arm-only-touched wires skipped block-end `trace_out`) and enabling chained mid-circuit measurement inside a `match` arm, previously a `KernelError`; matching `hir.py` Controller-measure-inside-arm branch added); [spec](../specs/staqex-dynamic-jobresult-trace.md) | PR [#504](https://github.com/nn0cl/staqex/pull/504); full regression 1412 passed (2026-08-10). Live/provider execution (ADR 0127) — see AWS Braket adapter row below — is the only remaining item in this lineage. |
+| Live QPU provider adapter (AWS Braket) | Host adapter + live submit entrypoint + full CLI wiring (submit + status/wait/result/cancel) + `examples/host/live_qpu_braket_demo/` end-to-end walkthrough all **complete**; no real submission ever performed by an agent (standing constraint) | ADR 0127 (recovered text, `docs/pre-canonicalization-2026-08-03`); [ADR 0202](adr/0202-aws-braket-provider-adapter.md) (**Accepted** — AWS Braket selected by Adjudicator technology approval; `amazon-braket-sdk>=1.117.0,<2` required, CVE-2026-9291 CVSS 7.1 fixed at that version; no project dependency manifest exists yet, package documented as optional/lazy-imported, not added) / [LISS-0392](../issues/LISS-0392-aws-braket-adapter.md) (**complete** — `compiler/staqex/adapters/aws_braket.py`); [ADR 0203](adr/0203-live-qpu-submit-entrypoint.md) (**Accepted** — separate async `submit_live_qpu` entrypoint, `submit_source`/`submit_path` untouched, returns `ProviderJobId` never `Job`/`JobResult`) / [LISS-0393](../issues/LISS-0393-live-qpu-submit-entrypoint.md) (**complete** — `compiler/staqex/live_submit.py`: auto-selects Static/Dynamic-lane QASM emission, tests use only a fake `QpuSubmitPort`); [LISS-0396](../issues/LISS-0396-live-qpu-submit-cli.md) (**complete** — ADR 0203's named CLI follow-up: `staqex submit-live-qpu` subcommand wires `submit_live_qpu` to a real `AwsBraketAdapter`; fails closed on unsupported `--provider`, missing/vulnerable SDK, or missing credentials before `submit()`); [LISS-0397](../issues/LISS-0397-qpu-job-port-cli.md) (**complete** — `qpu-job-status`/`-wait`/`-result`/`-cancel` subcommands wire the already-shipped `QpuJobPort`; discovered during Red that `AwsBraketAdapter` only gates credentials inside `submit()`, not the four job-status operations — corrected the test to match, no adapter change; REPL integration remains explicitly deferred); `examples/host/live_qpu_braket_demo/` (minimal 2-qubit Bell pair + README walking the full `submit-live-qpu` → `qpu-job-status`/`-wait`/`-result` flow against a real device; local verification steps are free, real-submission steps are written for the human Adjudicator to run themselves) | PR [#499](https://github.com/nn0cl/staqex/pull/499) (adapter); PR [#501](https://github.com/nn0cl/staqex/pull/501) (entrypoint); PR [#506](https://github.com/nn0cl/staqex/pull/506) (submit CLI); PR [#508](https://github.com/nn0cl/staqex/pull/508) (job-port CLI); PR [#510](https://github.com/nn0cl/staqex/pull/510) (example demo); full regression 1424 passed (2026-08-10). `QpuSubmitPort`/`QpuJobPort` (ADR 0127/0083) and `CredentialPort` (ADR 0161) reused unchanged throughout. Real (non-mock) submission requires the user's own AWS credentials and explicit real-time confirmation — never performed autonomously by this agent regardless of other in-session "don't stop" direction. |
 | Real `qft` / `iqft` | Phase 3 reviewed; official example complete | [LISS-0010](documentation-compression-map.md); [LISS-0020](documentation-compression-map.md); [LISS-0042](../issues/LISS-0042-qft-basic-gate-lowering.md); [ADR 0078](decision-themes/dec-0005-quantum-operations-and-runtime.md) | Exact register-typed QFT/IQFT boundary and basic-gate lowering are complete; `examples/basics/B11_qft_registers/` is the canonical Basics path; integration capstone `examples/applied/A10_mission_observatory/`. Exact single-control `cqft`/`ciqft` shipped (ADR 0120 / LISS-0151); approximate QFT remains deferred. |
 | Density matrix / Lindblad CPTP | Complete | [LISS-0011](documentation-compression-map.md); [ADR 0057](decision-themes/dec-0003-language-surface-and-physicist-first-dx.md) | Numeric/runtime/source slices are complete; symbolic Hamiltonian/jump operators now support any qubit count (dimension is derived from the actual `DensityState` source, not a hardcoded 1-qubit assumption). Adjudicator final review approved 2026-07-25. Adaptive integration, positivity projection, and QPU execution remain a possible future follow-up, not scheduled. |
 | Explicit Lindblad jump inputs | Phase 3 reviewed | [LISS-0039](documentation-compression-map.md); [WP-0005](../work-plans/WP-0005-lindblad-jump-inputs.md) | `JumpSet([RawMatrix(...)])` lowers through the existing RK4 CPU lane; Channel reuse and symbolic jumps remain out of scope. |
@@ -71,10 +79,10 @@ research roadmap
 | Acting-space typing | Phase 3 complete | [LISS-0058](documentation-compression-map.md); [ADR 0102](decision-themes/dec-0002-state-first-semantics-and-measurement.md); ADR 0096 D12 | Acting space is carried by operator values, with `QubitRegister<N>` as the canonical single-register shape and enclosing context as a secondary resolver. Declared shape is used during Hamiltonian evolution, context-free site-free identities fail explicitly, and no syntax-derived or one-qubit execution fallback is allowed. Multi-register naming and provider mapping remain deferred. |
 | Multi-register acting-space and QPU mapping | Phase 3 reviewed | [LISS-0067](documentation-compression-map.md); [ADR 0105](decision-themes/dec-0006-host-qpu-and-external-ports.md) | Named static registers, RegisterSet typing, qualified-site checks, and logical/flat QPU mapping are reviewed complete; provider selection and physical routing remain gated. |
 | Staqex v1 normative rebaseline | **closed — promoted** | [LISS-0068](documentation-compression-map.md), [spec v1.0](../specs/staqex-language-specification.md), [migration matrix](../specs/staqex-v1-migration-matrix.md) | Spec promotion 2026-07-28; next was LISS-0069. |
-| Canonical Unicode math source | **closed — Slice A/B/C** | [LISS-0069](../issues/LISS-0069-canonical-mathematical-source-and-migration.md), [`cli.py` migrate](../../compiler/staqex/cli.py) | Dual-accept + library + CLI shipped 2026-07-28; NFC/A.1/M-P01/M-P05 separate. |
+| Canonical Unicode math source | **superseded by ASCII source policy** | [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md), [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md) | LISS-0069 remains historical migration evidence; current source is ASCII-only and Unicode is presentation/tooling input. |
 | Versioned conformance / differential oracle | **closed — Slice A/B/C** | [LISS-0071](documentation-compression-map.md), [scenario catalog](../specs/staqex-v1-conformance-scenario-catalog.md) | Completed 2026-07-28; E-07/13/14 deferred; Rust differential with LISS-0070. |
 | Lossless CST / formatter / source versioning | **closed — Slice A/B/C/D** | [LISS-0072](documentation-compression-map.md), [CST/formatter plan](../specs/staqex-v1-cst-formatter-plan.md) | Completed 2026-07-28; NFC / full pretty-print / LSP remain separate; no Rust gate. |
-| Named Dirac notation / algebra AST | **closed — A–G** | [LISS-0073](documentation-compression-map.md), [Dirac algebra AST plan](../specs/staqex-v1-dirac-algebra-ast-plan.md) | Completed 2026-07-29; formula→AST frozen; M-P06 dual-accept retained; formatter emit policy documented. |
+| Named Dirac notation / algebra AST | **closed — AST retained; source spelling revised** | [LISS-0073](documentation-compression-map.md), [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md) | AST semantics remain; Unicode source sugar is superseded by ASCII ket/bra/tensor spelling. |
 | Qutrit / qudit / finite local dimension | **complete** | [LISS-0074](documentation-compression-map.md), [qudit plan](../specs/staqex-v1-qudit-local-dimension-plan.md) | A–E complete; SV deferred to LISS-0112. |
 | Qutrit / qudit D=3 state-vector MVP | **complete** | [LISS-0112](documentation-compression-map.md), [D=3 SV plan](../specs/staqex-v1-qudit-d3-sv-plan.md) | A–C complete; measure + Identity; QASM/D≠3 reject; E06-003. |
 | Phase-resolved typed HIR | **complete** | [LISS-0080](documentation-compression-map.md), [HIR plan](../specs/staqex-v1-phase-resolved-hir-plan.md) | A–D complete; unlocks LISS-0075. |
@@ -102,7 +110,7 @@ research roadmap
 | Examples health (rebaseline Gate P0) | **complete** (0119/0122/0123) | [LISS-0119](documentation-compression-map.md), [LISS-0122](documentation-compression-map.md), [LISS-0123](documentation-compression-map.md) | Basics+applied catalogs green; A11 on SV-09. |
 | Language coverage ledger (Gate P1) | **complete** | [LISS-0124](documentation-compression-map.md), [ledger](../specs/staqex-v1-language-coverage-ledger.md) | Option B complete; typed surface shipped; permanent-out recorded; S1 authorize unblocked. |
 | Showcase mission lock (Gate P2) | **complete** | [LISS-0126](documentation-compression-map.md), [mission lock](../specs/staqex-v1-showcase-mission-lock.md) | Quantum-matter / Noether Forge lineage locked 2026-07-31. |
-| Showcase S0 specification | **complete** (docs) | [LISS-0127](documentation-compression-map.md), [S0 spec](../specs/staqex-v1-showcase-s0-specification.md) | Docs only; S1 authorized and shipped as LISS-0134. |
+| Showcase S0 specification | **complete** (docs) | [LISS-0127](documentation-compression-map.md), [S0 disaster-response spec](../specs/staqex-v1-showcase-s0-disaster-response.md) | Canonical S0 is the disaster-response mission; the former quantum-matter S1 thin slice remains as historical implementation evidence. |
 | Showcase S1 thin slice | **complete** | [LISS-0134](../issues/LISS-0134-showcase-s1-thin-slice.md), `examples/showcase/quantum_matter_discovery/` | Merged #179. |
 | Sparse Pauli Operator return | **complete** | [LISS-0136](../issues/LISS-0136-sparse-pauli-operator-return.md) | Merged #180; factory local Float fold. |
 | Classical Float → Operator / evolve + param factory | **complete** (PR pending) | [LISS-0137](../issues/LISS-0137-classical-float-operator-evolve-binding.md) | \(H(J,h)\); field/`evolve for` binding. |
@@ -141,7 +149,7 @@ research roadmap
 | Typed surface annotations | **complete** | [LISS-0129](documentation-compression-map.md), ADR 0115 | `state x: State<T> = …` shipped. |
 | Expression residuals | **complete** | [LISS-0133](documentation-compression-map.md), ADR 0116 | LINEAR return, Float return, MULTI FP, Classical⊕State. |
 | Physicist source friction ledger | **working** | [friction ledger](physicist-source-friction-ledger.md) | F-02/F-05 closed (ADR 0114 + LISS-0121); residual sample debt feeds P0; ledger seeds P1. Not an ADR. |
-| Adjudicator language vision | **Accepted** (2026-07-31) | [vision](adjudicator-language-vision.md) | Physicist-first; ideal form first; §2.1 writeable≠executable; §3.1 Outer/Kernel/lanes; §6 Stop narrowed; §6.1 friction ops. Wired into agent contracts + spec §1.1. |
+| Adjudicator language vision | **Accepted** (2026-07-31; **§2.2 Accepted 2026-08-08**) | [vision](adjudicator-language-vision.md) | Physicist-first; ideal form first; §2.1 writeable≠executable (= meaning vs realization, not “non-executable”); **§2.2 source denotes the same blackboard meaning** (intentional transform priority; composition stability); §3.1 Outer/Kernel/lanes; §6 Stop narrowed; §6.1 friction ops. Wired into agent contracts + spec §1.1. |
 | HIR BinOp expr children | **complete** (LISS-0125) | [LISS-0125](documentation-compression-map.md), [suite](../../tests/test_liss_0125_hir_binop_expr_children_red.py) | `BinOp.lhs/rhs` walk; unblocks B03/A01 compile crash. |
 
 | HIR → Physics IR lowering | **complete** (A–D) | [LISS-0115](documentation-compression-map.md) | `physics_ir_lower.py` + soft `CompileResult.physics_ir`; equations still explicit. **Do not reuse ID.** |
@@ -182,12 +190,40 @@ Issue gives them a concrete scope:
   [WP-0068](documentation-compression-map.md) (**complete**);
   **finiteize surface shipped** [ADR 0185](decision-themes/dec-0004-type-first-scientific-model.md)
   Lane A / [LISS-0313](documentation-compression-map.md) **complete**
-  (`finiteize` + B18); mid-program Continuous still deferred — **expressiveness
+  (`finiteize` + B18); mid-program Continuous (Lane B) MVP surface
+  **shipped** [ADR 0204](adr/0204-continuous-lane-b-type-world.md)
+  **Accepted** / [WP-0097](../work-plans/WP-0097-continuous-lane-b-ship.md)
+  **complete + post_reviewed** (2026-08-10: `Continuous<T>` type + hard
+  gates / [LISS-0399](../issues/LISS-0399-continuous-type-hard-gates.md);
+  `weight`/`mask` ops lifted from LISS-0317's Host-proven semantics /
+  [LISS-0400](../issues/LISS-0400-continuous-weight-mask-ops.md);
+  `finiteize(continuous, lo, hi, n_bins[, seed])` overload /
+  [LISS-0401](../issues/LISS-0401-finiteize-continuous-overload.md); PR
+  [#514](https://github.com/nn0cl/staqex/pull/514); full regression 1440
+  passed) — `CH-field-fork` explicitly deferred by the LINEAR
+  single-consumption rule; no S01 spine/example wiring yet (separate,
+  later Issue); Lane B expressiveness seat scoring update is a
+  follow-up docs-only Issue, not done in WP-0097 itself — **expressiveness
   seats** [scenarios](../specs/staqex-v1-continuous-lane-b-expressiveness-scenarios.md)
   / [LISS-0315](documentation-compression-map.md);
   **CH-field-compose baseline frozen weak** (Ideal §2A + Host 0317 + H→E 0318;
   [LISS-0319](documentation-compression-map.md));
-  Joint rational mode still ADR 0125 (classical path: ADR 0160 shipped);
+  Joint rational mode still ADR 0125 (classical path: ADR 0160 shipped).
+  **Closed 2026-08-10** (Architecture Path re-investigation of the
+  reopened-backlog item, Adjudicator confirmed): ADR 0097's own
+  verification contract rejects a rational/symbolic Kernel numeric mode
+  "unless it comes with the concrete requirement and semantics ADR
+  0076/0097 say such a change needs," and its own reasoning is that exact
+  rationals would not make Staqex exact — the coefficients that actually
+  dominate quantum computing ($1/\sqrt{2}$, $e^{i\theta}$, Trotter steps,
+  molecular integrals) are not rational. Unlike its 2026-07-31
+  permanent-out-reopen siblings (SI dims, Continuous PDF, live QPU —
+  see [staqex-v1-open-topics-permanent-out.md](../specs/staqex-v1-open-topics-permanent-out.md)),
+  which found real unseal paths and shipped, this item's own design
+  investigation concluded against it; no new concrete requirement has
+  surfaced since. ADR 0125/0076/0097 design boundary stands; do not
+  re-propose without a concrete requirement per ADR 0097's verification
+  contract;
   numeric literal lifting: [LISS-0018](documentation-compression-map.md).
 - Concrete live QPU provider **SDK** after honesty ports (ADR 0127);
   CredentialPort shipped ADR 0161: [LISS-0019](documentation-compression-map.md),
@@ -196,7 +232,13 @@ Issue gives them a concrete scope:
   [LISS-0196](documentation-compression-map.md) —
   **complete** (Adjudicator 採択 2026-08-03: examples accepted, **no ship ADR**)
   ([examples](../specs/staqex-v1-trait-effect-surface-examples.md)); no Kernel Red
-  until a future ship ADR is Accepted separately.
+  until a future ship ADR is Accepted separately. **Reconfirmed 2026-08-10**:
+  Architecture Path re-investigation (reopened-backlog review) found no new
+  friction evidence since 2026-08-03 — the friction ledger's trait/effect
+  entry is unchanged, and this session's own Kernel work (Dynamic QPU lane,
+  Continuous Lane B) never needed specialization or effect-row expansion.
+  "Not now" stands; revisit only if sample friction reappears, per the
+  spec's own condition.
 - Whether numeric literals are sugar for `dirac`.
 - **Kernel External Resources ports (ADR 0166) — shipped:**
   `RngPort` (WP-0082 / LISS-0235 / ADR 0170),
@@ -217,25 +259,1566 @@ Issue gives them a concrete scope:
   Friction ledger F-08 cites that decision
   ([LISS-0215](documentation-compression-map.md)
   **complete**).
-- **Quantum mental-model follow-up:** design is open under
+- **Quantum mental-model follow-up:** remaining design is open under
   [WP-0092](../work-plans/WP-0092-quantum-mental-model-follow-up.md), following
-  accepted [ADR 0189](adr/0189-quantum-mental-model-and-observation-contract.md).
-  Specification approval and Phase 1 approval are still required before
-  grammar, conformance tests, or implementation changes.
-- Living backlog: WP-0062–0068 shipped; next free WP-0069+ / LISS-0199+.
+  accepted [ADR 0189](adr/0189-quantum-mental-model-and-observation-contract.md)
+  (§2 and the related Consequences bullet superseded in part by ADR 0190).
+  The first `DiagnosticView<T>` compiler classification shipped in PR #342
+  (`abaa7cb`). The `mix` canonical grammar and `when` hard-retirement
+  diagnostic also shipped, in PR #337 (`321de3a`), under ADR 0190/WP-0093
+  Phase 2 approval. The `superpose` formal grammar/AST/type boundary is also
+  shipped, [LISS-0320](../issues/LISS-0320-superpose-formal-grammar.md) /
+  PR #345: `superpose (control) { pat -> expr, … }` parses to a distinct
+  `SuperposeExpr` (never `WhenExpr`/`Mixture`), type-checks to `State<T>`,
+  and fails closed with `COHERENT_EXECUTION_UNSUPPORTED` if a program tries
+  to evaluate it — coherent amplitude/phase execution and target/QASM
+  lowering remain separate, unimplemented slices. Specification approval and
+  Phase 1 approval remain required before the remaining `controlled`
+  grammar, the scientific lexicon, conformance scenarios, or the public
+  observation-surface changes. Work unit 6 (H1 theory/experiment diagnostic
+  honesty, added 2026-08-05 from the
+  [kernel stub and placeholder registry](kernel-stub-and-placeholder-registry.md)
+  audit) closed all three misleading-diagnostic gaps in `h1_authoring.py`,
+  work unit 6 now **complete**:
+  [LISS-0325](../issues/LISS-0325-h1-non-hermitian-operator-diagnostic.md)
+  (`NON_HERMITIAN_OPERATOR_ERROR` now consults `parameter_types` instead of
+  identifier spelling) shipped, PR #359 (`765ed17`).
+  [LISS-0326](../issues/LISS-0326-h1-basis-target-capability-diagnostics.md)
+  (`BASIS_MISMATCH_ERROR`/`TARGET_CAPABILITY_REJECT`) shipped, PR #361
+  (`632e96e`): new `basis`/`coordinate`/top-level `realize` AST (previously
+  discarded entirely by the parser — `realize` did not even parse) and a
+  real `target_capability.py`-backed capability lookup replace both
+  substring heuristics.
+- **S02 drug-discovery benchmark:** [ADR 0190](adr/0190-s02-selection-boundary-and-mix-control.md)
+  (Accepted; Phase 2 implementation approved 2026-08-04),
+  [WP-0093](../work-plans/WP-0093-s02-language-expressiveness-and-selection.md),
+  and [S02 spec](../specs/staqex-v1-s02-drug-discovery-benchmark.md). The
+  `mix`/`controlled` language-surface slice (work unit A) is implemented and
+  shipped (PR #337) — `mix` is canonical, `when` is a hard `RETIRED_KEYWORD`
+  diagnostic, `controlled` is not lowered to `Mixture`. Work unit B (Host
+  domain records and finite-manifest witness) is implemented and shipped,
+  Host-side only ([LISS-0321](../issues/LISS-0321-s02-host-domain-and-finite-boundary.md) / PR #349):
+  `Candidate`/`Constraint`/`Score`/`TargetProfile`/`SelectionProblem` and
+  `FiniteManifestWitness`/`validate_manifest()` under
+  `examples/showcase/S02_drug_discovery/host/`; no `compiler/staqex/**`
+  change. Work unit C's semantics/type contract is Accepted via
+  [ADR 0192](adr/0192-s02-projector-selection-semantics.md) (2026-08-05) —
+  a structured `constraint_ref`, a fixed three-predicate vocabulary
+  (`exactly_selected`/`pairwise_compatible`/`diversity_at_least`), Host-side
+  objective normalization, and penalty-vs-Projector disposition tracking.
+  Its Kernel-touching slice is implemented and shipped
+  ([LISS-0322](../issues/LISS-0322-s02-projector-region-semantics.md) /
+  PR #352): `_append_selection_projector_region`'s `constraint_ref` is now
+  derived from the actual recognized predicate names instead of the
+  hardcoded `"S02.feasible"` literal, and an unrecognized predicate fails
+  closed with `S02_UNKNOWN_CONSTRAINT_PREDICATE`. The Host-side
+  `ConstraintDisposition`/`objective_profile` fields (ADR 0192 Follow-up
+  item 2) remain a separate, unstarted Issue. Work unit D
+  (observation/result contract) is implemented and shipped, Host-side only
+  ([LISS-0323](../issues/LISS-0323-s02-observation-matrix-and-benchmark-result.md) /
+  PR #354): a `BenchmarkResult`-shaped Host DTO maps already-shipped
+  Kernel primitives (non-destructive `expect`, terminal `measure`,
+  `MeasurementEnvelope.vacuum`) into the S02 result contract — an empty or
+  vacuum terminal measurement is recorded as a failed result, never a
+  fabricated selection or score; no `Selection` Kernel type was added.
+  Work unit E's first slice — real `prepare_selection(n: Int)` as a Kernel
+  op — is implemented and shipped
+  ([LISS-0324](../issues/LISS-0324-s02-prepare-selection.md) / PR #363,
+  `746d002`): `Evaluator._bind_prepare_selection` produces an equal
+  superposition over all `2^n` selection patterns via the same
+  `Joint.bind_split` primitive `coin()`/`finiteize(...)` use; `measure`
+  needed no change. Real `project ... onto feasible(...)` runtime
+  execution is also now shipped, via
+  [ADR 0194](adr/0194-host-input-port-and-selection-predicate-semantics.md)
+  (Accepted) and its two Follow-up Issues:
+  [LISS-0327](../issues/LISS-0327-host-input-port-foundation.md) (new
+  `HostInputPort`, PR #366, `b1ce2bd`) and
+  [LISS-0328](../issues/LISS-0328-selection-projector-predicate-execution.md)
+  (real predicate execution for `exactly_selected`/`pairwise_compatible`/
+  `diversity_at_least`, PR #368, `73580d3`). **Full expressiveness
+  re-review 2026-08-10** (Adjudicator-requested, S01-style):
+  [staqex-v1-s02-expressiveness-review.md](../specs/staqex-v1-s02-expressiveness-review.md)
+  — confirmed `prepare_selection`/`project onto feasible(...)` were
+  already Runtime-real (not "mostly plumbing left" as the summary above
+  used to suggest); identified the Ideal sketch's `finiteize(candidates,
+  witness= C16)` step as having no Kernel-visible form (Host-only
+  `FiniteManifestWitness`, LISS-0321) and named weighted objective terms
+  as unproven for S02 specifically — both Class B. **Work unit E now
+  closed**: [LISS-0402](../issues/LISS-0402-s02-selection-example.md)
+  (PR [#519](https://github.com/nn0cl/staqex/pull/519)) shipped the first
+  end-to-end `examples/showcase/S02_drug_discovery/main_selection.sqx`
+  (hard-constraint selection subspace + separately-evolved soft-objective
+  qubit pair — `prepare_selection`'s tuple-valued coordinate cannot itself
+  be evolved under a Pauli-term `Operator`, confirmed by direct execution)
+  plus a Host runner and an exact classical baseline cross-checked to
+  agree on the feasible-set definition; full regression 1443 passed. The
+  Kernel-visible finite-witness surface gap (P1 finding) remains open,
+  not opened as a new Architecture Path item without demonstrated need,
+  per this session's own precedent; S01 disaster-response showcase is
+  unchanged. **Real benchmark report 2026-08-10**:
+  [LISS-0403](../issues/LISS-0403-s02-benchmark-report.md) (PR
+  [#521](https://github.com/nn0cl/staqex/pull/521)) closes the gap
+  between "runs" and "reports like a benchmark" — `host/benchmark_report.py`
+  computes real baseline/objective/reranked scores and quality metrics
+  (feasibility_rate, objective gap, top-k overlap, reproducibility)
+  instead of LISS-0323's original deferred stub. Caught and fixed a
+  degenerate-scoring bug during design (a symmetric spin-sum formula
+  scored every feasible pattern identically once `exactly_selected` fixed
+  the bit count — a combinatorial identity, not a corner case).
+  `top_k_overlap` measuring ~0 **empirically confirms** the
+  hard-constraint/soft-objective independence LISS-0402 already
+  disclosed — the benchmark now demonstrates the gap it was designed to
+  expose, per the S02 design doc's own stated purpose. Full regression
+  1446 passed. **Architecture fix shipped 2026-08-11**:
+  [ADR 0205](adr/0205-tuple-coordinate-register-bridge.md) (Accepted) /
+  [LISS-0404](../issues/LISS-0404-tuple-coordinate-hamiltonian-evolve.md)
+  (PR [#524](https://github.com/nn0cl/staqex/pull/524)) closes the
+  `top_k_overlap≈0` root cause for real: `evolve psi under H` now accepts
+  a single tuple-valued coordinate (as `prepare_selection` produces), not
+  only `nq` separate named coordinates — no new op, no new syntax (`Z[i]`
+  indexed Pauli already shipped), `prepare_selection`/`project`/`measure`
+  untouched. Verified against the existing path to float precision.
+  Chosen over an initially-proposed `unpack_bits`/`pack_bits` bridge and
+  over a fuller `prepare_selection` redesign (found to require inventing
+  multi-coordinate joint measurement — bigger and riskier) after the
+  Adjudicator asked for the fundamentally correct fix regardless of size.
+  A separate, disclosed bug in `main_selection.sqx` itself (bare `Z*Z`
+  collapses to identity via same-site multiplication) remains open,
+  fixable independently with already-shipped `Z[i]` syntax; rewriting
+  `main_selection.sqx` to use the new unified single-coordinate form is a
+  separate, not-yet-scheduled follow-on. Full regression 1450 passed.
+  **Applied to the example 2026-08-11 — merged**:
+  [LISS-0405](../issues/LISS-0405-s02-unified-selection-evolve.md) (PR
+  [#526](https://github.com/nn0cl/staqex/pull/526))
+  rewrites `main_selection.sqx` to evolve `psi_sel` directly
+  (`objective_hamiltonian` now uses `sum (i in Index<0..7>) { Z[i] }` /
+  `{ X[i] }` field terms plus all-28-pairs `Z[i]*Z[j]` coupling, fixing
+  the same-site bug in the same pass); removes the disconnected
+  `obj0`/`obj1` pair. Verified: the terminal distribution is genuinely
+  non-uniform over the 25 feasible patterns (`~1.4e-11`–`~0.0399`, not
+  uniform `1/25`) — the architectural half of the `top_k_overlap≈0`
+  finding is closed in practice, not only in principle. **However**
+  `top_k_overlap` itself is still measured at `0.0`, for a newly
+  identified and disclosed reason distinct from the one LISS-0403 named:
+  `objective_hamiltonian`'s field terms weight every candidate position
+  identically (no per-candidate value crosses into the Kernel), so the
+  bias it produces has no per-candidate structure to correlate against
+  `scoring.py`'s independent per-candidate `baseline_top_k` proxy.
+  Closing that would need a further, unshipped mechanism for
+  Host-computed per-position weights (not candidate identity) to enter
+  an `Operator`'s field terms — disclosed as an open follow-on question,
+  not filed as a new Issue without further direction. Full regression
+  1450 passed. **Per-candidate weight channel wired 2026-08-11 — merged**:
+  [LISS-0406](../issues/LISS-0406-host-coefficient-tensor-evaluator-wiring.md)
+  (PR [#528](https://github.com/nn0cl/staqex/pull/528))
+  found the disclosed gap above was not fully accurate — the
+  `Float[N]… = host("key")` coefficient-tensor surface (ADR 0119,
+  `sum (i in Index<0..N>) { w[i] * Z[i] }`) already existed and was
+  already typechecked/tested, but was never reachable from a real
+  `Evaluator` run: `_run_unit_body` never built `host_arrays` from
+  `self.host_input`, and (a second gap found during Green) generic
+  per-statement execution had never been taught to skip `Float[N]…`
+  StateBinds at all, host-sourced or literal. Both wired/fixed —
+  `evaluator.py` only, no new port/type/syntax, no ADR needed (reuses
+  ADR 0119/ADR 0194, both already "accepted current surface").
+  `main_selection.sqx` now weights its `Z[i]`/`X[i]` field terms with the
+  same per-candidate values `scoring.py`'s classical baseline scores
+  against. **Also surfaced and fixed a real correctness gap**: `H_obj`'s
+  `X[i]` terms don't commute with `project onto feasible(...)`'s
+  projector (X changes Hamming weight), so evolution under it can leak
+  probability outside the feasible subspace — a non-vacuum terminal
+  measurement was never unconditionally feasible once LISS-0405 made
+  `H_obj` act on `psi_sel` directly, but `benchmark_report.py` still
+  assumed `feasibility_rate == 1.0` "by construction" (true only for the
+  pre-LISS-0405 disconnected-pair design). Per the S02 spec's own
+  "penalty Hamiltonian… must not claim… guarantees feasibility" contract,
+  `benchmark_report.py` now verifies every shot against the real
+  predicates and excludes infeasible ones from scoring (6/20 seeds leak
+  at the shipped weights). `top_k_overlap` re-measured on the corrected
+  metric: **0.33**, up from `0.0`, confirmed reproducible across an
+  independent weight/duration sweep — real and partial, not claimed as
+  solved (real-time unitary evolution under a fixed duration is not a
+  tuned ranking algorithm). Full regression 1454 passed. **Rewritten in
+  its natural physicist form 2026-08-12** (Adjudicator-requested
+  review/polish, after LISS-0407 shipped): [LISS-0408](../issues/LISS-0408-s02-natural-objective-form.md)
+  (PR [#535](https://github.com/nn0cl/staqex/pull/535))
+  reintroduces a named `ObjectiveWeights` struct and a reusable
+  `objective_hamiltonian(w, activity_w, selectivity_w) -> Operator`
+  factory, called inline while scaling
+  (`scale * objective_hamiltonian(...)`) — exercising all three
+  combinations LISS-0407 closed in the same real program that motivated
+  it. Confirmed byte-identical terminal measurement and benchmark report
+  (feasibility_rate, infeasible_shots, top_k_overlap, mean_objective_score,
+  manifest_id all unchanged) before/after the rewrite. Full regression
+  1459 passed; spec verification 100.00% (161/161). **S01 brushed up the
+  same way 2026-08-12** (Adjudicator asked whether S01 was updated;
+  found it still had the `H_raw`/`H` two-step idiom LISS-0407 obsoleted
+  — S01 originally established that idiom, LISS-0402 copied it rather
+  than inventing a new workaround): [LISS-0409](../issues/LISS-0409-s01-natural-operator-form.md)
+  (PR [#537](https://github.com/nn0cl/staqex/pull/537))
+  removes eight now-unnecessary `*_raw` intermediates across
+  `main_day2_recovery.sqx`, `main_disaster_response.sqx` (four),
+  `main_lattice_four.sqx` (two), and `main_morning_collect.sqx` (the
+  last one was never actually blocked by the OpCall gap — a bare `Z`
+  literal — simplified for consistency only). Confirmed byte-identical
+  `staqex run --seed 0` output for all four files before/after; full
+  regression 1459 passed; spec verification 100.00% (161/161); all
+  17 S01-specific tests pass. **Kernel-visible
+  finite-witness surface gap reconfirmed closed 2026-08-12** (Adjudicator
+  requested review of remaining S02 items): the P1 finding above
+  (`finiteize(candidates, witness=C16)` has no Kernel-visible form) has
+  now gone through three Issues (LISS-0402, LISS-0405, LISS-0406) that
+  each needed the finite-candidate width for real — every one used the
+  bare-`Int` form successfully; none needed a source-visible witness
+  step. Matches this session's own precedent for Joint rational mode and
+  trait/effect: do not open new Kernel surface ahead of a demonstrated
+  need. `FiniteManifestWitness` (Host-only, LISS-0321) remains the real
+  shipped mechanism; do not re-open without a concrete requirement.
+- **Operator coefficient/binder resolution unification:**
+  [ADR 0206](adr/0206-operator-coefficient-resolution-unification.md)
+  (**Accepted**, 2026-08-12) / [LISS-0407](../issues/LISS-0407-operator-resolution-unification.md)
+  (**complete** — PR [#533](https://github.com/nn0cl/staqex/pull/533)) — S02 work (LISS-0402/0405/0406) surfaced three
+  separate, incrementally-shipped Operator-coefficient resolution
+  mechanisms (function-call return-position inlining, `finite_binder.py`'s
+  top-level-only array lowering, and a third pass fired from `evolve`'s
+  own call site) that didn't compose. git/Issue lineage
+  (LISS-0052→0136→0137→0139→0224→0297→0306) showed six narrow patches to
+  the same underlying question, not one design. Investigation sized full
+  unification (including folding in `hamiltonian.py`'s dense path and
+  `typecheck.py`'s diagnostics walker) as multi-week with real regression
+  risk; Adjudicator asked which was "physically correct" (unification —
+  the three-way split is an implementation accident, not physics, per
+  the language vision's own "source must denote the same thing as the
+  blackboard"), then approved proceeding with a bounded slice in the same
+  round: one recursive resolver (`Evaluator._resolve_operator_tree`),
+  invoked from the same points the three old mechanisms fired from
+  (lazy, not eager — preserves LISS-0297's load-bearing per-call
+  scoping), closing all three confirmed-broken combinations — a `Float[N]`
+  array threaded through a function parameter into a `sum` binder; a
+  struct-field coefficient hidden behind an intermediate named Operator
+  variable; a nested Operator-returning call inside a larger expression
+  (`scale * f(weights)`, the original LISS-0402 finding) — plus the
+  silently-discarded diagnostic (`evaluator.py:3220-3221`), now a specific
+  `KernelError` instead of a vague, much-later `cannot compile sparse
+  Pauli for OpBinder`. `hamiltonian.py`/`typecheck.py` confirmed
+  unnecessary to change (they already consume the resolver's literal
+  output correctly). Full regression 1459 passed (up from 1455); spec
+  verification 100.00% (161/161); S02's own example confirmed
+  byte-identical before/after. **Gap in the "unified" claim found and
+  closed 2026-08-12** (independent-context code review, Adjudicator-
+  requested): `_resolve_operator_tree` never actually learned `OpAttr`
+  — that stayed a separate, bolted-on call reachable only from
+  `evolve`'s own call site, so `apply`/`capply`
+  (`_resolve_unitary_matrix`) still read raw, unresolved AST directly
+  and rejected the exact struct-field forms `evolve` already accepted.
+  [LISS-0410](../issues/LISS-0410-operator-resolver-completion.md)
+  (PR [#539](https://github.com/nn0cl/staqex/pull/539))
+  folds `OpAttr` into `_resolve_operator_tree` for real (threading an
+  `objects` context parameter through the whole call chain, found
+  necessary after a factory-function regression — A11/Noether-Forge —
+  surfaced during Green: a factory's own local `Operator` bind must
+  resolve against its *parameter*-name object scope, not module-level
+  `self.objects`) — `apply`/`capply` needed **no code change at all**
+  once StateBind is guaranteed fully resolved. A wrong plan assumption
+  (inline anonymous `evolve under (expr)` needing richer resolution)
+  was also corrected: that form was never supported at all, unrelated
+  to this gap. Full regression 1464 passed; spec verification 100.00%
+  (161/161). **Static-analysis side closed 2026-08-12**:
+  [LISS-0411](../issues/LISS-0411-static-operator-resolution.md)
+  (PR [#540](https://github.com/nn0cl/staqex/pull/540)) fixed
+  `unitarity_check.py`'s silent safety-gate bypass (`apply(Bad, psi)`
+  with a genuinely non-unitary struct-field coefficient passed `check`
+  with "ok" instead of `NON_UNITARY_TRANSFORM_ERROR`) and the QASM/
+  Trotter backend's identical vague-error gap — both separate,
+  compile-time-only static-analysis paths LISS-0410's runtime fix
+  doesn't reach. New shared `static_operator_resolution.py`: pure
+  struct-of-literals constant folding (only when every field value is a
+  literal or previously-folded scalar) plus a from-scratch static mirror
+  of the runtime's `OpCall` inlining. Found and fixed a real infinite-
+  recursion bug during Green: a callee's own local `Operator H = ...`
+  sharing a name with the *caller's* outer `Operator H` caused unbounded
+  self-reference until the callee got its own fresh, function-scoped
+  `operators` context (proper lexical scoping, matching the runtime
+  resolver's own `local_ops` pattern). Full regression 1468 passed; spec
+  verification 100.00% (161/161); every showcase/applied `.sqx` entry
+  point re-checked and confirmed unaffected. **Second review pass
+  2026-08-12** (Adjudicator: "個別確認し、できるだけバグを探して" — check
+  individually, find as many bugs as possible; scoped to consumers
+  LISS-0410/0411 didn't touch: Lindblad/`DensityState` evolve, second-
+  quantization Jordan-Wigner mapping, quantum-walk ops, `controlled`/
+  `ocapply`/`toffoli`, grid/Fock evolve branches, `outer`/`inner`) found
+  3 more real gaps, empirically verified: (a) second-quantization JW
+  mapping never resolved a struct-field coefficient (two independent
+  bugs — a parser lookahead gap and a missing `OpAttr` case — fixed as
+  [LISS-0412](../issues/LISS-0412-second-quantization-struct-field-coefficients.md)
+  (PR [#542](https://github.com/nn0cl/staqex/pull/542)));
+  (b) `Evaluator._bind_method` (`evaluator.py:3717`) stored a class-
+  method-local `Operator` bind raw, unresolved; (c) `_bind_user_fun`
+  (`evaluator.py:4135`) did the same for a library-`fn`-local `Operator`
+  bind. **(b)/(c) fixed 2026-08-12** as
+  [LISS-0413](../issues/LISS-0413-method-fn-local-operator-resolution.md)
+  (PR [#544](https://github.com/nn0cl/staqex/pull/544)) —
+  same one-line-each shape as LISS-0410's original fix (`self.operators[...]
+  = stmt.expr` → `self._resolve_operator_expr(stmt.expr)`, defaulting to
+  module-scope `self.objects`); confirmed the fix matches the equivalent
+  literal-coefficient form's result exactly. Full regression 1476
+  passed; spec verification 100.00% (161/161). This closes out the
+  second review pass — no further findings pending. Ruled out with
+  empirical evidence: Lindblad/`DensityState`
+  (already resolved at top-level bind time), quantum-walk ops (never
+  consume Operator AST at all), `controlled`/`ocapply`/`toffoli`
+  (already route through the same `_resolve_unitary_matrix` LISS-0410
+  fixed), grid/Fock evolve branches (share the same pre-branch
+  resolution call `evolve`'s multi-qubit path uses). `outer`/`inner`
+  combined with Operator algebra is a distinct, pre-existing, unrelated
+  limitation (fails identically for literal and struct-field
+  coefficients), not this bug class.
+- **`evolve` Hamiltonian-form syntax — complete 2026-08-12** (Adjudicator
+  language-design critique: a reader unfamiliar with Staqex could not
+  tell, at a glance, whether bare `evolve a under H for t` was an
+  operation, a variable, or a declaration — no bracketing signaled "this
+  is an operation," unlike `apply(H, psi)`). Discussion also corrected an
+  earlier, imprecise justification for the old bare form ("mirrors a
+  blackboard sentence") — the actual physics is
+  $|\psi(t)\rangle=U(t)|\psi(0)\rangle$, $U=e^{-iHt/\hbar}$, structurally
+  identical to `apply(U,psi)`; `evolve` itself never appears on the
+  blackboard. Adjudicator chose to keep `evolve` as the verb and fix only
+  the syntax-signaling problem (decomposing into explicit U-construction
+  + `apply` was considered and deferred, not adopted).
+  [LISS-0414](../issues/LISS-0414-evolve-block-run-syntax.md)
+  (PR [#546](https://github.com/nn0cl/staqex/pull/546)) requires
+  `evolve { seed under H for t [using Suzuki(...)] [until pred [max N]]
+  }.run()`; the old bare form now raises `EVOLVE_REQUIRES_BLOCK_RUN`
+  naming the exact rewrite (hard cutover, no back-compat alias, matching
+  the `fun`→`fn`/`public`→`pub` precedent). Parser-only change — the new
+  form produces the identical `EvolveExpr` AST the old bare form did, so
+  no typecheck/hir/evaluator/QASM change was needed. The already-
+  bracketed `times N { body }` / `for dt { body }` forms are unaffected.
+  Migrated ~290 pre-existing call sites across `examples/`/`tests/` via a
+  scratch script; found and fixed one false-positive match (a plain
+  descriptive string in `sv17_quantum_mechanics_syntax.py` coincidentally
+  matched the pattern) and several garbled docstring/comment rewrites,
+  all hand-corrected. Full regression 1483 passed; spec verification
+  100.00% (161/161); full `.sqx` corpus `staqex check` swept clean.
+- **Case-sensitive keyword convention + Sigma/Pi binder unification —
+  complete 2026-08-13** ([ADR 0191 amendment](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
+  [WP-0098](../work-plans/WP-0098-case-sensitive-keywords-and-sigma-binder.md),
+  LISS-0415–0420). Originated from the same design-review session that
+  produced the `evolve` syntax fix above: re-examining S02's
+  `main_selection.sqx` step 1 against the actual blackboard equation
+  found Staqex had no way to write a State as a literal sum over basis
+  kets at all. Generalized into a language-wide convention: capitalized
+  spellings are reserved for tokens standing in for a blackboard
+  symbol/operator (extending the existing Pauli `X`/`Y`/`Z`/`Suzuki`/
+  `Index` precedent); lowercase stays for connective/procedural keywords.
+  Retired lowercase `state` (freed as an ordinary identifier, LISS-0418)
+  and ten verb keywords — `Evolve`/`Measure`/`Mix`/`Coin`/`Dirac`/
+  `Inspect`/`Vacuum`/`Snapshot`/`Superpose`/`ForEach` (hard cutover via
+  the existing `RETIRED` dict, LISS-0419); added `sqrt`/`^` classical
+  Float builtins (LISS-0415), a dedicated `In` domain-membership keyword
+  distinct from `forEach`'s lowercase `in` (LISS-0416), and a `{0,1}^n`
+  set-power domain literal (LISS-0417). Capstone LISS-0420 unified the
+  Operator-DSL `sum`/`product` binder into `Sigma`/`Pi` and added a new
+  State-typed "ket-sum" capability (`Sigma (x In {0,1}^n) { |x> }`,
+  structurally identical to `prepare_selection(n)`) — closing the
+  originating gap. Two Hard Stops escalated to the Adjudicator rather
+  than resolved unilaterally: how `|x>` binds to the loop variable's
+  runtime value (`KetLit`'s scope extended narrowly — the ket-sum body
+  must be exactly the bound variable, parser-verified; `KetLit`'s own
+  node/evaluation untouched) and how an external normalization
+  coefficient applies at runtime (literal application, verified to
+  produce an honest unnormalized result when redundant with the
+  self-normalizing ket-sum, matching this codebase's own no-silent-
+  normalization precedent from LISS-0410). Several real, pre-existing
+  bugs found and fixed along the way — most substantially LISS-0418's
+  five gaps in bare `State` Type-First handling (only exposed once the
+  corpus migration made that combination common for the first time:
+  an incomplete `_check_payload_assign` "Any" allowlist, the
+  declared-vs-inferred type masking a `Partial`'s own arity, the
+  identical bug in the separate `EvolveExpr`-specific bind path, `hir.py`
+  treating bare `State` the same as an explicit annotation for linear-use
+  tracking, and the separate "H1" experimental authoring surface's own
+  independent lowercase keyword detection) — and a regression during
+  LISS-0420 where an initially-too-broad "classical scalar × State-
+  producing expr" evaluator path silently reopened a boundary LISS-0273
+  deliberately closed, found by the full regression sweep and narrowed
+  before merge. Final state: 1511 tests passed (up from the pre-batch
+  baseline); spec verification 100.00% (161/161); full `.sqx` corpus
+  `staqex check` clean.
+  `main_selection.sqx` itself was rewritten in the deferred follow-on,
+  [LISS-0421](../issues/LISS-0421-s02-sigma-ket-sum-rewrite.md) — step 1
+  now reads `Sigma (x In {0,1}^n) { |x> }` in place of
+  `prepare_selection(n)`, term-for-term matching the blackboard equation.
+  Found and fixed one more real bug of the same "recognized by
+  construction site, not structural shape" class this batch kept
+  surfacing: `unitarity_check.py`'s static `_expr_is_quantum` recognized
+  `KetLit` directly and `prepare_selection` via its `Call`-name allowlist,
+  but had no case for the new `KetSumBinder` node, so the rewritten
+  `psi_sel` fell through to `return False` and the very next
+  `project psi_sel onto feasible(...)` statement wrongly raised
+  `PREDICATE_PROJECTOR_ERROR`. Fixed by adding `KetSumBinder` to the same
+  direct-recognition case as `KetLit`. Verified byte-identical seeded
+  terminal output to the pre-rewrite baseline; full regression (1511) and
+  spec verification (100.00%, including the existing
+  `sv23-Coin-project-banned` check) confirm the fix does not weaken the
+  guard's original purpose.
+  Adjudicator review of that same rewrite then found LISS-0420's shipped
+  `Sigma` ket-sum semantics themselves wrong: it was self-normalizing
+  (equal probability per branch), but the bare blackboard `Sigma` symbol
+  denotes a literal, unnormalized sum — normalization is the equation's
+  own separate `1/sqrt(2^n)` coefficient, not something the summation
+  symbol should supply implicitly.
+  [LISS-0422](../issues/LISS-0422-sigma-literal-unnormalized-correction.md)
+  corrected `_bind_ket_sum_binder` to assign amplitude 1 per basis ket
+  (`bind_split` probability weight `1.0`, not `1.0/len(patterns)`), so
+  `Sigma (x In {0,1}^n) { |x> }` alone now has total probability `2^n`;
+  `main_selection.sqx` was updated to the fully literal transcription
+  `(1.0 / sqrt(2.0 ^ n)) * Sigma (x In {0,1}^n) { |x> }`, with
+  byte-identical terminal output preserved. `prepare_selection(n)` (the
+  pre-existing native primitive, not a blackboard-symbol keyword) is
+  unaffected and stays its own equal-weight/normalized construction.
+  LISS-0420's own test file was rewritten (not patched) to assert the
+  corrected semantics. Final state after LISS-0422: 1511 tests passed;
+  spec verification 100.00% (161/161).
+  **Step 2 literal rewrite, 2026-08-13** (PR [#549](https://github.com/nn0cl/staqex/pull/549)):
+  extensive Adjudicator Socratic
+  review of step 2's own equation
+  ($\lvert\psi_{sel}\rangle=P_F\lvert\psi_0\rangle/\lVert
+  P_F\lvert\psi_0\rangle\rVert$, $P_F=\sum_{x\in F}\lvert x\rangle\langle
+  x\rvert$) found the same "opaque native primitive standing in for a
+  blackboard $\Sigma$" problem `prepare_selection(n)` was for step 1 —
+  `project ... onto feasible(exactly_selected=…, pairwise_compatible=…,
+  diversity_at_least=…)`'s closed vocabulary never represented $F$'s own
+  $\forall$/$\min$-based membership predicate or the projector's
+  renormalization as literal source. [ADR 0207](adr/0207-literal-set-builder-projector-transcription.md)
+  (Accepted, superseding [ADR 0192](adr/0192-s02-projector-selection-semantics.md)/
+  [ADR 0194](adr/0194-host-input-port-and-selection-predicate-semantics.md))
+  and [WP-0099](../work-plans/WP-0099-s02-step2-literal-transcription.md)
+  shipped ten new/changed language primitives across eleven Local Issues
+  (LISS-0423–0433): bare-range binder domains retiring `Index<...>`
+  (LISS-0423, hard cutover — corpus impact escalated to the Adjudicator
+  mid-Red when found to affect ~35 files, not just `objective_hamiltonian`
+  as assumed; confirmed proceeding); classical numeric `Sigma`/`Pi`
+  (LISS-0424); `Implies` (LISS-0425); `||State||` norm + `State/Float`
+  division (LISS-0426); `ForAll` (LISS-0427) and `Min` (LISS-0428) binders
+  with comma-separated-AND guards; `Set F = { x In D : cond1, cond2, ... }`
+  comprehension (LISS-0429); `Sigma (x In F) { |x><x| }` over a general
+  `Set` domain with bound-variable projector terms (LISS-0430 — found and
+  fixed a real, previously-dead lexer bug: `|x><x|` had never actually
+  worked anywhere since shipping, since `_can_start_primary` blocked `<`
+  from starting a bra literal immediately after a closed ket); `project`
+  dropping implicit renormalization entirely and accepting a general
+  multi-term Operator (LISS-0431); `feasible(...)` retired outright with
+  `Bool[N]…` Host-bound arrays generalizing the previously Float-only ADR
+  0119 coefficient-tensor path (LISS-0432 — found the batch's own "no new
+  Host contract" claim undersold the real surface: `Bool[N]…` needed four
+  independent, previously-nonexistent pieces wired, and Host-bound arrays
+  had no visibility from classical `ForAll`/`Min`/`Set`-comprehension
+  bodies at all, only `Operator` bodies); and a dedicated baseline
+  distributional-equivalence verification (LISS-0433). `main_selection.sqx`
+  step 2 is now a literal, term-by-term transcription of the confirmed
+  equation. LISS-0432 also found and root-caused a real, significant
+  performance defect while verifying the rewrite end to end: the
+  confirmed design's separate `psi_0`/`psi_sel` names (vs the old
+  program's same-name rebind, which structurally erased the pre-
+  projection coordinate) left `psi_0` lingering in every surviving
+  World's `assign` after `project`, fragmenting step 3's `Evolve` into
+  one Suzuki-Trotter exponential per surviving World (25, at this
+  fixture's $n=8$/$\lvert F\rvert=25$) instead of one batched exponential
+  — confirmed by direct profiling (54s+ → ~5.6s once fixed with an
+  explicit `trace_out(psi_0)`, per ADR 0173's own "no leftovers to trace
+  out" principle; confirmed numerically neutral). LISS-0433 then found a
+  real, non-floating-point discrepancy while verifying against the
+  pre-batch baseline, root-caused to an expected transient inconsistency
+  in the comparison commit itself (LISS-0431 had already stripped
+  `feasible(...)`'s own implicit renormalization there, but
+  `main_selection.sqx` hadn't yet been given an explicit `/ ||...||` for
+  it) rather than a defect in the rewrite — once compared correctly,
+  agreement is floating-point-exact (`1.46e-16`), and the sampled
+  measurement outcome is byte-identical to the pre-batch baseline across
+  ten tested seeds. Final state: 1537 tests passed; spec verification
+  100.00% (161/161); full `.sqx` corpus `staqex check` clean.
+- **ASCII quantum notation:** **complete — PR #339 merged 2026-08-04** under
+  [ADR 0191](adr/0191-ascii-quantum-notation-and-lexical-boundary.md),
+  [WP-0094](../work-plans/WP-0094-ascii-quantum-notation.md), and the
+  [acceptance specification](../specs/staqex-v1-ascii-quantum-notation.md).
+  Unicode source forms are removed. Tensor alias parity, arity, factor-order,
+  and grouping tests are green. Completion packet synchronized after merge.
+- **Real ℏ and dimensioned Hamiltonian dynamics:** [ADR 0195](adr/0195-real-hbar-hamiltonian-dynamics.md)
+  (Accepted), [WP-0095](../work-plans/WP-0095-real-hbar-hamiltonian-dynamics.md).
+  Work unit 1 (Kernel primitive) is **complete**
+  ([LISS-0330](../issues/LISS-0330-real-hbar-kernel-primitive.md) / PR #376,
+  `29f2ee8`): `evolve`'s formula changed from `exp(-iHt)` (natural units)
+  to `exp(-iHt/hbar)` with ℏ's real SI value; a bare dimensionless
+  duration now fails closed (`EVOLVE_UNRESOLVED_UNIT_ERROR`). Work unit 2
+  (`A03_h2_vqe`, first example migration) is also **complete**
+  ([LISS-0332](../issues/LISS-0332-a03-h2-real-unit-migration.md) / PR
+  #381, `510e860`). Work unit 3 (`A05_qaoa_portfolio`) is also
+  **complete** ([LISS-0333](../issues/LISS-0333-a05-qaoa-arbitrary-unit-migration.md)
+  / PR #383, `8d36278`) — A05 models an abstract QUBO cost function, not
+  a real physical system, so its coefficients are given real
+  `Energy`/`Time` dimensions but honestly documented as arbitrary
+  problem-defined cost units, not physical constants (contrast with
+  A03). Work unit 4 (`A06_topological_edge_memory`) is also **complete**
+  ([LISS-0334](../issues/LISS-0334-a06-ssh-real-unit-migration.md) / PR
+  #385, `780707a`) — A06 models a real physical model class (the SSH
+  tight-binding chain), so its hopping amplitudes are given real
+  `eV`-scale `Energy` values (ratio preserved), documented as physically
+  plausible but not literature-traced to a specific measurement — a
+  third honesty category between A03 and A05. Work unit 5
+  (`A10_mission_observatory`) is also **complete**
+  ([LISS-0335](../issues/LISS-0335-a10-mission-observatory-real-unit-migration.md)
+  / PR #387, `556d459`) — same SSH honesty category as A06; also surfaced
+  a Kernel limitation (the fail-closed check doesn't recognize
+  dimensioned struct-field-access durations, worked around, not fixed —
+  see WP-0095's "Related, not blocking"). An urgent interleaved Kernel
+  fix ([LISS-0336](../issues/LISS-0336-evolve-real-unit-canonicalization-bugs.md)
+  / PR #389, `bbd7c06`) then corrected two independent bugs found live
+  during work unit 6 design intake: a coalescing epsilon that silently
+  zeroed real Joule-scale Hamiltonian coefficients (confirmed to have
+  broken A05's `evolve` entirely) and a missing Time-unit-to-seconds
+  canonicalization for the evolve duration (affected all four merged
+  examples). A05/A06/A10 are re-verified to now show real, non-trivial
+  evolution; A03 was found to be affected by a third, separate,
+  pre-existing bug (`op_n_qubits` undercounting for Jordan-Wigner-mapped
+  Operators), deferred to its own new Issue, not yet fixed.
+  **Correction (2026-08-07, LISS-0350)**: `op_n_qubits`'s undercount was
+  itself only a symptom — the true root cause, found while finally
+  filing that deferred Issue, was `second_quantization.py::jordan_wigner_map`'s
+  absolute `_ZERO_TOL`/`_REAL_TOL` thresholds silently zeroing A03's
+  entire real-Joule-scale (~1e-18) electronic Hamiltonian (six orders of
+  magnitude below the fixed `1e-12` epsilon). **A03's `evolve` produced
+  no real H2 electronic-structure dynamics from LISS-0332's real-unit
+  migration until this fix landed** — its own test only checked
+  "compiles, runs, non-vacuum measurement," which a global-phase-only
+  evolution (from the surviving `nuclear_repulsion * I` term alone)
+  still satisfied, so the bug went uncaught through LISS-0332, LISS-0336,
+  and WP-0095's closure. See LISS-0350 below for the fix and a
+  systematic audit confirming no other example or `spec_verification`
+  suite fixture was exposed to the same bug class. **By explicit
+  Adjudicator decision this real-unit migration is a real, one-time
+  change with no natural-units fallback**. [LISS-0337](../issues/LISS-0337-spec-verification-suite-real-unit-fixtures.md)
+  (PR #390, `339ae99`) then migrated 5 `spec_verification` suites' own
+  internal test fixtures (never updated for ADR 0195, previously
+  crashing outright) to real units, restoring `spec_verification`'s full
+  161-case reporting. Work unit 6 (`A11_noether_forge`) is also
+  **complete** ([LISS-0338](../issues/LISS-0338-a11-structural-monitoring-magnetometer.md)
+  / PR #392, `42ca5ed`) — rethemed from the rejected/deferred Noether
+  Forge theme to a structural-monitoring quantum magnetometer (real
+  D≈2.87GHz NV-center physics, Doherty et al. 2013), with all 14 module
+  files genuinely wired. Found and fixed a real Kernel bug (struct
+  constructor calls from within an imported function's own body failed
+  at runtime); found and documented (not fixed) three further
+  classical-language gaps — see WP-0095's "Related, not blocking". Work
+  unit 7 (`B04_evolve_not_loops`) is also **complete**
+  ([LISS-0339](../issues/LISS-0339-b04-evolve-not-loops-real-unit-migration.md)
+  / PR #394, `084feb4`) — reused LISS-0337's `sv17` fix pattern for the
+  legacy bare-Pauli-letter evolve form (not ℏ-divided), no new findings.
+  Work unit 8 (`B07_structure_visibility`) is also **complete**
+  ([LISS-0340](../issues/LISS-0340-b07-structure-visibility-real-unit-migration.md)
+  / PR #396, `f385df8`) — `IsingParams.J`/`.h` became real `Energy`
+  (qubit-Pauli sparse path, genuinely needed real-scaled values); the
+  struct-field-derived duration (`scale * 0.25`) became an independent
+  `Time` literal, since unit suffixes only attach to literals, not
+  expressions. Work unit 9 (`B08_operators_hamiltonians`) is also
+  **complete** ([LISS-0341](../issues/LISS-0341-b08-operators-hamiltonians-real-unit-migration.md)
+  / PR #398, `45fe41d`) — found and fixed a real Kernel bug in the same
+  systemic category as LISS-0336/0338: `backend/qasm/trotter.py`'s
+  Suzuki gate-angle computation was never updated for ADR 0195's real-ℏ
+  formula, silently collapsing real-unit QASM3 Trotter emission into an
+  "idle" no-op circuit — confirmed general, not B08-specific.
+  `spec_verification` reached **161/161 (100%, Gate: PASS)**, but this
+  is scoped to that suite's own 161 cases, **not** a complete repository
+  audit: `B16_effect_marking` was confirmed still unmigrated (simply not
+  exercised by any `spec_verification` suite). Work unit 10
+  (`B16_effect_marking`) is also **complete**
+  ([LISS-0342](../issues/LISS-0342-b16-effect-marking-real-unit-migration.md)
+  / PR #400, `adf63b4`) — identical fix pattern to B08, no new findings;
+  a bonus pre-existing test also flipped to passing. **All
+  `examples/basics`/`examples/applied` entries are now confirmed
+  migrated** (checked directly, not inferred from `spec_verification`
+  alone). Work unit 11 (`quantum_matter_discovery`) is also **complete**
+  ([LISS-0343](../issues/LISS-0343-typecheck-classical-payload-and-quantum-matter-discovery-migration.md)
+  / PR #402, `fbf0f58`)
+  — `IsingCouplings.J`/`.h` and `QuenchSchedule.duration` became real
+  `Energy`/`Time`, propagated through the struct-field-typed free
+  functions' return types (a multi-file showcase slice, unlike the
+  single-file B04/B07/B08/B16 migrations). Found and fixed a fifth
+  instance of the same systemic category:
+  `typecheck.py::_infer_binop`'s Classical `+`/`-` branch hardcoded its
+  result payload to `"Float"` regardless of operand payload (the
+  dimension itself was tracked correctly), so `Energy + Energy`
+  type-checked as `Classical<Float>` with an `Energy` dimension, failing
+  `RETURN_TYPE_MISMATCH` against a declared `-> Energy` return. Fixed
+  with a payload check that preserves a non-bare-numeric operand's
+  payload and otherwise falls back to the existing `Int + Int -> Float`
+  legacy convention (confirmed load-bearing by an existing passing
+  test — using the shared `_promote()` helper as-is would have broken
+  it, caught before shipping). **Bonus fix**: the locked S01
+  disaster-response spine test independently hit the same bug and now
+  passes — S01's own migration (work unit 12+) is still not done. The
+  sibling Classical `*`/`/` branches are suspected to have the identical
+  hardcoded-payload issue but were not touched (no live repro forces
+  that path yet). Work unit 12 (S01 lock-boundary + energy-scale
+  survey, `main_fuel_search`) is also **complete**
+  ([LISS-0344](../issues/LISS-0344-s01-fuel-search-real-unit-migration.md)
+  / PR #404, `2c62100`)
+  — confirmed the migrations don't conflict with the S01 lock boundary
+  (value-internal retype only); found 3 of the 5 S01 files reference
+  implicit-coefficient-1 Hamiltonians that are numerically meaningless
+  under real ℏ for any human-scale duration (confirmed live:
+  `RUNTIME_ERROR: evolve magnitude |H*t/hbar| ~= 2**61 exceeds the
+  sparse evolution step budget`); adopted a shared `ops_energy_scale()
+  -> Energy` function (new, purely-additive file, A05-style
+  arbitrary-unit honesty category) multiplied in at each Hamiltonian's
+  call site, requiring no changes to the existing shared factory
+  functions. `main_fuel_search` itself needed only the established
+  B04-pattern fix. Work unit 13 (`main_lattice_four`) is also
+  **complete**
+  ([LISS-0345](../issues/LISS-0345-s01-lattice-four-real-unit-migration.md)
+  / PR #406, `1c1b2c6`)
+  — first file to add `physics/ops_energy_scale.sqx`; found and
+  corrected two implementation wrinkles during Green (not new Kernel
+  bugs): `scale * <factory call>()` written inline fails
+  `RUNTIME_ERROR: cannot compile sparse Pauli for OpCall` (the
+  Operator-compiler's scalar multiplication only recognizes a `Var`
+  operand, needs pre-binding), and an inline unit-suffixed literal in
+  the `for` clause doesn't satisfy the fail-closed duration check
+  either (`duration_unit` is only resolved for a bare `Var`, needs its
+  own `Time`-typed variable) — both apply to every remaining S01
+  Hamiltonian-wrapping migration. Work unit 14 (`main_morning_collect`)
+  is also **complete**
+  ([LISS-0346](../issues/LISS-0346-s01-morning-collect-real-unit-migration.md)
+  / PR #408, `c1ab33f`)
+  — `Operator H = Z` wrapped with `ops_energy_scale()` using work unit
+  13's confirmed pattern; no new findings, Green passed on the first
+  attempt. Work unit 15 (`main_day2_recovery`) is also **complete**
+  ([LISS-0347](../issues/LISS-0347-s01-day2-recovery-real-unit-migration.md)
+  / PR #410, `cde5191`)
+  — the first of the two `ConstraintCoeffs`-based files (shared with
+  `main_disaster_response`); `ConstraintCoeffs` itself stays `Float`
+  (per work unit 12's confirmed design), `recovery_hamiltonian(coeffs)`
+  wrapped with the same pattern; no new findings, confirming it holds
+  equally for a computed-`Float`-weighted Hamiltonian, not just the
+  coefficient-1 case. Work unit 16 (`main_disaster_response`, the
+  flagship "tonight spine") is also **complete**
+  ([LISS-0348](../issues/LISS-0348-s01-disaster-response-real-unit-migration.md)
+  / PR #412, `f22d78a`)
+  — all 4 Hamiltonians wrapped with `ops_energy_scale()` (including its
+  first use on a `product(...)`-built Hamiltonian, `corridor_product()`,
+  confirmed the scale applies once to the whole assembled result, not
+  distributed into factors); 3 of 4 evolve durations needed B07's
+  independent-`Time`-literal workaround (confirmed live a computed
+  dimensionless `Float` cannot be `to`-converted to `Time` either). No
+  new Kernel findings — every constituent pattern was already proven;
+  this Issue combined them in one file for the first time. **Bonus
+  fix**: all 3 `test_s01_tonight_ticket_export.py` cases (depend on
+  this file running end-to-end) flipped from failing to passing.
+  **WP-0095 is now complete** — every ADR 0195-affected `.sqx` example
+  is confirmed migrated. See the "Repository health" note below.
+  **Discoverability fix 2026-08-12** (S02 P1 finding, LISS-0402): the
+  energy-scale requirement was undiscoverable without reading a shipped
+  example's source — the sparse-evolution step-budget overflow error
+  (`compiler/staqex/runtime/sparse_pauli.py::expm_ih_apply`) now names
+  the actionable fix directly (`Energy scale = ...to J` two-step
+  pattern) instead of only stating the bare magnitude, and
+  `QUICKSTART.md`'s B08 mention now explains why its `Energy J`/`Energy
+  h` lines are required, not decorative. No behavior change — same
+  condition fails closed as before, only the message improved.
+- Living backlog: WP-0062–0068 shipped; next free WP-0096+ / LISS-0331+.
 
-## Repository health (2026-08-02)
+## Repository health (2026-08-02; regression note added 2026-08-05)
 
-Root suites and spec-verification are green locally and gated in CI:
+Root suites and spec-verification were green locally and gated in CI as
+of 2026-08-02:
 
 - Blocking `kernel-tests`: `python3 -m pytest tests/ -q` (WP-0080 / LISS-0209).
 - Blocking `spec-verification`: `python3 tests/spec_verification/run_all.py`
   (WP-0086 / LISS-0241).
 - Floor observed 2026-08-02: **1084+** pytest passed; SV gate **161/161**.
 
+**2026-08-05: `main` currently does not meet this floor, by explicit,
+tracked, ADR-approved design** — see "Real ℏ and dimensioned Hamiltonian
+dynamics" above. After work unit 5 (`A10_mission_observatory`, PR #387)
+landed, `pytest tests/ -q` reported 1203 passed / 60 failed (down from 63
+— A10 no longer contributes a failure, plus three more bonus fixes to
+tests exercising A10's legacy multi-file/capstone source;
+`test_applied_catalog_health_red.py` now only lists A11 as failing);
+`spec_verification` reported 136/145 (+1 vs. work unit 4's 135/145). The
+LISS-0336 Kernel bug fix (PR #389) that followed added its own 2 tests
+without changing this count: `pytest tests/ -q` reported 1205 passed /
+60 failed; `spec_verification` stayed at 136/145.
+
+**2026-08-05, LISS-0337**: investigating PR #390's CI failure found the
+136/145 figure conflated two different categories: 4 already-tracked
+WP-0095 unmigrated examples, and **5 `spec_verification` suites whose own
+internal test fixtures had never been updated for ADR 0195** and were
+crashing outright (`sv17_quantum_mechanics_syntax`,
+`sv19_arbitrary_hamiltonian`, `sv27_fock_quadrature`, `sv28_sparse_pauli`,
+`sv29_position_grid_ho` — an uncaught `KernelDiagnosticError`/`ValueError`
+per suite, collapsing each suite's many individual cases into one
+"suite-crash" placeholder). Migrating those 5 suites' fixtures to real
+units restored `spec_verification`'s reporting to its full, un-collapsed
+case count: **156/161** (96.89%) — matching the 161-case total from the
+2026-08-02 healthy floor. Only 5 cases remain failing, all directly
+attributable to the 4 already-tracked WP-0095 examples (`B08` appears
+twice: once directly, once via a cross-reference in `sv19`). `pytest
+tests/ -q` remains 1205 passed / 60 failed (unchanged — LISS-0337 only
+touched test fixtures and one small QASM-backend gap it surfaced, not
+Kernel evolve semantics). This SV/pytest state is expected to persist
+until WP-0095's remaining work units (6+) migrate every affected example.
+Do not "fix" these failures by reverting LISS-0330 or reintroducing a
+natural-units fallback — that would undo an
+explicit Adjudicator decision.
+
+**2026-08-06, LISS-0338**: work unit 6 (`A11_noether_forge`) landed (PR
+#392, `42ca5ed`). `pytest tests/ -q` reported **1206 passed / 57
+failed** (-3 vs. LISS-0337's 60 — A11 and the two `noether_forge`
+structural test files' pre-existing failures resolved;
+`test_applied_catalog_health_red.py`'s failure list is now **empty**);
+`spec_verification` reported **157/161** (97.52%, +1 vs. LISS-0337's
+156/161).
+
+**2026-08-06, LISS-0339**: work unit 7 (`B04_evolve_not_loops`) landed
+(PR #394, `084feb4`). `pytest tests/ -q` reported **1207 passed / 57
+failed** (unchanged failure count, +1 this Issue's own new test);
+`spec_verification` reported **158/161** (98.14%, +1 vs. LISS-0338's
+157/161).
+
+**2026-08-06, LISS-0340**: work unit 8 (`B07_structure_visibility`)
+landed (PR #396, `f385df8`). `pytest tests/ -q` reported **1208
+passed / 57 failed** (unchanged failure count, +1 this Issue's own new
+test); `spec_verification` reported **159/161** (98.76%, +1 vs.
+LISS-0339's 158/161).
+
+**2026-08-06, LISS-0341**: work unit 9 (`B08_operators_hamiltonians`)
+landed (PR #398, `45fe41d`), along with a real QASM-backend ℏ fix (see
+"Real ℏ and dimensioned Hamiltonian dynamics" above). `pytest tests/ -q`
+reported **1209 passed / 57 failed** (unchanged failure count, +1 this
+Issue's own new test); `spec_verification` reported **161/161 (100%,
+Gate: PASS)** — the first fully-green SV run since the ADR 0195
+regression began. **This did not mean the regression was fully closed**:
+`B16_effect_marking` (confirmed unmigrated, `EVOLVE_UNRESOLVED_UNIT_ERROR`)
+and the 5 locked S01 files plus `quantum_matter_discovery` were simply
+not exercised by any `spec_verification` suite, so were never counted.
+
+**2026-08-06, LISS-0342**: work unit 10 (`B16_effect_marking`) landed
+(PR #400, `adf63b4`) — identical fix pattern to B08, no new findings.
+`pytest tests/ -q` now reports **1211 passed / 56 failed** (-1 vs.
+LISS-0341's 57 — a bonus pre-existing test also flipped to passing);
+`spec_verification` remains **161/161 (100%, Gate: PASS)** (B16 isn't
+exercised by any SV suite, so this number is unchanged by design).
+**All `examples/basics`/`examples/applied` entries are now confirmed
+migrated** (checked directly). Only the 5 locked S01 files and
+`quantum_matter_discovery` remain, expected to persist until WP-0095's
+remaining work units (11+) migrate each. Do not "fix" these failures by
+reverting LISS-0330 or reintroducing a natural-units fallback — that
+would undo an explicit Adjudicator decision.
+
+**2026-08-06, LISS-0343**: work unit 11 (`quantum_matter_discovery`)
+landed, along with a `typecheck.py` Classical `+`/`-` payload-collapse
+Kernel fix (see "Real ℏ and dimensioned Hamiltonian dynamics" above).
+`pytest tests/ -q` reports **1215 passed / 55 failed** (-1 vs.
+LISS-0342's 56 — a bonus pre-existing test,
+`test_showcase_s1_thin_slice_red.py::test_s1_spine_compiles_and_runs`,
+independently hit the same Classical `+`/`-` bug and now passes; +3 this
+Issue's own new tests); `spec_verification` remains **161/161 (100%,
+Gate: PASS)** (`quantum_matter_discovery` isn't exercised by any SV
+suite, unchanged by design). Only the 5 locked S01 files remain,
+expected to persist until WP-0095's work unit 12+ migrates each — these
+need their own explicit lock-boundary check first, not just a value
+substitution (see WP-0095 work unit 12+).
+
+**2026-08-06, LISS-0344**: work unit 12 (S01 lock-boundary +
+energy-scale survey, `main_fuel_search`) landed. Confirmed no
+lock-boundary conflict for any of the 5 S01 files (value-internal
+retype only). Found 3 of the 5 reference implicit-coefficient-1
+Hamiltonians that are numerically meaningless under real ℏ for any
+human-scale duration — adopted a shared `ops_energy_scale()` function
+(A05-style arbitrary-unit honesty category, no changes needed to the
+existing shared factory functions). `main_fuel_search` itself needed
+only the established B04-pattern fix. `pytest tests/ -q` reports
+**1216 passed / 55 failed** (unchanged failure count vs. LISS-0343's
+55, +1 this Issue's own new test); `spec_verification` remains
+**161/161 (100%, Gate: PASS)** (`main_fuel_search` isn't exercised by
+any SV suite, unchanged by design). Only the remaining 4 S01 files
+persist, expected until WP-0095's work unit 13+ migrates each in the
+sequenced order (`main_lattice_four` → `main_morning_collect` →
+`main_day2_recovery` → `main_disaster_response`).
+
+**2026-08-06, LISS-0345**: work unit 13 (`main_lattice_four`) landed,
+adding `physics/ops_energy_scale.sqx`. Found and corrected two
+implementation wrinkles during Green (not new Kernel bugs, resolved by
+testing directly): `scale * <factory call>()` written inline fails
+`RUNTIME_ERROR: cannot compile sparse Pauli for OpCall` (needs
+pre-binding to a local `Operator` variable first), and an inline
+unit-suffixed literal in the `for` clause doesn't satisfy the
+fail-closed duration check either (needs its own `Time`-typed
+variable) — both apply to every remaining S01 Hamiltonian-wrapping
+migration. `pytest tests/ -q` reports **1217 passed / 55 failed**
+(unchanged failure count vs. LISS-0344's 55, +1 this Issue's own new
+test); `spec_verification` remains **161/161 (100%, Gate: PASS)**
+(`main_lattice_four` isn't exercised by any SV suite, unchanged by
+design). Only the remaining 3 S01 files persist, expected until
+WP-0095's work unit 14+ migrates each in the sequenced order
+(`main_morning_collect` → `main_day2_recovery` →
+`main_disaster_response`).
+
+**2026-08-06, LISS-0346**: work unit 14 (`main_morning_collect`)
+landed. `Operator H = Z` wrapped with `ops_energy_scale()` using work
+unit 13's confirmed pattern (pre-bind before `scale *`, duration as its
+own `Time` variable) — no new findings, Green passed on the first
+attempt. `pytest tests/ -q` reports **1218 passed / 55 failed**
+(unchanged failure count vs. LISS-0345's 55, +1 this Issue's own new
+test); `spec_verification` remains **161/161 (100%, Gate: PASS)**
+(`main_morning_collect` isn't exercised by any SV suite, unchanged by
+design). Only the remaining 2 S01 files persist, expected until
+WP-0095's work unit 15+ migrates each in the sequenced order
+(`main_day2_recovery` → `main_disaster_response`).
+
+**2026-08-06, LISS-0347**: work unit 15 (`main_day2_recovery`) landed.
+`Operator H = recovery_hamiltonian(coeffs)` (a `ConstraintCoeffs`-
+weighted Hamiltonian, not coefficient-1) wrapped with
+`ops_energy_scale()` using work unit 13's confirmed pattern —
+`ConstraintCoeffs` itself stays `Float`, no new findings, confirming
+the wrap-at-call-site pattern holds equally for a computed-`Float`-
+weighted Hamiltonian. `pytest tests/ -q` reports **1219 passed / 55
+failed** (unchanged failure count vs. LISS-0346's 55, +1 this Issue's
+own new test); `spec_verification` remains **161/161 (100%, Gate:
+PASS)** (`main_day2_recovery` isn't exercised by any SV suite,
+unchanged by design). Only `main_disaster_response` (the flagship
+"tonight spine", 4 Hamiltonians, 4 durations) persists, expected until
+WP-0095's work unit 16 migrates it.
+
+**2026-08-06, LISS-0348**: work unit 16 (`main_disaster_response`, the
+flagship "tonight spine") landed — **WP-0095's final work unit**. All 4
+Hamiltonians (`H_drive`, `H_damage`, `H_flood`, `H_corridor`) wrapped
+with `ops_energy_scale()`, including its first use on a
+`product(...)`-built Hamiltonian (`corridor_product()` — the scale
+applies once to the whole assembled result, not distributed into
+factors). 3 of 4 evolve durations (`t_drive`, `t_damage`, `t_corridor`)
+needed B07's independent-`Time`-literal workaround — confirmed live a
+computed dimensionless `Float` cannot be `to`-converted to `Time`
+either (`DIMENSION_MISMATCH_ERROR: [1] vs [Time]`). No new Kernel
+findings; every constituent pattern was already proven by prior work
+units. `pytest tests/ -q` reports **1223 passed / 52 failed** (**-3**
+vs. LISS-0347's 55 — bonus fix: all 3 `test_s01_tonight_ticket_export.py`
+cases, which depend on this file running end-to-end, flipped from
+failing to passing; +1 this Issue's own new test); `spec_verification`
+remains **161/161 (100%, Gate: PASS)** (`main_disaster_response` isn't
+exercised by any SV suite, unchanged by design).
+
+**WP-0095 is now complete.** Every ADR 0195-affected `.sqx` example
+(`examples/basics`, `examples/applied`,
+`examples/showcase/quantum_matter_discovery`,
+`examples/showcase/S01_quantum_disaster_response`) is confirmed
+migrated to real ℏ / real Energy-Time units. `main` no longer carries
+any ADR-approved real-unit regression from this program.
+
+**2026-08-06, LISS-0349** (PR #414, `e1b0797`; standalone, not part of WP-0095):
+`typecheck.py::_infer_binop`'s Classical `*`/`/` branch, flagged as a
+*suspected* sibling of LISS-0343's already-fixed `+`/`-`
+hardcoded-payload bug but left unfixed for lack of a live repro, is now
+confirmed and fixed. Repro: `Energy / Length -> Force` failed
+`RETURN_TYPE_MISMATCH` (dimension computed correctly, payload name
+stayed `"Float"`). Fixed by mirroring the same function's
+already-correct State-side `*`/`/` implementation
+(`_payload_for_dim(dim, _promote(...))`, deriving the payload from the
+*result* dimension — the right tool for `*`/`/`, which produce a new
+physical dimension, unlike `+`/`-`, which preserve the operands'
+shared one). No regression this time (unlike LISS-0343's `+`/`-` fix):
+`_payload_for_dim`'s dimensionless fallback already matches the
+existing `Int`/`Float` legacy convention, confirmed via the
+already-shipped, already-tested State-side sibling using the identical
+helper. `pytest tests/ -q` reports **1225 passed / 52 failed**
+(unchanged failure count vs. WP-0095's closing baseline, +2 this
+Issue's own new tests); `spec_verification` remains **161/161 (100%,
+Gate: PASS)**.
+
+**2026-08-07, LISS-0350** (PR #416, `add8447`; standalone, not part of WP-0095): while
+finally filing the `op_n_qubits` Jordan-Wigner qubit-undercount Issue
+deferred since LISS-0336, found the undercount was only a symptom.
+`second_quantization.py::jordan_wigner_map`'s absolute `_ZERO_TOL`
+(`1e-12`) silently dropped every term of A03_h2_vqe's real-Joule-scale
+(~1e-18) electronic Hamiltonian, collapsing `H_electronic` to a bare
+zero literal — **A03's `evolve` has produced no real H2
+electronic-structure dynamics since its own real-unit migration
+(LISS-0332)**, undetected through LISS-0332, LISS-0336, and WP-0095's
+closure because A03's test only checks "compiles, runs, non-vacuum
+measurement" (satisfied by the surviving `nuclear_repulsion * I`
+global-phase term alone). Fixed by mirroring
+`sparse_pauli.py::_coalesce`'s already-shipped scale-relative pattern
+(LISS-0336) for both `_ZERO_TOL` and its sibling `_REAL_TOL`
+(non-Hermitian-residual check, same latent-risk mechanism, fixed
+together though not yet observed causing wrong output). A systematic
+audit of every other absolute numeric threshold in
+`compiler/staqex/runtime/` and `compiler/staqex/` confirmed no other
+location is exposed to the same bug class (all others operate on
+dimensionless, normalized quantities — Born-rule probability,
+quantum-amplitude, or an already-ℏ-divided dimensionless matrix
+exponent), and confirmed no other shipped example or `spec_verification`
+suite fixture uses Jordan-Wigner mapping with real-unit-scale
+coefficients. `pytest tests/ -q` reports **1227 passed / 52 failed**
+(unchanged failure count vs. LISS-0349's 52, +2 this Issue's own new
+tests); `spec_verification` remains **161/161 (100%, Gate: PASS)**.
+`examples/applied/A03_h2_vqe/main_h2_vqe.sqx` itself is unchanged — the
+bug and fix are entirely in the Kernel's JW-mapping pipeline; A03's
+own literature-cross-validation claim
+(`docs/research/2026-08-05-h2-two-orbital-jordan-wigner-cross-validation.md`)
+has not yet been independently re-verified against the now-corrected
+measurement output — flagged as follow-up, not done here.
+
+**2026-08-07, LISS-0351** (PR #418, `4eb91ad`; standalone, not part of WP-0095): performed
+that follow-up. Extracted A03's actual compiled `H_electronic` Pauli-
+term coefficients (post-LISS-0350) and converted Joules back to
+Hartree — all six match the research note's derived/literature values
+(O'Malley et al. 2016 Table 1, via the ENCCS reproduction) to the
+source's own 4-decimal precision, and `g0_electronic + E_nn` matches
+the literature's full `g0 = 0.2252 Ha` to within `0.013%`. This
+confirms LISS-0350's fix produced the numerically correct physics, not
+merely nonzero physics. Automated as
+`tests/test_liss_0351_a03_jw_literature_crosscheck_red.py`; the
+research note's own "Follow-up (not yet done)" section is updated in
+place to record this. `pytest tests/ -q` reports **1229 passed / 52
+failed** (unchanged failure count vs. LISS-0350's 52, +2 this Issue's
+own new tests); `spec_verification` remains **161/161 (100%, Gate:
+PASS)**.
+
+**2026-08-07, LISS-0352** (PR #420, `eeafbb8`; standalone, not part of WP-0095): fixes one
+of LISS-0338's documented, deferred "Related, not blocking" gaps —
+Classical relational comparisons (`>`,`<`,`>=`,`<=`) mistyped as
+`Classical<Float>` instead of `Classical<Bool>`.
+`typecheck.py::_infer_binop`'s Classical branch had no explicit
+`RELATIONAL` case, falling through to its `Classical<Float>` catch-all
+fallback — fixed by mirroring the already-correct State-side
+`RELATIONAL` case 8 lines below in the same function. `pytest tests/ -q`
+reports **1230 passed / 52 failed** (unchanged failure count vs.
+LISS-0351's 52, +1 this Issue's own new test); `spec_verification`
+remains **161/161 (100%, Gate: PASS)**.
+
+**2026-08-07, LISS-0353** (PR #422, `dbeb100`; standalone, not part of WP-0095): fixes
+another of LISS-0338's documented, deferred "Related, not blocking"
+gaps — no execution path for free functions that return a struct type.
+Turned out to be 3 compounding gaps, not one, only visible one at a
+time as each was fixed: (1) the top-level struct-typed-binding dispatch
+always assumed the RHS call was the struct's own constructor, never
+considering it could be a free function that internally constructs and
+returns the struct; (2) `_eval_classical_call`'s `classical_heads` gate
+excluded struct return types entirely; (3) `_construct_struct` (and its
+`_eval_struct_arg` helper) had no way to resolve an enclosing free
+function's own local parameters, only globally-registered
+`self.objects` names — so a struct constructed inside that function's
+own `return Point(a, b)` failed to resolve `a`/`b` even after (1)-(2)
+were fixed. All three fixed; `_construct_struct`/`_eval_struct_arg` now
+accept and thread an optional caller-local frame, backward compatible
+at every pre-existing call site (defaults to `None`). `pytest tests/ -q`
+reports **1233 passed / 52 failed** (unchanged failure count vs.
+LISS-0352's 52, +3 this Issue's own new tests); `spec_verification`
+remains **161/161 (100%, Gate: PASS)**. `_construct_instance` (the
+equivalent path for classes, not structs) was not audited or touched —
+flagged for a future Issue if a class-returning free function is ever
+needed.
+
+**2026-08-07, ADR 0196**: triaging the last of LISS-0338's documented
+gaps (`&&` unsupported in expression position) found this is not an
+oversight bug like the other three — `staqex-type-system.md`'s own
+normative table already lists short-circuit `&&`/`||` under "Deferred
+/ research (do not implement in Kernel)," since classical short-circuit
+conflicts with the project's own accepted "every overloaded op on
+`State<T>` is a pushforward, never an early collapse" principle
+(`dec-0002`). [ADR 0196](adr/0196-boolean-total-pushforward-logical-operators.md)
+is the design work that spec itself names as required first: `&&`/`||`
+as **total-pushforward** operators (both operands always evaluated,
+truth-table-combined per Joint world, no short-circuit), added as a new
+general-expression grammar production separate from the Operator-DSL's
+existing, unaffected binder-guard `&&`/`||`. `!` (logical NOT) is
+explicitly out of scope, left for a future ADR. **Accepted** by the
+Adjudicator (2026-08-07) — acceptance approves the semantics and
+grammar-insertion approach only; implementation is a separate Local
+Issue with its own Plan approval, not yet started.
+
+**2026-08-07, LISS-0354** (PR #425, `fcda1c6`; standalone, not part of WP-0095): implements
+ADR 0196. `_logical_or`/`_logical_and` grammar levels added between
+`_pipe` and `_comparison`; `typecheck.py` Classical/State cases (Bool-
+only, `TYPE_MISMATCH` otherwise); `_apply_op` truth-table cases.
+Concretely verified the "total pushforward, not short-circuit"
+property via a 400-trial seed sweep on two independent fair coins each
+mapped to `State<Bool>` and combined with `&&`: `P(true) ≈ 0.25`,
+matching the theoretical product of two independent fair coins —
+would not match if evaluation had incorrectly short-circuited per
+world. **Found and updated (Adjudicator-confirmed) a real regression
+in two pre-existing tests**
+(`test_binder_compound_where_red.py::test_classical_ampersand_outside_where_still_errors`,
+`test_binder_where_or_red.py::test_statement_or_still_errors`) that
+asserted `Float && Float` must be a parse-level rejection — exactly
+the pre-ADR-0196 behavior this ADR superseded; both renamed and
+updated to assert the new contract (parses cleanly, `TYPE_MISMATCH`
+at typecheck). `dec-0002-state-first-semantics-and-measurement.md`
+updated per ADR 0188's DEC-page-update rule. `pytest tests/ -q`
+reports **1237 passed / 52 failed** (unchanged failure count vs. the
+established baseline, no new failures — +4 this Issue's own new
+tests, net of the 2 pre-existing tests' updated assertions);
+`spec_verification` remains **161/161 (100%, Gate: PASS)**.
+
+**Correction (2026-08-07)**: LISS-0354 originally flagged a suspected
+`mix` type-inference quirk here (`mix (coin_result) { 0 ->
+dirac(false), else -> dirac(true) }` without an explicit `State<Bool>`
+annotation reportedly inferring payload `"Coin"` from the scrutinee
+instead of `"Bool"` from the arm bodies). Re-investigated directly:
+this does **not** reproduce, not even at LISS-0354's own merged commit
+(`fcda1c6`) — `typecheck.py`'s `WhenExpr` inference already correctly
+derives payload from the arm bodies, never the scrutinee. The original
+finding was almost certainly a documentation error (likely tested
+against an intermediate, not-yet-finished state of LISS-0354's own
+`typecheck.py` work), not a persistent Kernel bug. No fix needed; the
+"separate future Issue" flagged here is withdrawn.
+
+**2026-08-07, LISS-0355** (PR #427, `62d2285`; standalone, not part of WP-0095): while
+investigating `abs()`'s missing classical-scalar implementation
+(LISS-0338's last documented gap), found `typecheck.py::_infer_binop`'s
+Classical-vs-bare-literal mixing branch (originally written to allow
+`pi / 2.0`-style expressions) unconditionally hardcoded **every**
+operator's result to `Classical<Float>`, discarding not just payload
+naming (like the four sibling bugs LISS-0343/0349/0352/0354 already
+fixed for the variable-vs-variable case) but the operand's **dimension
+itself** — confirmed live: `fn scale(e: Energy) -> Energy { return e *
+2.0 }` failed `DIMENSION_MISMATCH_ERROR: [Energy] vs [1]`, the `Energy`
+dimension silently dropped. Root cause: the branch's `other` variable
+was the *literal's own* Ty (always trivially dimensionless), not the
+actual Classical operand's, so it fired for any Classical operand
+paired with a bare literal, via any operator. Blast-radius grep across
+`examples/` found exactly one coincidental match
+(`recovery.sqx`'s `effect_on_rescue * 10.0`), unaffected since already
+dimensionless `Float` — **no shipped example was actually broken**.
+Fixed by reinterpreting the literal side as genuinely Classical before
+any kind-based dispatch runs, letting the already-correct "Classical ⊕
+Classical" logic handle it uniformly; the now-dead hardcoded branch was
+removed. `pytest tests/ -q` reports **1241 passed / 52 failed**
+(unchanged failure count vs. LISS-0354's 52 — confirmed via full
+failure-list diff, not just count, identical before and after; +4 this
+Issue's own new tests); `spec_verification` remains **161/161 (100%,
+Gate: PASS)**. `abs()`'s own classical-scalar implementation remains
+open, deferred to its own follow-up Issue.
+
+**2026-08-07, LISS-0356** (PR #429, `32b0852`; standalone, not part of WP-0095): closes the
+follow-up named above and the last item in LISS-0338's documented
+backlog. `stdlib/math_ops.py::MATH_OPS` (`sin`, `cos`, `exp`, `sqrt`,
+`abs`, `log`, `tan`) was consumed only via `joint.map_coord` (a State-
+pushforward path) — a classical-scalar call (`Float y = abs(x)` inside
+an ordinary classical free function) had no evaluator support at all,
+failing `RUNTIME_ERROR: call cannot be classical value in Phase 2.2
+value context` at runtime despite compiling successfully (typecheck.py
+has no `MATH_OPS` awareness; unrecognized function calls fall through
+to a permissive `State<Any>` default that happens to satisfy any
+declared classical type). Confirmed the identical gap in all seven
+`MATH_OPS` entries, not just `abs()` as LISS-0338 named — fixed the
+whole family together (Adjudicator-confirmed scope), not just `abs()`.
+Fixed in `evaluator.py::_eval_classical_call`: check
+`math_ops.known_math_op` before the `self.funs` lookup, evaluate the
+single argument classically, apply `math_ops.apply_math` (reusing the
+same implementation the quantum `map_coord` path already uses).
+`typecheck.py` left untouched — its existing permissive fallback
+already lets this pattern compile. `pytest tests/ -q` reports **1249
+passed / 52 failed** (unchanged failure count vs. LISS-0355's 52,
+confirmed via full failure-list diff; +8 this Issue's own new tests);
+`spec_verification` remains **161/161 (100%, Gate: PASS)**.
+
+**This closes every item in LISS-0338's original "Related, not
+blocking" backlog** (Float relational mistyping — LISS-0352; struct-
+returning free functions — LISS-0353; `&&` — ADR 0196/LISS-0354;
+`abs()`/`MATH_OPS` — LISS-0356), plus the deeper, previously-unknown
+bugs found while fixing them (Classical `*`/`/` payload — LISS-0349;
+the JW-mapping absolute-epsilon regression that had silently zeroed
+A03's Hamiltonian since LISS-0332 — LISS-0350/0351; Classical-vs-bare-
+literal mixing discarding dimension — LISS-0355).
+
+**2026-08-07, LISS-0357** (PR #432, `8f25c61`; standalone, not part of
+WP-0095): fixes the
+"Related, not blocking" item flagged in LISS-0335 (2026-08-05).
+`evaluator.py::_hamiltonian_evolve_one_step`'s ADR 0195 fail-closed
+`evolve ... for <duration>` unit check only recognized a bare `Var`
+duration (`isinstance(expr.duration, Var)`), rejecting both a
+dimensioned struct-field access (`evolve ... for config.duration`,
+LISS-0335's finding) and an inline unit-suffixed literal (`evolve ...
+for 0.25.fs`, LISS-0345's finding) with `EVOLVE_UNRESOLVED_UNIT_ERROR`
+even though both genuinely carry a resolvable `Time` unit. Fixed by
+replacing the narrow check with a single call to the already-correct
+`_eval_value_with_unit` (used elsewhere for unit-aware `+`/`-`
+arithmetic), which already generalizes `Var`, struct-field `Attr` (via
+ADR 0174 `field_units`), and literal-suffix `Attr` resolution — one
+change fixes both gaps, since they share the identical root cause.
+ADR 0195's fail-closed behavior for genuinely dimensionless durations
+is unchanged and covered by a dedicated regression test. `pytest tests/
+-q` reports **1252 passed / 52 failed** (unchanged failure count vs.
+LISS-0356's 52, confirmed via full failure-list diff; +3 this Issue's
+own new tests); `spec_verification` remains **161/161 (100%, Gate:
+PASS)**.
+
+**2026-08-08, LISS-0358** (PR #434, `693d395`; standalone, not part of
+WP-0095): a general architectural audit (requested by the Adjudicator
+after LISS-0357, to check for other instances of the same "narrow
+AST-shape dispatch" bug category) found three `evaluator.py` functions
+(`_bind_call`, `_eval_classical_method_call`,
+`_resolve_operator_method_call`) independently gating `recv.method(...)`
+resolution on `isinstance(recv_expr, Var) and recv_expr.name in
+self.objects`, rejecting a nested-field receiver
+(`outer.inner.method()`) even though `typecheck.py` already
+type-checks it generally. Fixed with a shared
+`_resolve_receiver_instance` helper (mirrors the existing `_attr_host`
+pattern), applied identically at all three sites. Verifying the third
+(Operator-returning) site surfaced a same-category bug one layer up:
+`parser.py::_type_first_bind`'s LISS-0139 heuristic for `Operator H =
+recv.method()` used a fixed 4-token lookahead recognizing only exactly
+one dotted hop before the call, so `outer.inner.h()` failed to even
+parse; fixed with a new `_dotted_call_lookahead` helper accepting any
+depth of dotted hops. `pytest tests/ -q` reports **1256 passed / 52
+failed** (identical failure list vs. LISS-0357's 52, confirmed via
+direct list comparison; +4 this Issue's own new tests);
+`spec_verification` remains **161/161 (100%, Gate: PASS)**.
+
+The audit also investigated and ruled out (false positives, already
+general or structurally necessary) the tensor `*|*` bind, the
+`converged(state)` predicate argument, the Operator-DSL `OpExpr`
+index/register grammar, `WhenExpr`/`SuperposeExpr` inference/binding,
+and the `Var`-arg fast paths in classical/Operator method-call
+argument binding.
+
+**2026-08-08, LISS-0359** (PR #437, `9eacfc8`;
+[WP-0096](../work-plans/WP-0096-tests-real-hbar-duration-migration.md)
+work unit 1 of 8): migrates the 4 `EVOLVE_UNRESOLVED_UNIT_ERROR`
+failures using the legacy single-Pauli-letter `evolve ψ under X for t`
+path (`pauli_u`, no `ℏ` reference) to real `Time` units. Test-fixture-
+only, no Kernel source change. Caught and corrected an error in
+WP-0096's own investigation before any test was edited: the unit
+suffix must be `.s` specifically (canonical seconds, scale factor 1),
+not `.fs` (canonicalizes ×1e-15, silently producing a near-zero
+rotation instead of the intended angle) — live-verified before
+committing to the fix. `pytest tests/ -q` reports **1260 passed / 48
+failed** (exactly -4 vs. LISS-0358's 52, confirmed via full
+failure-list diff); `spec_verification` remains **161/161 (100%, Gate:
+PASS)**. 48 known failures remain across WP-0096's remaining 7 work
+units.
+
+**2026-08-08, LISS-0360** (PR #439, `80c0353`;
+[WP-0096](../work-plans/WP-0096-tests-real-hbar-duration-migration.md)
+work unit 2 of 8): migrates 14 `EVOLVE_UNRESOLVED_UNIT_ERROR` failures
+(WP-0096's own investigation had undercounted this group as 13,
+corrected during Red) across 6 files composing their Hamiltonian via
+the Operator-DSL `sum`/`product` binder machinery, scaling by
+`K = ℏ/1fs` with duration numerals kept unchanged and `.fs` appended
+(preserves `H·t/ℏ` exactly). Found and fixed a real regression during
+Green: wrapping a binder expression's whole top-level RHS in `K` breaks
+`qpu_ir["binder_lowering"]` provenance tracking in two files; corrected
+to inject `K` inside each binder body instead (mathematically
+identical). Found and fixed a genuine, previously-undiscovered Kernel
+bug, confirmed with the Adjudicator before including it in this Issue:
+`backend/qasm/trotter.py::_eval_float`'s `Attr` unit-suffix handling
+used a local, independently-hardcoded Time-unit-scale table that
+predated ADR 0195's `ps`/`fs` additions and had gone stale — replaced
+with a lookup against `dimensions.py`'s own `UNIT_SCALE_TO_CANONICAL`.
+`pytest tests/ -q` reports **1274 passed / 34 failed** (exactly -14 vs.
+LISS-0359's 48, confirmed via full failure-list diff); `spec_
+verification` remains **161/161 (100%, Gate: PASS)**. 34 known
+failures remain across WP-0096's remaining 6 work units.
+
+**2026-08-08, LISS-0361** (PR #441, `8e44252`;
+[WP-0096](../work-plans/WP-0096-tests-real-hbar-duration-migration.md)
+work unit 3 of 8): migrates the last 4 `EVOLVE_UNRESOLVED_UNIT_ERROR`
+failures concerning periodic-boundary (`wrap()`) and acting-space
+typing (`test_liss0057_periodic_boundary_red.py`,
+`test_liss0058_acting_space_typing_red.py`), applying the same
+`K = ℏ/1fs` coefficient scale / `.fs`-suffixed duration conversion
+established in LISS-0360. No new Kernel gap found this time — the
+pattern applied cleanly. `pytest tests/ -q` reports **1278 passed / 30
+failed** (exactly -4 vs. LISS-0360's 34, confirmed via full
+failure-list diff); `spec_verification` remains **161/161 (100%, Gate:
+PASS)**. 30 known failures remain across WP-0096's remaining 5 work
+units.
+
+**2026-08-08, LISS-0362** (PR #443, `bead530`;
+[WP-0096](../work-plans/WP-0096-tests-real-hbar-duration-migration.md)
+work unit 4 of 8): migrates 19 `EVOLVE_UNRESOLVED_UNIT_ERROR` failures
+(WP-0096's own investigation had undercounted this group as 18,
+corrected during Red) across 10 files where the Hamiltonian's
+coefficient reaches `Operator H = ...` through a function/method
+return, a struct/class field, or a classical multi-bind — applying
+`K = ℏ/1fs` scaling at each coefficient's actual source rather than at
+the `Operator` expression itself. One file
+(`test_liss0051_operator_factory_runtime_red.py`) needed no direct
+edit, since it re-exports its failing test from
+`test_liss0107_examples_linker_runtime_red.py` and was fixed
+transitively. One new pattern required declaring a `Schedule` class's
+duration field/init-parameter/`t()`-return chain `Time`-typed (not
+`Float`) so unit tracking propagates through a method-returned
+duration — confirmed live before implementing, no Kernel change
+needed. Kept as one Issue rather than splitting (flagged as a
+candidate in WP-0096's own investigation) after full-file review found
+the conversion pattern fully uniform. `pytest tests/ -q` reports
+**1297 passed / 11 failed** (exactly -19 vs. LISS-0361's 30, confirmed
+via full failure-list diff); `spec_verification` remains **161/161
+(100%, Gate: PASS)**. 11 known failures remain across WP-0096's
+remaining 4 work units.
+
+**2026-08-08, LISS-0363** (PR #445, `77c177f`;
+[WP-0096](../work-plans/WP-0096-tests-real-hbar-duration-migration.md)
+work unit 5 of 8): migrates the last 3 `EVOLVE_UNRESOLVED_UNIT_ERROR`
+failures concerning explicit Suzuki/Trotter step policy
+(`test_explicit_trotter_steps_red.py`,
+`test_liss_0270_experiment_surface_profile_red.py`,
+`test_liss_0280_0288_sugar_red.py`), applying the established
+`K = ℏ/1fs` conversion. Verified a larger duration numeral (100.0)
+does not overflow the sparse-evolution step-budget check, and that a
+shared fixture's two currently-passing QASM-emission tests (which
+never reach the runtime fail-closed duration check) are unaffected. No
+new Kernel gap found. `pytest tests/ -q` reports **1300 passed / 8
+failed** (exactly -3 vs. LISS-0362's 11, confirmed via full
+failure-list diff); `spec_verification` remains **161/161 (100%, Gate:
+PASS)**. 8 known failures remain across WP-0096's remaining 3 work
+units.
+
+**2026-08-08, LISS-0364** (PR #447, `800584b`;
+[WP-0096](../work-plans/WP-0096-tests-real-hbar-duration-migration.md)
+work unit 6 of 8): migrates the 4 `EVOLVE_UNRESOLVED_UNIT_ERROR`
+failures in `test_jordan_wigner_mapping_red.py`, each comparing a
+`FermionOperator` mapped via `map(H, JordanWigner)` against a
+hand-written equivalent Pauli `Operator` — both sides scaled
+identically by `K = ℏ/1fs` so the marginal-equality comparison remains
+meaningful. Found a real syntax constraint during design intake:
+neither wrapping the whole `FermionOperator` RHS in parens nor scaling
+the already-mapped `QubitOperator` result parses/type-checks; resolved
+with a per-term `K *` prefix instead (mirrors the Pauli-sum body-
+injection pattern from earlier work units, applied to the Fermionic
+ladder-operator grammar), live-verified end-to-end including the
+marginal comparisons before Red. `pytest tests/ -q` reports **1304
+passed / 4 failed** (exactly -4 vs. LISS-0363's 8, confirmed via full
+failure-list diff); `spec_verification` remains **161/161 (100%, Gate:
+PASS)**. 4 known failures remain across WP-0096's remaining 2 work
+units.
+
+**2026-08-08, LISS-0365** (PR #449, `bbb5a18`;
+[WP-0096](../work-plans/WP-0096-tests-real-hbar-duration-migration.md)
+work unit 7 of 8): migrates the 2 `EVOLVE_UNRESOLVED_UNIT_ERROR`
+failures in `test_continuous_lowering_red.py` (the position-grid/
+continuous Hamiltonian discretization bridge — `theory`/
+`discretization`/`use ... as` DSL). Resolves WP-0096's own flagged open
+question: the grid Hamiltonian path uses the same `expm_ih` primitive
+WP-0095 work unit 1 updated together with the sparse-Pauli path, so
+the identical `K = ℏ/1fs` constant applies — confirmed live via
+Born-rule norm preservation and bridge-vs-direct marginal equality
+before Red. `pytest tests/ -q` reports **1306 passed / 2 failed**
+(exactly -2 vs. LISS-0364's 4, confirmed via full failure-list diff);
+`spec_verification` remains **161/161 (100%, Gate: PASS)**. Only 2
+known failures remain, both in WP-0096's final work unit 8.
+
+**2026-08-08, LISS-0366** (PR #451, `31a9bd5`;
+[WP-0096](../work-plans/WP-0096-tests-real-hbar-duration-migration.md)
+work unit 8 of 8, **final**): migrates the last 2
+`EVOLVE_UNRESOLVED_UNIT_ERROR` failures
+(`test_operator_pauli_atom_call_parse_red.py`,
+`test_when_ket_prepare_arms_red.py`). **This closes WP-0096 in its
+entirety and resolves the "`main` currently does not meet this floor"
+note recorded above on 2026-08-05** — `pytest tests/ -q` now reports
+**1308 passed, 0 failed**, the first fully green root-suite run since
+the ADR 0195 real-ℏ migration began. `spec_verification` remains
+**161/161 (100%, Gate: PASS)**. WP-0096 ran as 8 sequential Issues
+(LISS-0359 through LISS-0366), each with its own Plan/Completion
+approval, migrating 52 test-fixture `evolve` durations off the
+pre-ADR-0195 dimensionless convention via a behavior-preserving
+`H·t/ℏ`-conserving scale identity — no test's physics or numeric
+assertions were altered, only their unit declarations. Two genuine,
+previously-undiscovered Kernel bugs were found and fixed along the way
+(both confirmed narrow-blast-radius and Adjudicator-approved before
+inclusion): `backend/qasm/trotter.py::_eval_float`'s stale local
+Time-unit table (LISS-0360) and the provenance-tracking constraint on
+top-level binder-expression scaling (also LISS-0360, worked around
+without a Kernel change). See
+[WP-0096](../work-plans/WP-0096-tests-real-hbar-duration-migration.md)
+for the full work-unit-by-work-unit record.
+
+**2026-08-08, LISS-0367** (PR #453, `92c6a56`; standalone, not part of
+WP-0096): closes a parser gap found and deliberately deferred during
+LISS-0364 (WP-0096 work unit 6). `parser.py::_second_quantized_rhs_
+is_op_dsl` — the heuristic deciding whether a `FermionOperator`/
+`BosonOperator`/`SpinOperator`/`QubitOperator`-typed bind's RHS parses
+via the Operator-DSL or the general expression grammar — skipped a
+parenthesized group's contents opaquely when scanning for a leading
+scalar-coefficient chain, never checking whether the second-quantized
+atom was itself *inside* the parens (`K * (create[0] *
+annihilate[0])` failed with a confusing `PARSE_ERROR`, forcing
+LISS-0364's workaround of dropping the parens). Fixed by scanning
+inside a skipped group for an `IDENT[` pattern before falling through
+to the compound-coefficient assumption. `pytest tests/ -q` reports
+**1312 passed, 0 failed** — `main` remains fully green; `spec_
+verification` remains **161/161 (100%, Gate: PASS)**.
+
+**2026-08-08, LISS-0368** (PR #455, `0682e1a`; standalone, not part of
+WP-0096): a second architectural audit (requested after LISS-0367, same
+"narrow AST-shape dispatch" category) found and fixed two gaps in
+`second_quantization.py`'s Jordan-Wigner mapping: `_orbital_index` only
+accepted a literal integer index, rejecting a named integer local
+carrying the identical value (`Int site = 0; create[site]`); and
+`_scalar_value` only recognized `*` as a scalar `OpBin`, rejecting a
+compound coefficient combined with `+`/`-` (`(a + b) * create[0] *
+annihilate[0]`). Both fixed by mirroring already-correct sibling logic
+in the same file. Notable: LISS-0367's own regression guard already
+used the `(a + b) * ...` shape but only asserted parse success, never
+execution — this execution-time gap was invisible to it. `pytest
+tests/ -q` reports **1316 passed, 0 failed** — `main` stays fully
+green; `spec_verification` remains **161/161 (100%, Gate: PASS)**.
+
+**2026-08-08, LISS-0369** (PR #457, `421edf6`; standalone, not part of
+WP-0096): closes the fourth candidate from the second architectural
+audit (LISS-0368 covered the other two). `parser.py::_type_first_bind`'s
+ADR 0118 / LISS-0149 gate for `Float[M…] row = h[i]` only recognized a
+bare variable name immediately followed by `[`; a struct/class-field
+array (`m.h[1]`) fell through to the general expression grammar and
+failed with a misleading `PARSE_ERROR`. Fixed with
+`_dotted_index_lookahead`, mirroring `_dotted_call_lookahead`'s
+pattern from LISS-0358. **Scope note**: applying the fix surfaced a
+second, larger gap — `typecheck.py::_check_float_partial_bind` has no
+struct/class field-array shape-tracking anywhere in the codebase, so
+`m.h[1]` still does not fully compile; confirmed with the Adjudicator
+to keep this Issue's scope as originally approved (parser-only) —
+`m.h[1]` now reaches the correct grammar and surfaces the accurate ADR
+0118 `TYPE_MISMATCH` instead of the misleading `PARSE_ERROR`, a real
+diagnostic-quality improvement even though full field-array-indexing
+support remains a separate, unimplemented future Issue (would need a
+`field_shapes`-style tracking mechanism analogous to ADR 0174's
+`field_units`). `pytest tests/ -q` reports **1318 passed, 0 failed** —
+`main` stays fully green; `spec_verification` remains **161/161 (100%,
+Gate: PASS)**.
+
+**2026-08-08, LISS-0370** (PR #459, `de176cf`; standalone, not part of
+WP-0096): closes the fourth and final candidate from the second
+architectural audit (LISS-0368/0369 covered the other three), re-
+verified with corrected combining syntax after the first repro attempt
+failed for unrelated reasons. `adjoint(create[i])` (physically
+equivalent to `annihilate[i]`) failed in three different contexts with
+three different errors, all tracing to `second_quantization.py::
+_expand` having no case at all for `OpCall`. Unlike LISS-0368/0369
+(mirroring already-correct sibling recognition patterns), this
+required implementing new mapping logic — verified for physical
+correctness two ways before implementation: analytically (every term's
+Pauli-tensor factor is Hermitian, so `(c·Op)† = c̄·Op`) and numerically
+(conjugating `_create(0)`'s terms exactly reproduces `_annihilate(0)`'s
+terms). Required three fix sites, not the two anticipated at Plan time
+— a third gap (`finite_binder.py::_substitute_indices` not recursing
+into `OpCall`, so a binder's index variable never got substituted
+inside `adjoint(...)`) was found only while confirming Green for the
+binder-body case. `pytest tests/ -q` reports **1321 passed, 0 failed**
+— `main` stays fully green; `spec_verification` remains **161/161
+(100%, Gate: PASS)**.
+
+**This closes the second architectural audit's full candidate list**
+(LISS-0368/0369/0370 — three real, live-verified bugs fixed; the audit
+also flagged and ruled out several false positives, recorded in each
+Issue's own design decision section).
+
+**2026-08-08, LISS-0371** (PR #461, `24a63ad`; standalone, not part of
+WP-0096): first candidate from a third architectural audit round.
+`using Suzuki(order = ord, steps = M)` (`ord` a named `Int` constant
+equal to a literal that already works) was spuriously rejected with
+`SUZUKI_ORDER_ERROR`. **Self-correction recorded here**: the first
+finding reported this as a *silent* wrong-output bug — verified by
+calling `QASM3Emitter.emit_unit()` directly without first checking
+`compiled.ok`, unlike every other call site in this codebase. Properly
+re-verifying (`compile_source(...).ok` checked first) showed the
+program is actually hard-rejected at typecheck time — the same
+spurious-rejection category as every other finding this session, not a
+new, more severe one. The fix still required genuinely new
+infrastructure, unlike LISS-0368/0369's mirror-an-existing-sibling
+fixes: `typecheck.py` had zero constant-folding/static-value tracking
+anywhere (`grep` for `_fold`/`_const_fold`/`self.scalars` returned
+nothing). Added `self.static_scalars: dict[str, float]`, populated at
+the two places a plain classical scalar bind's value becomes known
+(`check_unit`'s main-loop and `_check_function_body`, the latter with
+its own save/restore swap so a function's locals never leak across
+scopes), and widened `_check_suzuki_policy` to resolve a named constant
+through it. The runtime layer's three independently duplicated
+literal-only `order` checks (`trotter.py::resolve_suzuki_steps`,
+`lower.py::_lower_evolve`'s inline copy, `qpu_ir.py::
+_lowering_policy_projection`) were also deduplicated behind one new
+`trotter.py::resolve_suzuki_order` helper, mirroring LISS-0360's
+dedup principle. `pytest tests/ -q` reports **1324 passed, 0 failed**
+— `main` stays fully green; `spec_verification` remains **161/161
+(100%, Gate: PASS)**.
+
+**2026-08-08, LISS-0372** (PR #463, `fe73ced`; standalone, not part of
+WP-0096): second and final candidate from the third architectural audit
+round (LISS-0371 covered the first). `apply(rx(theta), q)` with a named
+`Float` variable angle (equal to a literal that already works) silently
+dropped the gate from the emitted QASM entirely, with both
+`compiled.ok` and `emitted.ok` reporting `True` — re-verified against
+the LISS-0371 lesson (checking both `ok` flags before inspecting
+output) and confirmed this one really is silent, unlike LISS-0371.
+Root cause: `lower.py::_rotation_angle` (the same narrow-AST-shape-
+dispatch category) only recognized `LitFloat`/`LitInt`/a prelude-
+constant `Var`/a `pi/N` `BinOp`. Fixed in two parts: (1) widened
+`_rotation_angle` to resolve a named `Var` through the same `scalars`
+dict `_from_ast_patterns` already builds before the `apply(...)`
+lowering loop runs (the dict/naming convention LISS-0371 established);
+(2) converted the remaining unresolvable-angle fallback from a silent
+note-and-continue into an explicit rejection
+(`reject_code = QASM_ROTATION_ANGLE_UNRESOLVED`), mirroring the
+already-correct `STATIC_HILBERT_RESOURCE_ERROR` sibling pattern a few
+dozen lines earlier in the same function — a larger semantics change
+than LISS-0371's recognition-only widening, explicitly approved by the
+Adjudicator before implementation given a dropped gate is a more severe
+failure mode than a fallback to a different-but-still-valid value.
+`pytest tests/ -q` reports **1326 passed, 0 failed** — `main` stays
+fully green; `spec_verification` remains **161/161 (100%, Gate:
+PASS)**.
+
+**This closes the third architectural audit's full candidate list**
+(LISS-0371/0372 — two real, live-verified bugs fixed; LISS-0371's
+initial "silent" framing was self-corrected to "spurious rejection"
+during verification, while LISS-0372 was independently confirmed
+genuinely silent using the corrected verification method).
+
+**2026-08-08, LISS-0373** (PR #465, `2951c4e`; standalone): first
+candidate from a fourth architectural audit round (LISS-0374 tracks the
+round's second candidate). `sum (i in Index<0..2>, j in Index<0..2>)
+where i == next(j) { ... }` — a `where` guard using the `next(...)`
+index accessor, the same accessor that already works correctly in an
+indexed operator body (`Z[next(i)]`) — crashed `compile_source()`
+itself with an **uncaught `ValueError`** ("where guard must use static
+binder indices"), propagating all the way out of the public compiler
+API. This is the most severe finding of the entire session: every prior
+narrow-AST-shape-dispatch bug produced at worst a diagnostic (spurious
+rejection) or a value silently propagating with an `ok=True` result;
+this one crashed the compiler outright for a physically plausible
+program (a nearest-neighbor guard). Root cause: `_static_value` (used
+only for `where`-guard evaluation) called the narrow
+`_resolve_bound_index` (`OpVar`/`OpLit` only) and raised unconditionally
+when it returned `None`, while the already-correct, more general
+`_resolve_index` (already handling `next`/`wrap` via
+`_resolve_accessor`) sat unused one function away. Fixed by threading a
+`_Context` through `_static_value`/`_guard_matches`/`_binder_values`
+(which already computed everything a `_Context` needs, just after the
+point the guard check ran) and having `_static_value` call
+`_resolve_index` directly — eliminating the narrow duplicate rather
+than widening it. Live-verified correct semantics, not just absence of
+crash: the `next(j)`-guard Hamiltonian emits the identical 3-`rz`-gate
+QASM as the hand-written equivalent `Z[1]*Z[0] + Z[2]*Z[1]`. `pytest
+tests/ -q` reports **1328 passed, 0 failed** — `main` stays fully
+green; `spec_verification` remains **161/161 (100%, Gate: PASS)**.
+
+**2026-08-08, LISS-0374** (PR #467, `a7783c0`; standalone): second and
+final candidate from the fourth architectural audit round (LISS-0373
+covered the first). `⟨0|psi|1⟩` (`psi`: `State`) correctly raises
+`OPERATOR_ALGEBRA_TYPE_ERROR`; the equivalent-shaped misuse through a
+class method returning `State` (`⟨0|b.getPsi|1⟩`) silently compiled
+clean — `typecheck.py::_check_matrix_element_middle` bailed for any
+non-`Var` callee shape, the same nested-`Attr`-receiver-dispatch
+category as this session's very first round (LISS-0357/0358). Fixed by
+widening the callee-shape recognition to a single-level
+`Attr(Var, name)`, resolved through `self.fun_returns` — the same table
+`check_unit` already populates for every class method with a return
+type, already used elsewhere for method-call return-type inference — no
+new lookup infrastructure needed. `pytest tests/ -q` reports **1330
+passed, 0 failed** — `main` stays fully green; `spec_verification`
+remains **161/161 (100%, Gate: PASS)**.
+
+**This closes the fourth architectural audit's full candidate list**
+(LISS-0373/0374 — two real, live-verified bugs fixed, one of them
+(LISS-0373) this session's most severe finding: an uncaught crash in
+the public compiler API, not merely a diagnostic-quality issue).
+
+**2026-08-08, LISS-0375** (PR #469, `fe29104`; standalone): first
+candidate from a fifth architectural audit round (LISS-0376 tracks the
+round's second candidate). The ADR 0045 `NESTED_WHEN_ERROR` static
+coherence guard correctly rejects a `mix` nested directly inside
+another `mix`'s arm, but silently missed the identical violation when
+embedded inside a `*|*` tensor-product statement —
+`nested_when.py::_walk` had cases for `BinOp`/`Call`/`Attr`/`Dirac`/
+`Inspect`/`Pipe`/`Lambda`/`TupleExpr`/`EvolveExpr`/`WhenExpr` but none
+for `TensorExpr`. **Verification note recorded in the Issue**: the
+first repro attempt (binding the nested `mix` to its own name in a
+separate statement, then tensor-combining it in a second statement)
+produced a false negative — `check_nested_when` checks each
+statement's own top-level expression independently, and a bind
+statement whose `.expr` is itself a `WhenExpr` was already correctly
+covered regardless of this gap. The corrected repro embeds the nested
+`mix` directly inside the tensor expression at the same statement,
+confirming the actual gap. Fixed by adding a `TensorExpr` case to
+`_walk`, mirroring the existing `BinOp`/`Pipe` two-operand cases
+immediately above it. `pytest tests/ -q` reports **1332 passed, 0
+failed** — `main` stays fully green; `spec_verification` remains
+**161/161 (100%, Gate: PASS)**.
+
+**2026-08-08, LISS-0376** (PR #470, `2cd8950`; standalone): second and
+final candidate from the fifth architectural audit round (LISS-0375
+covered the first). `unitarity_check.py::_expr_is_quantum` (feeds the
+`quantum`/`strict` tracking dicts the ADR 0045/0052 non-unitary-
+transform guard uses) had no case for `SuperposeExpr` — LISS-0320's
+coherent-lane surface, "structurally parallel to `WhenExpr`" per
+`SuperposeArm`'s own docstring — so a `superpose(...)`-bound state was
+silently tracked as non-quantum, skipping every subsequent non-unitary-
+transform check on it. **Currently non-exploitable**: any
+`superpose(...)`-bound state already fails at runtime with
+`COHERENT_EXECUTION_UNSUPPORTED` (a separate, deliberate LISS-0320
+fail-closed gate), so this static-analysis gap could not yet produce a
+silently-wrong measured result — fixed as regression prevention so it
+does not resurface, harder to trace, once superpose coherent execution
+ships. Fixed by adding a `SuperposeExpr` case mirroring the existing
+`WhenExpr` case immediately above it exactly. `pytest tests/ -q`
+reports **1332 passed, 0 failed** — `main` stays fully green;
+`spec_verification` remains **161/161 (100%, Gate: PASS)**.
+
+**This closes the fifth architectural audit's full candidate list**
+(LISS-0375/0376 — two real, live-verified bugs fixed; LISS-0376 is
+notable for being a confirmed real gap that is nonetheless currently
+dormant/non-exploitable, a new nuance this session's audit taxonomy
+had not yet produced).
+
+**2026-08-08, LISS-0377** (PR #473, `3b2d3ad`; standalone; Cursor
+Claude-process handoff): first candidate from a sixth architectural
+audit round. Terminal `measure make()` where `make` is a zero-arg user
+function returning `DensityState<Qubit>` silently succeeded with an
+empty marginal and skipped `POVM_DOMAIN_MISMATCH` for a
+domain-mismatched POVM — both because `measurement.py` and the
+evaluator's mixed-measure path only recognized bare `Var` targets.
+Fixed by resolving FunDecl return-type domains for zero-arg Calls and
+evaluating `return DensityState(...)` via `density_from_call` into
+`_measure_mixed`. `pytest tests/ -q` reports **1338 passed, 0 failed**;
+`spec_verification` remains **161/161 (100%, Gate: PASS)**.
+
+**2026-08-08, LISS-0378** (PR #475, `b9f03d5`; standalone; sixth audit candidate 2):
+`mixed_state._number` / runtime twin accepted only `LitInt`/`LitFloat`,
+so `Ensemble([(1.0 * 1.0, |0>)])` and named `Float w` weights raised
+spurious `MALFORMED_DENSITY_STATE`. Fixed by folding literal `BinOp`
+and resolving `Var` against classical Float/Int binds threaded into
+`density_from_call`. `pytest tests/ -q` → **1341 passed**; SV **161/161**.
+
+**2026-08-08, LISS-0379** (PR #476, `56357b5`; standalone; sixth audit candidate 3):
+`apply(ch, State)` MIXED_STATE_TYPE_ERROR only fired for bare `Var`
+sources; a Call returning `State` compiled without that diagnostic.
+Fixed via `_apply_arg_is_state` FunDecl return-type lookup.
+`pytest tests/ -q` → **1343 passed**; SV **161/161**.
+
+**2026-08-08, LISS-0380** (PR #477, `deab864`; standalone; sixth audit candidate 4 — final):
+static Ensemble validation allowed `Var` ket states, but runtime
+`_matrix_from_ensemble` required `KetLit` only, so
+`Ensemble([(1.0, psi)])` with `psi = |0>` compiled then failed. Fixed
+by tracking pure ket labels on State binds and resolving Vars at
+runtime. `pytest tests/ -q` → **1345 passed**; SV **161/161**.
+
+**This closes the sixth architectural audit's full candidate list**
+(LISS-0377/0378/0379/0380 — four real, live-verified bugs fixed;
+category (b)/(a)/static-evasion/contract-gap respectively).
+
 Historical note: the 2026-08-01 operations review recorded ~50 root failures and
 no CI tests ([WP-0069](../work-plans/WP-0069-operations-review-intake.md)); that
 floor was closed by WP-0079–0080 and WP-0086.
+
+**2026-08-20, LISS-0444/WP-0107 bounded projection update:** the canonical
+Scientific Semantic IR now carries and the QPU projection consumes
+`lowering_policy`, `explicit_evolution`, and `binder_lowering`, with source
+identity, provenance, semantic fingerprint coverage, and executable-projection
+mutation rejection. This closes only the bounded projection batch. The old AST
+helpers, diagnostic-time binder re-lowering, QASM AST fallback, and parallel
+`symbolic_ir` path remain open under the consumer-wide migration; no provider,
+live-QPU, or S02 work is implied.
 
 ## Status rule
 

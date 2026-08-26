@@ -17,7 +17,7 @@ from compiler.staqex.cli import main as cli_main
 from compiler.staqex.pipeline import compile_source
 from compiler.staqex import run as run_mod
 
-KET = "\u27e9"  # ⟩
+KET = ">"
 UNSUPPORTED = "UNSUPPORTED_LOCAL_DIMENSION"
 
 
@@ -38,7 +38,7 @@ def test_cli_emit_qasm_rejects_qutrit_measure() -> None:
     package t
     pub fn main() -> Unit {{
         State<Qutrit> s = |0{KET}
-        measure s
+        Measure s
     }}
     """
     with tempfile.TemporaryDirectory() as tmp:
@@ -58,8 +58,8 @@ def test_emitter_rejects_annotation_only_qutrit_state() -> None:
     package t
     pub fn main() -> Unit {{
         State<Qutrit> s = |0{KET}
-        State observed = coin()
-        measure observed
+        State observed = Coin()
+        Measure observed
     }}
     """
     emitted = _emit(source)
@@ -75,8 +75,8 @@ def test_emitter_rejects_qutrit_register_program() -> None:
     package t
     pub fn main() -> Unit {
         QutritRegister<1> r = system()
-        State observed = coin()
-        measure observed
+        State observed = Coin()
+        Measure observed
     }
     """
     emitted = _emit(source)
@@ -92,7 +92,7 @@ def test_cli_emit_qasm_qubit_measure_unchanged() -> None:
     package t
     pub fn main() -> Unit {{
         State<Qubit> s = |0{KET}
-        measure s
+        Measure s
     }}
     """
     with tempfile.TemporaryDirectory() as tmp:

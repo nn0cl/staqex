@@ -18,9 +18,9 @@ from compiler.staqex.runtime.joint import Joint, World, current_world_workers, w
 SRC = """
 package t
 pub fn main() -> Unit {
-    state b = coin()
-    state r = when (b) { 0 -> 0, else -> 1 }
-    measure r
+    State b = Coin()
+    State r = Mix (b) { 0 -> 0, else -> 1 }
+    Measure r
 }
 """
 

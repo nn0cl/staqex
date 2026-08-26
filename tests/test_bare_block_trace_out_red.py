@@ -25,13 +25,13 @@ def test_bare_block_let_temps_traced_out() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state w = {
+            State w = {
                 let z = 3
                 let temp1 = z * 2
                 let temp2 = temp1 + 5
                 temp2
             }
-            measure w
+            Measure w
         }
         """,
         stdout=io.StringIO(),
@@ -50,13 +50,13 @@ def test_bare_block_preserves_unrelated_live_coord() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state keep = |1>
-            state w = {
+            State keep = |1>
+            State w = {
                 let t = 7
                 t
             }
-            state viewed = inspect(w)
-            measure keep
+            State viewed = Inspect(w)
+            Measure keep
         }
         """,
         stdout=io.StringIO(),

@@ -1,15 +1,20 @@
-// B08 — Operator Hamiltonians and Suzuki evolution (minimal dialect face).
+// staqex-profile: experiment
+// B08 — Operator Hamiltonians and exact propagator spelling (local lane).
 // WP-0089 / LISS-0290: ADR 0180 ty-fill; LISS-0305 multi-bind (ADR 0184).
 // Leftover leaves via tracing_out (ADR 0173).
 
-J, h = 1.0, 0.5
+// ADR 0195: J/h carry real Energy units (bare multi-bind can't attach a
+// unit); H_chain stays inferred (ADR 0180 ty-fill still applies).
+Energy J = 1.0.eV to J
+Energy h = 0.5.eV to J
 
-H_chain = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
+Operator H_chain = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
 
 // LISS-0309: multi-ket multi-bind (ideal dialect face).
 s0, s1 = |+>, |+>
-state (s0, s1) = evolve (s0, s1) under H_chain for 0.7
-    using Suzuki(order = 2, steps = 6)
+Time dur = 0.7.fs
+Operator U_dur = exp(-i * H_chain * dur / hbar)
+State (s0, s1) = Evolve() { U_dur * (s0, s1) }.run()
 
-state zz = expect(ZZ, s0, s1)
-measure s0 tracing_out s1
+State zz = expect(ZZ, s0, s1)
+Measure s0 tracing_out s1

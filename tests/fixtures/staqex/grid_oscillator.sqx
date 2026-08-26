@@ -4,11 +4,13 @@
 package examples.oscillator
 
 pub fn main() -> Unit {
-    state psi = wavepacket(-6.0, 6.0, 48, 0.0, inv_sqrt2)
+    State psi = wavepacket(-6.0, 6.0, 48, 0.0, inv_sqrt2)
 
-    Operator H_grid = 0.5 * (P * P + X * X)
-    state psi = evolve psi under H_grid for 1.0
+    Energy e = 0.5.eV to J
+    Time dur = 1.0.fs
+    Operator H_grid = e * (P * P + X * X)
+    State psi = Evolve { psi under H_grid for dur }.run()
 
-    state viewed = inspect(psi)
-    measure psi
+    State viewed = Inspect(psi)
+    Measure viewed
 }

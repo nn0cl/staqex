@@ -35,17 +35,16 @@ def _program(operator: str, *, register: int | None = None) -> str:
 package t
 pub fn main() -> Unit {{
 {register_decl}    Operator H = {operator}
-    state psi = |0>
-    state psi = |0>
-    state out = evolve psi under H for 0.1
-        using Suzuki(order = 2, steps = 1)
-    measure out
+    State psi = |0>
+    State psi = |0>
+    State out = Evolve {{ psi under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
+    Measure out
 }}
 """
 
 
 def test_empty_sum_is_a_warning_and_not_a_hard_compile_error() -> None:
-    compiled = compile_source(_program("sum (i in Index<3..1>) { Z[i] }"))
+    compiled = compile_source(_program("Sigma (i In 3..1) { Z[i] }"))
 
     codes = [diagnostic.get("code") for diagnostic in compiled.diagnostics]
     assert "EMPTY_BINDER_DOMAIN_WARNING" in codes
@@ -53,7 +52,7 @@ def test_empty_sum_is_a_warning_and_not_a_hard_compile_error() -> None:
 
 
 def test_empty_product_is_a_warning_and_not_a_hard_compile_error() -> None:
-    compiled = compile_source(_program("product (i in Index<3..1>) { Z[i] }"))
+    compiled = compile_source(_program("Pi (i In 3..1) { Z[i] }"))
 
     codes = [diagnostic.get("code") for diagnostic in compiled.diagnostics]
     assert "EMPTY_BINDER_DOMAIN_WARNING" in codes
@@ -62,7 +61,7 @@ def test_empty_product_is_a_warning_and_not_a_hard_compile_error() -> None:
 
 def test_identity_without_acting_space_is_rejected_before_simulation() -> None:
     result = run_source(
-        _program("sum (i in Index<3..1>) { Z[i] }"),
+        _program("Sigma (i In 3..1) { Z[i] }"),
         seed=0,
         stdout=io.StringIO(),
     )
@@ -74,7 +73,7 @@ def test_identity_without_acting_space_is_rejected_before_simulation() -> None:
 
 def test_identity_with_explicit_register_runs_at_that_register_shape() -> None:
     compiled = compile_source(
-        _program("sum (i in Index<3..1>) { Z[i] }", register=4)
+        _program("Sigma (i In 3..1) { Z[i] }", register=4)
     )
     assert compiled.ok, compiled.diagnostics
     lowered, _ = lower_finite_binder_operators(compiled.unit)
@@ -90,7 +89,7 @@ def test_identity_without_acting_space_cannot_emit_qasm() -> None:
     with tempfile.TemporaryDirectory() as directory:
         source = Path(directory) / "empty_identity.sqx"
         source.write_text(
-            _program("sum (i in Index<3..1>) { Z[i] }"), encoding="utf-8"
+            _program("Sigma (i In 3..1) { Z[i] }"), encoding="utf-8"
         )
         try:
             StaqexCompiler().compile_to_qasm3(str(source))

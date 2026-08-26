@@ -26,14 +26,14 @@ _SCIENTIFIC_SCOPE_HEADS = frozenset(
     {"theory", "experiment", "workflow", "execution", "report", "system"}
 )
 _CONTEXTUAL_VERSIONING = frozenset({"until", "max", "pub", "in"})
-_UNICODE_MATH_TOKENS = frozenset({"⊗", "†", "⟨", "⟩"})
+_ASCII_QUANTUM_TOKENS = frozenset({"*|*", "<", ">"})
 _NUMERIC_SEPARATOR_MARKERS = frozenset({"_"})
 
 _REQUIRED_INVENTORY = frozenset().union(
     _MODERN_KEYWORDS,
     _SCIENTIFIC_SCOPE_HEADS,
     _CONTEXTUAL_VERSIONING,
-    _UNICODE_MATH_TOKENS,
+    _ASCII_QUANTUM_TOKENS,
     _NUMERIC_SEPARATOR_MARKERS,
 )
 

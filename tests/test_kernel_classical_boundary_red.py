@@ -28,11 +28,11 @@ def test_static_foreach_is_kernel_elaboration_and_emits_one_gate_per_wire() -> N
     package t
     pub fn main() -> Unit {
         QubitRegister<3> reg = system()
-        forEach q in reg {
+        ForEach q in reg {
             apply(H, q)
         }
-        State<Int> answer = coin()
-        measure answer
+        State<Int> answer = Coin()
+        Measure answer
     }
     """
 
@@ -50,12 +50,12 @@ def test_foreach_element_is_opaque_and_cannot_become_an_int_index() -> None:
         package t
         pub fn main() -> Unit {
             QubitRegister<3> reg = system()
-            forEach q in reg {
+            ForEach q in reg {
                 Int i = index(q)
                 apply(H, q)
             }
-            State<Int> answer = coin()
-            measure answer
+            State<Int> answer = Coin()
+            Measure answer
         }
         """
     )
@@ -68,11 +68,11 @@ def test_measurement_dependent_foreach_bound_is_rejected_before_submission() -> 
         """
         package t
         pub fn main() -> Unit {
-            State<Int> width = coin()
-            forEach q in register(measure width) {
+            State<Int> width = Coin()
+            ForEach q in register(Measure width) {
                 apply(H, q)
             }
-            measure width
+            Measure width
         }
         """
     )
@@ -86,8 +86,8 @@ def test_host_value_cannot_be_declared_inside_qpu_kernel() -> None:
         package t
         pub fn main() -> Unit {
             Host<Float> temperature = host_input()
-            State<Int> answer = coin()
-            measure answer
+            State<Int> answer = Coin()
+            Measure answer
         }
         """
     )

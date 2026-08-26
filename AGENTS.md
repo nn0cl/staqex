@@ -11,62 +11,6 @@ No phase skipping.
 
 No hidden business logic in adapters.
 
-## Project (adopter facts — keep in sync across Tier 2)
-
-**Staqex:** Quantum-Probabilistic Executable (**Never Leave the State**).
-Mid-program values are `State<T>`; classical collapse only at terminal
-`measure`.
-
-**Shipping Kernel (authoritative for `examples/` + SV):** Python 3 package
-`compiler/staqex/` — run with `python3 -m compiler.staqex`. Language surface
-includes Joint amplitude eval, Type-First dims, `namespace` / `enum` /
-`struct` / `class` + `fn init` / `this`, and visibility `pub` / `_`
-(DEC-0003). See `QUICKSTART.md` and
-`docs/architecture/physicist-dx-harmony.md`.
-
-**Long-term target:** Rust (edition 2021+) Cargo workspace VM/simulator;
-QPU / OpenQASM backends later **behind ports**. Do not invent a second
-language semantics for “Rust-only” wording in older ADRs — one language,
-two implementation generations.
-
-## Language Design Priority (Adjudicator vision — binding)
-
-**Staqex is a language for physicists.** Full orientation:
-[`docs/architecture/adjudicator-language-vision.md`](docs/architecture/adjudicator-language-vision.md).
-
-Normative summary agents must not violate:
-
-1. **Physicist mental model is primary**; programmer DX is secondary but
-required. On conflict, prefer blackboard spelling (DEC-0003; physicist-dx-harmony).
-2. **Ideal form first** — not shortest path to something that runs; machine
-   convenience never shapes the surface.
-3. **Never Leave the State** / `when` not `if` / terminal `measure` — physics
-   law, not style preference.
-4. Do **not** recreate “beautiful equation → broken DSL → QPU port” inside
-   Staqex or official examples; record gaps in the friction ledger / Issues.
-5. Language-affecting `[DESIGN CHECK]` must state physicist-first preservation
-   or stop for Architecture approval.
-
-Companions: DEC-0003, `physicist-dx-harmony.md`,
-`physicist-source-friction-ledger.md`.
-
-## Honest backlog pointer (do not re-open settled rows)
-
-Authoritative open / parked work:
-[`docs/architecture/open-work-register.md`](docs/architecture/open-work-register.md).
-Claude-facing narrative list (may be longer): `CLAUDE.md` §Current Open Topics
-— not a second source of truth; if they disagree, prefer the open-work register
-and cited Issues/ADRs.
-
-**Trait specialization / effect rows (DEC-0004):** surface examples
-**accepted, no ship ADR**
-([LISS-0196](docs/issues/LISS-0196-trait-specialization-surface-design.md)
-**complete**;
-[examples](docs/specs/staqex-v1-trait-effect-surface-examples.md)).
-Core `interface`/`impl` and fixed `effects {…}` remain shipped (DEC-0005).
-**Do not start Kernel Red** for specialization or extensible effect rows until
-a future ship ADR is Accepted.
-
 ## Expected Workflow
 
 1. Read `docs/architecture/agent-quickstart.md`.
@@ -83,14 +27,33 @@ a future ship ADR is Accepted.
 
 - Treat each new session as having no prior chat context.
 - Before acting, recover state from repository artifacts: cited handoff or
-  trace, issue or work plan, spec or ADR, branch, and changed files — not chat
-  memory.
+  trace, spec or ADR, branch, and changed files — not chat memory. Read an
+  ISSUE or work plan only when resuming that work or updating the ledger.
+  Current rules come from policy documents, ADRs, and specifications, not
+  from ISSUES or work plans.
 - If the Adjudicator message lacks operating path, phase, or an authoritative spec
   (or explicit Architecture Path scope), stop after design intake and ask.
+- Read `docs/collaboration/project-conventions.md` when present. It holds
+  project name, stack, ports, boundaries, non-decisions, and extra
+  project-specific rules. Do not store those facts in this file. If the
+  conventions file is missing, stop and ask to create it from
+  `docs/templates/project-conventions.md`.
+- If a relied-on contract, architecture, or conventions file still contains
+  an unfilled `<...>` placeholder, stop after design intake and ask the
+  Adjudicator to set the value. Do not treat placeholder text as a project
+  name, stack, datastore, provider, or domain fact.
 - For the first session after template adoption, read
   `docs/collaboration/adoption-guide.md` before changing target-owned files.
 - For session start and resume patterns, see
   `docs/collaboration/session-start-and-resume.md`.
+- After selecting an operating path, if
+  `docs/collaboration/runtime-routing.toml` exists, apply its review and
+  implementation isolation and optional model identifiers. If it is missing,
+  keep capability-class routing on the host agent and do not invent model
+  names. After first adoption, recommend
+  `scripts/configure-ai-collaboration.sh` rather than guessing. These
+  settings do not replace Adjudicator approval. See
+  `docs/collaboration/runtime-routing.md`.
 
 Relevant architecture documents:
 
@@ -120,15 +83,19 @@ Relevant architecture documents:
   `docs/collaboration/prompt-instruction-change-control.md`.
 - Session start and resume:
   `docs/collaboration/session-start-and-resume.md`.
-- Staqex language axioms: `docs/architecture/staqex-language-axioms.md`.
-- Adjudicator language vision:
-  `docs/architecture/adjudicator-language-vision.md`.
-- Physicist × DX surface: `docs/architecture/physicist-dx-harmony.md`.
-- Physicist source friction ledger:
-  `docs/architecture/physicist-source-friction-ledger.md`.
-- Developer quickstart: `QUICKSTART.md`.
-- Modern OOP / visibility handoff:
-  `docs/collaboration/agent-sync-modern-oop-visibility.md`.
+- Document lifecycle and citation direction:
+  `docs/collaboration/document-lifecycle.md`.
+- Project conventions (target-owned facts and extra rules):
+  `docs/collaboration/project-conventions.md`.
+- Runtime routing (optional target-owned settings):
+  `docs/collaboration/runtime-routing.md`.
+- Process lessons (meta-level, reused at design and implementation):
+  `docs/collaboration/process-lessons.md`.
+- Completion process review:
+  `docs/collaboration/process-review.md`.
+- On-demand procedures: `.agents/skills/`.
+- Stack-specific architecture documents listed in
+  `docs/collaboration/project-conventions.md`.
 
 ## Clean Architecture Dependency Rule
 
@@ -153,50 +120,20 @@ Forbidden dependencies:
 
 ## External Resources Must Be Ports
 
-Represent these as ports before using concrete implementations:
-
-- Entropy / RNG source (for `measure` sampling) via `RngPort`.
-- Program source loading (file or stdin) via `SourcePort`.
-- Measurement / diagnostic sink (stdout, stderr, or files) via `MeasureSinkPort`.
-- Settings storage and validation (CLI flags / environment).
-- Secret storage (reserved; not required for MVP).
-- Dependency policy checks.
-
-MVP has no application datastore, no cloud DB, no QPU adapter, and no LLM
-provider inside the language runtime. Those remain future optional ports.
+Represent every external resource listed in
+`docs/collaboration/project-conventions.md` as a port before using a
+concrete implementation. Do not add project ports to this file.
 
 ## Adjudicator Interaction
 
 When a decision affects architecture, capture it as an ADR. When a decision is
 unknown, list it in the path-appropriate design note as an ambiguity boundary.
 
-Every request starts from design intake. Select only the AI payload context
-needed for the task, define lightweight VO or DTO candidates when clear, and
-route subtasks to an appropriate model, code assistant, or deterministic tool.
-When AI or model output is involved, define input, output, and reasoning
-evidence contracts before implementation.
-
-Use the `[DESIGN CHECK]` scaffold only for Feature Path and Architecture Path
-work. It reports observable requirements, inspected context, boundaries,
-assumptions, routing, and verification; it must not request hidden
-chain-of-thought. For Fast Path work, use a compact design note that states
-scope, omitted context, deterministic checks, and why the full scaffold is
-unnecessary.
-
-The common scaffold is:
-
-```markdown
-[DESIGN CHECK]
-- Scope and expected behavior:
-- Specifications and files inspected:
-- Component boundaries, ports/adapters, and VO/DTO candidates when applicable:
-- Applicable constraints:
-- Decisions, assumptions, and unresolved ambiguities:
-- Included and omitted AI context:
-- Task routing (model/assistant/tool):
-- Input/output evidence contract when AI output is involved:
-- Verification plan:
-```
+Every request starts from design intake. Load
+`.agents/skills/design-intake/SKILL.md` and output its `[DESIGN CHECK]`
+scaffold for Feature Path and Architecture Path work. Fast Path uses the
+compact note in that skill. Do not skip this step when the host does not
+auto-discover the skill directory.
 
 ## Approval Model
 
@@ -216,46 +153,17 @@ implementation. Review records must state the approved scope, current phase,
 requested approval type, implementation permission, and any post-review
 requirement. A proposed ADR is a design artifact, not implementation approval.
 
-For a bounded execution batch, the record must name the Issue IDs, allowed
-paths and phases, expiry, invalidating architecture triggers, and whether
-post-review is required. Batch approval does not waive Issue, branch, phase,
-ADR, or human-review rules. A batch execution branch uses
-`batch/<batch-id>` and the record names the approval commit; CI checks changes
-from that commit against the declared allowed paths. CI success is not
-Adjudicator approval.
+Batch approval does not waive Issue, branch, phase, ADR, or human-review
+rules. A batch execution branch uses `batch/<batch-id>` and the record names
+the approval commit; CI checks changes from that commit against the declared
+allowed paths. CI success is not Adjudicator approval. When writing or
+executing a bounded batch, follow `.agents/skills/execution-batch/SKILL.md`.
 
-### Explicit Batch and Approval Source Rules
-
-An explicit user or Adjudicator message may authorize an ordered, bounded
-batch containing multiple documentation-only or design-intake steps. The
-message itself must identify, or unambiguously enumerate:
-
-- the target Issue or ADR;
-- the allowed operation for each step;
-- the order of the steps;
-- whether implementation and tests are forbidden;
-- the stopping condition and required follow-up approval.
-
-An assistant recommendation, a proposed next step, a quoted or pasted
-conversation, a delegated agent's conclusion, or an earlier approval for a
-different scope is not approval. Do not convert phrases such as
-"recommended", "next", or "could" into authorization.
-
-An approved batch authorizes only the named steps. Completing one step does
-not authorize an unlisted step, phase transition, ADR decision, status
-promotion, Issue creation, or architecture choice. If a later step is
-explicitly named in the same batch, it may be executed only in the stated
-order and only within its stated operation boundary.
-
-Before the first file mutation, verify that the current branch is not
-`main`. Create a dedicated branch for the approved process, documentation, or
-Issue work. Read-only inspection on `main` is allowed; mutation on `main` is
-not. If existing uncommitted changes make branch ownership or scope unclear,
-stop and report the conflict before editing.
-
-When handing off or stopping before completion, use
-`docs/templates/agent-handoff.md`. When asking the Adjudicator for approval, use the
-review points from `docs/templates/adjudicator-review.md`.
+When handing off or stopping before completion, follow
+`.agents/skills/agent-handoff/SKILL.md`. When asking the Adjudicator for
+approval, follow `.agents/skills/adjudicator-review/SKILL.md`. When an agent
+review packet is required and review isolation is `same_context` (or routing
+is missing), follow `.agents/skills/same-context-review/SKILL.md`.
 
 Generated source code must minimize human cognitive load. Prefer clear
 responsibility boundaries, small functions, straightforward names, and
@@ -263,7 +171,12 @@ reviewable tests. Do not compress implementation into dense code just to be
 minimal.
 
 Before reporting completion, check `docs/collaboration/definition-of-done.md`.
-Create AI work traces under `docs/collaboration/traces/` when the trace policy
-requires it. Use feature-unit branches for feature work.
-For feature work, identify local issue or GitHub issue dependencies before
-creating the branch.
+When the trace policy requires a trace, follow
+`.agents/skills/ai-work-trace/SKILL.md`. Use feature-unit branches for feature
+work. For feature work, identify local issue or GitHub issue dependencies
+before creating the branch.
+
+When an agent review packet is produced, or at the next design intake and
+before implementation, follow `.agents/skills/process-lessons/SKILL.md`.
+When marking a local issue or work plan `done`, follow
+`.agents/skills/process-review/SKILL.md`.

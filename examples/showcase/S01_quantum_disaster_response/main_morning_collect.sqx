@@ -18,6 +18,7 @@ import ..domain.theatre_scale.{
     mean_cell_population, capital_cells, capital_qpu_recommended
 }
 import ..provenance.honesty.{HonestyDossier}
+import ..physics.ops_energy_scale.{ops_energy_scale}
 
 use OpsPhase.*
 use ShelterStatus.*
@@ -123,29 +124,32 @@ pub fn main() -> Unit {
     Float capital_cells_v = capital_cells()
     Float capital_qpu = capital_qpu_recommended()
 
-    state bit = coin()
-    state status = when (board.phase) {
+    State bit = Coin()
+    State status = Mix (board.phase) {
       Tonight -> |0>,
       MorningCollect -> |+>,
       NextDayRecovery -> |1>,
       else -> |0>,
     }
-    state shelter_gate = when (coastal.status) {
+    State shelter_gate = Mix (coastal.status) {
       Open -> |+>,
       NearFull -> |0>,
       ClosedFlooded -> |1>,
       else -> |0>,
     }
-    state branch = when (bit) {
+    State branch = Mix (bit) {
       0 -> |0>,
       else -> |+>,
     }
     // Shake: phase() on a morning observation wire (B05 surface).
-    state status = phase(status, 0.2)
-    Operator H = Z
-    state status = evolve status under H for 0.4
-    state peeked = expect(Z, status)
+    State status = phase(status, 0.2)
+    Energy scale = ops_energy_scale()
+    Operator H = scale * Z
+    Time dur = 0.4.fs
+    Operator U_t = exp(-i * H * dur / hbar)
+    State status = Evolve() { U_t * status }.run()
+    State peeked = expect(Z, status)
     // Sparse chapter peek only (SE-01: Host logs preferred; scorecard inspect seat).
-    state viewed_peek = inspect(peeked)
-    measure status tracing_out shelter_gate, branch
+    State viewed_peek = Inspect(peeked)
+    Measure status tracing_out shelter_gate, branch
 }

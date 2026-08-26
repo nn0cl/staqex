@@ -59,13 +59,18 @@ collapse occurs only at a terminal **`measure`** in the Static Kernel lane.
 2. **Blackboard surface** — Type-First quantities, dimensional algebra, Dirac
    kets, Hamiltonian `evolve`, non-destructive `expect` / `inspect`. Machine
    convenience (term counts, circuit depth, compile or simulation cost) must
-   not restrict what a physicist may write on this surface
-   ([Adjudicator language vision](../architecture/adjudicator-language-vision.md);
+   not restrict what a physicist may write on this surface. Source must
+   **denote the same physics** as the blackboard thought process (including
+   intentional expansion, rewrite, and combination); writeable ≠ executable
+   separates meaning from realization and does not mean programs are
+   non-executable
+   ([Adjudicator language vision](../architecture/adjudicator-language-vision.md)
+   §2.1–§2.2;
    [ADR 0095](../architecture/decision-themes/dec-0003-language-surface-and-physicist-first-dx.md)).
 
 **Secondary, non-optional** programmer DX (must not blunt chalk):
 
-3. **Modules and structure** — `package` / `fn` / `when` / `struct` / `enum` /
+3. **Modules and structure** — `package` / `fn` / `mix` / `struct` / `enum` /
    `class` / visibility without classical `if` / `while` / exceptions / threads
    in the Static Kernel. When blackboard form and programmer convenience
    conflict, **prefer the physicist form**. DX is **not** co-equal with (1)–(2)
@@ -192,10 +197,10 @@ separate spelling migration Issue (DR-007 / M-P05).
 
 | Class | Role |
 |-------|------|
-| **Active** | Grammar keywords (`state`, `when`, `evolve`, …); scientific-scope keywords per companion specs (`theory`, `discretization`, `use`, …) |
+| **Active** | Grammar keywords (`state`, `mix`, `evolve`, …); scientific-scope keywords per companion specs (`theory`, `discretization`, `use`, …) |
 | **Contextual** | Soft: `else`, `times`, `for`, `under`, `until` inside `evolve … until … max N` (ADR 0079), … |
 | **Forbidden** | Hard error `FORBIDDEN_KEYWORD` (`if`, `while`, `null`, `throw`, `async`, …) |
-| **Retired** | `RETIRED_KEYWORD` + fix-it (`observe`→`measure`, `span`→`when`, …) |
+| **Retired** | `RETIRED_KEYWORD` + migration hint (`observe`→`measure`, `span`→`mix`, `when`→`mix`; no compatibility alias) |
 | **Lane markers** | `dynamic qpu fn` introduces Dynamic lane body (ADR 0071) |
 
 Bare C-style `for (` is ungrammatical. Lexeme `for` is contextual inside
@@ -232,7 +237,7 @@ Normative grammar file: [`grammar/staqex.ebnf`](grammar/staqex.ebnf).
 ### 3.1 Statements vs expressions
 
 - **Statements** (in `main` / blocks): binds, `measure`, `snapshot`.
-- **Expressions:** yield `State` values (or lift to them); include `when`,
+- **Expressions:** yield `State` values (or lift to them); include `mix`,
   `evolve`, calls, arithmetic, kets.
 
 ### 3.2 Operator precedence (low → high)
@@ -275,7 +280,7 @@ Sugar: `state name = expr`, `(x, p) = expr`.
 ### 3.4 Control and evolution forms
 
 ```text
-when (ctrl) { pat -> expr, … else -> expr }
+mix (ctrl) { pat -> expr, … else -> expr }
 evolve (seeds) times N { let…; result }
 evolve (seeds) for duration { let…; result }
 evolve seed under H for t
@@ -286,13 +291,13 @@ Arm `expr` may be a classical value **or** a ket prepare literal
 superposition support while keeping the mixture semantics of ADR 0024
 ([LISS-0138](../issues/LISS-0138-when-ket-prepare-arms.md)).
 
-**Nested `when` is illegal (Normative — ADR 0039).** Arm bodies MUST NOT
-contain another `when`. Diagnostic: **`NESTED_WHEN_ERROR`**. Aligns with
+**Nested `mix` is illegal (Normative — ADR 0039).** Arm bodies MUST NOT
+contain another `mix`. Diagnostic: **`NESTED_WHEN_ERROR`**. Aligns with
 OpenQASM / QIR: branching on unmeasured quantum wires is not expressible;
 use `cnot` / `evolve` / `expect`, `project`, or a joint pushforward
 (`s0 == s1`, `b0 * 2 + b1`).
 
-Single-level `when` remains the Discrete mixture form (ADR 0024).
+Single-level `mix` remains the Discrete mixture form (ADR 0024).
 
 ### 3.5 Valid / Invalid
 
@@ -311,7 +316,7 @@ pub fn main() -> Unit {
 pub fn main() -> Unit {
     state s0 = coin()
     state s1 = coin()
-    state agree = when (s0 == s1) { true -> 1, else -> 0 }
+    state agree = mix (s0 == s1) { true -> 1, else -> 0 }
     measure agree
 }
 ```
@@ -321,9 +326,9 @@ pub fn main() -> Unit {
 pub fn main() -> Unit {
     state s0 = coin()
     state s1 = coin()
-    state agree = when (s0) {
-      0 -> when (s1) { 0 -> 1, else -> 0 },
-      else -> when (s1) { 0 -> 0, else -> 1 },
+    state agree = mix (s0) {
+      0 -> mix (s1) { 0 -> 1, else -> 0 },
+      else -> mix (s1) { 0 -> 0, else -> 1 },
     }   (* NESTED_WHEN_ERROR *)
     measure agree
 }
@@ -428,7 +433,7 @@ with that $x$-value. Coalesce **sums amplitudes** on identical assignments.
 
 ### 5.2 Expression evaluation (pushforward)
 
-Arithmetic and `when` act as pushforwards / mixtures on the joint. They MUST NOT
+Arithmetic and `mix` act as pushforwards / mixtures on the joint. They MUST NOT
 sample. `coin()` splits amplitudes with factor $1/\sqrt{2}$ on $\{0,1\}$.
 
 ### 5.3 Combinators (selected)
@@ -454,9 +459,9 @@ sample. `coin()` splits amplitudes with factor $1/\sqrt{2}$ on $\{0,1\}$.
 | `ocapply(c…, U, t…)` | Open control: $U$ iff ctrls $\|0\rangle^{\otimes n}$ (ADR 0047) |
 | `capply(a, !b, U, t)` | Mixed ●/○ polarities (ADR 0048) |
 
-### 5.4 Control: `when`
+### 5.4 Control: `mix`
 
-Arms with positive weight are retained (no classical discard). Nested `when`
+Arms with positive weight are retained (no classical discard). Nested `mix`
 preserves correlation through the joint.
 
 ### 5.5 Block / Euler `evolve`
@@ -484,7 +489,7 @@ is also used in other forms.
 
 ### 5.8 Failure model
 
-No exceptions. Failure arms are world-lines (`Result` / `when` / `project`)
+No exceptions. Failure arms are world-lines (`Result` / `mix` / `project`)
 (ADR 0025).
 
 ### 5.9 Open / Deferred (explicitly non-normative for v1.0 Kernel baseline)
@@ -560,7 +565,7 @@ Unit` normative. Bare `main` declarations are rejected with
 
 ### 6.3 Scopes
 
-- `main` / `fn` bodies and `evolve` / `when` braces introduce nested scopes.
+- `main` / `fn` bodies and `evolve` / `mix` braces introduce nested scopes.
 - Working names in `evolve` shadow seeds for the body duration.
 - Library units without `main` are valid (no entry).
 - Ordinary `fn` / method bodies must have a terminal `return` statement. `measure`
@@ -685,7 +690,7 @@ treat it as the conformance oracle.
 | `FORBIDDEN_KEYWORD` | ADR 0035 Forbidden |
 | `RETIRED_KEYWORD` | ADR 0035 Retired |
 | `EARLY_COLLAPSE_ERROR` | Non-terminal `measure` |
-| `NESTED_WHEN_ERROR` | Nested `when` on State (ADR 0039) |
+| `NESTED_WHEN_ERROR` | Nested `mix` on State (ADR 0039) |
 | `INTERFER_INDEPENDENT_STATE_ERROR` | `interfer` without shared lineage |
 | `EXPECT_CLASSICAL_ONLY_ERROR` | Mix `expect` scalar into State arith |
 | `COIN_IN_EVOLVE_ERROR` | `coin()` inside `evolve` |

@@ -16,6 +16,7 @@ import .domain.comms_ops.{FairnessReport, fairness_score}
 import .domain.hazards.{HazardCell, HazardKind, HazardBoard, secondary_pressure}
 import .grid.block_costs.{damage_hamiltonian, corridor_product, flood_zone_sum}
 import .physics.constraint_h.{ConstraintCoeffs, constraint_hamiltonian}
+import .physics.ops_energy_scale.{ops_energy_scale}
 import .protocol.windows.{PlanWindow}
 import .protocol.compose.{compose_priority, compose_pair, compose_poly, local_priority_bump}
 
@@ -136,60 +137,71 @@ pub fn main() -> Unit {
     ConstraintCoeffs coeffs = ConstraintCoeffs {
         congestion: congestion, fairness: fairness_c, _pad: 0.0
     }
-    Operator H_drive = constraint_hamiltonian(coeffs)
+    Energy scale = ops_energy_scale()
+    // LISS-0407 (ADR 0206): Operator-returning calls can now be used
+    // inline while scaling, no *_raw intermediates needed.
+    Operator H_drive = scale * constraint_hamiltonian(coeffs)
+    Operator H_damage = scale * damage_hamiltonian()
+    Operator H_corridor = scale * corridor_product()
+    Operator H_flood = scale * flood_zone_sum()
 
-    Operator H_damage = damage_hamiltonian()
-    Operator H_corridor = corridor_product()
-    Operator H_flood = flood_zone_sum()
-
-    // Evolve times from domain pressures + PlanWindow (not anonymous-only).
+    // Evolution durations from domain pressures + PlanWindow (not anonymous-only).
+    // ADR 0195: these classical desk values stay for the causal map, but
+    // cannot themselves be `to`-converted into Time (computed dimensionless
+    // Float has no matching dimension) -- each evolve below is driven by an
+    // independent Time literal instead (WP-0095/LISS-0348, same resolution
+    // as LISS-0340/B07).
     Float t_drive = duration + load * 0.05 + request_load + roll_min * 0.001
     Float t_damage = hazard_pressure * 0.03
     Float t_flood = 0.1
     Float t_corridor = open_score * 0.04
+    Time dur_drive = 0.6.fs
+    Time dur_damage = 0.3.fs
+    Time dur_flood = 0.1.fs
+    Time dur_corridor = 0.4.fs
 
     // Classical⊕State fair-share ticket.
-    state ration: State<Int> = 2 / 3
-    state ration = ration + (1 / 4)
+    State<Int> ration = 2 / 3
+    State ration = ration + (1 / 4)
 
     // Priority pipe / Partial / poly Fusion (dispatch desk SE-05/06).
-    state composed = compose_priority(3)
-    state pair_sum = compose_pair(2, 5)
-    state poly = compose_poly(2)
-    state bumped_pri = local_priority_bump(1)
+    State composed = compose_priority(3)
+    State pair_sum = compose_pair(2, 5)
+    State poly = compose_poly(2)
+    State bumped_pri = local_priority_bump(1)
 
     // Enum when — phase and shelter status gate the plan wire.
-    state plan0 = when (board.phase) {
+    State plan0 = Mix (board.phase) {
       Tonight -> |0>,
       MorningCollect -> |+>,
       NextDayRecovery -> |1>,
       else -> |0>,
     }
-    state shelter_gate = when (coastal.status) {
+    State shelter_gate = Mix (coastal.status) {
       Open -> |+>,
       NearFull -> |0>,
       ClosedFlooded -> |1>,
       else -> |0>,
     }
-    state bit = coin()
-    state plan_branch = when (bit) {
+    State bit = Coin()
+    State plan_branch = Mix (bit) {
       0 -> |0>,
       else -> |+>,
     }
 
-    state plan1 = |+>
-    state (plan0, plan1) = evolve (plan0, plan1) under H_drive for t_drive
-        using Suzuki(order = 2, steps = 4)
-    state (plan0, plan1) = evolve (plan0, plan1) under H_damage for t_damage
-        using Suzuki(order = 2, steps = 4)
-    state (plan0, plan1) = evolve (plan0, plan1) under H_flood for t_flood
-        using Suzuki(order = 2, steps = 2)
-    state (plan0, plan1) = evolve (plan0, plan1) under H_corridor for t_corridor
-        using Suzuki(order = 2, steps = 2)
+    State plan1 = |+>
+    Operator U_drive = exp(-i * H_drive * dur_drive / hbar)
+    State (plan0, plan1) = Evolve() { U_drive * (plan0, plan1) }.run()
+    Operator U_damage = exp(-i * H_damage * dur_damage / hbar)
+    State (plan0, plan1) = Evolve() { U_damage * (plan0, plan1) }.run()
+    Operator U_flood = exp(-i * H_flood * dur_flood / hbar)
+    State (plan0, plan1) = Evolve() { U_flood * (plan0, plan1) }.run()
+    Operator U_corridor = exp(-i * H_corridor * dur_corridor / hbar)
+    State (plan0, plan1) = Evolve() { U_corridor * (plan0, plan1) }.run()
 
-    state zz = expect(ZZ, plan0, plan1)
+    State zz = expect(ZZ, plan0, plan1)
 
     // ADR 0173: leftovers leave via Born partial trace.
-    measure plan0 tracing_out plan1, ration, composed, pair_sum, poly,
+    Measure plan0 tracing_out plan1, ration, composed, pair_sum, poly,
         bumped_pri, shelter_gate, plan_branch
 }

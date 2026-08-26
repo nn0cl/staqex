@@ -1,0 +1,14 @@
+// SSC-009: dynamic lane remains distinct from terminal static collapse.
+package t
+pub fn main() -> Unit {
+    dynamic qpu {
+        State q = |0>
+        Controller<Bit> bit = Measure q
+        match bit {
+            0 => { }
+            1 => { }
+        }
+    }
+    State<Int> observed = Coin()
+    Measure observed
+}

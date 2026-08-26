@@ -26,6 +26,26 @@ A task is not done unless:
 - no unrelated context, secrets, or full private data exports were used
   without Adjudicator approval.
 - generated code, if any, is readable and appropriately split.
+- current project guidance has one Canonical source per topic, with the
+  Canonical Register and source evidence updated when the current rule changes.
+- completed or superseded records are marked Historical or linked through the
+  consolidation ledger; they are not used as the entry point for current work.
+- substantial review work has a Review Summary or equivalent reviewer-facing
+  packet linking its Canonical documents, findings, dispositions, blockers,
+  verification, and next approval.
+- agent-to-agent review, when already required, follows
+  `docs/collaboration/runtime-routing.md` isolation (`same_context` uses
+  `.agents/skills/same-context-review/SKILL.md`; `separate_context` is a host
+  launch request; `ask` stops for the Adjudicator) and does not replace
+  Adjudicator approval.
+- review outcomes that should change later work are recorded as meta-level
+  lessons per `.agents/skills/process-lessons/SKILL.md`, not as incident
+  narratives, and are applied at the next design intake and implementation.
+- a local issue or work plan is not `done` until the same-context process
+  review in `.agents/skills/process-review/SKILL.md` has run.
+- the Canonical Register and Review Summary remain derived navigation/review
+  aids and do not replace the existing Issue, specification, ADR, Work Plan, or
+  Adjudicator approval as the agreement unit.
 
 ## Phase 0 Done: Design Intake
 
@@ -95,54 +115,11 @@ The implementation commit and the status/documentation update should be the same
 or the handoff must explicitly identify the pending synchronization. A status is not considered
 complete from code and tests alone.
 
-### Completion gate procedure
-
-### Official examples (`.sqx` under `examples/`)
-
-When the Issue changes official samples, also check
-[surface-style-guide](../architecture/surface-style-guide.md) §7:
-
-- Blackboard H / ket / evolve not longer for compiler convenience
-- No new inspect museum / identity evolve theater
-- Pure packs stay struct + free-fn (intentional `class` seats only)
-- Constructor form and package depth match the style guide
-- seed-0 still green where claimed
-
-Use this ordered checklist for every Issue that reaches final review:
-
-1. **Phase 3 closeout:** set the Issue and work-plan state to
-   `final-review-ready`; record the exact verification result and remaining
-   risks in the trace. Do not write `complete` or merged-PR evidence yet.
-2. **Review PR:** open the single completion PR while the synchronized
-   artifacts still say `final-review-ready`. The PR description must identify
-   the Issue, work-plan row, accepted spec/ADR references, trace, and the
-   required final status.
-3. **Completion packet:** after final review approval and after the PR number
-   is known, update the Issue, work-plan row, and trace in the same PR to
-   `complete`, including that PR number and the verification date. Run a
-   deterministic text check over all three artifacts with
-   `python3 scripts/check-completion-packet.py`: their status and PR evidence
-   must agree, and no pre-merge or pending-state wording may remain in the
-   completion fields. A failed check blocks merge.
-4. **CI and merge gate:** run CI on the final status-bearing commit. If the
-   repository reports that the workflow completed with no jobs, record that
-   exact outcome and retain the passing deterministic local verification; do
-   not write a pending CI state. Merge only when the branch is conflict-free,
-   the Issue/WP/spec/trace status values agree, and the completion packet
-   records either passing jobs or the no-jobs outcome. If any status-bearing
-   commit is added after CI, wait for CI again and repeat
-   `check-completion-packet.py`.
-5. **Post-merge confirmation:** immediately verify the main-branch page and
-   merged commit contain the exact completion packet. This is read-only
-   confirmation, not a normal repair phase; a mismatch means completion was
-   not achieved and must be reported as a process incident before any further
-   status claim.
-
-The completion checklist is part of the final review, not an optional
-administrative step. A PR that contains implementation but leaves an approved
-Issue in `review` or `final-review-ready` is not ready to merge. The three-file
-completion packet and its text check are required even when implementation and
-tests already pass.
+When the status becomes `done`, the same context also runs the completion
+process review in `.agents/skills/process-review/SKILL.md`. Record a
+meta-level lesson when the pattern should affect later work. If a deviation
+or operational problem is found, agree the disposition with the Adjudicator
+and write template feedback when they so decide.
 
 ## Handoff Done
 

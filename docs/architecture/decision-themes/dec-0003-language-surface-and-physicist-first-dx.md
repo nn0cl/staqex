@@ -7,7 +7,10 @@
 ## Current rules
 
 - Ideal blackboard form and physicist mental models take priority over
-  machine-convenient syntax.
+  machine-convenient syntax. Source must denote the same physics as the
+  blackboard (including intentional expansion / rewrite / combination);
+  realization failure is fail-closed, not a license to reshape chalk
+  ([vision §2.2](../adjudicator-language-vision.md)).
 - The active surface uses `when`, `state`, `evolve`, `measure`, `fn`, `pub`,
   `namespace`, `enum`, `struct`, and `class`; legacy `if`, `null`, and
   exception-style control are not part of the language.

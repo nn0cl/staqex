@@ -1,13 +1,22 @@
 // Finite SSH Hamiltonian — a readable topological transport toy.
+//
+// Units (ADR 0195 real-unit migration, LISS-0335): v/w are real Energy
+// values at an eV scale, physically plausible in magnitude for a
+// tight-binding hopping amplitude, but not traced to a specific cited
+// measurement -- this remains a pedagogical toy, not a reproduction of
+// a particular material's measured SSH parameters. See the README
+// "Units and interpretation" (same treatment as A06_topological_edge_memory).
 
 package examples.applied.mission_observatory.operators
 
 namespace Observatory.Operators {
     pub fn build_ssh_hamiltonian() -> Operator {
+        Energy v = 0.5.eV to J
+        Energy w = 1.5.eV to J
         Operator Hssh =
-            0.5 * (hop(0, 1) + hop(1, 0)) +
-            1.5 * (hop(1, 2) + hop(2, 1)) +
-            0.5 * (hop(2, 3) + hop(3, 2))
+            v * (hop(0, 1) + hop(1, 0)) +
+            w * (hop(1, 2) + hop(2, 1)) +
+            v * (hop(2, 3) + hop(3, 2))
         return Hssh
     }
 }

@@ -21,7 +21,7 @@ def test_pub_function_is_accepted() -> None:
     codes = _codes(
         """
         pub fn advance() -> State<Int> {
-            dirac(1)
+            Dirac(1)
         }
         """
     )
@@ -34,7 +34,7 @@ def test_public_is_rejected_without_compatibility_fallback() -> None:
     codes = _codes(
         """
         public fn advance() -> State<Int> {
-            dirac(1)
+            Dirac(1)
         }
         """
     )

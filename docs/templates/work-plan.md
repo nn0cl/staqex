@@ -2,7 +2,7 @@
 
 ## Goal
 
-- 
+-
 
 ## Scope
 
@@ -62,7 +62,7 @@ attempt starts. Link to a local issue record instead of duplicating it. -->
 
 ## Recommended Order
 
-1. 
+1.
 
 ## Current Next Issue
 
@@ -72,8 +72,17 @@ attempt starts. Link to a local issue record instead of duplicating it. -->
 
 ## Risks
 
-- 
+-
 
 ## Verification Plan
 
-- 
+-
+
+## Process Review
+
+<!-- Required when the plan is marked done. Same context. Meta-level only.
+     Policy: docs/collaboration/process-review.md -->
+
+- Outcome: no deviation | deviation (class) | not yet
+- Lesson written: yes | no | not applicable
+- Template-feedback path: none | path

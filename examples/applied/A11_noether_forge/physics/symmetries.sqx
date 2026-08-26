@@ -1,82 +1,11 @@
-// Symmetry and conservation declarations for review provenance.
+// Noether callback: a healthy (defect-free) sensor array is invariant
+// under site permutation; a stress/defect site breaks that symmetry.
+// The broken symmetry IS the detection signal (see observables.sqx).
 
 package examples.applied.noether_forge.physics
 
 namespace Forge.Symmetry {
-    pub enum SymmetryKind {
-        ParityZ2,
-        U1Charge,
-        Translation,
-        Reflection
+    pub fn array_symmetry_broken(has_stressed_site: Bool) -> Bool {
+        return has_stressed_site
     }
-
-    pub enum ConservationStatus {
-        Exact,
-        ApproximateBroken,
-        ExplicitlyBroken
-    }
-
-    pub struct SymmetryDecl {
-        val kind: SymmetryKind
-        val status: ConservationStatus
-    }
-
-    pub fn parity_exact() -> SymmetryDecl {
-        return SymmetryDecl(SymmetryKind.ParityZ2, ConservationStatus.Exact)
-    }
-
-    pub fn charge_exact() -> SymmetryDecl {
-        return SymmetryDecl(SymmetryKind.U1Charge, ConservationStatus.Exact)
-    }
-
-    pub fn translation_approx() -> SymmetryDecl {
-        return SymmetryDecl(SymmetryKind.Translation, ConservationStatus.ApproximateBroken)
-    }
-
-    pub fn reflection_broken() -> SymmetryDecl {
-        return SymmetryDecl(SymmetryKind.Reflection, ConservationStatus.ExplicitlyBroken)
-    }
-
-    pub fn is_exact(decl: SymmetryDecl) -> Bool {
-        return decl.status == ConservationStatus.Exact
-    }
-
-    pub fn is_broken(decl: SymmetryDecl) -> Bool {
-        return decl.status != ConservationStatus.Exact
-    }
-
-    pub fn review_primary() -> SymmetryDecl {
-        return parity_exact()
-    }
-
-    pub fn quench_may_break(decl: SymmetryDecl) -> Bool {
-        return decl.kind == SymmetryKind.Translation || decl.kind == SymmetryKind.Reflection
-    }
-
-    pub fn charge_broken() -> SymmetryDecl {
-        return SymmetryDecl(SymmetryKind.U1Charge, ConservationStatus.ExplicitlyBroken)
-    }
-
-    pub fn parity_approx() -> SymmetryDecl {
-        return SymmetryDecl(SymmetryKind.ParityZ2, ConservationStatus.ApproximateBroken)
-    }
-
-    pub fn status_rank(status: ConservationStatus) -> Int {
-        if status == ConservationStatus.Exact {
-            return 1
-        }
-        if status == ConservationStatus.ApproximateBroken {
-            return 2
-        }
-        return 3
-    }
-
-    pub fn kind_of(decl: SymmetryDecl) -> SymmetryKind {
-        return decl.kind
-    }
-
-    pub fn status_of(decl: SymmetryDecl) -> ConservationStatus {
-        return decl.status
-    }
-
 }

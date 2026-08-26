@@ -27,8 +27,8 @@ def test_theory_call_argument_must_not_name_execution_symbol() -> None:
             Operator H = scale(n * X)
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -54,8 +54,8 @@ def test_theory_must_not_call_fn_that_uses_execution_symbol() -> None:
             Operator H = leak()
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -83,8 +83,8 @@ def test_theory_must_not_call_method_that_uses_execution_symbol() -> None:
             Operator H = S().k()
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -111,8 +111,8 @@ def test_main_may_call_fn_that_uses_execution_symbol() -> None:
         }
         pub fn main() -> Unit {
             Operator H = leak()
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -136,8 +136,8 @@ def test_theory_may_call_pure_operator_fn() -> None:
             Operator H = scale(X)
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )

@@ -4,17 +4,17 @@
 package examples.walk
 
 pub fn main() -> Unit {
-    state c1 = coin()
-    state c2 = coin()
-    state d1 = when (c1) {
+    State c1 = Coin()
+    State c2 = Coin()
+    State d1 = Mix (c1) {
       0 -> -1,
       else -> 1,
     }
-    state d2 = when (c2) {
+    State d2 = Mix (c2) {
       0 -> -1,
       else -> 1,
     }
-    state classical = d1 + d2
-    state viewed = inspect(classical)
-    measure viewed
+    State classical = d1 + d2
+    State viewed = Inspect(classical)
+    Measure viewed
 }

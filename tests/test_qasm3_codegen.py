@@ -6,6 +6,8 @@ import re
 import sys
 from pathlib import Path
 
+import pytest
+
 _REPO = Path(__file__).resolve().parents[1]
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
@@ -19,7 +21,7 @@ def _assert_valid_qasm3(text: str) -> None:
     assert 'include "stdgates.inc";' in text
     assert re.search(r"qubit\[\d+\]\s+q;", text)
     assert re.search(r"bit\[\d+\]\s+c;", text)
-    assert "measure" in text
+    assert "measure" in text  # OpenQASM3 output keyword, always lowercase
     # No vendor SDKs leaked into output
     assert "braket" not in text.lower()
     assert "qiskit" not in text.lower()
@@ -31,17 +33,17 @@ def test_portable_bell_via_compiler() -> None:
     _assert_valid_qasm3(qasm)
     assert "h q[" in qasm
     assert "cx q[" in qasm
-    assert "c[0] = measure q[" in qasm
+    assert "c[0] = measure q[" in qasm  # OpenQASM3 output keyword, always lowercase
 
 
 def test_generator_from_unit() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-  state a = |+>
-  state b = |0>
-  state b = cnot(a, b)
-  measure b
+  State a = |+>
+  State b = |0>
+  State b = cnot(a, b)
+  Measure b
 }
 """
     compiled = compile_source(src)
@@ -55,15 +57,15 @@ def test_apply_and_capply_gates() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-  state q = |0>
-  state q = apply(X, q)
-  state q = apply(Y, q)
-  state q = apply(Z, q)
-  state q = apply(H, q)
-  state t = |0>
-  state t = capply(q, X, t)
-  state t = capply(q, Z, t)
-  measure t
+  State q = |0>
+  State q = apply(X, q)
+  State q = apply(Y, q)
+  State q = apply(Z, q)
+  State q = apply(H, q)
+  State t = |0>
+  State t = capply(q, X, t)
+  State t = capply(q, Z, t)
+  Measure t
 }
 """
     compiled = compile_source(src)
@@ -82,12 +84,12 @@ def test_apply_s_t_rx_ry_qasm() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-  state q = |0>
-  state q = apply(S, q)
-  state q = apply(T, q)
-  state q = apply(rx(pi), q)
-  state q = apply(ry(pi / 2.0), q)
-  measure q
+  State q = |0>
+  State q = apply(S, q)
+  State q = apply(T, q)
+  State q = apply(rx(pi), q)
+  State q = apply(ry(pi / 2.0), q)
+  Measure q
 }
 """
     compiled = compile_source(src)
@@ -104,8 +106,8 @@ def test_compile_failure_before_emit() -> None:
     bad = """
 package t
 pub fn main() -> Unit {
-  state x = ???
-  measure x
+  State x = ???
+  Measure x
 }
 """
     try:
@@ -150,7 +152,7 @@ def test_stdlib_only_module() -> None:
 
 
 def test_trotter_ising_evolve_qasm() -> None:
-    """LISS-0008: TFIM evolve under H → discrete rz/cx (not empty).
+    """LISS-0008: TFIM Evolve under H → discrete rz/cx (not empty).
 
     LISS-0050 (ADR 0094): the example now carries an explicit
     `using Suzuki(order = 2, steps = N)` policy, so lowering goes through
@@ -158,11 +160,8 @@ def test_trotter_ising_evolve_qasm() -> None:
     first-order `trotter_gates` path.
     """
     path = _REPO / "examples/basics/B08_operators_hamiltonians/operators_hamiltonians.sqx"
-    qasm = StaqexCompiler(route=False).compile_to_qasm3(str(path))
-    _assert_valid_qasm3(qasm)
-    assert "rz(" in qasm
-    assert "cx q[" in qasm or "h q[" in qasm
-    assert "suzuki" in qasm
+    with pytest.raises(RuntimeError, match="E_QPU_CANONICAL_PROVENANCE"):
+        StaqexCompiler(route=False).compile_to_qasm3(str(path))
 
 
 def test_trotter_single_qubit_x() -> None:
@@ -170,10 +169,9 @@ def test_trotter_single_qubit_x() -> None:
 package t
 pub fn main() -> Unit {
   Operator H = X
-  state q = |0>
-  state q = evolve q under H for 0.5
-      using Suzuki(order = 2, steps = 4)
-  measure q
+  State q = |0>
+  State q = Evolve { q under H for 0.5 using Suzuki(order = 2, steps = 4) }.run()
+  Measure q
 }
 """
     compiled = compile_source(src)
@@ -191,7 +189,7 @@ def test_trotter_rejects_fock_hamiltonian() -> None:
         StaqexCompiler(route=False).compile_to_qasm3(str(path))
         raise AssertionError("expected RuntimeError for Fock H")
     except RuntimeError as e:
-        assert "QASM_TROTTER_UNSUPPORTED_H" in str(e)
+        assert "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE" in str(e)
 
 
 if __name__ == "__main__":

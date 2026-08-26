@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "batch_id": "case-sensitive-keywords-and-sigma-binder",
+  "work_plan_id": "WP-0098",
+  "status": "approved_for_execution",
+  "approval_type": "bounded-batch",
+  "approved_by": "Adjudicator",
+  "approved_at": "2026-08-12T00:00:00Z",
+  "expires_at": "2026-08-26T00:00:00Z",
+  "execution_branch": "batch/case-sensitive-keywords-and-sigma-binder",
+  "approval_commit": "a7e9be35dd99c79e00f2a08c6a2a524f737adc20",
+  "issue_ids": [
+    "LISS-0415",
+    "LISS-0416",
+    "LISS-0417",
+    "LISS-0418",
+    "LISS-0419",
+    "LISS-0420"
+  ],
+  "issue_order": [
+    "LISS-0415",
+    "LISS-0416",
+    "LISS-0417",
+    "LISS-0418",
+    "LISS-0419",
+    "LISS-0420"
+  ],
+  "approved_scope": "WP-0098: extend ADR 0191 with a case-sensitivity axis (capitalized = blackboard symbol/operator, lowercase = connective/procedural). Retire lowercase `state`; capitalize ten verb keywords (Evolve/Measure/Mix/Coin/Dirac/Inspect/Vacuum/Snapshot/Superpose/ForEach); unify sum/product into Sigma/Pi with new State-typed ket-sum body support; new In keyword, {0,1}^n set-literal domain, classical sqrt/^ builtins. Category-B builtin-function renames (apply/project/prepare_selection/...) explicitly out of scope. main_selection.sqx rewrite is a separate follow-on Issue.",
+  "allowed_paths": [
+    "compiler/staqex/lexer.py",
+    "compiler/staqex/tokens.py",
+    "compiler/staqex/parser.py",
+    "compiler/staqex/ast_nodes.py",
+    "compiler/staqex/typecheck.py",
+    "compiler/staqex/dimensions.py",
+    "compiler/staqex/finite_binder.py",
+    "compiler/staqex/stdlib/prelude.py",
+    "compiler/staqex/hir.py",
+    "compiler/staqex/qpu_ir.py",
+    "compiler/staqex/pipeline.py",
+    "compiler/staqex/cli.py",
+    "compiler/staqex/runtime/evaluator.py",
+    "compiler/staqex/runtime/joint.py",
+    "compiler/staqex/runtime/hamiltonian.py",
+    "compiler/staqex/runtime/sparse_pauli.py",
+    "examples/**",
+    "tests/**",
+    "docs/issues/LISS-0415*",
+    "docs/issues/LISS-0416*",
+    "docs/issues/LISS-0417*",
+    "docs/issues/LISS-0418*",
+    "docs/issues/LISS-0419*",
+    "docs/issues/LISS-0420*",
+    "docs/work-plans/WP-0098*",
+    "docs/architecture/adr/0191-*",
+    "docs/architecture/open-work-register.md",
+    "docs/collaboration/reviews/**"
+  ],
+  "disallowed_paths_notes": [
+    "examples/showcase/S02_drug_discovery/main_selection.sqx intentionally omitted -- rewriting it to the new syntax is a separate follow-on Issue, not part of this batch",
+    "evaluator.py/typecheck.py string-name dispatch for apply/capply/ocapply/project/controlled/toffoli/prepare_selection/feasible/expect/host/finiteize/map is reused unchanged -- any Category-B builtin-function rename invalidates this batch"
+  ],
+  "allowed_phases": ["phase-1-red", "phase-2-green", "phase-3-refactor"],
+  "allowed_operations": [
+    "edit-documentation",
+    "edit-tests",
+    "edit-implementation",
+    "run-verification"
+  ],
+  "operation_notes": {
+    "LISS-0415": "Feature Path; classical sqrt/^ exposed as Float builtins",
+    "LISS-0416": "Feature Path; tokens.py keyword-table addition + grammar position",
+    "LISS-0417": "Feature Path; new set-literal domain grammar production",
+    "LISS-0418": "Feature Path; hard-cutover keyword retirement + scripted corpus migration (~276 sites)",
+    "LISS-0419": "Feature Path; hard-cutover keyword capitalization (10 keywords, ~273 sites) + scripted corpus migration",
+    "LISS-0420": "Feature Path; new AST node + typecheck + evaluator binding logic for State-typed Sigma/Pi bodies, plus sum/product retirement"
+  },
+  "invalidating_triggers": [
+    "A Category-B (builtin function) rename request surfaces mid-batch",
+    "main_selection.sqx or any other shipped showcase .sqx entry point needs to change beyond what LISS-0418/0419's mechanical spelling migration produces",
+    "ADR 0191 amendment is not accepted before Red starts on any Issue"
+  ],
+  "post_review_required": true,
+  "draft_notes": {
+    "created_at": "2026-08-12",
+    "created_on_branch": "batch/case-sensitive-keywords-and-sigma-binder",
+    "work_plan": "docs/work-plans/WP-0098-case-sensitive-keywords-and-sigma-binder.md",
+    "plan_file": "conversational Plan Mode output, approved 2026-08-12 (承認)"
+  },
+  "completion_notes": {
+    "completed_at": "2026-08-13",
+    "allowed_paths_amended": "Investigation's original allowed_paths enumerated compiler/staqex/{lexer,tokens,parser,ast_nodes,typecheck,dimensions}.py + runtime/{evaluator,joint}.py; Green discovered several more files needed the same keyword-consistency fix (scattered lowercase-literal checks outside the main lexer table: finite_binder.py, stdlib/prelude.py, hir.py, qpu_ir.py, pipeline.py, cli.py, runtime/hamiltonian.py, runtime/sparse_pauli.py) -- all within the approved scope's spirit (consistent keyword capitalization across the compiler), not a scope expansion in kind. Added to allowed_paths here for an honest record; none of the invalidating_triggers fired.",
+    "full_regression": "1511 passed (up from pre-batch baseline 1476)",
+    "spec_verification": "100.00% (161/161)",
+    "sqx_corpus_check": "clean (pre-existing A11_noether_forge standalone-import artifacts untouched)"
+  }
+}

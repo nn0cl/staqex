@@ -19,18 +19,18 @@ package t
 class Lat {{
   fn init() {{}}
   pub fn corridor() -> Operator {{
-    Operator {name} = product (i in Index<0..1>) {{ Z[i] }}
+    Operator {name} = Pi (i In 0..1) {{ 1.0545718e-19 * Z[i] }}
     return {name}
   }}
 }}
 pub fn main() -> Unit {{
   Lat L = Lat()
   Operator H = L.corridor()
-  state a = |+>
-  state b = |0>
-  state (a, b) = evolve (a, b) under H for 0.1 using Suzuki(order = 2, steps = 2)
-  state b = |0>
-  measure a
+  State a = |+>
+  State b = |0>
+  State (a, b) = Evolve {{ (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }}.run()
+  State b = |0>
+  Measure a
 }}
 """
 
@@ -39,10 +39,10 @@ def _unbound_xp() -> str:
     return """
 package t
 pub fn main() -> Unit {
-  Operator H = 0.5 * (P * P + Q * Q)
-  state psi = dirac(0)
-  state psi = evolve psi under H for 0.5 using Suzuki(order = 2, steps = 4)
-  measure psi
+  Operator H = 5.272859e-20 * (P * P + Q * Q)
+  State psi = Dirac(0)
+  State psi = Evolve { psi under H for 0.5.fs using Suzuki(order = 2, steps = 4) }.run()
+  Measure psi
 }
 """
 
@@ -55,7 +55,7 @@ def test_method_return_p_product_evolves() -> None:
     )
     assert result.status == "succeeded", result.diagnostics
     msgs = " ".join(str(d.get("message", "")) for d in result.diagnostics)
-    assert "Fock Hamiltonian evolve requires a single bind name" not in msgs
+    assert "Fock Hamiltonian Evolve requires a single bind name" not in msgs
 
 
 def test_method_return_q_product_evolves() -> None:

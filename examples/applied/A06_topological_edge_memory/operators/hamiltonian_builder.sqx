@@ -1,15 +1,24 @@
-// SSH tight-binding Hamiltonian — hop(i,j) + e^{-iHt}
+// SSH tight-binding Hamiltonian — hop(i,j) + e^{-iHt/hbar}
+//
+// Units (ADR 0195 real-unit migration, LISS-0334): v/w are real Energy
+// values at an eV scale, physically plausible in magnitude for a
+// tight-binding hopping amplitude (Su, Schrieffer, Heeger 1979), but not
+// traced to a specific cited measurement -- this remains the same
+// pedagogical model, not a reproduction of a particular material's
+// measured SSH parameters. See the README "Units and interpretation".
 
 package examples.applied.topological_edge_memory.operators
 
 namespace Physics.Operators {
     pub fn build_ssh_hamiltonian() -> Operator {
+        Energy v = 0.5.eV to J
+        Energy w = 1.5.eV to J
         Operator Hssh =
-            0.5 * (hop(0, 1) + hop(1, 0)) +
-            1.5 * (hop(1, 2) + hop(2, 1)) +
-            0.5 * (hop(2, 3) + hop(3, 2)) +
-            1.5 * (hop(3, 4) + hop(4, 3)) +
-            0.5 * (hop(4, 5) + hop(5, 4))
+            v * (hop(0, 1) + hop(1, 0)) +
+            w * (hop(1, 2) + hop(2, 1)) +
+            v * (hop(2, 3) + hop(3, 2)) +
+            w * (hop(3, 4) + hop(4, 3)) +
+            v * (hop(4, 5) + hop(5, 4))
         return Hssh
     }
 }

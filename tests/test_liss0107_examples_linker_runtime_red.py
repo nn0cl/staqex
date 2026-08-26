@@ -74,8 +74,8 @@ def test_linked_operator_factory_result_is_resolved_at_runtime() -> None:
     """Library fn ``return Coin`` must lower to a closed OpExpr in the caller."""
     lib_body = """
 pub fn make_op() -> Operator {
-    Operator Coin = (X + Z) * inv_sqrt2
-    return Coin
+    Operator CoinOp = (X + Z) * inv_sqrt2
+    return CoinOp
 }
 """
     main = """
@@ -86,8 +86,8 @@ import com.staqex.tests.liss0107.coinlib
 pub fn main() -> Unit {
     Operator k = make_op()
     State<Qubit> c = |+>
-    state c2 = apply(k, c)
-    measure c2
+    State c2 = apply(k, c)
+    Measure c2
 }
 """
     with tempfile.TemporaryDirectory() as td:
@@ -105,7 +105,7 @@ def test_linked_hamiltonian_factory_op_space_terminates() -> None:
     """Returned Hamiltonian locals must not leave self-referential ``op_env``."""
     lib_body = """
 pub fn build_h() -> Operator {
-    Operator H = hop(0, 1) + hop(1, 0)
+    Operator H = 1.0545718e-19 * (hop(0, 1) + hop(1, 0))
     return H
 }
 """
@@ -116,9 +116,9 @@ import com.staqex.tests.liss0107.hoplib
 
 pub fn main() -> Unit {
     Operator H = build_h()
-    State<Position> psi = dirac(0)
-    state psi = evolve psi under H for 0.1
-    measure psi
+    State<Position> psi = Dirac(0)
+    State psi = Evolve { psi under H for 0.1.fs }.run()
+    Measure psi
 }
 """
     with tempfile.TemporaryDirectory() as td:

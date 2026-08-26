@@ -27,11 +27,11 @@ def test_qubit_register_is_a_type_level_static_shape() -> None:
         package t
         pub fn main() -> Unit {
             QubitRegister<3> reg = system()
-            forEach q in reg {
+            ForEach q in reg {
                 apply(H, q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -46,11 +46,11 @@ def test_param_angle_is_allowed_only_as_a_gate_argument() -> None:
         pub fn main() -> Unit {
             QubitRegister<1> reg = system()
             Param<Angle> theta = parameter("theta")
-            forEach q in reg {
+            ForEach q in reg {
                 apply(Rz(theta), q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -64,11 +64,11 @@ def test_param_cannot_control_static_register_shape() -> None:
         package t
         pub fn main() -> Unit {
             Param<Int> n = parameter("n")
-            forEach q in register(n) {
+            ForEach q in register(n) {
                 apply(H, q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -82,12 +82,12 @@ def test_dynamic_lane_requires_explicit_capability_and_mid_measurement_rule() ->
         package t
         pub fn main() -> Unit {
             dynamic qpu {
-                State<Int> flag = coin()
-                measure flag
+                State<Int> flag = Coin()
+                Measure flag
                 apply(X, flag)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -101,11 +101,11 @@ def test_dynamic_lane_does_not_fall_back_to_host_execution() -> None:
         package t
         pub fn main() -> Unit {
             dynamic qpu {
-                State<Int> flag = coin()
-                measure flag
+                State<Int> flag = Coin()
+                Measure flag
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

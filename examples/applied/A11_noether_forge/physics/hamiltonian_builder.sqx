@@ -1,93 +1,21 @@
-// Hamiltonian term tagging and builder policy (ownership docs).
-// Slice C entry still constructs a tiny Operator inline for run_source.
+// Sensor-array Hamiltonian: rotating-frame NV-center model.
+//
+// The real D~2.87GHz zero-field splitting (Doherty et al. 2013) defines
+// the qubit basis and is transformed away (standard rotating-frame
+// practice in magnetic-resonance simulation) -- only the physically
+// relevant smaller terms are evolved: a transverse (X) defect/strain
+// coupling on the stressed site, and real dipolar (ZZ) coupling between
+// neighboring sensors. See the README "Units and interpretation".
 
 package examples.applied.noether_forge.physics
 
+import .domain.couplings.{SensorCouplings}
+
 namespace Forge.Hamiltonian {
-    pub enum TermKind {
-        FieldZ,
-        DriveX,
-        BondZZ,
-        BondXX,
-        BondYY
+    pub fn build_sensor_hamiltonian(c: Forge.Couplings.SensorCouplings) -> Operator {
+        Operator H =
+            c.defect * X[1] +
+            c.dip * (Z[0] * Z[1]) + c.dip * (Z[1] * Z[2])
+        return H
     }
-
-    pub struct TermTag {
-        val kind: TermKind
-        val weight: Float
-    }
-
-    pub struct BuilderPlan {
-        val include_drive: Bool
-        val include_interaction: Bool
-    }
-
-    pub fn field_term(weight: Float) -> TermTag {
-        return TermTag(TermKind.FieldZ, weight)
-    }
-
-    pub fn drive_term(weight: Float) -> TermTag {
-        return TermTag(TermKind.DriveX, weight)
-    }
-
-    pub fn interaction_term(weight: Float) -> TermTag {
-        return TermTag(TermKind.BondZZ, weight)
-    }
-
-    pub fn xx_term(weight: Float) -> TermTag {
-        return TermTag(TermKind.BondXX, weight)
-    }
-
-    pub fn yy_term(weight: Float) -> TermTag {
-        return TermTag(TermKind.BondYY, weight)
-    }
-
-    pub fn review_plan() -> BuilderPlan {
-        return BuilderPlan(true, true)
-    }
-
-    pub fn is_field(tag: TermTag) -> Bool {
-        return tag.kind == TermKind.FieldZ
-    }
-
-    pub fn is_drive(tag: TermTag) -> Bool {
-        return tag.kind == TermKind.DriveX
-    }
-
-    pub fn is_bond(tag: TermTag) -> Bool {
-        return tag.kind == TermKind.BondZZ || tag.kind == TermKind.BondXX || tag.kind == TermKind.BondYY
-    }
-
-    pub fn scaled(tag: TermTag, factor: Float) -> TermTag {
-        return TermTag(tag.kind, tag.weight * factor)
-    }
-
-    pub fn review_local_weights() -> Float {
-        return 0.25
-    }
-
-    pub fn research_plan() -> BuilderPlan {
-        return BuilderPlan(true, true)
-    }
-
-    pub fn smoke_plan() -> BuilderPlan {
-        return BuilderPlan(true, false)
-    }
-
-    pub fn plan_includes_drive(plan: BuilderPlan) -> Bool {
-        return plan.include_drive
-    }
-
-    pub fn plan_includes_interaction(plan: BuilderPlan) -> Bool {
-        return plan.include_interaction
-    }
-
-    pub fn combine_weights(a: TermTag, b: TermTag) -> Float {
-        return a.weight + b.weight
-    }
-
-    pub fn same_kind(a: TermTag, b: TermTag) -> Bool {
-        return a.kind == b.kind
-    }
-
 }

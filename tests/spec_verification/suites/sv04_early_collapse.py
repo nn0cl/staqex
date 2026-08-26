@@ -1,4 +1,4 @@
-"""SV-04: Early Collapse — mid-measure rejected at compile gate."""
+"""SV-04: Early Collapse — mid-Measure rejected at compile gate."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ def run() -> list[CaseResult]:
             CaseResult(
                 "SV-04",
                 "sv04-early-collapse-bad",
-                "mid-measure → EARLY_COLLAPSE_ERROR",
+                "mid-Measure → EARLY_COLLAPSE_ERROR",
                 True,
                 ["assertCompileError(EARLY_COLLAPSE_ERROR)"],
             )
@@ -32,7 +32,7 @@ def run() -> list[CaseResult]:
             CaseResult(
                 "SV-04",
                 "sv04-early-collapse-bad",
-                "mid-measure → EARLY_COLLAPSE_ERROR",
+                "mid-Measure → EARLY_COLLAPSE_ERROR",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -44,12 +44,12 @@ def run() -> list[CaseResult]:
         diags = analyze_source(good)
         codes = [d["code"] for d in diags]
         if "EARLY_COLLAPSE_ERROR" in codes:
-            raise AssertionFailure("EARLY_COLLAPSE_ERROR", "false positive on terminal measure")
+            raise AssertionFailure("EARLY_COLLAPSE_ERROR", "false positive on terminal Measure")
         out.append(
             CaseResult(
                 "SV-04",
                 "sv04-early-collapse-ok",
-                "terminal measure accepted",
+                "terminal Measure accepted",
                 True,
                 ["assertCompileError(absent)"],
             )
@@ -59,7 +59,7 @@ def run() -> list[CaseResult]:
             CaseResult(
                 "SV-04",
                 "sv04-early-collapse-ok",
-                "terminal measure accepted",
+                "terminal Measure accepted",
                 False,
                 error_code=e.code,
                 message=str(e),

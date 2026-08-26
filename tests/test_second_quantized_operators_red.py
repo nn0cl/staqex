@@ -22,8 +22,8 @@ def test_typed_fermion_operator_family_is_distinct() -> None:
         package t
         pub fn main() -> Unit {
             FermionOperator<Orbitals> H = create[0] * annihilate[0]
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -39,8 +39,8 @@ def test_fermion_and_boson_families_cannot_be_mixed() -> None:
             FermionOperator<Orbitals> fermion = create[0]
             BosonOperator<Modes> boson = create[0]
             FermionOperator<Orbitals> invalid = fermion + boson
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -55,8 +55,8 @@ def test_mapping_to_qubit_operator_is_explicit() -> None:
         pub fn main() -> Unit {
             FermionOperator<Orbitals> H = create[0] * annihilate[0]
             QubitOperator<Qubits> mapped = map(H, JordanWigner)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -69,9 +69,9 @@ def test_second_quantized_operations_do_not_measure() -> None:
         """
         package t
         pub fn main() -> Unit {
-            FermionOperator<Orbitals> invalid = create(measure(|0>))
-            State<Int> observed = coin()
-            measure observed
+            FermionOperator<Orbitals> invalid = create(Measure(|0>))
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -85,8 +85,8 @@ def test_fermion_canonical_order_records_exchange_sign() -> None:
         package t
         pub fn main() -> Unit {
             FermionOperator<Orbitals> H = create[1] * create[0]
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -103,8 +103,8 @@ def test_boson_order_does_not_introduce_fermion_sign() -> None:
         package t
         pub fn main() -> Unit {
             BosonOperator<Modes> H = create[1] * create[0]
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -119,8 +119,8 @@ def test_mapping_name_is_recorded_in_symbolic_ir() -> None:
         pub fn main() -> Unit {
             FermionOperator<Orbitals> H = create[0] * annihilate[0]
             QubitOperator<Qubits> mapped = map(H, JordanWigner)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

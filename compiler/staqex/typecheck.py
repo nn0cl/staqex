@@ -30,6 +30,7 @@ from .ast_nodes import (
     Inspect,
     BraLit,
     KetLit,
+    KetSumBinder,
     Lambda,
     ListExpr,
     LitBool,
@@ -38,16 +39,21 @@ from .ast_nodes import (
     LitString,
     MeasureExpr,
     Measure,
+    NormExpr,
+    SetComprehension,
     OpBinder,
     OpCall,
+    OpAttr,
     OpIndexed,
     OpLit,
+    OpNumber,
     OpExpr,
     OpBin,
     OpVar,
     Pipe,
     ReturnStmt,
     RevDomain,
+    SetPowerDomain,
     Snapshot,
     StateBind,
     StructDecl,
@@ -60,6 +66,7 @@ from .ast_nodes import (
     Vacuum,
     Var,
     WhenExpr,
+    SuperposeExpr,
 )
 from .dimensions import (
     DIMLESS,
@@ -106,6 +113,12 @@ class Ty:
             base = f"POVM<{self.payload}>"
         elif self.kind in {"Meta", "Execution", "Discrete"}:
             return self.payload
+        elif self.kind == "DiagnosticView":
+            base = f"DiagnosticView<{self.payload}>"
+        elif self.kind == "Continuous":
+            base = f"Continuous<{self.payload}>"
+        elif self.kind == "Domain":
+            base = f"Domain<{self.payload}>"
         elif self.dim.is_dimensionless():
             base = f"State<{self.payload}>"
         else:
@@ -117,6 +130,14 @@ class Ty:
 
 ARITH = {"+", "-", "*", "/"}
 TRIG_AND_TRANS = frozenset({"sin", "cos", "tan", "exp", "log", "cis"})
+# ADR 0204 / LISS-0399: the only Call forms a Continuous value may ever
+# flow into (Decision 1 hard gate) -- field_from_host never takes a
+# Continuous arg itself but is listed for clarity; weight/mask/finiteize
+# are LISS-0400/0401 surfaces, named here ahead of their own Issues so
+# this gate does not need to be revisited when they ship.
+_CONTINUOUS_COMPATIBLE_OPS = frozenset(
+    {"field_from_host", "weight", "mask", "finiteize"}
+)
 
 
 @dataclass
@@ -149,7 +170,13 @@ class TypeChecker:
         self._active_register_set: str | None = None
         self.has_entry_main: bool = False
         self.float_arrays: dict[str, tuple[int, ...]] = {}  # name → shape (LISS-0143/0144)
+        self.bool_arrays: dict[str, tuple[int, ...]] = {}  # name → shape (LISS-0432)
         self._binder_depth: int = 0
+        # name → value for classical scalar binds resolvable at typecheck time
+        # (LISS-0371); mirrors the runtime `scalars` dict trotter.py builds,
+        # but populated statically so checks like `_check_suzuki_policy` can
+        # accept a named constant, not just a bare literal.
+        self.static_scalars: dict[str, float] = {}
 
     _SEMANTIC_CARRIERS = {
         "Dimension",
@@ -176,6 +203,7 @@ class TypeChecker:
 
         for name in PRELUDE_CONSTANTS:
             self.env[name] = Ty("Classical", "Float", DIMLESS)
+            self.static_scalars[name] = float(PRELUDE_CONSTANTS[name])
 
         for declaration in unit.decls:
             if isinstance(declaration, DiscretizationBridgeDecl):
@@ -360,6 +388,28 @@ class TypeChecker:
                             self._check_operator_expr(stmt.expr)
                         finally:
                             self._active_register_set = previous_register_set
+                    # Preserve the physical dimension carried by an explicit
+                    # Operator expression (for example `scale * X`).  The
+                    # operator's identifier is not a type annotation: a name
+                    # such as `H` must not be treated as a Hamiltonian by
+                    # convention.
+                    inferred_value = (
+                        self._infer_operator_value(stmt.expr)
+                        if isinstance(stmt.expr, OpExpr)
+                        else self._infer(stmt.expr)
+                        if not isinstance(stmt.expr, Call)
+                        else declared_operator
+                    )
+                    if (
+                        inferred_value.kind == "Operator"
+                        and not stmt.ty.args
+                    ):
+                        declared_operator = Ty(
+                            "Operator",
+                            declared_operator.payload,
+                            inferred_value.dim,
+                            unit=inferred_value.unit,
+                        )
                     for n in stmt.names:
                         self.env[n] = declared_operator
                     continue
@@ -370,6 +420,18 @@ class TypeChecker:
                     and len(stmt.ty.args) >= 1
                 ):
                     self._check_float_array_bind(stmt)
+                    continue
+                # LISS-0432: `Bool[N][M]…` Host-bound coefficient array
+                # (e.g. `Bool[8][8] C = host("pairwise_compatible")`) --
+                # narrower than `Float[N]…`'s literal/partial-index forms
+                # since the confirmed S02 step 2 design only ever sources a
+                # Bool array from Host.
+                if (
+                    stmt.ty is not None
+                    and stmt.ty.name == "Bool"
+                    and len(stmt.ty.args) >= 1
+                ):
+                    self._check_bool_array_bind(stmt)
                     continue
                 # Enum / struct / class object binds
                 if stmt.ty is not None:
@@ -385,6 +447,14 @@ class TypeChecker:
                             self.env[n] = Ty("Operator", family, DIMLESS)
                         continue
                     if tname == "Host":
+                        # ADR 0189: tomography is a Host/protocol operation.
+                        # Inspect it before the generic Host-in-Kernel guard so
+                        # it cannot fall through as an implicit State call.
+                        if (
+                            isinstance(stmt.expr, Call)
+                            and _call_op_name(stmt.expr) == "tomography"
+                        ):
+                            self._infer(stmt.expr)
                         self.diagnostics.append(
                             {
                                 "code": "HOST_TYPE_IN_KERNEL_ERROR",
@@ -484,6 +554,30 @@ class TypeChecker:
                             kind = "Struct" if tname in struct_names else "Object"
                             self.env[n] = Ty(kind, tname, DIMLESS)
                         continue
+                    if tname == "Continuous":
+                        # ADR 0204 / LISS-0399: Continuous<Field> Host-backed
+                        # opaque carrier -- never Joint-compatible. Hard gates
+                        # against measure/evolve/gate-Call use live elsewhere
+                        # in this loop and in `_infer_evolve` / `_infer`.
+                        self._infer(stmt.expr)
+                        payload = (
+                            stmt.ty.args[0].name if stmt.ty.args else "Field"
+                        )
+                        for n in stmt.names:
+                            self.env[n] = Ty("Continuous", payload, DIMLESS)
+                        continue
+                    if tname == "Controller":
+                        # ADR 0197 / LISS-0382: Controller bind from `measure`
+                        # is mid-circuit only inside `dynamic qpu`. Outside the
+                        # lane, MeasureExpr must emit EARLY_COLLAPSE_ERROR via
+                        # `_infer`. Do not take the capitalized-Object shortcut.
+                        self._infer(stmt.expr)
+                        carrier = (
+                            stmt.ty.args[0].name if stmt.ty.args else "Bit"
+                        )
+                        for n in stmt.names:
+                            self.env[n] = Ty("Controller", carrier, DIMLESS)
+                        continue
                     if tname in self.interface_names:
                         self._infer(stmt.expr)
                         for n in stmt.names:
@@ -542,7 +636,12 @@ class TypeChecker:
                         self._check_assign(
                             declared, inferred, stmt.span.line, stmt.span.col
                         )
-                        ty = declared
+                        # LISS-0418: bare `State x = evolve …` (no `<T>`)
+                        # must not mask `inferred`'s real kind (e.g.
+                        # Continuous on an invalid seed) behind the
+                        # declared placeholder -- see the identical fix a
+                        # few lines below in the general single-name path.
+                        ty = inferred if declared.payload == "Any" else declared
                     else:
                         ty = inferred
                     for n in stmt.names:
@@ -613,8 +712,18 @@ class TypeChecker:
                         self._check_payload_assign(
                             declared, inferred, stmt.span.line, stmt.span.col
                         )
+                    # LISS-0418: bare `State x = e` (Type-First, no `<T>`)
+                    # declares no more specific information than full
+                    # inference already provides -- storing the coarse
+                    # `Ty("State", "Any", ...)` here instead of `inferred`
+                    # was losing precise info (e.g. a Partial's own arity)
+                    # that a later use of `x` needs, a gap that went
+                    # unexercised before lowercase `state` (always
+                    # `inferred`-preserving) was retired in its favor.
+                    if declared.payload == "Any" and declared.kind == "State":
+                        ty = inferred
                     # ADR 0154: preserve known unit suffix through Type-First binds.
-                    if inferred.unit is not None:
+                    elif inferred.unit is not None:
                         ty = Ty(
                             declared.kind,
                             declared.payload,
@@ -632,13 +741,31 @@ class TypeChecker:
                             self._fill_bind_ty(stmt, filled)
                 for n in stmt.names:
                     self.env[n] = ty
+                    if ty.kind == "Classical" and len(stmt.names) == 1:
+                        static_val = self._static_scalar_value(stmt.expr)
+                        if static_val is not None:
+                            self.static_scalars[n] = static_val
                     # ADR 0180: inferred classical/Operator/object binds are not State.
                     # `state` keyword and State-kind still require NLTS discipline.
-                    if stmt.via_state_keyword or ty.kind == "State":
+                    # LISS-0418: a bare `State x = e` declaration (Type-First,
+                    # no `<T>`) must also require NLTS discipline even though
+                    # `ty` now stores the precise `inferred` kind (which may
+                    # legitimately be non-"State", e.g. Continuous on a bad
+                    # seed) -- gating on `ty.kind == "State"` alone would skip
+                    # `_assert_is_state` (and its TYPE_NOT_STATE diagnostic)
+                    # exactly when it is most needed.
+                    bare_state_decl = (
+                        stmt.ty is not None
+                        and stmt.ty.name == "State"
+                        and not stmt.ty.args
+                    )
+                    if stmt.via_state_keyword or bare_state_decl or ty.kind == "State":
                         self._assert_is_state(ty, stmt.span.line, stmt.span.col, n)
             elif isinstance(stmt, (Measure, Snapshot)):
                 ty = self._infer(stmt.expr)
-                self._assert_is_state(ty, stmt.span.line, stmt.span.col, "measure/snapshot")
+                self._assert_is_state(
+                    ty, stmt.span.line, stmt.span.col, "measure/snapshot"
+                )
                 self._check_unsupported_qudit_runtime_ty(
                     ty, stmt.span.line, stmt.span.col, allow_mvp_d3=True
                 )
@@ -1153,6 +1280,15 @@ class TypeChecker:
             return
         if inferred.payload in {"Any", declared.payload}:
             return
+        # LISS-0418: a bare `State x = …` (Type-First, no `<T>`) declares
+        # Ty("State", "Any", ...) -- "Any" must tolerate every payload, the
+        # same way the un-annotated `name = …` inferred-bind form always
+        # did (no declared type to compare against at all). Previously this
+        # gap (e.g. Bool) went unexercised because almost no shipped source
+        # used bare `State` before lowercase `state` was retired in favor
+        # of it.
+        if declared.payload == "Any":
+            return
         if declared.payload in {"Any", "Int"} and inferred.payload in {
             "Int",
             "Qubit",
@@ -1435,7 +1571,22 @@ class TypeChecker:
                             "message": f"execution carrier `{domain_ty}` cannot be a theory domain",
                         }
                     )
-                elif domain_ty.kind not in {"Meta", "Discrete"}:
+                elif domain_ty.kind not in {"Meta", "Discrete"} and not (
+                    # LISS-0430: `Sigma (x In F)` where F is a `Set`
+                    # comprehension value (LISS-0429) -- a genuinely
+                    # finite, enumerable domain, just not the pre-existing
+                    # Index/Basis-shaped one this check was written for.
+                    # `F`'s own declared-type inference lands on
+                    # `Ty("State", "Set", ...)` (the generic Type-First
+                    # fallback for an unrecognized type head wraps
+                    # `_infer`'s payload in State kind, confirmed by
+                    # reading `checker.env` directly, not assumed) rather
+                    # than the `Ty("Classical", "Set", ...)`
+                    # `_infer_inner`'s own `SetComprehension` case returns
+                    # -- checking `payload == "Set"` alone is the
+                    # reliable signal.
+                    domain_ty.payload == "Set"
+                ):
                     self.diagnostics.append(
                         {
                             "code": "BINDER_DOMAIN_ERROR",
@@ -1560,7 +1711,7 @@ class TypeChecker:
                         ),
                     }
                 )
-            if expr.name in {"measure", "log", "write", "send"}:
+            if expr.name in {"Measure", "log", "write", "send"}:
                 self.diagnostics.append(
                     {
                         "code": "MATHEMATICAL_BINDER_EFFECT_ERROR",
@@ -1780,6 +1931,71 @@ class TypeChecker:
             self.env[n] = Ty("Classical", f"Float{label}", DIMLESS)
             self.float_arrays[n] = shape_t
 
+    def _check_bool_array_bind(self, stmt: StateBind) -> None:
+        """LISS-0432: `Bool[N]… name = host("…")` -- a Host-bound Bool
+        coefficient array (e.g. the confirmed S02 step 2 design's
+        `Bool[8][8] C = host("pairwise_compatible")`). Deliberately
+        narrower than `_check_float_array_bind`: only the `host("…")` RHS
+        is supported (no literal Bool-tensor list, no static partial
+        index) since no confirmed design needs either yet -- adding them
+        speculatively would be unused surface, not a real requirement."""
+        assert stmt.ty is not None
+        shape: list[int] = []
+        for arg in stmt.ty.args:
+            try:
+                dim = int(arg.name)
+            except ValueError:
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": stmt.span.line,
+                        "col": stmt.span.col,
+                        "message": "`Bool[N]…` requires positive integer lengths",
+                    }
+                )
+                return
+            if dim <= 0:
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": stmt.span.line,
+                        "col": stmt.span.col,
+                        "message": "`Bool[N]…` lengths must be positive",
+                    }
+                )
+                return
+            shape.append(dim)
+        shape_t = tuple(shape)
+        product = 1
+        for dim in shape_t:
+            product *= dim
+            if product > 1_000_000:
+                self.diagnostics.append(
+                    {
+                        "code": "BINDER_RESOURCE_ERROR",
+                        "line": stmt.span.line,
+                        "col": stmt.span.col,
+                        "message": (
+                            "`Bool[N]…` element count exceeds the Kernel resource budget"
+                        ),
+                    }
+                )
+                return
+        if not self._is_host_coefficient_call(stmt.expr):
+            self.diagnostics.append(
+                {
+                    "code": "TYPE_MISMATCH",
+                    "line": stmt.span.line,
+                    "col": stmt.span.col,
+                    "message": "`Bool[N]…` requires a `host(\"…\")` source",
+                }
+            )
+            return
+        label = "".join(f"[{d}]" for d in shape_t)
+        for n in stmt.names:
+            self.env[n] = Ty("Classical", f"Bool{label}", DIMLESS)
+            self.bool_arrays[n] = shape_t
+
     @staticmethod
     def _is_host_coefficient_call(expr: Any) -> bool:
         return (
@@ -1997,8 +2213,10 @@ class TypeChecker:
             "commutator",
             "anticommutator",
         }:
-            self._infer(expr)
-            return Ty("State", "Any", DIMLESS)
+            # `_infer` is the authoritative path for generic operator calls
+            # such as `exp` and `Limit`; return its result so callers do not
+            # infer the same call twice (and duplicate its diagnostics).
+            return self._infer(expr)
         args = [self._infer(arg) for arg in expr.args]
         kinds = [self._operator_value_kind(arg) for arg in expr.args]
         if name == "adjoint" and (len(args) != 1 or kinds[0] != "Operator"):
@@ -2059,11 +2277,25 @@ class TypeChecker:
         if not isinstance(applied, Call) or len(applied.args) != 1:
             return
         callee = applied.callee
-        if not isinstance(callee, Var):
+        ty: Ty | None
+        if isinstance(callee, Var):
+            if callee.name in _PAULI_ATOM_NAMES:
+                return
+            ty = self.env.get(callee.name)
+        elif isinstance(callee, Attr) and isinstance(callee.obj, Var):
+            # LISS-0374: a class-method middle (`b.getPsi`) must be
+            # checked the same way a plain-name middle already is --
+            # resolve the method's declared return type through the
+            # same fun_returns table method-call inference already uses
+            # elsewhere, instead of silently skipping any non-Var callee.
+            receiver_ty = self.env.get(callee.obj.name)
+            ty = None
+            if receiver_ty is not None and receiver_ty.kind in {"Object", "Struct"}:
+                entry = self.fun_returns.get(f"{receiver_ty.payload}.{callee.name}")
+                if entry is not None:
+                    ty = entry[1]
+        else:
             return
-        if callee.name in _PAULI_ATOM_NAMES:
-            return
-        ty = self.env.get(callee.name)
         if ty is not None and ty.kind != "Operator":
             self._operator_algebra_error(
                 expr,
@@ -2229,7 +2461,7 @@ class TypeChecker:
         return Ty("State", payload, dim)
 
     def _check_when_enum_exhaustive(self, expr: WhenExpr, ctrl_ty: Ty) -> None:
-        """Hard-fail incomplete closed-enum `when` without `else` (LISS-0304)."""
+        """Hard-fail incomplete closed-enum `mix` without `else` (LISS-0304)."""
         if any(arm.is_else for arm in expr.arms):
             return
         enum_key: str | None = None
@@ -2260,7 +2492,7 @@ class TypeChecker:
                 "line": expr.span.line,
                 "col": expr.span.col,
                 "message": (
-                    f"`when` on enum `{enum_key}` is missing variant(s) "
+                    f"`mix` on enum `{enum_key}` is missing variant(s) "
                     f"{', '.join(missing)}; cover every variant or add `else`"
                 ),
             }
@@ -2355,6 +2587,7 @@ class TypeChecker:
             "Enum",
             "Struct",
             "Partial",
+            "DiagnosticView",
         }:
             self.diagnostics.append(
                 {
@@ -2459,7 +2692,9 @@ class TypeChecker:
         previous_env = self.env
         previous_class = self._in_class
         previous_effects = self._current_effects
+        previous_static_scalars = self.static_scalars
         self.env = dict(base_env)
+        self.static_scalars = dict(previous_static_scalars)
         self._in_class = cls.qualified_name if cls is not None else None
         self._current_effects = self._effect_context(fun)
         for param in fun.params:
@@ -2489,9 +2724,22 @@ class TypeChecker:
             elif isinstance(stmt, StateBind):
                 if stmt.ty is not None and stmt.ty.name == "Operator":
                     # Operator locals must remain visible to later return
-                    # expressions so their declared type can be checked.
+                    # expressions, while retaining any physical coefficient
+                    # dimension inferred from their operator AST. Treating
+                    # every declared local as dimensionless loses Energy
+                    # through helper functions such as `build_hamiltonian`.
+                    inferred_operator = (
+                        self._infer_operator_value(stmt.expr)
+                        if isinstance(stmt.expr, OpExpr)
+                        else self._infer(stmt.expr)
+                    )
+                    ty = (
+                        inferred_operator
+                        if inferred_operator.kind == "Operator"
+                        else self._ty_from_ref(stmt.ty)
+                    )
                     for name in stmt.names:
-                        self.env[name] = self._ty_from_ref(stmt.ty)
+                        self.env[name] = ty
                     continue
                 inferred = self._infer(stmt.expr)
                 ty = inferred
@@ -2500,6 +2748,10 @@ class TypeChecker:
                     self._check_assign(ty, inferred, stmt.span.line, stmt.span.col)
                 for name in stmt.names:
                     self.env[name] = ty
+                    if ty.kind == "Classical" and len(stmt.names) == 1:
+                        static_val = self._static_scalar_value(stmt.expr)
+                        if static_val is not None:
+                            self.static_scalars[name] = static_val
 
         return_stmt = next(
             (stmt for stmt in fun.body.stmts if isinstance(stmt, ReturnStmt)),
@@ -2525,8 +2777,21 @@ class TypeChecker:
                 }
             )
         elif return_stmt is not None:
-            inferred = self._infer(return_stmt.expr)
             declared = self._ty_from_ref(fun.return_type)  # type: ignore[arg-type]
+            inferred = (
+                self._infer_operator_value(return_stmt.expr)
+                if declared.kind == "Operator"
+                and isinstance(return_stmt.expr, OpExpr)
+                else self._infer(return_stmt.expr)
+            )
+            if declared.kind == "Operator" and inferred.kind == "Operator":
+                # `Operator` is a domain declaration, not a dimensionless
+                # scalar declaration. Preserve the inferred coefficient
+                # dimension for later callers (notably an explicit
+                # `exp(-i * H * t / hbar)` in the caller).
+                updated = (fun, inferred)
+                self.fun_returns[fun.name] = updated
+                self.fun_returns[fun.qualified_name] = updated
             # LISS-0133: numeric literals infer as State<Float>; Classical return
             # heads (ADR 0114 elaboration coefficients) accept them.
             if (
@@ -2571,7 +2836,10 @@ class TypeChecker:
                             "message": f"`{fun.name}` returns {inferred}, declared {declared}",
                         }
                     )
-            if not declared.dim.matches(inferred.dim):
+            if (
+                declared.kind != "Operator"
+                and not declared.dim.matches(inferred.dim)
+            ):
                 self._dim_error(
                     return_stmt.span.line,
                     return_stmt.span.col,
@@ -2583,6 +2851,7 @@ class TypeChecker:
         self.env = previous_env
         self._in_class = previous_class
         self._current_effects = previous_effects
+        self.static_scalars = previous_static_scalars
 
     def _effect_context(self, fun: FunDecl) -> frozenset[str]:
         """Return the capabilities available while checking one function."""
@@ -2720,6 +2989,36 @@ class TypeChecker:
             return Ty("State", "Coin", DIMLESS)
         if isinstance(expr, Vacuum):
             return Ty("State", "Any", DIMLESS)
+        if isinstance(expr, SetPowerDomain):
+            # LISS-0417: reserved ahead of its consumer (LISS-0420's
+            # Sigma/Pi binder domain) -- width must be a dimensionless
+            # classical Int/Float; no runtime evaluation path exists yet.
+            width_ty = self._infer(expr.width)
+            if not width_ty.dim.is_dimensionless():
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "`{...}^n` width must be dimensionless",
+                    }
+                )
+            labels = ",".join(str(v) for v in expr.labels)
+            return Ty("Domain", f"BitTuple<{{{labels}}}>", DIMLESS)
+        if isinstance(expr, KetSumBinder):
+            # LISS-0420: `Sigma (x In {0,1}^n) { |x> }` -- a State-typed
+            # ket-sum, structurally identical to `prepare_selection(n)`.
+            width_ty = self._infer(expr.domain.width)
+            if not width_ty.dim.is_dimensionless():
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Sigma ket-sum domain width must be dimensionless",
+                    }
+                )
+            return Ty("State", "Any", DIMLESS)
         if isinstance(expr, Dirac):
             inner = self._infer(expr.arg)
             return Ty("State", inner.payload, inner.dim)
@@ -2728,7 +3027,16 @@ class TypeChecker:
             # adjoint lowering is deferred to later LISS-0073 slices.
             return Ty("State", "Qubit", DIMLESS)
         if isinstance(expr, Var):
-            return self.env.get(expr.name, Ty("State", "Any", DIMLESS))
+            if expr.name == "i":
+                return Ty("Classical", "ComplexUnit", DIMLESS)
+            if expr.name == "hbar":
+                return Ty(
+                    "Classical",
+                    "Action",
+                    TYPE_DIMS["Energy"].mul(TYPE_DIMS["Time"]),
+                )
+            ty = self.env.get(expr.name, Ty("State", "Any", DIMLESS))
+            return ty
         if isinstance(expr, MeasureExpr):
             self.diagnostics.append(
                 {
@@ -2750,14 +3058,14 @@ class TypeChecker:
                         "line": expr.span.line,
                         "col": expr.span.col,
                         "message": (
-                            "`when` control must be a quantum/probabilistic state, "
+                            "`mix` control must be a quantum/probabilistic state, "
                             "not an elaboration coefficient (classical Type-First "
                             "quantity). Keep couplings in Operator formulas; put "
                             "classical iteration in Host/Outer (ADR 0114)."
                         ),
                     }
                 )
-            # LISS-0304: closed enum `when` without `else` must list every variant
+            # LISS-0304: closed enum `mix` without `else` must list every variant
             # (incomplete arms currently sample vacuum — fail closed).
             self._check_when_enum_exhaustive(expr, ctrl_ty)
             payloads: list[str] = []
@@ -2776,6 +3084,31 @@ class TypeChecker:
                     # when arms must share dimension
                     self._dim_error(
                         expr.span.line, expr.span.col, dim, dims[i], "when-arm"
+                    )
+            return Ty("State", payload, dim)
+        if isinstance(expr, SuperposeExpr):
+            # LISS-0320: distinct coherent lane. Arm-type unification mirrors
+            # `WhenExpr`'s State<T> rule; exhaustiveness/coefficient-control
+            # checks are deliberately not replicated here — they govern
+            # `mix`'s vacuum-sampling execution policy, which does not apply
+            # since `superpose` execution is a separate, later slice (it
+            # always fails closed at evaluation for now).
+            self._infer(expr.ctrl)
+            payloads = []
+            dims = []
+            for arm in expr.arms:
+                t = self._infer(arm.body)
+                payloads.append(t.payload)
+                dims.append(t.dim)
+            payload = payloads[0] if payloads else "Any"
+            dim = dims[0] if dims else DIMLESS
+            for i in range(1, len(payloads)):
+                payload = _promote(payload, payloads[i])
+                if not dim.matches(dims[i]) and not (
+                    dim.is_dimensionless() and dims[i].is_dimensionless()
+                ):
+                    self._dim_error(
+                        expr.span.line, expr.span.col, dim, dims[i], "superpose-arm"
                     )
             return Ty("State", payload, dim)
         if isinstance(expr, Call):
@@ -2800,7 +3133,10 @@ class TypeChecker:
             )
             return Ty("State", "Any", DIMLESS)
         if isinstance(expr, Inspect):
-            return self._infer(expr.expr)
+            self._infer(expr.expr)
+            # ADR 0189: inspection is a non-destructive diagnostic view, not
+            # a State value that can cross the terminal measurement boundary.
+            return Ty("DiagnosticView", "Any", DIMLESS)
         if isinstance(expr, TupleExpr):
             for it in expr.items:
                 self._infer(it)
@@ -2830,6 +3166,28 @@ class TypeChecker:
         if isinstance(expr, UnaryNot):
             # Open-control marker; carrier follows inner wire
             return self._infer(expr.expr)
+        if isinstance(expr, NormExpr):
+            # LISS-0426: ||state_expr|| is a classical Float, matching
+            # $\lVert\cdot\rVert$ -- not a State (the fallback below would
+            # wrongly type it State<Any>, since it has no dedicated case).
+            inner = self._infer(expr.state)
+            if inner.kind != "State":
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": (
+                            f"`||...||` requires a State expression, got `{inner}`"
+                        ),
+                    }
+                )
+            return Ty("Classical", "Float", DIMLESS)
+        if isinstance(expr, SetComprehension):
+            # LISS-0429: `Set F = { x In D : cond1, cond2, ... }` is a
+            # classical domain value, not a State -- consumed by
+            # `Sigma (x In F) { ... }` (LISS-0430).
+            return Ty("Classical", "Set", DIMLESS)
         return Ty("State", "Any", DIMLESS)
 
     def _infer_pipe(self, expr: Pipe) -> Ty:
@@ -3151,10 +3509,118 @@ class TypeChecker:
         )
         return inner
 
+    def _infer_operator_value(self, expr: OpExpr) -> Ty:
+        """Infer the physical coefficient dimension of an Operator AST."""
+        if isinstance(expr, OpVar):
+            ty = self.env.get(expr.name)
+            if ty is not None and ty.kind == "Classical":
+                return Ty("Operator", "Hamiltonian", ty.dim, unit=ty.unit)
+            if ty is not None and ty.kind == "Operator":
+                return ty
+            return Ty("Operator", "Hamiltonian", DIMLESS)
+        if isinstance(expr, OpAttr):
+            # Operator syntax keeps coefficient field access as OpAttr rather
+            # than the value-expression Attr node. Preserve a dimensioned
+            # struct field (for example `p.J: Energy`) when that field scales
+            # a Pauli/operator tree; otherwise a function-returned
+            # Hamiltonian is silently reclassified as dimensionless and an
+            # explicit `exp(-i * H * t / hbar)` is rejected later.
+            if isinstance(expr.obj, OpVar):
+                obj_ty = self.env.get(expr.obj.name)
+                if obj_ty is not None:
+                    struct = self.struct_meta.get(obj_ty.payload)
+                    if struct is not None:
+                        field = next(
+                            (f for f in struct.fields if f.name == expr.name),
+                            None,
+                        )
+                        if field is not None:
+                            field_ty = self._ty_from_ref(field.ty)
+                            return Ty(
+                                "Operator",
+                                "Hamiltonian",
+                                field_ty.dim,
+                                unit=field_ty.unit,
+                            )
+            return Ty("Operator", "Hamiltonian", DIMLESS)
+        if isinstance(expr, OpBin):
+            left = self._infer_operator_value(expr.lhs)
+            right = self._infer_operator_value(expr.rhs)
+            if expr.op in {"+", "-"}:
+                if left.dim.is_dimensionless() and not right.dim.is_dimensionless():
+                    return Ty("Operator", right.payload, right.dim)
+                if right.dim.is_dimensionless() and not left.dim.is_dimensionless():
+                    return Ty("Operator", left.payload, left.dim)
+                return Ty("Operator", left.payload, left.dim)
+            if expr.op == "*":
+                return Ty("Operator", left.payload, left.dim.mul(right.dim))
+            if expr.op == "/":
+                return Ty("Operator", left.payload, left.dim.div(right.dim))
+        if isinstance(expr, (OpNumber, OpLit)):
+            return Ty("Operator", "Hamiltonian", DIMLESS)
+        return Ty("Operator", "Hamiltonian", DIMLESS)
+
     def _infer_binop(self, expr: BinOp) -> Ty:
+        if expr.op in {"*", "/"} and (
+            isinstance(expr.lhs, TensorExpr) or isinstance(expr.rhs, TensorExpr)
+        ):
+            tensor_side = expr.lhs if isinstance(expr.lhs, TensorExpr) else expr.rhs
+            if not getattr(tensor_side, "_explicitly_grouped", False):
+                self.diagnostics.append(
+                    {
+                        "code": "TENSOR_GROUPING_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": (
+                            "tensor product mixed with arithmetic requires explicit "
+                            "parentheses"
+                        ),
+                    }
+                )
         left = self._infer(expr.lhs)
         right = self._infer(expr.rhs)
+        # A bare numeric literal defaults to State-typed sugar (`pi / 2.0`),
+        # but combined with an otherwise-Classical operand it is classical
+        # arithmetic, not a genuine State mix. Reinterpret the literal side
+        # as Classical here, before any kind-based dispatch below, so the
+        # already-correct "Classical op Classical" logic (payload/dimension
+        # preservation, RELATIONAL -> Bool, &&/|| -> Bool) handles it
+        # uniformly -- previously this case hardcoded every operator's
+        # result to Classical<Float>, discarding the other operand's real
+        # payload and dimension entirely (e.g. `Energy e; e * 2.0` lost its
+        # Energy dimension), and bypassing RELATIONAL/&&/|| altogether.
+        if (
+            left.kind == "Classical"
+            and right.kind == "State"
+            and isinstance(expr.rhs, (LitInt, LitFloat))
+            and right.dim.is_dimensionless()
+        ):
+            right = Ty("Classical", right.payload, right.dim)
+        elif (
+            right.kind == "Classical"
+            and left.kind == "State"
+            and isinstance(expr.lhs, (LitInt, LitFloat))
+            and left.dim.is_dimensionless()
+        ):
+            left = Ty("Classical", left.payload, left.dim)
         if left.kind == "Operator" or right.kind == "Operator":
+            if left.kind == "Operator" and right.kind == "State" and expr.op == "*":
+                return Ty("State", right.payload, right.dim)
+            if right.kind == "Operator" and left.kind == "State" and expr.op == "*":
+                self.diagnostics.append(
+                    {
+                        "code": "OPERATOR_STATE_APPLICATION_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "state application requires `Operator * State`, not `State * Operator`",
+                    }
+                )
+                return Ty("State", left.payload, left.dim)
+            if left.kind == "Operator" and right.kind == "Classical" and expr.op in {"*", "/"}:
+                dim = left.dim.mul(right.dim) if expr.op == "*" else left.dim.div(right.dim)
+                return Ty("Operator", left.payload, dim)
+            if right.kind == "Operator" and left.kind == "Classical" and expr.op == "*":
+                return Ty("Operator", right.payload, left.dim.mul(right.dim))
             if left.kind != "Operator" or right.kind != "Operator":
                 self.diagnostics.append(
                     {
@@ -3195,15 +3661,10 @@ class TypeChecker:
         # Classical scalars (`expect`, prelude `pi`, …) must not mix into State wires
         if left.kind == "Classical" or right.kind == "Classical":
             if left.kind == "State" or right.kind == "State":
-                # Allow `pi / 2.0` / `2 * pi`: numeric literals are State-typed sugar
-                lit_side = expr.rhs if left.kind == "Classical" else expr.lhs
-                other = right if left.kind == "Classical" else left
-                if (
-                    isinstance(lit_side, (LitInt, LitFloat))
-                    and other.payload in {"Int", "Float", "Any"}
-                    and other.dim.is_dimensionless()
-                ):
-                    return Ty("Classical", "Float", DIMLESS)
+                # `pi / 2.0` / `2 * pi` with a bare dimensionless literal is
+                # already reinterpreted as Classical above, so this branch
+                # now only ever sees a genuine classical-scalar / quantum-
+                # State mix (a non-literal State expression).
                 # LISS-0133: Type-First classical quantities may scale State
                 # values via * / with dimensional algebra (Never Leave the State
                 # keeps the result as State — not a classical control island).
@@ -3248,23 +3709,83 @@ class TypeChecker:
                         ),
                     }
                 )
-            # Classical ⊕ Classical → classical quantity with dim algebra
+            # Classical ⊕ Classical → classical quantity with dim algebra.
+            # A physical-dimension payload (Energy/Time/...) wins over a
+            # bare numeric one and must survive the addition/subtraction
+            # (e.g. `Energy + Energy` must stay Energy, not collapse to
+            # the legacy bare-numeric "always promotes to Float" rule,
+            # which still applies when neither side carries a physical
+            # payload, e.g. `Int + Int`).
             if expr.op in {"+", "-"}:
                 if not left.dim.matches(right.dim):
                     self._dim_error(
                         expr.span.line, expr.span.col, left.dim, right.dim, expr.op
                     )
                 self._check_mixed_units(left, right, expr)
+                _bare_numeric = {"Int", "Float", "Bool", "String", "Any"}
+                if left.payload not in _bare_numeric:
+                    payload = left.payload
+                elif right.payload not in _bare_numeric:
+                    payload = right.payload
+                else:
+                    payload = "Float"
                 return Ty(
                     "Classical",
-                    "Float",
+                    payload,
                     left.dim,
                     unit=self._promoted_result_unit(left, right),
                 )
             if expr.op == "*":
-                return Ty("Classical", "Float", left.dim.mul(right.dim))
+                dim = left.dim.mul(right.dim)
+                payload = _payload_for_dim(dim, _promote(left.payload, right.payload))
+                return Ty("Classical", payload, dim)
             if expr.op == "/":
-                return Ty("Classical", "Float", left.dim.div(right.dim))
+                dim = left.dim.div(right.dim)
+                payload = _payload_for_dim(dim, _promote(left.payload, right.payload))
+                return Ty("Classical", payload, dim)
+            if expr.op == "^":
+                # LISS-0415: classical numeric power, dimensionless operands
+                # only -- a dimensioned base raised to a non-integer power is
+                # out of scope (the Sigma-binder coefficient use case this
+                # was added for is always dimensionless).
+                if not left.dim.is_dimensionless() or not right.dim.is_dimensionless():
+                    self.diagnostics.append(
+                        {
+                            "code": "TYPE_MISMATCH",
+                            "line": expr.span.line,
+                            "col": expr.span.col,
+                            "message": (
+                                "`^` requires dimensionless operands "
+                                f"(got `{left}` and `{right}`)"
+                            ),
+                        }
+                    )
+                return Ty("Classical", "Float", DIMLESS)
+            if expr.op in RELATIONAL:
+                if not left.dim.matches(right.dim):
+                    self._dim_error(
+                        expr.span.line, expr.span.col, left.dim, right.dim, expr.op
+                    )
+                self._check_mixed_units(left, right, expr)
+                return Ty("Classical", "Bool", DIMLESS)
+            if expr.op in {"&&", "||", "Implies"}:
+                # ADR 0196: total-pushforward Boolean combinators -- both
+                # operands must already be Bool, no implicit truthiness
+                # coercion from other classical types. LISS-0425: Implies
+                # (A => B) follows the same Bool-Bool -> Bool rule.
+                if left.payload != "Bool" or right.payload != "Bool":
+                    self.diagnostics.append(
+                        {
+                            "code": "TYPE_MISMATCH",
+                            "line": expr.span.line,
+                            "col": expr.span.col,
+                            "message": (
+                                f"`{expr.op}` requires two Bool operands, got "
+                                f"`{left.payload}` and `{right.payload}`"
+                            ),
+                        }
+                    )
+                return Ty("Classical", "Bool", DIMLESS)
             return Ty("Classical", "Float", DIMLESS)
         if expr.op in RELATIONAL:
             # Both sides must match; one-sided dimensionless bypass is banned
@@ -3273,6 +3794,24 @@ class TypeChecker:
                     expr.span.line, expr.span.col, left.dim, right.dim, expr.op
                 )
             self._check_mixed_units(left, right, expr)
+            return Ty("State", "Bool", DIMLESS)
+        if expr.op in {"&&", "||", "Implies"}:
+            # ADR 0196: total-pushforward Boolean combinators -- both
+            # operands must already be Bool, no implicit truthiness
+            # coercion from other State-carrier types. LISS-0425: Implies
+            # (A => B) follows the same Bool-Bool -> Bool rule.
+            if left.payload != "Bool" or right.payload != "Bool":
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": (
+                            f"`{expr.op}` requires two Bool operands, got "
+                            f"`{left.payload}` and `{right.payload}`"
+                        ),
+                    }
+                )
             return Ty("State", "Bool", DIMLESS)
         if expr.op in {"+", "-"}:
             if not left.dim.matches(right.dim):
@@ -3298,6 +3837,21 @@ class TypeChecker:
             dim = left.dim.div(right.dim)
             payload = _payload_for_dim(dim, _promote(left.payload, right.payload))
             return Ty("State", payload, dim)
+        if expr.op == "^":
+            # LISS-0415: classical numeric power, dimensionless operands only.
+            if not left.dim.is_dimensionless() or not right.dim.is_dimensionless():
+                self.diagnostics.append(
+                    {
+                        "code": "TYPE_MISMATCH",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": (
+                            "`^` requires dimensionless operands "
+                            f"(got `{left}` and `{right}`)"
+                        ),
+                    }
+                )
+            return Ty("State", "Float", DIMLESS)
         return Ty("State", "Any", DIMLESS)
 
     def _check_mixed_units(self, left: Ty, right: Ty, expr: BinOp) -> None:
@@ -3348,6 +3902,160 @@ class TypeChecker:
         # Math.sin(x) / sin(x) / cis(theta): argument must be dimensionless
         op_name = _call_op_name(expr)
         self._check_call_effects(expr)
+        if op_name == "Realize":
+            kwargs = dict(expr.kwargs or ())
+            allowed = {"source", "method", "order", "steps", "error_budget"}
+            unknown = sorted(set(kwargs) - allowed)
+            if unknown:
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_REALIZATION_POLICY_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "unknown Realize argument(s): " + ", ".join(unknown),
+                    }
+                )
+            method = kwargs.get("method")
+            method_value = method.value if isinstance(method, LitString) else None
+            required = {"source", "method", "steps", "error_budget"}
+            if method_value == "suzuki":
+                required.add("order")
+            missing = sorted(required - set(kwargs))
+            if missing:
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_REALIZATION_POLICY_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Realize requires: " + ", ".join(missing),
+                    }
+                )
+                return Ty("Operator", "Propagator", DIMLESS)
+            source_ty = self._infer(kwargs["source"])
+            if source_ty.kind != "Operator":
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_REALIZE_SOURCE_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Realize source must be an Operator",
+                    }
+                )
+            if not isinstance(method, LitString) or method.value not in {"product", "suzuki"}:
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_REALIZATION_POLICY_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Realize method must be `product` or `suzuki`",
+                    }
+                )
+            names = ("order", "steps") if method_value == "suzuki" else ("steps",)
+            for name in names:
+                value = kwargs[name]
+                if not isinstance(value, LitInt) or value.value <= 0:
+                    self.diagnostics.append(
+                        {
+                            "code": "EVOLUTION_REALIZATION_POLICY_ERROR",
+                            "line": expr.span.line,
+                            "col": expr.span.col,
+                            "message": f"Realize {name} must be a positive integer",
+                        }
+                    )
+            error_budget = kwargs["error_budget"]
+            if not isinstance(error_budget, (LitInt, LitFloat)) or error_budget.value <= 0:
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_REALIZATION_POLICY_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Realize error_budget must be positive",
+                    }
+                )
+            return Ty("Operator", "Propagator", DIMLESS)
+        if op_name == "Limit":
+            self.diagnostics.append(
+                {
+                    "code": "EVOLUTION_REALIZATION_REQUIRED",
+                    "line": expr.span.line,
+                    "col": expr.span.col,
+                    "message": "formal Limit is source-preserving but requires an explicit finite target realization",
+                }
+            )
+            return Ty("Operator", "Propagator", DIMLESS)
+        if op_name == "exp":
+            if len(expr.args) != 1:
+                self.diagnostics.append(
+                    {
+                        "code": "OPERATOR_EXP_DOMAIN_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "operator `exp` requires exactly one Operator exponent",
+                    }
+                )
+                return Ty("Operator", "Propagator", DIMLESS)
+            exponent = self._infer(expr.args[0])
+            if exponent.kind != "Operator":
+                self.diagnostics.append(
+                    {
+                        "code": "OPERATOR_EXP_DOMAIN_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "operator `exp` requires an Operator exponent",
+                    }
+                )
+            elif not exponent.dim.is_dimensionless():
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLUTION_DIMENSION_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": f"operator exponent must be dimensionless, got {exponent.dim}",
+                    }
+                )
+            return Ty("Operator", "Propagator", DIMLESS)
+        if (
+            op_name == "tomography"
+            and isinstance(expr.callee, Var)
+            and op_name not in self.fun_returns
+        ):
+            for arg in expr.args:
+                self._infer(arg)
+            self.diagnostics.append(
+                {
+                    "code": "OBSERVATION_CAPABILITY_UNSUPPORTED",
+                    "line": expr.span.line,
+                    "col": expr.span.col,
+                    "message": (
+                        "`tomography` is a Host observation protocol and is "
+                        "not executable in the Static Kernel lane"
+                    ),
+                }
+            )
+            return Ty("Host", "ObservationReport", DIMLESS)
+        if op_name == "tensor":
+            if len(expr.args) != 2:
+                self.diagnostics.append(
+                    {
+                        "code": "TENSOR_ARITY_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": (
+                            "tensor requires exactly two arguments; use explicit "
+                            "nesting for three or more factors"
+                        ),
+                    }
+                )
+                for arg in expr.args:
+                    self._infer(arg)
+                return Ty("State", "Any", DIMLESS)
+            left = self._infer(expr.args[0])
+            right = self._infer(expr.args[1])
+            return Ty(
+                "State",
+                product_payload([left.payload, right.payload]),
+                DIMLESS,
+            )
         if op_name in self.interface_names:
             self.diagnostics.append(
                 {
@@ -3434,6 +4142,19 @@ class TypeChecker:
             if isinstance(a, Hole):
                 continue
             at = self._infer(a)
+            if at.kind == "Continuous" and op_name not in _CONTINUOUS_COMPATIBLE_OPS:
+                self.diagnostics.append(
+                    {
+                        "code": "CONTINUOUS_ESCAPE_ERROR",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": (
+                            f"`{op_name}` cannot take a Continuous argument "
+                            "(Continuous values may only reach "
+                            "weight/mask/finiteize)"
+                        ),
+                    }
+                )
             if op_name in TRIG_AND_TRANS and not at.dim.is_dimensionless():
                 self.diagnostics.append(
                     {
@@ -3577,14 +4298,24 @@ class TypeChecker:
                 )
             if expr.args:
                 return self._infer(expr.args[0])
-        if op_name == "dirac" and expr.args:
+        if op_name == "Dirac" and expr.args:
             return self._infer(expr.args[0])
+        if op_name == "controlled":
+            # Coherent control is a state-preserving operation, distinct from
+            # the probabilistic `mix` composition surface.
+            for arg in expr.args:
+                self._infer(arg)
+            return Ty("State", "Any", DIMLESS)
         if op_name == "finiteize":
             # ADR 0185 Lane A: Host histogram → finite State (not Continuous)
             return Ty("State", "Any", DIMLESS)
         if op_name == "expect":
             # ⟨O⟩ is a classical scalar — not a quantum State coordinate
             return Ty("Classical", "Float", DIMLESS)
+        if op_name == "Inspect":
+            # ADR 0189: an inspection view is diagnostic, never a State or
+            # terminal measurement result.
+            return Ty("DiagnosticView", "Any", DIMLESS)
         if op_name == "occupation":
             # |⟨k|ψ⟩|² Born weight — classical Float
             return Ty("Classical", "Float", DIMLESS)
@@ -3605,6 +4336,48 @@ class TypeChecker:
         return Ty("State", "Any", DIMLESS)
 
     def _infer_evolve(self, expr: EvolveExpr) -> Ty:
+        if expr.explicit_transform:
+            if expr.body is None:
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLVE_REQUIRES_EXPLICIT_TRANSFORM",
+                        "line": expr.span.line,
+                        "col": expr.span.col,
+                        "message": "Evolve() requires an explicit state-transforming expression",
+                    }
+                )
+                return Ty("State", "Any", DIMLESS)
+            for let in expr.body.lets:
+                self.env[let.name] = self._infer(let.expr)
+            diagnostic_start = len(self.diagnostics)
+            result_ty = self._infer(expr.body.result)
+            valid_application = (
+                isinstance(expr.body.result, BinOp)
+                and expr.body.result.op == "*"
+                and self._infer(expr.body.result.lhs).kind == "Operator"
+                and self._infer(expr.body.result.rhs).kind == "State"
+            )
+            if result_ty.kind != "State" or not valid_application:
+                # Inside explicit Evolve, the enclosing diagnostic is the
+                # actionable contract.  Do not also emit the operand-order
+                # diagnostic for the same malformed application.
+                self.diagnostics[diagnostic_start:] = [
+                    diagnostic
+                    for diagnostic in self.diagnostics[diagnostic_start:]
+                    if diagnostic.get("code")
+                    != "OPERATOR_STATE_APPLICATION_ERROR"
+                ]
+                self.diagnostics.append(
+                    {
+                        "code": "EVOLVE_REQUIRES_EXPLICIT_TRANSFORM",
+                        "line": expr.body.result.span.line,
+                        "col": expr.body.result.span.col,
+                        "message": "Evolve() body must end with `Operator * State`",
+                    }
+                )
+            if expr.until_predicate is not None:
+                self._check_evolve_until_contract(expr)
+            return result_ty if result_ty.kind == "State" else Ty("State", "Any", DIMLESS)
         allow_mvp_d3 = (
             expr.hamiltonian is not None
             and self._expr_is_identity_atom(expr.hamiltonian)
@@ -3622,6 +4395,17 @@ class TypeChecker:
         if expr.until_predicate is not None:
             self._check_evolve_until_contract(expr)
         if expr.hamiltonian is not None:
+            self.diagnostics.append(
+                {
+                    "code": "EVOLVE_HAMILTONIAN_SHORTCUT_RETIRED",
+                    "line": expr.span.line,
+                    "col": expr.span.col,
+                    "message": (
+                        "the implicit Hamiltonian Evolve form is migration-only; "
+                        "write `exp(-i * H * t / hbar) * psi` inside `Evolve()`"
+                    ),
+                }
+            )
             hamiltonian_ty = self._infer(expr.hamiltonian)
             self._check_unsupported_qudit_runtime_ty(
                 hamiltonian_ty, expr.span.line, expr.span.col
@@ -3670,9 +4454,28 @@ class TypeChecker:
             self.env[let.name] = self._infer(let.expr)
         return self._infer(expr.body.result)
 
+    def _static_scalar_value(self, expr: Expr) -> float | None:
+        """Resolve a classical scalar expression at typecheck time (LISS-0371).
+
+        Covers literals and named classical constants already tracked in
+        `self.static_scalars`; any other shape is not a closed value yet
+        (mirrors the fail-closed stance of the runtime `_eval_float`
+        resolver in `backend/qasm/trotter.py`, but at typecheck time).
+        """
+        if isinstance(expr, LitInt):
+            return float(expr.value)
+        if isinstance(expr, LitFloat):
+            return float(expr.value)
+        if isinstance(expr, Var):
+            return self.static_scalars.get(expr.name)
+        return None
+
     def _check_suzuki_policy(self, policy) -> None:
         """Validate the static S2/S4 lowering policy accepted by ADR 0084."""
         order_ok = isinstance(policy.order, LitInt) and policy.order.value in {2, 4}
+        if not order_ok:
+            resolved_order = self._static_scalar_value(policy.order)
+            order_ok = resolved_order is not None and int(resolved_order) in {2, 4}
         if not order_ok:
             self.diagnostics.append(
                 {

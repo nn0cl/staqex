@@ -38,7 +38,7 @@ def test_source_accepts_non_empty_numeric_jump_set() -> None:
                 JumpSet([RawMatrix([[0.0, 1.0], [0.0, 0.0]])]),
                 0.1
             )
-            measure evolved
+            Measure evolved
             """
         )
     )
@@ -64,7 +64,7 @@ def test_source_rejects_jump_with_wrong_hilbert_dimension() -> None:
                 ])]),
                 0.1
             )
-            measure evolved
+            Measure evolved
             """
         )
     )
@@ -85,7 +85,7 @@ def test_source_rejects_malformed_jump_payload_without_repair() -> None:
                 JumpSet([RawMatrix([[0.0, 1.0], [0.0]])]),
                 0.1
             )
-            measure evolved
+            Measure evolved
             """
         )
     )
@@ -102,7 +102,7 @@ def test_unresolved_symbolic_jump_remains_opaque() -> None:
                 Ensemble([(1.0, |0>)])
             )
             DensityState<Qubit> evolved = lindblad(rho, H, jumps, t)
-            measure evolved
+            Measure evolved
             """
         )
     )
@@ -126,7 +126,7 @@ def test_channel_completeness_diagnostic_is_not_reused_for_jumps() -> None:
                 ])]),
                 0.1
             )
-            measure evolved
+            Measure evolved
             """
         )
     )

@@ -1,0 +1,17 @@
+package fixtures.ideal_realization
+
+pub fn main() -> Unit {
+    Operator H = X + Z
+    Time dur = 0.6.fs
+    Operator U_formal = Limit N -> Infinity {
+        (I - i * H * dur / (N * hbar)) ^ N
+    }
+    Operator U_qpu = Realize(
+        source = U_formal,
+        method = "suzuki",
+        order = 2,
+        steps = 8,
+        error_budget = 1e-6
+    )
+    Measure |0>
+}

@@ -8,6 +8,10 @@
 | Phase | Phase 1 — failing tests only |
 | Out of scope | Numerical evolution, QPU routing, automatic quantization, optimizer fusion |
 
+This document is a design input, not a normative acceptance authority, until
+the named specification receives typed Phase 1 approval. Implementation
+approval remains separate.
+
 ## 1. Objective
 
 Replace H1 operator `source_tokens` as the primary representation with a
@@ -62,6 +66,11 @@ When Physics IR is built
 Then it contains a source-backed H1Operator node
 And the node retains operator atoms, parameters, carrier, and provenance
 ```
+
+**Canonical authority note:** H1-3-05 consumes the source-derived Scientific
+Semantic IR through a typed Physics IR projection. Physics IR does not own
+independent meaning and cannot bypass canonical dispatch or authorize an
+artifact when source identity, structural children, or provenance are absent.
 
 ## 3. Design boundary
 

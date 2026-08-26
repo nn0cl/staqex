@@ -1,72 +1,12 @@
-// Result contracts shared by simulation and static hardware honesty lanes.
+// Final result DTO for the presentation-layer dossier.
 
 package examples.applied.noether_forge.application
 
+import .phase_evidence.{DetectionEvidence}
+
 namespace Forge.Result {
-    pub enum LaneKind {
-        Sim0Exact,
-        StaticCh0CommonPhysical,
-        CapabilityReject
+    pub struct MonitoringResult {
+        val stressed_site: Int
+        val evidence: Forge.PhaseEvidence.DetectionEvidence
     }
-
-    pub enum RealizationStatus {
-        Supported,
-        UnsupportedHonest,
-        Rejected
-    }
-
-    pub struct ResultContract {
-        val lane: LaneKind
-        val status: RealizationStatus
-        val shared_source_meaning: Bool
-    }
-
-    pub fn sim0_exact() -> ResultContract {
-        return ResultContract(LaneKind.Sim0Exact, RealizationStatus.Supported, true)
-    }
-
-    pub fn static_ch0() -> ResultContract {
-        return ResultContract(LaneKind.StaticCh0CommonPhysical, RealizationStatus.UnsupportedHonest, true)
-    }
-
-    pub fn capability_reject() -> ResultContract {
-        return ResultContract(LaneKind.CapabilityReject, RealizationStatus.Rejected, true)
-    }
-
-    pub fn keeps_source_meaning(contract: ResultContract) -> Bool {
-        return contract.shared_source_meaning
-    }
-
-    pub fn is_supported(contract: ResultContract) -> Bool {
-        return contract.status == RealizationStatus.Supported
-    }
-
-    pub fn is_honest_gap(contract: ResultContract) -> Bool {
-        return contract.status == RealizationStatus.UnsupportedHonest
-    }
-
-    pub fn review_pair_count() -> Int {
-        return 2
-    }
-
-    pub fn lane_of(contract: ResultContract) -> LaneKind {
-        return contract.lane
-    }
-
-    pub fn status_of(contract: ResultContract) -> RealizationStatus {
-        return contract.status
-    }
-
-    pub fn review_sim_lane() -> ResultContract {
-        return sim0_exact()
-    }
-
-    pub fn review_static_lane() -> ResultContract {
-        return static_ch0()
-    }
-
-    pub fn both_share_meaning(a: ResultContract, b: ResultContract) -> Bool {
-        return a.shared_source_meaning && b.shared_source_meaning
-    }
-
 }

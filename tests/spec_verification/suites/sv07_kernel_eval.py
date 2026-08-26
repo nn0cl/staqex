@@ -1,4 +1,4 @@
-"""SV-07: Kernel evaluator — correlation, when, project/vacuum, measure."""
+"""SV-07: Kernel evaluator — correlation, when, project/Vacuum, Measure."""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ def run() -> list[CaseResult]:
 
     # PoC A: correlated x + x
     try:
-        src = as_main("state x = coin()\nstate y = x + x\nmeasure y\n")
+        src = as_main("State x = Coin()\nState y = x + x\nMeasure y\n")
         compiled = compile_source(src)
         if compiled.unit is None:
             raise AssertionFailure("PARSE_ERROR", str(compiled.diagnostics))
@@ -37,7 +37,7 @@ def run() -> list[CaseResult]:
         if 1 in marg:
             raise AssertionFailure("SUPERPOSITION_MISMATCH", "independent sum leaked mass on 1")
         if result.rng_calls_before_measure != 0:
-            raise AssertionFailure("NORM_MISMATCH", "RNG used before measure")
+            raise AssertionFailure("NORM_MISMATCH", "RNG used before Measure")
         out.append(
             CaseResult(
                 "SV-07",
@@ -62,12 +62,12 @@ def run() -> list[CaseResult]:
     # when preserves both arms
     try:
         src = as_main("""
-state c = coin()
-state z = when (c) {
+State c = Coin()
+State z = Mix (c) {
   0 -> 10,
   else -> 20,
 }
-measure z
+Measure z
 """)
         compiled = compile_source(src)
         ev = Evaluator(seed=0)
@@ -96,12 +96,12 @@ measure z
             )
         )
 
-    # project all-reject → vacuum; measure safe
+    # project all-reject → Vacuum; Measure safe
     try:
         src = as_main("""
-state x = coin()
-state y = project(x, 99)
-measure y
+State x = Coin()
+State y = project(x, 99)
+Measure y
 """)
         compiled = compile_source(src)
         if compiled.unit is None:
@@ -112,14 +112,14 @@ measure y
         if not result.joint.is_vacuum():
             raise AssertionFailure("NOT_VACUUM", f"joint={result.joint.support_rows()}")
         if result.measure is None or not result.measure.vacuum:
-            raise AssertionFailure("NOT_VACUUM", "measure should report vacuum")
+            raise AssertionFailure("NOT_VACUUM", "Measure should report Vacuum")
         if buf.getvalue() != "":
             raise AssertionFailure("NOT_VACUUM", f"unexpected output {buf.getvalue()!r}")
         out.append(
             CaseResult(
                 "SV-07",
-                "sv07-project-vacuum",
-                "project reject-all → vacuum measure",
+                "sv07-project-Vacuum",
+                "project reject-all → Vacuum Measure",
                 True,
                 ["assertVacuum"],
             )
@@ -128,8 +128,8 @@ measure y
         out.append(
             CaseResult(
                 "SV-07",
-                "sv07-project-vacuum",
-                "project vacuum",
+                "sv07-project-Vacuum",
+                "project Vacuum",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -139,9 +139,9 @@ measure y
     # map pushforward
     try:
         src = as_main("""
-state x = coin()
-state y = map(x, v -> v * 10)
-measure y
+State x = Coin()
+State y = map(x, v -> v * 10)
+Measure y
 """)
         compiled = compile_source(src)
         ev = Evaluator(seed=0)
@@ -172,10 +172,10 @@ measure y
     # interfer mixture
     try:
         src = as_main("""
-state a = dirac(1)
-state b = dirac(2)
-state z = interfer(a, b)
-measure z
+State a = Dirac(1)
+State b = Dirac(2)
+State z = interfer(a, b)
+Measure z
 """)
         compiled = compile_source(src)
         ev = Evaluator(seed=0)
@@ -204,9 +204,9 @@ measure z
             )
         )
 
-    # terminal measure samples
+    # terminal Measure samples
     try:
-        src = as_main("state x = dirac(42)\nmeasure x\n")
+        src = as_main("State x = Dirac(42)\nMeasure x\n")
         buf = io.StringIO()
         rr = run_source(src, seed=1, stdout=buf)
         if not rr.compile_ok:
@@ -218,18 +218,18 @@ measure z
         out.append(
             CaseResult(
                 "SV-07",
-                "sv07-measure-stdout",
-                "terminal measure writes sample",
+                "sv07-Measure-stdout",
+                "terminal Measure writes sample",
                 True,
-                ["measure output"],
+                ["Measure output"],
             )
         )
     except AssertionFailure as e:
         out.append(
             CaseResult(
                 "SV-07",
-                "sv07-measure-stdout",
-                "measure stdout",
+                "sv07-Measure-stdout",
+                "Measure stdout",
                 False,
                 error_code=e.code,
                 message=str(e),

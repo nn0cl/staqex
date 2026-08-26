@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import math
+import struct
+import unicodedata
 from types import MappingProxyType
 from typing import Any, Iterator, Mapping
 
 from .ast_nodes import (
+    BinOp,
     Call,
     CompilationUnit,
     DynamicQpuStmt,
@@ -27,15 +31,25 @@ from .backend.qasm.trotter import (
     TrotterError,
     compile_hamiltonian,
     eval_time_expr,
+    resolve_suzuki_order,
     resolve_suzuki_steps,
 )
 from .finite_binder import lower_finite_binders
+from .scientific_semantic_ir import (
+    ScientificSemanticIR,
+    build_scientific_semantic_ir,
+    semantic_fingerprint,
+)
 from .stdlib.prelude import PRELUDE_CONSTANTS
 from .static_hilbert import MVP_MAX_LOGICAL_QUBITS
 
 QPU_IR_KIND = "ProviderNeutralQpuIR"
 QFT_WIRE_ORDER = "logical"
-QPU_GATE_OPCODES = frozenset({"H", "X", "Y", "Z", "CX", "RX", "RY", "RZ"})
+QPU_GATE_OPCODES = frozenset({"H", "X", "Y", "Z", "S", "T", "CX", "CZ", "RX", "RY", "RZ"})
+
+
+class QpuCanonicalProjectionError(RuntimeError):
+    """Raised when a QPU instruction cannot retain canonical source identity."""
 
 
 @dataclass(frozen=True)
@@ -54,6 +68,11 @@ class QpuProgram(Mapping[str, Any]):
 
     values: Mapping[str, Any]
 
+    @property
+    def source_node_ids(self) -> tuple[str, ...]:
+        """Compatibility-free provenance hook for the canonical projection."""
+        return tuple(str(item) for item in self.values.get("source_node_ids", ()))
+
     def __getitem__(self, key: str) -> Any:
         return self.values[key]
 
@@ -62,6 +81,104 @@ class QpuProgram(Mapping[str, Any]):
 
     def __len__(self) -> int:
         return len(self.values)
+
+
+def instruction_fingerprint(instructions: tuple[QpuInstruction, ...]) -> str:
+    """Digest the executable projection using the canonical byte contract.
+
+    The serializer is deliberately structural: instruction order and duplicate
+    operations are significant, strings are NFC-normalized, and non-finite
+    numeric values are rejected before an executable artifact can be
+    fingerprinted.
+    """
+    encoded = _canonical_value(
+        tuple(_instruction_fingerprint_payload(instruction) for instruction in instructions)
+    )
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _length(value: int) -> bytes:
+    """Encode a count or byte length as an unsigned big-endian u64."""
+    return struct.pack(">Q", value)
+
+
+def _canonical_string(value: str) -> bytes:
+    normalized = unicodedata.normalize("NFC", value).encode("utf-8")
+    return b"S" + _length(len(normalized)) + normalized
+
+
+def _canonical_float(value: float) -> bytes:
+    if not math.isfinite(value):
+        raise ValueError("fingerprint numeric values must be finite")
+    if value == 0.0:
+        value = 0.0
+    return b"F" + struct.pack(">d", value)
+
+
+def _canonical_sequence(value: tuple[Any, ...] | list[Any]) -> bytes:
+    return b"A" + _length(len(value)) + b"".join(
+        _canonical_value(item) for item in value
+    )
+
+
+def _canonical_mapping(value: Mapping[Any, Any]) -> bytes:
+    entries = [
+        (_canonical_value(key), _canonical_value(item))
+        for key, item in value.items()
+    ]
+    entries.sort(key=lambda pair: pair[0])
+    return b"M" + _length(len(entries)) + b"".join(
+        key + item for key, item in entries
+    )
+
+
+def _canonical_value(value: Any) -> bytes:
+    """Encode supported fingerprint values with explicit type tags."""
+    if value is None:
+        return b"N"
+    if isinstance(value, bool):
+        return b"B" + (b"\x01" if value else b"\x00")
+    if isinstance(value, str):
+        return _canonical_string(value)
+    if isinstance(value, bytes):
+        return b"Y" + _length(len(value)) + value
+    if isinstance(value, int):
+        return b"I" + struct.pack(">q", value)
+    if isinstance(value, float):
+        return _canonical_float(value)
+    if isinstance(value, complex):
+        return b"C" + _canonical_float(value.real) + _canonical_float(value.imag)
+    if isinstance(value, (tuple, list)):
+        return _canonical_sequence(value)
+    if isinstance(value, Mapping):
+        return _canonical_mapping(value)
+    raise TypeError(f"unsupported fingerprint value: {type(value).__name__}")
+
+
+def _instruction_fingerprint_payload(instruction: QpuInstruction) -> tuple[Any, ...]:
+    provenance = instruction.provenance
+    source_node_id = provenance.get("source_node_id")
+    provenance_fields = (
+        source_node_id,
+        provenance.get("role"),
+        provenance.get("type"),
+        provenance.get("dimensions"),
+        provenance.get("exactness"),
+        provenance.get("intent"),
+    )
+    provenance_digest = hashlib.sha256(_canonical_value(provenance_fields)).digest()
+    return (
+        source_node_id,
+        instruction.opcode,
+        instruction.qubits,
+        instruction.parameter,
+        provenance.get("role"),
+        provenance.get("type"),
+        provenance.get("dimensions"),
+        provenance.get("exactness"),
+        provenance.get("intent"),
+        provenance_digest,
+    )
 
 
 def _parameter_projection(unit: CompilationUnit) -> list[dict[str, str]]:
@@ -104,21 +221,23 @@ def _has_terminal_measure(unit: CompilationUnit) -> bool:
     )
 
 
-def _qft_projection(unit: CompilationUnit) -> dict[str, Any] | None:
-    if unit.main is None:
+def _qft_projection(
+    unit: CompilationUnit, semantic_ir: ScientificSemanticIR | None = None
+) -> dict[str, Any] | None:
+    if semantic_ir is None or semantic_ir.qpu_projection is None:
         return None
-    operations = []
-    for stmt in unit.main.body.stmts:
-        if not (
-            isinstance(stmt, StateBind)
-            and stmt.ty is not None
-            and stmt.ty.name == "Operator"
-            and isinstance(stmt.expr, Call)
-            and isinstance(stmt.expr.callee, Var)
-            and stmt.expr.callee.name in {"qft", "iqft", "cqft", "ciqft"}
-        ):
-            continue
-        operations.append({"name": stmt.names[0], "operation": stmt.expr.callee.name})
+    operations = [
+        {
+            "operation": str(operation.provenance_map().get("source", operation.kind)),
+            "source_node_id": operation.source_node_id,
+            "size": operation.size,
+            "inverse": operation.inverse,
+            "control": operation.control,
+            "target_offset": operation.target_offset,
+        }
+        for operation in semantic_ir.qpu_projection.operations
+        if operation.kind in {"qft", "cqft"}
+    ]
     if not operations:
         return None
     return {
@@ -143,6 +262,49 @@ def _provenance(span: Any, source: str) -> Mapping[str, Any]:
     return MappingProxyType({"line": span.line, "col": span.col, "source": source})
 
 
+def _canonical_node_for_provenance(
+    provenance: Mapping[str, Any], semantic_ir: ScientificSemanticIR
+) -> str | None:
+    """Resolve a lowered instruction back to its source-derived node."""
+    line = provenance.get("line")
+    col = provenance.get("col")
+    matches = [
+        node.node_id
+        for node in semantic_ir.nodes
+        if node.provenance[1] == line and node.provenance[2] == col
+    ]
+    return matches[-1] if matches else None
+
+
+def _attach_canonical_provenance(
+    instructions: tuple[QpuInstruction, ...], semantic_ir: ScientificSemanticIR
+) -> tuple[QpuInstruction, ...]:
+    """Annotate every emitted instruction with its canonical source node."""
+    attached: list[QpuInstruction] = []
+    canonical_ids = {node.node_id for node in semantic_ir.nodes}
+    for instruction in instructions:
+        source_node_id = instruction.provenance.get("source_node_id")
+        if source_node_id not in canonical_ids:
+            source_node_id = _canonical_node_for_provenance(instruction.provenance, semantic_ir)
+        if source_node_id is None:
+            raise QpuCanonicalProjectionError(
+                "instruction provenance does not resolve to a Scientific Semantic IR node"
+            )
+        provenance = dict(instruction.provenance)
+        provenance["source_node_id"] = source_node_id
+        if instruction.opcode != "Measure":
+            provenance.setdefault("comment", f"canonical {instruction.opcode}")
+        attached.append(
+            QpuInstruction(
+                opcode=instruction.opcode,
+                qubits=instruction.qubits,
+                parameter=instruction.parameter,
+                provenance=MappingProxyType(provenance),
+            )
+        )
+    return tuple(attached)
+
+
 def _gate_name(
     expr: Any, param_bindings: dict[str, str] | None = None
 ) -> tuple[str, str | float | None] | None:
@@ -160,101 +322,65 @@ def _gate_name(
     return None
 
 
-def _instruction_projection(unit: CompilationUnit) -> tuple[QpuInstruction, ...]:
-    if unit.main is None:
+def _instruction_projection(
+    unit: CompilationUnit, semantic_ir: ScientificSemanticIR
+) -> tuple[QpuInstruction, ...]:
+    """Lower canonical QPU operation intents without re-reading the AST."""
+    projection = semantic_ir.qpu_projection
+    if projection is None:
+        return ()
+    if projection.projection_error is not None:
         return ()
     instructions: list[QpuInstruction] = []
-    register_sizes: dict[str, int] = {}
-    param_bindings = _parameter_binding_names(unit)
-    for stmt in unit.main.body.stmts:
-        if isinstance(stmt, StateBind) and stmt.ty is not None and stmt.ty.name == "QubitRegister":
-            if stmt.names and stmt.ty.args and stmt.ty.args[0].name.isdigit():
-                register_sizes[stmt.names[0]] = int(stmt.ty.args[0].name)
-    for stmt in unit.main.body.stmts:
-        if (
-            isinstance(stmt, StateBind)
-            and stmt.ty is not None
-            and stmt.ty.name == "Operator"
-            and isinstance(stmt.expr, Call)
-            and isinstance(stmt.expr.callee, Var)
-            and stmt.expr.callee.name in {"qft", "iqft"}
-            and len(stmt.expr.args) == 1
-            and isinstance(stmt.expr.args[0], Var)
-        ):
-            size = register_sizes.get(stmt.expr.args[0].name)
-            if size is not None and size <= MVP_MAX_LOGICAL_QUBITS:
-                instructions.extend(
-                    _qft_instructions(
-                        size,
-                        inverse=stmt.expr.callee.name == "iqft",
-                        span=stmt.span,
-                        source=stmt.expr.callee.name,
-                    )
-                )
-            continue
-        if (
-            isinstance(stmt, StateBind)
-            and stmt.ty is not None
-            and stmt.ty.name == "Operator"
-            and isinstance(stmt.expr, Call)
-            and isinstance(stmt.expr.callee, Var)
-            and stmt.expr.callee.name in {"cqft", "ciqft"}
-            and len(stmt.expr.args) == 2
-            and isinstance(stmt.expr.args[0], Var)
-            and isinstance(stmt.expr.args[1], Var)
-        ):
-            ctrl_size = register_sizes.get(stmt.expr.args[0].name)
-            size = register_sizes.get(stmt.expr.args[1].name)
-            if (
-                ctrl_size == 1
-                and size is not None
-                and ctrl_size + size <= MVP_MAX_LOGICAL_QUBITS
-            ):
-                instructions.extend(
-                    _cqft_instructions(
-                        size,
-                        control=size,  # control after target wires 0..N-1
-                        inverse=stmt.expr.callee.name == "ciqft",
-                        span=stmt.span,
-                        source=stmt.expr.callee.name,
-                    )
-                )
-            continue
-        if isinstance(stmt, ForEachStmt):
-            count = _static_register_size(stmt.collection, register_sizes)
-            if count is None:
-                continue
-            for index in range(count):
-                for body_stmt in stmt.body.stmts:
-                    if not isinstance(body_stmt, ExprStmt) or not isinstance(body_stmt.expr, Call):
-                        continue
-                    call = body_stmt.expr
-                    if not (
-                        isinstance(call.callee, Var)
-                        and call.callee.name == "apply"
-                        and len(call.args) == 2
-                    ):
-                        continue
-                    gate = _gate_name(call.args[0], param_bindings)
-                    if gate is None:
-                        continue
-                    opcode, parameter = gate
-                    instructions.append(
-                        QpuInstruction(
-                            opcode=opcode,
-                            qubits=(index,),
-                            parameter=parameter,
-                            provenance=_provenance(body_stmt.span, "forEach.apply"),
-                        )
-                    )
-        elif isinstance(stmt, Measure):
+    for operation in projection.operations:
+        provenance = MappingProxyType(operation.provenance_map())
+        if operation.kind == "gate" and operation.opcode is not None:
             instructions.append(
                 QpuInstruction(
-                    opcode="Measure",
-                    provenance=_provenance(stmt.span, "measure"),
+                    opcode=operation.opcode,
+                    qubits=operation.qubits,
+                    parameter=operation.parameter,
+                    provenance=provenance,
                 )
             )
-    return tuple(instructions)
+        elif operation.kind == "measure":
+            instructions.append(
+                QpuInstruction("Measure", qubits=operation.qubits, provenance=provenance)
+            )
+        elif operation.kind == "qft" and operation.size is not None:
+            span = type("CanonicalSpan", (), {
+                "line": provenance.get("line", 0),
+                "col": provenance.get("col", 0),
+            })()
+            instructions.extend(
+                _qft_instructions(
+                    operation.size,
+                    inverse=operation.inverse,
+                    span=span,
+                    source=str(provenance.get("source", "qft")),
+                    target_offset=operation.target_offset,
+                )
+            )
+        elif operation.kind == "cqft" and operation.size is not None:
+            span = type("CanonicalSpan", (), {
+                "line": provenance.get("line", 0),
+                "col": provenance.get("col", 0),
+            })()
+            instructions.extend(
+                _cqft_instructions(
+                    operation.size,
+                    control=(
+                        operation.control
+                        if operation.control is not None
+                        else operation.size
+                    ),
+                    inverse=operation.inverse,
+                    span=span,
+                    source=str(provenance.get("source", "cqft")),
+                    target_offset=operation.target_offset,
+                )
+            )
+    return _attach_canonical_provenance(tuple(instructions), semantic_ir)
 
 
 def _qft_instructions(
@@ -263,13 +389,22 @@ def _qft_instructions(
     inverse: bool,
     span: Any,
     source: str,
+    target_offset: int = 0,
 ) -> tuple[QpuInstruction, ...]:
     """Expand exact QFT/IQFT into ADR 0086 basic gates."""
     result: list[QpuInstruction] = []
     provenance = _provenance(span, source)
-    targets = range(size - 1, -1, -1) if inverse else range(size)
+    targets = (
+        range(size - 1 + target_offset, target_offset - 1, -1)
+        if inverse
+        else range(target_offset, size + target_offset)
+    )
     for target in targets:
-        controls = range(size - 1, target, -1) if inverse else range(target + 1, size)
+        controls = (
+            range(size - 1 + target_offset, target, -1)
+            if inverse
+            else range(target + 1, size + target_offset)
+        )
         if not inverse:
             result.append(QpuInstruction("H", (target,), provenance=provenance))
         for control in controls:
@@ -283,6 +418,8 @@ def _qft_instructions(
             result.append(QpuInstruction("H", (target,), provenance=provenance))
     for left in range(size // 2):
         right = size - left - 1
+        left += target_offset
+        right += target_offset
         result.extend(_swap_instructions(left, right, provenance))
     return tuple(result)
 
@@ -294,9 +431,16 @@ def _cqft_instructions(
     inverse: bool,
     span: Any,
     source: str,
+    target_offset: int = 0,
 ) -> tuple[QpuInstruction, ...]:
     """Lift exact QFT/IQFT under one filled control (ADR 0120)."""
-    base = _qft_instructions(size, inverse=inverse, span=span, source=source)
+    base = _qft_instructions(
+        size,
+        inverse=inverse,
+        span=span,
+        source=source,
+        target_offset=target_offset,
+    )
     provenance = _provenance(span, source)
     lifted: list[QpuInstruction] = []
     for instruction in base:
@@ -395,17 +539,31 @@ def _swap_instructions(
     )
 
 
-def _hilbert_shape(unit: CompilationUnit) -> Mapping[str, Any]:
+def _hilbert_shape(
+    unit: CompilationUnit, semantic_ir: ScientificSemanticIR | None = None
+) -> Mapping[str, Any]:
     system = _multi_register_system(unit)
     if system is not None:
         registers = system.registers
         logical_qubits = sum(width for _name, width in registers)
-        return MappingProxyType(
+        shape = MappingProxyType(
             {
                 "logical_qubits": logical_qubits,
                 "hilbert_dimension": 2**logical_qubits,
             }
         )
+        return shape
+    if semantic_ir is not None and semantic_ir.qpu_projection is not None:
+        logical_qubits = semantic_ir.qpu_projection.logical_qubits
+        if semantic_ir.qpu_projection.projection_error is not None:
+            return MappingProxyType({"logical_qubits": logical_qubits, "hilbert_dimension": None})
+        if logical_qubits:
+            return MappingProxyType(
+                {
+                    "logical_qubits": logical_qubits,
+                    "hilbert_dimension": 2**logical_qubits,
+                }
+            )
     if unit.main is None:
         return MappingProxyType({"logical_qubits": 0})
     for stmt in unit.main.body.stmts:
@@ -486,92 +644,88 @@ def _qpu_diagnostics(unit: CompilationUnit) -> list[dict[str, Any]]:
     return diagnostics
 
 
-def _lowering_policy_projection(unit: CompilationUnit) -> dict[str, Any] | None:
-    """Project the accepted Suzuki policy and its statically resolved steps."""
-    if unit.main is None:
-        return None
-    binds = [stmt for stmt in unit.main.body.stmts if isinstance(stmt, StateBind)]
-    op_env: dict[str, OpExpr] = {}
-    scalars: dict[str, float] = {k: float(v) for k, v in PRELUDE_CONSTANTS.items()}
-    evolves: list[EvolveExpr] = []
-    for stmt in binds:
-        if stmt.ty is not None and stmt.ty.name == "Operator" and len(stmt.names) == 1:
-            op_env[stmt.names[0]] = stmt.expr  # type: ignore[assignment]
-        elif stmt.ty is not None and stmt.ty.name in {"Float", "Int"} and len(stmt.names) == 1:
-            if isinstance(stmt.expr, (LitFloat, LitInt)):
-                scalars[stmt.names[0]] = float(stmt.expr.value)
-        if isinstance(stmt.expr, EvolveExpr) and stmt.expr.suzuki is not None:
-            evolves.append(stmt.expr)
-    if not evolves:
-        return None
-    policy = evolves[0].suzuki
-    assert policy is not None
-    steps: int | None = None
-    tolerance: float | None = None
-    if isinstance(policy.steps, LitInt):
-        steps = int(policy.steps.value)
-    if isinstance(policy.tolerance, (LitInt, LitFloat)):
-        tolerance = float(policy.tolerance.value)
-    if steps is None and tolerance is not None:
-        ev = evolves[0]
-        if ev.duration is None or ev.hamiltonian is None:
-            return None
-        try:
-            duration = eval_time_expr(ev.duration, scalars)
-            terms = compile_hamiltonian(
-                ev.hamiltonian,
-                env=op_env,
-                scalars=scalars,
-                n_qubits=max(1, len(ev.seeds)),
-            )
-            steps = resolve_suzuki_steps(policy, terms, duration)
-        except TrotterError:
-            # QPU IR inspection must not replace the compiler's normal
-            # lowering diagnostic when the source is not QASM-lowerable.
-            return None
-    if steps is None:
-        return None
-    return {
-        "algorithm": "Suzuki",
-        "order": int(policy.order.value) if isinstance(policy.order, LitInt) else 2,
-        "steps": steps,
-        "error_mode": policy.error_mode if tolerance is not None else None,
-        "tolerance_target": tolerance,
-    }
-
-
 def build_qpu_ir(
-    unit: CompilationUnit, symbolic_ir: dict[str, Any]
+    unit: CompilationUnit, semantic_ir: ScientificSemanticIR | None = None
 ) -> QpuProgram:
     """Build the immutable provider-neutral boundary without provider lowering."""
-    measurement = {"terminal": _has_terminal_measure(unit)}
+    semantic_ir = semantic_ir or build_scientific_semantic_ir(unit)
+    canonical_operations = semantic_ir.qpu_projection.operations if semantic_ir.qpu_projection else ()
+    measurement = {"terminal": any(operation.kind == "measure" for operation in canonical_operations)}
     if measurement["terminal"]:
         measurement["operation"] = "Measure"
+    projection_error: str | None = (
+        semantic_ir.qpu_projection.projection_error
+        if semantic_ir.qpu_projection is not None
+        else None
+    )
+    if projection_error is None and semantic_ir.projection_errors:
+        projection_error = semantic_ir.projection_errors[0]
+    if projection_error is not None:
+        # A rejected projection is atomic: no executable or terminal
+        # instruction may remain visible to direct QPU consumers.
+        instructions = ()
+    else:
+        try:
+            instructions = _instruction_projection(unit, semantic_ir)
+        except QpuCanonicalProjectionError as exc:
+            instructions = ()
+            projection_error = f"E_QPU_CANONICAL_PROVENANCE: {exc}"
     projection = {
         "kind": QPU_IR_KIND,
-        "provenance": symbolic_ir.get("provenance", []),
+        "semantic_schema": semantic_ir.schema,
+        "semantic_authority": semantic_ir.authority,
+        "semantic_relations": semantic_ir.relations,
+        "canonical_semantic_ir": semantic_ir,
+        "semantic_fingerprint": semantic_fingerprint(semantic_ir),
+        "source_node_ids": tuple(node.node_id for node in semantic_ir.nodes),
+        "provenance": [node.provenance for node in semantic_ir.nodes],
         "parameters": _parameter_projection(unit),
         "measurement": measurement,
-        "hilbert_shape": _hilbert_shape(unit),
-        "instructions": _instruction_projection(unit),
+        "hilbert_shape": _hilbert_shape(unit, semantic_ir),
+        "instructions": instructions,
+        "instruction_fingerprint": instruction_fingerprint(instructions),
+        "projection_error": projection_error,
+        "projection_errors": semantic_ir.projection_errors,
+        "binder_source_node_ids": semantic_ir.binder_source_node_ids,
+        "binder_provenance": semantic_ir.binder_provenance,
     }
     multi_register = _multi_register_projection(unit)
     if multi_register is not None:
         projection.update(multi_register)
-    qft = _qft_projection(unit)
+    qft = _qft_projection(unit, semantic_ir)
     if qft is not None:
         projection["qft"] = qft
-    lowering_policy = _lowering_policy_projection(unit)
+    lowering_policy = semantic_ir.lowering_policy
     if lowering_policy is not None:
         projection["lowering_policy"] = lowering_policy
-    binder_lowering, _ = lower_finite_binders(unit)
+    explicit_evolution = semantic_ir.explicit_evolution
+    if explicit_evolution is not None:
+        projection["explicit_evolution"] = explicit_evolution
+    binder_lowering = semantic_ir.binder_lowering
     if binder_lowering:
         projection["binder_lowering"] = binder_lowering
     return QpuProgram(MappingProxyType(projection))
 
 
-def qpu_ir_diagnostics(unit: CompilationUnit) -> list[dict[str, Any]]:
+def qpu_ir_diagnostics(
+    unit: CompilationUnit,
+    semantic_ir: ScientificSemanticIR | None = None,
+) -> list[dict[str, Any]]:
     diagnostics = _qpu_diagnostics(unit)
-    _, binder_diagnostics = lower_finite_binders(unit)
-    diagnostics.extend(binder_diagnostics)
+    semantic_ir = semantic_ir or build_scientific_semantic_ir(unit)
+    for code in semantic_ir.projection_errors:
+        if not (
+            code.startswith("BINDER_")
+            or code.startswith("E_QPU_CANONICAL_")
+            or code.startswith("E_ALGORITHM_PLAN_CANONICAL_PROVENANCE")
+        ):
+            continue
+        diagnostic_code, _, reason = code.partition(":")
+        diagnostic = {
+            "code": diagnostic_code,
+            "message": "canonical projection rejected this QPU capability",
+        }
+        if reason:
+            diagnostic["reason"] = reason
+        diagnostics.append(diagnostic)
     return diagnostics

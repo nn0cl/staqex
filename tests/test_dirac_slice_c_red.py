@@ -13,8 +13,8 @@ if str(_REPO) not in sys.path:
 from compiler.staqex.ast_nodes import BraLit, Call, KetLit, StateBind, Var
 from compiler.staqex.pipeline import compile_source
 
-BRA_OPEN = "\u27e8"  # ⟨
-KET_CLOSE = "\u27e9"  # ⟩
+BRA_OPEN = "<"
+KET_CLOSE = ">"
 EBNF_PATH = _REPO / "docs" / "specs" / "grammar" / "staqex.ebnf"
 
 
@@ -29,13 +29,13 @@ def _main_binds(compiled) -> list[StateBind]:
 
 
 def _matrix_element_source() -> str:
-    # ⟨0|X|1⟩ → inner(⟨0|, X(|1⟩)) per Slice C plan.
+    # <0|X|1> -> inner(<0|, X(|1>)) per Slice C plan.
     return f"""
         package t
         pub fn main() -> Unit {{
-            state m = {BRA_OPEN}0|X|1{KET_CLOSE}
-            State observed = coin()
-            measure observed
+            State m = {BRA_OPEN}0|X|1{KET_CLOSE}
+            State observed = Coin()
+            Measure observed
         }}
         """
 
@@ -70,10 +70,10 @@ def test_matrix_element_rejects_state_middle_with_algebra_error() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state psi = |+>
-            state m = {BRA_OPEN}0|psi|1{KET_CLOSE}
-            State observed = coin()
-            measure observed
+            State psi = |+>
+            State m = {BRA_OPEN}0|psi|1{KET_CLOSE}
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -86,9 +86,9 @@ def test_slice_b_inner_without_middle_still_works() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state overlap = {BRA_OPEN}0|1{KET_CLOSE}
-            State observed = coin()
-            measure observed
+            State overlap = inner({BRA_OPEN}0|, |1{KET_CLOSE})
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -104,7 +104,7 @@ def test_ebnf_documents_bra_op_ket_matrix_element() -> None:
     text = EBNF_PATH.read_text(encoding="utf-8")
     assert "bra_op_ket" in text or re.search(
         r"bra_lit.*operator|matrix.?element|bra_op_ket", text, re.I
-    ), "EBNF must document ⟨φ|A|ψ⟩ matrix-element surface"
+    ), "EBNF must document <phi|A|psi> matrix-element surface"
 
 
 def main() -> None:

@@ -1,9 +1,14 @@
-"""AT-TDD regression: LISS-0120 Slice B Noether Forge vertical prototype.
+"""AT-TDD regression: A11_noether_forge structural checks.
 
-Originally expected a 300–500 non-blank-line prototype. Slice C+D expands the
-same tree to the full 1,000–3,000-line candidate; this suite keeps the
-prototype floor and ownership/compile checks. Line-budget upper bound lives
-in test_noether_forge_slice_c_d_integrated_red.py.
+Historically LISS-0120 Slice B (300-500 non-blank-line vertical
+prototype, part of the rejected/deferred 1,000-3,000-line "representative
+program" ambition -- see staqex-v1-representative-program-rebaseline.md).
+LISS-0338 (2026-08-05) retheme's A11's content to a structural-monitoring
+quantum magnetometer with the Adjudicator's explicit direction to rewrite
+freely; the line-count floor this file used to assert is no longer this
+example's goal and has been removed. The remaining structural checks
+(module tree, compile/run correctness, no provider/dynamic surface) stay
+valid for any A11 content and are kept.
 """
 
 from __future__ import annotations
@@ -45,10 +50,6 @@ _FORBIDDEN_SOURCE_TOKENS = (
 )
 
 
-def _non_blank_lines(text: str) -> list[str]:
-    return [line for line in text.splitlines() if line.strip()]
-
-
 def _sqx_files() -> list[Path]:
     if not _ROOT.exists():
         raise FileNotFoundError(_ROOT)
@@ -64,15 +65,9 @@ def test_required_module_tree_exists() -> None:
     assert not missing, f"missing Noether Forge modules: {missing}"
 
 
-def test_prototype_non_blank_line_floor_still_met() -> None:
-    files = _sqx_files()
-    total = sum(len(_non_blank_lines(_read(path))) for path in files)
-    assert total >= 300, f"non-blank line total {total} below Slice B floor 300"
-
-
 def test_each_sqx_file_within_hard_max_300_non_blank() -> None:
     for path in _sqx_files():
-        count = len(_non_blank_lines(_read(path)))
+        count = len([line for line in _read(path).splitlines() if line.strip()])
         assert count <= 300, f"{path.relative_to(_REPO)} has {count} non-blank lines"
 
 
@@ -80,7 +75,7 @@ def test_entry_point_compiles_and_keeps_terminal_measure() -> None:
     from compiler.staqex.pipeline import compile_path
 
     assert _ENTRY.is_file()
-    compiled = compile_path(_ENTRY)
+    compiled = compile_path(str(_ENTRY))
     assert compiled.ok, compiled.diagnostics
     source = _read(_ENTRY)
     assert re.search(r"\bmeasure\b", source)
@@ -88,21 +83,18 @@ def test_entry_point_compiles_and_keeps_terminal_measure() -> None:
 
 
 def test_entry_point_runs_deterministically_with_seed() -> None:
-    import io
-    from compiler.staqex.run import run_source
+    from compiler.staqex import run_path
 
-    source = _read(_ENTRY)
-    first = run_source(source, seed=0, stdout=io.StringIO())
-    second = run_source(source, seed=0, stdout=io.StringIO())
-    assert first.ok
-    assert second.ok
+    first = run_path(str(_ENTRY), settings={"target": "local", "seed": 0})
+    second = run_path(str(_ENTRY), settings={"target": "local", "seed": 0})
+    assert first.status == "succeeded"
+    assert second.status == "succeeded"
     assert first.measurements == second.measurements
 
 
 def test_sources_forbid_dynamic_and_provider_surface() -> None:
     for path in _sqx_files():
-        text = _read(path)
-        lowered = text.lower()
+        lowered = _read(path).lower()
         for token in _FORBIDDEN_SOURCE_TOKENS:
             assert token.lower() not in lowered, f"{path.name} contains {token!r}"
 
@@ -115,7 +107,7 @@ def test_ownership_directories_are_present() -> None:
 def test_soft_semantic_ir_available_when_compiled() -> None:
     from compiler.staqex.pipeline import compile_path
 
-    compiled = compile_path(_ENTRY)
+    compiled = compile_path(str(_ENTRY))
     assert compiled.ok
     # Soft field from LISS-0082 Slice F; prototype must not require providers.
     assert hasattr(compiled, "quantum_semantic_ir")
@@ -135,6 +127,6 @@ if __name__ == "__main__":
             failures += 1
             print(f"FAIL {test.__name__}: {type(error).__name__}: {error}")
     print(
-        f"LISS-0120 Slice B integrated Red: {len(tests) - failures} passed, {failures} failed"
+        f"A11_noether_forge structural Red: {len(tests) - failures} passed, {failures} failed"
     )
     raise SystemExit(1 if failures else 0)

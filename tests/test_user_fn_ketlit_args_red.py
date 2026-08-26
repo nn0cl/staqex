@@ -24,8 +24,8 @@ def test_ketlit_direct_fn_arg() -> None:
                 return x
             }
             pub fn main() -> Unit {
-                state r = id(|1>)
-                measure r
+                State r = id(|1>)
+                Measure r
             }
             """
         ).diagnostics
@@ -40,8 +40,8 @@ def test_ketlit_direct_fn_arg() -> None:
             return x
         }
         pub fn main() -> Unit {
-            state r = id(|1>)
-            measure r
+            State r = id(|1>)
+            Measure r
         }
         """,
         stdout=io.StringIO(),
@@ -56,14 +56,14 @@ def test_partial_with_ketlit_bound_slot() -> None:
         """
         package t
         fn second(x: State<Bit>, y: State<Bit>) -> State<Bit> {
-            state x = |0>
+            State x = |0>
             return y
         }
         pub fn main() -> Unit {
-            state p = second(|0>, _)
-            state w = |1>
-            state r = w |> p
-            measure r
+            State p = second(|0>, _)
+            State w = |1>
+            State r = w |> p
+            Measure r
         }
         """,
         stdout=io.StringIO(),

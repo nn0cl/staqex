@@ -3,16 +3,27 @@
 from __future__ import annotations
 
 import argparse
+import functools
+import json
 import sys
 from pathlib import Path
 from typing import TextIO
 
+from .adapters.aws_braket import (
+    AwsBraketAdapter,
+    BraketCredentialError,
+    BraketDependencyError,
+    RealAwsBraketClient,
+)
 from .codegen.openqasm import emit_openqasm3
+from .credentials import EnvCredentialAdapter
 from .format import format_source
 from .ir.dag import lower_source_ast
+from .live_submit import submit_live_qpu
 from .migrate_unicode_math import migrate_unicode_math_source
 from .pipeline import HARD_CODES, compile_path, compile_source
 from .host import run_path as host_run_path, run_source as host_run_source
+from .qpu_submit import ProviderJobId
 from .runtime.evaluator import Evaluator
 from .stdlib.io_ops import format_marginal_table
 from .stdlib.prelude import PRELUDE_NAMES
@@ -77,7 +88,12 @@ def cmd_run(args: argparse.Namespace) -> int:
             topo = profile
         elif profile in {"linear", "grid", "grid-2x2", "grid-3x3"}:
             topo = profile
-        emitted = emit_openqasm3(compiled.unit, topology=topo, route=True)
+        emitted = emit_openqasm3(
+            compiled.unit,
+            semantic_ir=compiled.scientific_semantic_ir,
+            topology=topo,
+            route=True,
+        )
         for n in emitted.notes:
             print(f"// note: {n}", file=sys.stderr)
         if not emitted.ok:
@@ -197,14 +213,14 @@ def cmd_repl(args: argparse.Namespace) -> int:
         if line.strip() == "" and buf:
             source = "\n".join(buf) + "\n"
             buf.clear()
-            if "measure" not in source:
+            if "Measure" not in source:
                 last = None
                 for ln in source.splitlines():
                     s = ln.strip()
-                    if s.startswith("state "):
-                        last = s.split("=")[0].replace("state", "").strip()
+                    if s.startswith("State "):
+                        last = s.split("=")[0].replace("State", "").strip()
                 if last:
-                    source = source + f"measure {last}\n"
+                    source = source + f"Measure {last}\n"
             result = host_run_source(
                 source,
                 settings={"target": "local", "seed": seed},
@@ -234,7 +250,10 @@ def cmd_emit_qasm(args: argparse.Namespace) -> int:
     if compiled.unit is None or any(d.get("code") in HARD_CODES for d in compiled.diagnostics):
         _print_diags(compiled.diagnostics)
         return 1
-    emitted = emit_openqasm3(compiled.unit)
+    emitted = emit_openqasm3(
+        compiled.unit,
+        semantic_ir=compiled.scientific_semantic_ir,
+    )
     for n in emitted.notes:
         print(f"// note: {n}", file=sys.stderr)
     if not emitted.ok:
@@ -244,6 +263,90 @@ def cmd_emit_qasm(args: argparse.Namespace) -> int:
         Path(args.output).write_text(out if out.endswith("\n") else out + "\n", encoding="utf-8")
     else:
         print(out, end="" if out.endswith("\n") else "\n")
+    return 0
+
+
+def _build_live_qpu_adapter(device_arn: str) -> AwsBraketAdapter:
+    """LISS-0396: real client + env credentials, both already-shipped
+    (ADR 0202/LISS-0194). Never called by this module's own test suite in
+    its real (non-mocked) form except to exercise the deliberate
+    fail-closed path when amazon-braket-sdk is absent (RealAwsBraketClient
+    itself never touches the network on that path).
+    """
+    return AwsBraketAdapter(
+        client=RealAwsBraketClient(),
+        device_arn=device_arn,
+        credentials=EnvCredentialAdapter(),
+    )
+
+
+def cmd_submit_live_qpu(args: argparse.Namespace) -> int:
+    """LISS-0396 (ADR 0203 named CLI follow-up): wires the already-shipped
+    `submit_live_qpu` entrypoint to a real `AwsBraketAdapter`. This agent
+    never invokes this command against a real device (ADR 0202 Decision
+    5) -- it is the human Adjudicator's own terminal, own AWS credentials,
+    own explicit invocation.
+    """
+    if args.provider != "aws-braket":
+        print(
+            f"submit-live-qpu: unsupported --provider {args.provider!r} "
+            "(only aws-braket is available)",
+            file=sys.stderr,
+        )
+        return 1
+    source = _load_source(args)
+    execution_settings: dict[str, object] = {}
+    if getattr(args, "shots", None) is not None:
+        execution_settings["shots"] = args.shots
+    print(
+        f"submit-live-qpu: submitting to AWS Braket device {args.device_arn} "
+        "-- this may incur real cost on real hardware",
+        file=sys.stderr,
+    )
+    try:
+        adapter = _build_live_qpu_adapter(args.device_arn)
+        job_id, diagnostics = submit_live_qpu(
+            source, adapter=adapter, execution_settings=execution_settings
+        )
+    except (BraketDependencyError, BraketCredentialError) as exc:
+        print(f"submit-live-qpu: {exc}", file=sys.stderr)
+        return 1
+    if job_id is None:
+        _print_diags(list(diagnostics))
+        return 1
+    print(f"provider={job_id.provider} id={job_id.opaque_id}")
+    return 0
+
+
+def _cmd_qpu_job(args: argparse.Namespace, *, action: str) -> int:
+    """LISS-0397 (ADR 0203/0202 follow-up): shared dispatcher for the four
+    `qpu-job-*` commands, wiring the already-shipped `QpuJobPort.status`/
+    `wait`/`result`/`cancel` (all implemented, unchanged, by
+    `AwsBraketAdapter`). `--device-arn` is still required to construct the
+    adapter even though none of these four operations read it (disclosed
+    LISS-0397 Plan wrinkle, not fixed here).
+    """
+    if args.provider != "aws-braket":
+        print(
+            f"qpu-job-{action}: unsupported --provider {args.provider!r} "
+            "(only aws-braket is available)",
+            file=sys.stderr,
+        )
+        return 1
+    job_id = ProviderJobId(provider=args.provider, opaque_id=args.id)
+    try:
+        adapter = _build_live_qpu_adapter(args.device_arn)
+        outcome = getattr(adapter, action)(job_id)
+    except (BraketDependencyError, BraketCredentialError) as exc:
+        print(f"qpu-job-{action}: {exc}", file=sys.stderr)
+        return 1
+    if action == "result":
+        try:
+            print(json.dumps(outcome, indent=2))
+        except TypeError:
+            print(outcome)
+    else:
+        print(outcome.value)
     return 0
 
 
@@ -417,6 +520,38 @@ def build_parser() -> argparse.ArgumentParser:
     pe.add_argument("-o", "--output", help="write QASM to file")
     pe.set_defaults(func=cmd_emit_qasm)
 
+    psl = sub.add_parser(
+        "submit-live-qpu",
+        help="submit compiled QASM3 to a real QPU provider (ADR 0203; real cost)",
+    )
+    add_src(psl)
+    psl.add_argument(
+        "--device-arn", required=True, help="provider device identifier (e.g. AWS Braket ARN)"
+    )
+    psl.add_argument("--shots", type=int, default=None, help="default: adapter's own default")
+    psl.add_argument(
+        "--provider", default="aws-braket", help="only aws-braket is currently available"
+    )
+    psl.set_defaults(func=cmd_submit_live_qpu)
+
+    def add_qpu_job_parser(name: str, action: str, help_text: str) -> None:
+        pj = sub.add_parser(name, help=help_text)
+        pj.add_argument("--id", required=True, help="provider opaque job id")
+        pj.add_argument(
+            "--device-arn",
+            required=True,
+            help="required to construct the adapter (unused by this operation)",
+        )
+        pj.add_argument(
+            "--provider", default="aws-braket", help="only aws-braket is currently available"
+        )
+        pj.set_defaults(func=functools.partial(_cmd_qpu_job, action=action))
+
+    add_qpu_job_parser("qpu-job-status", "status", "query a live QPU job's status")
+    add_qpu_job_parser("qpu-job-wait", "wait", "wait for a live QPU job's terminal status")
+    add_qpu_job_parser("qpu-job-result", "result", "fetch a live QPU job's result")
+    add_qpu_job_parser("qpu-job-cancel", "cancel", "cancel a live QPU job")
+
     prepl = sub.add_parser("repl", help="interactive shell")
     prepl.add_argument("--seed", type=int, default=None)
     prepl.set_defaults(func=cmd_repl)
@@ -478,6 +613,11 @@ def main(argv: list[str] | None = None) -> int:
         "inspect",
         "dag",
         "emit-qasm",
+        "submit-live-qpu",
+        "qpu-job-status",
+        "qpu-job-wait",
+        "qpu-job-result",
+        "qpu-job-cancel",
         "repl",
         "migrate",
         "format",

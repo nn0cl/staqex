@@ -31,7 +31,7 @@ from .second_quantization import SecondQuantizationMappingError, jordan_wigner_m
 from .kernel_literals import RELATIONAL as _GUARD_OPERATORS
 
 MAX_EXPANSION_TERMS = 1_000_000
-_BINDER_KINDS = frozenset({"sum", "product"})
+_BINDER_KINDS = frozenset({"Sigma", "Pi"})  # LISS-0420: renamed from sum/product
 _INDEX_ACCESSORS = frozenset({"next", "wrap"})
 _INDEX_ACCESS_ERROR = (
     "indexed Pauli must use the binder, next(binder), or wrap(binder)"
@@ -352,18 +352,18 @@ def _lower_executable_expr(expr: OpExpr, context: _Context) -> OpExpr:
 def _fold_operator_terms(
     terms: list[OpExpr], kind: str, span: Any, acting_space: int | None = None
 ) -> OpExpr:
-    # LISS-0226: nested empty `sum` contributes additive zero, not an
+    # LISS-0226: nested empty `Sigma` contributes additive zero, not an
     # undetermined OpIdentity sibling inside a non-empty outer sum.
-    if kind == "sum":
+    if kind == "Sigma":
         terms = [
             term
             for term in terms
-            if not (isinstance(term, OpIdentity) and term.kind == "sum")
+            if not (isinstance(term, OpIdentity) and term.kind == "Sigma")
         ]
     if not terms:
         return OpIdentity(kind=kind, acting_space=acting_space, span=span)
     result = terms[0]
-    operator = "+" if kind == "sum" else "*"
+    operator = "+" if kind == "Sigma" else "*"
     for term in terms[1:]:
         result = OpBin(op=operator, lhs=result, rhs=term, span=span)
     return result
@@ -374,6 +374,11 @@ def _contains_second_quantized(expr: OpExpr) -> bool:
         return isinstance(expr.base, OpVar) and expr.base.name in {"create", "annihilate"}
     if isinstance(expr, OpBin):
         return _contains_second_quantized(expr.lhs) or _contains_second_quantized(expr.rhs)
+    # LISS-0370: a call wrapping a second-quantized atom (e.g.
+    # adjoint(create[i])) must still route through the Jordan-Wigner
+    # binder-lowering path, mirroring the existing OpBin recursion.
+    if isinstance(expr, OpCall):
+        return any(_contains_second_quantized(arg) for arg in expr.args)
     return False
 
 
@@ -404,31 +409,44 @@ def _substitute_indices(expr: OpExpr, bindings: Mapping[str, int]) -> OpExpr:
             rhs=_substitute_indices(expr.rhs, bindings),
             span=expr.span,
         )
+    # LISS-0370: a call wrapping an indexed atom (e.g. adjoint(create[i]))
+    # must have its binder index substituted too, mirroring OpBin.
+    if isinstance(expr, OpCall):
+        return OpCall(
+            name=expr.name,
+            args=[_substitute_indices(arg, bindings) for arg in expr.args],
+            span=expr.span,
+        )
     return expr
 
 
-def _static_value(expr: OpExpr, bindings: Mapping[str, int]) -> int:
-    value = _resolve_bound_index(expr, bindings)
+def _static_value(expr: OpExpr, context: _Context) -> int:
+    # LISS-0373: defer to the already-general `_resolve_index` (which
+    # also resolves `next(...)`/`wrap(...)` index accessors) instead of
+    # the narrower `_resolve_bound_index`, so a `where` guard accepts
+    # the same index-accessor shapes an indexed operator body already
+    # does (e.g. `Z[next(i)]`).
+    value = _resolve_index(expr, context)
     if value is None:
         raise ValueError("where guard must use static binder indices")
     return value
 
 
-def _guard_matches(guard: OpExpr | None, bindings: Mapping[str, int]) -> bool:
+def _guard_matches(guard: OpExpr | None, context: _Context) -> bool:
     if guard is None:
         return True
     if isinstance(guard, OpBin) and guard.op == "||":
-        return _guard_matches(guard.lhs, bindings) or _guard_matches(
-            guard.rhs, bindings
+        return _guard_matches(guard.lhs, context) or _guard_matches(
+            guard.rhs, context
         )
     if isinstance(guard, OpBin) and guard.op == "&&":
-        return _guard_matches(guard.lhs, bindings) and _guard_matches(
-            guard.rhs, bindings
+        return _guard_matches(guard.lhs, context) and _guard_matches(
+            guard.rhs, context
         )
     if not isinstance(guard, OpBin) or guard.op not in _GUARD_OPERATORS:
         raise ValueError("unsupported where guard")
-    lhs = _static_value(guard.lhs, bindings)
-    rhs = _static_value(guard.rhs, bindings)
+    lhs = _static_value(guard.lhs, context)
+    rhs = _static_value(guard.rhs, context)
     return {
         "<": lhs < rhs,
         "<=": lhs <= rhs,
@@ -543,16 +561,17 @@ def _binder_values(
     for value in values:
         bindings = dict(context.bindings)
         bindings[expr.variable] = value
-        if not apply_guard or _guard_matches(expr.guard, bindings):
-            yield _Context(
-                bindings,
-                register_size,
-                start,
-                end,
-                arrays=context.arrays,
-                register_sizes=context.register_sizes,
-                descending=False,
-            )
+        binder_context = _Context(
+            bindings,
+            register_size,
+            start,
+            end,
+            arrays=context.arrays,
+            register_sizes=context.register_sizes,
+            descending=False,
+        )
+        if not apply_guard or _guard_matches(expr.guard, binder_context):
+            yield binder_context
 
 
 def _lower_binder_ast(expr: OpBinder, context: _Context) -> OpExpr:
@@ -715,7 +734,7 @@ def _operator_metadata(
             )
         ]
     domain = {"start": start, "end": end, "inclusive": True}
-    operation = "Sum" if expr.kind == "sum" else "Product"
+    operation = "Sum" if expr.kind == "Sigma" else "Product"
     return (
         {
             "operator": name,
@@ -800,16 +819,22 @@ def identity_acting_space_diagnostics(
     return diagnostics
 
 
-def _host_placeholder_keys(unit: CompilationUnit) -> dict[str, tuple[str, tuple[int, ...]]]:
-    """Map local Float name → (host key, declared shape) for `host(\"…\")` binds."""
-    out: dict[str, tuple[str, tuple[int, ...]]] = {}
+def _host_placeholder_keys(
+    unit: CompilationUnit,
+) -> dict[str, tuple[str, tuple[int, ...], str]]:
+    """Map local Float/Bool name → (host key, declared shape, dtype) for
+    `host(\"…\")` binds. LISS-0432: `Bool[N]…` reuses the identical
+    placeholder mechanism `Float[N]…` already had (ADR 0119/LISS-0406),
+    just carrying dtype through so the caller can validate/preserve Bool
+    leaves instead of coercing them to float."""
+    out: dict[str, tuple[str, tuple[int, ...], str]] = {}
     if unit.main is None:
         return out
     for stmt in unit.main.body.stmts:
         if not (
             isinstance(stmt, StateBind)
             and stmt.ty is not None
-            and stmt.ty.name == "Float"
+            and stmt.ty.name in ("Float", "Bool")
             and len(stmt.ty.args) >= 1
             and len(stmt.names) == 1
             and isinstance(stmt.expr, Call)
@@ -832,7 +857,11 @@ def _host_placeholder_keys(unit: CompilationUnit) -> dict[str, tuple[str, tuple[
                 break
             shape.append(dim)
         if ok:
-            out[stmt.names[0]] = (stmt.expr.args[0].value, tuple(shape))
+            out[stmt.names[0]] = (
+                stmt.expr.args[0].value,
+                tuple(shape),
+                stmt.ty.name,
+            )
     return out
 
 
@@ -860,7 +889,7 @@ def merge_host_coefficient_arrays(
                 }
             )
 
-    referenced_keys = {key for key, _shape in placeholders.values()}
+    referenced_keys = {key for key, _shape, _dtype in placeholders.values()}
     for key in sorted(host_keys - referenced_keys):
         if key in literal_names:
             continue  # already reported as HOST_COEFFICIENT_CONFLICT
@@ -871,7 +900,7 @@ def merge_host_coefficient_arrays(
             }
         )
 
-    for local_name, (host_key, shape) in placeholders.items():
+    for local_name, (host_key, shape, _dtype) in placeholders.items():
         tensor = host_tensors.get(host_key)
         if tensor is None:
             diagnostics.append(

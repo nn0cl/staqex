@@ -17,11 +17,11 @@ def test_openqasm_adapter_consumes_qpu_ir_in_memory() -> None:
         package t
         pub fn main() -> Unit {
             QubitRegister<1> reg = system()
-            forEach q in reg {
+            ForEach q in reg {
                 apply(H, q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -30,7 +30,7 @@ def test_openqasm_adapter_consumes_qpu_ir_in_memory() -> None:
     emitted = QASM3Emitter(route=False).emit_qpu_program(compiled.qpu_ir)
     assert emitted.ok, emitted.notes
     assert "h q[0];" in emitted.qasm
-    assert "measure q[0]" in emitted.qasm
+    assert "measure q[0]" in emitted.qasm  # OpenQASM3 output keyword, always lowercase
 
 
 def test_qpu_program_root_is_immutable_and_preserves_node_provenance() -> None:
@@ -39,16 +39,16 @@ def test_qpu_program_root_is_immutable_and_preserves_node_provenance() -> None:
         package t
         pub fn main() -> Unit {
             QubitRegister<1> reg = system()
-            forEach q in reg {
+            ForEach q in reg {
                 apply(H, q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
     assert compiled.ok
     program = compiled.qpu_ir
     assert type(program).__name__ == "QpuProgram"
-    assert program["instructions"][0].provenance["source"] == "forEach.apply"
+    assert program["instructions"][0].provenance["source"] == "ForEach.apply"
 

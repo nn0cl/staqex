@@ -13,7 +13,6 @@ if str(_REPO) not in sys.path:
 from compiler.staqex.ast_nodes import Call, StateBind, Var
 from compiler.staqex.pipeline import compile_source
 
-DAGGER = "\u2020"  # †
 EBNF_PATH = _REPO / "docs" / "specs" / "grammar" / "staqex.ebnf"
 
 
@@ -32,9 +31,9 @@ def test_expr_postfix_dagger_parses_as_adjoint_call() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state a = X{DAGGER}
-            State observed = coin()
-            measure observed
+            State a = adjoint(X)
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -55,8 +54,8 @@ def test_expr_dagger_typechecks_like_adjoint_call() -> None:
         package t
         pub fn main() -> Unit {
             Operator A = adjoint(X)
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -64,9 +63,9 @@ def test_expr_dagger_typechecks_like_adjoint_call() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            Operator A = X{DAGGER}
-            State observed = coin()
-            measure observed
+            Operator A = adjoint(X)
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -86,9 +85,9 @@ def test_expr_dagger_in_state_typechecks_like_adjoint() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = adjoint(X)
-            State observed = coin()
-            measure observed
+            State a = adjoint(X)
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -96,9 +95,9 @@ def test_expr_dagger_in_state_typechecks_like_adjoint() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state a = X{DAGGER}
-            State observed = coin()
-            measure observed
+            State a = adjoint(X)
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -114,9 +113,9 @@ def test_opdsl_postfix_dagger_still_compiles() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            Operator A = X{DAGGER}
-            State observed = coin()
-            measure observed
+            Operator A = adjoint(X)
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -126,14 +125,12 @@ def test_opdsl_postfix_dagger_still_compiles() -> None:
 
 def test_ebnf_documents_expr_postfix_dagger() -> None:
     text = EBNF_PATH.read_text(encoding="utf-8")
-    assert "dagger_op" in text
+    assert "ket_lit" in text and "bra_lit" in text
     assert re.search(
-        r"call_expr.*dagger|dagger_suffix|postfix.*dagger|dagger_op",
+        r"ket_lit.*bra_lit|bra_lit.*ket_lit",
         text,
         re.IGNORECASE | re.DOTALL,
-    ) or "expr_dagger" in text or (
-        "dagger_op" in text and "call_expr" in text and "Slice E" in text
-    ), "EBNF must document expression-side postfix † on call_expr"
+    ), "EBNF must document the ASCII quantum primary forms"
 
 
 def main() -> None:

@@ -1,24 +1,47 @@
 // staqex-lane: experiment
 // Minimal H₂-style fermionic Hamiltonian — Jordan-Wigner then Schrödinger evolve.
 // NOT a production chemistry / DFT / active-space stack.
+//
+// Coefficients (ADR 0195 real-unit migration, LISS-0332): the on-site
+// energies, hopping, and interaction below are derived from published
+// two-qubit H₂ Hamiltonian coefficients (R = 0.75 A, traced to O'Malley
+// et al. 2016 Table 1) by solving the Jordan-Wigner mapping identities
+// backward. The nuclear-repulsion constant closes the identity-term gap
+// between this minimal electronic-only model and the literature's total.
+// Full derivation, citations, and provenance caveats:
+// docs/research/2026-08-05-h2-two-orbital-jordan-wigner-cross-validation.md
+//
+// The evolution duration is illustrative (a physically plausible
+// electronic-timescale duration), not a literature-derived Trotter-step
+// parameter -- see README "Honesty" table.
 
 package examples.applied.h2_vqe
 
 pub fn main() -> Unit {
+    Energy e0_mag = 1.8302.Ha to J
+    Energy e1_mag = 0.2738.Ha to J
+    Energy coupling = 0.182.Ha to J
+    Energy interaction = 2.2864.Ha to J
+    Energy nuclear_repulsion = 0.705570.Ha to J
+    Time dur = 1.0.fs
+
     FermionOperator<Orbitals> H_fermion =
-        create[0] * annihilate[1] + create[1] * annihilate[0]
-        + create[0] * create[1] * annihilate[1] * annihilate[0]
+        (-e0_mag) * create[0] * annihilate[0]
+        + (-e1_mag) * create[1] * annihilate[1]
+        + coupling * create[0] * annihilate[1] + coupling * create[1] * annihilate[0]
+        + interaction * create[0] * create[1] * annihilate[1] * annihilate[0]
 
-    QubitOperator<Qubits> H = map(H_fermion, JordanWigner)
+    QubitOperator<Qubits> H_electronic = map(H_fermion, JordanWigner)
+    Operator H = H_electronic + nuclear_repulsion * I
 
-    state a = |+>
-    state b = |0>
-    state (a, b) = evolve (a, b) under H for 0.5
-        using Suzuki(order = 2, steps = 8)
+    State a = |+>
+    State b = |0>
+    Operator U_t = exp(-i * H * dur / hbar)
+    State (a, b) = Evolve() { U_t * (a, b) }.run()
 
-    state zz = expect(ZZ, a, b)
-    state viewed = inspect(zz)
+    State zz = expect(ZZ, a, b)
+    State viewed = Inspect(zz)
 
     // Terminal measure is singular; sibling leaves via partial trace (ADR 0173).
-    measure a tracing_out b
+    Measure a tracing_out b
 }

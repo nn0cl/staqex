@@ -20,8 +20,8 @@ def _compile(operation: str):
         pub fn main() -> Unit {{
             QubitRegister<3> reg = system()
             Operator F = {operation}(reg)
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }}
         """
     )

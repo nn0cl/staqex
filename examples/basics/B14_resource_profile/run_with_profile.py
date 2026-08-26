@@ -46,7 +46,7 @@ def main() -> int:
     measured = result.eval.measure
     if measured is None:
         return 1
-    print(f"measure={measured.value}")
+    print(f"Measure={measured.value}")
     return 0
 
 

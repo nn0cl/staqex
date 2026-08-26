@@ -22,16 +22,16 @@ def test_stepwise_partial_typechecks_and_runs() -> None:
     src = """
     package t
     fn third(x: State<Bit>, y: State<Bit>, z: State<Bit>) -> State<Bit> {
-        state x = |0>
-        state y = |0>
+        State x = |0>
+        State y = |0>
         return z
     }
     pub fn main() -> Unit {
-        state p2 = third(|0>, _, _)
-        state p1 = p2(|1>)
-        state w = |0>
-        state r = w |> p1
-        measure r
+        State p2 = third(|0>, _, _)
+        State p1 = p2(|1>)
+        State w = |0>
+        State r = w |> p1
+        Measure r
     }
     """
     codes = _codes(src)
@@ -53,9 +53,9 @@ def test_over_arity_partial_call_rejected() -> None:
             return y
         }
         pub fn main() -> Unit {
-            state p = second(|0>, _)
-            state r = p(|1>, |0>)
-            measure r
+            State p = second(|0>, _)
+            State r = p(|1>, |0>)
+            Measure r
         }
         """
     )

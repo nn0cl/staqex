@@ -29,58 +29,18 @@ Rules:
   trunk branch, even for a single commit.
 - do not mix unrelated documentation, tests, implementation, and refactor work.
 - do not start Phase 2 implementation on a branch whose Phase 1 tests have not
-  been reviewed. (Claude Code only: `CLAUDE.md` §Claude Code Issue-Level and
-  Work-Plan Autonomy supersedes this for Issues it covers. Unchanged for every
-  other agent.)
+  been reviewed.
 - branch names should describe user-visible feature or process purpose, not the
   AI tool used.
 - keep branches short-lived: merge or close a branch as soon as its reviewable
   unit (one Phase, one issue, one process change) is accepted, instead of
-  accumulating multiple issues or phases on one long-running branch. (Claude
-  Code only: a `batch/<batch-id>` branch under an approved bounded execution
-  batch is a deliberate exception, bounded by the record's `expires_at` rather
-  than by Issue count. Unchanged for every other agent.)
+  accumulating multiple issues or phases on one long-running branch.
 - automated maintenance branches (for example, the
   `process/update-collab-template-*` branches created by
   `scripts/update-ai-collaboration-files.sh`, see
   `docs/architecture/decision-themes/dec-0001-governance-and-collaboration.md`) are exempt from
   the local/GitHub issue requirement above, but must still go through a PR and
   the CI gate before merging; they must never commit to `main` directly.
-
-## Branch and PR Granularity
-
-Default to one branch and one pull request per local Issue (`docs/issues/LISS-*`)
-or GitHub Issue, covering however many AT-TDD phases that Issue's approved
-scope actually needs — not a separate branch/PR for every incremental step
-(a documentation sync, an Architecture Path decision record, a single AT-TDD
-phase, and so on).
-
-Rules:
-
-- create the branch when starting work on the Issue.
-- accumulate phase-tagged commits (see Commits above) on that branch as
-  work progresses through Red, Green, and Refactor, instead of opening a
-  new branch or PR at each phase boundary.
-- still pause for the Adjudicator's explicit phase approval before pushing
-  the next phase's commits; consolidating branches does not weaken phase
-  discipline or the Approval Model.
-- open the pull request only once the Issue's approved scope is complete
-  and its documentation is synchronized (see Issue Status Synchronization
-  in `docs/collaboration/definition-of-done.md`) — not at an intermediate
-  phase. Request the Adjudicator's merge decision at that point.
-
-**Claude Code only (pointer, not a rule for other agents):** `CLAUDE.md`
-§"Claude Code Issue-Level and Work-Plan Autonomy" defines a work-plan-level
-alternative for Claude Code — one `batch/<batch-id>` branch and one pull
-request per approved bounded execution batch, without a pause at each phase
-boundary (ADR 0112, ADR 0113). It applies to Claude Code only. `AGENTS.md`,
-Copilot, Codex, Grok, and Cursor remain bound by the Issue-level default and
-the per-phase approval rule stated above; nothing in this section changes for
-them.
-- split into multiple branches/PRs only when: the work genuinely spans more
-  than one Issue, the Adjudicator explicitly asks for phase-separated
-  stacked PRs (see Stacked Branches for Phase Splitting below), or a
-  reviewable unit would otherwise become too large to review as one PR.
 
 ## Continuous Integration Gate
 
@@ -137,12 +97,6 @@ Rules:
 - keep commits reviewable.
 - do not hide test changes inside implementation commits.
 - when issue status changes, include the matching issue/documentation synchronization and any applicable work-plan update in the same reviewable unit.
-- before opening a completion PR, run the completion gate procedure in the
-  Definition of Done: the Issue, work-plan row, and trace must carry the
-  pre-merge `final-review-ready` state. After the PR number is known, the same
-  PR must add the `complete` state, exact PR evidence, and a passing
-  `scripts/check-completion-packet.py` run before merge. Do not defer status
-  synchronization to a post-merge PR.
 - mention AI assistance in PR notes when it materially shaped the change.
 - never commit secrets or full exports of private data.
 
@@ -158,8 +112,20 @@ PRs should identify:
 - whether AI payload included private context.
 - CI status (must be passing before merge; see Continuous Integration Gate
   above).
-- intended post-merge Issue status and the exact Issue/work-plan/trace files
-  that carry it.
+
+## Sync Script Delivery Choices
+
+`scripts/update-ai-collaboration-files.sh` supports two explicit routes:
+
+- `--delivery github` pushes the maintenance branch and opens a PR. Add
+  `--merge-pr` only when GitHub auto-merge after required checks is intended.
+- `--delivery local` creates and commits a local review branch without pushing.
+  Use `--base-branch` to choose the local branch from which it is created.
+
+The script keeps `--no-pr` as a local-delivery compatibility alias. The
+`--subagent ask|yes|no` choice records whether a provider-neutral handoff is
+requested; it does not bypass the existing issue, phase, review, or approval
+rules and does not select an LLM provider.
 
 ## Feature-Unit Branch Creation
 

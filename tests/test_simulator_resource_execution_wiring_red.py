@@ -63,8 +63,8 @@ from compiler.staqex.run import run_source  # noqa: E402
 _SOURCE = """
 package t
 pub fn main() -> Unit {
-    state q = |0>
-    measure q
+    State q = |0>
+    Measure q
 }
 """
 

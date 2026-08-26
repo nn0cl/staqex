@@ -26,8 +26,8 @@ def test_h1_5_when_is_classified_as_mixture_not_coherent_control() -> None:
           operator H = Z[0]
         }
         experiment classify() {
-          when phase { Ground -> prepare |0>, Excited -> prepare |1> }
-          measure
+          Mix phase { Ground -> prepare |0>, Excited -> prepare |1> }
+          Measure
         }
         """
     )
@@ -48,7 +48,7 @@ def test_h1_5_coherent_control_maps_to_semantic_region() -> None:
         experiment controlled() {
           prepare |00>
           capply(control, X, target)
-          measure
+          Measure
         }
         """
     )
@@ -73,7 +73,7 @@ def test_h1_5_dynamic_feed_forward_is_rejected_in_static_kernel() -> None:
         }
         experiment feedback() {
           prepare |0>
-          measure
+          Measure
           dynamic control measured -> correction
         }
         """

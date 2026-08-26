@@ -1,134 +1,18 @@
-// Lattice geometry ownership for finite quantum-matter missions.
+// Sensor array geometry.
 
 package examples.applied.noether_forge.domain
 
 namespace Forge.Lattice {
     pub enum Boundary {
-        Open,
-        Periodic,
-        Cylinder
+        Open
     }
 
-    pub enum GeometryKind {
-        Chain1D,
-        Ladder,
-        Square2D,
-        HoneycombSnippet
-    }
-
-    pub struct Chain {
+    pub struct SensorArray {
         val sites: Int
         val boundary: Boundary
     }
 
-    pub struct Plaquette {
-        val rows: Int
-        val cols: Int
-        val boundary: Boundary
+    pub fn middle_index(array: SensorArray) -> Int {
+        return array.sites / 2
     }
-
-    pub struct LatticeSpec {
-        val kind: GeometryKind
-        val sites: Int
-        val boundary: Boundary
-    }
-
-    pub fn chain_open(sites: Int) -> Chain {
-        return Chain(sites, Boundary.Open)
-    }
-
-    pub fn chain_periodic(sites: Int) -> Chain {
-        return Chain(sites, Boundary.Periodic)
-    }
-
-    pub fn square_open(side: Int) -> Plaquette {
-        return Plaquette(side, side, Boundary.Open)
-    }
-
-    pub fn square_periodic(side: Int) -> Plaquette {
-        return Plaquette(side, side, Boundary.Periodic)
-    }
-
-    pub fn ladder_open(rungs: Int) -> LatticeSpec {
-        return LatticeSpec(GeometryKind.Ladder, rungs * 2, Boundary.Open)
-    }
-
-    pub fn site_count(chain: Chain) -> Int {
-        return chain.sites
-    }
-
-    pub fn plaquette_sites(p: Plaquette) -> Int {
-        return p.rows * p.cols
-    }
-
-    pub fn is_open(chain: Chain) -> Bool {
-        return chain.boundary == Boundary.Open
-    }
-
-    pub fn is_periodic(chain: Chain) -> Bool {
-        return chain.boundary == Boundary.Periodic
-    }
-
-    pub fn supports_translation(spec: LatticeSpec) -> Bool {
-        return spec.boundary == Boundary.Periodic
-    }
-
-    pub fn review_smoke_chain() -> Chain {
-        return chain_open(4)
-    }
-
-    pub fn review_research_chain() -> Chain {
-        return chain_periodic(8)
-    }
-
-    pub fn geometry_label(kind: GeometryKind) -> Int {
-        if kind == GeometryKind.Chain1D {
-            return 1
-        }
-        if kind == GeometryKind.Ladder {
-            return 2
-        }
-        if kind == GeometryKind.Square2D {
-            return 3
-        }
-        return 4
-    }
-
-    pub fn cylinder_chain(sites: Int) -> LatticeSpec {
-        return LatticeSpec(GeometryKind.Chain1D, sites, Boundary.Cylinder)
-    }
-
-    pub fn honeycomb_snippet(sites: Int) -> LatticeSpec {
-        return LatticeSpec(GeometryKind.HoneycombSnippet, sites, Boundary.Open)
-    }
-
-    pub fn min_sites_for_review(kind: GeometryKind) -> Int {
-        if kind == GeometryKind.Chain1D {
-            return 4
-        }
-        if kind == GeometryKind.Ladder {
-            return 6
-        }
-        if kind == GeometryKind.Square2D {
-            return 9
-        }
-        return 8
-    }
-
-    pub fn fits_smoke_budget(spec: LatticeSpec) -> Bool {
-        return spec.sites >= 2 && spec.sites <= 5
-    }
-
-    pub fn fits_research_budget(spec: LatticeSpec) -> Bool {
-        return spec.sites >= 4 && spec.sites <= 16
-    }
-
-    pub fn same_boundary(a: Chain, b: Chain) -> Bool {
-        return a.boundary == b.boundary
-    }
-
-    pub fn enlarge_chain(chain: Chain, delta: Int) -> Chain {
-        return Chain(chain.sites + delta, chain.boundary)
-    }
-
 }

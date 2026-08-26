@@ -24,37 +24,40 @@ from compiler.staqex.cli import build_parser, cmd_run  # noqa: E402
 from compiler.staqex.pipeline import compile_source  # noqa: E402
 
 BELL = as_main("""
-state q = coin()
-state result = when (q) {
-  0 -> dirac(0),
-  else -> dirac(1),
+State q = Coin()
+State result = Mix (q) {
+  0 -> Dirac(0),
+  else -> Dirac(1),
 }
-measure result
+Measure result
 """)
 
 
 def run() -> list[CaseResult]:
     out: list[CaseResult] = []
 
-    # Valid OpenQASM 3 header + gates
+    # Coin/Mix has no static finite projection; it must reject atomically.
     try:
         compiled = compile_source(BELL)
         assert compiled.unit is not None
         emitted = emit_openqasm3(compiled.unit, topology="linear", route=True)
-        qasm = emitted.qasm
-        if not qasm.startswith("OPENQASM 3.0"):
-            raise AssertionFailure("PARSE_ERROR", qasm[:80])
-        for needle in ("include \"stdgates.inc\"", "qubit[", "h q[", "cx q[", "measure"):
-            if needle not in qasm:
-                raise AssertionFailure("PARSE_ERROR", f"missing {needle}: {qasm}")
-        # balanced brackets rough check
-        if qasm.count("[") != qasm.count("]"):
-            raise AssertionFailure("PARSE_ERROR", "unbalanced []")
+        if emitted.ok or emitted.qasm:
+            raise AssertionFailure("PARSE_ERROR", "Coin/Mix emitted QASM")
+        if emitted.circuit is None:
+            raise AssertionFailure("PARSE_ERROR", "missing rejection circuit")
+        if emitted.circuit.reject_code != "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE":
+            raise AssertionFailure("PARSE_ERROR", str(emitted.circuit.reject_code))
+        if emitted.circuit.provenance is None:
+            raise AssertionFailure("PARSE_ERROR", "missing rejection provenance")
+        if emitted.circuit.provenance.get("reason") != "mixture_projection_unavailable":
+            raise AssertionFailure("PARSE_ERROR", str(emitted.circuit.provenance))
+        if emitted.circuit.gates or emitted.circuit.allocation_started:
+            raise AssertionFailure("PARSE_ERROR", "rejection retained target artifacts")
         out.append(
             CaseResult(
                 "SV-11",
                 "sv11-qasm3-syntax",
-                "bell → valid OpenQASM 3.0 text",
+                "Coin/Mix → explicit capability rejection",
                 True,
                 ["QASM3Emitter"],
             )
@@ -71,18 +74,23 @@ def run() -> list[CaseResult]:
             )
         )
 
-    # DAG/AST mapping coin→H, when-copy→CX
+    # The QASM consumer must not use the retired AST gate mapping for Coin/Mix.
     try:
         compiled = compile_source(BELL)
         em = QASM3Emitter(route=False).emit_unit(compiled.unit)
-        names = [g.name for g in em.circuit.gates] if em.circuit else []
-        if names.count("h") < 1 or names.count("cx") < 1 or names.count("measure") != 1:
-            raise AssertionFailure("PARSE_ERROR", f"gates={names}")
+        if em.ok or em.qasm or em.circuit is None:
+            raise AssertionFailure("PARSE_ERROR", "Coin/Mix emitted a gate fallback")
+        if em.circuit.reject_code != "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE":
+            raise AssertionFailure("PARSE_ERROR", str(em.circuit.reject_code))
+        if em.circuit.provenance is None or em.circuit.provenance.get("reason") != "mixture_projection_unavailable":
+            raise AssertionFailure("PARSE_ERROR", str(em.circuit.provenance))
+        if em.circuit.gates or em.circuit.allocation_started:
+            raise AssertionFailure("PARSE_ERROR", "rejection retained target artifacts")
         out.append(
             CaseResult(
                 "SV-11",
                 "sv11-gate-map",
-                "coin→H, when-copy→CX, measure",
+                "Coin/Mix does not use the retired gate fallback",
                 True,
                 ["lower"],
             )
@@ -153,11 +161,11 @@ def run() -> list[CaseResult]:
 
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(err):
                 code = cmd_run(args)
-            if code != 0:
+            if code != 1:
                 raise AssertionFailure("PARSE_ERROR", err.getvalue())
-            text = path.read_text(encoding="utf-8")
-            if "OPENQASM 3.0" not in text or "h q[" not in text:
-                raise AssertionFailure("PARSE_ERROR", text)
+            text = path.read_text(encoding="utf-8") if path.exists() else ""
+            if text or path.exists() or "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE" not in err.getvalue():
+                raise AssertionFailure("PARSE_ERROR", f"file={text} stderr={err.getvalue()}")
         out.append(
             CaseResult(
                 "SV-11",

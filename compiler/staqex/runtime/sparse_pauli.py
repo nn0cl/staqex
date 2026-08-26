@@ -6,6 +6,7 @@ Avoids building dense 2^n×2^n U for Schrödinger evolve: store H as
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Sequence
 
@@ -91,18 +92,58 @@ def expm_ih_apply(
     max_order: int = 48,
     atol: float = 1e-14,
 ) -> list[complex]:
-    """|ψ'⟩ = exp(-i H t)|ψ⟩ via Taylor series + sparse matvec (no dense U)."""
-    total = list(vec)
-    term_v = list(vec)
-    tt = float(t)
-    for k in range(1, max_order + 1):
-        hv = matvec(terms, term_v)
-        scale = (-1j * tt) / k
-        term_v = [scale * x for x in hv]
-        total = [a + b for a, b in zip(total, term_v)]
-        if sum(abs(x) ** 2 for x in term_v) < atol * atol:
-            break
-    return total
+    """|ψ'⟩ = exp(-i H t / hbar)|ψ⟩ via Taylor series + sparse matvec (no
+    dense U; ADR 0195 -- real hbar, H in Joules, t in seconds).
+
+    Real hbar division can push |t/hbar| * ||H|| many orders of magnitude
+    larger than the old hbar=1 convention ever did, well beyond a single
+    fixed-order Taylor series' convergence range. Uses the same
+    scaling-and-squaring idea as `expm_ih` -- applying the small-step
+    propagator `exp(A/2^s)` to the state vector `2^s` times, which is
+    mathematically identical to applying `exp(A)` once but converges at
+    every step -- with `||H||` bounded via the triangle inequality over
+    Pauli-string coefficients (each individual Pauli string has operator
+    norm 1). Unlike the dense `expm_ih` (which squares a matrix, O(s) work
+    regardless of how large `s` is), this sparse/vector form must apply
+    the propagator `2^s` times sequentially -- O(2^s) work -- so `s` is
+    capped; beyond the cap this fails closed rather than attempting an
+    intractable computation."""
+    from ..stdlib.prelude import HBAR_SI
+
+    tt = float(t) / HBAR_SI
+    h_norm_bound = sum(abs(term.coeff) for term in terms)
+    magnitude = abs(tt) * h_norm_bound
+    s = max(0, math.ceil(math.log2(magnitude))) if magnitude > 1.0 else 0
+    max_s = 16  # steps = 2**16 = 65536, already a generous, bounded worst case
+    if s > max_s:
+        raise ValueError(
+            f"evolve magnitude |H*t/hbar| ~= 2**{s} exceeds the sparse "
+            f"evolution step budget (2**{max_s}) -- H and/or t are not "
+            "physically plausible real-unit values. ADR 0195 requires H's "
+            "coefficients to already be in real Joules and t in real "
+            "seconds by the time they reach `evolve`: if H was built from "
+            "dimensionless/natural-unit weights, scale it explicitly first, "
+            "e.g. `Energy scale = 1.0.eV to J; Operator H = scale * H_raw` "
+            "(the `to` unit-conversion operator), matching the shipped "
+            "energy/time unit surface (see any `examples/showcase/*` "
+            "program's own H_raw/H two-step pattern)"
+        )
+    steps = 2**s
+    step_tt = tt / steps
+
+    result = list(vec)
+    for _ in range(steps):
+        total = list(result)
+        term_v = list(result)
+        for k in range(1, max_order + 1):
+            hv = matvec(terms, term_v)
+            scale = (-1j * step_tt) / k
+            term_v = [scale * x for x in hv]
+            total = [a + b for a, b in zip(total, term_v)]
+            if sum(abs(x) ** 2 for x in term_v) < atol * atol:
+                break
+        result = total
+    return result
 
 
 def sparse_to_dense(terms: Sequence[PauliTerm]) -> Matrix:
@@ -126,7 +167,19 @@ def _coalesce(terms: Sequence[PauliTerm]) -> SparsePauli:
     acc: dict[tuple[str, ...], complex] = {}
     for t in terms:
         acc[t.kinds] = acc.get(t.kinds, 0j) + t.coeff
-    return [PauliTerm(coeff=c, kinds=k) for k, c in acc.items() if abs(c) > 1e-15]
+    if not acc:
+        return []
+    # ADR 0195: real-unit coefficients (Joules) are routinely far below
+    # any fixed absolute epsilon (e.g. 1 eV ~= 1.6e-23 relative to a
+    # once-plausible 1e-15 natural-units floor). Scale the drop threshold
+    # to the largest coefficient present so genuine floating-point
+    # cancellation-to-zero is still coalesced away without zeroing real
+    # small-magnitude SI values.
+    scale = max(abs(c) for c in acc.values())
+    if scale == 0:
+        return []
+    tol = scale * 1e-12
+    return [PauliTerm(coeff=c, kinds=k) for k, c in acc.items() if abs(c) > tol]
 
 
 def _identity(n: int, coeff: complex = 1 + 0j) -> SparsePauli:
@@ -147,7 +200,7 @@ def _eval(
             )
         if op.acting_space != n:
             raise ValueError("identity acting space does not match the target register")
-        return [] if op.kind == "sum" else _identity(n)
+        return [] if op.kind == "Sigma" else _identity(n)
     if isinstance(op, OpLit):
         return _identity(n, complex(op.value))
     if isinstance(op, OpPauli):

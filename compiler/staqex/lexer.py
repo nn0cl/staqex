@@ -13,12 +13,7 @@ from .tokens import (
 )
 from .kernel_literals import DIRAC_LABEL_EXTRAS as _DIRAC_LABEL_EXTRAS
 
-# LISS-0069 Slice A — Unicode math dual-accept (same IR as ASCII forms).
-_UNICODE_TENSOR = "\u2297"  # ⊗
-_UNICODE_DAGGER = "\u2020"  # †
-_UNICODE_BRA_OPEN = "\u27e8"  # ⟨
-_UNICODE_KET_CLOSE = "\u27e9"  # ⟩
-_KET_CLOSE_CHARS = frozenset({">", _UNICODE_KET_CLOSE})
+_KET_CLOSE_CHARS = frozenset({">"})
 
 
 class Lexer:
@@ -38,7 +33,7 @@ class Lexer:
             start_line, start_col = self.line, self.col
             c = self._peek()
 
-            if c.isalpha() or c == "_":
+            if self._is_ascii_identifier_start(c):
                 self._ident_or_keyword(start_line, start_col)
                 continue
             if c.isdigit():
@@ -74,6 +69,20 @@ class Lexer:
                 self._advance()
                 self.tokens.append(Token(TokenKind.EQEQ, "==", start_line, start_col))
                 continue
+            if c == "=" and self._peek_at(1) == ">":
+                self._advance()
+                self._advance()
+                self.tokens.append(
+                    Token(TokenKind.FAT_ARROW, "=>", start_line, start_col)
+                )
+                continue
+            if (
+                c == "<"
+                and self._can_start_primary()
+                and self._peek_at(1) not in {"\0", " ", "\t", "\r", "\n"}
+            ):
+                self._bra_literal(start_line, start_col)
+                continue
             if c == "&" and self._peek_at(1) == "&":
                 self._advance()
                 self._advance()
@@ -106,21 +115,6 @@ class Lexer:
                 self.tokens.append(
                     Token(TokenKind.TENSOR_OP, "*|*", start_line, start_col)
                 )
-                continue
-            if c == _UNICODE_TENSOR:
-                self._advance()
-                self.tokens.append(
-                    Token(TokenKind.TENSOR_OP, _UNICODE_TENSOR, start_line, start_col)
-                )
-                continue
-            if c == _UNICODE_DAGGER:
-                self._advance()
-                self.tokens.append(
-                    Token(TokenKind.DAGGER, _UNICODE_DAGGER, start_line, start_col)
-                )
-                continue
-            if c == _UNICODE_BRA_OPEN:
-                self._bra_literal(start_line, start_col)
                 continue
             if c == "^":
                 self._advance()
@@ -172,7 +166,7 @@ class Lexer:
         return self.tokens, self.diagnostics
 
     def _ket_literal(self, line: int, col: int) -> None:
-        """Scan `|label>` or `|label⟩` → TokenKind.KET with literal=label."""
+        """Scan `|label>` → TokenKind.KET with literal=label."""
         self._advance()  # consume '|'
         label_start = self.i
         label = self._scan_dirac_label(stop_before=_KET_CLOSE_CHARS)
@@ -182,7 +176,7 @@ class Lexer:
                 col,
                 label_start,
                 message_kind="ket literal",
-                expected="`>` or `⟩`",
+                expected="`>`",
             )
             return
         close = self._peek()
@@ -191,11 +185,11 @@ class Lexer:
         self.tokens.append(Token(TokenKind.KET, lexeme, line, col, literal=label))
 
     def _bra_literal(self, line: int, col: int) -> None:
-        """Scan `⟨label|` → TokenKind.BRA; optional ket half for `⟨φ|ψ⟩` (Slice B)."""
-        self._advance()  # consume '⟨'
+        """Scan adjacent ASCII `<label|` → TokenKind.BRA."""
+        self._advance()  # consume '<'
         label_start = self.i
         label = self._scan_dirac_label(stop_before=frozenset("|"))
-        if self._at_end() or self._peek() != "|":
+        if not label or self._at_end() or self._peek() != "|":
             self._emit_unterminated_dirac(
                 line,
                 col,
@@ -205,43 +199,15 @@ class Lexer:
             )
             return
         self._advance()  # '|'
-        lexeme = f"{_UNICODE_BRA_OPEN}{label}|"
+        lexeme = f"<{label}|"
         self.tokens.append(Token(TokenKind.BRA, lexeme, line, col, literal=label))
-        # North-star inner surface ⟨φ|ψ⟩: bra-close bar then ket label + ⟩/>.
-        self._skip_trivia()
-        self._try_ket_half_after_bra()
-
-    def _try_ket_half_after_bra(self) -> None:
-        """If the next chars are `label⟩` / `label>`, emit TokenKind.KET; else leave input."""
-        if self._at_end():
-            return
-        start_line, start_col = self.line, self.col
-        checkpoint = (self.i, self.line, self.col)
-        ch = self._peek()
-        if not (ch.isalnum() or ch in _DIRAC_LABEL_EXTRAS):
-            return
-        label = self._scan_dirac_label(stop_before=_KET_CLOSE_CHARS)
-        if not label or self._at_end() or self._peek() not in _KET_CLOSE_CHARS:
-            self.i, self.line, self.col = checkpoint
-            return
-        close = self._peek()
-        self._advance()
-        self.tokens.append(
-            Token(
-                TokenKind.KET,
-                f"|{label}{close}",
-                start_line,
-                start_col,
-                literal=label,
-            )
-        )
 
     def _scan_dirac_label(self, *, stop_before: frozenset[str]) -> str:
         """Consume a ket/bra interior label; stop before a terminator or invalid char."""
         start = self.i
         while not self._at_end() and self._peek() not in stop_before:
             ch = self._peek()
-            if not (ch.isalnum() or ch in _DIRAC_LABEL_EXTRAS):
+            if not (self._is_ascii_identifier_part(ch) or ch in _DIRAC_LABEL_EXTRAS):
                 break
             self._advance()
         return self.source[start : self.i]
@@ -269,7 +235,7 @@ class Lexer:
         self.tokens.append(Token(TokenKind.ERROR, lexeme, line, col))
     def _ident_or_keyword(self, line: int, col: int) -> None:
         start = self.i
-        while not self._at_end() and (self._peek().isalnum() or self._peek() == "_"):
+        while not self._at_end() and self._is_ascii_identifier_part(self._peek()):
             self._advance()
         lexeme = self.source[start : self.i]
 
@@ -441,6 +407,44 @@ class Lexer:
         if j >= len(self.source):
             return "\0"
         return self.source[j]
+
+    def _can_start_primary(self) -> bool:
+        """Return whether the current token position can begin an expression."""
+        if not self.tokens:
+            return True
+        previous = self.tokens[-1].kind
+        value_kinds = {
+            TokenKind.IDENT,
+            TokenKind.INT,
+            TokenKind.FLOAT,
+            TokenKind.STRING,
+            TokenKind.BRA,
+            TokenKind.RPAREN,
+            TokenKind.RBRACKET,
+        }
+        # LISS-0430: `TokenKind.KET` deliberately excluded -- `|x><x|`
+        # (outer product / matching-label projector, ADR 0169 "Slice D")
+        # needs `<` to start a fresh bra literal immediately after a
+        # closed ket, with no operator between them. Before this fix
+        # `_can_start_primary` always blocked that (treating the `<` as
+        # a stray comparison operator), so this syntax could never
+        # actually be reached despite `_ket_or_outer` already being
+        # written to handle it -- confirmed via a full corpus grep
+        # finding zero existing uses of `>` immediately followed by `<`,
+        # so this closes a real, previously-dead code path rather than
+        # risking any existing `<` comparison.
+        return previous not in value_kinds
+
+    @staticmethod
+    def _is_ascii_identifier_start(char: str) -> bool:
+        return char == "_" or "A" <= char <= "Z" or "a" <= char <= "z"
+
+    @staticmethod
+    def _is_ascii_identifier_part(char: str) -> bool:
+        return (
+            Lexer._is_ascii_identifier_start(char)
+            or "0" <= char <= "9"
+        )
 
     def _advance(self) -> str:
         c = self.source[self.i]

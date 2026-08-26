@@ -54,16 +54,18 @@ def run() -> list[CaseResult]:
     try:
         src = as_main(
             """
-Operator H = N + 0.5
-state psi = dirac(0)
-state psi = evolve psi under H for 2.3
-measure psi
+Energy e = 0.5.eV to J
+Time dur = 1.0.fs
+Operator H = e * (N + 0.5)
+State psi = Dirac(0)
+State psi = Evolve { psi under H for dur }.run()
+Measure psi
 """
         )
         result, _ = _eval(src)
         n = _joint_norm(result.joint)
         if abs(n - 1.0) > 1e-9:
-            raise AssertionFailure("NORM", f"Fock evolve norm {n}")
+            raise AssertionFailure("NORM", f"Fock Evolve norm {n}")
         st = State(result.joint.marginal("psi"), payload_type=int)
         assertNormEquals(st, 1.0)
         assertSuperposition(st, {0: 1.0})
@@ -71,7 +73,7 @@ measure psi
             CaseResult(
                 "SV-19",
                 "sv19-fock-ho-unitary",
-                "Fock H=N+1/2 evolve preserves |0⟩ and unit norm",
+                "Fock H=N+1/2 Evolve preserves |0⟩ and unit norm",
                 True,
                 ["Operator", "expm"],
             )
@@ -81,7 +83,7 @@ measure psi
             CaseResult(
                 "SV-19",
                 "sv19-fock-ho-unitary",
-                "Fock H=N+1/2 evolve preserves |0⟩ and unit norm",
+                "Fock H=N+1/2 Evolve preserves |0⟩ and unit norm",
                 False,
                 [],
                 error_code=e.code,
@@ -93,26 +95,27 @@ measure psi
     try:
         src = as_main(
             """
-Float J = 1.0
-Float h = 0.25
+Energy J = 1.0.eV to J
+Energy h = 0.25.eV to J
+Time dur = 1.0.fs
 Operator H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
-state a = |+>
-state b = |0>
-state (a, b) = evolve (a, b) under H for 1.1
-state zz = expect(ZZ, a, b)
-measure zz
+State a = |+>
+State b = |0>
+State (a, b) = Evolve { (a, b) under H for dur }.run()
+State zz = expect(ZZ, a, b)
+Measure zz
 """
         )
         result, _ = _eval(src)
         n = _joint_norm(result.joint)
         if abs(n - 1.0) > 1e-8:
-            raise AssertionFailure("NORM", f"Ising evolve norm {n}")
+            raise AssertionFailure("NORM", f"Ising Evolve norm {n}")
         # Energy proxy: ⟨ZZ⟩ is classical; joint still unit
         out.append(
             CaseResult(
                 "SV-19",
                 "sv19-ising-unitary",
-                "Ising Operator H evolve preserves Born norm",
+                "Ising Operator H Evolve preserves Born norm",
                 True,
                 ["Operator", "Z[index]", "Float coeff"],
             )
@@ -122,7 +125,7 @@ measure zz
             CaseResult(
                 "SV-19",
                 "sv19-ising-unitary",
-                "Ising Operator H evolve preserves Born norm",
+                "Ising Operator H Evolve preserves Born norm",
                 False,
                 [],
                 error_code=e.code,
@@ -141,7 +144,15 @@ measure zz
             sp,
         )
         h = compile_hamiltonian(h_ast, env={}, scalars={}, n_qubits=2)
-        u = expm_ih(h, 0.37)
+        # LISS-0337: expm_ih now divides by real hbar (ADR 0195); this
+        # direct-Python call bypasses .sqx entirely and h carries a bare
+        # unit (dimensionless, magnitude 1) Pauli-product matrix, not a
+        # real Joule-scale value -- so t must be picked on hbar's own
+        # scale to keep |H*t/hbar| a moderate O(1) phase. Unitarity
+        # (U dag U = I) holds for any real, finite phase.
+        from compiler.staqex.stdlib.prelude import HBAR_SI
+
+        u = expm_ih(h, HBAR_SI)
         udag = mat_dag(u)
         i_approx = mat_mul(udag, u)
         err = 0.0
@@ -177,11 +188,11 @@ measure zz
     try:
         src = as_main(
             """
-state a = |+>
-state b = |0>
-state (c, x) = a *|* b
-state _t = trace_out(c)
-measure x
+State a = |+>
+State b = |0>
+State (c, x) = a *|* b
+State _t = trace_out(c)
+Measure x
 """
         )
         result, _ = _eval(src)
@@ -191,8 +202,8 @@ measure x
         # also closed form tensor
         src2 = as_main(
             """
-state (c, x) = |+> *|* dirac(0)
-measure x
+State (c, x) = |+> *|* Dirac(0)
+Measure x
 """
         )
         result2, _ = _eval(src2)
@@ -225,11 +236,13 @@ measure x
     try:
         src = as_main(
             """
-Operator H = Z
-state psi = |0>
-state psi = evolve psi under H for 3.0
-state ez = expect(Z, psi)
-measure ez
+Energy e = 1.0.eV to J
+Time dur = 1.0.fs
+Operator H = e * Z
+State psi = |0>
+State psi = Evolve { psi under H for dur }.run()
+State ez = expect(Z, psi)
+Measure ez
 """
         )
         result, _ = _eval(src)
@@ -246,7 +259,7 @@ measure ez
                 "sv19-energy-eigenstate",
                 "|0⟩ under H=Z: populations fixed, ⟨Z⟩=1",
                 True,
-                ["expect", "evolve under H"],
+                ["expect", "Evolve under H"],
             )
         )
     except AssertionFailure as e:
@@ -263,16 +276,27 @@ measure ez
         )
 
     # --- Official example files compile+run ---
+    # LISS-0437: B08_operators_hamiltonians now writes its propagator
+    # explicitly. Catch KernelError here so a runtime boundary reports as a
+    # graceful FAIL instead of crashing this whole suite and masking every
+    # other case's result.
     try:
+        from compiler.staqex.runtime.evaluator import KernelError
+
         for rel in (
             "tests/fixtures/staqex/quantum_oscillator.sqx",
             "examples/basics/B08_operators_hamiltonians/operators_hamiltonians.sqx",
         ):
             path = _REPO / rel
             src = path.read_text(encoding="utf-8")
-            result, compiled = _eval(src)
+            try:
+                result, compiled = _eval(src)
+            except KernelError as ke:
+                raise AssertionFailure(
+                    getattr(ke, "code", "KERNEL_ERROR"), f"{rel}: {ke}"
+                ) from ke
             if result.measure is None:
-                raise AssertionFailure("MEASURE", f"no measure in {rel}")
+                raise AssertionFailure("MEASURE", f"no Measure in {rel}")
         out.append(
             CaseResult(
                 "SV-19",

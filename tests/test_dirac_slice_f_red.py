@@ -32,8 +32,8 @@ def test_operator_brackets_parse_as_commutator() -> None:
         package t
         pub fn main() -> Unit {
             Operator C = [X, Y]
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -55,8 +55,8 @@ def test_operator_braces_parse_as_anticommutator() -> None:
         package t
         pub fn main() -> Unit {
             Operator C = {X, Y}
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -76,9 +76,9 @@ def test_expr_two_element_list_remains_list_expr() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state xs = [X, Y]
-            State observed = coin()
-            measure observed
+            State xs = [X, Y]
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -94,9 +94,9 @@ def test_expr_braces_parse_as_anticommutator() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state a = {X, Y}
-            State observed = coin()
-            measure observed
+            State a = {X, Y}
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -116,8 +116,8 @@ def test_bracket_punctuation_typechecks_like_function_forms() -> None:
         pub fn main() -> Unit {
             Operator C = commutator(X, Y)
             Operator A = anticommutator(X, Y)
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )
@@ -127,8 +127,8 @@ def test_bracket_punctuation_typechecks_like_function_forms() -> None:
         pub fn main() -> Unit {
             Operator C = [X, Y]
             Operator A = {X, Y}
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }
         """
     )

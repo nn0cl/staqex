@@ -34,8 +34,8 @@ import demo.domain.ops.{Keep}
 pub fn main() -> Unit {
     Keep k = Keep(2.0)
     Float v = k.get() * 0.5
-    state s = dirac(v)
-    measure s
+    State s = Dirac(v)
+    Measure s
 }
 """,
         encoding="utf-8",
@@ -52,11 +52,11 @@ enum Phase { Tonight, Day }
 use Phase.*
 pub fn main() -> Unit {
     Phase p = Phase.Tonight
-    state s = when (p) {
+    State s = Mix (p) {
       Tonight -> |0>,
       else -> |1>,
     }
-    measure s
+    Measure s
 }
 """
     r = run_source(src, settings={"seed": 0})
@@ -68,11 +68,11 @@ def test_lane_soft_foreach_under_experiment() -> None:
 // staqex-profile: experiment
 // staqex-lane: experiment
 QubitRegister<1> r = system()
-forEach q in r {
+ForEach q in r {
   apply(H, q)
 }
-state s = |0>
-measure s
+State s = |0>
+Measure s
 """
     c = compile_source(src)
     codes = {d.get("code") for d in c.diagnostics}
@@ -84,11 +84,11 @@ def test_lane_circuit_suppresses_soft() -> None:
 // staqex-profile: experiment
 // staqex-lane: circuit
 QubitRegister<1> r = system()
-forEach q in r {
+ForEach q in r {
   apply(H, q)
 }
-state s = |0>
-measure s
+State s = |0>
+Measure s
 """
     c = compile_source(src)
     codes = {d.get("code") for d in c.diagnostics}

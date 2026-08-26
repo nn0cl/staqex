@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .ast_nodes import Call, CompilationUnit, Measure, StateBind, Var
+from .ast_nodes import Call, CompilationUnit, FunDecl, Measure, StateBind, Var
 
 
 @dataclass(frozen=True, slots=True)
@@ -58,10 +58,10 @@ def resolve_measurement_contracts(
                 )
             )
             continue
-        if isinstance(statement.expr, Var):
-            source_domain = states.get(statement.expr.name)
+        source_domain = _measure_source_domain(statement.expr, states, unit)
+        if source_domain is not None:
             povm_domain = povms[statement.povm.name].domain
-            if source_domain is not None and source_domain != povm_domain:
+            if source_domain != povm_domain:
                 diagnostics.append(
                     _diagnostic(
                         "POVM_DOMAIN_MISMATCH",
@@ -70,6 +70,39 @@ def resolve_measurement_contracts(
                     )
                 )
     return povms, diagnostics
+
+
+def _measure_source_domain(
+    expr: object,
+    states: dict[str, str],
+    unit: CompilationUnit,
+) -> str | None:
+    """Domain of a measure target: named bind, or zero-arg Call return type.
+
+    LISS-0377: POVM domain checks used to require ``isinstance(expr, Var)``,
+    so ``measure make() with p`` silently skipped ``POVM_DOMAIN_MISMATCH``
+    even when ``make`` returned ``DensityState<Qubit>``.
+    """
+    if isinstance(expr, Var):
+        return states.get(expr.name)
+    if (
+        not isinstance(expr, Call)
+        or not isinstance(expr.callee, Var)
+        or expr.args
+    ):
+        return None
+    for decl in unit.decls:
+        if not isinstance(decl, FunDecl) or decl.name != expr.callee.name:
+            continue
+        return_type = decl.return_type
+        if (
+            return_type is not None
+            and return_type.name in {"State", "DensityState"}
+            and return_type.args
+        ):
+            return return_type.args[0].name
+        return None
+    return None
 
 
 def _is_computational_basis(expr: object) -> bool:

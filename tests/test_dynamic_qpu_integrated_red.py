@@ -152,7 +152,13 @@ def test_unpaired_and_double_merge_reject() -> None:
     assert "DYN_DOUBLE_MERGE" in _codes(double)
 
 
-def test_ch1_profile_rejects_unsupported_reset_reuse_latency() -> None:
+def test_ch1_profile_rejects_unsupported_latency_only() -> None:
+    """LISS-0388 (ADR 0200 Decision 3) repurposed reuse; LISS-0390 (ADR
+    0199 Amendment) repurposed reset -- both symmetric for
+    simulator-class profiles (CH1_DIGITAL_RESEARCH included). Latency
+    alone remains reject-on-demand (ADR 0193 Follow-up #2, still
+    deferred).
+    """
     api = _load_api()
     request = _request(
         api,
@@ -160,9 +166,35 @@ def test_ch1_profile_rejects_unsupported_reset_reuse_latency() -> None:
         demand=_demand(api, needs_reset=True, needs_reuse=True, needs_latency=True),
     )
     codes = _codes(api["verify_dynamic_request"](request))
-    assert "DYN_CAPABILITY_RESET" in codes
-    assert "DYN_CAPABILITY_REUSE" in codes
+    assert "DYN_CAPABILITY_RESET" not in codes
+    assert "DYN_CAPABILITY_REUSE" not in codes
     assert "DYN_CAPABILITY_LATENCY" in codes
+
+
+def test_ch1_profile_accepts_reset_alone() -> None:
+    """LISS-0390: reset alone (no reuse/latency) is accepted on
+    CH1_DIGITAL_RESEARCH, mirroring SIM0_EXACT's repurposed behavior.
+    """
+    api = _load_api()
+    request = _request(
+        api,
+        profile_id="CH1_DIGITAL_RESEARCH",
+        demand=_demand(api, needs_reset=True, needs_reuse=False, needs_latency=False),
+    )
+    assert api["verify_dynamic_request"](request) == []
+
+
+def test_ch1_profile_accepts_reuse_alone() -> None:
+    """LISS-0388: reuse alone (no reset/latency) is accepted on
+    CH1_DIGITAL_RESEARCH, mirroring SIM0_EXACT's repurposed behavior.
+    """
+    api = _load_api()
+    request = _request(
+        api,
+        profile_id="CH1_DIGITAL_RESEARCH",
+        demand=_demand(api, needs_reset=False, needs_reuse=True, needs_latency=False),
+    )
+    assert api["verify_dynamic_request"](request) == []
 
 
 def test_sim0_profile_accepts_feedback_without_reset_reuse() -> None:

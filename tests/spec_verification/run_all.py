@@ -11,7 +11,7 @@ from types import ModuleType
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 
-from harness.report import SuiteReport  # noqa: E402
+from harness.report import CaseResult, SuiteReport  # noqa: E402
 from suites import (  # noqa: E402
     sv01_lifting,
     sv02_when,
@@ -141,7 +141,22 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     results = []
     for mod in _SUITE_MODULES:
-        results.extend(mod.run())
+        try:
+            results.extend(mod.run())
+        except Exception as exc:  # noqa: BLE001 -- one suite's crash must not
+            # hide every other suite's report (an uncaught runtime exception
+            # in a single case is itself the failure signal, not a reason to
+            # abort the whole compliance run).
+            results.append(
+                CaseResult(
+                    suite=mod.__name__.rsplit(".", 1)[-1],
+                    case_id="suite-crash",
+                    title=f"{mod.__name__} raised before producing results",
+                    passed=False,
+                    error_code=type(exc).__name__,
+                    message=str(exc),
+                )
+            )
 
     report = SuiteReport(results=results)
     paths = emit_reports_if_requested(report, ROOT, write=args.write_report)

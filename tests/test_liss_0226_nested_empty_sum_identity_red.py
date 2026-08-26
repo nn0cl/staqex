@@ -21,15 +21,14 @@ def _where_sum_program() -> str:
     return """
 package t
 pub fn main() -> Unit {
-  Operator H = sum (i in Index<0..1>, j in Index<0..1>) where i < j {
-      Z[i] * Z[j]
+  Operator H = Sigma (i In 0..1, j In 0..1) where i < j {
+      1.0545718e-19 * (Z[i] * Z[j])
   }
-  state a = |+>
-  state b = |0>
-  state (a, b) = evolve (a, b) under H for 0.1
-      using Suzuki(order = 2, steps = 2)
-  state b = |0>
-  measure a
+  State a = |+>
+  State b = |0>
+  State (a, b) = Evolve { (a, b) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }.run()
+  State b = |0>
+  Measure a
 }
 """
 
@@ -68,10 +67,10 @@ def test_empty_outer_sum_still_rejected_without_register() -> None:
         """
 package t
 pub fn main() -> Unit {
-  Operator H = sum (i in Index<3..1>) { Z[i] }
-  state psi = |0>
-  state out = evolve psi under H for 0.1 using Suzuki(order = 2, steps = 1)
-  measure out
+  Operator H = Sigma (i In 3..1) { Z[i] }
+  State psi = |0>
+  State out = Evolve { psi under H for 0.1 using Suzuki(order = 2, steps = 1) }.run()
+  Measure out
 }
 """,
         seed=0,

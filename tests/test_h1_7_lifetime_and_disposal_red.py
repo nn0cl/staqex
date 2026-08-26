@@ -20,7 +20,7 @@ def test_h1_7_trace_out_is_disposal_not_uncompute() -> None:
         }
         experiment dispose() {
           prepare |00>
-          measure probe tracing_out ancilla
+          Measure probe tracing_out ancilla
         }
         """
     )
@@ -46,7 +46,7 @@ def test_h1_7_uncompute_records_reversible_lifetime_obligation() -> None:
         experiment restore() {
           prepare |00>
           uncompute ancilla witness |0>
-          measure
+          Measure
         }
         """
     )
@@ -73,7 +73,7 @@ def test_h1_7_missing_uncompute_witness_is_rejected() -> None:
         experiment invalid_restore() {
           prepare |00>
           uncompute ancilla
-          measure
+          Measure
         }
         """
     )

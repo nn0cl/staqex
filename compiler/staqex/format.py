@@ -1,16 +1,13 @@
-"""Canonical source formatting for LISS-0072 Slice B."""
+"""Canonical source formatting for the ASCII source surface."""
 
 from __future__ import annotations
 
-from .migrate_unicode_math import migrate_unicode_math_source
-
 
 def format_source(source: str) -> str:
-    """Return the current canonical source spelling for formatter-owned slices.
+    """Preserve ASCII source spelling while formatting remains lossless.
 
-    Slice B keeps formatting intentionally small: preserve the existing source
-    layout and comments while canonicalizing the approved Unicode math spellings
-    from LISS-0069.
+    Unicode-to-ASCII migration is a separate explicit tool operation. The
+    formatter must never emit source that the lexer rejects.
     """
 
-    return migrate_unicode_math_source(source)
+    return source

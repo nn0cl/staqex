@@ -13,7 +13,7 @@ if str(_REPO) not in sys.path:
 from compiler.staqex.ast_nodes import StateBind
 from compiler.staqex.pipeline import compile_source
 
-BRA_OPEN = "\u27e8"  # ⟨
+BRA_OPEN = "<"
 EBNF_PATH = _REPO / "docs" / "specs" / "grammar" / "staqex.ebnf"
 
 
@@ -41,9 +41,9 @@ def test_alone_bra_parses_to_bralit() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state bra = {BRA_OPEN}0|
-            State observed = coin()
-            measure observed
+            State bra = {BRA_OPEN}0|
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -61,10 +61,10 @@ def test_alone_bra_typechecks_as_algebra_primary() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state bra = {BRA_OPEN}0|
-            state bra = |0>
-            State observed = coin()
-            measure observed
+            State bra = {BRA_OPEN}0|
+            State bra = |0>
+            State observed = Coin()
+            Measure observed
         }}
         """
     )

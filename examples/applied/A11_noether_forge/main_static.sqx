@@ -1,17 +1,74 @@
 // staqex-lane: experiment
-// Noether Forge Slice C — static full-candidate entry (self-contained).
-// Ownership modules document domain policy; entry stays runnable via run_source.
-// Linear reuse: rebind the same state name through evolve (consume-and-replace).
+// Structural-monitoring quantum magnetometer — a 3-sensor NV-center-like
+// array (site 1 stressed, sites 0/2 healthy) detects a stress/defect
+// signature via a symmetry-breaking transverse coupling and real
+// dipolar inter-sensor coupling. Rotating-frame model (D~2.87GHz
+// zero-field splitting transformed away) -- see README "Units and
+// interpretation" and physics/hamiltonian_builder.sqx.
+// Linear reuse: rebind the same state names through evolve (consume-and-replace).
 
 package examples.applied.noether_forge
 
+import .domain.site.{SiteId, SensorSite, SensorRole, is_stressed}
+import .domain.couplings.{SensorCouplings}
+import .domain.lattice.{SensorArray, Boundary}
+import .domain.experiment_config.{ExperimentConfig}
+import .physics.hamiltonian_builder.{build_sensor_hamiltonian}
+import .physics.symmetries.{array_symmetry_broken}
+import .physics.observables.{signal_gap}
+import .application.quench_protocol.{QuenchProtocol}
+import .application.spectroscopy_protocol.{confidence_score}
+import .application.phase_evidence.{DetectionEvidence}
+import .application.result_contract.{MonitoringResult}
+import .presentation.evidence_dossier.{dossier_label}
+
 pub fn main() -> Unit {
-    // Finite review spine: plus-state prepare, local Hamiltonian evolve,
-    // magnetization observation intent, then terminal measure only.
-    state psi = |+>
-    Operator H = Z + 0.25 * X
-    state psi = evolve psi under H for 0.35
-    state magnetization = expect(Z, psi)
-    state viewed_m = inspect(magnetization)
-    measure psi
+    Forge.Lattice.SensorArray array = SensorArray(3, Boundary.Open)
+
+    SiteId id0 = SiteId(0)
+    SiteId id1 = SiteId(1)
+    SiteId id2 = SiteId(2)
+    SensorSite site0 = SensorSite(id0, SensorRole.Healthy)
+    SensorSite site1 = SensorSite(id1, SensorRole.Stressed)
+    SensorSite site2 = SensorSite(id2, SensorRole.Healthy)
+    Bool symmetry_broken = array_symmetry_broken(is_stressed(site1))
+
+    Energy defect = 6.203501545385788e-08.eV to J
+    Energy dip = 2.0678338484619295e-09.eV to J
+    Forge.Couplings.SensorCouplings couplings = SensorCouplings(defect, dip)
+
+    Time dur = 16.7.ns
+    Forge.Experiment.ExperimentConfig config = ExperimentConfig(dur, 0)
+    Forge.Quench.QuenchProtocol protocol = QuenchProtocol(config, couplings)
+
+    Operator H = build_sensor_hamiltonian(couplings)
+
+    State s0 = |0>
+    State s1 = |0>
+    State s2 = |0>
+    Operator U_t = exp(-i * H * dur / hbar)
+    State (s0, s1, s2) = Evolve() { U_t * (s0, s1, s2) }.run()
+
+    State m0 = expect(Z, s0)
+    State m1 = expect(Z, s1)
+    State m2 = expect(Z, s2)
+    State v0 = Inspect(m0)
+    State v1 = Inspect(m1)
+    State v2 = Inspect(m2)
+
+    // Illustrative dossier assembly (Never Leave the State: classical
+    // collapse happens only at terminal measure, so the live m0/m1/m2
+    // quantum readouts above cannot themselves feed this classical
+    // evidence chain mid-program -- these values mirror the physics
+    // this Hamiltonian/duration is verified to produce).
+    Float gap = signal_gap(1.0, 0.0 - 0.99)
+    Bool detected = true
+    Float confidence = confidence_score(gap)
+    Forge.PhaseEvidence.DetectionEvidence evidence = DetectionEvidence(detected, confidence)
+    Forge.Result.MonitoringResult result = MonitoringResult(1, evidence)
+    Bool verdict = dossier_label(detected)
+
+    // Symmetry / evidence checks are non-blocking; the terminal measure
+    // is singular. Sibling sensors leave via partial trace (ADR 0173).
+    Measure s1 tracing_out s0, s2
 }

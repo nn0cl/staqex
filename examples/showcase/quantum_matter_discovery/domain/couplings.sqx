@@ -5,8 +5,8 @@ package examples.showcase.quantum_matter_discovery.domain
 
 namespace Matter.Domain {
     pub struct IsingCouplings {
-        val J: Float
-        val h: Float
+        val J: Energy
+        val h: Energy
     }
 
     // Mutable discovery step counter (true system seat).
@@ -26,6 +26,6 @@ namespace Matter.Domain {
     }
 }
 
-pub fn field_scale(p: Matter.Domain.IsingCouplings) -> Float {
+pub fn field_scale(p: Matter.Domain.IsingCouplings) -> Energy {
     return p.J + p.h
 }

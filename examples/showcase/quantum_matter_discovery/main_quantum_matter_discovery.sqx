@@ -10,31 +10,31 @@ import .physics.ising_hamiltonian.{ising_hamiltonian, named_coeff_sum}
 import .protocol.quench.{QuenchSchedule, schedule_duration}
 
 pub fn main() -> Unit {
-    IsingCouplings c = IsingCouplings(1.0, 0.5)
+    IsingCouplings c = IsingCouplings(1.0.eV to J, 0.5.eV to J)
     DiscoveryModel model = DiscoveryModel(c)
     Float stepped = model.mark_step()
-    Float scale = field_scale(c)
-    Float coeff_sum = named_coeff_sum(c)
+    Energy scale = field_scale(c)
+    Energy coeff_sum = named_coeff_sum(c)
 
-    QuenchSchedule schedule = QuenchSchedule(0.7)
-    Float duration = schedule_duration(schedule)
+    QuenchSchedule schedule = QuenchSchedule(0.7.fs)
+    Time duration = schedule_duration(schedule)
     // stepped / scale / coeff_sum: classical desk (Host may log); no inspect museum.
 
-    state bit = coin()
-    state s0 = when (bit) {
+    State bit = Coin()
+    State s0 = Mix (bit) {
       0 -> |0>,
       else -> |+>,
     }
 
     Operator H = ising_hamiltonian(c)
-    state s1 = |+>
-    state (s0, s1) = evolve (s0, s1) under H for duration
-        using Suzuki(order = 2, steps = 6)
+    State s1 = |+>
+    Operator U_t = exp(-i * H * duration / hbar)
+    State (s0, s1) = Evolve() { U_t * (s0, s1) }.run()
 
-    state zz = expect(ZZ, s0, s1)
+    State zz = expect(ZZ, s0, s1)
     // Sparse notebook peek only (minimal dialect: Host owns structured logs).
-    state viewed_zz = inspect(zz)
+    State viewed_zz = Inspect(zz)
 
     // Sibling leaves via partial trace (ADR 0173); not a ritual |0> rebind.
-    measure s0 tracing_out s1
+    Measure s0 tracing_out s1
 }

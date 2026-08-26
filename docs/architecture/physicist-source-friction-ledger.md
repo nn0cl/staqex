@@ -183,7 +183,7 @@ From Open Topics and stance memos (not re-probed exhaustively here):
 | `\|>` / currying | Pipeline experimental programs detour |
 | SI beyond (L,M,T) | Dimensionful equations stay tagged-toy |
 | Continuous PDF / Monte Carlo | Continuum models cannot be honest Kernel programs |
-| Exact rational masses | Probabilities look like `f64` numerics |
+| Exact rational masses | Probabilities look like `f64` numerics — **decided out 2026-08-10**: ADR 0125/0076/0097 design boundary reconfirmed; classical-path rationals already shipped (ADR 0160), Joint/PMF masses stay `f64` |
 | No user operator overload | **Decided out** — [ADR 0114 §D5](decision-themes/dec-0002-state-first-semantics-and-measurement.md); Domain `add`/`eq` named methods — not chalk `+` on arbitrary types |
 
 ### F-09 — Multi-file / import landmines (Class C/E) — **mostly healed**
@@ -296,7 +296,8 @@ Re-run when Kernel changes; do not treat this table as eternal.
    ([LISS-0196](documentation-compression-map.md)
    **complete**;
    [examples](../specs/staqex-v1-trait-effect-surface-examples.md)). No Kernel
-   Red under ADR 0128 until a future ship ADR.
+   Red under ADR 0128 until a future ship ADR. **Reconfirmed 2026-08-10** —
+   no new friction row added since 2026-08-03; "not now" stands.
 3. Optional: further Operator free-fn edge cases (class receivers without intermediate Float, multi-level Attr).
 4. **Pedagogy north star (Accepted 2026-08-02):**
    [physicist-minimal-dialect.md](physicist-minimal-dialect.md) gates example

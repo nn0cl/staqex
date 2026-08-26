@@ -1,9 +1,9 @@
 package demo.app
 
 pub fn main(sys: State<Sys>) -> Unit {
-  state x = coin()
+  State x = Coin()
   span (x) {  // retired → when
-    0 -> dirac(0)
+    0 -> Dirac(0)
   }
   observe x  // retired → measure
 }

@@ -1,83 +1,11 @@
-// Observation intents: magnetization, correlators, structure factor, return.
+// Per-site magnetization readout comparison: how far apart are the
+// stressed and healthy sensors' signals? (caller supplies stressed_z
+// below healthy_z, so the plain difference is already positive.)
 
 package examples.applied.noether_forge.physics
 
 namespace Forge.Observables {
-    pub enum ObservableKind {
-        MagnetizationZ,
-        NearestNeighborZZ,
-        StructureFactor,
-        ReturnProbability,
-        SymmetrySectorPop
+    pub fn signal_gap(healthy_z: Float, stressed_z: Float) -> Float {
+        return healthy_z - stressed_z
     }
-
-    pub struct ObservableIntent {
-        val kind: ObservableKind
-        val site: Int
-    }
-
-    pub fn magnetization_z(site: Int) -> ObservableIntent {
-        return ObservableIntent(ObservableKind.MagnetizationZ, site)
-    }
-
-    pub fn nn_zz(site: Int) -> ObservableIntent {
-        return ObservableIntent(ObservableKind.NearestNeighborZZ, site)
-    }
-
-    pub fn structure_factor() -> ObservableIntent {
-        return ObservableIntent(ObservableKind.StructureFactor, 0)
-    }
-
-    pub fn return_probability() -> ObservableIntent {
-        return ObservableIntent(ObservableKind.ReturnProbability, 0)
-    }
-
-    pub fn symmetry_sector() -> ObservableIntent {
-        return ObservableIntent(ObservableKind.SymmetrySectorPop, 0)
-    }
-
-    pub fn is_local(intent: ObservableIntent) -> Bool {
-        return intent.kind == ObservableKind.MagnetizationZ || intent.kind == ObservableKind.NearestNeighborZZ
-    }
-
-    pub fn is_global(intent: ObservableIntent) -> Bool {
-        return !is_local(intent)
-    }
-
-    pub fn review_primary() -> ObservableIntent {
-        return magnetization_z(0)
-    }
-
-    pub fn dossier_set_size() -> Int {
-        return 5
-    }
-
-    pub fn correlator_chain_start() -> ObservableIntent {
-        return nn_zz(0)
-    }
-
-    pub fn correlator_near(site: Int) -> ObservableIntent {
-        return nn_zz(site)
-    }
-
-    pub fn intent_rank(intent: ObservableIntent) -> Int {
-        if intent.kind == ObservableKind.MagnetizationZ {
-            return 1
-        }
-        if intent.kind == ObservableKind.NearestNeighborZZ {
-            return 2
-        }
-        if intent.kind == ObservableKind.StructureFactor {
-            return 3
-        }
-        if intent.kind == ObservableKind.ReturnProbability {
-            return 4
-        }
-        return 5
-    }
-
-    pub fn site_of(intent: ObservableIntent) -> Int {
-        return intent.site
-    }
-
 }

@@ -1,85 +1,14 @@
-// Sudden and scheduled quench protocols with typed duration contracts.
+// Single-shot quench protocol: bundles the sensor Hamiltonian's real
+// couplings with the real evolve duration used by main_static.sqx.
 
 package examples.applied.noether_forge.application
 
+import .domain.experiment_config.{ExperimentConfig}
+import .domain.couplings.{SensorCouplings}
+
 namespace Forge.Quench {
-    pub enum QuenchKind {
-        Sudden,
-        LinearRamp,
-        PiecewiseHold
+    pub struct QuenchProtocol {
+        val config: Forge.Experiment.ExperimentConfig
+        val couplings: Forge.Couplings.SensorCouplings
     }
-
-    pub struct QuenchStep {
-        val kind: QuenchKind
-        val duration: Float
-        val target_drive: Float
-    }
-
-    pub struct QuenchSchedule {
-        val steps: Int
-        val total_duration: Float
-    }
-
-    pub fn sudden(duration: Float, drive: Float) -> QuenchStep {
-        return QuenchStep(QuenchKind.Sudden, duration, drive)
-    }
-
-    pub fn linear_ramp(duration: Float, drive: Float) -> QuenchStep {
-        return QuenchStep(QuenchKind.LinearRamp, duration, drive)
-    }
-
-    pub fn hold(duration: Float, drive: Float) -> QuenchStep {
-        return QuenchStep(QuenchKind.PiecewiseHold, duration, drive)
-    }
-
-    pub fn review_sudden() -> QuenchStep {
-        return sudden(0.35, 0.25)
-    }
-
-    pub fn two_step_schedule() -> QuenchSchedule {
-        return QuenchSchedule(2, 0.7)
-    }
-
-    pub fn is_sudden(step: QuenchStep) -> Bool {
-        return step.kind == QuenchKind.Sudden
-    }
-
-    pub fn duration_of(step: QuenchStep) -> Float {
-        return step.duration
-    }
-
-    pub fn drive_of(step: QuenchStep) -> Float {
-        return step.target_drive
-    }
-
-    pub fn schedule_ok(schedule: QuenchSchedule) -> Bool {
-        return schedule.steps >= 1 && schedule.total_duration > 0.0
-    }
-
-    pub fn three_step_schedule() -> QuenchSchedule {
-        return QuenchSchedule(3, 1.05)
-    }
-
-    pub fn research_ramp() -> QuenchStep {
-        return linear_ramp(1.0, 0.4)
-    }
-
-    pub fn step_rank(step: QuenchStep) -> Int {
-        if step.kind == QuenchKind.Sudden {
-            return 1
-        }
-        if step.kind == QuenchKind.LinearRamp {
-            return 2
-        }
-        return 3
-    }
-
-    pub fn schedule_steps(schedule: QuenchSchedule) -> Int {
-        return schedule.steps
-    }
-
-    pub fn schedule_duration(schedule: QuenchSchedule) -> Float {
-        return schedule.total_duration
-    }
-
 }

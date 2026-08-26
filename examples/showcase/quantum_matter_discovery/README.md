@@ -1,8 +1,9 @@
 # Quantum-matter discovery (Showcase S1)
 
-Finite spin-chain discovery spine for the locked mission
-([mission lock](../../../docs/specs/staqex-v1-showcase-mission-lock.md),
-[S0](../../../docs/specs/staqex-v1-showcase-s0-specification.md)).
+Finite spin-chain discovery spine retained as the historical S1 thin slice for
+the locked showcase program. The canonical S0 mission is the disaster-response
+specification ([S0](../../../docs/specs/staqex-v1-showcase-s0-disaster-response.md));
+this tree is preserved for its completed language-surface evidence.
 
 Surface face (LISS-0298 / LISS-0303): selective import, struct + free scores /
 Operator factories; `DiscoveryModel` remains `class` only for the mutable step

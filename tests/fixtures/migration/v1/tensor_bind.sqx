@@ -1,7 +1,7 @@
 package t
 pub fn main() -> Unit {
-    state left = |0⟩
-    state right = |1⟩
-    (a, b) = left ⊗ right
-    measure a
+    State left = |0>
+    State right = |1>
+    (a, b) = left *|* right
+    Measure a
 }

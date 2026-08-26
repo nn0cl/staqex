@@ -1,89 +1,9 @@
-// Presentation-facing dossier sections for human language review (Slice E later).
+// Human-readable detection summary for the monitoring dossier.
 
 package examples.applied.noether_forge.presentation
 
 namespace Forge.Dossier {
-    pub enum SectionId {
-        ModelFamily,
-        QuenchProtocol,
-        Spectroscopy,
-        ObservationIntent,
-        Symmetry,
-        Provenance,
-        BackendHonesty,
-        FrictionLedger
+    pub fn dossier_label(detected: Bool) -> Bool {
+        return detected
     }
-
-    pub struct Section {
-        val id: SectionId
-    }
-
-    pub struct DossierOutline {
-        val sections: Int
-    }
-
-    pub fn model_section() -> Section {
-        return Section(SectionId.ModelFamily)
-    }
-
-    pub fn protocol_section() -> Section {
-        return Section(SectionId.QuenchProtocol)
-    }
-
-    pub fn spectroscopy_section() -> Section {
-        return Section(SectionId.Spectroscopy)
-    }
-
-    pub fn observation_section() -> Section {
-        return Section(SectionId.ObservationIntent)
-    }
-
-    pub fn symmetry_section() -> Section {
-        return Section(SectionId.Symmetry)
-    }
-
-    pub fn provenance_section() -> Section {
-        return Section(SectionId.Provenance)
-    }
-
-    pub fn honesty_section() -> Section {
-        return Section(SectionId.BackendHonesty)
-    }
-
-    pub fn friction_section() -> Section {
-        return Section(SectionId.FrictionLedger)
-    }
-
-    pub fn review_outline() -> DossierOutline {
-        return DossierOutline(8)
-    }
-
-    pub fn section_count(outline: DossierOutline) -> Int {
-        return outline.sections
-    }
-
-    pub fn section_id_of(section: Section) -> SectionId {
-        return section.id
-    }
-
-    pub fn is_honesty(section: Section) -> Bool {
-        return section.id == SectionId.BackendHonesty
-    }
-
-    pub fn is_friction(section: Section) -> Bool {
-        return section.id == SectionId.FrictionLedger
-    }
-
-    pub fn smoke_outline() -> DossierOutline {
-        return DossierOutline(5)
-    }
-
-    pub fn research_outline() -> DossierOutline {
-        return DossierOutline(8)
-    }
-
-    pub fn outline_ok(outline: DossierOutline) -> Bool {
-        return outline.sections >= 4 && outline.sections <= 12
-    }
-
 }

@@ -1,4 +1,4 @@
-"""AT-TDD: LISS-0137 classical Float → Operator / evolve for (+ param factory)."""
+"""AT-TDD: LISS-0137 classical Float → Operator / Evolve for (+ param factory)."""
 
 from __future__ import annotations
 
@@ -37,15 +37,14 @@ pub fn tfim(J: Float, h: Float) -> Operator {
     return H
 }
 pub fn main() -> Unit {
-    Operator H = tfim(1.0, 0.5)
-    state s0 = |+>
-    state s1 = |+>
-    state (s0, s1) = evolve (s0, s1) under H for 0.7
-        using Suzuki(order = 2, steps = 6)
-    state zz = expect(ZZ, s0, s1)
-    state viewed = inspect(zz)
-    state s1 = |0>
-    measure s0
+    Operator H = tfim(1.0545718e-19, 5.272859e-20)
+    State s0 = |+>
+    State s1 = |+>
+    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State zz = expect(ZZ, s0, s1)
+    State viewed = Inspect(zz)
+    State s1 = |0>
+    Measure s0
 }
 """
 
@@ -58,16 +57,15 @@ namespace D {
     }
 }
 pub fn main() -> Unit {
-    D.C c = D.C(1.0, 0.5)
+    D.C c = D.C(1.0545718e-19, 5.272859e-20)
     Float J = c.J
     Float h = c.h
     Operator H = -J * (Z[0] * Z[1]) - h * (X[0] + X[1])
-    state s0 = |+>
-    state s1 = |+>
-    state (s0, s1) = evolve (s0, s1) under H for 0.7
-        using Suzuki(order = 2, steps = 6)
-    state s1 = |0>
-    measure s0
+    State s0 = |+>
+    State s1 = |+>
+    State (s0, s1) = Evolve { (s0, s1) under H for 0.7.fs using Suzuki(order = 2, steps = 6) }.run()
+    State s1 = |0>
+    Measure s0
 }
 """
 
@@ -75,26 +73,25 @@ _EVOLVE_FOR_METHOD_FLOAT = """
 package t
 namespace P {
     pub class Schedule {
-        pub val duration: Float
-        fn init(t: Float) {
+        pub val duration: Time
+        fn init(t: Time) {
             this.duration = t
         }
-        pub fn t() -> Float {
-            Float out = this.duration
+        pub fn t() -> Time {
+            Time out = this.duration
             return out
         }
     }
 }
 pub fn main() -> Unit {
-    P.Schedule s = P.Schedule(0.7)
-    Float duration = s.t()
-    Operator H = -1.0 * (Z[0] * Z[1]) - 0.5 * (X[0] + X[1])
-    state s0 = |+>
-    state s1 = |+>
-    state (s0, s1) = evolve (s0, s1) under H for duration
-        using Suzuki(order = 2, steps = 6)
-    state s1 = |0>
-    measure s0
+    P.Schedule s = P.Schedule(0.7.fs)
+    Time duration = s.t()
+    Operator H = -1.0545718e-19 * (Z[0] * Z[1]) - 5.272859e-20 * (X[0] + X[1])
+    State s0 = |+>
+    State s1 = |+>
+    State (s0, s1) = Evolve { (s0, s1) under H for duration using Suzuki(order = 2, steps = 6) }.run()
+    State s1 = |0>
+    Measure s0
 }
 """
 

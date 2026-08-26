@@ -9,6 +9,13 @@
 | QPU honesty | [staqex-v1-qpu-capability-honesty.md](staqex-v1-qpu-capability-honesty.md) |
 | Not | S2 without separate authorize; silent live QPU |
 
+**2026-08-05 addition:** the [S02 drug-discovery benchmark](staqex-v1-s02-drug-discovery-benchmark.md)
+(a numbered showcase, distinct from this ledger's own "S2" phase label
+above) is formally connected to this Gate P1 lineage via
+[rebaseline §7](staqex-v1-representative-program-rebaseline.md#7-examplesshowcase-two-phase-benchmark-role-and-the-s02-lineage-2026-08-05).
+S02's own row-by-row entries in this ledger are not yet populated — that
+remains separate, unstarted future work.
+
 ```markdown
 [DESIGN CHECK]
 - Scope: honest in/partial/out rows for showcase prerequisites.

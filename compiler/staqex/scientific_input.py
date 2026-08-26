@@ -117,18 +117,26 @@ class ParameterSweep:
 
 @dataclass(frozen=True)
 class CoefficientTensor:
-    """Immutable Host coefficient tensor for Kernel `Float[…] = host(\"…\")`."""
+    """Immutable Host coefficient tensor for Kernel `Float[…]`/`Bool[…]
+    = host(\"…\")` (LISS-0432 generalized the dtype from Float-only)."""
 
     name: str
     shape: tuple[int, ...]
     values: object
     provenance: InputProvenance | Mapping[str, str]
+    dtype: str = "Float"
 
     def __post_init__(self) -> None:
         if not self.name.strip():
             raise ScientificInputValidationError(
                 "HOST_COEFFICIENT_NAME_ERROR",
                 "coefficient tensor name must not be empty",
+            )
+        if self.dtype not in ("Float", "Bool"):
+            raise ScientificInputValidationError(
+                "HOST_COEFFICIENT_VALUE_ERROR",
+                f"coefficient tensor dtype {self.dtype!r} is not supported "
+                "(expected Float or Bool)",
             )
         shape = tuple(int(dim) for dim in self.shape)
         if not shape or any(dim <= 0 for dim in shape):
@@ -144,13 +152,19 @@ class CoefficientTensor:
                     "HOST_COEFFICIENT_RESOURCE_ERROR",
                     "coefficient tensor exceeds the Kernel resource budget",
                 )
-        normalized = _normalize_tensor_values(self.values, shape, path=self.name)
+        normalized = _normalize_tensor_values(
+            self.values, shape, path=self.name, dtype=self.dtype
+        )
         object.__setattr__(self, "shape", shape)
         object.__setattr__(self, "values", normalized)
         object.__setattr__(self, "provenance", _coerce_provenance(self.provenance))
 
 
-def _normalize_tensor_values(values: object, shape: tuple[int, ...], *, path: str) -> object:
+def _normalize_tensor_values(
+    values: object, shape: tuple[int, ...], *, path: str, dtype: str = "Float"
+) -> object:
+    if dtype == "Bool":
+        return _normalize_bool_tensor_values(values, shape, path=path)
     if not shape:
         if isinstance(values, bool) or not isinstance(values, Real):
             raise ScientificInputValidationError(
@@ -172,6 +186,32 @@ def _normalize_tensor_values(values: object, shape: tuple[int, ...], *, path: st
         )
     return tuple(
         _normalize_tensor_values(item, shape[1:], path=f"{path}[{index}]")
+        for index, item in enumerate(values)
+    )
+
+
+def _normalize_bool_tensor_values(
+    values: object, shape: tuple[int, ...], *, path: str
+) -> object:
+    """LISS-0432: Bool-dtype leaves are validated and preserved as `bool`,
+    not coerced to `float` the way `_normalize_tensor_values`'s Float path
+    does -- a Host-supplied `Bool[N]…` array (e.g. `pairwise_compatible`)
+    must round-trip as `True`/`False`."""
+    if not shape:
+        if not isinstance(values, bool):
+            raise ScientificInputValidationError(
+                "HOST_COEFFICIENT_VALUE_ERROR",
+                f"coefficient {path!r} requires a Bool scalar leaf",
+            )
+        return values
+    expected = shape[0]
+    if not isinstance(values, (list, tuple)) or len(values) != expected:
+        raise ScientificInputValidationError(
+            "HOST_COEFFICIENT_SHAPE_ERROR",
+            f"coefficient {path!r} axis length mismatch for shape {shape}",
+        )
+    return tuple(
+        _normalize_bool_tensor_values(item, shape[1:], path=f"{path}[{index}]")
         for index, item in enumerate(values)
     )
 

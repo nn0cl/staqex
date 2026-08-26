@@ -232,7 +232,7 @@ def test_projection_feeds_liss_0092_routing_pipeline() -> None:
     )
 
     profile = _profile(api, profile_id="CH1_DIGITAL_RESEARCH", qubits=4)
-    snapshot = api["project_to_routing_snapshot"](profile)
+    Snapshot = api["project_to_routing_snapshot"](profile)
     plan = {
         "plan_id": "plan.from-capability",
         "resources": (
@@ -252,11 +252,11 @@ def test_projection_feeds_liss_0092_routing_pipeline() -> None:
             ),
         ),
     }
-    result = run_target_pipeline(plan, snapshot)
+    result = run_target_pipeline(plan, Snapshot)
 
     assert result.status == "verified"
     assert verify_target_pipeline(result) == []
-    assert snapshot.profile_id == "CH1_DIGITAL_RESEARCH"
+    assert Snapshot.profile_id == "CH1_DIGITAL_RESEARCH"
 
 
 def test_module_does_not_import_physics_or_semantic_ir() -> None:

@@ -34,8 +34,8 @@ def test_explicit_impl_and_inline_generic_bound_are_accepted() -> None:
             return x
         }
         pub fn main() -> Unit {
-            state psi = dirac(0.0)
-            measure psi
+            State psi = Dirac(0.0)
+            Measure psi
         }
         """
     )
@@ -50,8 +50,8 @@ def test_system_is_a_marker_without_required_methods() -> None:
         interface System {}
         class EmptySystem : System {}
         pub fn main() -> Unit {
-            state result = dirac(0)
-            measure result
+            State result = Dirac(0)
+            Measure result
         }
         """
     )
@@ -68,8 +68,8 @@ def test_duplicate_interface_type_impls_are_rejected_after_merge() -> None:
         impl System for Oscillator {}
         impl System for Oscillator {}
         pub fn main() -> Unit {
-            state result = dirac(0)
-            measure result
+            State result = Dirac(0)
+            Measure result
         }
         """
     )
@@ -91,8 +91,8 @@ def test_impl_methods_cannot_declare_pub() -> None:
             }
         }
         pub fn main() -> Unit {
-            state result = dirac(0.0)
-            measure result
+            State result = Dirac(0.0)
+            Measure result
         }
         """
     )
@@ -107,8 +107,8 @@ def test_system_is_not_a_general_value_constructor() -> None:
         interface System {}
         pub fn main() -> Unit {
             System value = System()
-            state result = dirac(0)
-            measure result
+            State result = Dirac(0)
+            Measure result
         }
         """
     )

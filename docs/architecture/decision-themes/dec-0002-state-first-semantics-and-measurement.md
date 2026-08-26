@@ -27,6 +27,15 @@
 - Linear uncompute checks use the physical amplitude tolerance `1e-12`.
 - The language surface is governed by the language axioms and normative
   specification, not by a backend's implementation convenience.
+- `&&`/`||` are total-pushforward Boolean operators, not classical
+  short-circuit: both operands are always evaluated, in every Joint
+  world, combined via the ordinary truth table — the same pushforward
+  shape every other `State<T>` binary operator already uses. `!`
+  (logical NOT) remains undecided. This applies only to general-
+  expression `&&`/`||`; the Operator-DSL's own binder-guard `&&`/`||`
+  (`sum(...) where ...`) is a separate, unaffected compile-time
+  predicate over index combinations, not a runtime value operator
+  ([ADR 0196](../adr/0196-boolean-total-pushforward-logical-operators.md)).
 
 See [language axioms](../staqex-language-axioms.md), the
 [language specification](../../specs/staqex-language-specification.md), and

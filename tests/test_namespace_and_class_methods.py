@@ -61,8 +61,8 @@ pub fn main() -> Unit {
   Float wind = params.topological_index()
   Float gap = params.band_gap()
 
-  state viewed = inspect(sites)
-  measure sites
+  State viewed = Inspect(sites)
+  Measure sites
 }
 """
 
@@ -115,7 +115,7 @@ namespace N {
 pub fn main() -> Unit {
   N.Box b = N.Box()
   Float y = b.sq()
-  measure y
+  Measure y
 }
 """
     result = run_source(src, seed=0, stdout=io.StringIO())

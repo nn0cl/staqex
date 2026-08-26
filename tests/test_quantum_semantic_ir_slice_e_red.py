@@ -2,7 +2,7 @@
 
 The reviewed boundary is intentionally narrow: Physics IR plus explicit,
 source-backed finite-carrier evidence may enter Semantic IR. The lowering
-does not inspect AST/HIR, choose a discretization or encoding, or attach
+does not Inspect AST/HIR, choose a discretization or encoding, or attach
 provider and numerical-plan details.
 """
 

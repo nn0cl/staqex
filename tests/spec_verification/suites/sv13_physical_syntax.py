@@ -1,4 +1,4 @@
-"""SV-13: Physical surface — evolve times, tuple bind, correlated BinOp (Priority 1)."""
+"""SV-13: Physical surface — Evolve times, tuple bind, correlated BinOp (Priority 1)."""
 
 from __future__ import annotations
 
@@ -18,21 +18,21 @@ from compiler.staqex.pipeline import compile_source  # noqa: E402
 from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
 
 EVOLVE_HO = as_main("""
-state bit = coin()
-state x0 = when (bit) {
+State bit = Coin()
+State x0 = Mix (bit) {
   0 -> 0.0,
   else -> 1.0,
 }
-state p0 = when (bit) {
+State p0 = Mix (bit) {
   0 -> 1.0,
   else -> 0.0,
 }
-state (x, p) = evolve (x0, p0) times 1 {
+State (x, p) = Evolve (x0, p0) times 1 {
   let x1 = x + 0.5 * p
   let p1 = p - 0.5 * x
   (x1, p1)
 }
-measure x
+Measure x
 """)
 
 
@@ -50,8 +50,8 @@ def run() -> list[CaseResult]:
         out.append(
             CaseResult(
                 "SV-13",
-                "sv13-evolve-parse",
-                "evolve (x,p) times N {…} parses",
+                "sv13-Evolve-parse",
+                "Evolve (x,p) times N {…} parses",
                 True,
                 ["parser"],
             )
@@ -60,8 +60,8 @@ def run() -> list[CaseResult]:
         out.append(
             CaseResult(
                 "SV-13",
-                "sv13-evolve-parse",
-                "evolve parse",
+                "sv13-Evolve-parse",
+                "Evolve parse",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -93,8 +93,8 @@ def run() -> list[CaseResult]:
         out.append(
             CaseResult(
                 "SV-13",
-                "sv13-evolve-correlated",
-                "Euler evolve keeps (x,p) correlation",
+                "sv13-Evolve-correlated",
+                "Euler Evolve keeps (x,p) correlation",
                 True,
                 ["assertSuperposition", "joint"],
             )
@@ -103,8 +103,8 @@ def run() -> list[CaseResult]:
         out.append(
             CaseResult(
                 "SV-13",
-                "sv13-evolve-correlated",
-                "evolve correlated",
+                "sv13-Evolve-correlated",
+                "Evolve correlated",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -114,14 +114,14 @@ def run() -> list[CaseResult]:
     # times 2 matches hand Euler twice
     try:
         src = as_main("""
-state x0 = dirac(0.0)
-state p0 = dirac(1.0)
-state (x, p) = evolve (x0, p0) times 2 {
+State x0 = Dirac(0.0)
+State p0 = Dirac(1.0)
+State (x, p) = Evolve (x0, p0) times 2 {
   let x1 = x + 0.5 * p
   let p1 = p - 0.5 * x
   (x1, p1)
 }
-measure x
+Measure x
 """)
         compiled = compile_source(src)
         ev = Evaluator(seed=0)
@@ -134,17 +134,17 @@ measure x
         out.append(
             CaseResult(
                 "SV-13",
-                "sv13-evolve-times2",
+                "sv13-Evolve-times2",
                 "times 2 matches two Euler steps",
                 True,
-                ["evolve"],
+                ["Evolve"],
             )
         )
     except AssertionFailure as e:
         out.append(
             CaseResult(
                 "SV-13",
-                "sv13-evolve-times2",
+                "sv13-Evolve-times2",
                 "times 2",
                 False,
                 error_code=e.code,
@@ -167,8 +167,8 @@ measure x
         out.append(
             CaseResult(
                 "SV-13",
-                "sv13-examples-evolve",
-                "phase_space + oscillator use evolve",
+                "sv13-examples-Evolve",
+                "phase_space + oscillator use Evolve",
                 True,
                 ["examples"],
             )
@@ -177,8 +177,8 @@ measure x
         out.append(
             CaseResult(
                 "SV-13",
-                "sv13-examples-evolve",
-                "examples evolve",
+                "sv13-examples-Evolve",
+                "examples Evolve",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -188,8 +188,8 @@ measure x
         out.append(
             CaseResult(
                 "SV-13",
-                "sv13-examples-evolve",
-                "examples evolve",
+                "sv13-examples-Evolve",
+                "examples Evolve",
                 False,
                 error_code="UNEXPECTED_EXCEPTION",
                 message=str(e),

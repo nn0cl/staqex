@@ -1,8 +1,15 @@
 // B04 — repetition uses `evolve times N` / evolve-under, not classical loops (axiom 4).
 
-state psi = |+>
-state psi = evolve psi under Z for pi / 2.0
-state ez = expect(Z, psi)
-state viewed = inspect(ez)
+// The finite evolution is written as an explicit propagator so the source
+// retains the blackboard distinction between H and U(t).
+Time dur = 1.5707963267948966.fs
+Energy scale = 1.0.eV to J
 
-measure psi
+State psi = |+>
+Operator H = scale * Z
+Operator U_dur = exp(-i * H * dur / hbar)
+State psi = Evolve() { U_dur * psi }.run()
+State ez = expect(Z, psi)
+State viewed = Inspect(ez)
+
+Measure psi

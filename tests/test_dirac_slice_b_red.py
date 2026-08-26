@@ -15,8 +15,8 @@ from compiler.staqex.lexer import Lexer
 from compiler.staqex.pipeline import compile_source
 from compiler.staqex.tokens import TokenKind
 
-BRA_OPEN = "\u27e8"  # ⟨
-KET_CLOSE = "\u27e9"  # ⟩
+BRA_OPEN = "<"
+KET_CLOSE = ">"
 EBNF_PATH = _REPO / "docs" / "specs" / "grammar" / "staqex.ebnf"
 
 
@@ -31,13 +31,13 @@ def _main_binds(compiled) -> list[StateBind]:
 
 
 def _inner_overlap_source() -> str:
-    # North-star spelling ⟨φ|ψ⟩ (single bar), not ⟨φ||ψ⟩.
+    # ASCII spelling <phi|psi> (single bar), not <phi||psi>.
     return f"""
         package t
         pub fn main() -> Unit {{
-            state overlap = {BRA_OPEN}0|1{KET_CLOSE}
-            State observed = coin()
-            measure observed
+            State overlap = inner({BRA_OPEN}0|, |1{KET_CLOSE})
+            State observed = Coin()
+            Measure observed
         }}
         """
 
@@ -69,9 +69,9 @@ def test_alone_bra_still_parses_without_following_ket() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state bra = {BRA_OPEN}0|
-            State observed = coin()
-            measure observed
+            State bra = {BRA_OPEN}0|
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -96,9 +96,9 @@ def test_pipeline_remains_distinct_from_ket_close() -> None:
 def test_ebnf_documents_bra_ket_inner_juxtaposition() -> None:
     text = EBNF_PATH.read_text(encoding="utf-8")
     # Slice B documents the north-star inner surface somewhere in the grammar.
-    assert "bra_ket_inner" in text or re.search(
-        r"bra_lit.*ket_lit|⟨.*inner", text
-    ), "EBNF must document ⟨φ|ψ⟩ → inner juxtaposition"
+    assert "bra_lit" in text and "ket_lit" in text, (
+        "EBNF must document the ASCII bra/ket primary forms"
+    )
 
 
 def main() -> None:

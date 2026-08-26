@@ -12,6 +12,6 @@ pub fn ising_hamiltonian(p: Matter.Domain.IsingCouplings) -> Operator {
     return -p.J * (Z[0] * Z[1]) - p.h * (X[0] + X[1])
 }
 
-pub fn named_coeff_sum(p: Matter.Domain.IsingCouplings) -> Float {
+pub fn named_coeff_sum(p: Matter.Domain.IsingCouplings) -> Energy {
     return p.J + p.h
 }

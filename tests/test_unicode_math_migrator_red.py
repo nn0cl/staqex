@@ -1,4 +1,4 @@
-"""AT-TDD Phase 1 Red: LISS-0069 Slice B — Unicode math migrator."""
+"""Acceptance tests for legacy Unicode-to-ASCII math migration."""
 
 from __future__ import annotations
 
@@ -56,18 +56,18 @@ def test_pipeline_operator_is_preserved_beside_ket_migration() -> None:
     source = (_V01 / "pipeline_preserved.sqx").read_text(encoding="utf-8")
     migrated = _migrate(source)
     assert "|>" in migrated
-    assert "|0>" not in migrated
-    assert "|0⟩" in migrated
+    assert "|0>" in migrated
+    assert "|0⟩" not in migrated
 
 
 def test_comment_ascii_ket_is_not_rewritten() -> None:
     source = (_V01 / "comments_preserved.sqx").read_text(encoding="utf-8")
     migrated = _migrate(source)
     assert "// |0> in a comment must stay ASCII" in migrated
-    assert "state psi = |1⟩" in migrated
+    assert "State psi = |1>" in migrated
 
 
-def test_migrate_is_idempotent_on_canonical_unicode() -> None:
+def test_migrate_is_idempotent_on_canonical_ascii() -> None:
     source = (_V1 / "idempotent_unicode.sqx").read_text(encoding="utf-8")
     assert _migrate(source) == source
 

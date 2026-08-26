@@ -19,15 +19,15 @@ from compiler.staqex.run import run_source  # noqa: E402
 EFFECT_SRC = """
 package t
 fn inspect_state(x: State<Float>) -> State<Float> effects { Inspect } {
-    return inspect(x)
+    return Inspect(x)
 }
 fn pure_wrapper(x: State<Float>) -> State<Float> {
     return inspect_state(x)
 }
 pub fn main() -> Unit {
-    state psi = dirac(0.0)
-    state viewed = pure_wrapper(psi)
-    measure viewed
+    State psi = Dirac(0.0)
+    State viewed = pure_wrapper(psi)
+    Measure viewed
 }
 """
 

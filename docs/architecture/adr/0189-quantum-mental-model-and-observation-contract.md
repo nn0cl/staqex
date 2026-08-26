@@ -5,6 +5,17 @@
 **Accepted** (2026-08-04) — direction approved by the Adjudicator. Follow-up
 specifications and implementation remain separately gated.
 
+**Superseded in part by [ADR 0190](0190-s02-selection-boundary-and-mix-control.md)**
+(Accepted; Phase 2 implementation approved 2026-08-04): the compatibility
+wording in §2 and the related Consequences bullet below, which treated
+`when` as remaining valid until a future migration decision, is superseded.
+ADR 0190 is the accepted decision: `mix` (not `superpose`) is the canonical
+non-collapsing probabilistic/classified alternative spelling, `controlled`/
+`Ctl` is reserved for coherent control, `superpose` is reserved for coherent
+phase-preserving semantics only, and `when` is retired with no compatibility
+alias. The historical text below is preserved as the original decision
+record; it is not the current accepted rule.
+
 ## Design check
 
 - **Scope and expected behavior:** Define the top-level language direction for
@@ -88,6 +99,13 @@ strongly associated with classical branching in languages such as Kotlin. The
 future canonical spelling should therefore distinguish quantum composition
 from classical case selection.
 
+> **Superseded (see Status):** the illustrative pattern and naming below
+> predate ADR 0190. The "all positively weighted arms remain, no sampling"
+> behavior described here is the `mix` lane, not `superpose`, under the
+> accepted taxonomy; `superpose` is reserved for coherent, phase-preserving
+> composition. The "compatibility form" sentence is also superseded — `when`
+> is retired with no compatibility alias.
+
 The proposed canonical spelling is `superpose`, subject to surface review. It
 expresses that all positively weighted arms remain part of the resulting state
 and that the construct is not a short-circuit branch. The existing `when`
@@ -162,7 +180,9 @@ metadata.
   not claims of the current Kernel.
 - Existing `when` programs remain valid during migration, but new canonical
   examples should wait for acceptance of the replacement spelling rather than
-  silently changing current syntax.
+  silently changing current syntax. **Superseded by ADR 0190 (see Status):**
+  `when` is retired with no compatibility alias and a hard diagnostic; it does
+  not remain valid pending migration.
 - The Python Kernel and future Rust implementation must share the observation
   contracts; neither implementation may define a narrower surface as the
   language ideal.

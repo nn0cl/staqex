@@ -13,11 +13,11 @@ namespace M {
   pub enum Phase { Tonight, Morning, Day }
 }
 M.Phase p = M.Phase.Day
-state s = when (p) {
+State s = Mix (p) {
   Tonight -> |0>,
   Morning -> |+>,
 }
-measure s
+Measure s
 """
     c = compile_source(src)
     codes = {d.get("code") for d in c.diagnostics}
@@ -32,12 +32,12 @@ namespace M {
   pub enum Phase { Tonight, Morning, Day }
 }
 M.Phase p = M.Phase.Day
-state s = when (p) {
+State s = Mix (p) {
   Tonight -> |0>,
   Morning -> |+>,
   Day -> |1>,
 }
-measure s
+Measure s
 """
     r = run_source(src, settings={"seed": 0})
     assert r.status == "succeeded", r.diagnostics
@@ -51,11 +51,11 @@ namespace M {
   pub enum Phase { Tonight, Morning, Day }
 }
 M.Phase p = M.Phase.Day
-state s = when (p) {
+State s = Mix (p) {
   Tonight -> |0>,
   else -> |1>,
 }
-measure s
+Measure s
 """
     r = run_source(src, settings={"seed": 0})
     assert r.status == "succeeded", r.diagnostics

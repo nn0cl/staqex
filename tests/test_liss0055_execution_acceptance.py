@@ -20,11 +20,11 @@ from compiler.staqex.ast_nodes import OpBin, OpPauli  # noqa: E402
 def _source(operator: str, register: int = 3) -> str:
     names_list = list("abc"[:register])
     wires = "\n".join(
-        f"    state {name} = |{'+' if name == 'a' else '0'}>" for name in names_list
+        f"    State {name} = |{'+' if name == 'a' else '0'}>" for name in names_list
     )
     names = ", ".join(names_list)
     uncompute = "\n".join(
-        f"    state {name} = |0>" for name in names_list if name != "a"
+        f"    State {name} = |0>" for name in names_list if name != "a"
     )
     return f"""
 package t
@@ -32,10 +32,9 @@ pub fn main() -> Unit {{
     QubitRegister<{register}> register = system()
     Operator H = {operator}
 {wires}
-    state ({names}) = evolve ({names}) under H for 0.1
-        using Suzuki(order = 2, steps = 2)
+    State ({names}) = Evolve {{ ({names}) under H for 0.1.fs using Suzuki(order = 2, steps = 2) }}.run()
 {uncompute}
-    measure a
+    Measure a
 }}
 """
 
@@ -43,8 +42,8 @@ pub fn main() -> Unit {{
 def test_where_filters_index_tuples_before_execution() -> None:
     compiled = compile_source(
         _source(
-            "sum (i in Index<0..2>, j in Index<0..2>) "
-            "where i < j { Z[i] * Z[j] }"
+            "Sigma (i In 0..2, j In 0..2) "
+            "where i < j { 1.0545718e-19 * (Z[i] * Z[j]) }"
         )
     )
     assert compiled.ok, compiled.diagnostics
@@ -52,11 +51,14 @@ def test_where_filters_index_tuples_before_execution() -> None:
     assert provenance["binder_variables"] == ["i", "j"]
     assert provenance["desugared"] is True
     assert provenance["retained_terms"] == 3
-    assert run_source(_source("sum (i in Index<0..2>, j in Index<0..2>) where i < j { Z[i] * Z[j] }"), stdout=io.StringIO()).status == "succeeded"
+    assert run_source(_source("Sigma (i In 0..2, j In 0..2) where i < j { 1.0545718e-19 * (Z[i] * Z[j]) }"), stdout=io.StringIO()).status == "succeeded"
 
 
 def test_nested_sum_runs_and_emits_qasm() -> None:
-    source = _source("sum (i in Index<0..1>) { sum (j in Index<0..1>) { Z[i] * Z[j] } }")
+    source = _source(
+        "Sigma (i In 0..1) { Sigma (j In 0..1) "
+        "{ 1.0545718e-19 * (Z[i] * Z[j]) } }"
+    )
     result = run_source(source, stdout=io.StringIO())
     assert result.status == "succeeded", result.diagnostics
     compiled = compile_source(source)
@@ -65,7 +67,7 @@ def test_nested_sum_runs_and_emits_qasm() -> None:
 
 
 def test_product_preserves_ascending_factor_order() -> None:
-    source = _source("product (i in Index<0..2>) { Z[i] }")
+    source = _source("Pi (i In 0..2) { Z[i] }")
     compiled = compile_source(source)
     lowered, diagnostics = lower_finite_binder_operators(compiled.unit)
     assert not diagnostics
@@ -84,7 +86,9 @@ def test_product_preserves_ascending_factor_order() -> None:
 
 
 def test_second_quantized_binder_runs_and_emits_qasm() -> None:
-    source = _source("sum (i in Index<0..1>) { create[i] * annihilate[i] }")
+    source = _source(
+        "Sigma (i In 0..1) { 1.0545718e-19 * (create[i] * annihilate[i]) }"
+    )
     result = run_source(source, stdout=io.StringIO())
     assert result.status == "succeeded", result.diagnostics
     compiled = compile_source(source)

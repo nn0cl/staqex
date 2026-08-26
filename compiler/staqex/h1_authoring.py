@@ -21,6 +21,8 @@ from .ast_nodes import (
     H1OperatorDecl,
     H1Observable,
     H1Prepare,
+    H1RealizeDecl,
+    H1Superposition,
     H1TraceOut,
     H1Uncompute,
     OpBin,
@@ -29,6 +31,7 @@ from .ast_nodes import (
     OpVar,
     TheoryDecl,
 )
+from .target_capability import FakePhysicalTargetPort
 from .physics_ir import OperatorAtom, PhysicsModule, PhysicsNode, SourceOrigin
 from .quantum_semantic_ir import (
     ActingFactor,
@@ -82,6 +85,7 @@ _PLAN_STEP_KINDS = {
     H1Observable: "Observe",
     H1Measure: "TerminalMeasure",
     H1Mixture: "Mixture",
+    H1Superposition: "CoherentSuperposition",
     H1CoherentControl: "CoherentControl",
     H1TraceOut: "TraceOut",
     H1Uncompute: "Uncompute",
@@ -365,7 +369,11 @@ def _operator_diagnostics(
         )
     # The binder spelling is still a lexical compatibility boundary until the
     # H1 binder AST is introduced; preserve the reviewed `sum(i, ...)` form.
-    if "i" in referenced_names and "sum" not in operator.source_tokens:
+    if (
+        "i" in referenced_names
+        and "i" not in operator.parameter_types
+        and "sum" not in operator.source_tokens
+    ):
         diagnostics.append(
             _diagnostic(
                 "NON_HERMITIAN_OPERATOR_ERROR",
@@ -374,6 +382,87 @@ def _operator_diagnostics(
             )
         )
     return diagnostics
+
+
+def _h1_basis_mismatch_diagnostics(
+    theory_decl: TheoryDecl,
+    experiment_decl: ExperimentDecl | None,
+    origin: SourceOrigin,
+) -> list[dict[str, object]]:
+    """Real AST-correlated check: a state evolved under this theory's
+    operator must have been `prepare`d over this theory's declared basis or
+    coordinate, not merely co-occur textually with it (LISS-0326)."""
+
+    domain_name = (
+        theory_decl.basis.name
+        if theory_decl.basis is not None
+        else theory_decl.coordinate.name
+        if theory_decl.coordinate is not None
+        else None
+    )
+    if domain_name is None or experiment_decl is None:
+        return []
+
+    prepares = [stmt for stmt in experiment_decl.body if isinstance(stmt, H1Prepare)]
+    evolves = [stmt for stmt in experiment_decl.body if isinstance(stmt, H1Evolve)]
+
+    diagnostics: list[dict[str, object]] = []
+    for evolve in evolves:
+        if evolve.theory_name != theory_decl.name:
+            continue
+        prepare = next(
+            (stmt for stmt in prepares if stmt.state_name == evolve.state_name),
+            None,
+        )
+        bound = prepare.bound_to if prepare is not None else None
+        if bound != (theory_decl.name, domain_name):
+            diagnostics.append(
+                _diagnostic(
+                    "BASIS_MISMATCH_ERROR",
+                    origin,
+                    f"state carrier `{evolve.state_name}` is incompatible with "
+                    f"basis/coordinate `{domain_name}` declared by theory "
+                    f"`{theory_decl.name}`",
+                )
+            )
+    return diagnostics
+
+
+def _h1_target_capability_diagnostics(
+    theory_decl: TheoryDecl,
+    unit: object | None,
+    origin: SourceOrigin,
+) -> list[dict[str, object]]:
+    """Real capability-registry check: a declared `coordinate ... Lattice<N>`
+    site count must not exceed the named `realize qpu:<target>`'s actual
+    `max_logical_qubits`, instead of matching a fixed literal (LISS-0326)."""
+
+    if theory_decl.coordinate is None or theory_decl.coordinate.size is None:
+        return []
+    realize_decl = next(
+        (
+            declaration
+            for declaration in getattr(unit, "decls", ())
+            if isinstance(declaration, H1RealizeDecl)
+        ),
+        None,
+    )
+    if realize_decl is None:
+        return []
+    try:
+        profile = FakePhysicalTargetPort().load_profile(realize_decl.target)
+    except KeyError:
+        return []
+    if theory_decl.coordinate.size > profile.max_logical_qubits:
+        return [
+            _diagnostic(
+                "TARGET_CAPABILITY_REJECT",
+                origin,
+                f"target `{realize_decl.target}` cannot realize a "
+                f"{theory_decl.coordinate.size}-site H1 model",
+            )
+        ]
+    return []
 
 
 def analyze_h1_source(source: str, unit: object | None = None) -> H1Analysis:
@@ -450,22 +539,12 @@ def analyze_h1_source(source: str, unit: object | None = None) -> H1Analysis:
                 )
             )
 
-    if "basis position_grid" in source and "state spin" in source:
-        diagnostics.append(
-            _diagnostic(
-                "BASIS_MISMATCH_ERROR",
-                origin,
-                "state carrier `spin` is incompatible with position basis `position_grid`",
-            )
+    if theory_decl is not None:
+        diagnostics.extend(
+            _h1_basis_mismatch_diagnostics(theory_decl, experiment_decl, origin)
         )
-
-    if "Lattice<128>" in source and "qpu:CH0_STATIC_V1" in source:
-        diagnostics.append(
-            _diagnostic(
-                "TARGET_CAPABILITY_REJECT",
-                origin,
-                "target `CH0_STATIC_V1` cannot realize a 128-site H1 model",
-            )
+        diagnostics.extend(
+            _h1_target_capability_diagnostics(theory_decl, unit, origin)
         )
 
     physics_ir = PhysicsModule(

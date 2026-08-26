@@ -9,7 +9,7 @@
 | North-star lens | [Physicist × DX harmony](../architecture/physicist-dx-harmony.md); Clean Architecture / DDD in `AGENTS.md` |
 | Friction evidence | [physicist-source-friction-ledger.md](../architecture/physicist-source-friction-ledger.md) |
 | Mission lock | [staqex-v1-showcase-mission-lock.md](staqex-v1-showcase-mission-lock.md) |
-| S0 spec | [staqex-v1-showcase-s0-specification.md](staqex-v1-showcase-s0-specification.md) |
+| S0 spec | [staqex-v1-showcase-s0-disaster-response.md](staqex-v1-showcase-s0-disaster-response.md) |
 
 ```markdown
 [DESIGN CHECK]
@@ -243,8 +243,66 @@ and **P2 mission is locked**.
       [mission lock](staqex-v1-showcase-mission-lock.md). Locked 2026-07-31.
 - [x] Publish **S0** showcase specification (docs only) —
       [LISS-0127](../architecture/documentation-compression-map.md);
-      [S0 spec](staqex-v1-showcase-s0-specification.md).
+[S0 spec](staqex-v1-showcase-s0-disaster-response.md).
 - [x] Authorize **S1** vertical thin slice (Feature Path; [LISS-0134](../issues/LISS-0134-showcase-s1-thin-slice.md)) — authorized and shipped 2026-07-31 (PR pending).
 - [x] Choose Option **B** (2026-07-31): selected Open Topics spec+ship before S1.
 - [x] Complete Option B program (0129–0133, 0135).
 - [ ] Authorize **S2** full mission scale (new Issue LISS-0136+).
+- [x] Accept §7's two-phase examples/showcase benchmark role and the S02
+      lineage connection. Accepted 2026-08-05.
+
+## 7. Examples/showcase two-phase benchmark role, and the S02 lineage (2026-08-05)
+
+**Terminology note:** "S02" below means the second *numbered showcase*
+(the drug-discovery benchmark), not this document's own §3 "S0–S4" labels,
+which name *phases of building one showcase mission* (S0 spec → S1 thin
+slice → S2 full mission scale → S3 coverage completion → S4 joint review).
+The two numbering systems are independent; do not conflate a showcase
+named S02 with the "S2" phase above.
+
+### The two-phase role
+
+Examples/showcases are not a one-time deliverable that is finished once it
+first compiles and runs. They serve two distinct, sequential benchmark
+roles for the language, and are expected to be revisited for both:
+
+1. **Current — language-expressiveness coverage.** Each showcase should
+   push the language spec across a distinct real-world use case, testing
+   whether it is genuinely expressive enough for that case — not merely
+   whether some narrow slice of it compiles. This is exactly what §1's
+   joint rubric and the [P1 coverage ledger](staqex-v1-language-coverage-ledger.md)
+   already establish for S0/S1: required/optional/out rows per showcase,
+   with Adjudicator approval needed to demote a required row rather than
+   silently under-using the language.
+2. **Future — real-hardware gap discovery.** When Staqex targets a real
+   QPU backend, the same showcases get revisited and updated, and
+   attempting real deployment is expected to surface language-spec gaps
+   that the Python simulator cannot expose on its own.
+   [ADR 0193](../architecture/adr/0193-dynamic-qpu-timing-region-intent.md)
+   (dynamic QPU lane timing intent) is the first concrete instance of this
+   role: the need for a backend-neutral timing-intent construct was
+   identified by reasoning about what a showcase would require once real
+   hardware execution is attempted — not by any gap the simulator-only
+   Kernel itself exposed. A showcase is not "done" in the sense this
+   section means until it has been through this pass at least once for
+   any target it is expected to eventually run on.
+
+### S02 lineage connection
+
+This document's §4 already anticipated a successor: "S2+ = new ID (do not
+reuse LISS-0120)." The [S02 drug-discovery benchmark](staqex-v1-s02-drug-discovery-benchmark.md)
+(ADR 0190; [WP-0093](../work-plans/WP-0093-s02-language-expressiveness-and-selection.md))
+is that successor. Its own document chain (design draft, accepted spec,
+ADR 0190, WP-0093) never linked back to this rebaseline, to the
+[coverage ledger](staqex-v1-language-coverage-ledger.md), or to the
+[showcase mission lock](staqex-v1-showcase-mission-lock.md) — verified by
+direct search; the omission was accidental, not a deliberate decision to
+exclude S02 from this lineage. S02 is hereby formally part of the
+representative-program lineage this document establishes, and is subject
+to the two-phase role above.
+
+**Not done by this entry:** populating S02's own row-by-row
+coverage-ledger table (mirroring §1's friction-seeded surface table for
+S0/S1) is separate, unstarted future work. This entry establishes the
+connection and the operating principle; it does not itself constitute
+that coverage inventory.

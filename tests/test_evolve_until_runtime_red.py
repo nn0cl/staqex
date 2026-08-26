@@ -1,4 +1,4 @@
-"""AT-TDD: LISS-0012 bounded evolve-until runtime (Joint evaluator)."""
+"""AT-TDD: LISS-0012 bounded Evolve-until runtime (Joint evaluator)."""
 
 from __future__ import annotations
 
@@ -23,14 +23,18 @@ def _run(source: str, *, seed: int = 7) -> tuple[str, tuple[dict, ...]]:
     return result.status, codes
 
 
-def test_hamiltonian_evolve_until_stops_when_predicate_holds() -> None:
+def test_explicit_evolve_until_stops_when_predicate_holds() -> None:
     status, codes = _run(
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state psi = evolve psi under X for pi / 2.0 until converged(psi) max 64
-            measure psi
+            Energy scale = 0.0.eV to J
+            Operator H = scale * X
+            Time dt = 0.1.fs
+            State psi = Dirac(0)
+            Operator U_dt = exp(-i * H * dt / hbar)
+            State psi = Evolve() { U_dt * psi until converged(psi) max 64 }.run()
+            Measure psi
         }
         """
     )
@@ -39,14 +43,18 @@ def test_hamiltonian_evolve_until_stops_when_predicate_holds() -> None:
     assert "EVOLVE_UNTIL_MAX_STEPS_ERROR" not in codes
 
 
-def test_hamiltonian_evolve_until_reports_max_steps_error() -> None:
+def test_explicit_evolve_until_reports_max_steps_error() -> None:
     status, codes = _run(
         """
         package t
         pub fn main() -> Unit {
-            state psi = |+>
-            state psi = evolve psi under X for 1 until converged(psi) max 2
-            measure psi
+            Energy scale = 1.0.eV to J
+            Operator H = scale * X
+            Time dt = 1.0.fs
+            State psi = |+>
+            Operator U_dt = exp(-i * H * dt / hbar)
+            State psi = Evolve() { U_dt * psi until false max 2 }.run()
+            Measure psi
         }
         """
     )
@@ -60,9 +68,13 @@ def test_evolve_until_predicate_does_not_consume_rng() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state psi = evolve psi under X for pi / 2.0 until converged(psi) max 64
-            measure psi
+            Energy scale = 0.0.eV to J
+            Operator H = scale * X
+            Time dt = 0.1.fs
+            State psi = Dirac(0)
+            Operator U_dt = exp(-i * H * dt / hbar)
+            State psi = Evolve() { U_dt * psi until converged(psi) max 64 }.run()
+            Measure psi
         }
         """,
         seed=11,
@@ -71,9 +83,9 @@ def test_evolve_until_predicate_does_not_consume_rng() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state psi = evolve psi under X for pi / 2.0
-            measure psi
+            State psi = Dirac(0)
+            State psi = Evolve { psi under X for 1.5707963267948966.s }.run()
+            Measure psi
         }
         """,
         seed=11,
@@ -85,9 +97,9 @@ def test_evolve_until_predicate_does_not_consume_rng() -> None:
 
 if __name__ == "__main__":
     for test in (
-        test_hamiltonian_evolve_until_stops_when_predicate_holds,
-        test_hamiltonian_evolve_until_reports_max_steps_error,
+        test_explicit_evolve_until_stops_when_predicate_holds,
+        test_explicit_evolve_until_reports_max_steps_error,
         test_evolve_until_predicate_does_not_consume_rng,
     ):
         test()
-    print("OK — evolve until runtime tests")
+    print("OK — Evolve until runtime tests")

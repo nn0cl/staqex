@@ -1,98 +1,23 @@
-// Local site degrees of freedom for Noether Forge finite carriers.
+// Sensor site identity and structural-health role.
 
 package examples.applied.noether_forge.domain
 
 namespace Forge.Site {
-    pub enum CarrierKind {
-        Qubit,
-        Qutrit,
-        SpinOne
-    }
-
-    pub enum LocalBasis {
-        Computational,
-        XBasis,
-        Energy
+    pub enum SensorRole {
+        Healthy,
+        Stressed
     }
 
     pub struct SiteId {
         val index: Int
     }
 
-    pub struct SiteSpec {
+    pub struct SensorSite {
         val id: SiteId
-        val carrier: CarrierKind
-        val basis: LocalBasis
+        val role: SensorRole
     }
 
-    pub fn qubit_site(index: Int) -> SiteSpec {
-        return SiteSpec(SiteId(index), CarrierKind.Qubit, LocalBasis.Computational)
+    pub fn is_stressed(site: SensorSite) -> Bool {
+        return site.role == SensorRole.Stressed
     }
-
-    pub fn qutrit_site(index: Int) -> SiteSpec {
-        return SiteSpec(SiteId(index), CarrierKind.Qutrit, LocalBasis.Computational)
-    }
-
-    pub fn spin_one_site(index: Int) -> SiteSpec {
-        return SiteSpec(SiteId(index), CarrierKind.SpinOne, LocalBasis.Energy)
-    }
-
-    pub fn in_x_basis(site: SiteSpec) -> SiteSpec {
-        return SiteSpec(site.id, site.carrier, LocalBasis.XBasis)
-    }
-
-    pub fn is_qubit(site: SiteSpec) -> Bool {
-        return site.carrier == CarrierKind.Qubit
-    }
-
-    pub fn is_finite_review_default(site: SiteSpec) -> Bool {
-        return site.carrier == CarrierKind.Qubit && site.basis == LocalBasis.Computational
-    }
-
-    pub fn local_dimension(carrier: CarrierKind) -> Int {
-        if carrier == CarrierKind.Qubit {
-            return 2
-        }
-        if carrier == CarrierKind.Qutrit {
-            return 3
-        }
-        return 3
-    }
-
-    pub fn neighbor_id(site: SiteId, delta: Int) -> SiteId {
-        return SiteId(site.index + delta)
-    }
-
-    pub fn same_site(a: SiteId, b: SiteId) -> Bool {
-        return a.index == b.index
-    }
-
-    pub fn review_edge_pair() -> Int {
-        return 2
-    }
-
-    pub fn energy_basis(site: SiteSpec) -> SiteSpec {
-        return SiteSpec(site.id, site.carrier, LocalBasis.Energy)
-    }
-
-    pub fn computational_basis(site: SiteSpec) -> SiteSpec {
-        return SiteSpec(site.id, site.carrier, LocalBasis.Computational)
-    }
-
-    pub fn total_hilbert_hint(sites: Int, carrier: CarrierKind) -> Int {
-        return sites * local_dimension(carrier)
-    }
-
-    pub fn is_edge_index(index: Int, sites: Int) -> Bool {
-        return index == 0 || index == sites - 1
-    }
-
-    pub fn interior_index(index: Int, sites: Int) -> Bool {
-        return index > 0 && index < sites - 1
-    }
-
-    pub fn review_carrier() -> CarrierKind {
-        return CarrierKind.Qubit
-    }
-
 }

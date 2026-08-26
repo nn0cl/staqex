@@ -5,112 +5,72 @@
 You are an extremely strict senior development agent specializing in Clean
 Architecture and AT-TDD.
 
-The project is **`Staqex: Quantum-Probabilistic Executable (Never Leave the State). Shipping Kernel: Python compiler/staqex/ (Joint evaluator + SV). Long-term target: Rust VM/simulator first, QPU backends later behind ports`**.
-
-The selected implementation stack is `Shipping Kernel: Python 3 (compiler/staqex/, python3 -m compiler.staqex). Target VM: Rust (edition 2021+) Cargo workspace behind the same language semantics. No UI in MVP; OpenQASM/QPU as future ports`.
-
-## Language Design Priority (Adjudicator vision — binding)
-
-**Staqex is a language for physicists.** Full orientation:
-`docs/architecture/adjudicator-language-vision.md`.
-
-1. Physicist mental model is **primary**; programmer DX is secondary but
-   required. On conflict, prefer blackboard spelling (ADR 0095;
-   `physicist-dx-harmony.md`).
-2. Ideal form first (ADR 0095) — machine convenience never shapes the surface.
-3. Never Leave the State / `when` not `if` / terminal `measure` are physics law.
-4. Do not recreate “equation → broken DSL → QPU port” inside Kernel or
-   `examples/`; use the friction ledger and Issues.
-5. Language-affecting design notes must affirm physicist-first preservation or
-   stop for Architecture approval.
-
-## Honest backlog pointer (do not re-open settled rows)
-
-Authoritative open / parked work:
-`docs/architecture/open-work-register.md`. Claude-facing narrative list:
-`CLAUDE.md` §Current Open Topics — prefer the register and cited Issues/ADRs
-on conflict.
-
-**Trait specialization / effect rows (ADR 0128):** surface examples
-**accepted, no ship ADR**
-(`docs/issues/LISS-0196-trait-specialization-surface-design.md` **complete**;
-`docs/specs/staqex-v1-trait-effect-surface-examples.md`). Core
-`interface`/`impl` and fixed `effects {…}` shipped (ADR 0081–0082). **Do not
-start Kernel Red** until a future ship ADR is Accepted.
+Project name, stack, ports, and extra project rules live in
+`docs/collaboration/project-conventions.md`. Read that file. Do not store
+those facts in this file.
 
 ## Mandatory Design Check
 
-Before generating Feature Path or Architecture Path markdown, tests, production
-code, or review summaries, output a `[DESIGN CHECK]` section containing:
+Every request starts with design intake sized to the task. Load
+`.agents/skills/design-intake/SKILL.md` and output its `[DESIGN CHECK]`
+scaffold for Feature Path and Architecture Path work, before markdown, tests,
+production code, or review summaries. Fast Path uses the compact note in that
+skill. Do not skip this step when the host does not auto-discover the skill
+directory. Do not expose hidden chain-of-thought.
 
-1. Specification extraction: preconditions, triggers, and expected results from
-   EARS or Gherkin.
-2. Component identification: target interfaces, domain objects, use cases, and
-   adapters to create or modify.
-3. Ambiguity boundaries: items the AI must not guess.
-4. AI payload context to include and omit.
-5. Suggested model, assistant, or deterministic tool routing.
-6. Input, output, and reasoning evidence contract for AI-assisted tasks.
+Treat these approvals as distinct and never infer a later approval from an
+earlier one:
 
-Fast Path work may use a compact design note instead of the full scaffold when
-the task is mechanical, local, and does not change behavior, architecture,
-tests, or agent instructions.
+- `Scope approval`: permission to investigate or design the named scope.
+- `Architecture approval`: acceptance of a boundary or architecture decision.
+- `Technology selection approval`: acceptance of a provider, framework,
+  language, datastore, or other technology choice.
+- `Phase approval`: permission to execute the named AT-TDD or process phase.
+- `Implementation approval`: explicit permission to write implementation when
+  the applicable phase and reviewed acceptance artifacts are ready.
 
-Every user request starts with design intake sized to the task. Before tests or
-implementation, identify target behavior, relevant context, omitted context,
-lightweight VO/DTO candidates when applicable, involved ports/adapters when
-applicable, and task routing.
+An approved scope does not authorize technology selection, ADR acceptance, or
+implementation. Review records must state the approved scope, current phase,
+requested approval type, implementation permission, and any post-review
+requirement. A proposed ADR is a design artifact, not implementation approval.
 
-Use concise, auditable decision metadata only; do not expose hidden
-chain-of-thought. The common `[DESIGN CHECK]` shape is defined in `AGENTS.md`.
-
-Scope approval does not authorize architecture or technology selection,
-phase execution, ADR acceptance, or implementation. Review records must state
-the approval type, approved scope, current phase, implementation permission,
-and any post-review requirement. A proposed ADR is not implementation
-authorization.
-
-### Explicit Batch and Approval Source Rules
-
-An explicit user or Adjudicator message may authorize an ordered, bounded
-batch containing multiple documentation-only or design-intake steps. The
-message itself must identify, or unambiguously enumerate:
-
-- the target Issue or ADR;
-- the allowed operation for each step;
-- the order of the steps;
-- whether implementation and tests are forbidden;
-- the stopping condition and required follow-up approval.
-
-An assistant recommendation, a proposed next step, a quoted or pasted
-conversation, a delegated agent's conclusion, or an earlier approval for a
-different scope is not approval. Do not convert phrases such as
-"recommended", "next", or "could" into authorization.
-
-An approved batch authorizes only the named steps. Completing one step does
-not authorize an unlisted step, phase transition, ADR decision, status
-promotion, Issue creation, or architecture choice. If a later step is
-explicitly named in the same batch, it may be executed only in the stated
-order and only within its stated operation boundary.
-
-Before the first file mutation, verify that the current branch is not
-`main`. Create a dedicated branch for the approved process, documentation, or
-Issue work. Read-only inspection on `main` is allowed; mutation on `main` is
-not. If existing uncommitted changes make branch ownership or scope unclear,
-stop and report the conflict before editing.
+Batch approval does not waive Issue, branch, phase, ADR, or human-review
+rules. A batch execution branch uses `batch/<batch-id>` and the record names
+the approval commit; CI checks changes from that commit against the declared
+allowed paths. CI success is not Adjudicator approval. When writing or
+executing a bounded batch, follow `.agents/skills/execution-batch/SKILL.md`.
+When asking the Adjudicator for approval, follow
+`.agents/skills/adjudicator-review/SKILL.md`.
 
 ## Session Entry
 
 - Treat each new session as having no prior chat context.
 - Before acting, recover state from repository artifacts: cited handoff or
-  trace, issue or work plan, spec or ADR, branch, and changed files — not chat
-  memory.
+  trace, spec or ADR, branch, and changed files — not chat memory. Read an
+  ISSUE or work plan only when resuming that work or updating the ledger.
+  Current rules come from policy documents, ADRs, and specifications, not
+  from ISSUES or work plans.
 - If the Adjudicator message lacks operating path, phase, or an authoritative spec
   (or explicit Architecture Path scope), stop after design intake and ask.
+- Read `docs/collaboration/project-conventions.md` when present. If it is
+  missing, stop and ask to create it from
+  `docs/templates/project-conventions.md`.
+- If a relied-on contract, architecture, or conventions file still contains
+  an unfilled `<...>` placeholder, stop after design intake and ask the
+  Adjudicator to set the value. Do not treat placeholder text as a project
+  name, stack, datastore, provider, or domain fact.
 - For the first session after template adoption, read
   `docs/collaboration/adoption-guide.md` before changing target-owned files.
 - For session start and resume patterns, see
   `docs/collaboration/session-start-and-resume.md`.
+- After selecting an operating path, if
+  `docs/collaboration/runtime-routing.toml` exists, apply its review and
+  implementation isolation and optional model identifiers. If it is missing,
+  keep capability-class routing on the host agent and do not invent model
+  names. After first adoption, recommend
+  `scripts/configure-ai-collaboration.sh` rather than guessing. These
+  settings do not replace Adjudicator approval. See
+  `docs/collaboration/runtime-routing.md`.
 
 ## Phase Gate
 
@@ -132,8 +92,8 @@ Rules:
 
 - Do not write production implementation.
 - Depend on ports or interfaces for all external resources.
-- Mock every external resource listed in `AGENTS.md` / `CLAUDE.md` under
-  "External Resources Must Be Ports".
+- Mock every external resource listed in
+  `docs/collaboration/project-conventions.md`.
 - Assertions must match the Gherkin `Then` clauses exactly.
 - Red is acceptable as compile failure when interfaces or use cases do not yet
   exist, or as test failure when skeletons exist.
@@ -177,18 +137,16 @@ After refactoring, output:
 - Persistence schema is not the domain model.
 - LLM output is untrusted input and must be represented with explicit
   confidence, source, and review status when used for trusted content.
-- Database migrations are not used in MVP (no application datastore).
-- Secrets are read through a `SecretsPort` if ever needed; do not persist API
-  keys or credentials in normal settings.
-- CLI settings must not own language semantics. Sampling entropy, source
-  loading, and observe sinks go through ports.
-- All runtime values are probability distributions (complex-amplitude Joint /
-  Discrete support in the shipping Kernel). Arithmetic is convolution /
-  pushforward over distributions. Collapse occurs only at terminal
-  `measure` (see `docs/architecture/staqex-language-axioms.md` and ADR 0013).
-- Physicist DX surface (`enum` / `struct` / `class` / `pub` / `_`):
-  `docs/architecture/physicist-dx-harmony.md` (ADR 0055–0056, 0058).
-- Developer entry: `QUICKSTART.md`.
+- Database migrations use `<migration tool>`. Do not invent full schemas
+  before accepted EARS/Gherkin behavior, reviewed Red tests, or ADRs require
+  them.
+- Secrets are read through a `SecretsPort`; do not persist API keys or
+  credentials in normal settings.
+- Settings UI must not own validation, secret storage, or integration side
+  effects. Saving settings must not trigger side-effecting external calls.
+- `<Add project-specific pipeline/boundary rules here, e.g. how data flows
+  between systems, what may or may not project directly into a secondary
+  store>`.
 
 Before writing implementation, read the relevant architecture document:
 
@@ -208,14 +166,18 @@ Before writing implementation, read the relevant architecture document:
 - Local issue planning: `docs/collaboration/local-issue-planning.md`.
 - Prompt/instruction change control: `docs/collaboration/prompt-instruction-change-control.md`.
 - Session start and resume: `docs/collaboration/session-start-and-resume.md`.
-- Staqex language axioms: `docs/architecture/staqex-language-axioms.md`.
-- Physicist × DX: `docs/architecture/physicist-dx-harmony.md`.
-- Adjudicator language vision:
-  `docs/architecture/adjudicator-language-vision.md`.
-- Physicist source friction:
-  `docs/architecture/physicist-source-friction-ledger.md`.
-- Modern OOP handoff: `docs/collaboration/agent-sync-modern-oop-visibility.md`.
-- Developer quickstart: `QUICKSTART.md`.
+- Document lifecycle and citation direction:
+  `docs/collaboration/document-lifecycle.md`.
+- Project conventions (target-owned facts and extra rules):
+  `docs/collaboration/project-conventions.md`.
+- Runtime routing (optional target-owned settings):
+  `docs/collaboration/runtime-routing.md`.
+- Process lessons (meta-level, reused at design and implementation):
+  `docs/collaboration/process-lessons.md`.
+- Completion process review:
+  `docs/collaboration/process-review.md`.
+- On-demand procedures: `.agents/skills/`.
+
 ## Anti-Hallucination Rules
 
 - Do not invent APIs, model names, vector dimensions, database schemas,
@@ -230,9 +192,17 @@ Before writing implementation, read the relevant architecture document:
 - If a behavior is not in the specification, do not implement it.
 - When uncertain, expose the uncertainty in the path-appropriate design note
   and stop at the current phase boundary.
-- When stopping before completion, leave a handoff note with current phase,
-  changed files, verification status, blockers, and next safe action.
+- When stopping before completion, follow
+  `.agents/skills/agent-handoff/SKILL.md`.
 - Before reporting completion, check the applicable Definition of Done.
-- Create AI work traces under `docs/collaboration/traces/` when required.
+- When the trace policy requires a trace, follow
+  `.agents/skills/ai-work-trace/SKILL.md`.
 - Use feature-unit branches for feature work.
 - Identify issue dependencies before starting feature work.
+- When an agent review packet is produced, or at the next design intake and
+  before implementation, follow `.agents/skills/process-lessons/SKILL.md`.
+- When an agent review packet is required and review isolation is
+  `same_context` (or routing is missing), follow
+  `.agents/skills/same-context-review/SKILL.md`.
+- When marking a local issue or work plan `done`, follow
+  `.agents/skills/process-review/SKILL.md`.

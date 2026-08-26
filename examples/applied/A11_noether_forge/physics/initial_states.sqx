@@ -1,90 +1,11 @@
-// Initial-state protocols: product, defect, domain wall, entangled intents.
+// Baseline sensor-array preparation intent: all sensors start in |0>
+// (the lab-frame magnetized reference state), stressed-site identity
+// carried separately via domain.site.SensorRole.
 
 package examples.applied.noether_forge.physics
 
 namespace Forge.Initial {
-    pub enum ProtocolKind {
-        ProductPlus,
-        ProductZero,
-        DomainWall,
-        Defect,
-        BellPairSnippet
+    pub fn baseline_site_count() -> Int {
+        return 3
     }
-
-    pub struct InitialProtocol {
-        val kind: ProtocolKind
-        val defect_site: Int
-    }
-
-    pub fn product_plus() -> InitialProtocol {
-        return InitialProtocol(ProtocolKind.ProductPlus, 0)
-    }
-
-    pub fn product_zero() -> InitialProtocol {
-        return InitialProtocol(ProtocolKind.ProductZero, 0)
-    }
-
-    pub fn domain_wall(site: Int) -> InitialProtocol {
-        return InitialProtocol(ProtocolKind.DomainWall, site)
-    }
-
-    pub fn defect_at(site: Int) -> InitialProtocol {
-        return InitialProtocol(ProtocolKind.Defect, site)
-    }
-
-    pub fn bell_snippet() -> InitialProtocol {
-        return InitialProtocol(ProtocolKind.BellPairSnippet, 0)
-    }
-
-    pub fn is_product(p: InitialProtocol) -> Bool {
-        return p.kind == ProtocolKind.ProductPlus || p.kind == ProtocolKind.ProductZero
-    }
-
-    pub fn is_inhomogeneous(p: InitialProtocol) -> Bool {
-        return p.kind == ProtocolKind.DomainWall || p.kind == ProtocolKind.Defect
-    }
-
-    pub fn review_default() -> InitialProtocol {
-        return product_plus()
-    }
-
-    pub fn smoke_default() -> InitialProtocol {
-        return product_zero()
-    }
-
-    pub fn wall_near_center(sites: Int) -> InitialProtocol {
-        return domain_wall(sites / 2)
-    }
-
-    pub fn defect_near_edge() -> InitialProtocol {
-        return defect_at(1)
-    }
-
-    pub fn product_for_smoke(prefer_zero: Bool) -> InitialProtocol {
-        if prefer_zero {
-            return product_zero()
-        }
-        return product_plus()
-    }
-
-    pub fn protocol_rank(p: InitialProtocol) -> Int {
-        if p.kind == ProtocolKind.ProductPlus {
-            return 1
-        }
-        if p.kind == ProtocolKind.ProductZero {
-            return 2
-        }
-        if p.kind == ProtocolKind.DomainWall {
-            return 3
-        }
-        if p.kind == ProtocolKind.Defect {
-            return 4
-        }
-        return 5
-    }
-
-    pub fn defect_site_of(p: InitialProtocol) -> Int {
-        return p.defect_site
-    }
-
 }

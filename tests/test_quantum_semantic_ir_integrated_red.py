@@ -83,8 +83,8 @@ def _source_to_physics(api):
         package noether_forge
         pub fn main() -> Unit {
             Operator H = X + Z
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -291,7 +291,7 @@ def test_semantic_lowering_rejects_raw_ast_or_hir_input():
     from compiler.staqex.hir import build_hir
     from compiler.staqex.pipeline import compile_source
 
-    compiled = compile_source("package t\npub fn main() -> Unit { measure coin() }")
+    compiled = compile_source("package t\npub fn main() -> Unit { Measure Coin() }")
     assert compiled.checker is not None
     assert compiled.unit is not None
     hir = build_hir(

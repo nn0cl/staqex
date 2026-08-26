@@ -11,7 +11,7 @@ namespace Observatory {
 
     pub struct Config {
         val steps: Int
-        val duration: Float
+        val duration: Time
         val station: Int
     }
 

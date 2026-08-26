@@ -28,8 +28,8 @@ def test_theory_body_must_not_see_execution_symbol() -> None:
             Operator H = n * X
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )
@@ -51,8 +51,8 @@ def test_theory_body_without_execution_symbol_still_compiles() -> None:
             Operator H = X + Z
         }
         pub fn main() -> Unit {
-            State<Int> q = coin()
-            measure q
+            State<Int> q = Coin()
+            Measure q
         }
         """
     )

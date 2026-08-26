@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "batch_id": "wp-0093-liss-0321-s02-host-domain",
+  "work_plan_id": "WP-0093",
+  "status": "post_reviewed",
+  "approval_type": "bounded-batch",
+  "approved_by": "Adjudicator",
+  "approved_at": "2026-08-04T00:00:00Z",
+  "expires_at": "2026-08-18T00:00:00Z",
+  "execution_branch": "batch/wp-0093-liss-0321-s02-host-domain",
+  "approval_commit": "f214594ce4e01d173c62217d3deb02a1d2ba55f8",
+  "issue_ids": [
+    "LISS-0321"
+  ],
+  "issue_order": [
+    "LISS-0321"
+  ],
+  "proposed_scope": "WP-0093 work unit B only: Host-side S02 domain records (CandidateId, Candidate, TargetProfile, Constraint, Score, SelectionProblem) and an explicit finite-manifest witness, with fail-closed Host input hygiene (missing/duplicate/non-finite/oversized/unproven-finite rejection). No Kernel grammar/typecheck/evaluator change. No Projector/constraint semantics (work unit C, needs its own ADR, not in this batch). No classical baselines, resource/provenance reporting, or .sqx example file.",
+  "approved_scope": "WP-0093 work unit B: Host-side S02 domain records and finite-manifest witness under examples/showcase/S02_drug_discovery/host/ (S01's domain/ turned out to mean .sqx Kernel source, which this Host-only Issue does not have, so both new modules live under host/ only). Classical baselines excluded, deferred to work unit E. Work unit C's Projector<Selection> ADR to be filed separately, after this Issue closes.",
+  "allowed_paths": [
+    "examples/showcase/S02_drug_discovery/**",
+    "tests/test_liss_0321*",
+    "docs/issues/LISS-0321*",
+    "docs/work-plans/WP-0093-s02-language-expressiveness-and-selection.md",
+    "docs/architecture/open-work-register.md",
+    "docs/collaboration/traces/**",
+    "docs/collaboration/reviews/execution-batch-wp-0093-liss-0321.json"
+  ],
+  "disallowed_paths_notes": [
+    "compiler/staqex/** intentionally omitted — this batch is Host-side only; any Kernel change requires its own amendment",
+    "docs/specs/staqex-v1-s02-drug-discovery-benchmark.md and ADR 0190 intentionally omitted — this batch does not renegotiate the accepted spec or ADR",
+    "work unit C (Projector<Selection> semantics) intentionally omitted — needs its own ADR before any Issue can be batched"
+  ],
+  "allowed_phases": [
+    "phase-1-red",
+    "phase-2-green",
+    "phase-3-refactor"
+  ],
+  "allowed_operations": [
+    "edit-documentation",
+    "edit-tests",
+    "edit-implementation",
+    "run-verification"
+  ],
+  "operation_notes": {
+    "LISS-0321": "Feature Path; Host-side Python only (domain records + finite-manifest witness + Host input hygiene); no compiler/staqex/** edits"
+  },
+  "invalidating_triggers": [
+    "any need to touch compiler/staqex/** (grammar, typecheck, evaluator, IR)",
+    "any Projector/constraint semantics decision surfacing mid-work (belongs to work unit C's own ADR)",
+    "any change to the accepted S02 spec's Value Model shapes",
+    "any real compound data, chemistry graph, or public dataset adoption",
+    "any classical-baseline or resource/provenance scope creep beyond the finite boundary"
+  ],
+  "post_review_required": true,
+  "post_reviewed_by": "Adjudicator",
+  "post_reviewed_at": "2026-08-04T00:00:00Z",
+  "post_review_notes": "Adjudicator granted Completion approval and push/PR authorization. PR #348 failed CI's check-execution-batch-reviews.py (execution_branch naming, approval_commit length); superseded by PR #349 on the corrected batch/wp-0093-liss-0321-s02-host-domain branch, CI green (3/3), merged as commit f214594. approval_commit updated from the pre-merge design commit (b8bd2de) to the squash-merge commit f214594, since squash-merging breaks direct git ancestry from a branch created off main after the merge.",
+  "draft_notes": {
+    "created_at": "2026-08-04",
+    "created_on_branch": "docs/wp-0093-s02-phase1-investigation",
+    "investigation_context": "Adjudicator asked to trace S02 history and requested an investigation before further work-unit-B batch approval. Investigation found the S02 acceptance spec (docs/specs/staqex-v1-s02-drug-discovery-benchmark.md) is already Accepted (same commit as ADR 0190), so work unit B's spec deliverable is done; the remaining gap is implementation. Investigation also found the existing green test_s02_selection_surface_red.py::test_projector_is_explicitly_lowered_from_selection_constraints only exercises generic project...onto syntax with S02-shaped names (prepare_selection is a unitarity-check whitelist entry, feasible is not a registered stdlib function) -- it is not evidence that S02 domain/Projector semantics are implemented.",
+    "not_yet_batched": "Work unit C (Projector<Selection> semantics) needs its own ADR before it can be batched; work units D and E depend on B and C."
+  }
+}

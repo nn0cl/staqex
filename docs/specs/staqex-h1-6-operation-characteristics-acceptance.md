@@ -8,6 +8,9 @@
 | Phase | Phase 3 — behavior-preserving refactor complete |
 | Out of scope | New surface capability syntax, numerical lowering, QPU emission, extensible effect rows |
 
+This document is a design input for this reorganization; its existing Phase 3
+status does not authorize a new Phase 1 or implementation scope here.
+
 ## 1. Objective
 
 Expose the physical characteristics of H1 state transformations in the

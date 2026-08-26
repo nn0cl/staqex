@@ -1,75 +1,11 @@
-// Phase-evidence records that feed the human review dossier.
+// Structural-monitoring detection evidence: is there a stress/defect
+// signature, and how confident is the reading?
 
 package examples.applied.noether_forge.application
 
 namespace Forge.PhaseEvidence {
-    pub enum EvidenceKind {
-        OrderParameter,
-        GapProxy,
-        Susceptibility,
-        ReturnSignal
-    }
-
-    pub struct EvidenceRecord {
-        val kind: EvidenceKind
+    pub struct DetectionEvidence {
+        val detected: Bool
         val confidence: Float
     }
-
-    pub struct EvidenceBundle {
-        val records: Int
-        val primary: EvidenceKind
-    }
-
-    pub fn order_parameter(confidence: Float) -> EvidenceRecord {
-        return EvidenceRecord(EvidenceKind.OrderParameter, confidence)
-    }
-
-    pub fn gap_proxy(confidence: Float) -> EvidenceRecord {
-        return EvidenceRecord(EvidenceKind.GapProxy, confidence)
-    }
-
-    pub fn susceptibility(confidence: Float) -> EvidenceRecord {
-        return EvidenceRecord(EvidenceKind.Susceptibility, confidence)
-    }
-
-    pub fn return_signal(confidence: Float) -> EvidenceRecord {
-        return EvidenceRecord(EvidenceKind.ReturnSignal, confidence)
-    }
-
-    pub fn review_bundle() -> EvidenceBundle {
-        return EvidenceBundle(4, EvidenceKind.OrderParameter)
-    }
-
-    pub fn is_strong(record: EvidenceRecord) -> Bool {
-        return record.confidence >= 0.7
-    }
-
-    pub fn primary_of(bundle: EvidenceBundle) -> EvidenceKind {
-        return bundle.primary
-    }
-
-    pub fn record_count(bundle: EvidenceBundle) -> Int {
-        return bundle.records
-    }
-
-    pub fn weak_order() -> EvidenceRecord {
-        return order_parameter(0.4)
-    }
-
-    pub fn strong_gap() -> EvidenceRecord {
-        return gap_proxy(0.85)
-    }
-
-    pub fn kind_of(record: EvidenceRecord) -> EvidenceKind {
-        return record.kind
-    }
-
-    pub fn confidence_of(record: EvidenceRecord) -> Float {
-        return record.confidence
-    }
-
-    pub fn research_bundle() -> EvidenceBundle {
-        return EvidenceBundle(6, EvidenceKind.GapProxy)
-    }
-
 }

@@ -1,0 +1,15 @@
+package residual.explicit_realize_plan
+
+pub fn main() -> Unit {
+    Operator U_formal = Limit N -> Infinity {
+        (I - i * X / N) ^ N
+    }
+    Operator U_qpu = Realize(
+        source = U_formal,
+        method = "suzuki",
+        order = 2,
+        steps = 8,
+        error_budget = 1e-6
+    )
+    Measure |0>
+}

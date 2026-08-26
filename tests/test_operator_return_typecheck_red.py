@@ -33,7 +33,7 @@ fn bad() -> State<Int> {
 
 pub fn main() -> Unit {
     State<Int> r = bad()
-    measure r
+    Measure r
 }
 """
 
@@ -44,8 +44,8 @@ fn make_coin() -> Operator {
 }
 
 pub fn main() -> Unit {
-    State<Int> r = dirac(0)
-    measure r
+    State<Int> r = Dirac(0)
+    Measure r
 }
 """
 

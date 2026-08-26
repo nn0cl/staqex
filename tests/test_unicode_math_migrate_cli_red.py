@@ -1,4 +1,4 @@
-"""AT-TDD Phase 1 Red: LISS-0069 Slice C — staqex migrate CLI."""
+"""Acceptance tests for the legacy Unicode-to-ASCII migrate CLI."""
 
 from __future__ import annotations
 
@@ -59,9 +59,11 @@ def test_migrate_write_rewrites_temp_file_in_place() -> None:
         assert target.read_text(encoding="utf-8") == expected
 
 
-def test_migrate_check_exits_one_on_ascii_drift() -> None:
-    path = _V01 / _KET
-    code, stdout, _stderr = _run_migrate([str(path), "--check"])
+def test_migrate_check_exits_one_on_legacy_unicode_drift() -> None:
+    with tempfile.TemporaryDirectory() as td:
+        path = Path(td) / _KET
+        path.write_text("State psi = |0⟩\n", encoding="utf-8")
+        code, stdout, _stderr = _run_migrate([str(path), "--check"])
     assert code == 1
     assert stdout == ""
 

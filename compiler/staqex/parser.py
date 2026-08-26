@@ -18,6 +18,9 @@ from .ast_nodes import (
     DiscretizationDecl,
     DynamicQpuStmt,
     EnumDecl,
+    MatchArm,
+    MatchStmt,
+    ResetStmt,
     ExperimentDecl,
     EvolveBody,
     EvolveExpr,
@@ -30,6 +33,8 @@ from .ast_nodes import (
     ImplDecl,
     Inspect,
     Hole,
+    H1BasisDecl,
+    H1CoordinateDecl,
     H1Evolve,
     H1CoherentControl,
     H1DynamicControl,
@@ -39,6 +44,8 @@ from .ast_nodes import (
     H1OperatorDecl,
     H1ParameterDecl,
     H1Prepare,
+    H1RealizeDecl,
+    H1Superposition,
     H1TraceOut,
     H1Uncompute,
     InterfaceDecl,
@@ -78,6 +85,10 @@ from .ast_nodes import (
     Snapshot,
     ScientificScopeDecl,
     Span,
+    KetSumBinder,
+    NormExpr,
+    SetComprehension,
+    SetPowerDomain,
     StateBind,
     StructDecl,
     SuzukiPolicy,
@@ -90,6 +101,8 @@ from .ast_nodes import (
     Var,
     WhenArm,
     WhenExpr,
+    SuperposeArm,
+    SuperposeExpr,
 )
 from .tokens import Token, TokenKind
 from .scientific_vocabulary import (
@@ -100,11 +113,19 @@ from .scientific_vocabulary import (
 
 
 class ParseError(Exception):
-    def __init__(self, message: str, line: int, col: int) -> None:
+    def __init__(
+        self,
+        message: str,
+        line: int,
+        col: int,
+        *,
+        code: str = "PARSE_ERROR",
+    ) -> None:
         super().__init__(message)
         self.line = line
         self.col = col
         self.message = message
+        self.code = code
 
 
 def _flatten_namespaces(decls: list) -> list:
@@ -127,7 +148,7 @@ def _flatten_namespaces(decls: list) -> list:
 # itself: `sum`/`product` binders and the Pauli/hop atoms. An `Operator`
 # bind's factory-call heuristic must never treat these as an ordinary
 # function call, even when immediately followed by `(` (LISS-0051).
-_OPERATOR_DSL_RESERVED_ATOMS = {"sum", "product", "adjoint", "I", "X", "Y", "Z", "hop"}
+_OPERATOR_DSL_RESERVED_ATOMS = {"Sigma", "Pi", "ForAll", "Min", "adjoint", "I", "X", "Y", "Z", "hop"}
 # Algebra Calls that must parse as expression `Call` under `Operator … =`
 # (LISS-0207): reserved OpDSL atoms would otherwise become `OpCall` and lose
 # qubit domain when rebound through bare `Operator`.
@@ -166,6 +187,12 @@ class Parser:
         }
         # LISS-0073 Slice F: Operator-context `[A, B]` → commutator (not ListExpr).
         self._commutator_bracket_context = False
+        # LISS-0426: depth counter so `_logical_or` doesn't greedily
+        # consume `||...||`'s own closing delimiter as a binary `||` --
+        # a State-typed norm argument never legitimately needs boolean
+        # `||` inside it, so this suppresses binary-`||` matching only
+        # while parsing between an unclosed pair.
+        self._norm_bars_depth = 0
         # ADR 0189: aliases become canonical only after a quantum-state bind;
         # ordinary/type-first names and Dirac paper labels keep source spelling.
         self._scientific_bindings: dict[str, str] = {}
@@ -211,6 +238,8 @@ class Parser:
                     decls.append(self._h1_scope_decl())
                 else:
                     decls.append(self._scientific_scope_decl())
+            elif self._check(TokenKind.IDENT) and self._peek().lexeme == "realize":
+                decls.append(self._h1_realize_decl())
             elif self._check(TokenKind.IDENT) and self._peek().lexeme == "discretization":
                 decls.append(self._discretization_decl())
             elif self._check(TokenKind.IDENT) and self._peek().lexeme == "use":
@@ -456,9 +485,9 @@ class Parser:
                     "operator",
                     "prepare",
                     "realize",
-                    "state",
-                    "evolve",
-                    "measure",
+                    "State",  # LISS-0418: lowercase `state` retired
+                    "Evolve",  # LISS-0419: lowercase `evolve` retired
+                    "Measure",  # LISS-0419: lowercase `measure` retired
                 }:
                     return True
                 if (
@@ -468,6 +497,16 @@ class Parser:
                 ):
                     return True
         return False
+
+    def _h1_realize_decl(self) -> H1RealizeDecl:
+        """Parse the top-level `realize qpu:<target>` H1 target selection."""
+
+        start = self._span()
+        self._advance()  # "realize"
+        self._expect_ident_like()  # fixed "qpu" prefix
+        self._expect(TokenKind.COLON)
+        target = self._expect_ident_like()
+        return H1RealizeDecl(target=target, span=start)
 
     def _h1_scope_decl(self) -> TheoryDecl | ExperimentDecl:
         """Parse the source-preserving H1 declaration skeleton."""
@@ -498,8 +537,15 @@ class Parser:
                     break
             body.append(token)
         if kind == "theory":
-            parameters, operators = self._parse_h1_theory_members(body)
-            return TheoryDecl(name=name, parameters=parameters, operators=operators, span=start)
+            parameters, operators, basis, coordinate = self._parse_h1_theory_members(body)
+            return TheoryDecl(
+                name=name,
+                parameters=parameters,
+                operators=operators,
+                span=start,
+                basis=basis,
+                coordinate=coordinate,
+            )
         return ExperimentDecl(
             name=name,
             parameters=params,
@@ -507,11 +553,20 @@ class Parser:
             span=start,
         )
 
+    _H1_THEORY_MEMBER_KEYWORDS = frozenset({"parameter", "operator", "basis", "coordinate"})
+
     def _parse_h1_theory_members(
         self, body: list[Token]
-    ) -> tuple[list[H1ParameterDecl], list[H1OperatorDecl]]:
+    ) -> tuple[
+        list[H1ParameterDecl],
+        list[H1OperatorDecl],
+        H1BasisDecl | None,
+        H1CoordinateDecl | None,
+    ]:
         parameters: list[H1ParameterDecl] = []
         operators: list[H1OperatorDecl] = []
+        basis: H1BasisDecl | None = None
+        coordinate: H1CoordinateDecl | None = None
         index = 0
         while index < len(body):
             token = body[index]
@@ -542,7 +597,10 @@ class Parser:
                     cursor += 1
                 expression: list[str] = []
                 expression_tokens: list[Token] = []
-                while cursor < len(body) and body[cursor].lexeme not in {"parameter", "operator"}:
+                while (
+                    cursor < len(body)
+                    and body[cursor].lexeme not in self._H1_THEORY_MEMBER_KEYWORDS
+                ):
                     expression.append(body[cursor].lexeme)
                     expression_tokens.append(body[cursor])
                     cursor += 1
@@ -567,8 +625,55 @@ class Parser:
                 )
                 index = cursor
                 continue
+            if (
+                token.lexeme == "basis"
+                and index + 2 < len(body)
+                and body[index + 2].kind == TokenKind.EQ
+            ):
+                name = body[index + 1].lexeme
+                cursor = index + 3
+                expression_tokens: list[Token] = []
+                while (
+                    cursor < len(body)
+                    and body[cursor].lexeme not in self._H1_THEORY_MEMBER_KEYWORDS
+                ):
+                    expression_tokens.append(body[cursor])
+                    cursor += 1
+                basis = H1BasisDecl(
+                    name=name,
+                    expression=self._parse_h1_operator_expression(expression_tokens),
+                    source_tokens=tuple(tok.lexeme for tok in expression_tokens),
+                    span=Span(line=token.line, col=token.col),
+                )
+                index = cursor
+                continue
+            if token.lexeme == "coordinate" and index + 3 < len(body):
+                name = body[index + 1].lexeme
+                kind_name = body[index + 3].lexeme
+                cursor = index + 4
+                size: int | None = None
+                if cursor < len(body) and body[cursor].kind == TokenKind.LT:
+                    cursor += 1
+                    if cursor < len(body) and body[cursor].kind == TokenKind.INT:
+                        try:
+                            size = int(body[cursor].lexeme)
+                        except ValueError:
+                            size = None
+                        cursor += 1
+                    while cursor < len(body) and body[cursor].kind != TokenKind.GT:
+                        cursor += 1
+                    if cursor < len(body):
+                        cursor += 1
+                coordinate = H1CoordinateDecl(
+                    name=name,
+                    kind=kind_name,
+                    size=size,
+                    span=Span(line=token.line, col=token.col),
+                )
+                index = cursor
+                continue
             index += 1
-        return parameters, operators
+        return parameters, operators, basis, coordinate
 
     def _parse_h1_operator_expression(self, tokens: list[Token]) -> object | None:
         if not tokens:
@@ -601,21 +706,59 @@ class Parser:
             span = Span(line=first.line, col=first.col)
             if first.lexeme == "dynamic" or "dynamic" in lexemes:
                 statements.append(H1DynamicControl(source_tokens=lexemes, span=span))
-            elif "when" in lexemes:
+            elif "Mix" in lexemes:
                 statements.append(H1Mixture(source_tokens=lexemes, span=span))
+            elif "Superpose" in lexemes:
+                statements.append(
+                    H1Superposition(source_tokens=lexemes, span=span)
+                )
             elif "capply" in lexemes:
                 statements.append(H1CoherentControl(source_tokens=lexemes, span=span))
-            elif first.lexeme == "state" or "prepare" in lexemes:
-                statements.append(H1Prepare(source_tokens=lexemes, span=span))
-            elif "evolve" in lexemes:
-                statements.append(H1Evolve(source_tokens=lexemes, span=span))
+            elif first.lexeme == "State" or "prepare" in lexemes:
+                # LISS-0418 (ADR 0191 amendment): lowercase `state` retired.
+                state_name = (
+                    line[1].lexeme if first.lexeme == "State" and len(line) > 1 else None
+                )
+                bound_to: tuple[str, str] | None = None
+                if "over" in lexemes:
+                    over_index = lexemes.index("over")
+                    if (
+                        over_index + 3 < len(lexemes)
+                        and line[over_index + 2].kind == TokenKind.DOT
+                    ):
+                        bound_to = (lexemes[over_index + 1], lexemes[over_index + 3])
+                statements.append(
+                    H1Prepare(
+                        source_tokens=lexemes,
+                        span=span,
+                        state_name=state_name,
+                        bound_to=bound_to,
+                    )
+                )
+            elif "Evolve" in lexemes:
+                state_name = (
+                    first.lexeme if first.kind == TokenKind.IDENT else None
+                )
+                theory_name = None
+                if "under" in lexemes:
+                    under_index = lexemes.index("under")
+                    if under_index + 1 < len(lexemes):
+                        theory_name = lexemes[under_index + 1]
+                statements.append(
+                    H1Evolve(
+                        source_tokens=lexemes,
+                        span=span,
+                        state_name=state_name,
+                        theory_name=theory_name,
+                    )
+                )
             elif "uncompute" in lexemes:
                 statements.append(H1Uncompute(source_tokens=lexemes, span=span))
             elif "tracing_out" in lexemes:
                 statements.append(H1TraceOut(source_tokens=lexemes, span=span))
             elif first.lexeme == "observable":
                 statements.append(H1Observable(source_tokens=lexemes, span=span))
-            elif first.lexeme == "measure":
+            elif first.lexeme == "Measure":
                 statements.append(H1Measure(source_tokens=lexemes, span=span))
         return statements
 
@@ -986,6 +1129,7 @@ class Parser:
             or self._is_type_first_start()
             or self._check(TokenKind.EVOLVE)
             or self._check(TokenKind.WHEN)
+            or self._check(TokenKind.SUPERPOSE)
             or self._check(TokenKind.COIN)
             or self._check(TokenKind.DIRAC)
             or self._check(TokenKind.VACUUM)
@@ -1191,6 +1335,21 @@ class Parser:
             generic_bounds=tuple(generic_bounds),
         )
 
+    # LISS-0419: effect labels are a closed vocabulary that includes
+    # several now-capitalized keyword spellings (Measure/Inspect/Snapshot/
+    # Evolve/...) -- `_expect_ident_like` alone rejects any keyword token,
+    # so `effects { Inspect }` needs this dedicated accessor.
+    _EFFECT_KEYWORD_LEXEMES = frozenset(
+        {"Evolve", "Measure", "Mix", "Coin", "Dirac", "Vacuum", "Snapshot", "Inspect", "Superpose", "ForEach"}
+    )
+
+    def _expect_effect_name(self) -> str:
+        tok = self._peek()
+        if tok.kind == TokenKind.IDENT or tok.lexeme in self._EFFECT_KEYWORD_LEXEMES:
+            self._advance()
+            return tok.lexeme
+        raise ParseError(f"expected effect name, got `{tok.lexeme}`", tok.line, tok.col)
+
     def _effects_clause(self) -> list[str]:
         """Parse the optional fixed effect annotation after a return type."""
         if self._peek().lexeme != "effects":
@@ -1199,9 +1358,9 @@ class Parser:
         self._expect(TokenKind.LBRACE)
         effects: list[str] = []
         if not self._check(TokenKind.RBRACE):
-            effects.append(self._expect_ident_like())
+            effects.append(self._expect_effect_name())
             while self._match(TokenKind.COMMA):
-                effects.append(self._expect_ident_like())
+                effects.append(self._expect_effect_name())
         self._expect(TokenKind.RBRACE)
         return effects
 
@@ -1249,21 +1408,24 @@ class Parser:
         else:
             raise ParseError(f"expected type name, got `{tok.lexeme}`", tok.line, tok.col)
         args: list[TypeRef] = []
-        # LISS-0143 / LISS-0144: `Float[N]` / `Float[N][M]…` classical tensors
-        if name == "Float" and self._check(TokenKind.LBRACKET):
+        # LISS-0143 / LISS-0144: `Float[N]` / `Float[N][M]…` classical tensors.
+        # LISS-0432: `Bool[N][M]…` reuses the identical dims grammar for the
+        # Host-bound Bool-dtype coefficient arrays the confirmed S02 step 2
+        # design needs (`Bool[8][8] C = host("pairwise_compatible")`).
+        if name in ("Float", "Bool") and self._check(TokenKind.LBRACKET):
             dims: list[TypeRef] = []
             while self._match(TokenKind.LBRACKET):
                 n_tok = self._peek()
                 if n_tok.kind != TokenKind.INT:
                     raise ParseError(
-                        "`Float[N]…` requires positive integer lengths",
+                        f"`{name}[N]…` requires positive integer lengths",
                         n_tok.line,
                         n_tok.col,
                     )
                 self._advance()
                 self._expect(TokenKind.RBRACKET)
                 dims.append(TypeRef(name=str(n_tok.literal)))
-            return TypeRef(name="Float", args=dims)
+            return TypeRef(name=name, args=dims)
         if self._match(TokenKind.LT):
             args.append(self._type_ref())
             if self._match(TokenKind.RANGE):
@@ -1545,7 +1707,11 @@ class Parser:
             saved = self.i
             try:
                 stmts.append(self._stmt())
-            except ParseError:
+            except ParseError as e:
+                # Named hard diagnostics (e.g. ADR 0193 timing-intent failures)
+                # must not be swallowed by the implicit-final-expression recovery.
+                if getattr(e, "code", "PARSE_ERROR") != "PARSE_ERROR":
+                    raise
                 # Implicit final expressions are retained only for parser
                 # recovery; the typechecker rejects them for ordinary fns.
                 self.i = saved
@@ -1582,6 +1748,33 @@ class Parser:
             return self._tuple_bind()
         if self._is_type_first_start():
             return self._type_first_bind()
+        # LISS-0418 (ADR 0191 amendment): lowercase `state` is retired --
+        # `State` (already-shipped Type-First form, TYPE_HEADS) is the sole
+        # canonical spelling. `state` is now a freely available ordinary
+        # identifier everywhere else (no RETIRED-dict blanket reservation);
+        # this check only fires on the exact old declaration shape (`state
+        # <name> =` / `state (<names>) =`), which was never valid syntax
+        # for anything else, so it does not shadow legitimate identifier
+        # uses of the word `state`.
+        if (
+            self._check(TokenKind.IDENT)
+            and self._peek().lexeme == "state"
+            and self._peek_at_kind(1) in (TokenKind.IDENT, TokenKind.LPAREN)
+        ):
+            tok = self._peek()
+            raise ParseError(
+                "lowercase `state` is retired -- use `State` "
+                "(e.g. `State a = |0>`, `State (a, b) = ...`)",
+                tok.line,
+                tok.col,
+                code="STATE_KEYWORD_RETIRED",
+            )
+        # ADR 0197 / LISS-0382: contextual soft `match <ctrl> { … }`.
+        if self._check(TokenKind.IDENT) and self._peek().lexeme == "match":
+            return self._match_stmt()
+        # ADR 0199 Amendment / LISS-0390: contextual soft `reset <wire>`.
+        if self._check(TokenKind.IDENT) and self._peek().lexeme == "reset":
+            return self._reset_stmt()
         # ADR 0180: inferred local bind `name = expr` (no type annotation).
         if self._check(TokenKind.IDENT) and self._peek_at_kind(1) == TokenKind.EQ:
             return self._inferred_bind()
@@ -1667,7 +1860,13 @@ class Parser:
         return ForEachStmt(element=element, collection=collection, body=body, span=sp)
 
     def _dynamic_qpu_stmt(self) -> DynamicQpuStmt:
-        """Parse an explicit dynamic lane for capability diagnostics."""
+        """Parse an explicit dynamic lane for capability diagnostics.
+
+        ADR 0193 / LISS-0381: optional contextual soft keyword
+        `within <name>` after `dynamic qpu`. `within` is not a global hard
+        keyword (vision §2.2 — ordinary identifier `within` must remain
+        usable outside this clause).
+        """
         sp = self._span()
         self._expect(TokenKind.DYNAMIC)
         name = self._expect_ident_like()
@@ -1677,7 +1876,83 @@ class Parser:
                 sp.line,
                 sp.col,
             )
-        return DynamicQpuStmt(body=self._block(), span=sp)
+        timing_intent = self._optional_dynamic_timing_intent()
+        return DynamicQpuStmt(
+            body=self._block(),
+            span=sp,
+            timing_intent=timing_intent,
+        )
+
+    def _match_stmt(self) -> MatchStmt:
+        """Parse soft `match <scrutinee> { <pat> => {…} … }` (ADR 0197)."""
+        sp = self._span()
+        match_tok = self._advance()
+        if match_tok.lexeme != "match":
+            raise ParseError(
+                "expected `match`",
+                match_tok.line,
+                match_tok.col,
+            )
+        scrutinee = self._expect_ident_like()
+        self._expect(TokenKind.LBRACE)
+        arms: list[MatchArm] = []
+        while not self._check(TokenKind.RBRACE) and not self._check(TokenKind.EOF):
+            arm_sp = self._span()
+            pat_tok = self._peek()
+            if pat_tok.kind == TokenKind.INT:
+                pattern = self._advance().lexeme
+            elif pat_tok.kind == TokenKind.IDENT:
+                pattern = self._expect_ident_like()
+            else:
+                raise ParseError(
+                    "match arm expects an integer or identifier pattern",
+                    pat_tok.line,
+                    pat_tok.col,
+                )
+            self._expect(TokenKind.FAT_ARROW)
+            body = self._block()
+            arms.append(MatchArm(pattern=pattern, body=body, span=arm_sp))
+        self._expect(TokenKind.RBRACE)
+        if not arms:
+            raise ParseError(
+                "`match` requires at least one finite arm",
+                sp.line,
+                sp.col,
+            )
+        return MatchStmt(scrutinee=scrutinee, arms=arms, span=sp)
+
+    def _reset_stmt(self) -> ResetStmt:
+        """Parse soft `reset <wire>` (ADR 0199 Amendment, LISS-0390)."""
+        sp = self._span()
+        reset_tok = self._advance()
+        if reset_tok.lexeme != "reset":
+            raise ParseError("expected `reset`", reset_tok.line, reset_tok.col)
+        target = self._expect_ident_like()
+        return ResetStmt(target=target, span=sp)
+
+    def _optional_dynamic_timing_intent(self) -> str | None:
+        """Parse optional `within <name>`; fail closed on malformed forms."""
+        peek = self._peek()
+        if not (peek.kind == TokenKind.IDENT and peek.lexeme == "within"):
+            return None
+        within_tok = self._advance()
+        intent_tok = self._peek()
+        if intent_tok.kind != TokenKind.IDENT:
+            raise ParseError(
+                "dynamic qpu `within` requires a timing-intent identifier",
+                within_tok.line,
+                within_tok.col,
+                code="DYNAMIC_TIMING_INTENT_MALFORMED",
+            )
+        if self._peek_at_kind(1) == TokenKind.LPAREN:
+            raise ParseError(
+                "dynamic qpu `within` requires a bare timing-intent "
+                "identifier, not a call",
+                intent_tok.line,
+                intent_tok.col,
+                code="DYNAMIC_TIMING_INTENT_MALFORMED",
+            )
+        return self._expect_ident_like()
 
     def _is_type_first_start(self) -> bool:
         """Type-First: physical quantity / State / Delta heads the declaration."""
@@ -1707,6 +1982,67 @@ class Parser:
                 return True
             break
         return self._peek_at_kind(j) == TokenKind.IDENT
+
+    def _second_quantized_rhs_is_op_dsl(self) -> bool:
+        """`FermionOperator`/`BosonOperator`/`SpinOperator`/`QubitOperator`
+        RHS: detect a second-quantized OpDSL expression (`create[i]`/
+        `annihilate[i]` atoms) even behind a chain of leading scalar
+        coefficients -- a bare literal or name (`1.0 * create[0]...`,
+        `e0 * create[0]...`), or a parenthesized compound expression
+        (`(e0 + e1) * create[0]...`) -- not just when the atom is the very
+        first token (LISS-0331)."""
+        offset = 0
+        for _ in range(6):  # bounded: a handful of coefficient terms at most
+            if (
+                self._peek_at_kind(offset) == TokenKind.IDENT
+                and self._peek_at_kind(offset + 1) == TokenKind.LBRACKET
+            ):
+                return True
+            if self._peek_at_kind(offset) == TokenKind.LPAREN:
+                depth = 1
+                inner_start = offset + 1
+                offset += 1
+                while depth > 0:
+                    kind = self._peek_at_kind(offset)
+                    if kind is None:
+                        return False
+                    if kind == TokenKind.LPAREN:
+                        depth += 1
+                    elif kind == TokenKind.RPAREN:
+                        depth -= 1
+                    offset += 1
+                # LISS-0367: the parenthesized group may itself contain
+                # the second-quantized atom (`K * (create[0] *
+                # annihilate[0])`), not just wrap a compound coefficient
+                # ahead of a further `* create[...]` chain -- scan
+                # inside it too before assuming it was only a
+                # coefficient grouping.
+                for inner_offset in range(inner_start, offset - 1):
+                    if (
+                        self._peek_at_kind(inner_offset) == TokenKind.IDENT
+                        and self._peek_at_kind(inner_offset + 1) == TokenKind.LBRACKET
+                    ):
+                        return True
+            elif self._peek_at_kind(offset) in (
+                TokenKind.INT,
+                TokenKind.FLOAT,
+                TokenKind.IDENT,
+            ):
+                offset += 1
+                # LISS-0412: a dotted struct-field chain is a single
+                # coefficient term too (`weights.e0 * create[0]...`),
+                # not just a bare literal or scalar name.
+                while (
+                    self._peek_at_kind(offset) == TokenKind.DOT
+                    and self._peek_at_kind(offset + 1) == TokenKind.IDENT
+                ):
+                    offset += 2
+            else:
+                return False
+            if self._peek_at_kind(offset) != TokenKind.STAR:
+                return False
+            offset += 1
+        return False
 
     def _type_first_bind(self) -> StateBind:
         """`Mass m = e` / `State<(A,B)> (c, x) = e` / `Operator H = …`."""
@@ -1738,6 +2074,11 @@ class Parser:
                     self._commutator_bracket_context = False
             elif (
                 self._peek().kind == TokenKind.IDENT
+                and self._peek().lexeme == "Limit"
+            ):
+                expr = self._expression()
+            elif (
+                self._peek().kind == TokenKind.IDENT
                 and (
                     self._peek().lexeme not in _OPERATOR_DSL_RESERVED_ATOMS
                     or self._peek().lexeme in self._function_names
@@ -1747,11 +2088,11 @@ class Parser:
             ):
                 expr = self._expression()
             elif (
-                # LISS-0139: Operator H = recv.method(…)
+                # LISS-0139 / LISS-0358: Operator H = recv.method(…), any
+                # depth of dotted attribute chain before the call (e.g.
+                # `outer.inner.method()`), not just exactly one `.`.
                 self._peek().kind == TokenKind.IDENT
-                and self._peek_at_kind(1) == TokenKind.DOT
-                and self._peek_at_kind(2) == TokenKind.IDENT
-                and self._peek_at_kind(3) == TokenKind.LPAREN
+                and self._dotted_call_lookahead()
             ):
                 expr = self._expression()
             else:
@@ -1762,10 +2103,7 @@ class Parser:
             "SpinOperator",
             "QubitOperator",
         }:
-            if (
-                self._peek().kind == TokenKind.IDENT
-                and self._peek_at_kind(1) == TokenKind.LBRACKET
-            ):
+            if self._second_quantized_rhs_is_op_dsl():
                 # Second-quantized indexed atoms share the Operator DSL AST;
                 # only mapping calls such as `map(Hf, JordanWigner)` remain
                 # ordinary expression calls.
@@ -1773,11 +2111,13 @@ class Parser:
             else:
                 expr = self._expression()
         elif (
-            # ADR 0118 / LISS-0149: `Float[M…] row = h[i]` OpDSL indexed RHS
+            # ADR 0118 / LISS-0149: `Float[M…] row = h[i]` OpDSL indexed
+            # RHS -- LISS-0369: any depth of dotted field access before
+            # the index (`m.h[i]`), not just a bare variable.
             ty.name == "Float"
             and len(ty.args) >= 1
             and self._peek().kind == TokenKind.IDENT
-            and self._peek_at_kind(1) == TokenKind.LBRACKET
+            and self._dotted_index_lookahead()
         ):
             expr = self._op_expression()  # type: ignore[assignment]
         else:
@@ -1881,11 +2221,50 @@ class Parser:
         return self._pipe()
 
     def _pipe(self):
-        expr = self._comparison()
+        expr = self._implies()
         while self._match(TokenKind.PIPE_OP):
             sp = self._span()
-            rhs = self._comparison()
+            rhs = self._implies()
             expr = Pipe(lhs=expr, rhs=rhs, span=sp)
+        return expr
+
+    def _implies(self):
+        """LISS-0425: `A Implies B` for $\\Rightarrow$ -- lower precedence
+        than `&&`/`||` (matching logical implication's usual binding
+        looser than conjunction/disjunction). `->`/`=>` were both already
+        taken (function return types/lambdas; match arms, ADR 0197/
+        LISS-0382) so `Implies` follows this project's own convention of
+        a capitalized English name for a blackboard symbol (`Sigma`,
+        `Pi`, `In`), a contextual keyword like `Sigma`/`Pi` rather than a
+        new reserved token."""
+        expr = self._logical_or()
+        while self._check(TokenKind.IDENT) and self._peek().lexeme == "Implies":
+            self._advance()
+            sp = self._span()
+            rhs = self._logical_or()
+            expr = BinOp(op="Implies", lhs=expr, rhs=rhs, span=sp)
+        return expr
+
+    def _logical_or(self):
+        """ADR 0196: general-expression `||` -- total pushforward, distinct
+        from the Operator-DSL's own `_op_guard` binder-guard `||`. LISS-0426:
+        suppressed while inside an unclosed `||...||` norm expression, so
+        its own closing delimiter isn't consumed as a binary operator."""
+        expr = self._logical_and()
+        while self._norm_bars_depth == 0 and self._match(TokenKind.OR):
+            sp = self._span()
+            rhs = self._logical_and()
+            expr = BinOp(op="||", lhs=expr, rhs=rhs, span=sp)
+        return expr
+
+    def _logical_and(self):
+        """ADR 0196: general-expression `&&` -- total pushforward, distinct
+        from the Operator-DSL's own `_op_guard_and` binder-guard `&&`."""
+        expr = self._comparison()
+        while self._match(TokenKind.AND):
+            sp = self._span()
+            rhs = self._comparison()
+            expr = BinOp(op="&&", lhs=expr, rhs=rhs, span=sp)
         return expr
 
     def _comparison(self):
@@ -1958,7 +2337,20 @@ class Parser:
             # desugar -e as 0 - e (LitInt 0 or LitFloat 0.0)
             zero = LitFloat(value=0.0, span=sp)
             return BinOp(op="-", lhs=zero, rhs=inner, span=sp)
-        return self._call()
+        return self._power()
+
+    def _power(self):
+        """Classical `^` (LISS-0415), right-associative:
+        `2.0 ^ 3.0 ^ 2.0` == `2.0 ^ (3.0 ^ 2.0)`. Distinct from the
+        Operator-DSL's own `^`/`OpPow` (`_op_power`, integer-only matrix
+        power) -- this is plain numeric exponentiation, reusing the
+        existing `BinOp` AST node rather than a new one."""
+        expr = self._call()
+        if self._match(TokenKind.CARET):
+            sp = self._span()
+            rhs = self._power()
+            return BinOp(op="^", lhs=expr, rhs=rhs, span=sp)
+        return expr
 
     def _call(self):
         expr = self._primary()
@@ -1970,10 +2362,26 @@ class Parser:
                 self._advance()  # (
                 sp = self._span()
                 args = []
+                kwargs = []
                 if not self._check(TokenKind.RPAREN):
-                    args.append(self._call_arg())
-                    while self._match(TokenKind.COMMA):
+                    if (
+                        self._check(TokenKind.IDENT)
+                        and self._peek_at_kind(1) == TokenKind.EQ
+                    ):
+                        while True:
+                            key = self._expect_ident_like()
+                            self._expect(TokenKind.EQ)
+                            kwargs.append((key, self._expression()))
+                            if not self._match(TokenKind.COMMA):
+                                break
+                            if self._check(TokenKind.RPAREN):
+                                break
+                    else:
                         args.append(self._call_arg())
+                        while self._match(TokenKind.COMMA):
+                            if self._check(TokenKind.RPAREN):
+                                break
+                            args.append(self._call_arg())
                 self._expect(TokenKind.RPAREN)
                 if isinstance(expr, (Coin, Dirac, Vacuum)):
                     continue
@@ -1984,7 +2392,18 @@ class Parser:
                         name=normalize_algebra_name(expr.name),
                         span=expr.span,
                     )
-                expr = Call(callee=expr, args=args, span=sp)
+                if (
+                    isinstance(expr, Var)
+                    and expr.name == "tensor"
+                    and len(args) == 2
+                    and not kwargs
+                ):
+                    # `tensor(a, b)` is a source alias, not a generic
+                    # collection constructor. Normalize it at parse time so
+                    # alias and `a *|* b` share one semantic AST node.
+                    expr = TensorExpr(left=args[0], right=args[1], span=sp)
+                else:
+                    expr = Call(callee=expr, args=args, span=sp, kwargs=kwargs or None)
             # ADR 0181: Type { field: expr, … } named struct construction.
             # Require `IDENT :` after `{` so statement blocks (`forEach … {`)
             # and evolve bodies are not eaten as named fields.
@@ -2089,6 +2508,32 @@ class Parser:
                 self._expect(TokenKind.RPAREN)
             return Vacuum(span=sp)
 
+        if self._match(TokenKind.OR):
+            # LISS-0426: `||state_expr||` -- only reachable here (a
+            # primary-expression position), so this can never collide
+            # with binary `||` (which is only ever consumed between two
+            # already-parsed operands, in `_logical_or`). The depth
+            # counter stops `_logical_or` from swallowing this norm's own
+            # closing `||` as a binary operator.
+            self._norm_bars_depth += 1
+            try:
+                inner = self._expression()
+            finally:
+                self._norm_bars_depth -= 1
+            self._expect(TokenKind.OR)
+            return NormExpr(state=inner, span=sp)
+
+        # LISS-0420: `Sigma`/`Pi` reachable from general expression position
+        # too (not just the Operator-DSL's own `_op_primary`), so a bare
+        # State-typed ket-sum (`Sigma (x In {0,1}^n) { |x> }`) can appear
+        # directly in a classical/State expression, e.g. `coeff * Sigma
+        # (...) { ... }`. Reuses `_op_binder`, which already dispatches to
+        # `KetSumBinder` vs the Operator-DSL `OpBinder` based on domain shape.
+        if self._check(TokenKind.IDENT) and self._peek().lexeme in ("Sigma", "Pi", "ForAll", "Min"):
+            kind = self._peek().lexeme
+            self._advance()
+            return self._op_binder(kind, sp)
+
         if self._match(TokenKind.INSPECT):
             self._expect(TokenKind.LPAREN)
             inner = self._expression()
@@ -2109,6 +2554,28 @@ class Parser:
         if self._match(TokenKind.WHEN):
             return self._when_expr(sp)
 
+        if self._match(TokenKind.SUPERPOSE):
+            return self._superpose_expr(sp)
+
+        if self._check(TokenKind.IDENT) and self._peek().lexeme == "Limit":
+            # Blackboard-preserving MVP surface. The target realization is
+            # intentionally deferred; typecheck emits the explicit
+            # EVOLUTION_REALIZATION_REQUIRED diagnostic.
+            self._advance()
+            self._expect_ident_like()  # finite-product index, e.g. N
+            self._expect(TokenKind.ARROW)
+            infinity = self._expect_ident_like()
+            if infinity != "Infinity":
+                raise ParseError("Limit requires `Infinity` as its bound", sp.line, sp.col)
+            self._expect(TokenKind.LBRACE)
+            body = self._expression()
+            self._expect(TokenKind.RBRACE)
+            return Call(
+                callee=Var(name="Limit", span=sp),
+                args=[body],
+                span=sp,
+            )
+
         if self._match(TokenKind.EVOLVE):
             return self._evolve_expr(sp)
 
@@ -2125,6 +2592,11 @@ class Parser:
                 self._expect(TokenKind.RPAREN)
                 return TupleExpr(items=items, span=sp)
             self._expect(TokenKind.RPAREN)
+            # Preserve the fact that a tensor expression was explicitly
+            # grouped; the typechecker uses this to distinguish `(a *|* b) * c`
+            # from the ungrouped `a *|* b * c`.
+            if isinstance(first, TensorExpr):
+                setattr(first, "_explicitly_grouped", True)
             return first
 
         # ADR 0153 bare block `{ let …; result }` vs Slice F `{A, B}` anticommutator.
@@ -2134,8 +2606,29 @@ class Parser:
             if nxt is not None and nxt.kind == TokenKind.LET:
                 body = self._evolve_body()
                 return BlockExpr(lets=body.lets, result=body.result, span=body.span)
+            # LISS-0429: `{ x In D : cond1, cond2, ... }` set comprehension
+            # -- disambiguated from `{A, B}` anticommutator / `{0,1}^n` by
+            # a distinctive 2-token lookahead (`{` IDENT `In`), which
+            # neither of those shapes can produce (an anticommutator/
+            # set-power operand is never immediately followed by `In`).
+            if (
+                nxt is not None
+                and nxt.kind == TokenKind.IDENT
+                and self._peek_at_kind(2) == TokenKind.IN_SET
+            ):
+                return self._set_comprehension(sp)
             self._advance()  # LBRACE
             items = self._comma_expr_items(TokenKind.RBRACE)
+            # LISS-0417: `{0,1}^n` set-power domain -- disambiguated from
+            # the anticommutator by a trailing `^` after the closing brace.
+            # Reserved ahead of its consumer (LISS-0420's Sigma/Pi binder).
+            if self._check(TokenKind.CARET) and items and all(
+                isinstance(it, LitInt) for it in items
+            ):
+                self._advance()  # CARET
+                width = self._power()
+                labels = [int(it.value) for it in items]  # type: ignore[union-attr]
+                return SetPowerDomain(labels=labels, width=width, span=sp)
             if len(items) != 2:
                 raise ParseError(
                     "anticommutator braces `{A, B}` require exactly two operands",
@@ -2156,6 +2649,22 @@ class Parser:
                     )
                 return self._algebra_call("commutator", items, sp)
             return ListExpr(items=items, span=sp)
+
+        if (
+            self._check(TokenKind.IDENT)
+            and tok.lexeme == "project"
+            and self._peek_at_kind(1) != TokenKind.LPAREN
+        ):
+            self._advance()
+            source = self._expression()
+            if self._match(TokenKind.ONTO):
+                target = self._expression()
+                return Call(
+                    callee=Var(name="project", span=sp),
+                    args=[source, target],
+                    span=sp,
+                )
+            return Var(name="project", span=sp)
 
         if self._match(TokenKind.IDENT):
             name = self._scientific_bindings.get(tok.lexeme, tok.lexeme)
@@ -2188,11 +2697,19 @@ class Parser:
         self._expect(TokenKind.LBRACE)
         arms: list[WhenArm] = []
         while not self._check(TokenKind.RBRACE) and not self._check(TokenKind.EOF):
+            arm_tok = self._peek()
             if self._match(TokenKind.ELSE):
                 self._expect(TokenKind.ARROW)
                 body = self._expression()
                 self._match(TokenKind.COMMA)
-                arms.append(WhenArm(pat=None, body=body, is_else=True))
+                arms.append(
+                    WhenArm(
+                        pat=None,
+                        body=body,
+                        is_else=True,
+                        span=Span(line=arm_tok.line, col=arm_tok.col),
+                    )
+                )
                 continue
             # pattern: literal or ident
             pat_tok = self._peek()
@@ -2212,7 +2729,7 @@ class Parser:
                         "code": "PARSE_ERROR",
                         "line": pat_tok.line,
                         "col": pat_tok.col,
-                        "message": f"bad when pattern `{pat_tok.lexeme}`",
+                        "message": f"bad mix pattern `{pat_tok.lexeme}`",
                     }
                 )
                 self._advance()
@@ -2220,17 +2737,79 @@ class Parser:
             self._expect(TokenKind.ARROW)
             body = self._expression()
             self._match(TokenKind.COMMA)
-            arms.append(WhenArm(pat=pat, body=body, is_else=False))
+            arms.append(
+                WhenArm(
+                    pat=pat,
+                    body=body,
+                    is_else=False,
+                    span=Span(line=pat_tok.line, col=pat_tok.col),
+                )
+            )
         self._expect(TokenKind.RBRACE)
         return WhenExpr(ctrl=ctrl, arms=arms, span=sp)
+
+    def _superpose_expr(self, sp: Span) -> SuperposeExpr:
+        """LISS-0320: `superpose (control) { pat -> expr, … }`.
+
+        Structurally mirrors `_when_expr`; produces a distinct
+        `SuperposeExpr`/`SuperposeArm` so this is never confused with
+        `mix`/`WhenExpr` downstream. Coherent amplitude/phase execution is a
+        separate, later slice — this method only builds the AST node.
+        """
+
+        self._expect(TokenKind.LPAREN)
+        ctrl = self._expression()
+        self._expect(TokenKind.RPAREN)
+        self._expect(TokenKind.LBRACE)
+        arms: list[SuperposeArm] = []
+        while not self._check(TokenKind.RBRACE) and not self._check(TokenKind.EOF):
+            if self._match(TokenKind.ELSE):
+                self._expect(TokenKind.ARROW)
+                body = self._expression()
+                self._match(TokenKind.COMMA)
+                arms.append(SuperposeArm(pat=None, body=body, is_else=True))
+                continue
+            pat_tok = self._peek()
+            if self._match(TokenKind.INT):
+                pat = int(pat_tok.literal)
+            elif self._match(TokenKind.FLOAT):
+                pat = float(pat_tok.literal)
+            elif self._match(TokenKind.TRUE):
+                pat = True
+            elif self._match(TokenKind.FALSE):
+                pat = False
+            elif self._match(TokenKind.IDENT):
+                pat = pat_tok.lexeme
+            else:
+                self.diagnostics.append(
+                    {
+                        "code": "PARSE_ERROR",
+                        "line": pat_tok.line,
+                        "col": pat_tok.col,
+                        "message": f"bad superpose pattern `{pat_tok.lexeme}`",
+                    }
+                )
+                self._advance()
+                continue
+            self._expect(TokenKind.ARROW)
+            body = self._expression()
+            self._match(TokenKind.COMMA)
+            arms.append(SuperposeArm(pat=pat, body=body, is_else=False))
+        self._expect(TokenKind.RBRACE)
+        return SuperposeExpr(ctrl=ctrl, arms=arms, span=sp)
 
     def _evolve_expr(self, sp: Span) -> EvolveExpr:
         # Forms:
         #   evolve (seeds) times N { body }
         #   evolve (seeds) for dt { body }
-        #   evolve psi under H for t          (ADR 0038)
-        #   evolve (psi) under H for t
+        #   evolve { psi under H for t }.run()             (LISS-0414)
+        #   evolve { (psi, phi) under H for t }.run()
+        if self._check(TokenKind.LBRACE):
+            return self._evolve_hamiltonian_block(sp)
+
         if self._match(TokenKind.LPAREN):
+            if self._match(TokenKind.RPAREN):
+                return self._evolve_explicit_block(sp)
             seeds = [self._expression()]
             while self._match(TokenKind.COMMA):
                 seeds.append(self._expression())
@@ -2238,36 +2817,23 @@ class Parser:
         else:
             seeds = [self._expression()]
 
+        if self._check(TokenKind.UNDER):
+            tok = self._peek()
+            raise ParseError(
+                "evolve … under H for t requires the `{ … }.run()` form "
+                "(LISS-0414): write `evolve { "
+                + self._render_seeds_hint(seeds)
+                + " under H for t }.run()` — bare `evolve … under …` "
+                "with no braces is retired, matching this project's own "
+                "keyword-migration precedent (no back-compat alias)",
+                tok.line,
+                tok.col,
+                code="EVOLVE_REQUIRES_BLOCK_RUN",
+            )
+
         duration = None
-        hamiltonian = None
         times = 1
         body: EvolveBody | None = None
-
-        if self._match(TokenKind.UNDER):
-            hamiltonian = self._expression()
-            self._expect(TokenKind.FOR)
-            duration = self._expression()
-            suzuki = self._suzuki_policy()
-            until_predicate = None
-            max_steps = None
-            if self._match(TokenKind.UNTIL):
-                until_predicate = self._expression()
-                if self._match(TokenKind.MAX):
-                    max_steps = self._expression()
-            times = 1
-            if self._check(TokenKind.LBRACE):
-                body = self._evolve_body()
-            return EvolveExpr(
-                seeds=seeds,
-                times=times,
-                body=body,
-                span=sp,
-                duration=duration,
-                hamiltonian=hamiltonian,
-                until_predicate=until_predicate,
-                max_steps=max_steps,
-                suzuki=suzuki,
-            )
 
         if self._match(TokenKind.TIMES):
             # ADR 0060: integer literal or closed classical expression
@@ -2287,10 +2853,136 @@ class Parser:
 
         tok = self._peek()
         raise ParseError(
-            "evolve expects `times N`, `for duration`, or `under H for t`",
+            "evolve expects `times N`, `for duration`, or "
+            "`{ … under H for t }.run()`",
             tok.line,
             tok.col,
         )
+
+    def _evolve_explicit_block(self, sp: Span) -> EvolveExpr:
+        """Parse explicit transform, optionally with bounded `until`."""
+        body, until_predicate, max_steps = self._evolve_bounded_body()
+        self._expect(TokenKind.DOT)
+        run_tok = self._peek()
+        run_name = self._expect_ident_like()
+        if run_name != "run":
+            raise ParseError(
+                f"Evolve() must be followed by `.run()`, got `.{run_name}`",
+                run_tok.line,
+                run_tok.col,
+                code="EVOLVE_REQUIRES_BLOCK_RUN",
+            )
+        self._expect(TokenKind.LPAREN)
+        self._expect(TokenKind.RPAREN)
+        return EvolveExpr(
+            seeds=[],
+            times=1,
+            body=body,
+            span=sp,
+            explicit_transform=True,
+            until_predicate=until_predicate,
+            max_steps=max_steps,
+        )
+
+    def _evolve_bounded_body(self) -> tuple[EvolveBody, Expr | None, Expr | None]:
+        sp = self._span()
+        self._expect(TokenKind.LBRACE)
+        lets: list[LetBind] = []
+        result = None
+        while not self._check(TokenKind.RBRACE) and not self._check(TokenKind.EOF):
+            if self._match(TokenKind.LET):
+                lsp = self._span()
+                name = self._expect_ident_like()
+                self._expect(TokenKind.EQ)
+                lets.append(LetBind(name=name, expr=self._expression(), span=lsp))
+                continue
+            result = self._expression()
+            break
+        if result is None:
+            tok = self._peek()
+            raise ParseError("evolve body missing result expression", tok.line, tok.col)
+        until_predicate = None
+        max_steps = None
+        if self._match(TokenKind.UNTIL):
+            until_predicate = self._expression()
+            if not self._match(TokenKind.MAX):
+                tok = self._peek()
+                raise ParseError(
+                    "bounded explicit evolve requires `max N`",
+                    tok.line,
+                    tok.col,
+                    code="EVOLVE_UNTIL_BOUND_ERROR",
+                )
+            max_steps = self._expression()
+        self._expect(TokenKind.RBRACE)
+        return EvolveBody(lets=lets, result=result, span=sp), until_predicate, max_steps
+
+    def _evolve_hamiltonian_block(self, sp: Span) -> EvolveExpr:
+        """`evolve { psi under H for t [using Suzuki(...)] [until pred
+        [max N]] }.run()` (LISS-0414). Produces the identical `EvolveExpr`
+        shape the old bare `evolve psi under H for t` form did -- this is
+        a surface-syntax-only change, no new AST/semantics."""
+        self._expect(TokenKind.LBRACE)
+        if self._match(TokenKind.LPAREN):
+            seeds = [self._expression()]
+            while self._match(TokenKind.COMMA):
+                seeds.append(self._expression())
+            self._expect(TokenKind.RPAREN)
+        else:
+            seeds = [self._expression()]
+        self._expect(TokenKind.UNDER)
+        hamiltonian = self._expression()
+        self._expect(TokenKind.FOR)
+        duration = self._expression()
+        suzuki = self._suzuki_policy()
+        until_predicate = None
+        max_steps = None
+        until_tok = self._peek()
+        if self._match(TokenKind.UNTIL):
+            raise ParseError(
+                "`until` is only valid in explicit Evolve() transform mode",
+                until_tok.line,
+                until_tok.col,
+                code="EVOLVE_UNTIL_MODE_ERROR",
+            )
+        self._expect(TokenKind.RBRACE)
+        self._expect(TokenKind.DOT)
+        run_tok = self._peek()
+        run_name = self._expect_ident_like()
+        if run_name != "run":
+            raise ParseError(
+                f"evolve {{ … }} must be followed by `.run()`, got `.{run_name}`",
+                run_tok.line,
+                run_tok.col,
+                code="EVOLVE_REQUIRES_BLOCK_RUN",
+            )
+        self._expect(TokenKind.LPAREN)
+        self._expect(TokenKind.RPAREN)
+        return EvolveExpr(
+            seeds=seeds,
+            times=1,
+            body=None,
+            span=sp,
+            duration=duration,
+            hamiltonian=hamiltonian,
+            until_predicate=until_predicate,
+            max_steps=max_steps,
+            suzuki=suzuki,
+        )
+
+    def _render_seeds_hint(self, seeds: list) -> str:
+        """Best-effort source-like rendering of already-parsed seed
+        expressions, for the LISS-0414 migration error message only --
+        not a general pretty-printer."""
+
+        def _one(e) -> str:
+            if isinstance(e, Var):
+                return e.name
+            return "…"
+
+        if len(seeds) == 1:
+            return _one(seeds[0])
+        return "(" + ", ".join(_one(s) for s in seeds) + ")"
 
     def _suzuki_policy(self) -> SuzukiPolicy | None:
         if self._peek().lexeme != "using":
@@ -2467,6 +3159,31 @@ class Parser:
         tok = self._peek_at(offset)
         return None if tok is None else tok.kind
 
+    def _dotted_index_lookahead(self) -> bool:
+        """LISS-0369: does the current position start `a[...]` or
+        `a.b[...]` etc. -- any depth (including zero) of `.<ident>`
+        hops before an index bracket, with the current token already
+        confirmed IDENT by the caller."""
+        offset = 1
+        while self._peek_at_kind(offset) == TokenKind.DOT:
+            if self._peek_at_kind(offset + 1) != TokenKind.IDENT:
+                return False
+            offset += 2
+        return self._peek_at_kind(offset) == TokenKind.LBRACKET
+
+    def _dotted_call_lookahead(self) -> bool:
+        """LISS-0358: does the current position start `a.b(...)` or
+        `a.b.c(...)` etc. -- one or more `.<ident>` hops before a call,
+        with the current token already confirmed IDENT by the caller."""
+        offset = 1
+        if self._peek_at_kind(offset) != TokenKind.DOT:
+            return False
+        while self._peek_at_kind(offset) == TokenKind.DOT:
+            if self._peek_at_kind(offset + 1) != TokenKind.IDENT:
+                return False
+            offset += 2
+        return self._peek_at_kind(offset) == TokenKind.LPAREN
+
     def _check(self, kind: TokenKind) -> bool:
         return self._peek().kind == kind
 
@@ -2503,7 +3220,36 @@ class Parser:
     # --- Operator expressions (Type-First `Operator H = …`) ---
 
     def _op_expression(self):
-        return self._op_comparison()
+        return self._op_implies()
+
+    def _op_guard_list(self):
+        """LISS-0428: comma-separated `where` conditions (implicit AND),
+        matching the equation's own set-builder/subscript convention --
+        e.g. $\\min_{i<j:\\,x_ix_j=1}$ separates "$i<j$" and "$x_ix_j=1$"
+        with nothing but a comma-shaped juxtaposition, never `&&`. Folds
+        into the same `OpBin(op="&&", ...)` shape writing `&&` explicitly
+        already produces, so no evaluator change was needed -- only the
+        parser gained an alternate spelling for conjunction here."""
+        expr = self._op_implies()
+        while self._match(TokenKind.COMMA):
+            sp = self._span()
+            rhs = self._op_implies()
+            expr = OpBin(op="&&", lhs=expr, rhs=rhs, span=sp)
+        return expr
+
+    def _op_implies(self):
+        """LISS-0425: `A Implies B` for $\\Rightarrow$, lowest precedence --
+        available in both binder bodies (classical `ForAll`/`Min`/`Sigma`
+        bodies need it, e.g. `(x[i]*x[j]==1) Implies (C[i][j]==1)`) and
+        `where` guards, since both route through this same entry point
+        now (`_op_expression`/`_op_guard` are unified)."""
+        expr = self._op_guard()
+        while self._check(TokenKind.IDENT) and self._peek().lexeme == "Implies":
+            self._advance()
+            sp = self._span()
+            rhs = self._op_guard()
+            expr = OpBin(op="Implies", lhs=expr, rhs=rhs, span=sp)
+        return expr
 
     def _op_guard(self):
         """Binder `where`: comparisons with `&&` (higher) and `||` (LISS-0145)."""
@@ -2597,6 +3343,15 @@ class Parser:
             expr = self._op_expression()
             self._expect(TokenKind.RPAREN)
             return expr
+        if self._check(TokenKind.KET):
+            # LISS-0430: `|x><x|` (bound-variable projector) inside a
+            # Sigma body over a Set domain -- reuses the same
+            # `_ket_or_outer` desugaring the general expression grammar
+            # already uses (ADR 0169: matching ket/bra labels ->
+            # `projector(Var(...))`), previously unreachable from the
+            # Operator-DSL's own body grammar at all.
+            tok = self._advance()
+            return self._ket_or_outer(tok, sp)
         if self._match(TokenKind.LBRACKET):
             # LISS-0073 Slice F: OpDSL `[A, B]` → commutator (expression Call).
             items = self._comma_op_expr_items(TokenKind.RBRACKET)
@@ -2628,7 +3383,7 @@ class Parser:
         if tok.kind == TokenKind.IDENT:
             name = tok.lexeme
             self._advance()
-            if name in {"sum", "product"}:
+            if name in {"Sigma", "Pi", "ForAll", "Min"}:
                 return self._op_binder(name, sp)
             if name in {"N", "Q", "P"}:
                 # LISS-0227: parse as OpVar so a local `Operator P = …; return P`
@@ -2747,7 +3502,10 @@ class Parser:
         )
 
     def _binder_domain(self):
-        """Parse a binder domain: Index<…>, rev(…), or named domain."""
+        """Parse a binder domain: `rev(…)`, a bare range `a..b` (LISS-0423:
+        `Index<…>` is retired as a binder-domain spelling -- hard cutover,
+        no back-compat alias, matching how `{0,1}^n` is already written
+        with no wrapper type), `{0,1}^n`, or a named domain."""
         sp = self._span()
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "rev":
             self._advance()
@@ -2756,65 +3514,108 @@ class Parser:
             self._expect(TokenKind.RPAREN)
             return RevDomain(inner=inner, span=sp)
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "Index":
-            self._advance()
-            self._expect(TokenKind.LT)
-            start = self._static_index_endpoint()
-            if self._match(TokenKind.RANGE):
-                end = self._static_index_endpoint()
-                if self._check(TokenKind.GT):
-                    self._advance()
-                elif self._check(TokenKind.GE):
-                    self._advance()
-                else:
-                    t = self._peek()
-                    raise ParseError(
-                        "expected `>` to close Index range", t.line, t.col
-                    )
-                return IndexDomain(start=start, end=end, span=sp)
-            # Index<N> single-arg form → TypeRef for compatibility
-            if not isinstance(start, OpLit):
-                raise ParseError(
-                    "`Index<N>` requires a literal size or use `Index<a..b>`",
-                    sp.line,
-                    sp.col,
-                )
-            args = [TypeRef(name=str(int(start.value)))]
-            while self._match(TokenKind.COMMA):
-                ep = self._static_index_endpoint()
-                if not isinstance(ep, OpLit):
-                    raise ParseError(
-                        "Index type arguments must be literals here",
-                        sp.line,
-                        sp.col,
-                    )
-                args.append(TypeRef(name=str(int(ep.value))))
-            if self._check(TokenKind.GT):
-                self._advance()
-            elif self._check(TokenKind.GE):
-                self._advance()
-            else:
-                t = self._peek()
-                raise ParseError("expected `>` to close type arguments", t.line, t.col)
-            return TypeRef(name="Index", args=args)
+            raise ParseError(
+                "`Index<a..b>` / `Index<N>` are retired as binder-domain "
+                "spellings (LISS-0423) -- write the bare range directly: "
+                "`a..b` for `Index<a..b>`, `0..N-1` for `Index<N>`. Matches "
+                "how `{0,1}^n` is already written with no wrapper type.",
+                sp.line,
+                sp.col,
+                code="BINDER_DOMAIN_INDEX_RETIRED",
+            )
         if self._check(TokenKind.IDENT) and self._peek_at_kind(1) == TokenKind.LT:
             return self._type_ref()
-        return OpVar(name=self._expect_ident_like(), span=self._span())
+        if self._check(TokenKind.LBRACE):
+            return self._set_power_domain()
+        start = self._static_index_endpoint()
+        if self._match(TokenKind.RANGE):
+            end = self._static_index_endpoint()
+            return IndexDomain(start=start, end=end, span=sp)
+        if isinstance(start, OpVar):
+            return start
+        raise ParseError(
+            "expected `..` to complete a bare-range binder domain "
+            "(e.g. `0..n-1`)",
+            sp.line,
+            sp.col,
+        )
+
+    def _set_power_domain(self) -> SetPowerDomain:
+        """`{0,1}^n` as a binder domain (LISS-0420) -- mirrors the
+        expression-position parsing added by LISS-0417 (`parser.py`'s
+        anticommutator-disambiguation branch), but binder-domain position
+        has no anticommutator ambiguity to resolve, so this is a direct,
+        self-contained parse."""
+        sp = self._span()
+        self._expect(TokenKind.LBRACE)
+        labels = [int(self._expect(TokenKind.INT).literal)]
+        while self._match(TokenKind.COMMA):
+            labels.append(int(self._expect(TokenKind.INT).literal))
+        self._expect(TokenKind.RBRACE)
+        self._expect(TokenKind.CARET)
+        width = self._power()
+        return SetPowerDomain(labels=labels, width=width, span=sp)
+
+    def _set_comprehension(self, sp: Span) -> SetComprehension:
+        """`Set F = { x In D : cond1, cond2, ... }` (LISS-0429). Reuses
+        `_binder_domain()` for `D` (so `{0,1}^n` or a bare range both
+        work) and `_op_implies()` for each comma-separated condition --
+        the Operator-DSL expression grammar, which already supports
+        `x[i]` indexing (the general expression grammar does not,
+        confirmed during LISS-0424)."""
+        self._expect(TokenKind.LBRACE)
+        variable = self._expect_ident_like()
+        self._expect(TokenKind.IN_SET)
+        domain = self._binder_domain()
+        self._expect(TokenKind.COLON)
+        conditions = [self._op_implies()]
+        while self._match(TokenKind.COMMA):
+            conditions.append(self._op_implies())
+        self._expect(TokenKind.RBRACE)
+        return SetComprehension(
+            variable=variable, domain=domain, conditions=conditions, span=sp
+        )
 
     def _op_binder(self, kind: str, sp: Span):
         self._expect(TokenKind.LPAREN)
-        bindings = []
-        while True:
+        variable = self._expect_ident_like()
+        self._expect(TokenKind.IN_SET)
+        domain = self._binder_domain()
+        if kind == "Sigma" and isinstance(domain, SetPowerDomain):
+            # LISS-0420: State-typed ket-sum -- `Sigma (x In {0,1}^n) { |x> }`.
+            # Single-binding only (matching the target use case); body is
+            # always a bare ket referencing the bound variable. LISS-0427:
+            # narrowed to `kind == "Sigma"` specifically -- previously any
+            # kind (including `Pi`, and now `ForAll`/`Min`) with a
+            # `{0,1}^n` domain silently became a `KetSumBinder` too (which
+            # doesn't even record `kind`, so it always summed regardless);
+            # a real pre-existing gap, though never exercised (no shipped
+            # `Pi (x In {0,1}^n)` usage existed). `Pi`/`ForAll`/`Min` over
+            # `{0,1}^n` now correctly fall through to the general
+            # multi-binding `OpBinder` path below instead.
+            self._expect(TokenKind.RPAREN)
+            self._expect(TokenKind.LBRACE)
+            ket_tok = self._expect(TokenKind.KET)
+            if str(ket_tok.literal) != variable:
+                raise ParseError(
+                    f"Sigma ket-sum body must be `|{variable}>` "
+                    f"(the bound variable), got `|{ket_tok.literal}>`",
+                    ket_tok.line,
+                    ket_tok.col,
+                )
+            self._expect(TokenKind.RBRACE)
+            return KetSumBinder(variable=variable, domain=domain, span=sp)
+        bindings = [(variable, domain)]
+        while self._match(TokenKind.COMMA):
             variable = self._expect_ident_like()
-            self._expect(TokenKind.IN)
+            self._expect(TokenKind.IN_SET)
             domain = self._binder_domain()
             bindings.append((variable, domain))
-            if not self._match(TokenKind.COMMA):
-                break
         self._expect(TokenKind.RPAREN)
         guard = None
         if self._check(TokenKind.IDENT) and self._peek().lexeme == "where":
             self._advance()
-            guard = self._op_guard()
+            guard = self._op_guard_list()
         self._expect(TokenKind.LBRACE)
         body = self._op_expression()
         self._expect(TokenKind.RBRACE)

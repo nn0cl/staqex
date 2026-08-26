@@ -19,8 +19,8 @@ namespace Geometry {
 namespace Model {
     // Couplings pack — `_pad` is intentionally not `pub` (visibility demo).
     pub struct IsingParams {
-        pub val J: Float
-        pub val h: Float
+        pub val J: Energy
+        pub val h: Energy
         val _pad: Float
     }
 }
@@ -32,11 +32,18 @@ pub fn ising_hamiltonian(p: Model.IsingParams) -> Operator {
 Geometry.Segment seg = Geometry.Segment { length: 2.0, bc: Geometry.Boundary.Open }
 Float scale = seg.length
 
-Model.IsingParams params = Model.IsingParams { J: 1.0, h: 0.5, _pad: 0.0 }
+// ADR 0195: real Energy coefficients (ratio preserved from the original
+// 1.0 / 0.5); the evolve duration below is an independent real Time
+// value -- a struct-field-derived expression (like the old `scale *
+// 0.25`) can no longer directly become one (unit suffixes only attach
+// to literals), so `scale` stays a standalone struct-field-read demo.
+Model.IsingParams params = Model.IsingParams { J: 1.0.eV to J, h: 0.5.eV to J, _pad: 0.0 }
 Operator H = ising_hamiltonian(params)
 
-state s0 = |+>
-state s1 = |+>
-state (s0, s1) = evolve (s0, s1) under H for scale * 0.25
-    using Suzuki(order = 2, steps = 4)
-measure s0 tracing_out s1
+Time dur = 0.5.fs
+
+State s0 = |+>
+State s1 = |+>
+Operator U_t = exp(-i * H * dur / hbar)
+State (s0, s1) = Evolve() { U_t * (s0, s1) }.run()
+Measure s0 tracing_out s1

@@ -24,8 +24,11 @@ from .ast_nodes import (
     Inspect,
     KetLit,
     ListExpr,
+    MatchStmt,
     Measure,
+    MeasureExpr,
     Pipe,
+    ResetStmt,
     ReturnStmt,
     ScientificScopeContract,
     Span,
@@ -36,6 +39,7 @@ from .ast_nodes import (
     Vacuum,
     Var,
     WhenExpr,
+    SuperposeExpr,
 )
 from .typecheck import Ty, TypeChecker
 from .runtime.uncompute import LINEAR_UNCOMPUTE_AMPLITUDE_TOL
@@ -46,7 +50,7 @@ _KERNEL_PHASE = "kernel"
 # Gate / apply / hadamard rebinds are not listed here — Call moves are
 # governed by ADR 0168 (result-type driven), not by this kind set.
 LINEAR_CONSUME_KINDS = frozenset({
-    "measure",
+    "Measure",
     "static_uncompute_zero_reset",
 })
 
@@ -302,8 +306,25 @@ def _stmt_binds_state(
     # binds: some builtin calls infer coarsely (`qft(reg)` infers `State` while
     # it is declared and used as `Operator`), so it must not override a
     # declaration.
+    if stmt.ty is not None and not (stmt.ty.name == "State" and not stmt.ty.args):
+        # ADR 0204 / LISS-0399: Continuous roots use the same
+        # introduced/consumed LINEAR machinery as State roots -- consumed
+        # only by finiteize (LISS-0401); an untouched root discards the
+        # same as an unmeasured State.
+        return stmt.ty.name in {"State", "DensityState", "Continuous"}
     if stmt.ty is not None:
-        return stmt.ty.name in {"State", "DensityState"}
+        # LISS-0418: bare `State x = e` (Type-First, no `<T>`) is not a
+        # deliberate "this IS definitely linear" declaration the way
+        # `State<Qubit> x = e` is -- it is the canonical replacement for
+        # the old, always-inference-driven `state x = e`, so it must fall
+        # through to the same precise-inference check `via_state_keyword`
+        # already uses below, not the blind "declared State -> always
+        # linear" assumption (which mis-flagged e.g. a Partial-application
+        # value bound via bare `State` as an undischarged linear root).
+        bound_ty = state.expr_types.get(id(stmt.expr))
+        if bound_ty is not None:
+            return is_linear_carrier_ty(bound_ty)
+        return True
     if stmt.via_state_keyword:
         bound_ty = state.expr_types.get(id(stmt.expr))
         if bound_ty is not None:
@@ -338,6 +359,133 @@ def _linear_root(name: str, aliases: Mapping[str, str]) -> str:
     while root in aliases and aliases[root] != root:
         root = aliases[root]
     return root
+
+
+def _check_finiteize_continuous_reuse(
+    stmt: StateBind, state: _LinearUseState
+) -> dict | None:
+    """ADR 0204 Decision 5 / LISS-0401: a `Continuous` root may be consumed
+    by `finiteize` at most once (`CH-field-fork` deferred). The generic
+    Call-argument consumption path (`_mark_linear_var_use`) does not
+    detect reuse of an already-consumed root by design -- it only adds to
+    a set, silently on duplicates -- so this dedicated check closes that
+    gap specifically for `finiteize`'s first argument, mirroring
+    `_check_reset_stmt`'s pattern of a small pre-check ahead of the
+    generic consumption call.
+    """
+    expr = stmt.expr
+    if not isinstance(expr, Call) or not expr.args:
+        return None
+    if not isinstance(expr.callee, Var) or expr.callee.name != "finiteize":
+        return None
+    first = expr.args[0]
+    if not isinstance(first, Var):
+        return None
+    root = _linear_root(first.name, state.aliases)
+    if root in state.consumed:
+        return _linear_diag(
+            _LINEAR_DUPLICATE_USE,
+            stmt.span,
+            f"`finiteize` reuses already-consumed Continuous root `{root}`",
+        )
+    return None
+
+
+def _check_reset_stmt(stmt: ResetStmt, state: _LinearUseState) -> dict | None:
+    """LISS-0390 (ADR 0199 Amendment): `reset wire` requires `wire` to
+    already be a known local root in this dynamic-lane scope (introduced
+    or aliased earlier); resetting an unknown name fails closed. Marking
+    consumed (mirroring the Controller-measure treatment) is safe for the
+    same reason: this checker does not yet re-inspect consumed roots for
+    duplicate use, so a later measure/reset/apply of the same wire is not
+    spuriously rejected -- the wire is genuinely usable again (the
+    evaluator physically reinitializes it, LISS-0390 Decision 7).
+
+    Extracted (LISS-0394) so the same check applies verbatim whether
+    `reset` appears at the top level of a dynamic-lane scope or inside a
+    `match` arm of that same scope.
+    """
+    root = _linear_root(stmt.target, state.aliases)
+    if root not in state.introduced and stmt.target not in state.aliases:
+        return _linear_diag(
+            "DYN_RESET_UNKNOWN_WIRE",
+            stmt.span,
+            f"reset of unknown wire `{stmt.target}`",
+        )
+    state.consumed.add(root)
+    return None
+
+
+def _is_controller_measure_stmt(stmt: object) -> bool:
+    """LISS-0387 (ADR 0200 Decision 4) shape: `Controller<T> = measure
+    wire`. Extracted (LISS-0395) so the same recognition applies verbatim
+    whether the bind appears at the top level of a dynamic-lane scope or
+    inside a `match` arm of that same scope.
+    """
+    return (
+        isinstance(stmt, StateBind)
+        and stmt.ty is not None
+        and stmt.ty.name == "Controller"
+        and isinstance(stmt.expr, MeasureExpr)
+        and isinstance(stmt.expr.expr, Var)
+    )
+
+
+def _consume_controller_measure_wire(stmt: StateBind, state: _LinearUseState) -> None:
+    """Marks the measured wire consumed (LISS-0387 Decision 4 rationale:
+    the wire is not physically dead -- it may still be gated/applied to
+    inside `match` arms -- but nothing later in this pass re-inspects a
+    consumed root for duplicate use, so marking it here is safe).
+    """
+    wire_root = _linear_root(stmt.expr.expr.name, state.aliases)
+    state.consumed.add(wire_root)
+
+
+def _analyze_dynamic_lane_match(stmt: MatchStmt, state: _LinearUseState) -> list[dict]:
+    """LISS-0394: check every arm of a dynamic-lane `match` against the
+    shared enclosing `state` (arms are mutually-exclusive continuations
+    of the same scope, not independent nested scopes -- see this
+    function's caller in `_analyze_block` for why a seeded-recursion
+    design was rejected).
+    """
+    diags: list[dict] = []
+    for arm in stmt.arms:
+        diags.extend(_analyze_dynamic_lane_arm_stmts(arm.body.stmts, state))
+    return diags
+
+
+def _analyze_dynamic_lane_arm_stmts(
+    stmts: list[object], state: _LinearUseState
+) -> list[dict]:
+    """Process one `match` arm's statements against the shared `state`.
+    Mirrors exactly the statement kinds
+    `evaluator.py::_run_dynamic_arm_body` executes for arm bodies (LISS-0395
+    unified that function with the top-level dynamic-qpu-block dispatcher,
+    so arm bodies now run the same vocabulary as the block top level, at
+    any nesting depth): Controller-measure (LISS-0395, dedicated -- mirrors
+    the top-level `_analyze_block` treatment exactly), `ResetStmt`
+    (LISS-0390, dedicated), nested `MatchStmt` (recursion). Bare
+    `ExprStmt`/`Call` stays untracked here, same as everywhere else in this
+    checker. A generic `StateBind` that is *not* Controller-measure-shaped
+    is intentionally left unhandled, matching the top-level
+    `_analyze_block`'s own scope (this checker does not track arbitrary
+    quantum-carrier binds inside dynamic-lane scopes at all, top level
+    included).
+    """
+    diags: list[dict] = []
+    for stmt in stmts:
+        if _is_controller_measure_stmt(stmt):
+            _consume_controller_measure_wire(stmt, state)
+            continue
+        if isinstance(stmt, ResetStmt):
+            diag = _check_reset_stmt(stmt, state)
+            if diag is not None:
+                diags.append(diag)
+            continue
+        if isinstance(stmt, MatchStmt):
+            diags.extend(_analyze_dynamic_lane_match(stmt, state))
+            continue
+    return diags
 
 
 def _linear_scopes(
@@ -388,10 +536,49 @@ def _analyze_block(
     diags: list[dict] = []
 
     for stmt in block.stmts:
+        if _is_controller_measure_stmt(stmt):
+            # LISS-0387 (ADR 0200 Decision 4): `Controller<T> = measure wire`
+            # inside a dynamic qpu block consumes `wire` for linear-use
+            # purposes, unlike Static `state` bindings which stay
+            # unconsumed until an explicit `measure` statement. Unlike
+            # Static terminal `measure`, the wire is not physically dead
+            # (ADR 0197 Decision 2) — it may still be gated/applied to
+            # inside `match` arms, including nested Controller-measures
+            # (LISS-0395) — nothing later in this pass re-inspects a
+            # consumed root for duplicate use.
+            _consume_controller_measure_wire(stmt, state)
+            continue
+        if isinstance(stmt, ResetStmt):
+            diag = _check_reset_stmt(stmt, state)
+            if diag is not None:
+                diags.append(diag)
+            continue
+        if isinstance(stmt, MatchStmt):
+            # LISS-0394: match arms are mutually-exclusive continuations
+            # of this same enclosing scope, not a separate nested scope
+            # (unlike ForEachStmt/DynamicQpuStmt below) -- processed
+            # against this same `state` object directly, no new
+            # _LinearUseState, no seed_linear, no independent discard
+            # check. See LISS-0394 Plan "Design verification" for why a
+            # seeded-recursion design was traced and rejected (it would
+            # false-positive LINEAR_IMPLICIT_DISCARD on every wire
+            # already consumed before the match).
+            diags.extend(_analyze_dynamic_lane_match(stmt, state))
+            continue
         if isinstance(stmt, StateBind):
             diag = _check_state_bind(stmt, module_symbols, state)
             if diag is not None:
                 diags.append(diag)
+            if isinstance(stmt.expr, EvolveExpr) and stmt.expr.explicit_transform:
+                # Explicit Evolve consumes the State operand of its written
+                # `Operator * State` transform. Keep this in the existing
+                # linear-use pass so the execution boundary does not create
+                # an implicit discard or weaken ownership checks.
+                _mark_all_linear_vars(stmt.expr, state)
+                _revive_explicit_evolve_outputs(stmt, state)
+            reuse_diag = _check_finiteize_continuous_reuse(stmt, state)
+            if reuse_diag is not None:
+                diags.append(reuse_diag)
             # LISS-0114 Slice E: when / inspect uses consume outer roots.
             _consume_when_linear_uses(stmt.expr, state)
             _consume_inspect_linear_uses(stmt.expr, state)
@@ -464,7 +651,11 @@ def _expr_children(expr: object) -> tuple[object, ...]:
 
     ``BinOp`` uses ``lhs``/``rhs``; ``TensorExpr`` uses ``left``/``right``.
     """
-    if isinstance(expr, WhenExpr):
+    if isinstance(expr, EvolveExpr):
+        if not expr.explicit_transform or expr.body is None:
+            return tuple(expr.seeds)
+        return tuple(expr.seeds) + tuple(let.expr for let in expr.body.lets) + (expr.body.result,)
+    if isinstance(expr, (WhenExpr, SuperposeExpr)):
         return (expr.ctrl, *(arm.body for arm in expr.arms))
     if isinstance(expr, Call):
         return tuple(expr.args)
@@ -496,9 +687,48 @@ def _mark_all_linear_vars(expr: object, state: _LinearUseState) -> None:
         _mark_all_linear_vars(child, state)
 
 
+def _revive_explicit_evolve_outputs(
+    stmt: StateBind, state: _LinearUseState
+) -> None:
+    """Reopen the linear carriers produced by an explicit Evolve bind.
+
+    The written ``Operator * State`` operand is a move, but Evolve also
+    produces the transformed carrier.  For an in-place bind the same root is
+    therefore consumed and immediately revived; for renamed outputs a new
+    output root is introduced after the input root is consumed.  This mirrors
+    the existing in-place transform rule for gate/application calls and keeps
+    terminal ``tracing_out`` valid for tuple-valued evolution.
+    """
+    expr = stmt.expr
+    if not isinstance(expr, EvolveExpr) or expr.body is None:
+        return
+    result = expr.body.result
+    if not isinstance(result, BinOp) or result.op != "*":
+        return
+    operand = result.rhs
+    if isinstance(operand, TupleExpr):
+        sources = operand.items
+    else:
+        sources = (operand,)
+    if len(sources) != len(stmt.names):
+        return
+    for output, source in zip(stmt.names, sources):
+        if not isinstance(source, Var):
+            continue
+        root = _linear_root(source.name, state.aliases)
+        if output == source.name:
+            state.consumed.discard(root)
+            state.introduced[output] = stmt.span
+            state.aliases[output] = output
+            continue
+        state.introduced[output] = stmt.span
+        state.aliases[output] = output
+
+
 def _consume_when_linear_uses(expr: object, state: _LinearUseState) -> None:
-    """Consume linear roots used as ``when`` scrutinee or arm values (Slice E)."""
-    if isinstance(expr, WhenExpr):
+    """Consume linear roots used as ``when``/``mix`` or ``superpose`` scrutinee
+    or arm values (Slice E; LISS-0320 extends this to `SuperposeExpr`)."""
+    if isinstance(expr, (WhenExpr, SuperposeExpr)):
         _mark_linear_var_use(expr.ctrl, state)
         for arm in expr.arms:
             _mark_all_linear_vars(arm.body, state)

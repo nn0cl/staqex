@@ -24,11 +24,11 @@ def test_static_register_exposes_immutable_qpu_program_metadata_and_nodes() -> N
         package t
         pub fn main() -> Unit {
             QubitRegister<1> reg = system()
-            forEach q in reg {
+            ForEach q in reg {
                 apply(H, q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -48,11 +48,11 @@ def test_param_remains_symbolic_in_qpu_ir_without_host_binding() -> None:
         pub fn main() -> Unit {
             QubitRegister<1> reg = system()
             Param<Angle> theta = parameter("theta")
-            forEach q in reg {
+            ForEach q in reg {
                 apply(Rz(theta), q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -66,8 +66,8 @@ def test_terminal_measurement_is_an_ir_node_not_a_provider_operation() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -83,9 +83,11 @@ def test_unsupported_dynamic_capability_is_a_hard_diagnostic_without_host_fallba
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state evolved = evolve psi under X for 1 until converged(psi) max 64
-            measure evolved
+            State psi = Dirac(0)
+            Time dt = 0.1.fs
+            Operator U = exp(-i * X * dt / hbar)
+            State evolved = Evolve() { U * psi until converged(psi) max 64 }.run()
+            Measure evolved
         }
         """
     )
@@ -102,8 +104,8 @@ def test_qpu_ir_has_no_provider_sdk_or_serialization_boundary() -> None:
         """
         package t
         pub fn main() -> Unit {
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

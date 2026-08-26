@@ -49,13 +49,13 @@ def test_grammar_lists_scientific_scope_heads_and_modern_keywords() -> None:
         assert keyword in grammar, keyword
 
 
-def test_grammar_lists_unicode_math_token_alternates() -> None:
+def test_grammar_lists_ascii_math_tokens() -> None:
     grammar = _grammar_text()
 
-    assert "⟨" in grammar or "\\u27e8" in grammar
-    assert "⟩" in grammar or "\\u27e9" in grammar
-    assert "⊗" in grammar or "\\u2297" in grammar
-    assert "†" in grammar or "\\u2020" in grammar
+    assert '"<"' in grammar
+    assert '">"' in grammar
+    assert '"*|*"' in grammar
+    assert "tensor_op" in grammar
 
 
 def test_alignment_helper_matches_shipping_inventory() -> None:

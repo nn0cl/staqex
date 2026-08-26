@@ -146,7 +146,7 @@ def check_physical_axioms(unit: CompilationUnit) -> list[dict[str, Any]]:
                             "line": when.span.line,
                             "col": when.span.col,
                             "message": (
-                                "Cannot nest `when` inside the control expression. "
+                                "Cannot nest `mix` inside the control expression. "
                                 "Bind the control first, or use a joint pushforward."
                             ),
                         }

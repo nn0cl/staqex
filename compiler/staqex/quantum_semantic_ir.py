@@ -35,6 +35,8 @@ __all__ = [
     "AncillaScope",
     "ChannelRegion",
     "CoherentControlRegion",
+    "ProjectorRegion",
+    "TimingRegion",
     "DensityJointStateValue",
     "DynamicControlRegion",
     "DynamicMeasurementRegion",
@@ -301,6 +303,28 @@ class CoherentControlRegion(_TransformationRegion):
 
 
 @dataclass(frozen=True, slots=True)
+class ProjectorRegion(_TransformationRegion):
+    """Explicit feasible-subspace restriction without terminal sampling."""
+
+    constraint_ref: str
+
+
+@dataclass(frozen=True, slots=True)
+class TimingRegion(_TransformationRegion):
+    """Dynamic-lane timing intent as inspectable Region provenance (ADR 0193).
+
+    `timing_intent` is a source-derived free-form name. Staqex core does not
+    interpret backend durations; a future target adapter may.
+    """
+
+    timing_intent: str
+
+    def __post_init__(self) -> None:
+        if not self.timing_intent:
+            raise ValueError("TimingRegion requires a non-empty timing_intent")
+
+
+@dataclass(frozen=True, slots=True)
 class SemanticLane:
     """Closed execution-lane marker carried by Semantic IR."""
 
@@ -425,6 +449,8 @@ SemanticRegion = (
     | IsometryRegion
     | ChannelRegion
     | CoherentControlRegion
+    | ProjectorRegion
+    | TimingRegion
     | DynamicMeasurementRegion
     | TerminalMeasurementRegion
     | DynamicControlRegion
@@ -477,6 +503,12 @@ class QuantumSemanticModule:
     linear_resource_evidence: tuple[object, ...] = field(
         default_factory=tuple
     )
+
+    @property
+    def source_node_ids(self) -> tuple[str, ...]:
+        """Stable source identities exposed by the canonical projection."""
+        values = tuple(str(origin.source_id) for origin in self.origins)
+        return values or ("qsem:canonical-source",)
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "roots", tuple(self.roots))

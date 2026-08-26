@@ -128,7 +128,25 @@ def suzuki_step_count(
     return max(_MIN_STEPS, math.ceil(estimate))
 
 
-def resolve_suzuki_steps(policy: SuzukiPolicy, terms: Sequence[PauliTerm], t: float) -> int:
+def resolve_suzuki_order(expr: Expr | int, scalars: dict[str, float]) -> int:
+    """Resolve `using Suzuki(order = ...)` to an int (LISS-0371).
+
+    Accepts any closed classical scalar expression (literal, named
+    constant, prelude constant, simple arithmetic), not just a bare
+    literal. Falls back to 2 only when the expression is not resolvable
+    (typecheck.py's `_check_suzuki_policy` already rejects an order that
+    resolves to neither 2 nor 4, so this fallback is unreachable for a
+    program that passed typecheck).
+    """
+    if isinstance(expr, (int, float)) and not isinstance(expr, bool):
+        return int(expr)
+    v = _eval_float(expr, scalars)  # type: ignore[arg-type]
+    return int(v) if v is not None else 2
+
+
+def resolve_suzuki_steps(
+    policy: SuzukiPolicy, terms: Sequence[PauliTerm], t: float, scalars: dict[str, float]
+) -> int:
     """Resolve an AST Suzuki policy after its Hamiltonian is compiled."""
     steps = int(policy.steps.value) if isinstance(policy.steps, LitInt) else None
     tolerance = (
@@ -136,7 +154,7 @@ def resolve_suzuki_steps(policy: SuzukiPolicy, terms: Sequence[PauliTerm], t: fl
         if isinstance(policy.tolerance, (LitInt, LitFloat))
         else None
     )
-    order = int(policy.order.value) if isinstance(policy.order, LitInt) else 2
+    order = resolve_suzuki_order(policy.order, scalars)
     return suzuki_step_count(
         terms,
         t,
@@ -233,8 +251,11 @@ def _suzuki_term_gates(
     total_steps: int,
     label: str = "S2",
 ) -> list[Gate]:
-    if abs(term.coeff) < 1e-15:
-        return []
+    # ADR 0195 / LISS-0341: no absolute-coefficient pre-filter here -- a
+    # real Joule-scale coefficient (~1e-19) is far below any natural-
+    # units-era absolute epsilon but is not physically negligible once
+    # divided by real hbar below. The dimensionless-theta check after
+    # that division is the correct (unit-independent) negligibility test.
     if abs(term.coeff.imag) > 1e-9:
         raise TrotterError(
             REJECT_COMPLEX_COEFF,
@@ -242,7 +263,9 @@ def _suzuki_term_gates(
         )
     if all(kind == "I" for kind in term.kinds):
         return []
-    theta = float(term.coeff.real) * delta_t
+    from ...stdlib.prelude import HBAR_SI
+
+    theta = float(term.coeff.real) * delta_t / HBAR_SI
     if abs(theta) < 1e-15:
         return []
     return _pauli_exp_gates(
@@ -325,8 +348,18 @@ def _eval_float(expr: Expr, scalars: dict[str, float]) -> float | None:
         base = _eval_float(expr.obj, scalars)
         if base is None:
             return None
-        unit_scale = {"s": 1.0, "ms": 1e-3, "us": 1e-6, "ns": 1e-9}
-        return base * unit_scale[expr.name] if expr.name in unit_scale else None
+        # LISS-0360: defer to dimensions.py's canonical Time scale table
+        # instead of a locally-hardcoded, independently-maintained copy --
+        # this local copy predates ADR 0195's `ps`/`fs` additions and had
+        # silently gone stale.
+        from ...dimensions import UNIT_SCALE_TO_CANONICAL
+
+        if expr.name == "s":
+            return base
+        scale = UNIT_SCALE_TO_CANONICAL.get(expr.name)
+        if scale is not None and scale[0] == "s":
+            return base * scale[1]
+        return None
     if isinstance(expr, BinOp):
         a = _eval_float(expr.lhs, scalars)
         b = _eval_float(expr.rhs, scalars)

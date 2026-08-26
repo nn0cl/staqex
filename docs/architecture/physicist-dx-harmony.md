@@ -10,7 +10,10 @@ Staqex aims at **both**, with an explicit priority:
    dimensions, exclusive classifications). This is a language **for
    physicists**; when physicist reading and programmer convenience conflict,
    prefer the physicist's form (ADR 0095: machine convenience never shapes the
-   surface).
+   surface). The source must **denote the same physics** as the blackboard
+   thought process — including intentional expansion, rewrite, and combination
+   of formulas; machine-forced dialect shift is forbidden
+   ([vision §2.2](adjudicator-language-vision.md)).
 2. **Programmer DX (secondary, non-optional)** — `enum` / `struct` /
    `namespace` / visibility so large simulations stay typed and maintainable.
    DX must not rewrite the physics spelling into enterprise ceremony.

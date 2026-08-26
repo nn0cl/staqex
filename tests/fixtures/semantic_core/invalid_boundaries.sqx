@@ -1,0 +1,7 @@
+// SSC-008: rejected boundaries must publish SemanticRejection only.
+Energy scale = 1.0.eV to J
+Operator H = scale * X
+Time duration = 0.6.fs
+Operator bare = Limit N -> Infinity {
+    (I - i * H * duration / (N * hbar)) ^ N
+}

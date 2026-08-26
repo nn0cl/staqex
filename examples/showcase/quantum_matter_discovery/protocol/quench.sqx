@@ -5,11 +5,11 @@ package examples.showcase.quantum_matter_discovery.protocol
 
 namespace Matter.Protocol {
     pub struct QuenchSchedule {
-        val duration: Float
+        val duration: Time
     }
 }
 
-pub fn schedule_duration(s: Matter.Protocol.QuenchSchedule) -> Float {
+pub fn schedule_duration(s: Matter.Protocol.QuenchSchedule) -> Time {
     return s.duration
 }
 

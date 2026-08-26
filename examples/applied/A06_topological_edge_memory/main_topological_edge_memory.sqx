@@ -22,13 +22,15 @@ pub fn main() -> Unit {
     Float gap = band_gap(p)
 
     Operator Hssh = build_ssh_hamiltonian()
-    State<Position> psi = dirac(0)
+    State<Position> psi = Dirac(0)
+    Time dur = 0.5.fs
 
-    state psi = evolve psi under Hssh for 0.5
+    Operator U_t = exp(-i * Hssh * dur / hbar)
+    State psi = Evolve() { U_t * psi }.run()
 
     // Notebook quantities (Host may log); not inspect floods before measure.
     Float left = occupation(psi, 0)
     Float right = occupation(psi, 5)
 
-    measure psi
+    Measure psi
 }

@@ -33,8 +33,8 @@ def _hir_fixture():
         package t
         pub fn main() -> Unit {
             Operator H = X + Z
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )

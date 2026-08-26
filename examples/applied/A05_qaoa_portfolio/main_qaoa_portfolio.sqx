@@ -1,22 +1,39 @@
 // staqex-lane: experiment
 // QAOA portfolio toy — one p=1 layer on a 2-asset QUBO (Ising form).
 // NOT a production portfolio optimizer or market simulator.
+//
+// Units (ADR 0195 real-unit migration, LISS-0333): ADR 0195 applies to
+// examples modeling real physical Hamiltonians; this example's QUBO cost
+// Hamiltonian is given real Energy/Time dimensions to satisfy the
+// Kernel's fail-closed evolve requirement, but its magnitudes are
+// arbitrary problem-defined relative cost weights, not physical
+// energies or literature-traced constants (contrast with A03_h2_vqe).
 
 package examples.applied.qaoa_portfolio
 
 pub fn main() -> Unit {
-    Operator H_cost = -0.6 * Z[0] - 0.4 * Z[1] + 0.5 * (Z[0] * Z[1])
-    Operator H_mixer = X[0] + X[1]
+    Energy w01 = 0.6.eV to J
+    Energy w02 = 0.4.eV to J
+    Energy w12 = 0.5.eV to J
+    Energy w_mix = 1.0.eV to J
+    Time dur_mix = 0.4.fs
+    Time dur_cost = 0.3.fs
 
-    state q0 = coin()
-    state q1 = coin()
+    Operator H_cost = (-w01) * Z[0] - w02 * Z[1] + w12 * (Z[0] * Z[1])
+    Operator H_mixer = w_mix * X[0] + w_mix * X[1]
 
-    state (q0, q1) = evolve (q0, q1) under H_mixer for 0.4
-    state (q0, q1) = evolve (q0, q1) under H_cost for 0.3
+    State q0 = Coin()
+    State q1 = Coin()
 
-    state zz = expect(ZZ, q0, q1)
-    state viewed = inspect(zz)
+    // p = 1: one explicitly named mixer layer followed by one cost layer.
+    Operator U_mix_p1 = exp(-i * H_mixer * dur_mix / hbar)
+    State (q0, q1) = Evolve() { U_mix_p1 * (q0, q1) }.run()
+    Operator U_cost_p1 = exp(-i * H_cost * dur_cost / hbar)
+    State (q0, q1) = Evolve() { U_cost_p1 * (q0, q1) }.run()
+
+    State zz = expect(ZZ, q0, q1)
+    State viewed = Inspect(zz)
 
     // Terminal measure is singular; sibling leaves via partial trace (ADR 0173).
-    measure q0 tracing_out q1
+    Measure q0 tracing_out q1
 }

@@ -1,4 +1,8 @@
-# Staqex Unicode math migrator (LISS-0069 Slice B)
+# Staqex Unicode math migrator (LISS-0069 Slice B historical)
+
+> Superseded for canonical source output by [ADR 0191](../architecture/adr/0191-ascii-quantum-notation-and-lexical-boundary.md).
+> Treat this document and its golden corpus as historical migration records;
+> new source and formatter output must remain ASCII.
 
 | Field | Value |
 |---|---|

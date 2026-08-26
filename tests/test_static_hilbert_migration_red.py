@@ -27,11 +27,11 @@ def test_historical_register_call_is_not_a_compatibility_alias() -> None:
         """
         package t
         pub fn main() -> Unit {
-            forEach q in register(3) {
+            ForEach q in register(3) {
                 apply(H, q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -45,11 +45,11 @@ def test_static_register_resource_overflow_is_a_hard_diagnostic() -> None:
         package t
         pub fn main() -> Unit {
             QubitRegister<1000000> reg = system()
-            forEach q in reg {
+            ForEach q in reg {
                 apply(H, q)
             }
-            State<Int> observed = coin()
-            measure observed
+            State<Int> observed = Coin()
+            Measure observed
         }
         """
     )
@@ -62,11 +62,11 @@ def test_static_hilbert_overflow_never_silently_truncates() -> None:
     package t
     pub fn main() -> Unit {
         QubitRegister<1000000> reg = system()
-        forEach q in reg {
+        ForEach q in reg {
             apply(H, q)
         }
-        State<Int> observed = coin()
-        measure observed
+        State<Int> observed = Coin()
+        Measure observed
     }
     """
 

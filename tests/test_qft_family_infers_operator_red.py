@@ -46,8 +46,8 @@ def _program(body: str) -> str:
         "package t\n"
         "pub fn main() -> Unit {\n"
         f"    {body}\n"
-        "    State<Int> observed = coin()\n"
-        "    measure observed\n"
+        "    State<Int> observed = Coin()\n"
+        "    Measure observed\n"
         "}\n"
     )
 

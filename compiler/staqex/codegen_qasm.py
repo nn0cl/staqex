@@ -17,6 +17,7 @@ from .backend.qasm import EmitResult, QASM3Emitter, emit_openqasm3
 from .finite_binder import identity_acting_space_diagnostics
 from .pipeline import compile_path, compile_source
 from .resource_profile import ResourceProfile, SimulationResourceEstimate
+from .scientific_semantic_ir import ScientificSemanticIR
 
 
 class OpenQASM3Generator:
@@ -30,12 +31,14 @@ class OpenQASM3Generator:
         self,
         unit: CompilationUnit,
         *,
+        semantic_ir: ScientificSemanticIR | None = None,
         resource_profile: ResourceProfile | None = None,
         resource_estimate: SimulationResourceEstimate | None = None,
     ) -> str:
         """Emit OpenQASM 3.0 for `unit` (header, registers, gates, measure)."""
         result = self.generate_detailed(
             unit,
+            semantic_ir=semantic_ir,
             resource_profile=resource_profile,
             resource_estimate=resource_estimate,
         )
@@ -54,11 +57,13 @@ class OpenQASM3Generator:
         self,
         unit: CompilationUnit,
         *,
+        semantic_ir: ScientificSemanticIR | None = None,
         resource_profile: ResourceProfile | None = None,
         resource_estimate: SimulationResourceEstimate | None = None,
     ) -> EmitResult:
         return QASM3Emitter(topology=self.topology, route=self.route).emit_unit(
             unit,
+            semantic_ir=semantic_ir,
             resource_profile=resource_profile,
             resource_estimate=resource_estimate,
         )
@@ -71,7 +76,7 @@ class OpenQASM3Generator:
         if not compiled.ok or compiled.unit is None:
             codes = [d.get("code") for d in compiled.diagnostics]
             raise ValueError(f"Staqex compile failed before QASM emit: {codes}")
-        return self.generate(compiled.unit)
+        return self.generate(compiled.unit, semantic_ir=compiled.scientific_semantic_ir)
 
 
 class StaqexCompiler:
@@ -94,12 +99,19 @@ class StaqexCompiler:
             raise ValueError(
                 f"Staqex compile failed for `{file_path}` before QASM emit: {codes}"
             )
-        return self._gen.generate(compiled.unit)
+        return self._gen.generate(
+            compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+        )
 
 
-def generate_openqasm3(unit: CompilationUnit, **kwargs) -> str:
+def generate_openqasm3(
+    unit: CompilationUnit,
+    *,
+    semantic_ir: ScientificSemanticIR | None = None,
+    **kwargs,
+) -> str:
     """Convenience wrapper used by CLI / tests."""
-    return OpenQASM3Generator(**kwargs).generate(unit)
+    return OpenQASM3Generator(**kwargs).generate(unit, semantic_ir=semantic_ir)
 
 
 __all__ = [

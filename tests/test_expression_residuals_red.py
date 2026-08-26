@@ -27,8 +27,8 @@ def test_float_function_return_binds_as_classical() -> None:
         pub fn mark() -> Float { return 0.5 }
         pub fn main() -> Unit {
             Float a = mark()
-            state x = dirac(0)
-            measure x
+            State x = Dirac(0)
+            Measure x
         }
         """
     )
@@ -40,10 +40,10 @@ def test_delta_time_evolve_for_is_classical() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state x = |0>
+            State x = |0>
             Delta<Time> dt = 0.1.s
-            state x = evolve x under X for dt
-            measure x
+            State x = Evolve { x under X for dt }.run()
+            Measure x
         }
         """
     )
@@ -60,10 +60,10 @@ def test_consume_on_return_product_chain() -> None:
             return apply(X, c) *|* x
         }
         pub fn main() -> Unit {
-            state c = |0>
-            state x = dirac(0)
-            state s = step(c, x)
-            measure s
+            State c = |0>
+            State x = Dirac(0)
+            State s = step(c, x)
+            Measure s
         }
         """
     )
@@ -85,18 +85,18 @@ def test_classical_quantity_scales_state() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state bit = coin()
+            State bit = Coin()
             Time dt = 0.5.s
             Mass m = 1.0.kg
             Stiffness k = 1.0.N_m
-            State<Length> x = when (bit) { 0 -> 0.0.m, else -> 1.0.m }
-            State<Momentum> p = when (bit) { 0 -> 1.0.kg_m_s, else -> 0.0.kg_m_s }
-            state (x, p) = evolve (x, p) times 2 {
+            State<Length> x = Mix (bit) { 0 -> 0.0.m, else -> 1.0.m }
+            State<Momentum> p = Mix (bit) { 0 -> 1.0.kg_m_s, else -> 0.0.kg_m_s }
+            State (x, p) = Evolve (x, p) times 2 {
                 (x + (dt / m) * p, p - (dt * k) * x)
             }
-            state bit = vacuum
-            state p = vacuum
-            measure x
+            State bit = Vacuum
+            State p = Vacuum
+            Measure x
         }
         """
     )

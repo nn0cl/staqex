@@ -4,18 +4,18 @@
 package examples.statphys
 
 pub fn main() -> Unit {
-    Float J = 1.0
+    Energy J = 1.0.eV to J
+    Time dur = 1.0.fs
     Operator H4 = -J * (
         Z[0] * Z[1] + Z[1] * Z[2] + Z[2] * Z[3] + Z[3] * Z[0]
     )
 
-    state q0 = |+>
-    state q1 = |0>
-    state q2 = |0>
-    state q3 = |0>
-    state (q0, q1, q2, q3) = evolve (q0, q1, q2, q3) under H4 for 0.6
-        using Suzuki(order = 2, steps = 5)
+    State q0 = |+>
+    State q1 = |0>
+    State q2 = |0>
+    State q3 = |0>
+    State (q0, q1, q2, q3) = Evolve { (q0, q1, q2, q3) under H4 for dur using Suzuki(order = 2, steps = 5) }.run()
 
-    state viewed = inspect(q0)
-    measure q0
+    State viewed = Inspect(q0)
+    Measure q0
 }

@@ -2,7 +2,7 @@
 
 Status: **Working baseline** (updated 2026-07-23, ADR 0024 / **0037**).
 Supersedes provisional MVP `let` / `observe` / `fair_bit`, and migrates
-`span` → `when`, keyword `system` → `class`. Kernel PoC *laws* unchanged.
+`span` → `mix`, keyword `system` → `class`. Kernel PoC *laws* unchanged.
 Umbrella: `staqex-language-spec.md`. Type-First + dims:
 `staqex-dimensional-types.md` (ADR 0037).
 
@@ -38,7 +38,7 @@ trick. No mid-program classical escape via `if` / early measure.
 | **Type-First quantity bind** | **`Q name = expr`** | — | Quantity heads the line (ADR **0037**) |
 | Fair Bernoulli prep | `coin()` | 4 | $\frac12\lvert0\rangle+\frac12\lvert1\rangle$ (PMF shadow) |
 | Dirac prep | `dirac(c)` | 5 | $\delta_c$ / $\lvert c\rangle$ (phase-0 MVP) |
-| Controlled mixture | **`when`** | 4 | Same law as former `span` / §Span |
+| Controlled mixture | **`mix`** | 4 | Same law as former `span` / §Span |
 | Time evolution block | `evolve` | 6 | Pure state update $U$ / pushforward pipeline |
 | Terminal collapse | `measure` | 7* | Projective sampling collapse (sole RNG) |
 | Model capsule | **`class`** | 5 | Immutable joint package (`: System`) |
@@ -62,7 +62,7 @@ avoid PPL `observe` (conditioning) collision. Former provisional name
 | Rejected | Why |
 |----------|-----|
 | Top-level `let` as the main binder | Reads as classical scalar binding; use `state` |
-| `if` / classical `switch` | Jump + discard branch ≈ early observation; use `when` |
+| `if` / classical `switch` | Jump + discard branch ≈ early observation; use `mix` |
 | `while` / `for` / `break` | Classical loops; use `evolve` |
 | `return` | Early exit collapses narrative continuity |
 | Mid-program `measure` | Violates Never Leave the State |
@@ -82,12 +82,12 @@ state c = coin()
 state x = dirac(5)
 ```
 
-### 3.2 `when` (replaces `if` / classical `switch`; former `span`)
+### 3.2 `mix` (replaces `if` / classical `switch`; former `span`)
 
 Binary sugar:
 
 ```staqex
-state z = when (c) {
+state z = mix (c) {
     0 -> x + 10
     1 -> x + 20
 }
@@ -96,7 +96,7 @@ state z = when (c) {
 Multi-arm (match-style — normative general form):
 
 ```staqex
-state z = when (c) {
+state z = mix (c) {
     0 -> x + 10,
     1 -> x + 20,
     else -> x + 30,
@@ -175,9 +175,9 @@ Normative token map: `docs/architecture/staqex-token-specification.md`.
 
 | Class | Behavior | Examples |
 |-------|----------|----------|
-| **Active** | Keyword tokens | `class`, `interface`, `package`, `import`, `fn`, `state`, `let`, `when`, `coin`, `dirac`, `vacuum`, `evolve`, `measure`, `snapshot`, `inspect` |
+| **Active** | Keyword tokens | `class`, `interface`, `package`, `import`, `fn`, `state`, `let`, `mix`, `coin`, `dirac`, `vacuum`, `evolve`, `measure`, `snapshot`, `inspect` |
 | **Forbidden** | Hard compile error | `if`, `switch`, `while`, `for`, `break`, `return`, `new`, `null`, `try`, `catch`, `throw`, `Thread`, `async`, `await` |
-| **Retired** | Linter warn + fix-it | `observe`→`measure`, `span`→`when`, `fn`→`fn`, `trait`→`interface` |
+| **Retired** | Hard diagnostic + migration hint | `observe`→`measure`, `span`→`mix`, `when`→`mix` (no alias), `fn`→`fn`, `trait`→`interface` |
 | **Pipeline op** | Left-associative callable application | `\|>` → `Pipe`; `lhs \|> f(a)` means `f(lhs, a)` |
 
 ```staqex
@@ -195,7 +195,7 @@ Normative token map: `docs/architecture/staqex-token-specification.md`.
 state c = coin()
 state x = dirac(5)
 
-state z = when (c) {
+state z = mix (c) {
     0 -> x + 10,
     1 -> x + 20,
     else -> x + 30,
@@ -220,7 +220,7 @@ measure w1
 | 2 | Formal semantics core + §Span/Block/Evolve/Tuple | **Done** |
 | 3 | PoC A/B fixtures | **Done** |
 | 4 | Numeric literals vs mandatory `dirac(c)` | TBD |
-| 5 | `when` amplitude-linear reading | MVP mixture done; lift = ADR 0016 |
+| 5 | `mix` amplitude-linear reading | MVP mixture done; lift = ADR 0016 |
 | 6 | AST design note (multi-arm) | **Done** |
 | 7 | `\|\>` / currying specs | **Pipeline MVP done; partial application open** — ADR 0080 / LISS-0013 |
 | 8 | Agent sync handoff doc | **Done** |
@@ -234,7 +234,7 @@ measure w1
 
 ## 6. Kernel PoC surface (minimal)
 
-PoC A/B do **not** require `when` / `evolve` / packages yet:
+PoC A/B do **not** require `mix` / `evolve` / packages yet:
 
 ```staqex
 state x = coin()

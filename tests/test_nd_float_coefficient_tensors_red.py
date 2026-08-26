@@ -26,11 +26,11 @@ def test_2d_float_tensor_lowers_in_binder() -> None:
             [1.0, 0.0],
             [0.0, 0.5],
         ]
-        Operator H = sum (p in Index<0..1>, q in Index<0..1>) {
+        Operator H = Sigma (p In 0..1, q In 0..1) {
             h[p][q] * Z[p] * Z[q]
         }
-        state a = |0>
-        measure a
+        State a = |0>
+        Measure a
     }
     """
     codes = _codes(source)
@@ -50,11 +50,11 @@ def test_4d_float_tensor_smoke() -> None:
     pub fn main() -> Unit {
         QubitRegister<2> register = system()
         Float[1][1][1][1] v = [[[[2.0]]]]
-        Operator H = sum (i in Index<0..0>, j in Index<0..0>, k in Index<0..0>, l in Index<0..0>) {
+        Operator H = Sigma (i In 0..0, j In 0..0, k In 0..0, l In 0..0) {
             v[i][j][k][l] * Z[0]
         }
-        state a = |0>
-        measure a
+        State a = |0>
+        Measure a
     }
     """
     codes = _codes(source)
@@ -72,7 +72,7 @@ def test_shape_mismatch_is_diagnosed() -> None:
         package t
         pub fn main() -> Unit {
             Float[2][2] h = [[1.0], [0.0, 0.5]]
-            measure h
+            Measure h
         }
         """
     )
@@ -86,11 +86,11 @@ def test_partial_index_arity_is_rejected() -> None:
         pub fn main() -> Unit {
             QubitRegister<2> register = system()
             Float[2][2] h = [[1.0, 0.0], [0.0, 0.5]]
-            Operator H = sum (p in Index<0..1>) {
+            Operator H = Sigma (p In 0..1) {
                 h[p] * Z[p]
             }
-            state a = |0>
-            measure a
+            State a = |0>
+            Measure a
         }
         """
     )
@@ -103,11 +103,11 @@ def test_1d_float_array_still_works() -> None:
     pub fn main() -> Unit {
         QubitRegister<2> register = system()
         Float[1] J = [1.0]
-        Operator H = sum (i in Index<0..0>) {
+        Operator H = Sigma (i In 0..0) {
             J[i] * Z[i] * Z[next(i)]
         }
-        state a = |0>
-        measure a
+        State a = |0>
+        Measure a
     }
     """
     codes = _codes(source)

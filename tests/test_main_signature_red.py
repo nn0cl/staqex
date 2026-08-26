@@ -18,8 +18,8 @@ def test_main_requires_explicit_unit_result() -> None:
     src = """
 package t
 pub fn main() -> Unit {
-    State<Int> value = coin()
-    measure value
+    State<Int> value = Coin()
+    Measure value
 }
 """
     result = run_source(src, seed=0, stdout=io.StringIO())
@@ -31,8 +31,8 @@ def test_bare_main_signature_is_rejected() -> None:
     src = """
 package t
 pub fn main() {
-    State<Int> value = coin()
-    measure value
+    State<Int> value = Coin()
+    Measure value
 }
 """
     compiled = compile_source(src)
@@ -43,8 +43,8 @@ def test_main_cannot_return_a_quantum_state() -> None:
     src = """
 package t
 pub fn main() -> State<Int> {
-    State<Int> value = coin()
-    measure value
+    State<Int> value = Coin()
+    Measure value
 }
 """
     compiled = compile_source(src)

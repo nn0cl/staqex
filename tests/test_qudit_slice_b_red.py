@@ -11,8 +11,8 @@ if str(_REPO) not in sys.path:
 
 from compiler.staqex.pipeline import compile_source
 
-KET = "\u27e9"  # ⟩
-BRA = "\u27e8"  # ⟨
+KET = ">"
+BRA = "<"
 
 
 def _codes(compiled) -> set[str]:
@@ -26,9 +26,9 @@ def test_in_range_labels_on_qutrit_accepted() -> None:
             package t
             pub fn main() -> Unit {{
                 State<Qutrit> s = |{label}{KET}
-                state s = |0>
-                State observed = coin()
-                measure observed
+                State s = |0>
+                State observed = Coin()
+                Measure observed
             }}
             """
         )
@@ -42,8 +42,8 @@ def test_out_of_range_ket_on_qutrit_is_local_dimension_type_error() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qutrit> s = |3{KET}
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -58,8 +58,8 @@ def test_out_of_range_ket_on_qudit4_is_error() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qudit<4>> s = |4{KET}
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -74,9 +74,9 @@ def test_in_range_ket_on_qudit4_accepted() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qudit<4>> s = |3{KET}
-            state s = |0>
-            State observed = coin()
-            measure observed
+            State s = |0>
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -90,8 +90,8 @@ def test_out_of_range_bra_on_qutrit_is_error() -> None:
         package t
         pub fn main() -> Unit {{
             State<Qutrit> b = {BRA}3|
-            State observed = coin()
-            measure observed
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -106,10 +106,10 @@ def test_alone_ket_without_qudit_carrier_unchanged() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state s = |1{KET}
-            state s = |0>
-            State observed = coin()
-            measure observed
+            State s = |1{KET}
+            State s = |0>
+            State observed = Coin()
+            Measure observed
         }}
         """
     )

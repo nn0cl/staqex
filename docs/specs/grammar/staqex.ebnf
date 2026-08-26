@@ -1,5 +1,6 @@
 (* Staqex grammar — Normative Draft matching compiler/staqex/lexer.py + parser.py
-   (2026-07-23). Character set: Unicode source; identifiers ASCII [A-Za-z_][A-Za-z0-9_]*.
+   (2026-08-04). Source punctuation and identifiers are ASCII-only;
+   Unicode notation is presentation/tooling input, not source syntax.
    Case-sensitive. *)
 
 (* ========== Lexical ========== *)
@@ -16,19 +17,14 @@ float          = digit_run, ".", digit_run ;
 string         = '"', { char - '"' }, '"' | "'", { char - "'" }, "'" ;
 
 ket_label      = { letter | digit | "+" | "-" | "_" } ;
-ket_lit        = "|", ket_label, ( ">" | "⟩" ) ;   (* |0>, |+>, |01>, … *)
-bra_lit        = "⟨", ket_label, "|" ;
-(* LISS-0073 Slice B: north-star inner ⟨φ|ψ⟩ — bra then ket-half (no second '|'). *)
-bra_ket_inner  = "⟨", ket_label, "|", ket_label, ( ">" | "⟩" ) ;
-(* LISS-0073 Slice C: matrix element ⟨φ|A|ψ⟩ → inner(φ, A(ψ)). *)
-bra_op_ket     = "⟨", ket_label, "|", call_expr, "|", ket_label, ( ">" | "⟩" ) ;
-(* LISS-0073 Slice D: outer |ψ⟩⟨φ|; same label → projector. OpHop: |i⟩⟨j| site sugar. *)
-ket_bra_outer  = ket_lit, bra_lit ;
+ket_lit        = "|", ket_label, ">" ;   (* |0>, |+>, |01>, … *)
+bra_lit        = "<", ket_label, "|" ;
+(* ASCII inner / matrix-element spellings are reserved for a later grammar
+   slice because `<` remains a comparison operator outside primary position. *)
 (* LISS-0073 Slice F: Operator-context [A,B] → commutator; {A,B} → anticommutator. *)
 bracket_commutator = "[", expr, ",", expr, "]" ;
 brace_anticommutator = "{", expr, ",", expr, "}" ;
-tensor_op      = "*|*" | "⊗" ;
-dagger_op      = "†" ;
+tensor_op      = "*|*" ;
 
 comment_line   = "//", { char - newline }, newline ;
 whitespace     = " " | "\t" | "\n" | "\r" ;
@@ -36,7 +32,7 @@ whitespace     = " " | "\t" | "\n" | "\r" ;
 (* Keywords — Active *)
 active_kw = "class" | "interface" | "impl" | "package" | "import"
           | "namespace" | "enum" | "struct" | "fn" | "return"
-          | "forEach" | "dynamic" | "state" | "let" | "when"
+          | "forEach" | "dynamic" | "state" | "let" | "mix"
           | "coin" | "dirac" | "vacuum" | "evolve" | "measure"
           | "snapshot" | "inspect" | "this" | "val" | "var"
           | "module" | "exports" | "requires" | "private" ;
@@ -54,7 +50,7 @@ retired_kw = "observe" | "span" | "fun" | "public" | "trait" ;
 
 (* Operators / punctuators *)
 op = "|>" | "->" | "*|*" | "==" | "!=" | "<=" | ">=" | "+" | "-" | "*" | "/"
-   | "^" | "=" | "<" | ">" | "." | "," | ":" | ";" | ".." | "!" | "⊗" | "†"
+   | "^" | "=" | "<" | ">" | "." | "," | ":" | ";" | ".." | "!"
    | "(" | ")" | "{" | "}" | "[" | "]" ;
 
 (* ========== Compilation unit ========== *)
@@ -159,18 +155,13 @@ tensor_expr = unary_expr, { tensor_op, unary_expr } ;
 
 unary_expr = [ "-" ], call_expr ;
 
-(* LISS-0073 Slice E: expression postfix † → adjoint(expr); OpDSL keeps OpCall. *)
-call_expr = primary, { call_suffix | attr_suffix | dagger_suffix } ;
+call_expr = primary, { call_suffix | attr_suffix } ;
 call_suffix = "(", [ expr, { ",", expr } ], ")"
             (* not applied across newline before '(' *) ;
 attr_suffix = ".", ident, [ "(", [ expr, { ",", expr } ], ")" ] ;
-dagger_suffix = dagger_op ;
 
 primary = integer | float | string | "true" | "false"
-        | ket_bra_outer
         | ket_lit
-        | bra_op_ket
-        | bra_ket_inner
         | bra_lit
         | bracket_commutator   (* Operator-context only; else list_expr *)
         | brace_anticommutator
@@ -179,7 +170,8 @@ primary = integer | float | string | "true" | "false"
         | "dirac", "(", expr, ")"
         | "vacuum", [ "(", ")" ]
         | "inspect", "(", expr, [ ",", string ], ")"
-        | "when", when_body
+        | "mix", when_body
+        | "project", expr, "onto", expr
         | "evolve", evolve_body
         | "(", expr, [ ",", expr, { ",", expr } ], ")"   (* group or tuple *)
         | ident, [ "->", expr ]                          (* lambda *)
@@ -187,7 +179,7 @@ primary = integer | float | string | "true" | "false"
 
 when_body = "(", expr, ")", "{", when_arm, { when_arm }, "}" ;
 when_arm  = ( "else" | literal_or_ident ), "->", expr, [ "," ] ;
-(* Semantic (ADR 0039): arm expr MUST NOT contain nested `when`
+(* Semantic (ADR 0039): arm expr MUST NOT contain nested `mix`
    → NESTED_WHEN_ERROR. Not expressed in EBNF; enforced by pipeline pass. *)
 
 

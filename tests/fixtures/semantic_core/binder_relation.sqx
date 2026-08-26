@@ -1,0 +1,3 @@
+// SSC-003: structural Sigma/Pi binder relation.
+Operator H = Sigma (i In 0..3) { Z[i] }
+Operator P = Pi (i In 0..3) { X[i] }

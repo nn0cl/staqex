@@ -21,8 +21,8 @@ package t
 enum BoundaryCondition { Periodic, Open }
 pub fn main() -> Unit {
   BoundaryCondition bc = BoundaryCondition.Open
-  state x = dirac(0)
-  measure x
+  State x = Dirac(0)
+  Measure x
 }
 """
     bad = """
@@ -30,8 +30,8 @@ package t
 enum BoundaryCondition { Periodic, Open }
 pub fn main() -> Unit {
   BoundaryCondition bc = 1
-  state x = dirac(0)
-  measure x
+  State x = Dirac(0)
+  Measure x
 }
 """
     c_ok = compile_source(ok)
@@ -60,7 +60,7 @@ pub fn main() -> Unit {
   P p = P(1.0, 2.0)
   Box b = Box()
   Float x = b.take(p)
-  measure x
+  Measure x
 }
 """
     r = run_source(src, seed=0, stdout=io.StringIO())
@@ -74,7 +74,7 @@ struct P { val a: Float }
 pub fn main() -> Unit {
   P p = P(1.0)
   p.a = 2.0
-  measure p.a
+  Measure p.a
 }
 """
     # assignment to struct field — parse + runtime/type error
@@ -101,7 +101,7 @@ pub fn main() -> Unit {
   N.Counter c = N.Counter()
   Float a = c.bump()
   Float b = c.bump()
-  measure b
+  Measure b
 }
 """
     r = run_source(src, seed=0, stdout=io.StringIO())
@@ -119,8 +119,8 @@ namespace A.B {
 pub fn main() -> Unit {
   A.B.E e = A.B.E.Y
   A.B.S s = A.B.S(7)
-  state x = dirac(0)
-  measure x
+  State x = Dirac(0)
+  Measure x
 }
 """
     c = compile_source(src)

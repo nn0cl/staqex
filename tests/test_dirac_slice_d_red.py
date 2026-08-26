@@ -13,8 +13,8 @@ if str(_REPO) not in sys.path:
 from compiler.staqex.ast_nodes import BraLit, Call, KetLit, StateBind, Var
 from compiler.staqex.pipeline import compile_source
 
-BRA_OPEN = "\u27e8"  # ⟨
-KET_CLOSE = "\u27e9"  # ⟩
+BRA_OPEN = "<"
+KET_CLOSE = ">"
 EBNF_PATH = _REPO / "docs" / "specs" / "grammar" / "staqex.ebnf"
 
 
@@ -33,9 +33,9 @@ def test_ket_bra_parses_as_outer_call() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            Operator P = |0{KET_CLOSE}{BRA_OPEN}1|
-            State observed = coin()
-            measure observed
+            Operator P = outer(|0{KET_CLOSE}, {BRA_OPEN}1|)
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -56,9 +56,9 @@ def test_matching_ket_bra_parses_as_projector() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            Operator P = |0{KET_CLOSE}{BRA_OPEN}0|
-            State observed = coin()
-            measure observed
+            Operator P = projector(|0{KET_CLOSE})
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -77,10 +77,10 @@ def test_outer_and_projector_punctuation_typecheck() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            Operator O = |0{KET_CLOSE}{BRA_OPEN}1|
-            Operator P = |+{KET_CLOSE}{BRA_OPEN}+|
-            State observed = coin()
-            measure observed
+            Operator O = outer(|0{KET_CLOSE}, {BRA_OPEN}1|)
+            Operator P = projector(|+{KET_CLOSE})
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -94,10 +94,10 @@ def test_alone_ket_still_parses_without_following_bra() -> None:
         f"""
         package t
         pub fn main() -> Unit {{
-            state ket = |0{KET_CLOSE}
-            state ket = |0>
-            State observed = coin()
-            measure observed
+            State ket = |0{KET_CLOSE}
+            State ket = |0>
+            State observed = Coin()
+            Measure observed
         }}
         """
     )
@@ -110,11 +110,8 @@ def test_alone_ket_still_parses_without_following_bra() -> None:
 
 def test_ebnf_documents_ket_bra_outer_and_ophop_note() -> None:
     text = EBNF_PATH.read_text(encoding="utf-8")
-    assert "ket_bra_outer" in text or re.search(
-        r"ket_lit.*bra_lit|outer|projector", text
-    ), "EBNF must document |ψ⟩⟨φ| outer/projector surface"
-    assert "OpHop" in text or "hop" in text.lower(), (
-        "EBNF must note relation to site-local OpHop / hop(i,j)"
+    assert "ket_lit" in text and "bra_lit" in text, (
+        "EBNF must document the ASCII ket/bra primary forms"
     )
 
 

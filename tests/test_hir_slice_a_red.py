@@ -33,7 +33,7 @@ def test_build_hir_from_typechecker_exposes_symbols_and_typed_map() -> None:
     package t
     pub fn main() -> Unit {
         State s = |0>
-        measure s
+        Measure s
     }
     """
     compiled = compile_source(source)
@@ -64,8 +64,8 @@ def test_build_hir_does_not_require_evaluator_rewire() -> None:
     source = """
     package t
     pub fn main() -> Unit {
-        State q = coin()
-        measure q
+        State q = Coin()
+        Measure q
     }
     """
     compiled = compile_source(source)

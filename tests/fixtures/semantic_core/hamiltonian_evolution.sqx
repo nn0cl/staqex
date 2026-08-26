@@ -1,0 +1,6 @@
+// SSC-005: evolution is distinct from a static identity relation.
+Energy h = 0.5.eV to J
+Operator H = Z[0]
+Time duration = 0.7.fs
+Operator U = exp(-i * H * duration / hbar)
+State evolved = Evolve() { U * |0> }.run()

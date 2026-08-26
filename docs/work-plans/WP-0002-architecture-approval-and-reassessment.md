@@ -23,7 +23,7 @@ technology choices.
 
 | Issue | Status | Initial size | Current size | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- |
-| LISS-0017 | in_progress | L | L | AIP-0017-001 | - | process/architecture-approval-gates |
+| LISS-0017 | done | L | L | AIP-0017-001 | - | process/architecture-approval-gates |
 
 ## Recommended Order
 
@@ -87,5 +87,10 @@ technology choices.
 
 ## Current Next Issue
 
-- LISS-0017 — in progress on `process/architecture-approval-gates`; CI-only
-  validator and common contract alignment are the accepted first slice.
+- None. LISS-0017 merged (PR #22). Plan complete.
+- 2026-08-26: Ledger status synchronized during LISS-0024. Document-lifecycle
+  work that collided on LISS-0017 now lives as LISS-0023 and is not part of
+  this plan.
+
+Process review: no remaining open acceptance notes in the merged
+implementation. Status was stale after merge and was corrected later.

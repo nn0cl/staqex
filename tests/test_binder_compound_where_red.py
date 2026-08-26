@@ -22,11 +22,11 @@ def test_compound_where_and_lowers_filtered_terms() -> None:
     package t
     pub fn main() -> Unit {
         QubitRegister<3> register = system()
-        Operator H = sum (i in Index<0..2>, j in Index<0..2>) where i < j && j < 2 {
+        Operator H = Sigma (i In 0..2, j In 0..2) where i < j && j < 2 {
             Z[i] * Z[j]
         }
-        state a = |0>
-        measure a
+        State a = |0>
+        Measure a
     }
     """
     codes = _codes(source)
@@ -41,7 +41,13 @@ def test_compound_where_and_lowers_filtered_terms() -> None:
     assert "H" in lowered
 
 
-def test_classical_ampersand_outside_where_still_errors() -> None:
+def test_classical_ampersand_on_non_bool_operands_rejects_at_typecheck() -> None:
+    """ADR 0196: `&&` is now a general-expression operator (total pushforward,
+    Bool-only) -- `Float && Float` correctly *parses* and is rejected at
+    typecheck (TYPE_MISMATCH), not at the lexer/parser stage. Renamed from
+    `test_classical_ampersand_outside_where_still_errors`, which asserted the
+    pre-ADR-0196 behavior (a parse-level rejection) that this ADR
+    superseded."""
     codes = _codes(
         """
         package t
@@ -49,15 +55,17 @@ def test_classical_ampersand_outside_where_still_errors() -> None:
             Float x = 1.0
             Float y = 2.0
             Float z = x && y
-            measure z
+            Measure z
         }
         """
     )
-    assert "LEX_ERROR" in codes or "PARSE_ERROR" in codes or "FORBIDDEN_KEYWORD" in codes
+    assert "LEX_ERROR" not in codes
+    assert "PARSE_ERROR" not in codes
+    assert "TYPE_MISMATCH" in codes
 
 
 if __name__ == "__main__":
     test_compound_where_and_lowers_filtered_terms()
     print("PASS test_compound_where_and_lowers_filtered_terms")
-    test_classical_ampersand_outside_where_still_errors()
-    print("PASS test_classical_ampersand_outside_where_still_errors")
+    test_classical_ampersand_on_non_bool_operands_rejects_at_typecheck()
+    print("PASS test_classical_ampersand_on_non_bool_operands_rejects_at_typecheck")

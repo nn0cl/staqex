@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-07-27T12:12:33.332995+00:00",
-  "protocol": "docs/testing/qpex-spec-verification-protocol.md",
-  "total": 160,
-  "passed": 160,
+  "generated_at": "2026-08-23T15:37:35.877465+00:00",
+  "protocol": "docs/testing/staqex-spec-verification-protocol.md",
+  "total": 161,
+  "passed": 161,
   "failed": 0,
   "spec_compliance_rate": 100.0,
   "gate": "PASS",
@@ -48,8 +48,8 @@
     },
     {
       "suite": "SV-01",
-      "case_id": "sv01-dirac",
-      "title": "dirac(42) is State<Int>",
+      "case_id": "sv01-Dirac",
+      "title": "Dirac(42) is State<Int>",
       "passed": true,
       "assertions": [
         "assertTypeIsState",
@@ -71,8 +71,8 @@
     },
     {
       "suite": "SV-02",
-      "case_id": "sv02-when-coin",
-      "title": "when(coin) keeps A and B at 0.5",
+      "case_id": "sv02-when-Coin",
+      "title": "Mix (Coin) keeps A and B at 0.5",
       "passed": true,
       "assertions": [
         "assertTypeIsState",
@@ -123,7 +123,7 @@
     {
       "suite": "SV-04",
       "case_id": "sv04-early-collapse-bad",
-      "title": "mid-measure → EARLY_COLLAPSE_ERROR",
+      "title": "mid-Measure → EARLY_COLLAPSE_ERROR",
       "passed": true,
       "assertions": [
         "assertCompileError(EARLY_COLLAPSE_ERROR)"
@@ -134,7 +134,7 @@
     {
       "suite": "SV-04",
       "case_id": "sv04-early-collapse-ok",
-      "title": "terminal measure accepted",
+      "title": "terminal Measure accepted",
       "passed": true,
       "assertions": [
         "assertCompileError(absent)"
@@ -144,8 +144,8 @@
     },
     {
       "suite": "SV-05",
-      "case_id": "sv05-vacuum-project",
-      "title": "full-reject project → vacuum; map/measure safe",
+      "case_id": "sv05-Vacuum-project",
+      "title": "full-reject project → Vacuum; map/Measure safe",
       "passed": true,
       "assertions": [
         "assertVacuum",
@@ -169,7 +169,7 @@
     },
     {
       "suite": "SV-05",
-      "case_id": "sv05-vacuum-ctor",
+      "case_id": "sv05-Vacuum-ctor",
       "title": "State.vacuum() is norm-0",
       "passed": true,
       "assertions": [
@@ -271,8 +271,8 @@
     },
     {
       "suite": "SV-07",
-      "case_id": "sv07-project-vacuum",
-      "title": "project reject-all → vacuum measure",
+      "case_id": "sv07-project-Vacuum",
+      "title": "project reject-all → Vacuum Measure",
       "passed": true,
       "assertions": [
         "assertVacuum"
@@ -305,11 +305,11 @@
     },
     {
       "suite": "SV-07",
-      "case_id": "sv07-measure-stdout",
-      "title": "terminal measure writes sample",
+      "case_id": "sv07-Measure-stdout",
+      "title": "terminal Measure writes sample",
       "passed": true,
       "assertions": [
-        "measure output"
+        "Measure output"
       ],
       "error_code": null,
       "message": null
@@ -339,22 +339,22 @@
     },
     {
       "suite": "SV-08",
-      "case_id": "sv08-inspect",
-      "title": "inspect logs table; identity on joint",
+      "case_id": "sv08-Inspect",
+      "title": "Inspect logs table; identity on joint",
       "passed": true,
       "assertions": [
-        "inspect"
+        "Inspect"
       ],
       "error_code": null,
       "message": null
     },
     {
       "suite": "SV-08",
-      "case_id": "sv08-snapshot",
-      "title": "snapshot writes CSV host log",
+      "case_id": "sv08-Snapshot",
+      "title": "Snapshot writes CSV host log",
       "passed": true,
       "assertions": [
-        "snapshot"
+        "Snapshot"
       ],
       "error_code": null,
       "message": null
@@ -362,7 +362,7 @@
     {
       "suite": "SV-08",
       "case_id": "sv08-cli-check",
-      "title": "qpex check fails on Forbidden",
+      "title": "staqex check fails on Forbidden",
       "passed": true,
       "assertions": [
         "cli check"
@@ -373,7 +373,7 @@
     {
       "suite": "SV-08",
       "case_id": "sv08-dag-ir",
-      "title": "AST lowers to DAG IR with measure sink",
+      "title": "AST lowers to DAG IR with Measure sink",
       "passed": true,
       "assertions": [
         "dag ir"
@@ -384,11 +384,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B01_never_leave_the_state-never_leave_the_state",
-      "title": "examples/basics/B01_never_leave_the_state/never_leave_the_state.qpex",
+      "title": "examples/basics/B01_never_leave_the_state/never_leave_the_state.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -396,11 +396,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B02_when_not_if-when_not_if",
-      "title": "examples/basics/B02_when_not_if/when_not_if.qpex",
+      "title": "examples/basics/B02_when_not_if/when_not_if.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -408,11 +408,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B03_failure_worldline-failure_worldline",
-      "title": "examples/basics/B03_failure_worldline/failure_worldline.qpex",
+      "title": "examples/basics/B03_failure_worldline/failure_worldline.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -420,11 +420,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B04_evolve_not_loops-evolve_not_loops",
-      "title": "examples/basics/B04_evolve_not_loops/evolve_not_loops.qpex",
+      "title": "examples/basics/B04_evolve_not_loops/evolve_not_loops.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -432,11 +432,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B05_phase_interference-phase_interference",
-      "title": "examples/basics/B05_phase_interference/phase_interference.qpex",
+      "title": "examples/basics/B05_phase_interference/phase_interference.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -444,11 +444,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B06_type_first_dimensions-type_first_dimensions",
-      "title": "examples/basics/B06_type_first_dimensions/type_first_dimensions.qpex",
+      "title": "examples/basics/B06_type_first_dimensions/type_first_dimensions.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -456,11 +456,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B07_structure_visibility-structure_visibility",
-      "title": "examples/basics/B07_structure_visibility/structure_visibility.qpex",
+      "title": "examples/basics/B07_structure_visibility/structure_visibility.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -468,11 +468,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B08_operators_hamiltonians-operators_hamiltonians",
-      "title": "examples/basics/B08_operators_hamiltonians/operators_hamiltonians.qpex",
+      "title": "examples/basics/B08_operators_hamiltonians/operators_hamiltonians.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -480,11 +480,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B09_multi_file_modules-main_multi_file_modules",
-      "title": "examples/basics/B09_multi_file_modules/main_multi_file_modules.qpex",
+      "title": "examples/basics/B09_multi_file_modules/main_multi_file_modules.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -492,11 +492,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B10_static_qpu_lane-main_static_qpu_lane",
-      "title": "examples/basics/B10_static_qpu_lane/main_static_qpu_lane.qpex",
+      "title": "examples/basics/B10_static_qpu_lane/main_static_qpu_lane.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -504,11 +504,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B11_qft_registers-main_qft_registers",
-      "title": "examples/basics/B11_qft_registers/main_qft_registers.qpex",
+      "title": "examples/basics/B11_qft_registers/main_qft_registers.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -516,11 +516,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B12_open_systems-main_open_systems",
-      "title": "examples/basics/B12_open_systems/main_open_systems.qpex",
+      "title": "examples/basics/B12_open_systems/main_open_systems.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -528,11 +528,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B13_host_job_api-main_host_job",
-      "title": "examples/basics/B13_host_job_api/main_host_job.qpex",
+      "title": "examples/basics/B13_host_job_api/main_host_job.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -540,11 +540,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B14_resource_profile-main_resource_profile",
-      "title": "examples/basics/B14_resource_profile/main_resource_profile.qpex",
+      "title": "examples/basics/B14_resource_profile/main_resource_profile.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -552,11 +552,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-basics-B15_multi_register-main_multi_register",
-      "title": "examples/basics/B15_multi_register/main_multi_register.qpex",
+      "title": "examples/basics/B15_multi_register/main_multi_register.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -564,11 +564,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-applied-A01_quantum_attention_toy-main_quantum_attention_toy",
-      "title": "examples/applied/A01_quantum_attention_toy/main_quantum_attention_toy.qpex",
+      "title": "examples/applied/A01_quantum_attention_toy/main_quantum_attention_toy.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -576,11 +576,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-applied-A02_robot_graph_planner-main_robot_graph_planner",
-      "title": "examples/applied/A02_robot_graph_planner/main_robot_graph_planner.qpex",
+      "title": "examples/applied/A02_robot_graph_planner/main_robot_graph_planner.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -588,11 +588,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-applied-A03_h2_vqe-main_h2_vqe",
-      "title": "examples/applied/A03_h2_vqe/main_h2_vqe.qpex",
+      "title": "examples/applied/A03_h2_vqe/main_h2_vqe.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -600,11 +600,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-applied-A04_hp_protein_folding-main_hp_protein_folding",
-      "title": "examples/applied/A04_hp_protein_folding/main_hp_protein_folding.qpex",
+      "title": "examples/applied/A04_hp_protein_folding/main_hp_protein_folding.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -612,11 +612,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-applied-A05_qaoa_portfolio-main_qaoa_portfolio",
-      "title": "examples/applied/A05_qaoa_portfolio/main_qaoa_portfolio.qpex",
+      "title": "examples/applied/A05_qaoa_portfolio/main_qaoa_portfolio.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -624,11 +624,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-applied-A06_topological_edge_memory-main_topological_edge_memory",
-      "title": "examples/applied/A06_topological_edge_memory/main_topological_edge_memory.qpex",
+      "title": "examples/applied/A06_topological_edge_memory/main_topological_edge_memory.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -636,11 +636,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-applied-A07_open_system_sensor-main_open_system_sensor",
-      "title": "examples/applied/A07_open_system_sensor/main_open_system_sensor.qpex",
+      "title": "examples/applied/A07_open_system_sensor/main_open_system_sensor.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -648,11 +648,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-applied-A08_entangled_compute_ancilla-main_entangled_compute_ancilla",
-      "title": "examples/applied/A08_entangled_compute_ancilla/main_entangled_compute_ancilla.qpex",
+      "title": "examples/applied/A08_entangled_compute_ancilla/main_entangled_compute_ancilla.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -660,11 +660,11 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-applied-A09_qkd_corridor-main_qkd_corridor",
-      "title": "examples/applied/A09_qkd_corridor/main_qkd_corridor.qpex",
+      "title": "examples/applied/A09_qkd_corridor/main_qkd_corridor.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -672,11 +672,23 @@
     {
       "suite": "SV-09",
       "case_id": "sv09-applied-A10_mission_observatory-main_mission_observatory",
-      "title": "examples/applied/A10_mission_observatory/main_mission_observatory.qpex",
+      "title": "examples/applied/A10_mission_observatory/main_mission_observatory.sqx",
       "passed": true,
       "assertions": [
-        "qpex check",
-        "qpex run"
+        "staqex check",
+        "staqex run"
+      ],
+      "error_code": null,
+      "message": null
+    },
+    {
+      "suite": "SV-09",
+      "case_id": "sv09-applied-A11_noether_forge-main_static",
+      "title": "examples/applied/A11_noether_forge/main_static.sqx",
+      "passed": true,
+      "assertions": [
+        "staqex check",
+        "staqex run"
       ],
       "error_code": null,
       "message": null
@@ -695,7 +707,7 @@
     {
       "suite": "SV-10",
       "case_id": "sv10-openqasm-bell",
-      "title": "coin/when/measure → OpenQASM H+CX",
+      "title": "Coin/Mix → explicit capability rejection",
       "passed": true,
       "assertions": [
         "emit_openqasm3"
@@ -706,7 +718,7 @@
     {
       "suite": "SV-10",
       "case_id": "sv10-cli-emit-qasm",
-      "title": "qpex emit-qasm CLI",
+      "title": "staqex emit-qasm CLI",
       "passed": true,
       "assertions": [
         "cli"
@@ -717,7 +729,7 @@
     {
       "suite": "SV-10",
       "case_id": "sv10-target-cpu",
-      "title": "qpex run --target cpu",
+      "title": "staqex run --target cpu",
       "passed": true,
       "assertions": [
         "--target cpu"
@@ -728,7 +740,7 @@
     {
       "suite": "SV-10",
       "case_id": "sv10-target-qpu-emit",
-      "title": "qpex run --target qpu:* emits QASM; source portable",
+      "title": "staqex run --target qpu:* rejects unsupported Coin/Mix projection",
       "passed": true,
       "assertions": [
         "--target qpu"
@@ -739,7 +751,7 @@
     {
       "suite": "SV-10",
       "case_id": "sv10-docs",
-      "title": "ADR 0036 + portable_bell_qpu.qpex",
+      "title": "ADR 0036 + portable_bell_qpu.sqx",
       "passed": true,
       "assertions": [
         "docs"
@@ -750,7 +762,7 @@
     {
       "suite": "SV-11",
       "case_id": "sv11-qasm3-syntax",
-      "title": "bell → valid OpenQASM 3.0 text",
+      "title": "Coin/Mix → explicit capability rejection",
       "passed": true,
       "assertions": [
         "QASM3Emitter"
@@ -761,7 +773,7 @@
     {
       "suite": "SV-11",
       "case_id": "sv11-gate-map",
-      "title": "coin→H, when-copy→CX, measure",
+      "title": "Coin/Mix does not use the retired gate fallback",
       "passed": true,
       "assertions": [
         "lower"
@@ -783,7 +795,7 @@
     {
       "suite": "SV-11",
       "case_id": "sv11-cli-openqasm3",
-      "title": "qpex run --target qpu:openqasm3 -o file",
+      "title": "staqex run --target qpu:openqasm3 -o file",
       "passed": true,
       "assertions": [
         "cli"
@@ -793,8 +805,8 @@
     },
     {
       "suite": "SV-13",
-      "case_id": "sv13-evolve-parse",
-      "title": "evolve (x,p) times N {…} parses",
+      "case_id": "sv13-Evolve-parse",
+      "title": "Evolve (x,p) times N {…} parses",
       "passed": true,
       "assertions": [
         "parser"
@@ -804,8 +816,8 @@
     },
     {
       "suite": "SV-13",
-      "case_id": "sv13-evolve-correlated",
-      "title": "Euler evolve keeps (x,p) correlation",
+      "case_id": "sv13-Evolve-correlated",
+      "title": "Euler Evolve keeps (x,p) correlation",
       "passed": true,
       "assertions": [
         "assertSuperposition",
@@ -816,19 +828,19 @@
     },
     {
       "suite": "SV-13",
-      "case_id": "sv13-evolve-times2",
+      "case_id": "sv13-Evolve-times2",
       "title": "times 2 matches two Euler steps",
       "passed": true,
       "assertions": [
-        "evolve"
+        "Evolve"
       ],
       "error_code": null,
       "message": null
     },
     {
       "suite": "SV-13",
-      "case_id": "sv13-examples-evolve",
-      "title": "phase_space + oscillator use evolve",
+      "case_id": "sv13-examples-Evolve",
+      "title": "phase_space + oscillator use Evolve",
       "passed": true,
       "assertions": [
         "examples"
@@ -838,8 +850,8 @@
     },
     {
       "suite": "SV-14",
-      "case_id": "sv14-destructive-vacuum",
-      "title": "e^{i0} + e^{iπ} → interfer → vacuum",
+      "case_id": "sv14-destructive-Vacuum",
+      "title": "e^{i0} + e^{iπ} → interfer → Vacuum",
       "passed": true,
       "assertions": [
         "assertVacuum"
@@ -849,7 +861,7 @@
     },
     {
       "suite": "SV-14",
-      "case_id": "sv14-constructive-dirac",
+      "case_id": "sv14-constructive-Dirac",
       "title": "same-phase interfer → Dirac(7)",
       "passed": true,
       "assertions": [
@@ -907,7 +919,7 @@
     },
     {
       "suite": "SV-15",
-      "case_id": "sv15-dim-ok-evolve",
+      "case_id": "sv15-dim-ok-Evolve",
       "title": "dimension-consistent Euler passes typecheck",
       "passed": true,
       "assertions": [
@@ -930,7 +942,7 @@
     {
       "suite": "SV-15",
       "case_id": "sv15-phase-space-example",
-      "title": "phase_space.qpex Type-First + dims",
+      "title": "phase_space.sqx Type-First + dims",
       "passed": true,
       "assertions": [
         "example"
@@ -941,7 +953,7 @@
     {
       "suite": "SV-16",
       "case_id": "sv16-main-ok",
-      "title": "package + pub fn main Type-First + measure runs",
+      "title": "package + pub fn main Type-First + Measure runs",
       "passed": true,
       "assertions": [
         "main",
@@ -953,7 +965,7 @@
     {
       "suite": "SV-16",
       "case_id": "sv16-toplevel-reject",
-      "title": "bare Delta<Time> at top level → TOPLEVEL_EXECUTION_ERROR",
+      "title": "packaged Type-First without main → TOPLEVEL_EXECUTION_ERROR",
       "passed": true,
       "assertions": [
         "assertCompileError(TOPLEVEL_EXECUTION_ERROR)"
@@ -964,7 +976,7 @@
     {
       "suite": "SV-16",
       "case_id": "sv16-package-import",
-      "title": "package + import qpex.math.* + main parses",
+      "title": "package + import staqex.math.* + main parses",
       "passed": true,
       "assertions": [
         "unit.package",
@@ -986,8 +998,8 @@
     },
     {
       "suite": "SV-17",
-      "case_id": "sv17-evolve-under-x",
-      "title": "evolve |0> under X for π/2 → |1>",
+      "case_id": "sv17-Evolve-under-x",
+      "title": "Evolve |0> under X for π/2 → |1>",
       "passed": true,
       "assertions": [
         "hamiltonian"
@@ -1031,8 +1043,8 @@
     },
     {
       "suite": "SV-18",
-      "case_id": "sv18-h-evolve-length",
-      "title": "H-evolve for Length → DIMENSION_MISMATCH_ERROR",
+      "case_id": "sv18-h-Evolve-length",
+      "title": "H-Evolve for Length → DIMENSION_MISMATCH_ERROR",
       "passed": true,
       "assertions": [
         "DIMENSION_MISMATCH_ERROR"
@@ -1053,7 +1065,7 @@
     },
     {
       "suite": "SV-18",
-      "case_id": "sv18-expect-mix",
+      "case_id": "sv18-expect-Mix",
       "title": "psi + expect → EXPECT_CLASSICAL_ONLY_ERROR",
       "passed": true,
       "assertions": [
@@ -1064,8 +1076,8 @@
     },
     {
       "suite": "SV-18",
-      "case_id": "sv18-evolve-tuple-swap",
-      "title": "Length↔Momentum evolve result → DIMENSION_MISMATCH_ERROR",
+      "case_id": "sv18-Evolve-tuple-swap",
+      "title": "Length↔Momentum Evolve result → DIMENSION_MISMATCH_ERROR",
       "passed": true,
       "assertions": [
         "DIMENSION_MISMATCH_ERROR"
@@ -1097,8 +1109,8 @@
     },
     {
       "suite": "SV-18",
-      "case_id": "sv18-coin-in-evolve",
-      "title": "coin inside evolve → COIN_IN_EVOLVE_ERROR",
+      "case_id": "sv18-Coin-in-Evolve",
+      "title": "Coin inside Evolve → COIN_IN_EVOLVE_ERROR",
       "passed": true,
       "assertions": [
         "COIN_IN_EVOLVE_ERROR"
@@ -1120,7 +1132,7 @@
     {
       "suite": "SV-19",
       "case_id": "sv19-fock-ho-unitary",
-      "title": "Fock H=N+1/2 evolve preserves |0⟩ and unit norm",
+      "title": "Fock H=N+1/2 Evolve preserves |0⟩ and unit norm",
       "passed": true,
       "assertions": [
         "Operator",
@@ -1132,7 +1144,7 @@
     {
       "suite": "SV-19",
       "case_id": "sv19-ising-unitary",
-      "title": "Ising Operator H evolve preserves Born norm",
+      "title": "Ising Operator H Evolve preserves Born norm",
       "passed": true,
       "assertions": [
         "Operator",
@@ -1172,7 +1184,7 @@
       "passed": true,
       "assertions": [
         "expect",
-        "evolve under H"
+        "Evolve under H"
       ],
       "error_code": null,
       "message": null
@@ -1305,7 +1317,7 @@
     {
       "suite": "SV-21",
       "case_id": "sv21-example-file",
-      "title": "controlled_unitary.qpex runs",
+      "title": "controlled_unitary.sqx runs",
       "passed": true,
       "assertions": [
         "examples"
@@ -1372,7 +1384,7 @@
     {
       "suite": "SV-22",
       "case_id": "sv22-dtqw-typed-example",
-      "title": "typed dtqw.qpex runs",
+      "title": "typed dtqw.sqx runs",
       "passed": true,
       "assertions": [
         "examples"
@@ -1448,8 +1460,8 @@
     },
     {
       "suite": "SV-23",
-      "case_id": "sv23-coin-project-banned",
-      "title": "project on classical coin → PREDICATE_PROJECTOR_ERROR",
+      "case_id": "sv23-Coin-project-banned",
+      "title": "project on classical Coin → PREDICATE_PROJECTOR_ERROR",
       "passed": true,
       "assertions": [
         "PREDICATE_PROJECTOR_ERROR"
@@ -1504,7 +1516,7 @@
     {
       "suite": "SV-24",
       "case_id": "sv24-example",
-      "title": "toffoli.qpex runs",
+      "title": "toffoli.sqx runs",
       "passed": true,
       "assertions": [
         "examples"
@@ -1548,7 +1560,7 @@
     {
       "suite": "SV-25",
       "case_id": "sv25-example",
-      "title": "open_control.qpex runs",
+      "title": "open_control.sqx runs",
       "passed": true,
       "assertions": [
         "examples"
@@ -1592,7 +1604,7 @@
     {
       "suite": "SV-26",
       "case_id": "sv26-example",
-      "title": "mixed_control.qpex runs",
+      "title": "mixed_control.sqx runs",
       "passed": true,
       "assertions": [
         "examples"
@@ -1614,11 +1626,11 @@
     },
     {
       "suite": "SV-27",
-      "case_id": "sv27-evolve-ground",
-      "title": "evolve |0⟩ under H_xp stays |0⟩",
+      "case_id": "sv27-Evolve-ground",
+      "title": "Evolve |0⟩ under H_xp stays |0⟩",
       "passed": true,
       "assertions": [
-        "evolve"
+        "Evolve"
       ],
       "error_code": null,
       "message": null
@@ -1626,7 +1638,7 @@
     {
       "suite": "SV-27",
       "case_id": "sv27-example",
-      "title": "xp_oscillator.qpex runs",
+      "title": "xp_oscillator.sqx runs",
       "passed": true,
       "assertions": [
         "examples"
@@ -1659,7 +1671,7 @@
     {
       "suite": "SV-28",
       "case_id": "sv28-ising4-norm",
-      "title": "4-qubit sparse evolve preserves Born norm",
+      "title": "4-qubit sparse Evolve preserves Born norm",
       "passed": true,
       "assertions": [
         "n=4"
@@ -1670,7 +1682,7 @@
     {
       "suite": "SV-28",
       "case_id": "sv28-example",
-      "title": "quantum_ising_4.qpex runs",
+      "title": "quantum_ising_4.sqx runs",
       "passed": true,
       "assertions": [
         "examples"
@@ -1692,8 +1704,8 @@
     },
     {
       "suite": "SV-29",
-      "case_id": "sv29-evolve-norm-mean",
-      "title": "grid evolve preserves norm; ⟨x⟩≈0 for centered Gaussian",
+      "case_id": "sv29-Evolve-norm-mean",
+      "title": "grid Evolve preserves norm; ⟨x⟩≈0 for centered Gaussian",
       "passed": true,
       "assertions": [
         "wavepacket"
@@ -1704,7 +1716,7 @@
     {
       "suite": "SV-29",
       "case_id": "sv29-example",
-      "title": "grid_oscillator.qpex runs",
+      "title": "grid_oscillator.sqx runs",
       "passed": true,
       "assertions": [
         "examples"
@@ -1769,8 +1781,8 @@
     },
     {
       "suite": "SV-30",
-      "case_id": "sv30-evolve-non-hermitian",
-      "title": "evolve under X*Y → NON_UNITARY_TRANSFORM_ERROR",
+      "case_id": "sv30-Evolve-non-hermitian",
+      "title": "Evolve under X*Y → NON_UNITARY_TRANSFORM_ERROR",
       "passed": true,
       "assertions": [
         "NON_UNITARY_TRANSFORM_ERROR"
@@ -1780,8 +1792,8 @@
     },
     {
       "suite": "SV-30",
-      "case_id": "sv30-evolve-grid-ok",
-      "title": "evolve under X/P HO accepted",
+      "case_id": "sv30-Evolve-grid-ok",
+      "title": "Evolve under X/P HO accepted",
       "passed": true,
       "assertions": [
         "ok"
@@ -1804,7 +1816,7 @@
     {
       "suite": "SV-31",
       "case_id": "sv31-linked-run",
-      "title": "main_multi_file_modules.qpex import+evolve runs",
+      "title": "main_multi_file_modules.sqx import+Evolve runs",
       "passed": true,
       "assertions": [
         "run_path",

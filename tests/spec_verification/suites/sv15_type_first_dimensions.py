@@ -26,7 +26,7 @@ def run() -> list[CaseResult]:
         src = as_main("""
 Delta<Time> dt = 0.05.s
 Mass m = 1.0.kg
-measure dt
+Measure dt
 """)
         compiled = compile_source(src)
         if compiled.unit is None:
@@ -72,12 +72,12 @@ measure dt
 Delta<Time> dt = 0.5.s
 Mass m = 1.0.kg
 Stiffness k = 1.0.N_m
-State<Length> x = dirac(1.0.m)
-State<Momentum> p = dirac(0.0.kg_m_s)
-(x, p) = evolve (x, p) for dt {
+State<Length> x = Dirac(1.0.m)
+State<Momentum> p = Dirac(0.0.kg_m_s)
+(x, p) = Evolve (x, p) for dt {
   (x + (dt / m) * p, p - (dt * k) * x)
 }
-measure x
+Measure x
 """)
         compiled = compile_source(src)
         dims = [d for d in compiled.diagnostics if d.get("code") == "DIMENSION_MISMATCH_ERROR"]
@@ -88,11 +88,11 @@ measure x
         ev = Evaluator(seed=0)
         result = ev.run_unit(compiled.unit, stdout=io.StringIO())
         if result.joint.is_vacuum():
-            raise AssertionFailure("SUPERPOSITION_MISMATCH", "vacuum after evolve")
+            raise AssertionFailure("SUPERPOSITION_MISMATCH", "Vacuum after Evolve")
         out.append(
             CaseResult(
                 "SV-15",
-                "sv15-dim-ok-evolve",
+                "sv15-dim-ok-Evolve",
                 "dimension-consistent Euler passes typecheck",
                 True,
                 ["dimensional analysis"],
@@ -102,8 +102,8 @@ measure x
         out.append(
             CaseResult(
                 "SV-15",
-                "sv15-dim-ok-evolve",
-                "dim-ok evolve",
+                "sv15-dim-ok-Evolve",
+                "dim-ok Evolve",
                 False,
                 error_code=e.code,
                 message=str(e),
@@ -113,10 +113,10 @@ measure x
     # Length + Time must be rejected
     try:
         src = as_main("""
-State<Length> x = dirac(1.0.m)
+State<Length> x = Dirac(1.0.m)
 Delta<Time> dt = 0.5.s
-state bad = x + dt
-measure bad
+State bad = x + dt
+Measure bad
 """)
         compiled = compile_source(src)
         dims = [d for d in compiled.diagnostics if d.get("code") == "DIMENSION_MISMATCH_ERROR"]
@@ -173,7 +173,7 @@ measure bad
         ev = Evaluator(seed=0)
         result = ev.run_unit(compiled.unit, stdout=io.StringIO())
         if result.measure is None and not result.joint.is_vacuum():
-            raise AssertionFailure("EARLY_COLLAPSE_ERROR", "missing measure")
+            raise AssertionFailure("EARLY_COLLAPSE_ERROR", "missing Measure")
         out.append(
             CaseResult(
                 "SV-15",

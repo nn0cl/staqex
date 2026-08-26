@@ -1,94 +1,10 @@
-// Named model families for coherent scientific ownership.
+// Names the rotating-frame NV-center sensor model family and documents
+// the D-splitting simplification (see hamiltonian_builder.sqx).
 
 package examples.applied.noether_forge.physics
 
 namespace Forge.Models {
-    pub enum ModelFamily {
-        TransverseIsing,
-        XYChain,
-        HeisenbergChain,
-        MixedFieldIsing
+    pub enum SensorModel {
+        RotatingFrameNvCenter
     }
-
-    pub enum PhaseLabel {
-        Ordered,
-        Disordered,
-        CriticalWindow,
-        Unknown
-    }
-
-    pub struct ModelChoice {
-        val family: ModelFamily
-        val label: PhaseLabel
-    }
-
-    pub fn transverse_ising() -> ModelChoice {
-        return ModelChoice(ModelFamily.TransverseIsing, PhaseLabel.Unknown)
-    }
-
-    pub fn xy_chain() -> ModelChoice {
-        return ModelChoice(ModelFamily.XYChain, PhaseLabel.Unknown)
-    }
-
-    pub fn heisenberg_chain() -> ModelChoice {
-        return ModelChoice(ModelFamily.HeisenbergChain, PhaseLabel.Unknown)
-    }
-
-    pub fn mixed_field_ising() -> ModelChoice {
-        return ModelChoice(ModelFamily.MixedFieldIsing, PhaseLabel.CriticalWindow)
-    }
-
-    pub fn mark_ordered(choice: ModelChoice) -> ModelChoice {
-        return ModelChoice(choice.family, PhaseLabel.Ordered)
-    }
-
-    pub fn mark_disordered(choice: ModelChoice) -> ModelChoice {
-        return ModelChoice(choice.family, PhaseLabel.Disordered)
-    }
-
-    pub fn is_ising_like(choice: ModelChoice) -> Bool {
-        return choice.family == ModelFamily.TransverseIsing || choice.family == ModelFamily.MixedFieldIsing
-    }
-
-    pub fn supports_magnetization(choice: ModelChoice) -> Bool {
-        return true
-    }
-
-    pub fn supports_structure_factor(choice: ModelChoice) -> Bool {
-        return choice.family != ModelFamily.HeisenbergChain
-    }
-
-    pub fn review_default() -> ModelChoice {
-        return mixed_field_ising()
-    }
-
-    pub fn mark_critical(choice: ModelChoice) -> ModelChoice {
-        return ModelChoice(choice.family, PhaseLabel.CriticalWindow)
-    }
-
-    pub fn mark_unknown(choice: ModelChoice) -> ModelChoice {
-        return ModelChoice(choice.family, PhaseLabel.Unknown)
-    }
-
-    pub fn family_rank(family: ModelFamily) -> Int {
-        if family == ModelFamily.TransverseIsing {
-            return 1
-        }
-        if family == ModelFamily.XYChain {
-            return 2
-        }
-        if family == ModelFamily.HeisenbergChain {
-            return 3
-        }
-        return 4
-    }
-
-    pub fn needs_drive_term(choice: ModelChoice) -> Bool {
-        return choice.family == ModelFamily.TransverseIsing || choice.family == ModelFamily.MixedFieldIsing
-    }
-
-    pub fn review_label(choice: ModelChoice) -> PhaseLabel {
-        return choice.label
-    }
-
 }

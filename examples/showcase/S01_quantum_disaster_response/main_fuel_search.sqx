@@ -6,7 +6,11 @@
 package examples.showcase.s01_disaster.fuel_lane
 
 pub fn main() -> Unit {
-    state fuel = dirac(0)
-    state fuel = evolve fuel under X for pi / 2.0 until converged(fuel) max 64
-    measure fuel
+    State fuel = Dirac(0)
+    Energy fuel_energy = 1.0.eV to J
+    Operator H_fuel = fuel_energy * X
+    Time dur = 0.1.fs
+    Operator U_fuel = exp(-i * H_fuel * dur / hbar)
+    State fuel = Evolve() { U_fuel * fuel until converged(fuel) max 64 }.run()
+    Measure fuel
 }

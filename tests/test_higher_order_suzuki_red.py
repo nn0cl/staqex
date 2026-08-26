@@ -21,10 +21,9 @@ def test_suzuki_s2_steps_policy_is_accepted() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state evolved = evolve psi under X for 1.0.s
-                using Suzuki(order = 2, steps = 8)
-            measure evolved
+            State psi = Dirac(0)
+            State evolved = Evolve { psi under X for 1.0.s using Suzuki(order = 2, steps = 8) }.run()
+            Measure evolved
         }
         """
     )
@@ -38,10 +37,9 @@ def test_suzuki_tolerance_policy_requires_explicit_error_mode() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state evolved = evolve psi under X for 1.0.s
-                using Suzuki(order = 2, tolerance = 1e-4, error = EmpiricalEstimate)
-            measure evolved
+            State psi = Dirac(0)
+            State evolved = Evolve { psi under X for 1.0.s using Suzuki(order = 2, tolerance = 1e-4, error = EmpiricalEstimate) }.run()
+            Measure evolved
         }
         """
     )
@@ -55,10 +53,9 @@ def test_suzuki_s4_steps_policy_is_accepted() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state evolved = evolve psi under X for 1.0.s
-                using Suzuki(order = 4, steps = 4)
-            measure evolved
+            State psi = Dirac(0)
+            State evolved = Evolve { psi under X for 1.0.s using Suzuki(order = 4, steps = 4) }.run()
+            Measure evolved
         }
         """
     )
@@ -72,10 +69,9 @@ def test_suzuki_order_three_is_rejected() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state evolved = evolve psi under X for 1.0.s
-                using Suzuki(order = 3, steps = 8)
-            measure evolved
+            State psi = Dirac(0)
+            State evolved = Evolve { psi under X for 1.0.s using Suzuki(order = 3, steps = 8) }.run()
+            Measure evolved
         }
         """
     )
@@ -88,10 +84,9 @@ def test_steps_and_tolerance_are_mutually_exclusive() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state evolved = evolve psi under X for 1.0.s
-                using Suzuki(order = 2, steps = 8, tolerance = 1e-4)
-            measure evolved
+            State psi = Dirac(0)
+            State evolved = Evolve { psi under X for 1.0.s using Suzuki(order = 2, steps = 8, tolerance = 1e-4) }.run()
+            Measure evolved
         }
         """
     )
@@ -104,10 +99,9 @@ def test_tolerance_requires_error_mode_and_steps_forbid_it() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state evolved = evolve psi under X for 1.0.s
-                using Suzuki(order = 2, tolerance = 1e-4)
-            measure evolved
+            State psi = Dirac(0)
+            State evolved = Evolve { psi under X for 1.0.s using Suzuki(order = 2, tolerance = 1e-4) }.run()
+            Measure evolved
         }
         """
     )
@@ -115,10 +109,9 @@ def test_tolerance_requires_error_mode_and_steps_forbid_it() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state psi = dirac(0)
-            state evolved = evolve psi under X for 1.0.s
-                using Suzuki(order = 2, steps = 8, error = Bound)
-            measure evolved
+            State psi = Dirac(0)
+            State evolved = Evolve { psi under X for 1.0.s using Suzuki(order = 2, steps = 8, error = Bound) }.run()
+            Measure evolved
         }
         """
     )

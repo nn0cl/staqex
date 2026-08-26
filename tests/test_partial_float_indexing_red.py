@@ -27,11 +27,11 @@ def test_classical_partial_float_bind_then_binder() -> None:
             [0.0, 0.5],
         ]
         Float[2] row = h[1]
-        Operator H = sum (q in Index<0..1>) {
+        Operator H = Sigma (q In 0..1) {
             row[q] * Z[q]
         }
-        state a = |0>
-        measure a
+        State a = |0>
+        Measure a
     }
     """
     codes = _codes(source)
@@ -52,11 +52,11 @@ def test_partial_as_scalar_coeff_still_rejected() -> None:
         pub fn main() -> Unit {
             QubitRegister<2> register = system()
             Float[2][2] h = [[1.0, 0.0], [0.0, 0.5]]
-            Operator H = sum (p in Index<0..1>) {
+            Operator H = Sigma (p In 0..1) {
                 h[p] * Z[p]
             }
-            state a = |0>
-            measure a
+            State a = |0>
+            Measure a
         }
         """
     )
@@ -73,8 +73,8 @@ def test_partial_shape_mismatch_is_diagnosed() -> None:
                 [4.0, 5.0, 6.0],
             ]
             Float[2] row = h[0]
-            state a = |0>
-            measure a
+            State a = |0>
+            Measure a
         }
         """
     )

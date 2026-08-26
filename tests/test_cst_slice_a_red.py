@@ -12,7 +12,7 @@ if str(_REPO) not in sys.path:
 from compiler.staqex.lexer import Lexer
 from compiler.staqex.tokens import TokenKind
 
-KET_CLOSE = "\u27e9"  # ⟩
+KET_CLOSE = ">"
 
 
 def _load_cst_api():
@@ -27,7 +27,7 @@ def _non_eof(tokens):
 
 def test_lossless_lex_retains_comment_and_whitespace_trivia() -> None:
     lossless_lex, _ = _load_cst_api()
-    source = "package demo  // package note\n\npub fn main() -> Unit {\n    measure |0>\n}\n"
+    source = "package demo  // package note\n\npub fn main() -> Unit {\n    Measure |0>\n}\n"
 
     tokens = lossless_lex(source)
 
@@ -48,16 +48,16 @@ def test_lossless_lex_retains_comment_and_whitespace_trivia() -> None:
     )
 
 
-def test_lossless_lex_preserves_unicode_math_token_kinds() -> None:
+def test_lossless_lex_preserves_ascii_math_token_kinds() -> None:
     lossless_lex, _ = _load_cst_api()
-    source = f"state psi = |0{KET_CLOSE} // unicode ket\nmeasure psi\n"
+    source = f"State psi = |0{KET_CLOSE} // ascii ket\nMeasure psi\n"
 
     tokens = lossless_lex(source)
 
     kinds = [entry.token.kind for entry in tokens if entry.token.kind is not TokenKind.EOF]
     assert TokenKind.KET in kinds
     assert any(
-        trivia.kind == "comment" and "unicode ket" in trivia.text
+        trivia.kind == "comment" and "ascii ket" in trivia.text
         for entry in tokens
         for trivia in (*entry.leading_trivia, *entry.trailing_trivia)
     )
@@ -65,7 +65,7 @@ def test_lossless_lex_preserves_unicode_math_token_kinds() -> None:
 
 def test_build_lossless_cst_exposes_root_and_original_source() -> None:
     _, build_lossless_cst = _load_cst_api()
-    source = "package demo\npub fn main() -> Unit {\n    measure |0>\n}\n"
+    source = "package demo\npub fn main() -> Unit {\n    Measure |0>\n}\n"
 
     cst = build_lossless_cst(source)
 

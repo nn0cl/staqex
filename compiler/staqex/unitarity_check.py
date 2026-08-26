@@ -19,8 +19,10 @@ from .ast_nodes import (
     Dirac,
     EvolveExpr,
     Expr,
+    FunDecl,
     Inspect,
     KetLit,
+    KetSumBinder,
     Lambda,
     LitBool,
     LitFloat,
@@ -28,17 +30,22 @@ from .ast_nodes import (
     LitString,
     Measure,
     Pipe,
+    ReturnStmt,
     Snapshot,
     StateBind,
+    SuperposeExpr,
     TensorExpr,
     TupleExpr,
     UnaryNot,
     Var,
     WhenExpr,
+    OpBin,
+    OpVar,
 )
 from .runtime.hamiltonian import compile_hamiltonian, op_n_qubits
 from .runtime.matrix import mat_dag, mat_mul
 from .runtime.unitaries import named_gate_matrix, rotation_gate_matrix
+from .static_operator_resolution import collect_static_operator_context, resolve_static_operator
 
 _EPS = 1e-8
 
@@ -47,6 +54,7 @@ _QUANTUM_OPS = frozenset(
     {
         "apply",
         "capply",
+        "controlled",
         "ocapply",
         "toffoli",
         "hadamard",
@@ -58,6 +66,7 @@ _QUANTUM_OPS = frozenset(
         "walk_shift",
         "shift",
         "wavepacket",
+        "prepare_selection",
     }
 )
 
@@ -84,6 +93,10 @@ def check_unitarity(unit: CompilationUnit) -> list[dict[str, Any]]:
 
     from .ast_nodes import FunDecl
 
+    # LISS-0411: struct-of-literals constant folding (ADR 0206 completion
+    # for this static-only pass -- no live Evaluator state exists here).
+    _, _, objects = collect_static_operator_context(unit)
+
     operators: dict[str, Any] = {}
     from .stdlib.prelude import PRELUDE_CONSTANTS
 
@@ -107,7 +120,7 @@ def check_unitarity(unit: CompilationUnit) -> list[dict[str, Any]]:
                     local_operators[stmt.names[0]] = stmt.expr
                 continue
             _check_expr_unitarity(
-                stmt.expr, quantum, strict, local_operators, scalars, diags
+                stmt.expr, quantum, strict, local_operators, scalars, objects, unit, diags
             )
 
     for stmt in unit.main.body.stmts:
@@ -115,11 +128,11 @@ def check_unitarity(unit: CompilationUnit) -> list[dict[str, Any]]:
             if isinstance(stmt, Measure):
                 _check_measure_target(stmt.expr, classical, diags)
                 _check_expr_unitarity(
-                    stmt.expr, quantum, strict, operators, scalars, diags
+                    stmt.expr, quantum, strict, operators, scalars, objects, unit, diags
                 )
             elif isinstance(stmt, Snapshot):
                 _check_expr_unitarity(
-                    stmt.expr, quantum, strict, operators, scalars, diags
+                    stmt.expr, quantum, strict, operators, scalars, objects, unit, diags
                 )
             continue
         if stmt.ty is not None and stmt.ty.name == "Operator":
@@ -145,7 +158,7 @@ def check_unitarity(unit: CompilationUnit) -> list[dict[str, Any]]:
                 classical[n] = True
 
         _check_expr_unitarity(
-            stmt.expr, quantum, strict, operators, scalars, diags
+            stmt.expr, quantum, strict, operators, scalars, objects, unit, diags
         )
 
     return diags
@@ -201,6 +214,8 @@ def _check_expr_unitarity(
     strict: dict[str, bool],
     operators: dict[str, Any],
     scalars: dict[str, float],
+    objects: dict[str, Any],
+    unit: CompilationUnit,
     diags: list[dict[str, Any]],
 ) -> None:
     if isinstance(expr, Call):
@@ -282,9 +297,9 @@ def _check_expr_unitarity(
                     u_expr = expr.args[u_idx]
                     n_wires = len(expr.args) - u_idx - 1
             if u_expr is not None and n_wires >= 1:
-                _check_apply_unitary(u_expr, n_wires, operators, scalars, diags, expr)
+                _check_apply_unitary(u_expr, n_wires, operators, scalars, objects, unit, diags, expr)
         for a in expr.args:
-            _check_expr_unitarity(a, quantum, strict, operators, scalars, diags)
+            _check_expr_unitarity(a, quantum, strict, operators, scalars, objects, unit, diags)
         return
 
     if isinstance(expr, WhenExpr):
@@ -297,15 +312,15 @@ def _check_expr_unitarity(
                     "line": expr.span.line,
                     "col": expr.span.col,
                     "message": (
-                        "`when` on a quantum control maps distinct arms to the same "
+                        "`mix` on a quantum control maps distinct arms to the same "
                         "value (non-injective / non-unitary). Prefer `apply` / `capply`."
                     ),
                 }
             )
-        _check_expr_unitarity(expr.ctrl, quantum, strict, operators, scalars, diags)
+        _check_expr_unitarity(expr.ctrl, quantum, strict, operators, scalars, objects, unit, diags)
         for arm in expr.arms:
             _check_expr_unitarity(
-                arm.body, quantum, strict, operators, scalars, diags
+                arm.body, quantum, strict, operators, scalars, objects, unit, diags
             )
         return
 
@@ -313,14 +328,207 @@ def _check_expr_unitarity(
         hop = expr.hamiltonian
         if isinstance(hop, Var) and hop.name in operators:
             _check_hamiltonian_hermitian(
-                hop.name, operators[hop.name], operators, scalars, diags, expr
+                hop.name, operators[hop.name], operators, scalars, objects, unit, diags, expr
             )
         for s in expr.seeds:
-            _check_expr_unitarity(s, quantum, strict, operators, scalars, diags)
+            _check_expr_unitarity(s, quantum, strict, operators, scalars, objects, unit, diags)
+        return
+
+    if isinstance(expr, EvolveExpr) and expr.explicit_transform:
+        # The explicit surface carries its own transform expression.  Do not
+        # route it through the times-block opacity rule: typechecking proves
+        # the required Operator * State shape, while target realization owns
+        # the propagator-specific proof.
+        # Shape errors are owned by the typechecker; do not duplicate them
+        # from the unitarity pass.  When the written propagator is the
+        # canonical exponential, retain the generator check instead of
+        # treating the whole explicit block as opaque.
+        transform = (
+            expr.body.result.lhs
+            if expr.body is not None
+            and isinstance(expr.body.result, BinOp)
+            and expr.body.result.op == "*"
+            else None
+        )
+        propagator = transform
+        if isinstance(transform, Var):
+            propagator = operators.get(transform.name)
+        if (
+            isinstance(propagator, Call)
+            and isinstance(propagator.callee, Var)
+            and propagator.callee.name == "exp"
+            and len(propagator.args) == 1
+        ):
+            exponent = propagator.args[0]
+            if (
+                isinstance(exponent, BinOp)
+                and exponent.op == "/"
+                and isinstance(exponent.lhs, BinOp)
+                and exponent.lhs.op == "*"
+                and isinstance(exponent.lhs.lhs, BinOp)
+                and exponent.lhs.lhs.op == "*"
+            ):
+                generator = exponent.lhs.lhs.rhs
+                if isinstance(generator, Var) and generator.name in operators:
+                    _check_hamiltonian_hermitian(
+                        generator.name,
+                        operators[generator.name],
+                        operators,
+                        scalars,
+                        objects,
+                        unit,
+                        diags,
+                        expr,
+                    )
+        for s in expr.seeds:
+            _check_expr_unitarity(s, quantum, strict, operators, scalars, objects, unit, diags)
+        return
+
+    if isinstance(expr, EvolveExpr) and expr.hamiltonian is None and expr.body is not None:
+        # LISS-0436: `Evolve (vars) times N { block }` has no Hamiltonian to
+        # check Hermiticity of -- unlike the `under H for dur` branch above,
+        # nothing here previously verified the block's own content at all
+        # (it fell through to the generic `_children` walk, which only finds
+        # *nested* Evolve/apply/map/etc. sites to check, never asks whether
+        # the block itself is built from anything trustworthy). A block that
+        # calls an arbitrary user function is opaque: that function's own
+        # body is never inspected, so nothing here actually guarantees the
+        # block is a coherent transform at all. Require every `lets`/`result`
+        # expression to be built only from State arithmetic/tensor-products
+        # and calls to the closed, already-unitarity-checked vocabulary
+        # (`_QUANTUM_OPS`) or to another user function whose own body
+        # satisfies this same constraint, recursively -- fail closed
+        # (`EVOLVE_BLOCK_OPAQUE_TRANSFORM`) on anything else, rather than
+        # silently trusting it.
+        verified: dict[str, bool] = {}
+        transparent = True
+        for lb in expr.body.lets:
+            if not _expr_is_transparent(lb.expr, unit, verified, frozenset()):
+                transparent = False
+                break
+        if transparent and not _expr_is_transparent(
+            expr.body.result, unit, verified, frozenset()
+        ):
+            transparent = False
+        if not transparent:
+            diags.append(
+                {
+                    "code": "EVOLVE_BLOCK_OPAQUE_TRANSFORM",
+                    "line": expr.span.line,
+                    "col": expr.span.col,
+                    "message": (
+                        "`Evolve (...) times N { ... }`'s block must be built "
+                        "only from State arithmetic/tensor-products and calls "
+                        "to an already-unitarity-checked primitive (apply/"
+                        "capply/controlled/walk_shift/...) or a user function "
+                        "whose own body satisfies the same constraint -- an "
+                        "opaque call whose body is not itself verified is not "
+                        "allowed here."
+                    ),
+                }
+            )
+        for s in expr.seeds:
+            _check_expr_unitarity(s, quantum, strict, operators, scalars, objects, unit, diags)
         return
 
     for child in _children(expr):
-        _check_expr_unitarity(child, quantum, strict, operators, scalars, diags)
+        _check_expr_unitarity(child, quantum, strict, operators, scalars, objects, unit, diags)
+
+
+def _expr_is_transparent(
+    expr: Expr,
+    unit: CompilationUnit,
+    verified: dict[str, bool],
+    in_progress: frozenset[str],
+) -> bool:
+    """LISS-0436: does `expr` denote a coherent transform built only from
+    State arithmetic/tensor-products, literals, and calls to either the
+    closed `_QUANTUM_OPS` vocabulary or a user function whose own body
+    satisfies this same constraint (checked recursively)? Fails closed
+    (`False`) on anything else -- a classical control-flow construct
+    (`WhenExpr`/`Mix`, `Pipe`, ...) or a call to an unrecognized/unverified
+    callee -- rather than assuming it's safe."""
+    if isinstance(expr, (Var, LitInt, LitFloat, LitBool, LitString, KetLit)):
+        return True
+    if isinstance(expr, BinOp):
+        return _expr_is_transparent(
+            expr.lhs, unit, verified, in_progress
+        ) and _expr_is_transparent(expr.rhs, unit, verified, in_progress)
+    if isinstance(expr, TensorExpr):
+        return _expr_is_transparent(
+            expr.left, unit, verified, in_progress
+        ) and _expr_is_transparent(expr.right, unit, verified, in_progress)
+    if isinstance(expr, TupleExpr):
+        return all(_expr_is_transparent(it, unit, verified, in_progress) for it in expr.items)
+    if isinstance(expr, Attr):
+        return _expr_is_transparent(expr.obj, unit, verified, in_progress)
+    if isinstance(expr, Call):
+        name = _op_name(expr)
+        args_ok = all(
+            _expr_is_transparent(a, unit, verified, in_progress) for a in expr.args
+        )
+        if not args_ok:
+            return False
+        if name in _QUANTUM_OPS:
+            return True
+        return _fn_body_is_transparent(name, unit, verified, in_progress)
+    return False
+
+
+def _fn_body_is_transparent(
+    name: str,
+    unit: CompilationUnit,
+    verified: dict[str, bool],
+    in_progress: frozenset[str],
+) -> bool:
+    """Recursively verify a user-defined function's own body, memoizing by
+    name (`verified`) and guarding against a call cycle (`in_progress` --
+    a function already being verified higher up the same recursion stack
+    is provisionally trusted, matching how a genuinely-cyclic pair of
+    mutually-recursive transforms would still each individually reduce to
+    the same closed vocabulary at their own base case)."""
+    if name in verified:
+        return verified[name]
+    if name in in_progress:
+        return True
+    fn = next(
+        (
+            d
+            for d in unit.decls
+            if isinstance(d, FunDecl) and d.name == name
+        ),
+        None,
+    )
+    if fn is None:
+        return False
+    next_in_progress = in_progress | {name}
+    ok = True
+    for stmt in fn.body.stmts:
+        if isinstance(stmt, StateBind):
+            if stmt.ty is not None and stmt.ty.name == "Operator":
+                # An Operator-typed bind constructs matrix/Hamiltonian
+                # *data* (Pauli-atom OpBin/OpVar trees, a different AST
+                # family from the general expression grammar this check
+                # otherwise walks) -- it doesn't act on a State by itself,
+                # so it isn't a "transform" this check needs to verify.
+                # Its actual use (`apply(CoinOp, c)`) is what matters, and
+                # that call site is already checked as an ordinary Call
+                # below; `_check_apply_unitary` independently verifies the
+                # matrix itself is unitary. Matches `check_unitarity`'s own
+                # top-level loop, which skips Operator binds the same way.
+                continue
+            if not _expr_is_transparent(stmt.expr, unit, verified, next_in_progress):
+                ok = False
+                break
+        elif isinstance(stmt, ReturnStmt):
+            if not _expr_is_transparent(stmt.expr, unit, verified, next_in_progress):
+                ok = False
+                break
+        else:
+            ok = False
+            break
+    verified[name] = ok
+    return ok
 
 
 def _check_apply_unitary(
@@ -328,6 +536,8 @@ def _check_apply_unitary(
     n_wires: int,
     operators: dict[str, Any],
     scalars: dict[str, float],
+    objects: dict[str, Any],
+    unit: CompilationUnit,
     diags: list[dict[str, Any]],
     site: Expr,
 ) -> None:
@@ -357,7 +567,13 @@ def _check_apply_unitary(
             return
         name = u_expr.name
         if name in operators:
-            op_ast = operators[name]
+            # LISS-0411: resolve struct-field coefficients before
+            # op_n_qubits/compile_hamiltonian, which don't understand
+            # OpAttr -- matches the live Evaluator's own resolution
+            # (ADR 0206/LISS-0410), statically, with no runtime state.
+            op_ast = resolve_static_operator(
+                operators[name], unit=unit, operators=operators, objects=objects
+            )
             nq = op_n_qubits(op_ast, operators, scalars)
             if nq == 0 or nq < 0:
                 kind = "Fock" if nq == 0 else "grid"
@@ -406,27 +622,44 @@ def _check_hamiltonian_hermitian(
     op_ast: Any,
     operators: dict[str, Any],
     scalars: dict[str, float],
+    objects: dict[str, Any],
+    unit: CompilationUnit,
     diags: list[dict[str, Any]],
     site: Expr,
 ) -> None:
     try:
-        nq = op_n_qubits(op_ast, operators, scalars)
+        # Coefficients such as `scale` may be dimensioned classical values
+        # that are not represented in the static scalar table.  Give those
+        # symbols a neutral numeric witness for the matrix-shape/Hermiticity
+        # check; this must never be used for execution or magnitude analysis.
+        witness_scalars = dict(scalars)
+        def collect_coefficients(node: Any) -> None:
+            if isinstance(node, OpVar):
+                if node.name not in operators:
+                    witness_scalars.setdefault(node.name, 1.0)
+            elif isinstance(node, OpBin):
+                collect_coefficients(node.lhs)
+                collect_coefficients(node.rhs)
+        collect_coefficients(op_ast)
+        # LISS-0411: same struct-field resolution as _check_apply_unitary.
+        op_ast = resolve_static_operator(op_ast, unit=unit, operators=operators, objects=objects)
+        nq = op_n_qubits(op_ast, operators, witness_scalars)
         if nq == 0:
             mat = compile_hamiltonian(
-                op_ast, env=operators, scalars=scalars, n_qubits=0, fock_dim=4
+                op_ast, env=operators, scalars=witness_scalars, n_qubits=0, fock_dim=4
             )
         elif nq < 0:
             xs = [-3.0 + i * (6.0 / 16) for i in range(16)]
             mat = compile_hamiltonian(
                 op_ast,
                 env=operators,
-                scalars=scalars,
+                scalars=witness_scalars,
                 n_qubits=-1,
                 grid_xs=xs,
             )
         else:
             mat = compile_hamiltonian(
-                op_ast, env=operators, scalars=scalars, n_qubits=nq
+                op_ast, env=operators, scalars=witness_scalars, n_qubits=nq
             )
         if not _is_hermitian(mat):
             diags.append(
@@ -470,6 +703,8 @@ def _expr_is_quantum(
     ops = _STRICT_QUANTUM_OPS if strict_mode else _QUANTUM_OPS
     if isinstance(expr, KetLit):
         return True
+    if isinstance(expr, KetSumBinder):
+        return True
     if isinstance(expr, Coin):
         return False
     if isinstance(expr, Var):
@@ -494,6 +729,17 @@ def _expr_is_quantum(
             _expr_is_quantum(a, quantum, strict_mode=strict_mode) for a in expr.args
         )
     if isinstance(expr, WhenExpr):
+        return _expr_is_quantum(
+            expr.ctrl, quantum, strict_mode=strict_mode
+        ) or any(
+            _expr_is_quantum(a.body, quantum, strict_mode=strict_mode)
+            for a in expr.arms
+        )
+    if isinstance(expr, SuperposeExpr):
+        # LISS-0375: `superpose (control) { ... }` is structurally
+        # parallel to `WhenExpr` (SuperposeArm docstring) but was never
+        # given the same coherent-lineage recognition here, so a state
+        # bound via superpose was silently tracked as non-quantum.
         return _expr_is_quantum(
             expr.ctrl, quantum, strict_mode=strict_mode
         ) or any(

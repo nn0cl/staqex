@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted** (Adjudicator, 2026-07-31) — normative orientation for language design and agent behavior |
+| Status | **Accepted** (Adjudicator, 2026-07-31; **§2.2 Accepted 2026-08-08**) — normative orientation for language design and agent behavior |
 | Authority | Adjudicator (human architect); not superseded by agent preference |
 | Companions | [ADR 0095](decision-themes/dec-0003-language-surface-and-physicist-first-dx.md), [physicist-dx-harmony](physicist-dx-harmony.md), [axioms](staqex-language-axioms.md), [friction ledger](physicist-source-friction-ledger.md), [minimal dialect (Accepted)](physicist-minimal-dialect.md), [destructive simplification sketch](staqex-destructive-simplification-sketch.md), [ADR 0106](decision-themes/dec-0003-language-surface-and-physicist-first-dx.md), [ADR 0071](decision-themes/dec-0006-host-qpu-and-external-ports.md), [ADR 0111](decision-themes/dec-0006-host-qpu-and-external-ports.md) |
 | Spec entry | [`staqex-language-specification.md`](../specs/staqex-language-specification.md) §1.1 |
@@ -50,8 +50,12 @@ writable program executes on every device.
 | Target/profile rejects unsupported work **explicitly** | Silent success, Host fake-emulation, or “close enough” lowering |
 | Cost, depth, qubit count as **diagnostics / capability checks** | Using those costs to ban or rename the surface spelling |
 
-**Writeable ≠ executable on a chosen target.** Execution feasibility is enforced
-by fail-closed compilation, capability profiles, and Host submission contracts
+**Writeable ≠ executable on a chosen target** separates **meaning** from
+**realization**. It does **not** mean “Staqex programs are non-executable,”
+and it does not weaken §2.2: when a target can realize the written meaning, it
+must realize *that* meaning; when it cannot, it rejects explicitly without
+rewriting the chalk. Feasibility is enforced by fail-closed compilation,
+capability profiles, and Host submission contracts
 ([ADR 0106](decision-themes/dec-0003-language-surface-and-physicist-first-dx.md),
 [ADR 0071](decision-themes/dec-0006-host-qpu-and-external-ports.md),
 [ADR 0111](decision-themes/dec-0006-host-qpu-and-external-ports.md)) — not by
@@ -63,13 +67,53 @@ A separate “executability ADR” is **not** required to accept this vision; th
 boundaries are already accepted. New ADRs are needed only when a *new* rejection
 or feedback shape is proposed.
 
+### 2.2 Source must denote the same thing as the blackboard
+
+What a physicist writes while thinking on the blackboard — including the
+intermediate forms of that thought process — must remain the **same denoted
+physics** when expressed as a Staqex program. The program is not a loose
+translation into a different dialect; it is the blackboard’s **canonical
+written form** under one meaning.
+
+**Same meaning** means: reading the source recovers the same physics narrative
+the chalk expressed (states, operators, expansions, juxtapositions, and
+attached intent such as lane markers or region attributes). It does **not**
+require glyph-for-glyph identity with a particular chalkboard rendering
+(presentation affordances such as ASCII source spelling remain allowed when
+they preserve semantics — see ADR 0191 / ADR 0189).
+
+**Intentional transform has priority.** When the physicist deliberately
+rewrites — expands a sum, substitutes an equivalent operator, factors a term,
+or chooses a lane-appropriate spelling (for example an explicit circuit form)
+— that intentionally written form becomes the new blackboard and therefore the
+new program positive. Machine- or DX-driven forced rewrites that change the
+denoted narrative without that intent are forbidden. Intentional transform
+never authorizes violating §3 axioms (Never Leave the State, `when` not `if`,
+terminal `measure`, and related laws).
+
+**Composition stability (corollary).** Expanding, rewriting, or combining
+independently well-formed blackboard fragments must not silently drop enclosing
+structure or attached intent, and must not force a flatten-to-gates or a new
+grammar category *only* so fragments can sit together. Unsupported composition
+fails closed with an explicit diagnostic and, when still open, is recorded in
+the friction ledger / Issues — not papered over in official examples.
+
+| Layer | What “same” requires |
+|---|---|
+| **Meaning (source ↔ blackboard)** | Same denoted physics narrative and attached intent |
+| **Realization (target / profile)** | Realize that meaning when capable; otherwise explicit reject — never a silent different meaning |
+
+This clause forbids the §4 anti-pattern (equation → broken DSL → QPU port) at
+the surface. It does not invent open lane semantics by implication, and it
+does not promise every composition runs on every device (§2.1).
+
 ## 3. Non-negotiable physics laws (object language)
 
 From axioms and the normative spec:
 
 - **Never Leave the State** — mid-program values stay in the joint; collapse
   only at terminal `measure` in the Static Kernel lane.
-- **`when` not `if`** — classical short-circuit control is rejected so unitary /
+- **`mix` not `if`** — classical short-circuit control is rejected so unitary /
   mixture narratives stay honest.
 - **No classical `while` / bare `for` as Joint control** inside the Static
   Kernel — state update uses `evolve` (and related pure Joint transformers).
@@ -85,7 +129,7 @@ anywhere.”
 
 | Layer | Role | Repetition / control (normative sketch) |
 |---|---|---|
-| **Static Kernel** | NLTS Joint evolution; terminal `measure` | `evolve`; `when`; **no** classical `if` / `while` / bare `for` |
+| **Static Kernel** | NLTS Joint evolution; terminal `measure` | `evolve`; `mix`; **no** classical `if` / `while` / bare `for` |
 | **Static QPU / Hilbert surface** | Explicit register factors | Static **`forEach`** elaboration over `QubitRegister<N>` ([ADR 0069](decision-themes/dec-0005-quantum-operations-and-runtime.md)) — not a classical loop over measured bits |
 | **Parametric lane** | Symbolic gate parameters | `Param<T>` + Host binding ([ADR 0070](decision-themes/dec-0006-host-qpu-and-external-ports.md)) |
 | **Dynamic QPU lane** | Feed-forward / mid-circuit (capability-gated) | Separate `dynamic qpu` surface; unsupported → reject ([ADR 0071](decision-themes/dec-0006-host-qpu-and-external-ports.md)) |
@@ -161,7 +205,7 @@ file; process cadence lives in collaboration docs. The obligation here is
 
 | Document | Role |
 |---|---|
-| This file | Adjudicator vision / priority / anti-patterns / boundary clarifications (living; agents bind here) |
+| This file | Adjudicator vision / priority / anti-patterns / boundary clarifications (living; agents bind here), including §2.2 blackboard↔source sameness |
 | `staqex-design-philosophy.md` | Historical archive of design intent; defer to this file + ADR 0095 on conflict |
 | ADR 0095 | Ideal-form operational rules |
 | ADR 0106 / 0069 / 0070 / 0071 / 0111 | Lanes, capability rejection, delivery honesty (executability ≠ surface folding) |

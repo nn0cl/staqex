@@ -6,11 +6,20 @@ Use this as the first short entry point before coding.
 
 Each new LLM session starts without prior chat context.
 
-1. Read the Adjudicator message for operating path, phase, spec or ADR, issue,
-   and branch.
+1. Read the Adjudicator message for operating path, phase, spec or ADR, and
+   branch. Read a cited ISSUE or work plan only when resuming that work.
 2. If resuming, read the cited handoff or trace before other documents.
 3. Recover progress from repository artifacts, not from assumed chat history.
-4. If path, phase, or authoritative scope is missing, stop after design intake
+   Current rules come from policy documents, ADRs, and specifications, not
+   from ISSUES or work plans.
+4. Read `docs/collaboration/project-conventions.md` when present. If it is
+   missing, stop and ask to create it from
+   `docs/templates/project-conventions.md`.
+5. If `docs/collaboration/runtime-routing.toml` exists, apply it when routing
+   review or implementation. If it is missing, keep capability-class routing
+   on the host agent and do not invent model names. See
+   `docs/collaboration/runtime-routing.md`.
+6. If path, phase, or authoritative scope is missing, stop after design intake
    and ask the Adjudicator.
 
 For Adjudicator checklists and resume examples, see
@@ -32,8 +41,9 @@ Read:
 2. directly touched files.
 3. `docs/collaboration/definition-of-done.md` before final reporting.
 
-Output a compact design note with scope, omitted context, deterministic checks,
-and why Feature Path or Architecture Path is unnecessary.
+Load `.agents/skills/design-intake/SKILL.md` and output its compact design
+note with scope, omitted context, deterministic checks, and why Feature Path
+or Architecture Path is unnecessary.
 
 Do not use Fast Path when the task changes behavior, tests, architecture,
 agent instructions, collaboration rules, privacy policy, or accepted specs.
@@ -48,19 +58,15 @@ Read:
 2. `docs/at-tdd/process.md`.
 3. `docs/collaboration/ai-human-scheme.md`.
 4. `docs/architecture/ai-request-routing.md`.
-5. target specification under `docs/specs/`.
+5. target specification under `docs/specs/`. Do not start from an ISSUE or
+   work plan unless the Adjudicator cited it for resume.
 6. area-specific architecture document.
 7. `docs/architecture/implementation-readiness.md`.
 8. `docs/architecture/io-reasoning-contracts.md` only when AI/model output is
    involved.
-9. when the work touches **language surface, semantics, diagnostics, or
-   official examples**: `docs/architecture/adjudicator-language-vision.md`,
-   `docs/architecture/decision-themes/dec-0003-language-surface-and-physicist-first-dx.md`, and
-   `docs/architecture/physicist-dx-harmony.md`.
 
-Output the full `[DESIGN CHECK]` scaffold and execute only the requested phase.
-For language-affecting work, the design note must state physicist-first
-preservation or stop for Architecture approval (see language vision §6).
+Load `.agents/skills/design-intake/SKILL.md` and output the full
+`[DESIGN CHECK]` scaffold. Execute only the requested phase.
 
 ### Architecture Path
 
@@ -73,16 +79,19 @@ Read:
 2. `docs/collaboration/ai-human-scheme.md`.
 3. `docs/architecture/ai-request-routing.md`.
 4. `docs/collaboration/model-tool-capability-matrix.md`.
-5. `docs/collaboration/privacy-context-budget-policy.md`.
-6. relevant ADRs and touched contract files.
-7. `docs/architecture/io-reasoning-contracts.md` when AI/model output is
+5. `docs/collaboration/runtime-routing.md` when review or implementation
+   routing is involved.
+6. `.agents/skills/process-lessons/SKILL.md` when design or implementation
+   routing is involved.
+7. `docs/collaboration/process-review.md` when closing an issue or work plan.
+8. `docs/collaboration/privacy-context-budget-policy.md`.
+9. relevant ADRs and touched contract files. ADRs may cite ISSUES or work
+   plans as evidence; do not treat those citations as the next required read.
+10. `docs/architecture/io-reasoning-contracts.md` when AI/model output is
    involved.
-8. for **language** ADRs or surface decisions:
-   `docs/architecture/adjudicator-language-vision.md` and
-   `docs/architecture/decision-themes/dec-0003-language-surface-and-physicist-first-dx.md`
-   (plus `physicist-dx-harmony.md` when DX features are in scope).
 
-Output the full `[DESIGN CHECK]` scaffold and stop for Adjudicator approval when a new
+Load `.agents/skills/design-intake/SKILL.md` and output the full
+`[DESIGN CHECK]` scaffold. Stop for Adjudicator approval when a new
 architecture or process decision is required.
 
 ## Design First
@@ -116,14 +125,6 @@ Only execute the phase explicitly requested by the Adjudicator.
 Phase transitions require Adjudicator approval. Do not start Phase 2 from
 unreviewed Phase 1 tests.
 
-**Claude Code exception (non-normative pointer, ADR 0112 / ADR 0113):** for
-named-Issue Feature Path work and for Issues named by an approved bounded
-execution batch record, `CLAUDE.md` §"Claude Code Issue-Level and Work-Plan
-Autonomy" supersedes this section. Claude Code should read that section before
-concluding that a phase-transition approval is required. This paragraph does
-not change the rule for `AGENTS.md`, Copilot, Codex, Grok, or Cursor, which
-remain bound by the per-phase gate above.
-
 Approval is typed and scoped. Scope approval authorizes investigation or
 design only; architecture, technology selection, phase, and implementation
 approval must be explicit. A proposed ADR is not implementation authorization.
@@ -155,13 +156,7 @@ plan before continuing.
 - Adapters implement ports.
 - Delivery handlers (UI components, HTTP/RPC handlers, CLI entry points) are
   thin and call use cases only.
-- The MVP has no application datastore, no cloud DB, no QPU adapter, and no
-  LLM provider inside the language runtime; those remain future optional
-  ports.
-- Runtime external I/O goes through ports only: `RngPort` (entropy for
-  `measure` sampling), `SourcePort` (program loading from file or stdin), and
-  `MeasureSinkPort` (measurement / diagnostic output). Secret storage is
-  reserved and not required for MVP.
+- Datastore and runtime facts: `docs/collaboration/project-conventions.md`.
 
 ## Required Area Documents
 
@@ -170,34 +165,12 @@ plan before continuing.
 - Dependency policy: `docs/architecture/dependency-policy.md`
 - AI input/output/reasoning: `docs/architecture/io-reasoning-contracts.md`
 - AI-human collaboration: `docs/collaboration/ai-human-scheme.md`
-- Language axioms (immutable): `docs/architecture/staqex-language-axioms.md`
-- Adjudicator language vision (physicist-first):
-  `docs/architecture/adjudicator-language-vision.md`
-- Physicist × DX harmony: `docs/architecture/physicist-dx-harmony.md`
-- Normative language spec: `docs/specs/staqex-language-specification.md` and
-  grammar `docs/specs/grammar/staqex.ebnf`
-- Surface lexicon and tokens: `docs/architecture/staqex-syntax-vocabulary.md`,
-  `docs/architecture/staqex-token-specification.md`
-- AST and type system: `docs/architecture/staqex-ast-design.md`,
-  `docs/architecture/staqex-type-system.md`
-- Runtime and backends: `docs/architecture/staqex-runtime-execution-model.md`,
-  `docs/architecture/staqex-backend-targets.md`
-- Spec verification: `docs/testing/staqex-spec-verification-protocol.md`
-- Open / deferred capabilities: `docs/architecture/open-work-register.md`
-- Full architecture document index: `docs/architecture/README.md`
+- Project conventions: `docs/collaboration/project-conventions.md`
+- Stack-specific architecture documents listed in that conventions file
 
 ## Stop Conditions
 
 Stop and ask for Adjudicator decision or ADR when the task requires choosing:
 
-- any application datastore, persistence engine, or schema; the MVP has none.
-- an LLM provider, embedding model, or vector store inside the language
-  runtime; the project boundaries exclude these.
-- secret storage or a credential / vault layout; it is reserved and not
-  required for MVP.
-- a QPU provider SDK, credentials, network adapter, or retry policy;
-  provider-neutral submit/job ports are shipped (ADR 0083), but real provider
-  submission stays outside the Kernel.
-- any other open technology choice recorded in
-  `docs/architecture/README.md` "Remaining Technology Evaluation" or
-  `docs/architecture/open-work-register.md`.
+- a current non-decision listed in `docs/collaboration/project-conventions.md`.
+- a new technology, provider, datastore, or schema beyond that file.

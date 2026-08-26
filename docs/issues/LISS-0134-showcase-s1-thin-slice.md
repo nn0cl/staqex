@@ -9,8 +9,8 @@
 - Priority: P0
 - Depends on: [LISS-0127](../architecture/documentation-compression-map.md) S0;
   [LISS-0126](../architecture/documentation-compression-map.md) P2; Option B complete
-- Spec: [S0](../specs/staqex-v1-showcase-s0-specification.md);
-  [rebaseline S1](../specs/staqex-v1-representative-program-rebaseline.md)
+- Spec: [rebaseline S1](../specs/staqex-v1-representative-program-rebaseline.md);
+  [historical S1 example](../../examples/showcase/quantum_matter_discovery/README.md)
 - Branch: `feature/liss-0134-showcase-s1-thin-slice`
 - Implementation permission: **yes** (S1 authorize 2026-07-31 「承認」)
 - Entry: `examples/showcase/quantum_matter_discovery/main_quantum_matter_discovery.sqx`

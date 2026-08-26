@@ -54,8 +54,8 @@ def run() -> list[CaseResult]:
             as_main(
                 """
 Operator Hxp = 0.5 * (P * P + Q * Q)
-state x = dirac(0)
-measure x
+State x = Dirac(0)
+Measure x
 """
             )
         )
@@ -89,13 +89,19 @@ measure x
         )
 
     try:
+        # LISS-0337: Time-typed duration to satisfy ADR 0195's fail-closed
+        # check. dirac(0) is an eigenstate of H=0.5(P^2+Q^2), so the
+        # assertion (population stays at |0>) is invariant to the exact
+        # real duration chosen.
         result, _ = _eval(
             as_main(
                 """
-Operator H = 0.5 * (P * P + Q * Q)
-state psi = dirac(0)
-state psi = evolve psi under H for 2.0
-measure psi
+Energy e = 0.5.eV to J
+Time dur = 1.0.fs
+Operator H = e * (P * P + Q * Q)
+State psi = Dirac(0)
+State psi = Evolve { psi under H for dur }.run()
+Measure psi
 """
             )
         )
@@ -105,18 +111,18 @@ measure psi
         out.append(
             CaseResult(
                 "SV-27",
-                "sv27-evolve-ground",
-                "evolve |0⟩ under H_xp stays |0⟩",
+                "sv27-Evolve-ground",
+                "Evolve |0⟩ under H_xp stays |0⟩",
                 True,
-                ["evolve"],
+                ["Evolve"],
             )
         )
     except AssertionFailure as e:
         out.append(
             CaseResult(
                 "SV-27",
-                "sv27-evolve-ground",
-                "evolve |0⟩ under H_xp stays |0⟩",
+                "sv27-Evolve-ground",
+                "Evolve |0⟩ under H_xp stays |0⟩",
                 False,
                 [],
                 error_code=e.code,
@@ -130,7 +136,7 @@ measure psi
         )
         result, _ = _eval(src)
         if result.measure is None:
-            raise AssertionFailure("MEASURE", "no measure")
+            raise AssertionFailure("MEASURE", "no Measure")
         out.append(
             CaseResult(
                 "SV-27",

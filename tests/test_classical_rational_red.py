@@ -33,8 +33,8 @@ def test_classical_float_keeps_fraction() -> None:
         package t
         pub fn main() -> Unit {
             Float x = 1 / 3
-            state s = x
-            measure s
+            State s = x
+            Measure s
         }
         """
     compiled = compile_source(src)
@@ -70,8 +70,8 @@ def test_state_literal_div_is_float_on_joint() -> None:
         """
         package t
         pub fn main() -> Unit {
-            state s = 1 / 3
-            measure s
+            State s = 1 / 3
+            Measure s
         }
         """,
         stdout=io.StringIO(),
