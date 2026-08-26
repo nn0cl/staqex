@@ -120,8 +120,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for n in 0001 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018; do
-            ls "docs/architecture/adr/${n}-"*.md >/dev/null
+          for file in \
+            docs/architecture/decision-themes/dec-0001-governance-and-collaboration.md \
+            docs/architecture/decision-themes/dec-0002-state-first-semantics-and-measurement.md \
+            docs/architecture/decision-themes/dec-0003-language-surface-and-physicist-first-dx.md \
+            docs/architecture/decision-themes/dec-0004-type-first-scientific-model.md \
+            docs/architecture/decision-themes/dec-0005-quantum-operations-and-runtime.md \
+            docs/architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md \
+            docs/architecture/decision-themes/dec-0007-documentation-and-decision-records.md \
+            docs/architecture/adr/0187-documentation-source-record-compaction.md \
+            docs/architecture/adr/0188-decision-theme-canonical-surface.md; do
+            test -f "$file"
           done
 
       - name: Check script syntax
@@ -147,6 +156,12 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/check-document-lifecycle.py
+
+      - name: Check coverage ledger / Open Topics consistency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/check-coverage-ledger-consistency.py
 
       - name: Check unresolved conflict markers
         shell: bash
@@ -277,6 +292,39 @@ jobs:
             echo "See docs/collaboration/prompt-instruction-change-control.md." >&2
             exit 1
           fi
+
+  kernel-tests:
+    name: Kernel root suites
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install pytest (CI runner only)
+        run: python3 -m pip install --upgrade pip pytest
+
+      - name: Run root suites
+        run: python3 -m pytest tests/ -q
+
+  spec-verification:
+    name: Spec verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Run spec verification
+        run: python3 tests/spec_verification/run_all.py
 
   # Add stack-specific jobs here once the implementation exists, for example:
   #
