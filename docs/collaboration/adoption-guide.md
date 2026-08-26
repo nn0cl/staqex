@@ -133,7 +133,7 @@ template content manually rather than running the automated sync.
 The script never commits to the target's trunk branch; it creates a
 dedicated branch and opens a PR, per
 `docs/collaboration/branch-commit-pr-discipline.md` and
-`docs/architecture/adr/0008-template-update-propagation.md`. It does not
+`docs/architecture/decision-themes/dec-0001-governance-and-collaboration.md`. It does not
 clone or register repositories on its own, and this template repository does
 not track which projects have adopted it.
 
