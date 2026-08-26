@@ -2,7 +2,7 @@
 
 ## Status
 
-**Phase 1 Red — failing acceptance tests only; implementation not approved**
+**Phase 2 Green — minimum implementation for reviewed Red tests**
 
 ## [DESIGN CHECK]
 
@@ -106,7 +106,8 @@ artifact emission.
 - Scope approval: granted by user on 2026-08-26.
 - Architecture approval: granted by user on 2026-08-26 for this design batch.
 - Phase 1 approval: granted by user on 2026-08-26 for failing tests only.
-- Implementation approval: not granted.
+- Phase 2 approval: granted by user on 2026-08-26 for the reviewed Red slice.
+- Implementation approval: granted for this bounded Phase 2 slice only.
 - Post-review: completed; latest independent review is `COMPLETE` / `READY`.
 
 ## Phase 1 execution record
@@ -121,3 +122,16 @@ artifact emission.
   implementation, deployment work, provider selection, and merge actions.
 - Expected Red state: the current JSON-based fingerprint does not yet enforce
   NFC normalization or rejection of non-finite numeric values.
+
+## Phase 2 execution record
+
+- Typed approval: user message `承認`, 2026-08-26.
+- Allowed operation: minimum production implementation required by the Red
+  fingerprint tests; no unrelated semantic or deployment changes.
+- Implementation: `compiler/staqex/qpu_ir.py` now uses a tagged canonical byte
+  serializer with big-endian u64 lengths, UTF-8/NFC strings, recursive arrays,
+  finite IEEE-754 numbers, and ordered provenance digest inputs.
+- Verification: direct smoke checks passed for NFC normalization, non-finite
+  rejection, instruction order, and duplicate preservation; `py_compile` and
+  `git diff --check` passed. pytest remains unavailable in this environment.
+- Test changes: reviewed Phase 1 tests were not modified.
