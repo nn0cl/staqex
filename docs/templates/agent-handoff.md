@@ -26,6 +26,9 @@ are complete.
 - Omitted:
 - Assumptions:
 - Open decisions:
+- Review isolation (`same_context` / `separate_context` / `ask`, or missing):
+- Implementation isolation (`host` / `separate_context` / `ask`, or missing):
+- Requested model identifiers (or empty / capability class):
 
 ## Next Safe Action
 

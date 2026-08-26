@@ -78,17 +78,10 @@ Rules:
 
 ## Mandatory `[DESIGN CHECK]`
 
-Before Feature Path or Architecture Path work, agents must output:
-
-1. Preconditions, triggers, and expected results.
-2. Existing or new target components.
-3. Ambiguous boundaries that must not be guessed.
-4. AI payload context to include and omit.
-5. Suggested model, assistant, or deterministic tool routing.
-6. Input, output, and reasoning evidence contract for AI-assisted tasks.
-
-For Fast Path work, agents may output a compact design note instead of the full
-`[DESIGN CHECK]` scaffold.
+Before Feature Path or Architecture Path work, agents load
+`.agents/skills/design-intake/SKILL.md` and output its `[DESIGN CHECK]`
+scaffold. For Fast Path work, agents may output the compact design note in
+that skill instead of the full scaffold.
 
 The design check is concise, auditable decision metadata. It must not expose
 hidden chain-of-thought. Scope approval, architecture approval, technology

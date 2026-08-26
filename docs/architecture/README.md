@@ -1,72 +1,96 @@
-# Staqex architecture
+# Architecture Overview
 
-This page is the architecture index. It records current boundaries and points
-to the canonical decision and work registers; it is not a second copy of every
-ADR or work-plan narrative.
+The project uses Clean Architecture. Runtime, stack, domain summary, ports,
+and non-decisions live in `docs/collaboration/project-conventions.md`.
 
-## Start here
+## Layers
 
-- [Current decision register](current-decision-register.md) — compressed
-  current rules.
-- [Decision theme register](decision-theme-register.md) — accepted `DEC-*`
-  theme-based current reading surface and ADR migration matrix.
-- [Open-work register](open-work-register.md) — canonical open/deferred work.
-- [Kernel stub and placeholder registry](kernel-stub-and-placeholder-registry.md)
-  — verified list of names/diagnostics that parse or appear in a passing
-  test but have shallower or different real semantics than they look like;
-  check before treating a grep hit as evidence of implementation.
-- [Language specification](../specs/staqex-language-specification.md) —
-  normative language contract and grammar.
-- [Adjudicator language vision](adjudicator-language-vision.md) —
-  physicist-first design priority.
-- [Documentation policy](documentation-canonicalization-policy.md) — current
-  versus source-record rules.
+### Domain
 
-## Implementation generations
+Pure domain behavior named in `docs/collaboration/project-conventions.md`.
 
-- **Shipping Kernel:** Python 3 package under `compiler/staqex/`; run with
-  `python3 -m compiler.staqex`.
-- **Long-term target:** Rust edition 2021+ Cargo workspace for the VM and
-  simulator.
-- **Backends:** QPU and OpenQASM integrations remain ports/adapters; provider
-  SDKs and credentials are not part of the Kernel.
-- Both generations implement one Staqex language semantics. Rust-only wording
-  in historical documents does not define a second language.
+Must not depend on:
 
-## Clean Architecture boundary
+- any UI framework.
+- SQL schemas, ORM structs, vector DB SDKs, or file-system APIs.
+- LLM SDKs, cloud AI SDKs, or third-party provider APIs.
 
-- **Domain:** pure language semantics and state transformations; no project-
-  specific infrastructure dependencies.
-- **UseCase:** coordinates domain behavior through ports.
-- **Ports:** define external resources such as `RngPort`, `SourcePort`, and
-  `MeasureSinkPort`.
-- **Adapters:** implement ports and framework integrations; they do not define
-  business or language policy.
-- **Delivery:** CLI/library entry points call application contracts only.
+### UseCase
 
-The MVP has no application datastore, cloud database, LLM provider, or live QPU
-provider inside the runtime.
+Coordinates domain behavior through ports.
 
-## Required operating documents
+Examples belong in the target's specifications and stack-specific
+architecture documents, not in this file.
 
-- [Agent quickstart](agent-quickstart.md)
-- [Implementation readiness](implementation-readiness.md)
-- [Project structure](project-structure.md)
-- [Testing strategy](testing-strategy.md)
-- [Dependency policy](dependency-policy.md)
-- [AI request routing](ai-request-routing.md)
-- [AI I/O and reasoning contracts](io-reasoning-contracts.md)
-- [Collaboration scheme](../collaboration/ai-human-scheme.md)
-- [Definition of Done](../collaboration/definition-of-done.md)
+### Ports
 
-## Detailed source records
+Interfaces owned by the application core.
 
-- [Retained policy ADRs](adr/)
-- [Archived decision recovery map](documentation-compression-map.md)
-- [Language and runtime architecture pages](.)
-- [Specifications](../specs/)
-- [Research](../research/)
+Ports isolate every external resource named in
+`docs/collaboration/project-conventions.md`.
 
-Read a source record only when the task requires its exact decision, acceptance
-boundary, or review evidence. Current implementation work starts from the
-decision register and open-work register.
+### Adapters
+
+Framework and infrastructure implementations.
+
+Adapters may use framework APIs, infrastructure libraries, DB or vector DB
+SDKs, external file layouts, API clients, and provider SDKs.
+
+Adapters must not define business policy.
+
+### Front-End / Delivery
+
+The delivery layer (UI, CLI, HTTP API) presents domain state and collects
+user input.
+
+It must not own:
+
+- confidence, trust, or merge policy for AI-derived data.
+- validation or secret-storage policy.
+- any policy that belongs in a use case.
+
+## Runtime Direction
+
+See `docs/collaboration/project-conventions.md`.
+
+## Selected Technology
+
+See `docs/collaboration/project-conventions.md`.
+
+## Detailed Rules
+
+- `project-structure.md`: where files belong.
+- `testing-strategy.md`: AT-TDD test placement.
+- `implementation-readiness.md`: checklist before coding.
+- `dependency-policy.md`: package dependency checking policy.
+- `ai-request-routing.md`: AI payload selection and task routing.
+- `io-reasoning-contracts.md`: AI input/output/reasoning contracts.
+- `external-resource-adoption-contract.md`: optional contract for adopting
+  AI-generated or human-sourced external content/data resources.
+- Stack-specific architecture documents listed in
+  `docs/collaboration/project-conventions.md`.
+
+## Accepted Decisions
+
+- `adr/0001-design-first-ai-request-routing.md`
+- `adr/0002-input-output-reasoning-contracts.md`
+- `adr/0003-ai-human-collaboration-governance.md`
+- `adr/0004-human-readable-source-code-quality.md`
+- `adr/0005-local-issue-planning.md`
+- `adr/0006-prompt-instruction-change-control.md`
+- `adr/0007-trunk-oriented-branching.md`
+- `adr/0008-template-update-propagation.md`
+- `adr/0009-bug-planning-and-ai-usage-records.md`
+- `adr/0010-ai-failure-recovery-and-runner-cli-contract.md`
+- `adr/0011-external-resource-adoption-contract.md`
+- `adr/0012-rename-referee-to-adjudicator.md`
+- `adr/0013-document-lifecycle-and-canonical-register.md`
+- `adr/0014-delivery-and-subagent-selection.md`
+- `adr/0015-runtime-routing-setup.md`
+- `adr/0016-process-lessons-and-completion-review.md`
+- `adr/0017-project-conventions-file.md`
+- `adr/0018-agent-skills-for-on-demand-procedures.md`
+
+## Remaining Technology Evaluation
+
+See Current non-decisions in `docs/collaboration/project-conventions.md`.

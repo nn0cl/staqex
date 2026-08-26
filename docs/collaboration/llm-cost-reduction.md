@@ -18,7 +18,10 @@ Reduce avoidable LLM cost by making agents:
 
 - Billing-grade exact token accounting.
 - Guessing unavailable token usage.
-- Choosing specific commercial models.
+- Choosing specific commercial models in the template itself. An adopting
+  project may record optional host-displayed identifiers in
+  `docs/collaboration/runtime-routing.toml`; empty fields keep class-based
+  routing.
 - Building a centralized cost dashboard.
 - Requiring private prompts, provider logs, or billing exports in the repo.
 

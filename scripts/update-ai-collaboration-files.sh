@@ -9,19 +9,13 @@ Usage:
 Pulls later AI-human collaboration template updates into a repository that
 already adopted the template (via copy-ai-collaboration-files.sh).
 
-Template files are split into two tiers:
-  Tier 1 (most files): pure process/methodology documents and tooling with no
-    adopter-filled placeholders. The template is fully authoritative -- if
-    the target's copy differs from the template's current copy, the
-    template's version wins, unconditionally.
-  Tier 2 (AGENTS.md, CLAUDE.md, .github/copilot-instructions.md,
-    .grok/rules/*.md, .cursor/rules/*.mdc): agent persona/contract files that
-    carry adopter-filled placeholders (project name, stack, domain
-    boundaries, external resources). When both the target and the template
-    changed one of these since the last sync, the file is left untouched and
-    flagged for AI-assisted reconciliation using
-    docs/templates/contract-file-sync-prompt.md, rather than mechanically
-    merged or overwritten.
+Template process and context files are template-authoritative: if the
+target's copy differs from the template's current copy, the template's
+version wins. Project facts and extra rules live in the target-owned
+docs/collaboration/project-conventions.md, which this script never
+overwrites. Before the first overwrite of customized AGENTS.md / CLAUDE.md
+after this policy, move those facts into project-conventions.md (see
+docs/templates/contract-file-sync-prompt.md).
 
 A file the target deleted since the last sync, where the template changed it
 again afterward, is not silently resolved either way: with an interactive
@@ -35,13 +29,30 @@ This script never commits to the target's trunk branch. It creates a
 dedicated branch, commits the result there, and (when possible) opens a pull
 request, per docs/collaboration/branch-commit-pr-discipline.md.
 
+The delivery route can be selected interactively or explicitly. GitHub mode
+pushes the branch and opens a pull request; --merge-pr additionally requests
+GitHub auto-merge after required checks pass. Local mode creates and commits a
+local branch without pushing it. The base branch can be selected with
+--base-branch. The provider-neutral --subagent option records whether a
+subagent handoff is requested; this script does not choose or invoke an LLM
+provider. Day-to-day review and implementation routing lives in the
+target-owned docs/collaboration/runtime-routing.toml created by
+scripts/configure-ai-collaboration.sh; this sync never overwrites that file.
+
 Options:
   --target PATH        Target repository directory. Required.
   --source PATH         Local checkout of the template repository to pull
                         updates from. Defaults to this script's own repo.
   --branch-prefix TEXT  Branch name prefix. Default: process/update-collab-template
-  --no-pr               Create the branch and commit locally; skip pushing
-                        and opening a PR even if `gh` is available.
+  --delivery MODE       github or local. If omitted in a TTY, ask; otherwise
+                        default to local. Legacy --no-pr selects local.
+  --base-branch BRANCH  Branch to branch from. If omitted in a TTY, ask from
+                        local branches; otherwise use the current branch.
+  --merge-pr            In github mode, request auto-merge after CI passes.
+                        Never merges without this explicit option.
+  --subagent MODE       ask, yes, or no. In a TTY, ask is interactive;
+                        otherwise ask defaults to no.
+  --no-pr               Legacy alias for --delivery local.
   --non-interactive     Never prompt for locally-deleted-but-upstream-changed
                         files; always take the default (restore).
   --dry-run             Report planned actions without changing anything.
@@ -56,6 +67,10 @@ target=""
 source_repo="$repo_root"
 branch_prefix="process/update-collab-template"
 no_pr=false
+delivery_mode=""
+base_branch=""
+merge_pr=false
+subagent_mode="ask"
 dry_run=false
 non_interactive=false
 
@@ -75,7 +90,27 @@ while [ "$#" -gt 0 ]; do
       ;;
     --no-pr)
       no_pr=true
+      delivery_mode="local"
       shift
+      ;;
+    --delivery)
+      delivery_mode="${2:-}"
+      shift 2
+      ;;
+    --base-branch)
+      base_branch="${2:-}"
+      shift 2
+      ;;
+    --merge-pr)
+      merge_pr=true
+      if [ -z "$delivery_mode" ]; then
+        delivery_mode="github"
+      fi
+      shift
+      ;;
+    --subagent)
+      subagent_mode="${2:-}"
+      shift 2
       ;;
     --non-interactive)
       non_interactive=true
@@ -96,6 +131,26 @@ while [ "$#" -gt 0 ]; do
       ;;
   esac
 done
+
+case "$delivery_mode" in
+  ""|github|local) ;;
+  *) echo "--delivery must be github or local: $delivery_mode" >&2; exit 2 ;;
+esac
+
+case "$subagent_mode" in
+  ask|yes|no) ;;
+  *) echo "--subagent must be ask, yes, or no: $subagent_mode" >&2; exit 2 ;;
+esac
+
+if [ "$no_pr" = true ] && [ "$delivery_mode" = "github" ]; then
+  echo "--no-pr conflicts with --delivery github." >&2
+  exit 2
+fi
+
+if [ "$merge_pr" = true ] && [ "$delivery_mode" = "local" ]; then
+  echo "--merge-pr requires --delivery github." >&2
+  exit 2
+fi
 
 if [ -z "$target" ]; then
   echo "--target is required." >&2
@@ -126,6 +181,89 @@ if [ "$dry_run" != true ] && [ -n "$(git -C "$target" status --porcelain)" ]; th
   exit 1
 fi
 
+is_interactive_setup() {
+  [ "$non_interactive" != true ] && [ -t 0 ] && [ -t 1 ]
+}
+
+prompt_choice() {
+  local prompt="$1" default_value="$2" answer=""
+  if ! is_interactive_setup; then
+    printf '%s\n' "$default_value"
+    return
+  fi
+  read -r -p "$prompt" answer || true
+  printf '%s\n' "${answer:-$default_value}"
+}
+
+select_delivery_mode() {
+  if [ -n "$delivery_mode" ]; then
+    return
+  fi
+  if is_interactive_setup; then
+    echo "Select delivery route:" >&2
+    echo "  1) github - push, create PR, and optionally auto-merge" >&2
+    echo "  2) local  - create a local branch for review; do not push" >&2
+    case "$(prompt_choice 'Choice [2]: ' '2')" in
+      1|github) delivery_mode="github" ;;
+      2|local|"") delivery_mode="local" ;;
+      *) echo "Invalid delivery choice." >&2; exit 2 ;;
+    esac
+  else
+    delivery_mode="local"
+  fi
+}
+
+select_subagent_mode() {
+  if [ "$subagent_mode" != ask ]; then
+    return
+  fi
+  if is_interactive_setup; then
+    echo "Create a provider-neutral subagent handoff request?" >&2
+    echo "  1) yes - record a subagent request in the output and PR body" >&2
+    echo "  2) no  - continue with one agent" >&2
+    case "$(prompt_choice 'Choice [2]: ' '2')" in
+      1|yes) subagent_mode="yes" ;;
+      2|no|"") subagent_mode="no" ;;
+      *) echo "Invalid subagent choice." >&2; exit 2 ;;
+    esac
+  else
+    subagent_mode="no"
+  fi
+}
+
+select_base_branch() {
+  local current_branch branch_choice branches index
+  current_branch="$(git -C "$target" branch --show-current)"
+  if [ -n "$base_branch" ]; then
+    git -C "$target" show-ref --verify --quiet "refs/heads/$base_branch" || {
+      echo "Base branch does not exist locally: $base_branch" >&2
+      exit 1
+    }
+  elif is_interactive_setup; then
+    branches=()
+    while IFS= read -r branch; do
+      branches+=("$branch")
+    done < <(git -C "$target" for-each-ref --format='%(refname:short)' refs/heads/)
+    echo "Select the local base branch (current: $current_branch):" >&2
+    for index in "${!branches[@]}"; do
+      echo "  $((index + 1))) ${branches[$index]}" >&2
+    done
+    branch_choice="$(prompt_choice "Choice [$(( ${#branches[@]} ))]: " "$(( ${#branches[@]} ))")"
+    if [[ "$branch_choice" =~ ^[0-9]+$ ]] && [ "$branch_choice" -ge 1 ] && [ "$branch_choice" -le "${#branches[@]}" ]; then
+      base_branch="${branches[$((branch_choice - 1))]}"
+    else
+      echo "Invalid base branch choice." >&2
+      exit 2
+    fi
+  else
+    base_branch="$current_branch"
+  fi
+
+  if [ "$dry_run" != true ] && [ "$current_branch" != "$base_branch" ]; then
+    git -C "$target" switch "$base_branch"
+  fi
+}
+
 marker="$target/.collaboration-template-version"
 if [ ! -f "$marker" ]; then
   echo "Missing $marker." >&2
@@ -150,6 +288,17 @@ new_ref="$(git -C "$source_repo" rev-parse HEAD)"
 if [ "$old_ref" = "$new_ref" ]; then
   echo "Target is already synced to $new_ref. Nothing to do."
   exit 0
+fi
+
+select_delivery_mode
+select_subagent_mode
+select_base_branch
+
+if [ "$delivery_mode" = "local" ]; then
+  no_pr=true
+elif [ "$merge_pr" = true ] && [ "$delivery_mode" != "github" ]; then
+  echo "--merge-pr requires github delivery." >&2
+  exit 2
 fi
 
 ignore_file="$target/.collaboration-template-ignore"
@@ -181,7 +330,7 @@ source "$script_dir/lib/collaboration-template-paths.sh"
 added=()
 updated=()
 overwritten=()
-needs_ai_merge=()
+
 restored=()
 kept_deleted=()
 collisions=()
@@ -196,7 +345,7 @@ is_interactive_tty() {
 
 # Asks whether to restore a target-deleted, template-since-changed file.
 # Defaults to "restore" on empty input, non-interactive mode, or no TTY, per
-# the Adjudicator's 2026-07-16 decision (LISS-0016).
+# the 2026-07-16 restore default.
 ask_restore_or_keep_deleted() {
   local rel="$1"
   if is_interactive_tty; then
@@ -393,15 +542,8 @@ process_file() {
   fi
 
   # Both sides changed since the marker commit.
-  if is_contract_persona_file "$rel"; then
-    # Tier 2: never mechanically merge or overwrite a file that can carry
-    # adopter-filled placeholders. Leave the target's current file in place
-    # and flag it for AI-assisted reconciliation.
-    needs_ai_merge+=("$rel")
-    return
-  fi
-
-  # Tier 1: the template is fully authoritative. No merge is attempted.
+  # Template is fully authoritative for shipped files. Project facts belong
+  # in docs/collaboration/project-conventions.md, which is excluded.
   overwritten+=("$rel")
   if [ "$dry_run" != true ]; then
     mkdir -p "$(dirname "$ours_file")"
@@ -429,16 +571,16 @@ print_list() {
 
 echo "Source: $source_repo ($old_ref -> $new_ref)"
 echo "Target: $target"
+echo "Delivery: $delivery_mode (base branch: $base_branch)"
+echo "Subagent handoff: $subagent_mode"
+if [ "$subagent_mode" = "yes" ]; then
+  echo "Subagent request: prepare a provider-neutral handoff for branch review;"
+  echo "  the host agent must choose and launch any actual subagent separately."
+fi
 echo
 print_list "Added (new upstream files):" "${added[@]+"${added[@]}"}"
-print_list "Updated (Tier 1 or 2, target had not diverged from the template):" "${updated[@]+"${updated[@]}"}"
-print_list "Overwritten (Tier 1, template is authoritative -- target had diverged):" "${overwritten[@]+"${overwritten[@]}"}"
-print_list "NEEDS AI-ASSISTED MERGE (Tier 2 persona/contract file, both sides changed):" "${needs_ai_merge[@]+"${needs_ai_merge[@]}"}"
-if [ "${#needs_ai_merge[@]}" -gt 0 ]; then
-  echo "  Left untouched. Run docs/templates/contract-file-sync-prompt.md with an"
-  echo "  agent for each file above, using old ref $old_ref and new ref $new_ref in"
-  echo "  $source_repo, before merging this branch."
-fi
+print_list "Updated (target had not diverged from the template):" "${updated[@]+"${updated[@]}"}"
+print_list "Overwritten (template is authoritative -- target had diverged):" "${overwritten[@]+"${overwritten[@]}"}"
 print_list "Restored (was deleted locally; template changed it since last sync):" "${restored[@]+"${restored[@]}"}"
 print_list "Kept deleted (operator decision):" "${kept_deleted[@]+"${kept_deleted[@]}"}"
 print_list "NUMBER COLLISIONS (manual renumbering required):" "${collisions[@]+"${collisions[@]}"}"
@@ -478,18 +620,19 @@ MARKER
 git -C "$target" add -A
 git -C "$target" commit -m "chore: sync collaboration template to ${new_ref:0:8}
 
-Added: ${#added[@]}, updated: ${#updated[@]}, overwritten: ${#overwritten[@]}, needs AI-assisted merge: ${#needs_ai_merge[@]}, restored: ${#restored[@]}, kept deleted: ${#kept_deleted[@]}, number collisions: ${#collisions[@]}.
+Added: ${#added[@]}, updated: ${#updated[@]}, overwritten: ${#overwritten[@]}, restored: ${#restored[@]}, kept deleted: ${#kept_deleted[@]}, number collisions: ${#collisions[@]}.
 See PR description or this commit's file list for details." >/dev/null
 
 echo
 echo "Committed sync on branch $branch_name."
 
-if [ "${#needs_ai_merge[@]}" -gt 0 ] || [ "${#collisions[@]}" -gt 0 ]; then
-  echo "Manual resolution needed before merging (see NEEDS AI-ASSISTED MERGE / NUMBER COLLISIONS above)."
+if [ "${#collisions[@]}" -gt 0 ]; then
+  echo "Manual resolution needed before merging (see NUMBER COLLISIONS above)."
 fi
 
 if [ "$no_pr" = true ]; then
-  echo "Skipping PR creation (--no-pr). Push and open a PR manually per docs/collaboration/branch-commit-pr-discipline.md."
+  echo "Local review mode: branch $branch_name was committed locally and not pushed."
+  echo "Review it against base branch $base_branch, then choose the branch for the next local action."
   exit 0
 fi
 
@@ -509,21 +652,31 @@ git -C "$target" push -u origin "$branch_name"
 pr_body="$(cat <<BODY
 Sync from collaboration template ${old_ref:0:8} -> ${new_ref:0:8}.
 
+- Delivery route: github PR
+- Base branch: $base_branch
+- Subagent handoff requested: $subagent_mode
 - Added: ${#added[@]}
-- Updated (Tier 1/2, target had not diverged): ${#updated[@]}
-- Overwritten (Tier 1, template authoritative): ${#overwritten[@]}
-- Needs AI-assisted merge (Tier 2 persona/contract files): ${#needs_ai_merge[@]}
+- Updated (target had not diverged): ${#updated[@]}
+- Overwritten (template authoritative): ${#overwritten[@]}
 - Restored (was deleted locally, template changed since): ${#restored[@]}
 - Kept deleted (operator decision): ${#kept_deleted[@]}
 - Number collisions needing manual renumbering: ${#collisions[@]}
 - Ignored: ${#ignored[@]}
 
+Project facts belong in docs/collaboration/project-conventions.md (never
+overwritten). Move any remaining facts out of AGENTS.md / CLAUDE.md before
+merging this overwrite.
+
 This branch follows docs/collaboration/branch-commit-pr-discipline.md: it
-must pass CI before merge and should not be merged with unresolved NEEDS
-AI-ASSISTED MERGE or NUMBER COLLISIONS items. For each file needing
-AI-assisted merge, run docs/templates/contract-file-sync-prompt.md with an
-agent (old ref ${old_ref}, new ref ${new_ref}) before merging.
+must pass CI before merge and should not be merged with unresolved NUMBER
+COLLISIONS items.
 BODY
 )"
 
-(cd "$target" && gh pr create --title "chore: sync collaboration template to ${new_ref:0:8}" --body "$pr_body")
+pr_url="$(cd "$target" && gh pr create --title "chore: sync collaboration template to ${new_ref:0:8}" --body "$pr_body")"
+echo "Created pull request: $pr_url"
+
+if [ "$merge_pr" = true ]; then
+  echo "Requesting GitHub auto-merge after required checks pass..."
+  (cd "$target" && gh pr merge "$pr_url" --auto --squash --delete-branch)
+fi

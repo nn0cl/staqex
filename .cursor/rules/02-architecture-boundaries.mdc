@@ -58,7 +58,7 @@ Root `AGENTS.md` is auto-applied by Cursor independently of this file
 automatically"). It holds the Clean Architecture Dependency Rule
 (allowed/forbidden dependencies) and the External Resources Must Be Ports
 list. Do not duplicate those sections here, and do not `@`-reference
-`AGENTS.md` from `.cursor/rules` (see ADR 0006 Cursor evidence).
+`AGENTS.md` from `.cursor/rules`.
 
 ## Anti-Hallucination Rules
 

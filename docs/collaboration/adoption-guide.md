@@ -10,21 +10,25 @@ For the benefits and tradeoffs of using the template, see
 ## New Repository Adoption
 
 1. Run `scripts/copy-ai-collaboration-files.sh --target <repo>`.
-2. Fill target-specific placeholders in `AGENTS.md`, `CLAUDE.md`,
-   `.github/copilot-instructions.md`, `.grok/rules/*.md`,
-   `.cursor/rules/*.mdc`, and `docs/architecture/README.md`. The copy
-   script can fill project name, domain summary, and stack placeholders;
-   runtime boundaries, datastore, migration tool, external resources, and
-   stack-specific architecture documents still require Adjudicator-approved
-   target facts.
-3. Add the first target feature specification under `docs/specs/`.
-4. Add only the stack-specific architecture documents that the project already
+2. Run `scripts/configure-ai-collaboration.sh --target <repo>` to record
+   review and implementation isolation and optional host-displayed model
+   identifiers. Use `--non-interactive` to accept the defaults (review
+   `same_context`, implementation `host`, empty model fields). The live
+   file is target-owned and is not overwritten by later template sync. See
+   `docs/collaboration/runtime-routing.md`.
+3. Fill `docs/collaboration/project-conventions.md` (copy creates it and can
+   fill name, domain, and stack). Put extra project-specific rules there.
+   Do not edit template context files to store those facts; they are
+   overwritten on later template sync. Unfilled `<...>` placeholders that a
+   task relies on must still be set.
+4. Add the first target feature specification under `docs/specs/`.
+5. Add only the stack-specific architecture documents that the project already
    needs.
-5. Read `docs/collaboration/project-start-guide.md` for the first development
+6. Read `docs/collaboration/project-start-guide.md` for the first development
    loop.
-6. Run `scripts/init-llm-context.sh <repo>` and paste the generated prompt into
+7. Run `scripts/init-llm-context.sh <repo>` and paste the generated prompt into
    the first agent session.
-7. Read `docs/collaboration/session-start-and-resume.md` for ongoing session
+8. Read `docs/collaboration/session-start-and-resume.md` for ongoing session
    start and resume patterns after adoption.
 
 ## Midway Adoption
@@ -34,7 +38,9 @@ For the benefits and tradeoffs of using the template, see
 3. Review skipped files and decide manually whether any target-owned document
    should adopt collaboration wording.
 4. Keep accepted target architecture and feature specifications authoritative.
-5. Use Fast Path for mechanical adoption cleanup, Feature Path for accepted
+5. Run `scripts/configure-ai-collaboration.sh --target <repo>` if runtime
+   routing has not been recorded yet.
+6. Use Fast Path for mechanical adoption cleanup, Feature Path for accepted
    feature work, and Architecture Path for process or boundary decisions.
 
 ## Receiving Later Template Updates
@@ -56,31 +62,37 @@ with their own empty issue, trace, and spec ledgers.
 3. Run `scripts/update-ai-collaboration-files.sh --target <repo>` (add
    `--non-interactive` for unattended/CI runs; see below for what that
    changes).
-4. Review the reported summary. Template files are split into two tiers (see
-   ADR 0008): **Tier 1** (most files -- process docs, templates, shipped
-   ADRs, CI/scripts) is fully template-authoritative, so a differing file is
-   reported as **Overwritten** with no merge attempt. **Tier 2** (the five
-   agent persona/contract files: `AGENTS.md`, `CLAUDE.md`,
-   `.github/copilot-instructions.md`, `.grok/rules/*.md`,
-   `.cursor/rules/*.mdc`) is never mechanically merged or overwritten; a
-   conflicting Tier 2 file is reported as **NEEDS AI-ASSISTED MERGE** and left
-   untouched. Other categories: **Added** (new upstream files), **Updated**
-   (either tier, target had not diverged), **Restored** / **Kept deleted**
-   (the target had deleted a file the template changed again), and **NUMBER
-   COLLISIONS** (a newly added ADR or local issue shares a number with an
-   existing target file under a different name).
-5. For every file under NEEDS AI-ASSISTED MERGE, run
-   `docs/templates/contract-file-sync-prompt.md` with an agent (the script's
-   output names the old ref, new ref, and file path to use) before merging.
-   Resolve any NUMBER COLLISIONS by renumbering. Never merge a sync PR with
-   unresolved NEEDS AI-ASSISTED MERGE or NUMBER COLLISIONS items.
-6. If the sync introduces new cross-cutting process vocabulary (for example,
-   a new operating-path or phase concept), check whether the target's own
-   `CLAUDE.md`/`AGENTS.md` needs a matching, reviewed update so the newly
-   imported docs describe a concept the target's agent contract actually
-   uses. A project that customized `CLAUDE.md` before that vocabulary
-   existed will not get it added automatically, and imported docs that
-   reference an unused concept are worse than no docs.
+4. Review the reported summary. Shipped template files, including context
+   files (`AGENTS.md`, `CLAUDE.md`, Copilot, Grok, Cursor rules), are
+   template-authoritative: a differing file is **Overwritten**. Project
+   facts stay in `docs/collaboration/project-conventions.md`, which is never
+   overwritten. Other categories: **Added**, **Updated** (target had not
+   diverged), **Restored** / **Kept deleted**, and **NUMBER COLLISIONS**.
+5. Before merging a sync that overwrites customized context files, move
+   remaining project facts into `docs/collaboration/project-conventions.md`
+   using `docs/templates/contract-file-sync-prompt.md` if needed. Resolve
+   NUMBER COLLISIONS by renumbering. Never merge a sync PR with unresolved
+   NUMBER COLLISIONS.
+6. If the project added extra operating rules, they belong in
+   `docs/collaboration/project-conventions.md`, not in overwritten context
+   files. After overwrite, confirm those extra rules are still present there.
+
+### Document ownership and lifecycle after adoption
+
+Keep template-owned collaboration rules separate from target-owned
+specifications, domain decisions, technology choices, and deprecated-term
+maps. Copy `docs/templates/canonical-document-register.md` to
+`docs/collaboration/canonical-document-register.md` and populate it with the
+target project's Entry and Canonical documents. This register is only a
+navigation/consistency aid; it is not a new approval artifact and does not
+replace the existing accepted specification, ADR, Issue, or Work Plan.
+
+Use the standard document layers and read order from
+`docs/collaboration/document-lifecycle.md`. The register is a navigation entry;
+agents should read it before opening historical ADRs, closed Issues, completed
+Work Plans, or detailed Traces. Record intentional sync differences and
+consolidation moves in the appropriate ledger rather than editing
+template-owned rules with target-specific facts.
 
 When a file the target deleted was changed again upstream, the script asks
 `Restore '<path>'? [Y/n]` if it is running with a real terminal attached,
@@ -121,11 +133,16 @@ template content manually rather than running the automated sync.
 The script never commits to the target's trunk branch; it creates a
 dedicated branch and opens a PR, per
 `docs/collaboration/branch-commit-pr-discipline.md` and
-`docs/architecture/decision-themes/dec-0001-governance-and-collaboration.md`. It does not
+`docs/architecture/adr/0008-template-update-propagation.md`. It does not
 clone or register repositories on its own, and this template repository does
 not track which projects have adopted it.
 
 ## LLM Session Setup
+
+Use `scripts/configure-ai-collaboration.sh --target <repo>` once after copy
+(or later with `--force`) to write `docs/collaboration/runtime-routing.toml`.
+Agents read that file when present and otherwise keep capability-class
+routing on the host agent.
 
 Use `scripts/init-llm-context.sh <repo>` once to print a compact first prompt
 after adoption. For daily new sessions and resuming work, see
@@ -143,6 +160,13 @@ The first-session prompt instructs the agent to:
   without an accepted specification or ADR.
 - stop when the target specification or requested phase is missing.
 
+On-demand procedures live in `.agents/skills/<name>/SKILL.md` (Agent Skills
+standard). Codex, Cursor, Copilot, Gemini CLI, and Grok Build auto-discover
+that directory. Claude Code's documented project path is `.claude/skills/`;
+this template does not duplicate the tree there. Contract files name the
+skill path so every agent still loads it. Copy and update treat
+`.agents/skills/` as template-authoritative.
+
 Grok Build discovers `.grok/rules/*.md` as a distinct, stronger-binding rules
 surface (visible via `grok inspect`) separate from generic context loading;
 keep it in sync with `AGENTS.md`/`CLAUDE.md` like any other contract file.
@@ -154,18 +178,16 @@ Cursor discovers `.cursor/rules/*.mdc` (files must use the `.mdc` extension
 with frontmatter — a plain `.md` file in `.cursor/rules/` is ignored by
 Cursor's rules system) as its primary, most powerful rules mechanism; this
 template sets `alwaysApply: true` on each file so the rules apply to every
-request regardless of which files are open. As of LISS-0015 (2026-07-16,
-Adjudicator-approved after live verification the same day), `.cursor/rules/*.mdc`
+request regardless of which files are open. As of 2026-07-16
+(Adjudicator-approved after live verification the same day), `.cursor/rules/*.mdc`
 holds Cursor-complementary rules only and does not `@`-reference or
 full-mirror shared sections from `AGENTS.md`. Grounds: Cursor lists
 `AGENTS.md` as its own Rules type and "picks it up automatically"
 ([Rules](https://cursor.com/docs/rules.md);
 [Help: Rules](https://cursor.com/help/customization/rules.md)); live session
 confirmed separate injection of root `AGENTS.md` alongside always-apply
-`.mdc` files — see ADR 0006 and
-`docs/collaboration/traces/2026-07-16-cursor-mdc-drop-agents-ref.md`. Keep
-the `.mdc` set for phase-gate detail, Decision Gates, and other Cursor-side
-complements rather than relying on `AGENTS.md` alone.
+`.mdc` files. Keep the `.mdc` set for phase-gate detail, Decision Gates, and
+other Cursor-side complements rather than relying on `AGENTS.md` alone.
 
 Codex reads `AGENTS.md` directly (its own `~/.codex/rules/` is a user-home
 setting, not a project-distributable one), so it needs no dedicated
@@ -173,12 +195,10 @@ template file.
 
 Claude Code supports `@path/to/file` imports (expanded inline into context at
 launch) and its own `.claude/rules/*.md` directory with `paths:`
-frontmatter, equivalent to Cursor's `globs`. `CLAUDE.md` is a full literal
-mirror of the shared operating contract (like `.github/copilot-instructions.md`
-and `.grok/rules/*.md`), not an `@AGENTS.md` import — a live session on this
-repository found the import technically worked but did not produce the same
-behavioral bindingness as content physically present in the file; see
-ADR 0006's 2026-07-25 revision.
+frontmatter, equivalent to Cursor's `globs`. `CLAUDE.md` is a full
+effective-content mirror of the shared contract plus a Claude-specific
+preamble. It does not import `@AGENTS.md`; keep the bodies aligned when
+shared rules change.
 
 ## Adding Stack-Specific Scoped Rules
 
@@ -198,6 +218,9 @@ contract files:
 - **Grok / Codex**: no confirmed path-scoped rule mechanism as of 2026-07-16;
   keep stack-specific rules for these tools inside the existing full-mirror
   files, scoped by a heading that states which area they apply to.
+- **Cross-agent procedures**: a new `.agents/skills/<name>/SKILL.md` using
+  only Agent Skills `name` and `description` frontmatter. Do not add a second
+  copy under `.claude/skills/` or `.cursor/skills/`.
 
 Add each new scoped-rule file to
 `docs/collaboration/prompt-instruction-change-control.md`'s contract file

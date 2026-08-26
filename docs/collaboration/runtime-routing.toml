@@ -1,0 +1,18 @@
+# Target-owned runtime routing for AI review and implementation.
+# Created or refreshed by: scripts/configure-ai-collaboration.sh
+# Policy: docs/collaboration/runtime-routing.md
+#
+# Do not store secrets, API keys, or provider credentials here.
+# An empty model string means capability-class routing only
+# (see docs/collaboration/model-tool-capability-matrix.md).
+# The template does not name commercial models.
+
+[review]
+# separate_context | same_context | ask
+isolation = "same_context"
+model = ""
+
+[implementation]
+# host | separate_context | ask
+isolation = "host"
+model = ""

@@ -44,7 +44,6 @@ Why it matters:
 Resolution:
 
 - Use `docs/collaboration/prompt-instruction-change-control.md`.
-- See `docs/architecture/decision-themes/dec-0001-governance-and-collaboration.md`.
 - CI enforces that a pull request changing a contract file also adds a trace
   under `docs/collaboration/traces/`.
 
@@ -115,7 +114,7 @@ Why it matters:
 Resolution:
 
 - Use `docs/collaboration/ai-failure-recovery.md`.
-- See `docs/architecture/decision-themes/dec-0001-governance-and-collaboration.md`.
+
 - Optional runner CLI contract for slow external AI jobs:
   `docs/collaboration/runner-cli-contract.md`.
 
@@ -163,7 +162,7 @@ Resolution:
 
 - Use `docs/collaboration/local-issue-planning.md`.
 - Use `docs/collaboration/ai-work-trace-log.md`.
-- See `docs/architecture/decision-themes/dec-0001-governance-and-collaboration.md`.
+
 
 ### 11. Issue Completion Document Synchronization
 
@@ -178,6 +177,75 @@ Resolution:
 
 - Use the Issue Status Synchronization section in `docs/collaboration/definition-of-done.md`.
 - Include the issue and work-plan updates in the same reviewable unit as the implementation status change.
+
+### 12. Runtime routing for review and implementation
+
+Status: resolved.
+
+Why it matters:
+
+- Adopters need to choose same-context review versus a separate-context
+  subagent, and optional host-displayed models, without editing the shared
+  contract or invoking a provider from a setup script.
+
+Resolution:
+
+- Use `docs/collaboration/runtime-routing.md`.
+- Store live choices in `docs/collaboration/runtime-routing.toml`.
+- Create or refresh that file with `scripts/configure-ai-collaboration.sh`.
+
+
+### 13. Meta-level process lessons and completion process review
+
+Status: resolved.
+
+Why it matters:
+
+- Review write-ups that replay one session do not transfer to the next task.
+- Completing an issue without checking operating-contract deviations hides
+  process debt.
+
+Resolution:
+
+- Use `docs/collaboration/process-lessons.md`.
+- Use `docs/collaboration/process-review.md`.
+
+
+### 14. Citation direction for context, ADRs, and work-management files
+
+Status: resolved.
+
+Why it matters:
+
+- Agents that load ISSUE or work-plan IDs from context files treat planning
+  history as current rules.
+- Context files that justify their own edits by linking to an ADR or ISSUE
+  invert the evidence graph.
+
+Resolution:
+
+- Agents read current policy, ADRs, and specifications. They do not open
+  ISSUES or work plans as the source of current rules.
+- ADRs and specifications may cite ISSUES and work plans.
+- Context files do not link to an ADR or ISSUE as the reason they changed.
+- Copy/update exclude this template's `LISS-*.md`, `WP-*.md`, traces, and
+  reviews.
+
+### 15. Project conventions file
+
+Status: resolved.
+
+Why it matters:
+
+- Project facts stored in template context files block template-authoritative
+  updates of those files.
+
+Resolution:
+
+- Keep facts and extra project rules in
+  `docs/collaboration/project-conventions.md`.
+- Template context files are overwritten on sync and instruct agents to read
+  the conventions file.
 
 ## Current Assessment
 
