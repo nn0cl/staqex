@@ -2,7 +2,7 @@
 
 ## Review status
 
-**CORRECTION APPLIED — fresh review iteration 2 was NOT READY; re-review pending**
+**CORRECTION APPLIED — latest fresh review was NOT READY; re-review pending**
 
 ## Trigger and scope
 
@@ -115,3 +115,27 @@ implementation.
   manifest were added. The H1 status wording is constrained to design input;
   implementation approval remains absent.
 - Next state: `RE_REVIEW` after this correction.
+
+## Latest fresh independent re-review
+
+- Verdict: `NOT READY`.
+- P0: none.
+- P1 findings accepted for correction:
+  1. The executable fingerprint still required a complete deterministic byte
+     serialization grammar, including length prefixes, type tags, UTF-8/NFC
+     normalization, recursive arrays, numeric normalization, and the ordered
+     provenance digest inputs.
+  2. Each H1 specification had to state that it is a design input, not
+     normative acceptance authority, until typed Phase approval; existing
+     phase status does not authorize this reorganization's implementation.
+  3. The review record's top-level status had to be synchronized with the
+     latest iteration.
+- P2 findings accepted for correction:
+  - the complete PR #574 manifest header had to match its three-column body;
+  - the manifest had to be whitespace-clean at EOF.
+- Disposition authority: primary agent under the accepted ADR/Spec
+  boundaries. All findings were design-preserving and in scope.
+- Corrections applied: the boundary matrix now defines the canonical byte
+  grammar and provenance digest order; H1 documents now carry the design-input
+  status note; the complete 318-path manifest was regenerated and checked.
+- Next state: `RE_REVIEW`; no Phase 1 or implementation approval inferred.

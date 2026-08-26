@@ -8,6 +8,9 @@
 | Phase | Phase 3 — behavior-preserving refactor complete |
 | Out of scope | Numerical execution, QPU lowering, automatic quantization, optimizer fusion, new control syntax |
 
+This document is a design input for this reorganization; its existing Phase 3
+status does not authorize a new Phase 1 or implementation scope here.
+
 ## 1. Objective
 
 Connect the formal H1 `experiment` body to a provider-neutral, ordered State

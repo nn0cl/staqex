@@ -94,13 +94,20 @@ technology selection, general automatic quantization, and a new mandatory
   source/provenance identity, symmetric expected/actual filtering, and a
   separate terminal `Measure` check. The deterministic fingerprint contract
   canonicalizes an ordered instruction list (preserving order and duplicate
-  instructions) as a length-prefixed sequence of field tuples:
+  instructions) as a length-prefixed sequence of field tuples. The canonical
+  byte grammar is: unsigned counts and byte lengths are big-endian `u64`;
+  strings are UTF-8 after Unicode NFC normalization; field values carry an
+  explicit type tag; arrays are count-prefixed recursively; finite numeric
+  values use canonical IEEE-754 binary64 big-endian bytes with `-0` normalized
+  to `+0`, while NaN and non-finite values are rejected; complex values encode
+  normalized real then imaginary components:
   `(source_node_id, opcode, wires, parameters, role, type, dimensions,
   exactness, intent, provenance_digest)`. Numeric parameters use one explicit
   normalized representation; absent values and empty lists have distinct
-  encodings; `provenance_digest` covers the same source/provenance fields.
-  The canonical byte serialization is the comparison authority and its
-  SHA-256 digest is only a transport/cache projection. Expected and actual
-  instructions are filtered by the same source/provenance boundary. Mutation,
-  legacy-fallback invocation, or terminal-Measure mutation must fail closed
-  before artifact emission.
+  encodings. `provenance_digest` is SHA-256 over the same canonical encoding
+  of `(source_node_id, role, type, dimensions, exactness, intent)` in that
+  order. The canonical byte serialization is the comparison authority and
+  its SHA-256 digest is only a transport/cache projection. Expected and
+  actual instructions are filtered by the same source/provenance boundary.
+  Mutation, legacy-fallback invocation, or terminal-Measure mutation must
+  fail closed before artifact emission.

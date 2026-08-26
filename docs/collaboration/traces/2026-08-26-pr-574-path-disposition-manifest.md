@@ -2,8 +2,8 @@
 
 This manifest covers every path in `git diff --name-only 9ca049f6 e87937ea`. A `SELECTED` row is design input only; it authorizes no implementation or merge. Every `REJECT` row is excluded from WP-0117 migration until a separate canonical owner and approval exist.
 
-| Path | Disposition / canonical owner |
-|---|---|
+| Path | Disposition | Reason / canonical owner |
+|---|---|---|
 | `.github/workflows/ci.yml` | REJECT | current CI must be compared separately; no blind workflow migration |
 | `AGENTS.md` | REJECT | not selected; no migration authority |
 | `CLAUDE.md` | REJECT | not selected; no migration authority |
@@ -201,22 +201,22 @@ This manifest covers every path in `git diff --name-only 9ca049f6 e87937ea`. A `
 | `docs/architecture/adr/0185-kernel-continuous-value.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/architecture/adr/0186-display-unit-restore.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/architecture/adr/0188-decision-theme-canonical-surface.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
-| `docs/architecture/adr/0189-quantum-mental-model-and-observation-contract.md` | SELECTED design input | ADR 0189 / WP-0092 |
+| `docs/architecture/adr/0189-quantum-mental-model-and-observation-contract.md` | SELECTED design input | canonical owner: ADR 0189 / WP-0092 |
 | `docs/architecture/agent-quickstart.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/architecture/current-decision-register.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/architecture/current-hardware-delivery-envelope.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/architecture/decision-theme-register.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/architecture/decision-themes/dec-0001-governance-and-collaboration.md` | REJECT | current main canonicalization already owns this surface |
-| `docs/architecture/decision-themes/dec-0002-state-first-semantics-and-measurement.md` | SELECTED reference | DEC-0002 |
-| `docs/architecture/decision-themes/dec-0003-language-surface-and-physicist-first-dx.md` | SELECTED reference | DEC-0003 |
+| `docs/architecture/decision-themes/dec-0002-state-first-semantics-and-measurement.md` | SELECTED reference | canonical owner: DEC-0002 |
+| `docs/architecture/decision-themes/dec-0003-language-surface-and-physicist-first-dx.md` | SELECTED reference | canonical owner: DEC-0003 |
 | `docs/architecture/decision-themes/dec-0004-type-first-scientific-model.md` | REJECT | current main canonicalization already owns this surface |
 | `docs/architecture/decision-themes/dec-0005-quantum-operations-and-runtime.md` | REJECT | current main canonicalization already owns this surface |
-| `docs/architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md` | SELECTED reference | DEC-0006 |
+| `docs/architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md` | SELECTED reference | canonical owner: DEC-0006 |
 | `docs/architecture/decision-themes/dec-0007-documentation-and-decision-records.md` | REJECT | current main canonicalization already owns this surface |
 | `docs/architecture/documentation-canonicalization-policy.md` | REJECT | current main canonicalization already owns this surface |
 | `docs/architecture/documentation-compression-map.md` | REJECT | current main canonicalization already owns this surface |
 | `docs/architecture/external-resource-adoption-contract.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
-| `docs/architecture/open-work-register.md` | SELECTED current authority | open-work register |
+| `docs/architecture/open-work-register.md` | SELECTED current authority | canonical owner: open-work register |
 | `docs/architecture/physicist-minimal-dialect.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/architecture/physicist-source-friction-ledger.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/architecture/quantum-capacity-horizon-scenarios.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
@@ -295,7 +295,7 @@ This manifest covers every path in `git diff --name-only 9ca049f6 e87937ea`. A `
 | `docs/specs/staqex-v1-continuous-lane-b-expressiveness-scenarios.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/specs/staqex-v1-normative-outline-s12.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/specs/staqex-v1-open-topics-permanent-out.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
-| `docs/specs/staqex-v1-quantum-mental-model-follow-up.md` | SELECTED design input | WP-0092 |
+| `docs/specs/staqex-v1-quantum-mental-model-follow-up.md` | SELECTED design input | canonical owner: WP-0092 |
 | `docs/specs/staqex-v1-quantum-semantic-ir-plan.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/specs/staqex-v1-representative-program-rebaseline.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/specs/staqex-v1-s01-coverage-scorecard.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
@@ -313,7 +313,7 @@ This manifest covers every path in `git diff --name-only 9ca049f6 e87937ea`. A `
 | `docs/work-plans/WP-0069-operations-review-intake.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/work-plans/WP-0073-linear-transform-move.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
 | `docs/work-plans/WP-0091-decision-theme-canonicalization.md` | REJECT | not selected; map to current Issue/Spec/WP before any migration |
-| `docs/work-plans/WP-0092-quantum-mental-model-follow-up.md` | SELECTED work-plan authority | WP-0092 |
+| `docs/work-plans/WP-0092-quantum-mental-model-follow-up.md` | SELECTED work-plan authority | canonical owner: WP-0092 |
 | `examples/basics/README.md` | REJECT | not selected; no migration authority |
 | `examples/showcase/S01_quantum_disaster_response/README.md` | REJECT | not selected; no migration authority |
 | `scripts/check-coverage-ledger-consistency.py` | REJECT | not selected; no migration authority |

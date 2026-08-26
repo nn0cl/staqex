@@ -7,6 +7,10 @@
 | Scope | First H-first authoring slice: typed parameters, indexed operator algebra, explicit basis, and honest evolution |
 | Out of scope | New `quantize` keyword, arbitrary continuous-to-discrete conversion, live QPU provider integration, automatic uncompute |
 
+This is a design input, not a normative acceptance authority. Normative
+acceptance requires the named specification review and typed Phase 1 approval;
+implementation approval remains separate.
+
 ## 1. Goal
 
 A physicist should be able to state a small Hamiltonian experiment without

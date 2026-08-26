@@ -8,6 +8,10 @@
 | Phase | Phase 1 — failing tests only |
 | Out of scope | Numerical evolution, QPU routing, automatic quantization, optimizer fusion |
 
+This document is a design input, not a normative acceptance authority, until
+the named specification receives typed Phase 1 approval. Implementation
+approval remains separate.
+
 ## 1. Objective
 
 Replace H1 operator `source_tokens` as the primary representation with a

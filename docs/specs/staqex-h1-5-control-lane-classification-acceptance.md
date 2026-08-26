@@ -8,6 +8,9 @@
 | Phase | Phase 3 — behavior-preserving refactor complete |
 | Out of scope | New numerical execution, QPU emission, full effect typing, automatic uncompute |
 
+This document is a design input for this reorganization; its existing Phase 3
+status does not authorize a new Phase 1 or implementation scope here.
+
 ## 1. Objective
 
 Make the three control meanings explicit in the H1 State Transformer boundary:
