@@ -15,14 +15,14 @@
 
 ### Source commit inventory
 
-| SHA | Subject | `git cherry` | Classification | Disposition |
-|---|---|---:|---|---|
-| `42e76708` | consolidate trace records by topic | `+` | distinct documentation proposal | compare to current canonical traces; selective extraction only |
-| `1c713ebc` | introduce decision theme reading surface | `+` | overlaps canonicalization already on main | do not re-merge; retain current main authority |
-| `3f71458d` | canonicalize decision themes and archive settled ADRs | `+` | overlaps canonicalization already on main | do not re-merge; recover history from documented baseline |
-| `227b65a5` | sync decision canonicalization with main | `+` | synchronization commit | historical evidence only; no cherry-pick |
-| `5642a69b` | validate decision theme surface | `+` | CI/documentation validation proposal | compare with current CI; no blind migration |
-| `e87937ea` | add compact scientific symbol aliases | `-` | patch-equivalent to `f21be487` on current main | already canonical; do not port again |
+| SHA | Subject | `git cherry` | Representative changed paths | Canonical owner / classification | Disposition |
+|---|---|---:|---|---|---|
+| `42e76708` | consolidate trace records by topic | `+` | `docs/architecture/adr/0187*`, `docs/architecture/trace-topic-register.md`, collaboration traces | WP-0090 / documentation canonicalization; distinct documentation proposal | compare to current canonical traces; selective extraction only |
+| `1c713ebc` | introduce decision theme reading surface | `+` | `docs/architecture/decision-themes/dec-0001..0007`, decision registers | ADR 0188 / WP-0091; overlaps canonicalization already on main | do not re-merge; retain current main authority |
+| `3f71458d` | canonicalize decision themes and archive settled ADRs | `+` | `AGENTS.md`, `CLAUDE.md`, `docs/architecture/adr/0001..0186`, decision-theme docs | ADR 0188 / WP-0091; overlaps canonicalization already on main | do not re-merge; recover history from documented baseline |
+| `227b65a5` | sync decision canonicalization with main | `+` | merge synchronization; no first-parent path delta | WP-0091 synchronization evidence | historical evidence only; no cherry-pick |
+| `5642a69b` | validate decision theme surface | `+` | `.github/workflows/ci.yml` | current CI contract; validation proposal | compare with current CI; no blind migration |
+| `e87937ea` | add compact scientific symbol aliases | `-` | `compiler/staqex/{parser.py,runtime/evaluator.py,scientific_vocabulary.py}`, alias test, ADR 0189/WP-0092 docs | ADR 0189 / WP-0092; patch-equivalent to `f21be487` on current main | already canonical; do not port again |
 
 The table is a disposition inventory, not an approval to merge any listed
 commit.

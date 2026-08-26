@@ -15,7 +15,9 @@
   `docs/architecture/adjudicator-language-vision.md`,
   `docs/architecture/physicist-minimal-dialect.md`,
   `docs/architecture/staqex-democratized-language-direction.md`,
-  `docs/architecture/staqex-runtime-execution-model.md`,
+  `docs/architecture/staqex-runtime-execution-model.md`, ADR 0210, ADR 0211,
+  ADR 0212, ADR 0213, the H1-01–H1-06 acceptance specifications, and
+  `docs/specs/staqex-scientific-semantic-consumer-migration.md`,
   `docs/architecture/open-work-register.md`,
   `docs/specs/staqex-unmerged-branch-asset-reassessment.md`, WP-0091,
   WP-0092, and PR #574 (`e87937e`).

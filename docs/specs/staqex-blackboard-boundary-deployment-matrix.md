@@ -45,6 +45,12 @@ second package:
 - canonical delivery: ADR 0211 and
   `docs/specs/staqex-scientific-semantic-consumer-migration.md`.
 
+For H1-2-03 and H1-3-05, the existing “Physics IR” acceptance wording is a
+consumer-facing projection requirement. The source-derived Scientific
+Semantic IR remains the authority; the Physics IR node must retain the
+canonical source identity, structural children, carrier, parameters, and
+provenance. It cannot independently authorize execution.
+
 The implementation contract must dispatch through Scientific Semantic IR,
 must not use an H1 early return to bypass canonical projection, and must
 reject with a stable code before producing an executable artifact or allocating
@@ -67,6 +73,11 @@ H1 does not include deployment delivery. Provider-neutral artifact delivery,
 retry, rollback, credentials, network, and provider SDK choices remain a
 separate future boundary decision.
 
+For the H1 simulator evidence, exact/symbolic inspection is non-finite,
+non-collapsing, and performs no allocation. A numeric simulator result is in
+scope only through a source-visible finite `Realize` carrying method/order,
+steps or equivalent finite policy, error budget, target, and provenance.
+
 It excludes provider SDKs, live QPU submission, credentials, deployment
 technology selection, general automatic quantization, and a new mandatory
 `theory`/`model`/`realize` syntax.
@@ -81,4 +92,9 @@ technology selection, general automatic quantization, and a new mandatory
 - simulator terminal-measurement tests;
 - executable projection fingerprint tests covering opcode, wires, parameters,
   source/provenance identity, symmetric expected/actual filtering, and a
-  separate terminal `Measure` check.
+  separate terminal `Measure` check. The deterministic fingerprint contract
+  is the canonical tuple `(source_node_id, opcode, wires, parameters,
+  provenance_digest)` serialized in field order with explicit numeric
+  normalization; expected and actual instructions are filtered by the same
+  source/provenance boundary. Mutation, legacy-fallback invocation, or
+  terminal-Measure mutation must fail closed before artifact emission.

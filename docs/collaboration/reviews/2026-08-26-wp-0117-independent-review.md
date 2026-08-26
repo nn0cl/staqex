@@ -71,3 +71,21 @@ review input.
 The review loop is not terminal. It is in `RE_REVIEW` pending a fresh review
 of the corrected artifacts. The latest reviewer cannot approve Phase 1 or
 implementation.
+
+## Iteration 3: fresh independent re-review
+
+- Verdict: `NOT READY`.
+- P0: none.
+- P1: three findings — path-level/canonical mapping detail, explicit H1
+  Physics IR projection relation, and deterministic executable fingerprint
+  contract.
+- P2: two findings — numeric simulator evidence must require source-visible
+  `Realize`, and the Design Check must list the newly consulted ADR/spec
+  artifacts.
+- Disposition: all five findings accepted as design-preserving corrections.
+- Corrections applied: source commit table expanded with representative paths
+  and canonical owners; H1-2-03/H1-3-05 projection relation added; fingerprint
+  tuple and fail-closed mutation/fallback rules added; H1 simulator constraint
+  and Design Check context updated.
+- Next state: `RE_REVIEW` after this correction; no Phase 1 or implementation
+  approval inferred.
