@@ -2,7 +2,7 @@
 
 ## Status
 
-**Design intake — Architecture approved; implementation not approved**
+**Phase 1 Red — failing acceptance tests only; implementation not approved**
 
 ## [DESIGN CHECK]
 
@@ -105,6 +105,19 @@ artifact emission.
 
 - Scope approval: granted by user on 2026-08-26.
 - Architecture approval: granted by user on 2026-08-26 for this design batch.
-- Phase 1 approval: not granted.
+- Phase 1 approval: granted by user on 2026-08-26 for failing tests only.
 - Implementation approval: not granted.
-- Post-review: required before Phase 1.
+- Post-review: completed; latest independent review is `COMPLETE` / `READY`.
+
+## Phase 1 execution record
+
+- Typed approval: user message `承認`, 2026-08-26.
+- Allowed operation: add failing acceptance tests only.
+- Test file: `tests/test_blackboard_boundary_projection_red.py`.
+- Contract under test: canonical executable projection fingerprinting for
+  Unicode NFC normalization, finite numeric values, ordered instruction lists,
+  and duplicate preservation.
+- Forbidden in this phase: production serializer changes, fallback behavior,
+  implementation, deployment work, provider selection, and merge actions.
+- Expected Red state: the current JSON-based fingerprint does not yet enforce
+  NFC normalization or rejection of non-finite numeric values.
