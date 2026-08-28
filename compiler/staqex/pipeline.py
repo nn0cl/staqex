@@ -769,6 +769,7 @@ def _analyze_unit(
     diags: list[dict[str, Any]],
     *,
     strict_evolution: bool = False,
+    source_id: str = "<memory>",
 ) -> CompileResult:
     diags.extend(check_early_collapse(unit))
     diags.extend(check_nested_when(unit))
@@ -847,7 +848,7 @@ def _analyze_unit(
     povm_contracts, povm_diags = resolve_measurement_contracts(unit)
     diags.extend(povm_diags)
 
-    scientific_semantic_ir = build_scientific_semantic_ir(unit)
+    scientific_semantic_ir = build_scientific_semantic_ir(unit, source_id=source_id)
     # The explicit-evolution QPU path has a canonical source projection and no
     # longer exposes Symbolic IR as a parallel live authority. Other, not-yet-
     # migrated symbolic consumers retain the compatibility projection until a
@@ -973,7 +974,9 @@ def compile_source(source: str, *, strict_evolution: bool = False) -> CompileRes
                 semantic_snapshot=build_inspection(scientific_semantic_ir),
                 execution_authority="scientific_semantic_ir",
             )
-    return _analyze_unit(unit, diags, strict_evolution=strict_evolution)
+    return _analyze_unit(
+        unit, diags, strict_evolution=strict_evolution, source_id="<memory>"
+    )
 
 
 def compile_path(
@@ -1005,7 +1008,12 @@ def compile_path(
     if any(d.get("code") in _HARD_CODES for d in diags):
         return CompileResult(unit=unit, diagnostics=diags, checker=None)
 
-    return _analyze_unit(unit, diags, strict_evolution=strict_evolution)
+    return _analyze_unit(
+        unit,
+        diags,
+        strict_evolution=strict_evolution,
+        source_id=str(path),
+    )
 
 
 def analyze_source(source: str) -> list[dict[str, Any]]:

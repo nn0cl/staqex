@@ -120,6 +120,7 @@ class ScientificSemanticIR:
     authority: str
     nodes: tuple[SemanticNode, ...]
     relations: tuple[SemanticRelation, ...]
+    source_id: str = "<memory>"
     has_explicit_realize: bool = False
     qpu_projection: CanonicalQpuProjection | None = None
     lowering_policy: dict[str, Any] | None = None
@@ -237,7 +238,9 @@ def semantic_fingerprint(core: ScientificSemanticIR) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
-def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
+def build_scientific_semantic_ir(
+    unit: Any, *, source_id: str = "<memory>"
+) -> ScientificSemanticIR:
     """Build a structural, source-derived projection from the parsed unit."""
 
     nodes: list[SemanticNode] = []
@@ -361,6 +364,7 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
     core = ScientificSemanticIR(
         schema="ssc-semantic-v1",
         authority="scientific_semantic_ir",
+        source_id=source_id,
         nodes=tuple(nodes),
         relations=(SemanticRelation(relation_kind, tuple(node.node_id for node in nodes)),),
         has_explicit_realize=_has_realize_call(unit),
@@ -372,6 +376,7 @@ def build_scientific_semantic_ir(unit: Any) -> ScientificSemanticIR:
     result = ScientificSemanticIR(
         schema=core.schema,
         authority=core.authority,
+        source_id=core.source_id,
         nodes=core.nodes,
         relations=core.relations,
         has_explicit_realize=core.has_explicit_realize,

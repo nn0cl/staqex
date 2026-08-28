@@ -81,6 +81,8 @@ class ScheduleResult:
     barriers: tuple[str, ...]
     concurrency_assumptions: tuple[str, ...]
     provenance: tuple[str, ...]
+    depth: int = 0
+    duration: str = "unknown"
 
 
 @dataclass(frozen=True, slots=True)
@@ -94,6 +96,13 @@ class TargetPipelineResult:
     diagnostics: tuple[Diagnostic, ...]
     provenance: tuple[str, ...]
     selected_alternative: str | None
+    cost: dict[str, int] | None = None
+    measurement_mapping: tuple[tuple[str, str], ...] = ()
+    artifact: None = None
+    allocation: None = None
+    qasm: None = None
+    partial_artifact: None = None
+    physical_execution_claimed: bool = False
 
 
 def _diagnostic(code: str, message: str) -> Diagnostic:
@@ -361,7 +370,7 @@ def _translate_native(
     )
 
 
-def _build_schedule(snapshot: TargetSnapshot) -> ScheduleResult:
+def _build_schedule(snapshot: TargetSnapshot, *, depth: int = 0) -> ScheduleResult:
     return ScheduleResult(
         stage="schedule",
         timing_resolution=snapshot.timing_resolution,
@@ -370,6 +379,47 @@ def _build_schedule(snapshot: TargetSnapshot) -> ScheduleResult:
             f"max_concurrent_measurements={snapshot.max_concurrent_measurements}",
         ),
         provenance=("schedule",),
+        depth=depth,
+        duration="finite",
+    )
+
+
+def _cost(
+    operations: tuple[LogicalOperation, ...], routing: RoutingResult
+) -> dict[str, int]:
+    return {
+        "swap_count": len(routing.insertions),
+        "total_operations": len(operations) + len(routing.insertions),
+    }
+
+
+def _measurement_mapping(plan: Mapping[str, Any]) -> tuple[tuple[str, str], ...]:
+    return tuple(
+        (str(logical), str(classical))
+        for logical, classical in tuple(plan.get("measurements", ()))
+    )
+
+
+def _with_artifact_evidence(
+    result: TargetPipelineResult,
+    plan: Mapping[str, Any],
+    *,
+    provenance_suffix: str,
+) -> TargetPipelineResult:
+    """Attach target-neutral artifact evidence to measurement-aware results."""
+    return TargetPipelineResult(
+        pipeline_id=result.pipeline_id,
+        status=result.status,
+        layout=result.layout,
+        routing=result.routing,
+        native=result.native,
+        schedule=result.schedule,
+        diagnostics=result.diagnostics,
+        provenance=(*result.provenance, provenance_suffix),
+        selected_alternative=result.selected_alternative,
+        cost=result.cost,
+        measurement_mapping=_measurement_mapping(plan),
+        physical_execution_claimed=False,
     )
 
 
@@ -415,11 +465,17 @@ def run_target_pipeline(
         pipeline_id=pipeline_id,
     )
     if isinstance(routed, TargetPipelineResult):
+        if "measurements" in plan:
+            return _with_artifact_evidence(
+                routed,
+                plan,
+                provenance_suffix="artifact-none",
+            )
         return routed
 
     native = _translate_native(operations, snapshot)
     if native.reject_reasons:
-        return _infeasible(
+        result = _infeasible(
             pipeline_id=pipeline_id,
             code="TARGET_NATIVE_UNSUPPORTED",
             message=(
@@ -431,17 +487,33 @@ def run_target_pipeline(
             native=native,
             schedule=_empty_schedule(snapshot.timing_resolution),
         )
+        if "measurements" in plan:
+            return _with_artifact_evidence(
+                result,
+                plan,
+                provenance_suffix="artifact-none",
+            )
+        return result
 
+    measurement_mapping = _measurement_mapping(plan)
+    provenance = STAGE_PROVENANCE
+    if "measurements" in plan:
+        provenance = (*STAGE_PROVENANCE, "artifact-target-neutral")
     return TargetPipelineResult(
         pipeline_id=pipeline_id,
         status="verified",
         layout=layout,
         routing=routed,
         native=native,
-        schedule=_build_schedule(snapshot),
+        schedule=_build_schedule(
+            snapshot,
+            depth=len(operations) + len(routed.insertions),
+        ),
         diagnostics=(),
-        provenance=STAGE_PROVENANCE,
+        provenance=provenance,
         selected_alternative=None,
+        cost=_cost(operations, routed),
+        measurement_mapping=measurement_mapping,
     )
 
 

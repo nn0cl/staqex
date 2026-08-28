@@ -413,7 +413,7 @@ class QASM3Emitter:
                         "measure",
                         instruction.qubits or (0,),
                         bits=(0,),
-                        comment="terminal Measure",
+                        comment="terminal measure",
                     )
                 )
                 continue
@@ -638,7 +638,7 @@ class QASM3Emitter:
             for instruction in program.get("instructions", ())
             if instruction.opcode != "Measure"
         )
-        if not instructions:
+        if not instructions and not program.get("instructions"):
             return None
         return self.emit_qpu_program(program, parameter_values=parameter_values)
 
