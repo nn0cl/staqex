@@ -2,12 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **Implementation in progress — pointer compaction approved** |
-| Branch | `docs/documentation-canonicalization` |
+| Status | **LISS-0473 and LISS-0474 classifier slices complete — current-main compaction batch not authorized** |
+| Branch | `docs/wp-0090-reassessment` |
 | Scope | Documentation inventory, versioned baseline, cross-artifact compression, canonical-page consolidation, and source-history routing |
 | Implementation permission | Granted for documentation-only compaction by Adjudicator direction |
 | Baseline tag | `docs/pre-canonicalization-2026-08-03` → `8663ba7` |
 | Requested by | Adjudicator direction, 2026-08-03 |
+| Follow-up Issue | [LISS-0473](../issues/LISS-0473-documentation-compression-classifier.md) |
+
+The next bounded maintenance follow-up is [LISS-0474](../issues/LISS-0474-documentation-compression-maintenance.md); its Phase 2 Green implementation is complete and awaits Phase 3 review.
 
 ## Design Note
 
@@ -16,7 +19,8 @@
   decisions, review evidence, and the pre-compression repository state.
 - **Current inventory:** the baseline and current counts are generated in
   `documentation-compression-map.md`; the map is the authoritative inventory
-  for this batch.
+  for this batch. The current-main refresh is recorded in
+  `docs/collaboration/traces/2026-08-28-wp-0090-current-main-reassessment.md`.
 - **Phase to execute:** documentation-only implementation and deterministic
   review. No language/runtime behavior or test behavior is in scope.
 - **Context included:** `AGENTS.md`, `docs/architecture/agent-quickstart.md`,
@@ -164,6 +168,20 @@
 - Deleting Git history, force-pushing, or rewriting published commit history.
 - Choosing a documentation site generator, database, or external knowledge
   base.
+
+## Current-main reassessment (2026-08-28)
+
+The original implementation branch predates the current `main` and contains
+unrelated compiler changes, so it is not a safe merge source. The current tree
+already contains the entry page, decision register, documentation policy, and
+compression map. A fresh inventory reports 1,022 `docs/` files, 983 Markdown
+files, 37 ADRs, 239 Issues, 81 Work Plans, and 234 Traces.
+
+The existing candidate classifier reports 138 historical candidates, but this
+set includes current-generation completed Issues and Work Plans that remain
+required acceptance or review evidence. No deletion batch is therefore
+authorized by this reassessment. The classifier must be corrected and its
+output separately reviewed before any further removal.
 
 ## Approval request
 

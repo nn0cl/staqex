@@ -9,6 +9,13 @@ future feature must first have an accepted specification or ADR, an explicit
 phase request, and the required ports/adapters review described in
 [`AGENTS.md`](../../AGENTS.md).
 
+## Documentation/process tooling follow-ups
+
+| Area | Current status | Tracking | Boundary / acceptance note |
+|---|---|---|---|
+| Documentation compression candidate classifier | **complete; deletion batch still unauthorized** | [LISS-0473](../issues/LISS-0473-documentation-compression-classifier.md); [WP-0090](../work-plans/WP-0090-documentation-canonicalization.md); [completion review](../collaboration/reviews/2026-08-28-liss-0473-completion-phase3-review.md) | Read-only classification now exposes all required policy dispositions, including Canonical pages. Legacy cleanup is follow-up work. No deletion is authorized. |
+| Documentation compression classifier maintenance | **complete; deletion batch still unauthorized** | [LISS-0474](../issues/LISS-0474-documentation-compression-maintenance.md); [WP-0090](../work-plans/WP-0090-documentation-canonicalization.md); [completion review](../collaboration/reviews/2026-08-29-liss-0474-completion-phase3-review.md) | Legacy classification path removed and review evidence is repository-relative. Policy, deletion behavior, and provider scope remain unchanged. |
+
 ## Staqex v1 north-star rebaseline
 
 | Area | Current status | Tracking | Boundary / acceptance note |

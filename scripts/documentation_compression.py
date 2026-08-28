@@ -20,6 +20,12 @@ SOURCE_ROOTS = {
     "work-plan": ROOT / "docs/work-plans",
     "trace": ROOT / "docs/collaboration/traces",
 }
+CANONICAL_PATHS = {
+    "docs/README.md",
+    "docs/architecture/current-decision-register.md",
+    "docs/architecture/documentation-canonicalization-policy.md",
+    "docs/architecture/open-work-register.md",
+}
 DESTINATION = {
     "issue": "docs/architecture/open-work-register.md",
     "work-plan": "docs/architecture/open-work-register.md",
@@ -46,6 +52,17 @@ class Candidate:
     kind: str
     path: Path
     reason: str
+    classification: str = "index-pointer"
+
+
+@dataclass(frozen=True)
+class ClassificationResult:
+    """Conservative, reviewable disposition for one source record."""
+
+    path: str
+    classification: str
+    reason: str
+    candidate: bool
 
 
 def relative(path: Path) -> str:
@@ -75,7 +92,7 @@ def explicit_status(text: str) -> str:
 
 def is_completed(text: str) -> bool:
     status = explicit_status(text)
-    return bool(status and any(word in status for word in COMPLETED_WORDS))
+    return is_completed_status(status)
 
 
 def has_unresolved_signal(text: str) -> bool:
@@ -86,6 +103,114 @@ def has_unresolved_signal(text: str) -> bool:
     if "residual" in status and "triaged" not in status:
         return True
     return any(word in status for word in UNRESOLVED_WORDS)
+
+
+def is_completed_status(status: str) -> bool:
+    """Recognize explicit completion without substring false positives."""
+
+    normalized = re.sub(r"[*_`]+", "", status).strip().lower()
+    if not normalized or normalized.startswith(("not ", "incomplete")):
+        return False
+    return normalized in COMPLETED_WORDS or any(
+        normalized.startswith(f"{word} ")
+        or normalized.startswith(f"{word}—")
+        or normalized.startswith(f"{word}-")
+        or normalized.startswith(f"{word}:")
+        for word in COMPLETED_WORDS
+    )
+
+
+def classify_records(records: list[dict[str, object]]) -> list[ClassificationResult]:
+    """Classify records without changing files or consulting a provider.
+
+    This small pure boundary is intentionally more conservative than the
+    historical candidate scan. Evidence and unresolved signals are protected;
+    only an unreferenced completed record can be proposed as a candidate.
+    """
+
+    results: list[ClassificationResult] = []
+    for record in records:
+        path = str(record["path"])
+        status = str(record.get("status", "")).strip().lower()
+        references = [str(value) for value in record.get("referenced_by", [])]
+        has_review_evidence = bool(record.get("has_review_evidence", False))
+        indexed = bool(record.get("indexed", False))
+        canonical = bool(record.get("canonical", False))
+
+        if canonical:
+            results.append(
+                ClassificationResult(
+                    path,
+                    "retain-canonical",
+                    "current canonical entry or register remains authoritative",
+                    False,
+                )
+            )
+        elif indexed:
+            results.append(
+                ClassificationResult(
+                    path,
+                    "index-pointer",
+                    "already represented by an existing compression-map pointer",
+                    False,
+                )
+            )
+        elif references:
+            results.append(
+                ClassificationResult(
+                    path,
+                    "retain-evidence",
+                    f"referenced by {references[0]}",
+                    False,
+                )
+            )
+        elif has_review_evidence:
+            results.append(
+                ClassificationResult(
+                    path,
+                    "retain-evidence",
+                    "required review or acceptance evidence remains attached",
+                    False,
+                )
+            )
+        elif any(word in status for word in UNRESOLVED_WORDS):
+            results.append(
+                ClassificationResult(
+                    path,
+                    "unresolved-review",
+                    "status remains unresolved and requires human review",
+                    False,
+                )
+            )
+        elif is_completed_status(status):
+            results.append(
+                ClassificationResult(
+                    path,
+                    "index-pointer",
+                    "completed record has no supplied current evidence reference",
+                    True,
+                )
+            )
+        else:
+            results.append(
+                ClassificationResult(
+                    path,
+                    "unresolved-review",
+                    "status is missing or not safely classified",
+                    False,
+                )
+            )
+    return results
+
+
+def render_classification_report(records: list[dict[str, object]]) -> str:
+    """Render every disposition for human review without changing files."""
+
+    classifications = classify_records(records)
+    return "\n".join(
+        f"{result.classification}\t{result.path}\treason={result.reason}"
+        for result in classifications
+    )
 
 
 def is_pointer_stub(text: str) -> bool:
@@ -118,35 +243,24 @@ def batch_issue_ids() -> set[str]:
     return result
 
 
-def historical_candidate(kind: str, path: Path, text: str) -> bool:
-    if is_pointer_stub(text):
-        return False
-    if path == ROOT / "docs/work-plans/WP-0090-documentation-canonicalization.md":
-        return False
-    if kind == "issue":
-        if identifier(path) in batch_issue_ids() or not is_completed(text):
-            return False
-        return not has_unresolved_signal(text)
-    if kind == "work-plan":
-        if identifier(path) in batch_work_plan_ids() or not is_completed(text):
-            return False
-        return not has_unresolved_signal(text)
-    if kind == "trace":
-        if any(word in path.name.lower() for word in ("approval", "review", "final", "completion", "handoff", "blocked", "pending")):
-            return False
-        dated_old = bool(re.match(r"2026-07-", path.name))
-        return (dated_old or is_completed(text)) and not has_unresolved_signal(text)
-    return False
-
-
 def candidates() -> list[Candidate]:
     texts = source_texts()
+    records = _classification_records(texts)
+    classifications = classify_records(records)
+    by_path = {str(record["path"]): record for record in records}
     result: list[Candidate] = []
-    for kind, root in SOURCE_ROOTS.items():
-        for path in sorted(root.glob("*.md")):
-            text = texts[path]
-            if historical_candidate(kind, path, text):
-                result.append(Candidate(kind, path, "historical record has no unresolved obligation or current review role"))
+    for classification in classifications:
+        if not classification.candidate:
+            continue
+        record = by_path[classification.path]
+        result.append(
+            Candidate(
+                str(record["kind"]),
+                ROOT / classification.path,
+                classification.reason,
+                classification.classification,
+            )
+        )
     return result
 
 
@@ -252,6 +366,83 @@ def indexed_deleted_paths() -> list[Path]:
     return result
 
 
+def _record_references(path: Path, texts: dict[Path, str]) -> list[str]:
+    """Find conservative references to a record in current documentation."""
+
+    record_id = identifier(path)
+    if not record_id:
+        return []
+    return [
+        relative(other)
+        for other, text in texts.items()
+        if other != path and record_id in text
+    ]
+
+
+def _record_has_review_evidence(path: Path, texts: dict[Path, str]) -> bool:
+    """Treat review packets and execution batches as retained evidence."""
+
+    record_id = identifier(path)
+    if not record_id:
+        return False
+    if record_id in batch_issue_ids() or record_id in batch_work_plan_ids():
+        return True
+    return any(
+        _is_review_path(other)
+        and record_id in text
+        for other, text in texts.items()
+    )
+
+
+def _is_review_path(path: Path) -> bool:
+    """Recognize review evidence from a repository-relative path."""
+
+    path_text = path.as_posix()
+    if path.is_absolute():
+        try:
+            path_text = relative(path)
+        except ValueError:
+            return False
+    return path_text.startswith("docs/collaboration/reviews/")
+
+
+def _classification_records(texts: dict[Path, str]) -> list[dict[str, object]]:
+    indexed = {relative(path) for path in indexed_deleted_paths()}
+    records: list[dict[str, object]] = []
+    seen: set[Path] = set()
+    for kind, root in SOURCE_ROOTS.items():
+        for path in sorted(root.glob("*.md")):
+            seen.add(path)
+            text = texts[path]
+            records.append(
+                {
+                    "path": relative(path),
+                    "kind": kind,
+                    "status": explicit_status(text),
+                    "referenced_by": _record_references(path, texts),
+                    "has_review_evidence": _record_has_review_evidence(path, texts),
+                    "indexed": relative(path) in indexed,
+                    "canonical": relative(path) in CANONICAL_PATHS,
+                }
+            )
+    for canonical_path in sorted(ROOT / path for path in CANONICAL_PATHS):
+        if not canonical_path.exists() or canonical_path in seen:
+            continue
+        text = texts[canonical_path]
+        records.append(
+            {
+                "path": relative(canonical_path),
+                "kind": "canonical",
+                "status": explicit_status(text),
+                "referenced_by": _record_references(canonical_path, texts),
+                "has_review_evidence": _record_has_review_evidence(canonical_path, texts),
+                "indexed": relative(canonical_path) in indexed,
+                "canonical": True,
+            }
+        )
+    return records
+
+
 def rewrite_deleted_links(paths: set[Path]) -> int:
     pattern = re.compile(r"(\]\()([^()\s]+)(#[^)]*)?(\))")
     changed = 0
@@ -326,10 +517,13 @@ def main() -> int:
         print(f"deleted={len(paths)} links_rewritten={changed}")
         return 0
     rows = candidates()
+    texts = source_texts()
+    records = _classification_records(texts)
     commit = baseline_commit()
     print(f"baseline={BASELINE_TAG} commit={commit}")
-    for row in rows:
-        print(f"{row.kind}\t{relative(row.path)}\t{row.reason}")
+    report = render_classification_report(records)
+    if report:
+        print(report)
     print(f"candidate_count={len(rows)}")
     return 0
 

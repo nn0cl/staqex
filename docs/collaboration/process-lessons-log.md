@@ -21,6 +21,20 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-08-28
+- Class: review-boundary-observability
+- Pattern: a safe internal classification API was integrated into a command,
+  but the command discarded the disposition metadata needed for human review.
+  Unit tests therefore passed while the operational review boundary remained
+  opaque.
+- What later design or implementation must do: define and test the observable
+  command/report contract separately from the pure classifier, preserving
+  classification, reason, and source path for every reviewed record.
+- Source issue or work plan (adopter's own ID, if any): LISS-0473 / WP-0090
+- Status: applied
+
+## Lesson
+
 - Date: 2026-08-26
 - Class: other
 - Pattern: two local issues shared one LISS ID. Filename uniqueness is not

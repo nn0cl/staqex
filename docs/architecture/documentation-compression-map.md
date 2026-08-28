@@ -2,7 +2,9 @@
 
 This file is generated and updated as part of WP-0090. It is the recoverability
 index for ADR, Issue, Work Plan, and Trace source records deleted
-from the current tree.
+from the current tree. The current-tree inventory below was refreshed on
+2026-08-28; it supersedes the historical post-compression snapshot without
+changing any recovery pointer.
 
 ## Baseline
 
@@ -14,14 +16,14 @@ from the current tree.
 
 ## Inventory delta
 
-| Area | Before (baseline) | After this batch | Delta |
+| Area | Before (baseline) | Current tree (2026-08-28) | Delta |
 |---|---:|---:|---:|
-| All `docs/` files | 1209 | 562 | -647 |
-| Markdown files | 1182 | 532 | -650 |
-| ADRs | 185 | 2 | -183 |
-| Issues | 321 | 87 | -234 |
-| Work Plans | 90 | 46 | -44 |
-| Traces | 361 | 150 | -211 |
+| All `docs/` files | 1209 | 1022 | -187 |
+| Markdown files | 1182 | 983 | -199 |
+| ADRs | 185 | 37 | -148 |
+| Issues | 321 | 239 | -82 |
+| Work Plans | 90 | 81 | -9 |
+| Traces | 361 | 234 | -127 |
 
 ## Deleted records
 
