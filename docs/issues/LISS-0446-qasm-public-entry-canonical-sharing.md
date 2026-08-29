@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete — independent review COMPLETE** |
+| Status | **done — bounded public QASM facade canonical-sharing slice complete; Phase 3 deferred** |
 | Discovered in | [LISS-0445](LISS-0445-scientific-semantic-consumer-migration.md) Phase 2 Green review |
 | Proposed Spec | [QASM Public Entry Canonical Sharing](../specs/staqex-qasm-public-entry-canonical-sharing.md) |
 | Proposed WorkPlan | [WP-0109](../work-plans/WP-0109-qasm-public-entry-canonical-sharing.md) |
@@ -65,4 +65,12 @@ parameters make canonical ownership visible, while collapsing the public
 signatures would make the ownership boundary less legible. The three existing
 LISS-0445 Red failures remain outside this Issue, so no Phase 3 code change is
 performed here. The refactor is deferred until those independent contracts or
-the Phase 3 acceptance policy are resolved.
+ the Phase 3 acceptance policy are resolved.
+
+## Completion review
+
+- Completion review: [2026-08-29 completion review](../collaboration/reviews/2026-08-29-liss-0446-completion-review.md)
+- Independent review: [Phase 2 Green review 02](../collaboration/reviews/2026-08-20-liss-0446-phase2-green-review-02.md)
+- Result: accepted for the bounded local public QASM facade canonical-sharing slice.
+- Phase 3 refactor remains deferred; no later phase, provider, or live-QPU work is implied.
+- Process review: no operating-contract deviation or operational problem found.

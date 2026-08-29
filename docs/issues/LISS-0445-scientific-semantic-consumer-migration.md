@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status/phase | **Phase 3 refactor complete — binder slice final-review-ready; LISS-0446 parked** |
+| Status/phase | **done — binder canonical-projection slice complete; LISS-0446 parked** |
 | WorkPlan | [WP-0108](../work-plans/WP-0108-scientific-semantic-consumer-migration.md) |
 | Specification | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md) |
 | Parent design | [LISS-0444](LISS-0444-scientific-semantic-core.md) / [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
@@ -62,3 +62,11 @@ current acceptance specification cannot prove safe replacement.
 - unsupported or unresolved meaning produces no executable artifact;
 - full regression and independent post-Green review pass;
 - WP-0107/open-work register/Issue status agree on completed and deferred work.
+
+## Completion review
+
+- Completion review: [2026-08-29 completion review](../collaboration/reviews/2026-08-29-liss-0445-completion-review.md)
+- Independent review: [2026-08-24 Phase 3 review](../collaboration/reviews/2026-08-24-liss-0445-phase3-review-02.md)
+- Result: accepted for the bounded binder canonical-projection slice.
+- LISS-0446 Public QASM facade ownership remains parked and is not included.
+- Process review: no operating-contract deviation or operational problem found.

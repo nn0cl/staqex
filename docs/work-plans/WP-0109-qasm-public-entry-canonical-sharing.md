@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete — independent review COMPLETE** |
+| Status | **complete — bounded public QASM facade canonical-sharing slice; Phase 3 deferred** |
 | Issue | [LISS-0446](../issues/LISS-0446-qasm-public-entry-canonical-sharing.md) |
 | Specification | [QASM Public Entry Canonical Sharing](../specs/staqex-qasm-public-entry-canonical-sharing.md) |
 | Parent | [WP-0108](WP-0108-scientific-semantic-consumer-migration.md) |
@@ -79,3 +79,9 @@ Phase 3 was evaluated using the recommended conservative disposition:
 - the three known LISS-0445 Red failures prevent claiming a full Phase 3 Green
   baseline and remain outside WP-0109;
 - Phase 3 is deferred, with no new implementation or scope expansion.
+
+## Completion review
+
+- Bounded Phase 2 Green slice accepted after independent review.
+- Completion record: [2026-08-29 completion review](../collaboration/reviews/2026-08-29-liss-0446-completion-review.md)
+- Process review: no operating-contract deviation or operational problem found.
