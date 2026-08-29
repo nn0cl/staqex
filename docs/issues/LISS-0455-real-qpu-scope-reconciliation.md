@@ -60,7 +60,7 @@ WP-0125 is needed. Unresolved decisions keep downstream work `proposed`.
 | Product/tensor, continuous/open-system, measurement | open, family-specific contract required | LISS-0457 / WP-0120 |
 | Artifact, capability, routing, QASM conformance | open roadmap work | LISS-0458–0462 / WP-0121–0122 |
 | Provider packaging, credentials, lifecycle | open roadmap work | LISS-0463–0466 / WP-0123 |
-| Real run, validation, operations | human/conditional future work | LISS-0467–0470 / WP-0124–0125 |
+| Real run, validation, operations | human/conditional future work | LISS-0475 / WP-0126; operations LISS-0470 / WP-0125 |
 
 ### Phase 0 closeout
 

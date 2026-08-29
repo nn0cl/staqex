@@ -17,7 +17,9 @@
 | Implementation permission | None |
 | Post-review requirement | Validation-protocol review and typed Phase 1 approval |
 
-Compare the real result with the CPU/simulator baseline using declared
+Define and exercise offline validation against the CPU/simulator baseline;
+validation of a supplied real result follows [LISS-0475](LISS-0475-human-real-qpu-execution.md).
+Compare any supplied result using declared
 statistical and physics checks. Record calibration drift, noise, failed shots,
 provider anomalies, and limitations. Classify the outcome as valid evidence,
 inconclusive, or rejected; never silently tune the source or claim hardware

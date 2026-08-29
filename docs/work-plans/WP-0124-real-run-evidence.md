@@ -1,4 +1,4 @@
-# WP-0124: Real-run evidence, pilot, and validation
+# WP-0124: Offline run evidence, pilot preparation, and validation
 
 | Field | Value |
 |---|---|
@@ -45,11 +45,11 @@ source rewrites to make a result look successful.
 
 ## Acceptance scenarios
 
-- A run record links source, semantic IR, finite artifact, provider/device/job,
-  compiler/SDK versions, shots, seed, calibration, and measured result.
-- The pilot cannot proceed without human approval, cost/shot review, and a
-  supported capability profile.
-- A real result is labeled real/non-mock and compared with a declared
+- An offline evidence record schema names source, semantic IR, finite artifact,
+  target/job/result fields, compiler/SDK versions, shots, seed, and calibration.
+- The offline pilot checklist rejects missing human approval, cost/shot review,
+  or supported-capability evidence before a run can be authorized.
+- Offline validation compares supplied raw/derived data with a declared
   simulator baseline using predeclared statistical/physics criteria.
 - Drift, noise, incomplete data, or provider anomalies produce inconclusive or
   rejected evidence rather than an unsupported fidelity claim.

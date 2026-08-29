@@ -17,17 +17,19 @@
 | Implementation permission | None; no autonomous real-QPU submission |
 | Post-review requirement | Human pilot-protocol review and separate real-run approval |
 
-Write the dry-run and approval checklist for one small supported program,
+Maintain the offline dry-run and approval checklist for one small supported program;
+the actual device run is tracked by [LISS-0475](LISS-0475-human-real-qpu-execution.md).
 including target selection, cost/shots guard, cancellation, credential check,
 artifact review, explicit real-time human confirmation, and evidence capture.
 The agent may prepare commands and inspect results, but must not submit to a
 real device autonomously.
 ## Design detail
 
-**In:** one minimal supported program, one selected device, dry-run output,
-artifact review, cost/shot guard, human confirmation, cancellation, and
-evidence capture. **Out:** unattended scheduling, production claims, agent
-credential use, broad benchmarking, and provider expansion.
+**In:** one minimal supported program, dry-run output, artifact review,
+cost/shot guard, human confirmation protocol, cancellation, and evidence
+capture requirements. **Out:** actual device execution, unattended scheduling,
+production claims, agent credential use, broad benchmarking, and provider
+expansion.
 
 **Acceptance:** the human operator reviews artifact, target, cost, and safety
 checks before explicit real-time approval; the path is auditable; the run is

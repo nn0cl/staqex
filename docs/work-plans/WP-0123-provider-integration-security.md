@@ -8,7 +8,7 @@
 | Parent | [WP-0119](WP-0119-real-qpu-readiness-roadmap.md) |
 | Issues | LISS-0463, LISS-0464, LISS-0465, LISS-0466 |
 | Depends on | WP-0122 |
-| Blocks | WP-0124 |
+| Blocks | WP-0126 |
 | Canonical authority | ADR 0083, 0103, 0104, 0161, 0202, 0203; dependency policy |
 | Owner boundary | Host adapters and provider-neutral Job ports |
 | Implementation permission | Bounded Issues complete; real submission excluded |

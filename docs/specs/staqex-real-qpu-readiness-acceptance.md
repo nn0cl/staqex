@@ -4,8 +4,8 @@
 |---|---|
 | Status | **proposed — LISS-0472 Continuous/Open-system bounded slice done; broader realization not approved** |
 | Authority | WP-0119; ADR 0210–0213; ADR 0202–0203; ADR 0065, 0083, 0103, 0104, 0161 |
-| Work Plans | WP-0120, WP-0121, WP-0122, WP-0123, WP-0124, WP-0125 |
-| Issues | LISS-0456–LISS-0472 |
+| Work Plans | WP-0120, WP-0121, WP-0122, WP-0123, WP-0124, WP-0125, WP-0126 |
+| Issues | LISS-0456–LISS-0472, LISS-0475 |
 | Scope approval | User-approved planning/design baseline, 2026-08-27 |
 | Implementation permission | None |
 
@@ -15,7 +15,7 @@
   from source-derived Scientific Semantic IR through finite artifact, target
   conformance, provider-neutral job lifecycle, reproducible evidence, and a
   human-authorized real-QPU pilot.
-- **Specifications and files inspected:** WP-0119–0125, LISS-0455–0470,
+- **Specifications and files inspected:** WP-0119–0126, LISS-0455–0475,
   `open-work-register.md`, ADR 0210–0213, ADR 0202–0203, ADR 0065, 0083,
   0103, 0104, 0161, and the existing semantic-consumer and realization specs.
 - **Component boundaries, ports/adapters, and VO/DTO candidates:** the
@@ -253,6 +253,18 @@ Then raw data, derived statistics, criteria, deviations, and disposition are ret
 And validation does not rewrite source meaning or turn inconclusive evidence into a success claim
 ```
 
+**LISS-0475 — Human real-QPU execution and evidence handoff**
+
+```gherkin
+Given a reviewed offline artifact, selected target, and cost/shots ceiling
+When the human operator gives explicit real-time approval
+Then the human may submit, observe the Job lifecycle, and retrieve a raw result
+And source/artifact identity and available calibration/noise metadata are handed off without secrets
+Given unsupported capability, missing credentials, unexpected cost, or incomplete provenance
+When the gate is evaluated
+Then submission stops before execution
+```
+
 **LISS-0470 — Delivery and operations boundary**
 
 ```gherkin
@@ -296,6 +308,7 @@ relevant technology/security/human gate even if offline tests are Green.
 | LISS-0467 | evidence schema and baseline fixtures | source-to-result chain is complete or marked incomplete |
 | LISS-0468 | dry-run checklist and human sign-off record | pilot is human-authorized and auditable |
 | LISS-0469 | predeclared criteria and analysis fixtures | result disposition is reproducible and honest |
+| LISS-0475 | human approval, target/cost gate, Job lifecycle, and redacted raw-result handoff | real execution is human-owned and traceable |
 | LISS-0470 | post-pilot decision and delivery ADR if needed | delivery is accepted or explicitly deferred |
 
 ## Non-goals

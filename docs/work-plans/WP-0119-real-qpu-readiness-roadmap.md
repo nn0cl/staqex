@@ -80,7 +80,7 @@ assets; it must not mechanically reimplement completed Issues.
 
 | Release | Work Plans | Exit meaning |
 |---|---|---|
-| R0 — planning baseline | WP-0120–0125 design records | Scope, ownership, dependencies, and approval gates are accepted |
+| R0 — planning baseline | WP-0120–0126 design records | Scope, ownership, dependencies, and approval gates are accepted |
 | R1 — semantic/finite boundary | WP-0120–0121 | Supported source meaning has one canonical path to a finite artifact |
 | R2 — offline target readiness | WP-0122 | Static/dynamic target artifacts pass offline conformance and preflight |
 | R3 — provider-ready Host | WP-0123 | Fake-provider lifecycle is safe, typed, credential-safe, and reproducible in tests |
