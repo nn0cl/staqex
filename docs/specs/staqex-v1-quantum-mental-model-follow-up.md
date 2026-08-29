@@ -5,6 +5,7 @@
 | Status | **Proposed specification** (2026-08-04) |
 | Parent | [ADR 0189](../architecture/adr/0189-quantum-mental-model-and-observation-contract.md) |
 | Work plan | [WP-0092](../work-plans/WP-0092-quantum-mental-model-follow-up.md) |
+| Follow-up Issues | [LISS-0480](../issues/LISS-0480-scientific-lexicon-contract.md), [LISS-0481](../issues/LISS-0481-observation-contract.md), [LISS-0482](../issues/LISS-0482-observation-semantic-mapping.md), [LISS-0483](../issues/LISS-0483-observation-lexicon-conformance.md) |
 | Scope | scientific lexicon, quantum composition surface, observation contracts |
 | Implementation status | partially implemented: `inspect` is classified as `DiagnosticView<T>`; `superpose` formal grammar shipped ([LISS-0320](../issues/LISS-0320-superpose-formal-grammar.md), PR #345); `controlled(...)` call-form execution confirmed already shipped (2026-08-05, see §4.3 note — no separate Issue needed); remaining surface (scientific lexicon beyond `psi`/`phi`/`rho`/`cm`, public `Observable<T>`/`Projection<T>`/`Observation<T>`) and observation families remain proposed |
 
@@ -409,6 +410,37 @@ Feature: typed observations
 ```
 
 ## 6. Current implementation gap
+
+### Detailed follow-up Issue design
+
+#### LISS-0480 — scientific lexicon and alias contract
+
+Define canonical ASCII spellings, display aliases, token classes, contexts,
+shadowing, versioning, and diagnostics. Aliases map to one AST/semantic
+meaning and retain written-form provenance. Phase 1 is lexer/parser contract
+and fixture inventory; mandatory Unicode migration is excluded.
+
+#### LISS-0481 — observation contract
+
+Define `Observable<T>`, `Projection<T>`, and `Observation<T>` across `expect`,
+`project`, `inspect`, `trace_out`, `measure`, and tomography. Inspection is
+non-destructive, terminal `measure` is the only collapse boundary, and dynamic
+measurement is a distinct lane. General Hilbert storage and POVM/tomography
+implementation remain separate decisions.
+
+#### LISS-0482 — observation-to-semantic-IR mapping
+
+Map accepted observation concepts to Scientific Semantic IR roles and lanes,
+preserving source IDs, provenance, exactness, dimensions, and projection-loss
+diagnostics. Illegal lane transitions reject explicitly; observation never
+becomes implicit finite realization.
+
+#### LISS-0483 — observation/lexicon conformance closure
+
+After 0480–0482 are accepted, build one matrix for aliases, `mix`, `superpose`,
+`controlled`, `when` retirement, inspection, projection, and terminal measure.
+Every proof maps to a deterministic test; deferred forms remain explicit
+rejects and do not imply hardware support.
 
 The shipping Kernel currently provides a finite-support Joint with complex
 amplitudes, selected unitary and Hamiltonian operations, limited density-state

@@ -6,8 +6,10 @@
 | Phase | **phase-3-refactor complete for the approved bounded slice** |
 | Size | XL |
 | Issue | [LISS-0450](../issues/LISS-0450-semantic-ir-meaning-preservation.md) |
+| Follow-up Issues | [LISS-0478](../issues/LISS-0478-interfer-phase-branch-meaning.md) |
 | Specification | [Scientific Semantic IR Meaning Preservation](../specs/staqex-semantic-ir-meaning-preservation.md) |
 | Related authority | ADR 0211 and the physicist-first language vision |
+| Detailed follow-up design | [Meaning Preservation Specification](../specs/staqex-semantic-ir-meaning-preservation.md#residual-follow-up-design-liss-0478) |
 | Depends on | WP-0112 design direction |
 | Branch | Merged through PRs #557, #558, and #559 |
 
@@ -92,3 +94,9 @@ Given/When/Then cases:
   run #1181 passed all three checks.
 - Follow-up product/tensor, continuous/open-system, and measurement slices are
   not completed by this work plan and require separate design/approval.
+
+## Detailed remaining design
+
+The residual `interfer`/phase/branch slice is decomposed as LISS-0478. It is a
+semantic preservation and rejection contract only; it does not authorize gate
+synthesis, numerical approximation, or QPU execution.

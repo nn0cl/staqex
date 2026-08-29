@@ -6,7 +6,7 @@
 | Type | feature/release work plan |
 | Size | XL |
 | Parent | [WP-0119](WP-0119-real-qpu-readiness-roadmap.md) |
-| Issues | LISS-0455, LISS-0456, LISS-0457, LISS-0471, LISS-0472 |
+| Issues | LISS-0455, LISS-0456, LISS-0457, LISS-0471, LISS-0472, LISS-0479 |
 | Depends on | WP-0118 governance baseline |
 | Blocks | WP-0121, WP-0122 |
 | Canonical authority | ADR 0211; scientific semantic consumer migration specification |
@@ -15,6 +15,7 @@
 | Scope approval | User approved all Work Plans, 2026-08-27 |
 | Post-review requirement | Issue-level acceptance review and typed Phase 1 approval |
 | Acceptance spec | [Real-QPU readiness acceptance](../specs/staqex-real-qpu-readiness-acceptance.md) |
+| Detailed follow-up design | [Real-QPU readiness acceptance](../specs/staqex-real-qpu-readiness-acceptance.md#liss-0479--residual-semantic-family-coverage) |
 | Current next | Proceed to next roadmap WP or design additional family slice; no family-wide implementation |
 
 ## Goal
@@ -78,6 +79,12 @@ meaning-family support.
 ## Planning record
 
 - Planning record: `AIP-WP-0120-2026-08-27-001`.
+
+## Detailed remaining design
+
+Residual source-family inventory and explicit ready/reject/defer dispositions
+are isolated in LISS-0479. Existing Product/Tensor, Measurement, and
+Continuous/Open-system bounded slices remain dependencies and are not reopened.
 - Author/environment: Codex host agent, local repository.
 - Model/reasoning: N/A; runtime does not expose displayed per-task values.
 - Planning size: XL; basis is multiple semantic consumers and architecture

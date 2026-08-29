@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Status | Architecture-approved; Phase 1 Red and Phase 2 Green complete; Phase 3 representative QPU plus policy/evolution/binder projection complete; consumer-wide migration remains open |
-| Issue | [LISS-0444](../issues/LISS-0444-scientific-semantic-core.md) |
+| Issue | [LISS-0444](../issues/LISS-0444-scientific-semantic-core.md); [LISS-0476](../issues/LISS-0476-symbolic-ir-consumer-migration.md); [LISS-0477](../issues/LISS-0477-ast-dto-authority-retirement.md) |
 | WorkPlan | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | ADR | [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |
 
@@ -134,6 +134,25 @@ expiry milestone in its Issue. Rollback is triggered by loss of structural
 children, source identity, state/measurement semantics, or explicit
 `Realize` policy; rollback restores the last passing semantic snapshot and
 does not restore an obsolete authority path.
+
+## Consumer-wide follow-up design
+
+### LISS-0476 — non-explicit `symbolic_ir` consumer migration
+
+Simulator and inspection consumers must use one compile-owned canonical
+projection exposed as a provenance-bearing inspection result. A caller-only
+symbolic DTO is non-authoritative. Phase 1 measures build count, object
+identity, source IDs, no finite allocation, and unresolved-meaning rejection;
+Phase 2 changes only the named inspection consumers.
+
+### LISS-0477 — AST/DTO semantic-authority retirement
+
+Remaining evaluator, Equation/Physics DTO, H1, Algorithm Plan, and QASM helper
+reads are classified as migrate, projection-only, retire, or defer. Each row
+names owner, proof ID, replacement projection, rollback trigger, and deletion
+condition. Phase 1 is inventory and negative tests only; deletion requires
+replacement and rollback evidence. Changes to ADR 0211, `Realize`, `State<T>`,
+or terminal `measure` stop for Architecture review.
 
 ## Acceptance corpus and artifact rules
 

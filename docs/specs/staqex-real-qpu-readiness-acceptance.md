@@ -5,7 +5,7 @@
 | Status | **proposed — LISS-0472 Continuous/Open-system bounded slice done; broader realization not approved** |
 | Authority | WP-0119; ADR 0210–0213; ADR 0202–0203; ADR 0065, 0083, 0103, 0104, 0161 |
 | Work Plans | WP-0120, WP-0121, WP-0122, WP-0123, WP-0124, WP-0125, WP-0126 |
-| Issues | LISS-0456–LISS-0472, LISS-0475 |
+| Issues | LISS-0456–LISS-0472, LISS-0475, LISS-0479 |
 | Scope approval | User-approved planning/design baseline, 2026-08-27 |
 | Implementation permission | None |
 
@@ -310,6 +310,16 @@ relevant technology/security/human gate even if offline tests are Green.
 | LISS-0469 | predeclared criteria and analysis fixtures | result disposition is reproducible and honest |
 | LISS-0475 | human approval, target/cost gate, Job lifecycle, and redacted raw-result handoff | real execution is human-owned and traceable |
 | LISS-0470 | post-pilot decision and delivery ADR if needed | delivery is accepted or explicitly deferred |
+
+### LISS-0479 — residual semantic-family coverage
+
+This local-only design reconciles remaining source constructs against the
+completed Product/Tensor, Measurement, and Continuous/Open-system bounded
+rows. Each construct records a source fixture, semantic role, finite boundary,
+ready/reject/defer status, rejection code, owner, and exit evidence. Deferred
+rows retain inspectable meaning and emit no artifact. Phase 1 is limited to
+inventory assertions and selected-row negative cases; no provider capability or
+new numerical method is implied.
 
 ## Non-goals
 

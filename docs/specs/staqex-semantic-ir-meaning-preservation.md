@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Status | **proposed** |
-| Issue | [LISS-0450](../issues/LISS-0450-semantic-ir-meaning-preservation.md) |
+| Issue | [LISS-0450](../issues/LISS-0450-semantic-ir-meaning-preservation.md); [LISS-0478](../issues/LISS-0478-interfer-phase-branch-meaning.md) |
 | WorkPlan | [WP-0113](../work-plans/WP-0113-semantic-ir-meaning-preservation.md) |
 | Authority | ADR 0211, [ADR 0212](../architecture/adr/0212-ideal-meaning-and-finite-realization-boundary.md); adjudicator language vision |
 
@@ -48,3 +48,16 @@ for another family, and each slice requires its own Red/Green acceptance.
 - non-unitary `product` remains a mathematical/operator meaning;
 - absent QPU projection does not remove the ideal semantic result;
 - source provenance and state/mixture role survive projection.
+
+## Residual follow-up design: LISS-0478
+
+The next bounded family is `interfer`/phase/branch meaning. Canonical semantic
+nodes must retain operand identity, control/branch relationships, phase
+metadata, exactness, dimensions, and source provenance. Semantic inspection
+remains valid when finite projection is unsupported; unsupported finite
+projection returns a typed rejection and no artifact.
+
+Phase 1 uses representative `.sqx` fixtures and negative projection tests.
+Phase 2 is limited to the minimum semantic projection. Gate synthesis,
+numerical approximation, provider behavior, and Hilbert-space storage are
+excluded and require separate decisions.
