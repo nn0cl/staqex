@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **in progress — offline evidence/checklist/validation complete; human pilot pending** |
+| Status | **complete — offline evidence/checklist/validation preparation** |
 | Type | release/experiment work plan |
 | Size | L |
 | Parent | [WP-0119](WP-0119-real-qpu-readiness-roadmap.md) |
-| Issues | LISS-0467, LISS-0468, LISS-0469 |
+| Issues | LISS-0467, LISS-0468, LISS-0469 (offline preparation slices) |
 | Depends on | WP-0123 |
-| Blocks | WP-0125 |
+| Blocks | WP-0126; WP-0125 remains conditional on the separated real-run task |
 | Canonical authority | ADR 0065, 0103, 0104; experiment/evidence contract to be accepted |
-| Owner boundary | Human-operated Host experiment and evidence review |
+| Owner boundary | Offline Host experiment preparation and evidence review |
 | Implementation permission | None; pilot design and evidence preparation only |
 | Scope approval | User approved all Work Plans, 2026-08-27 |
 | Post-review requirement | Human pilot protocol review and separate real-run approval |
@@ -18,30 +18,30 @@
 
 ## Goal
 
-Capture reproducible execution evidence and conduct one small, explicitly
-human-authorized real-QPU pilot, then compare results with the simulator and
-record a scientifically honest disposition.
+Prepare reproducible execution evidence, dry-run controls, and offline result
+validation. Actual device execution and receipt of non-mock results are
+separated into [WP-0126](WP-0126-human-real-qpu-execution.md).
 
 ## Work units
 
 - Run envelope, calibration/noise/compiler/seed/shot evidence (LISS-0467).
-- Dry-run, approval, cost, cancellation, and human-operated pilot (LISS-0468).
-- Statistical/physics comparison, drift handling, and claim boundaries
+- Dry-run, approval, cost, cancellation, and pilot checklist (LISS-0468).
+- Offline statistical/physics comparison, drift handling, and claim boundaries
   (LISS-0469).
 
 ## Release exit
 
-The run is traceable from source to measured result; real/non-mock evidence is
-clearly labeled; validation is marked valid, inconclusive, or rejected. The
-agent must never autonomously submit to a real device.
+Offline artifacts, checklist states, and validation rules are reproducible and
+ready for a separately authorized human run. No real/non-mock result is
+claimed by this WP.
 
 ## Included / excluded
 
-Included: run envelope, baseline selection, calibration/noise capture, seed and
-shot policy, cost guard, dry-run checklist, human confirmation, result
-comparison, drift handling, and claim boundaries. Excluded: unattended jobs,
-new provider adapters, deployment, and source rewrites to make a result look
-successful.
+Included: run envelope schema, baseline selection, calibration/noise fields,
+seed and shot policy, cost guard, dry-run checklist, offline result comparison,
+drift handling, and claim boundaries. Excluded: actual credentials, provider
+network calls, device selection/execution, unattended jobs, deployment, and
+source rewrites to make a result look successful.
 
 ## Acceptance scenarios
 
@@ -58,8 +58,8 @@ successful.
 
 Phase 0 accepts the pilot protocol and validation criteria. Phase 1 adds
 offline evidence-schema and baseline tests. Phase 2 prepares dry-run tooling
-and fake/recorded data only. Phase 3 is human-gated: the human operator runs
-the device and supplies evidence, followed by independent validation review.
+and fake/recorded data only. Phase 3 closes the offline preparation. Human
+execution and raw-result handoff are governed by WP-0126.
 
 ## Risks / stop conditions
 
@@ -85,6 +85,14 @@ establish general hardware support.
 ## Current status
 
 LISS-0467, LISS-0468, and LISS-0469 are complete for offline evidence,
-checklist, and validation slices. The remaining release evidence is a
-human-operated real-QPU pilot and its supplied raw result; no agent may submit
-autonomously. WP-0125 is deferred pending demonstrated operational need.
+checklist, and validation slices. Human-operated real-QPU execution and raw
+result handoff are tracked separately in WP-0126; no agent may submit
+autonomously. WP-0125 remains deferred pending demonstrated operational need.
+
+## Split record
+
+- Actual real-device work moved to [WP-0126](WP-0126-human-real-qpu-execution.md)
+  and [LISS-0475](../issues/LISS-0475-human-real-qpu-execution.md).
+- LISS-0467–0469 remain the offline preparation contracts; they are not
+  reopened.
+- Process review: no operating-contract deviation or operational problem found.

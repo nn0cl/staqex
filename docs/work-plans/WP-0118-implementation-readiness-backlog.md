@@ -162,7 +162,7 @@ finiteization.
 
 The planning baseline and Packet 0 reconciliation are approved and recorded.
 LISS-0456 and LISS-0457 are complete for their bounded slices. The next safe
-action is the human-operated WP-0124 pilot evidence step; no Phase 1 tests,
+action is the separately tracked human-operated WP-0126 pilot evidence step; no Phase 1 tests,
 provider installation, or production implementation should start from this
 document alone.
 

@@ -10,7 +10,7 @@
 | Current size | XL |
 | Owner | Host/delivery boundary |
 | Parent | WP-0119; WP-0125 |
-| Depends on | LISS-0469 |
+| Depends on | LISS-0475 |
 | Blocks | none |
 | Branch | `codex/liss-0470-provider-neutral-delivery-operations` |
 | Acceptance spec | [Real-QPU readiness acceptance](../specs/staqex-real-qpu-readiness-acceptance.md#liss-0470--delivery-and-operations-boundary) |
@@ -34,7 +34,7 @@ deletion, audit, and incident behavior are explicit or the Issue closes as
 deferred; operational failure cannot mutate source meaning or silently
 resubmit a job.
 
-**Phase/evidence:** Phase 0 decides needed/deferred after WP-0124; if needed,
+**Phase/evidence:** Phase 0 decides needed/deferred after WP-0126; if needed,
 new ADR and Phase 1 Red contract tests precede implementation. Planning record:
 `AIP-LISS-0470-2026-08-27-001` (XL; N/A model metrics).
 

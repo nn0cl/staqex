@@ -7,7 +7,7 @@
 | Size | XL |
 | Parent | [WP-0119](WP-0119-real-qpu-readiness-roadmap.md) |
 | Issues | LISS-0470 |
-| Depends on | WP-0124 |
+| Depends on | WP-0126 |
 | Blocks | none |
 | Canonical authority | Project conventions; new delivery ADR if work is unblocked |
 | Owner boundary | Host delivery/operations, never Kernel semantics |
@@ -29,7 +29,7 @@ sufficient. No cloud, datastore, or topology is selected implicitly.
 
 ## Included / excluded
 
-Included only if WP-0124 identifies a real operational need: delivery contract,
+Included only if WP-0126 identifies a real operational need: delivery contract,
 retention, monitoring, audit, incident response, cancellation, cost controls,
 and privacy boundaries. Excluded by default: cloud selection, datastore,
 deployment topology, public service API, and provider-specific operations.
@@ -76,7 +76,7 @@ disposition is deferred when local Host operation is sufficient.
   be followed and this WP deferred.
 - Local Host operation is sufficient; no ADR, deployment, datastore, public
   API, retention, monitoring, or provider-specific operations are added.
-- Reopen only after WP-0124 provides an evidenced operational need, followed
+- Reopen only after WP-0126 provides an evidenced operational need, followed
   by a new ADR and typed architecture/technology approval.
 - Process review: no operating-contract deviation or operational problem
   found.
