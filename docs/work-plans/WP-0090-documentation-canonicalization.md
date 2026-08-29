@@ -10,7 +10,10 @@
 | Requested by | Adjudicator direction, 2026-08-03 |
 | Follow-up Issue | [LISS-0473](../issues/LISS-0473-documentation-compression-classifier.md) |
 
-The next bounded maintenance follow-up is [LISS-0474](../issues/LISS-0474-documentation-compression-maintenance.md); its Phase 2 Green implementation is complete and awaits Phase 3 review.
+[LISS-0473](../issues/LISS-0473-documentation-compression-classifier.md) and
+[LISS-0474](../issues/LISS-0474-documentation-compression-maintenance.md) are
+complete after their review packets. The remaining follow-up is a separately
+authorized deletion/compaction batch; no deletion is authorized by this WP.
 
 ## Design Note
 
