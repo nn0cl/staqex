@@ -2,11 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Status | **in progress — LISS-0458 bounded artifact contract complete; remaining WP-0121 acceptance gaps open** |
+| Status | **complete — bounded finite realization and executable artifact release slice** |
 | Type | feature/release work plan |
 | Size | L |
 | Parent | [WP-0119](WP-0119-real-qpu-readiness-roadmap.md) |
-| Issues | LISS-0458 |
+| Issues | LISS-0458, with downstream acceptance evidence from LISS-0459–0462 |
 | Depends on | WP-0120 |
 | Blocks | WP-0122, WP-0123 |
 | Canonical authority | ADR 0210–0213; ideal-expression/realization boundary specification |
@@ -59,10 +59,10 @@ matrix.
 ## LISS-0458 closeout synchronization
 
 LISS-0458 is complete for the bounded finite realization/artifact contract
-slice. The WP remains in progress because the full release exit still needs
-explicit resource-preflight/budget-overflow coverage and any remaining
-cross-consumer acceptance evidence. No provider, credential, routing, or live
-QPU work is implied.
+slice. The downstream resource-preflight, route/schedule, static-QASM, and
+dynamic-QASM acceptance evidence is complete in LISS-0459–0462. The release
+slice is therefore closed without adding provider, credential, routing, or
+live-QPU behavior to this WP.
 
 ## Risks / stop conditions
 
@@ -84,3 +84,9 @@ implicit, or provider payloads leak into the provider-neutral contract.
 - Model/reasoning: N/A; runtime does not expose displayed per-task values.
 - Planning size: L; basis is a cross-boundary contract with numeric and
   provenance invariants. Confidence: medium pending ADR/spec review.
+
+## Completion review
+
+- Completion record: [2026-08-30 completion review](../collaboration/reviews/2026-08-30-wp-0121-completion-review.md)
+- LISS-0458–0462 bounded contract suites: **22 passed**.
+- Process review: no operating-contract deviation or operational problem found.
