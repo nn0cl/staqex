@@ -204,6 +204,18 @@ semantic snapshot or fail-closed invariant diverges.
   migration, provider/live QPU, S02 numerical migration, and solver work
   remain outside this phase.
 
+#### LISS-0476 — non-explicit `symbolic_ir` consumer migration — complete
+
+- Phase 1 Red, Phase 2 Green, and Phase 3 refactor/review are complete.
+- Ordinary simulator/inspection compilation now uses the canonical Scientific
+  Semantic IR without constructing a parallel `symbolic_ir` projection.
+- The legacy projection remains only at the named operator/discretization
+  compatibility boundary; LISS-0477 and other consumer migrations remain
+  separate work.
+- Evidence: 49 related tests passed, Python compilation passed, and the
+  same-context review is recorded in
+  `docs/collaboration/reviews/2026-08-30-liss-0476-phase3-review.md`.
+
 ## Independent review request
 
 > Review LISS-0444 / WP-0107 / ADR 0211 as an Architecture Path design. Do not

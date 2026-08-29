@@ -75,6 +75,8 @@ from .scientific_semantic_ir import (
 )
 from .symbolic_ir import build_symbolic_ir  # named legacy compatibility boundary
 
+_LEGACY_SYMBOLIC_OPERATOR_TYPES = {"Operator", *SECOND_QUANTIZED_FAMILIES}
+
 HARD_CODES = {
     "FORBIDDEN_KEYWORD",
     "RETIRED_KEYWORD",
@@ -683,14 +685,17 @@ def _needs_legacy_symbolic_projection(unit: CompilationUnit) -> bool:
     """Identify legacy consumers with an explicitly bounded compatibility need."""
     if _contains_explicit_evolve(unit):
         return False
-    if any(isinstance(declaration, DiscretizationBridgeDecl) for declaration in unit.decls):
+    if any(
+        isinstance(declaration, DiscretizationBridgeDecl)
+        for declaration in unit.decls
+    ):
         return True
     if unit.main is None:
         return False
     return any(
         isinstance(statement, StateBind)
         and statement.ty is not None
-        and statement.ty.name in {"Operator", *SECOND_QUANTIZED_FAMILIES}
+        and statement.ty.name in _LEGACY_SYMBOLIC_OPERATOR_TYPES
         for statement in unit.main.body.stmts
     )
 

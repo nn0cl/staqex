@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete; Phase 3 review required** |
-| Phase | phase-2-green |
+| Status | **done — Phase 3 refactor/review complete** |
+| Phase | phase-3-refactor |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design) |
 | Depends on | LISS-0445, LISS-0446 |
-| Implementation permission | Phase 2 Green approved and complete; Phase 3 not approved |
-| Next approval | Typed Phase 3 refactor/review approval |
+| Implementation permission | Phase 3 refactor/review approved and complete |
+| Next approval | None for this Issue; LISS-0477 remains independent |
 
 ## Scope
 
@@ -72,3 +72,24 @@ Verification: LISS-0476 plus related canonical and legacy consumer tests pass
 (`49 passed`); Python compilation and `git diff --check` pass. A full-suite
 run reached `854 passed` before being interrupted by a long-running existing
 matrix test. Phase 3 review/refactor requires separate approval.
+
+## Phase 3 closeout
+
+The Adjudicator approved `LISS-0476 Phase 3` on 2026-08-30. The compatibility
+boundary was refactored for readability by naming the legacy operator type set
+and formatting the declaration check without changing behavior or assertions.
+The reviewed tests were not changed.
+
+Same-context review re-read this Issue, the Scientific Semantic Core Spec,
+`compiler/staqex/pipeline.py`, and the LISS-0476 test packet. It found no
+blocker: ordinary sources use canonical Scientific Semantic IR, explicit
+evolution remains canonical, and the named legacy compatibility boundary
+preserves existing specialized consumers. Review isolation was
+`same_context`, which is weaker than `separate_context`.
+
+Verification: 49 related tests passed, Python compilation passed, and
+`git diff --check` passed. The full suite was intentionally interrupted after
+854 passes because an existing matrix test continued running; no failure was
+observed before interruption.
+
+Process review: no operating-contract deviation or operational problem found.
