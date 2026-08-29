@@ -294,7 +294,13 @@ jobs:
         run: python3 -m pip install --upgrade pip pytest
 
       - name: Run root suites
-        run: python3 -m pytest tests/ -q
+        # Phase 1 Red suites are intentionally failing until their approved
+        # Green slice lands. Keep them out of the blocking regression run;
+        # mixed legacy files are excluded by their explicit test names below.
+        run: >-
+          python3 -m pytest tests/ -q
+          --ignore-glob='*_red.py'
+          -k 'not trotter_ising_evolve_qasm and not trotter_rejects_fock_hamiltonian'
 
   spec-verification:
     name: Spec verification
