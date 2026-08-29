@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **ready — design complete; Phase 1 Red approval required** |
-| Phase | phase-0-design |
+| Status | **Phase 1 Red complete; Phase 2 Green approval required** |
+| Phase | phase-1-red |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design) |
 | Depends on | LISS-0445, LISS-0446 |
-| Implementation permission | None |
-| Next approval | Issue/spec review, then typed Phase 1 Red approval |
+| Implementation permission | None; Phase 2 Green not approved |
+| Next approval | Typed Phase 2 Green approval |
 
 ## Scope
 
@@ -36,3 +36,20 @@ the current Scientific Semantic IR authority must change.
 
 Named Red tests/fixtures, this Issue/WP/spec/review records, and the minimal
 inspection projection boundary only; no production implementation in Phase 1.
+
+## Phase 1 Red result
+
+The Adjudicator approved `LISS-0476 Phase 1 Red` on 2026-08-30. Added only
+`tests/test_liss_0476_symbolic_ir_consumer_migration_red.py`.
+
+The Red packet covers non-explicit `symbolic_ir` authority removal, the
+no-rebuild boundary, compile-owned inspection identity/source provenance, and
+the no-finite-artifact/no-collapse inspection contract. The two migration
+gates fail against the current pipeline because it still exposes and builds
+`symbolic_ir` for `ordinary_gate.sqx`; the two already-satisfied canonical
+inspection invariants pass. No production code was changed.
+
+Verification: `./.venv/bin/pytest -q
+tests/test_liss_0476_symbolic_ir_consumer_migration_red.py` reports `2 failed,
+2 passed`, and `git diff --check` passes. Phase 2 Green requires separate
+Adjudicator approval.
