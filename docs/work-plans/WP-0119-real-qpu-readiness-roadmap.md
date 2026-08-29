@@ -210,6 +210,9 @@ synchronized.
 
 ## Next safe action
 
-Execute the acceptance-spec review for LISS-0456 and LISS-0457. Phase 1 tests
-remain separately gated; no provider installation or real-QPU submission is
-authorized by this WP alone.
+LISS-0456 through LISS-0469 are complete for their bounded offline and
+provider-neutral slices. The next safe action is the human-operated WP-0124
+pilot: select a supported target, review the dry-run artifact and cost/shots
+guard, and provide explicit real-time approval before any human submits. No
+provider installation or real-QPU submission is authorized for the agent by
+this WP alone.
