@@ -33,13 +33,13 @@ from .source_port import SourcePort
 from .nested_when import check_nested_when
 from .parser import ParseError, Parser
 from .physical_axioms import check_physical_axioms
-from .symbolic_ir import build_symbolic_ir
 from .scientific_scopes import resolve_scientific_scopes
 from .workflow_surface import WorkflowContract, resolve_workflow_contracts
 from .continuous_lowering import GridHamiltonian, lower_discretization_bridges
 from .discretization import DiscretizationBridge, DiscretizationContract, resolve_discretization_bridges, resolve_discretization_contracts
 from .mixed_state import MixedStateContract, resolve_mixed_state_contracts
 from .measurement import POVMContract, resolve_measurement_contracts
+from .kernel_literals import SECOND_QUANTIZED_FAMILIES
 from .qpu_ir import build_qpu_ir, qpu_ir_diagnostics
 from .hir import build_hir
 from .physics_ir import PhysicsModule
@@ -63,6 +63,7 @@ from .typecheck import TypeChecker
 from .algorithm_plan_ir import AlgorithmPlanModule
 from .unitarity_check import check_unitarity
 from .dynamic_capability import reuse_demand_diagnostics
+from .kernel_literals import SECOND_QUANTIZED_FAMILIES
 from .scientific_semantic_ir import (
     ScientificSemanticIR,
     SemanticInspectionResult,
@@ -72,6 +73,7 @@ from .scientific_semantic_ir import (
     build_rejection,
     build_scientific_semantic_ir,
 )
+from .symbolic_ir import build_symbolic_ir  # named legacy compatibility boundary
 
 HARD_CODES = {
     "FORBIDDEN_KEYWORD",
@@ -677,6 +679,22 @@ def _contains_explicit_evolve(unit: CompilationUnit) -> bool:
     return walk(unit.main.body if unit.main is not None else None)
 
 
+def _needs_legacy_symbolic_projection(unit: CompilationUnit) -> bool:
+    """Identify legacy consumers with an explicitly bounded compatibility need."""
+    if _contains_explicit_evolve(unit):
+        return False
+    if any(isinstance(declaration, DiscretizationBridgeDecl) for declaration in unit.decls):
+        return True
+    if unit.main is None:
+        return False
+    return any(
+        isinstance(statement, StateBind)
+        and statement.ty is not None
+        and statement.ty.name in {"Operator", *SECOND_QUANTIZED_FAMILIES}
+        for statement in unit.main.body.stmts
+    )
+
+
 def _formal_limit_provenance(unit: CompilationUnit) -> dict[str, Any] | None:
     """Retain the written formal Limit as a target-rejected source witness."""
     def walk(value: Any) -> dict[str, Any] | None:
@@ -849,14 +867,13 @@ def _analyze_unit(
     diags.extend(povm_diags)
 
     scientific_semantic_ir = build_scientific_semantic_ir(unit, source_id=source_id)
-    # The explicit-evolution QPU path has a canonical source projection and no
-    # longer exposes Symbolic IR as a parallel live authority. Other, not-yet-
-    # migrated symbolic consumers retain the compatibility projection until a
-    # separately approved simulator migration removes that module entirely.
+    # Scientific Semantic IR is the sole compile-owned semantic authority.
+    # Keep a named compatibility projection only for legacy operator and
+    # discretization consumers that have separate migration issues.
     symbolic_ir = (
-        None
-        if scientific_semantic_ir.explicit_evolution is not None
-        else build_symbolic_ir(unit)
+        build_symbolic_ir(unit)
+        if _needs_legacy_symbolic_projection(unit)
+        else None
     )
     semantic_inspection = build_inspection(scientific_semantic_ir)
     algorithm_plan = build_algorithm_plan(scientific_semantic_ir)

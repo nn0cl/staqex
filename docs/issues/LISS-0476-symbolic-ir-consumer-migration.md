@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red complete; Phase 2 Green approval required** |
-| Phase | phase-1-red |
+| Status | **Phase 2 Green complete; Phase 3 review required** |
+| Phase | phase-2-green |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design) |
 | Depends on | LISS-0445, LISS-0446 |
-| Implementation permission | None; Phase 2 Green not approved |
-| Next approval | Typed Phase 2 Green approval |
+| Implementation permission | Phase 2 Green approved and complete; Phase 3 not approved |
+| Next approval | Typed Phase 3 refactor/review approval |
 
 ## Scope
 
@@ -51,5 +51,24 @@ inspection invariants pass. No production code was changed.
 
 Verification: `./.venv/bin/pytest -q
 tests/test_liss_0476_symbolic_ir_consumer_migration_red.py` reports `2 failed,
-2 passed`, and `git diff --check` passes. Phase 2 Green requires separate
-Adjudicator approval.
+ 2 passed`, and `git diff --check` passes. This Red evidence was reviewed
+ before Phase 2 Green implementation.
+
+## Phase 2 Green result
+
+The Adjudicator approved `LISS-0476 Phase 2 Green` on 2026-08-30. The
+pipeline now keeps Scientific Semantic IR as the sole authority for ordinary
+simulator/inspection compilation and constructs the legacy Symbolic IR only
+at the explicitly bounded operator/discretization compatibility boundary.
+Explicit-evolution compilation remains canonical and does not construct the
+legacy projection.
+
+Changed production file: `compiler/staqex/pipeline.py`. The reviewed Phase 1
+Red tests were not changed. The compatibility boundary preserves the existing
+specialized symbolic consumers while ordinary sources satisfy the new
+no-authority/no-rebuild contract.
+
+Verification: LISS-0476 plus related canonical and legacy consumer tests pass
+(`49 passed`); Python compilation and `git diff --check` pass. A full-suite
+run reached `854 passed` before being interrupted by a long-running existing
+matrix test. Phase 3 review/refactor requires separate approval.
