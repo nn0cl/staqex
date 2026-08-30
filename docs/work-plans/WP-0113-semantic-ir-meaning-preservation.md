@@ -106,3 +106,7 @@ distinct phase/interference meaning kinds, branch/control and operand
 identity, provenance, and inspection without finite QPU support. Unsupported
 finite projection remains fail-closed. Finite projection remains separately
 deferred.
+
+Follow-up classification review is complete with `22 passed` related tests;
+the semantic slice requires no further approval. Finite projection remains a
+separate future scope.
