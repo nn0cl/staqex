@@ -216,6 +216,17 @@ semantic snapshot or fail-closed invariant diverges.
   same-context review is recorded in
   `docs/collaboration/reviews/2026-08-30-liss-0476-phase3-review.md`.
 
+#### LISS-0477 — AST/DTO semantic-authority retirement — bounded QASM slice complete
+
+- Phase 1 Red, Phase 2 Green, and Phase 3 review are complete for the QASM
+  missing-canonical-projection boundary.
+- Compiled units provide the canonical Scientific Semantic IR to QASM; raw
+  units without that projection fail closed before artifact creation.
+- Remaining evaluator, Equation/Physics DTO, H1, and Algorithm Plan reads are
+  explicitly separate follow-up work and are not claimed complete here.
+- Evidence: 4 LISS-0477 tests passed and the same-context review is recorded
+  in `docs/collaboration/reviews/2026-08-30-liss-0477-phase3-review.md`.
+
 ## Independent review request
 
 > Review LISS-0444 / WP-0107 / ADR 0211 as an Architecture Path design. Do not

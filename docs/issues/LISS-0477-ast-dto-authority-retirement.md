@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete; Phase 3 review required** |
-| Phase | phase-2-green |
+| Status | **done — Phase 3 review complete for bounded QASM slice** |
+| Phase | phase-3-refactor |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design) |
 | Depends on | LISS-0476 |
-| Implementation permission | None |
-| Next approval | Typed Phase 3 refactor/review approval |
+| Implementation permission | Phase 3 refactor/review approved and complete for bounded QASM slice |
+| Next approval | None for this bounded slice; remaining consumer families are separate work |
 
 ## Scope
 
@@ -68,4 +68,25 @@ parser unit so it represents an actually absent canonical projection.
 Verification: LISS-0477 tests pass (`4 passed`), Python compilation passes,
 and `git diff --check` passes. Three historical QASM expectations remain
 outside this bounded slice because they assert separate legacy fallback
-behavior. Phase 3 review/refactor requires separate approval.
+behavior.
+
+## Phase 3 closeout
+
+The Adjudicator approved `LISS-0477 Phase 3` on 2026-08-30. Same-context
+review re-read this Issue, the Scientific Semantic Core Spec,
+`compiler/staqex/pipeline.py`, `compiler/staqex/backend/qasm/emitter.py`, and
+the LISS-0477 test packet. The bounded QASM slice has no blocker: compiled
+units provide the canonical projection, raw units fail closed before artifact
+creation, and caller-created mismatched projections are rejected.
+
+Review isolation was `same_context`, which is weaker than `separate_context`.
+The remaining evaluator, Equation/Physics DTO, H1, and Algorithm Plan
+authority inventory is intentionally not claimed complete by this bounded
+slice and remains follow-up work.
+
+Verification: 4 LISS-0477 tests passed, Python compilation passed, and
+`git diff --check` passed. The Phase 1 acceptance assertions were not
+weakened; only the missing-projection setup uses a raw parser unit to model
+the stated precondition.
+
+Process review: no operating-contract deviation or operational problem found.
