@@ -8,6 +8,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from compiler.staqex.lexer import Lexer
+from compiler.staqex.parser import Parser
 
 
 SPEC = (
@@ -45,9 +46,19 @@ def test_display_alias_has_one_canonical_token_and_written_form_provenance() -> 
 
 
 def test_alias_and_canonical_declaration_collision_is_deterministic() -> None:
-    _tokens, diagnostics = Lexer("State psi = |0> State ψ = |1>").tokenize()
+    source = """package t
+pub fn main() -> Unit {
+    State psi = |0>
+    State ψ = |1>
+    Measure psi
+}
+"""
+    tokens, lex_diagnostics = Lexer(source).tokenize()
+    parser = Parser(tokens)
+    parser.parse()
+    diagnostics = lex_diagnostics + parser.diagnostics
 
-    assert not any(diagnostic.get("code") == "LEX_ERROR" for diagnostic in diagnostics)
+    assert not any(diagnostic.get("code") == "LEX_ERROR" for diagnostic in lex_diagnostics)
     collision = [
         diagnostic
         for diagnostic in diagnostics

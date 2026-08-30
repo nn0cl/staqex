@@ -202,37 +202,8 @@ class Lexer:
             )
             self.tokens.append(Token(TokenKind.ERROR, c, start_line, start_col))
 
-        self._diagnose_scientific_declaration_collisions()
         self.tokens.append(Token(TokenKind.EOF, "", self.line, self.col))
         return self.tokens, self.diagnostics
-
-    def _diagnose_scientific_declaration_collisions(self) -> None:
-        """Reject duplicate state-name spellings within one lexical scope slice."""
-        declared: set[str] = set()
-        for index, token in enumerate(self.tokens[:-1]):
-            if token.kind is not TokenKind.STATE and token.lexeme != "State":
-                continue
-            if index + 1 >= len(self.tokens):
-                continue
-            name = self.tokens[index + 1]
-            canonical = (name.meta or {}).get("canonical_spelling")
-            if canonical is None:
-                continue
-            if canonical in declared:
-                self.diagnostics.append(
-                    {
-                        "code": "LEXICON_COLLISION",
-                        "line": name.line,
-                        "col": name.col,
-                        "canonical_spelling": canonical,
-                        "written_spelling": name.lexeme,
-                        "message": (
-                            f"scientific name `{name.lexeme}` collides with "
-                            f"canonical binding `{canonical}` in this scope"
-                        ),
-                    }
-                )
-            declared.add(canonical)
 
     def _ket_literal(self, line: int, col: int) -> None:
         """Scan `|label>` → TokenKind.KET with literal=label."""

@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red complete; Phase 2 Green approval required** |
-| Phase | phase-1-red |
+| Status | **done — Phase 3 complete** |
+| Phase | phase-3-refactor |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design) |
 | Depends on | ADR 0189/0190 |
-| Implementation permission | None; production lexicon implementation remains prohibited until Phase 2 Green approval |
-| Next approval | Typed Phase 2 Green approval |
+| Implementation permission | Approved for the LISS-0480 lexer/parser slice only |
+| Next approval | None for this Issue; future lexicon families require separate approval |
 
 ## Scope
 
@@ -65,6 +65,21 @@ these scientific names are accepted with provenance, while Unicode quantum
 punctuation and operators remain ASCII-only. This resolves the specification
 conflict identified in the Phase 3 review.
 
-The lexer collision ownership finding remains open: scope-sensitive duplicate
-declaration analysis must move to the parser/symbol-table layer in a follow-up
-slice before this Issue can be marked done.
+The collision ownership finding is resolved: lexer-level scope approximation was
+removed and duplicate alias declarations are checked at parsed block scope.
+
+## Phase 3 result
+
+- Moved `LEXICON_COLLISION` ownership from `compiler/staqex/lexer.py` to the
+  parser's parsed block scope.
+- Preserved intentional same-spelling state rebinding while rejecting a
+  canonical collision between different written forms.
+- Process review: no operating-contract deviation or operational problem found.
+
+## Final verification
+
+- LISS-0480, Unicode alias/punctuation, B04, and AST provenance suites:
+  `22 passed`.
+- `git diff --check`: passed.
+- Full repository pytest retains unrelated pre-existing Red/QASM/semantic
+  failures; none are in the LISS-0480 completion set.

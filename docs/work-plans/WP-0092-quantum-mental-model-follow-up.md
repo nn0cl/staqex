@@ -228,6 +228,20 @@ files are intentionally included in a later phase.
   observation syntax, tomography execution, POVMs, and Host DTO conversion
   remain separate future decisions or implementation slices.
 
+## Implementation closeout — LISS-0480 scientific lexicon slice
+
+- **Scope:** v1 scientific-name aliases `psi`/`ψ`, `phi`/`φ`, and `rho`/`ρ`,
+  written-form provenance, actionable unsupported spelling diagnostics, and
+  deterministic alias collision handling.
+- **Implementation:** lexer emits canonical/written metadata; parser owns
+  collision validation at parsed block scope. Unicode quantum punctuation and
+  operator aliases remain ASCII-only or proposal-level as specified.
+- **Verification:** targeted LISS-0480, Unicode, B04, and AST provenance suites
+  pass `22` tests; `git diff --check` passes.
+- **Review:** Phase 3 same-context review completed; the prior specification
+  conflict was resolved by formal adoption of scientific-name aliases. Future
+  lexicon families remain separate approval slices.
+
 ## Implementation closeout — `superpose` formal-grammar slice (LISS-0320, complete)
 
 - **Scope:** `superpose (control) { pat -> expr, … }` ordinary-surface

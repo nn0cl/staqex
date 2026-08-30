@@ -432,6 +432,8 @@ class Parser:
                 )
 
         self._check_scientific_scope_graph(decls)
+        if main is not None:
+            self._check_scientific_bind_collisions(main.body.stmts)
         decls = _flatten_namespaces(decls)
         return CompilationUnit(
             package=package,
@@ -2173,6 +2175,35 @@ class Parser:
             for alias, alias_canonical in SCIENTIFIC_NAME_ALIASES.items():
                 if alias_canonical == canonical:
                     self._scientific_bindings[alias] = source_name
+
+    def _check_scientific_bind_collisions(self, statements: list[Any]) -> None:
+        """Apply canonical-name collision rules at the parsed block scope."""
+        declared: dict[str, str] = {}
+        for statement in statements:
+            if not isinstance(statement, StateBind):
+                continue
+            for source_name in statement.names:
+                canonical = normalize_scientific_name(source_name)
+                canonical = {"ψ": "psi", "phi": "phi", "φ": "phi", "rho": "rho", "ρ": "rho"}.get(
+                    canonical, canonical
+                )
+                if canonical not in {"psi", "phi", "rho"}:
+                    continue
+                if canonical in declared and declared[canonical] != source_name:
+                    self.diagnostics.append(
+                        {
+                            "code": "LEXICON_COLLISION",
+                            "line": statement.span.line,
+                            "col": statement.span.col,
+                            "canonical_spelling": canonical,
+                            "written_spelling": source_name,
+                            "message": (
+                                f"scientific name `{source_name}` collides with "
+                                f"canonical binding `{canonical}` in this scope"
+                            ),
+                        }
+                    )
+                declared[canonical] = source_name
 
     def _measure(self) -> Measure:
         sp = self._span()

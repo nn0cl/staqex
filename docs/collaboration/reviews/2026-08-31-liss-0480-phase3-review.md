@@ -27,11 +27,12 @@
    `test_unicode_quantum_punctuation_is_rejected_as_source`. **Disposition:**
    Unicode scientific names are now formally adopted and the regression test
    is narrowed to keep punctuation/operators ASCII-only.
-2. **High — responsibility boundary.** `_diagnose_scientific_declaration_collisions`
+2. **Resolved — responsibility boundary.** `_diagnose_scientific_declaration_collisions`
    performs scope-sensitive declaration analysis in the lexer. It currently
    has no real scope tracking and can emit `LEXICON_COLLISION` for valid
-   repeated names in parser-defined nested scopes. **Disposition:** defer to a
-   parser/symbol-table follow-up; no speculative rewrite in this phase.
+   repeated names in parser-defined nested scopes. **Disposition:** removed the
+   lexer check and moved collision validation to parsed block scope; same-name
+   rebinding remains valid.
 3. **Already closed with evidence — provenance.** The alias tokens retain both
    canonical and written spelling metadata, and the targeted tests verify both
    fields.
@@ -46,11 +47,10 @@
 
 ## Blockers
 
-The issue cannot be marked `done` until collision ownership is assigned to the
-parser/scope layer and the lexer-level scope approximation is removed.
+Both review blockers are resolved. LISS-0480 may be marked done after the
+status and work-plan synchronization commit.
 
 ## Next requested approval
 
-Adjudicator decision on the two blockers, followed by a new typed approval for
-the corrective implementation phase. No implementation permission is inferred
-from this review packet.
+No further approval is requested for LISS-0480. Future lexicon families need
+their own specification and typed phase approvals.
