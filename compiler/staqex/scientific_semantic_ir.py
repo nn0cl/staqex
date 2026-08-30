@@ -25,6 +25,7 @@ from .ast_nodes import (
     LitFloat,
     LitInt,
     Measure,
+    Inspect,
     StateBind,
     Var,
 )
@@ -133,6 +134,8 @@ class ScientificSemanticIR:
     realize_source_node_id: str | None = None
     finite_realization_record: FiniteRealizationRecord | None = None
     ideal_meaning: "IdealMeaning | None" = None
+    observation_contracts: dict[str, dict[str, Any]] = None  # type: ignore[assignment]
+    measurement_envelopes: dict[str, dict[str, Any]] = None  # type: ignore[assignment]
 
 
 @dataclass(frozen=True, slots=True)
@@ -373,6 +376,27 @@ def build_scientific_semantic_ir(
         relations=(SemanticRelation(relation_kind, tuple(node.node_id for node in nodes)),),
         has_explicit_realize=_has_realize_call(unit),
     )
+    observation_contracts: dict[str, dict[str, Any]] = {}
+    measurement_envelopes: dict[str, dict[str, Any]] = {}
+    if unit.main is not None:
+        for statement in unit.main.body.stmts:
+            if isinstance(statement, StateBind) and statement.names and isinstance(statement.expr, Inspect):
+                observation_contracts[statement.names[0]] = {
+                    "kind": "DiagnosticView",
+                    "collapse": False,
+                    "sampling": False,
+                    "lane": "StaticKernel",
+                    "source_id": source_id,
+                    "source_node_id": source_node_ids.get(id(statement), ""),
+                }
+            if isinstance(statement, Measure) and isinstance(statement.expr, Var):
+                measurement_envelopes[statement.expr.name] = {
+                    "kind": "MeasurementEnvelope",
+                    "collapse": True,
+                    "sampling": True,
+                    "lane": "StaticKernel",
+                    "source_id": source_id,
+                }
     binder_lowering, binder_diagnostics = lower_finite_binders(unit)
     realize_source_node_id, finite_realization_record, realization_errors = (
         _build_finite_realization_record(unit, core)
@@ -401,6 +425,8 @@ def build_scientific_semantic_ir(
         source_unit_identity=id(unit),
         realize_source_node_id=realize_source_node_id,
         finite_realization_record=finite_realization_record,
+        observation_contracts=observation_contracts,
+        measurement_envelopes=measurement_envelopes,
     )
     ideal_payload = json.dumps(
         {

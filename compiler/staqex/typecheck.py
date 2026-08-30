@@ -334,6 +334,17 @@ class TypeChecker:
                 self._check_assign_stmt(stmt, class_meta)
                 continue
             if isinstance(stmt, StateBind):
+                if isinstance(stmt.expr, Call) and _call_op_name(stmt.expr) == "tomography":
+                    self.diagnostics.append(
+                        {
+                            "code": "OBSERVATION_UNSUPPORTED",
+                            "line": stmt.expr.span.line,
+                            "col": stmt.expr.span.col,
+                            "operation": "tomography",
+                            "lane": "StaticKernel",
+                            "message": "`tomography` requires the HostProtocol lane",
+                        }
+                    )
                 # LISS-0074 Slice A: validate qutrit/qudit type-level shapes early.
                 if stmt.ty is not None:
                     self._validate_local_dimension_surface(
@@ -4023,13 +4034,25 @@ class TypeChecker:
                 self._infer(arg)
             self.diagnostics.append(
                 {
-                    "code": "OBSERVATION_CAPABILITY_UNSUPPORTED",
+                    "code": "OBSERVATION_UNSUPPORTED",
                     "line": expr.span.line,
                     "col": expr.span.col,
+                    "operation": "tomography",
+                    "lane": "StaticKernel",
                     "message": (
                         "`tomography` is a Host observation protocol and is "
                         "not executable in the Static Kernel lane"
                     ),
+                }
+            )
+            self.diagnostics.append(
+                {
+                    "code": "OBSERVATION_CAPABILITY_UNSUPPORTED",
+                    "line": expr.span.line,
+                    "col": expr.span.col,
+                    "operation": "tomography",
+                    "lane": "StaticKernel",
+                    "message": "compatibility alias for OBSERVATION_UNSUPPORTED",
                 }
             )
             return Ty("Host", "ObservationReport", DIMLESS)

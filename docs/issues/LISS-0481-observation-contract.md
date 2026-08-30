@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red complete; Phase 2 Green approval required** |
-| Phase | phase-1-red |
+| Status | **Phase 2 Green complete; Phase 3 approval required** |
+| Phase | phase-2-green |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design) |
 | Depends on | ADR 0189/0190; existing `DiagnosticView<T>` slice |
-| Implementation permission | None |
-| Next approval | Typed Phase 2 Green approval |
+| Implementation permission | Approved for the reviewed observation metadata and Static Kernel rejection slice only |
+| Next approval | Typed Phase 3 approval |
 
 ## Scope
 
@@ -42,3 +42,16 @@ negative Red tests only.
   distinct inspect/measure metadata, and Static Kernel tomography rejection.
 - No observation runtime, public type annotations, POVM, tomography, provider,
   or QPU implementation was changed.
+
+## Phase 2 Green result
+
+- Added `observation_contracts` and `measurement_envelopes` metadata to the
+  Scientific Semantic IR for the existing `Inspect` and terminal `Measure`
+  paths.
+- Added hard `OBSERVATION_UNSUPPORTED` diagnostics for Static Kernel
+  tomography, including operation and lane; the prior capability diagnostic is
+  retained as a compatibility signal.
+- Reviewed Phase 1 tests were not modified to pass. The LISS-0481 suite and
+  the existing observation capability suite pass: `4 passed`.
+- General Hilbert storage, POVM execution, Host tomography, and public source
+  annotations remain out of scope.
