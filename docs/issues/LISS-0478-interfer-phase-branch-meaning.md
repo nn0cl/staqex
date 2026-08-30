@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **done — Phase 3 review complete** |
-| Phase | phase-3-refactor |
+| Status | **Phase 2 Green complete; Phase 3 review required for follow-up classification slice** |
+| Phase | phase-2-green |
 | Parent | WP-0113 |
 | Design authority | [Meaning Preservation Specification](../specs/staqex-semantic-ir-meaning-preservation.md#residual-follow-up-design-liss-0478) |
 | Depends on | LISS-0450 bounded Coin/when slice |
-| Implementation permission | Phase 3 refactor/review approved and complete |
-| Next approval | None for this Issue; finite projection remains excluded |
+| Implementation permission | Phase 2 Green approved and complete; Phase 3 not approved |
+| Next approval | Typed Phase 3 refactor/review approval |
 
 ## Scope
 
@@ -85,3 +85,18 @@ Verification: 17 related tests passed, Python compilation passed, and
 `git diff --check` passed.
 
 Process review: no operating-contract deviation or operational problem found.
+
+## Phase 2 Green follow-up result
+
+The Adjudicator approved the follow-up `LISS-0478 Phase 2 Green` on 2026-08-31.
+The canonical projection now gives `phase(...)` and `interfer(...)` distinct
+meaning kinds, quantum roles, `State<T>` types, dedicated intent/state roles,
+and existing child source identity/provenance. No finite gate synthesis,
+numerical approximation, provider behavior, or Hilbert-space storage was
+added.
+
+Changed production file: `compiler/staqex/scientific_semantic_ir.py`. The
+reviewed Red tests were not weakened. Verification: related meaning,
+Coin/Mix, and ideal-realization tests pass (`22 passed`), Python compilation
+passes, and `git diff --check` passes. Phase 3 review is required for this
+follow-up slice.
