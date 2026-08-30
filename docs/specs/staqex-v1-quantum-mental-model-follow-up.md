@@ -111,9 +111,9 @@ the same semantic identity as its canonical spelling.
 | `rho` | `ρ` | scientific name | density-state binding/reference | same canonical identity across source spellings; duplicate binding in one scope is deterministic | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `rho` or `ρ` |
 | `H` | — | contextual scientific name | Hamiltonian/Hermitian operator position | remains an identifier outside operator position; no global reservation | v1 | `LEXICON_UNSUPPORTED_SPELLING` only for a rejected operator spelling |
 | `U` | — | contextual scientific name | unitary operator position | remains an identifier outside operator position; no global reservation | v1 | `LEXICON_UNSUPPORTED_SPELLING` only for a rejected operator spelling |
-| `hbar` | `ℏ` | scientific constant name | physics expression | same semantic constant; ordinary local shadowing follows declaration scope | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `hbar` or `ℏ` |
-| `dag` | `†` | postfix operator | adjoint expression | cannot be used as a declaration name | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `dag` or `†` |
-| `tp` | `⊗` | infix operator | tensor-product expression | cannot be used as a declaration name | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `tp` or `⊗` |
+| `hbar` | not active in v1 | scientific constant name | physics expression | ordinary local shadowing follows declaration scope when activated | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `hbar` |
+| `dag` | not active in v1 | postfix operator | adjoint expression | cannot be used as a declaration name when activated | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `dag` |
+| `tp` | not active in v1 | infix operator | tensor-product expression | cannot be used as a declaration name when activated | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `tp` |
 | `cm` | `[A,B]` | operator expression | commutator position | square brackets are disambiguated by syntactic position; `cm(A,B)` is not a second semantic operation | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `cm(A,B)` |
 | `controlled` | `Ctl` | reserved operation word | coherent control expression | reserved in operation position; never aliases `Mix`/`mix` | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `controlled` |
 | `superpose` | `Superpose` | reserved operation word | coherent phase-preserving operation | reserved operation position; never aliases `Mix`/`mix` | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `superpose` |

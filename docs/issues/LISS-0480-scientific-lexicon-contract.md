@@ -42,3 +42,17 @@ Lexicon matrix, source fixtures, lexer/parser Red tests, and diagnostics only.
   unsupported spelling diagnostics.
 - No production code, runtime behavior, provider integration, or Unicode
   migration was changed. The suite is intentionally Red until Phase 2.
+
+## Phase 2 Green result
+
+- Implemented the minimum lexer support for `psi`/`ψ`, `phi`/`φ`, and
+  `rho`/`ρ`, retaining `canonical_spelling` and `written_spelling` metadata.
+- Added actionable `LEXICON_UNSUPPORTED_SPELLING` for the unlisted uppercase
+  `Ψ` spelling and deterministic `LEXICON_COLLISION` for the tested duplicate
+  state-name declaration slice.
+- LISS-0480 suite and the existing Unicode punctuation regression suite pass:
+  `13 passed`.
+- Full repository pytest still contains compatibility failures outside this
+  slice: the older ASCII-only test expects `ψ`/`φ`/`ρ` rejection, and existing
+  semantic/QASM Red suites remain failing. These are recorded as follow-up
+  migration work; they were not suppressed or changed here.
