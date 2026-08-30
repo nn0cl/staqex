@@ -400,6 +400,26 @@ classical Host envelope containing execution metadata. Target capability is
 checked after semantic elaboration, so an unsupported target rejects the
 request without rewriting it as `State`, `Float`, or an early measurement.
 
+### 5.4 LISS-0481 observation contract matrix
+
+The following matrix is the v1 acceptance contract for observation intent and
+result boundaries. `lane` and `provenance` are observable metadata, not
+implementation-only annotations.
+
+| Operation | Semantic type | Result contract | Collapse | Sampling | Lane | Required provenance | Unsupported behavior |
+|---|---|---|---:|---:|---|---|---|
+| `expect(O, state)` | `Observable<T>` | expectation projection | no | no | `StaticKernel` | source ID, operator ID, input state ID | reject with operation and target capability |
+| `project(P, state)` | `Projection<T>` | `State<T>` or vacuum | no | no | `StaticKernel` | source ID, projector ID, input state ID, loss marker | reject without fabricated state |
+| `inspect(state)` | `DiagnosticView<T>` | non-destructive diagnostic view | no | no | `StaticKernel` | source ID, state lineage ID, exactness | reject without sampling or finite-plan allocation |
+| `trace_out(state, subsystem)` | `Projection<T>` | reduced `State<T>` | no | no | `StaticKernel` | source ID, subsystem ID, reduction/projection loss | reject without fabricated reduced state |
+| terminal `measure(state)` | `Observation<T>` → `MeasurementEnvelope<T>` | outcome plus post-state metadata | yes | yes | `StaticKernel` | source ID, measurement ID, outcome, post-state ID, collapse boundary | fail before a second implicit measurement |
+| `tomography(plan)` | `Observation<T>` → `ObservationReport` | Host reconstruction report | no in Kernel | repeated shots at Host | `HostProtocol` | source ID, job/plan ID, shot policy, target capability | Static Kernel must emit `OBSERVATION_UNSUPPORTED` and no report |
+
+Every accepted operation must preserve its source ID and semantic input
+lineage. A diagnostic view or observation report with only rendered text and no
+lineage is not a conforming result. Unsupported behavior is a rejection, not a
+zero value, empty report, or implicit conversion to `measure`.
+
 ### 5.2 Acceptance scenarios
 
 ```gherkin
