@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete; Phase 3 review required** |
-| Phase | phase-2-green |
+| Status | **done — Phase 3 review complete** |
+| Phase | phase-3-refactor |
 | Parent | WP-0113 |
 | Design authority | [Meaning Preservation Specification](../specs/staqex-semantic-ir-meaning-preservation.md#residual-follow-up-design-liss-0478) |
 | Depends on | LISS-0450 bounded Coin/when slice |
-| Implementation permission | None |
-| Next approval | Typed Phase 3 refactor/review approval |
+| Implementation permission | Phase 3 refactor/review approved and complete |
+| Next approval | None for this Issue; finite projection remains excluded |
 
 ## Scope
 
@@ -67,3 +67,21 @@ reviewed Phase 1 tests were not changed. Verification: LISS-0478 plus related
 Coin/Mix and meaning-preservation tests pass (`17 passed`), Python compilation
 passes, and `git diff --check` passes. Phase 3 review/refactor requires
 separate approval.
+
+## Phase 3 closeout
+
+The Adjudicator approved `LISS-0478 Phase 3` on 2026-08-31. Same-context
+review re-read this Issue, the Meaning Preservation Specification,
+`compiler/staqex/scientific_semantic_ir.py`, the representative fixture, and
+the reviewed test packet. No blocker was found: phase and interference remain
+distinct semantic meanings, branch/control and operand identity remain
+preserved, and unsupported finite projection remains fail-closed.
+
+No additional behavior-preserving refactor was necessary. Review isolation was
+`same_context`, weaker than `separate_context`. Gate synthesis, numerical
+approximation, provider behavior, and Hilbert-space storage remain excluded.
+
+Verification: 17 related tests passed, Python compilation passed, and
+`git diff --check` passed.
+
+Process review: no operating-contract deviation or operational problem found.
