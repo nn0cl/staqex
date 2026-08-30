@@ -21,12 +21,12 @@
 
 ## Findings and dispositions
 
-1. **Blocker — accepted-spec conflict.** LISS-0480 accepts `ψ`/`φ`/`ρ` as
+1. **Resolved by Adjudicator decision — accepted-spec conflict.** LISS-0480 accepts `ψ`/`φ`/`ρ` as
    display aliases, while the existing ASCII-only regression contract rejects
    those same spellings. Full pytest therefore reports a failure in
    `test_unicode_quantum_punctuation_is_rejected_as_source`. **Disposition:**
-   stop and request Adjudicator decision on migration ownership; do not change
-   either contract in this review.
+   Unicode scientific names are now formally adopted and the regression test
+   is narrowed to keep punctuation/operators ASCII-only.
 2. **High — responsibility boundary.** `_diagnose_scientific_declaration_collisions`
    performs scope-sensitive declaration analysis in the lexer. It currently
    has no real scope tracking and can emit `LEXICON_COLLISION` for valid
@@ -46,9 +46,8 @@
 
 ## Blockers
 
-The issue cannot be marked `done` until the Adjudicator decides whether the
-ASCII-only contract is superseded, or LISS-0480 aliases remain proposal-only,
-and until collision ownership is assigned to the parser/scope layer.
+The issue cannot be marked `done` until collision ownership is assigned to the
+parser/scope layer and the lexer-level scope approximation is removed.
 
 ## Next requested approval
 

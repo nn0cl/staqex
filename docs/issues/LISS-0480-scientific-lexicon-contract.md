@@ -56,3 +56,15 @@ Lexicon matrix, source fixtures, lexer/parser Red tests, and diagnostics only.
   slice: the older ASCII-only test expects `ψ`/`φ`/`ρ` rejection, and existing
   semantic/QASM Red suites remain failing. These are recorded as follow-up
   migration work; they were not suppressed or changed here.
+
+## Unicode alias adoption decision
+
+The Adjudicator approved formal adoption of `ψ`/`φ`/`ρ` as v1 scientific-name
+display aliases. The existing ASCII-only acceptance test was narrowed so that
+these scientific names are accepted with provenance, while Unicode quantum
+punctuation and operators remain ASCII-only. This resolves the specification
+conflict identified in the Phase 3 review.
+
+The lexer collision ownership finding remains open: scope-sensitive duplicate
+declaration analysis must move to the parser/symbol-table layer in a follow-up
+slice before this Issue can be marked done.
