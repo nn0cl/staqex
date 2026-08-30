@@ -872,6 +872,7 @@ def _analyze_unit(
     diags.extend(povm_diags)
 
     scientific_semantic_ir = build_scientific_semantic_ir(unit, source_id=source_id)
+    unit._canonical_semantic_ir = scientific_semantic_ir
     # Scientific Semantic IR is the sole compile-owned semantic authority.
     # Keep a named compatibility projection only for legacy operator and
     # discretization consumers that have separate migration issues.
@@ -984,6 +985,7 @@ def compile_source(source: str, *, strict_evolution: bool = False) -> CompileRes
         if is_h1_unit(unit):
             analysis = analyze_h1_source(source, unit=unit)
             scientific_semantic_ir = build_scientific_semantic_ir(unit)
+            unit._canonical_semantic_ir = scientific_semantic_ir
             return CompileResult(
                 unit=unit,
                 diagnostics=diags + analysis.diagnostics,

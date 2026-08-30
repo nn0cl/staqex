@@ -14,6 +14,8 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from compiler.staqex.codegen_qasm import OpenQASM3Generator
+from compiler.staqex.lexer import Lexer
+from compiler.staqex.parser import Parser
 from compiler.staqex.pipeline import compile_path
 
 
@@ -61,10 +63,12 @@ def test_caller_created_canonical_projection_is_rejected() -> None:
 
 
 def test_missing_canonical_projection_fails_closed_before_qasm_artifact() -> None:
-    compiled = compile_path(ORDINARY_GATE)
+    source = ORDINARY_GATE.read_text(encoding="utf-8")
+    tokens, lex_diagnostics = Lexer(source).tokenize()
+    unit = Parser(tokens).parse()
 
-    assert compiled.unit is not None
-    emitted = OpenQASM3Generator(route=False).generate_detailed(compiled.unit)
+    assert lex_diagnostics == []
+    emitted = OpenQASM3Generator(route=False).generate_detailed(unit)
 
     assert not emitted.ok
     assert emitted.circuit is not None

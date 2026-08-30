@@ -189,7 +189,17 @@ class QASM3Emitter:
                 ok=False,
                 circuit=rejected,
             )
-        semantic_ir = semantic_ir or build_scientific_semantic_ir(unit)
+        semantic_ir = semantic_ir or getattr(unit, "_canonical_semantic_ir", None)
+        if semantic_ir is None:
+            return EmitResult(
+                qasm="",
+                notes=[
+                    "E_QPU_CANONICAL_PROVENANCE: canonical semantic projection "
+                    "is required before QASM emission"
+                ],
+                ok=False,
+                circuit=_empty_rejection_circuit("E_QPU_CANONICAL_PROVENANCE"),
+            )
         canonical = build_qpu_ir(unit, semantic_ir)
         qpu_result = self._emit_from_qpu_ir_when_available(
             canonical,
