@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red complete; Phase 2 Green approval required** |
-| Phase | phase-1-red |
+| Status | **Phase 2 Green complete; Phase 3 review required** |
+| Phase | phase-2-green |
 | Parent | WP-0113 |
 | Design authority | [Meaning Preservation Specification](../specs/staqex-semantic-ir-meaning-preservation.md#residual-follow-up-design-liss-0478) |
 | Depends on | LISS-0450 bounded Coin/when slice |
 | Implementation permission | None |
-| Next approval | Typed Phase 2 Green approval |
+| Next approval | Typed Phase 3 refactor/review approval |
 
 ## Scope
 
@@ -52,3 +52,18 @@ Verification: `./.venv/bin/pytest -q
 tests/test_liss_0478_interfer_phase_branch_meaning_red.py` reports `1 failed,
 4 passed`, and `git diff --check` passes. Phase 2 Green requires separate
 Adjudicator approval.
+
+## Phase 2 Green result
+
+The Adjudicator approved `LISS-0478 Phase 2 Green` on 2026-08-30. The
+canonical semantic projection now classifies `phase(...)` and
+`interfer(...)` as distinct meaning kinds with quantum role, `State<T>` type,
+dedicated intent/state roles, and existing child source identity/provenance.
+No finite gate synthesis, numerical approximation, provider behavior, or
+Hilbert-space storage was added.
+
+Changed production file: `compiler/staqex/scientific_semantic_ir.py`. The
+reviewed Phase 1 tests were not changed. Verification: LISS-0478 plus related
+Coin/Mix and meaning-preservation tests pass (`17 passed`), Python compilation
+passes, and `git diff --check` passes. Phase 3 review/refactor requires
+separate approval.

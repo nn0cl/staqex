@@ -287,6 +287,10 @@ def build_scientific_semantic_ir(
                 name = "Limit"
             elif value.callee.name == "exp" and is_quantum_exponential(value):
                 name = "ExactExponential"
+            elif value.callee.name == "phase":
+                name = "PhaseExpr"
+            elif value.callee.name == "interfer":
+                name = "InterferenceExpr"
         role = _role_for(name)
         child_start = len(nodes)
         for field_name in value.__dataclass_fields__:
@@ -1195,7 +1199,7 @@ def _build_finite_realization_record(
 def _role_for(name: str) -> str:
     if "Measure" in name:
         return "terminal_classical"
-    if name in {"Coin", "WhenExpr"}:
+    if name in {"Coin", "WhenExpr", "PhaseExpr", "InterferenceExpr"}:
         return "quantum"
     if name in {"Limit", "ExactExponential", "EvolveExpr"}:
         return "evolution"
@@ -1207,7 +1211,13 @@ def _role_for(name: str) -> str:
 
 
 def _type_for(name: str) -> str:
-    if "State" in name or name in {"EvolveExpr", "Limit", "ExactExponential"}:
+    if "State" in name or name in {
+        "EvolveExpr",
+        "Limit",
+        "ExactExponential",
+        "PhaseExpr",
+        "InterferenceExpr",
+    }:
         return "State<T>"
     if "Operator" in name:
         return "Operator"
@@ -1223,6 +1233,10 @@ def _intent_for(name: str) -> str:
         return "evolution"
     if name == "ExactExponential":
         return "exact_evolution"
+    if name == "PhaseExpr":
+        return "phase_transform"
+    if name == "InterferenceExpr":
+        return "interference"
     if "Measure" in name:
         return "measurement"
     return "expression"
@@ -1237,6 +1251,10 @@ def _meaning_kind(name: str) -> str:
         return "exact_exponential"
     if name == "WhenExpr":
         return "mixture"
+    if name == "PhaseExpr":
+        return "phase"
+    if name == "InterferenceExpr":
+        return "interference"
     if name in {"OpBin", "BinOp"}:
         return "mathematical_product"
     return "expression"
@@ -1249,6 +1267,10 @@ def _state_role(name: str) -> str:
         return "mixed_state"
     if name in {"Limit", "ExactExponential", "EvolveExpr"}:
         return "evolution_operator"
+    if name == "PhaseExpr":
+        return "phase_transform"
+    if name == "InterferenceExpr":
+        return "interference"
     return "unspecified"
 
 
