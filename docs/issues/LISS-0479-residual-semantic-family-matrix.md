@@ -51,3 +51,17 @@ Verification: `./.venv/bin/pytest -q
 tests/test_liss_0479_residual_semantic_family_matrix_red.py` reports `1 failed,
 4 passed`, and `git diff --check` passes. Phase 2 Green requires a separate
 approval for a selected row.
+
+## Phase 2 Green — Product/Tensor row
+
+The Adjudicator approved the Product/Tensor deferred row for Phase 2 Green on
+2026-08-31. The existing canonical projection preserves the mathematical
+product/state meaning and rejects unsupported finite projection before QASM
+artifact creation with `E_QPU_CANONICAL_PROJECTION_UNAVAILABLE`. No
+implicit unitary finiteization, provider behavior, or new numerical method was
+added, so no production change was required for this row.
+
+Verification: Product/Tensor plus related Coin/Mix and meaning-preservation
+tests pass (`16 passed` in the selected run). The matrix-wide Observation row
+fixture remains intentionally unresolved under the separate LISS-0481
+contract; LISS-0479 overall is not complete.
