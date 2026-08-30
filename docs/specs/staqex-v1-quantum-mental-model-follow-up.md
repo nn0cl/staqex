@@ -96,6 +96,39 @@ The table is a proposal, not yet the final reserved inventory. In particular,
 `d`, `del`, `sum`, and `prod` require context-sensitive parsing so that
 ordinary identifiers and mathematical binders do not collide.
 
+### 3.4 LISS-0480 v1 lexicon contract
+
+The following matrix is the accepted v1 contract for the first lexicon slice.
+`canonical` is the semantic spelling used by the AST and Scientific Semantic
+IR; `written` is the exact source spelling retained for diagnostics and source
+maps. A display alias is accepted only in the listed context and must produce
+the same semantic identity as its canonical spelling.
+
+| Canonical | Display alias(es) | Token class | Accepted context | Collision rule | Version | Unsupported spelling diagnostic |
+|---|---|---|---|---|---|---|
+| `psi` | `ψ` | scientific name | quantum state binding/reference | ordinary local name may shadow only in a nested scope; duplicate binding in one scope is `LEXICON_COLLISION` | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `psi` or `ψ` |
+| `phi` | `φ` | scientific name | quantum state/test-state binding/reference | same canonical identity across source spellings; duplicate binding in one scope is deterministic | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `phi` or `φ` |
+| `rho` | `ρ` | scientific name | density-state binding/reference | same canonical identity across source spellings; duplicate binding in one scope is deterministic | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `rho` or `ρ` |
+| `H` | — | contextual scientific name | Hamiltonian/Hermitian operator position | remains an identifier outside operator position; no global reservation | v1 | `LEXICON_UNSUPPORTED_SPELLING` only for a rejected operator spelling |
+| `U` | — | contextual scientific name | unitary operator position | remains an identifier outside operator position; no global reservation | v1 | `LEXICON_UNSUPPORTED_SPELLING` only for a rejected operator spelling |
+| `hbar` | `ℏ` | scientific constant name | physics expression | same semantic constant; ordinary local shadowing follows declaration scope | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `hbar` or `ℏ` |
+| `dag` | `†` | postfix operator | adjoint expression | cannot be used as a declaration name | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `dag` or `†` |
+| `tp` | `⊗` | infix operator | tensor-product expression | cannot be used as a declaration name | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `tp` or `⊗` |
+| `cm` | `[A,B]` | operator expression | commutator position | square brackets are disambiguated by syntactic position; `cm(A,B)` is not a second semantic operation | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `cm(A,B)` |
+| `controlled` | `Ctl` | reserved operation word | coherent control expression | reserved in operation position; never aliases `Mix`/`mix` | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `controlled` |
+| `superpose` | `Superpose` | reserved operation word | coherent phase-preserving operation | reserved operation position; never aliases `Mix`/`mix` | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `superpose` |
+
+The v1 matrix deliberately does not reserve `d`, `del`, `sum`, `prod`,
+`dsum`, `nab`, `ex`, `ket`, or `bra` globally. They remain proposal-level,
+context-sensitive candidates until a separate grammar decision specifies their
+binder/operator ownership. An implementation must not silently accept an
+unlisted spelling as a new dialect: it either preserves an ordinary identifier
+role or emits the actionable diagnostic above with the canonical suggestion.
+
+Each accepted alias test must expose both `canonical_spelling` and
+`written_spelling`; comparing only rendered text is insufficient evidence that
+the alias preserved meaning.
+
 The commutator keeps `[A,B]` as its canonical blackboard spelling. Square
 brackets are not rejected merely because other languages use them for lists or
 indexing. The parser and type checker must distinguish an operator expression

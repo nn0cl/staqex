@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **ready — design complete; specification/Phase 1 approval required** |
-| Phase | phase-0-design |
+| Status | **Phase 1 Red complete; Phase 2 Green approval required** |
+| Phase | phase-1-red |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design) |
 | Depends on | ADR 0189/0190 |
-| Implementation permission | None |
-| Next approval | Architecture/spec review, then typed Phase 1 Red approval |
+| Implementation permission | None; production lexicon implementation remains prohibited until Phase 2 Green approval |
+| Next approval | Typed Phase 2 Green approval |
 
 ## Scope
 
@@ -31,3 +31,14 @@ changes.
 ## Phase 1 candidate files
 
 Lexicon matrix, source fixtures, lexer/parser Red tests, and diagnostics only.
+
+## Phase 1 Red result
+
+- Added the v1 scientific lexicon matrix to the authoritative follow-up
+  specification, including accepted aliases, contexts, collision rules,
+  versioning, and actionable diagnostics.
+- Added `tests/test_liss_0480_scientific_lexicon_contract_red.py` covering the
+  matrix, canonical identity/provenance, deterministic alias collision, and
+  unsupported spelling diagnostics.
+- No production code, runtime behavior, provider integration, or Unicode
+  migration was changed. The suite is intentionally Red until Phase 2.
