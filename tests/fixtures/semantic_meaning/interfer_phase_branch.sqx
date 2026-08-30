@@ -1,0 +1,16 @@
+// LISS-0478 representative source: phase must affect interference meaning.
+State slit = Coin()
+
+State screenA = Mix (slit) {
+  0 -> 0,
+  else -> 1,
+}
+
+State screenB0 = Mix (slit) {
+  0 -> 1,
+  else -> 2,
+}
+
+State screenB = phase(screenB0, pi)
+State screen = interfer(screenA, screenB)
+Measure screen
