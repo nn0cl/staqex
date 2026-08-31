@@ -15,7 +15,8 @@ compact note in that skill.
 
 Stop for Adjudicator decision when:
 
-- phase is not explicitly selected.
+- phase is neither explicitly selected nor uniquely established by the
+  immediately preceding exchange.
 - issue dependencies are unclear or unresolved.
 - requirements imply a new architecture decision.
 - a payload would need unrelated large context.
