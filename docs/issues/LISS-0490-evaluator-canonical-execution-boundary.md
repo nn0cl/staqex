@@ -2,14 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **design-ready — awaiting Architecture approval** |
+| Status | **architecture-approved — awaiting Phase 1 Red approval** |
 | Phase | phase-0-architecture-design |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issues | [LISS-0489](LISS-0489-symbolic-ir-canonical-inspection.md), [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0490-evaluator-canonical-execution-boundary) |
 | Existing authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md), ADR 0211 |
-| Implementation permission | None; design only |
-| Next approval | Architecture approval, then Phase 1 Red approval |
+| Architecture approval | Approved by Adjudicator 2026-08-31; ADR 0211 boundary retained |
+| Implementation permission | None; Phase 1 Red test creation is not yet approved |
+| Next approval | Phase 1 Red approval |
 
 ## Design intake
 
@@ -112,3 +113,21 @@ concurrency, or deployment technology.
 Approve or reject the explicit canonical execution request boundary, the
 AST-as-mechanics-only rule, State/Measure invariants, and provider-neutral
 local scope. Approval does not authorize Phase 1 tests or implementation.
+
+## Architecture approval result
+
+- The explicit compile-owned `ScientificSemanticIR` execution boundary is
+  accepted for this Issue.
+- AST-only execution rejection, State/Measure invariants, no hidden
+  finiteization, and injected-port constraints are accepted as Phase 1
+  acceptance targets.
+- No new language semantics, provider technology, port contract, concurrency
+  model, or implementation permission is created by this approval.
+
+## Phase 1 Red readiness
+
+The exact Phase 1 candidate is fixed to
+`tests/test_liss_0490_evaluator_canonical_execution_boundary_red.py` and one
+state/terminal-measure fixture. The eight acceptance scenarios in this Issue
+will be tested without changing evaluator production code. Phase 1 Red
+requires a separate approval before those files are created.
