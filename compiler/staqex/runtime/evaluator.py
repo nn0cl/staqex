@@ -6,7 +6,10 @@ import cmath
 import random
 from dataclasses import dataclass, field
 from fractions import Fraction
-from typing import Any, Callable, Mapping, TextIO
+from typing import TYPE_CHECKING, Any, Callable, Mapping, TextIO
+
+if TYPE_CHECKING:
+    from ..scientific_semantic_ir import ScientificSemanticIR
 
 from ..continuous_field import (
     ContinuousFieldPort,
@@ -183,6 +186,7 @@ class EvalResult:
     # (the run vacuumed). True (default) when unchecked or all confirmed.
     dynamic_outcomes_confirmed: bool = True
     evolution_provenance: dict[str, Any] | None = None
+    execution_authority: str | None = None
 
 
 class KernelError(Exception):
@@ -294,7 +298,44 @@ class Evaluator:
         from .joint import world_workers
 
         with world_workers(self.data_parallel_workers):
-            return self._run_unit_body(unit, stdout=stdout)
+            result = self._run_unit_body(unit, stdout=stdout)
+        result.execution_authority = "legacy_ast_compatibility"
+        return result
+
+    def run_canonical_unit(
+        self,
+        unit: CompilationUnit,
+        *,
+        semantic_ir: ScientificSemanticIR | None = None,
+        stdout: TextIO | None = None,
+    ) -> EvalResult:
+        """Run one unit after validating its compile-owned semantic authority."""
+
+        from ..scientific_semantic_ir import ScientificSemanticIR
+
+        if semantic_ir is None:
+            raise KernelDiagnosticError(
+                "E_EVALUATOR_CANONICAL_AUTHORITY",
+                "canonical ScientificSemanticIR is required before execution",
+            )
+        if not isinstance(semantic_ir, ScientificSemanticIR):
+            raise KernelDiagnosticError(
+                "E_EVALUATOR_CANONICAL_AUTHORITY",
+                "evaluator requires ScientificSemanticIR input",
+            )
+        if semantic_ir.authority != "scientific_semantic_ir":
+            raise KernelDiagnosticError(
+                "E_EVALUATOR_CANONICAL_AUTHORITY",
+                "semantic input is not source-derived canonical authority",
+            )
+        if semantic_ir.source_id not in {"sqx", "<memory>"}:
+            raise KernelDiagnosticError(
+                "E_EVALUATOR_CANONICAL_AUTHORITY",
+                "semantic source identity does not match the local compiler",
+            )
+        result = self.run_unit(unit, stdout=stdout)
+        result.execution_authority = "scientific_semantic_ir"
+        return result
 
     def _resolve_host_coefficient_arrays(self, unit: CompilationUnit) -> dict[str, Any]:
         """Wire HostInputPort into the ADR 0119 coefficient-tensor path

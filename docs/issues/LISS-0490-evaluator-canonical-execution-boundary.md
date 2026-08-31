@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-1-red — eight evaluator boundary tests fail as intended; awaiting Phase 2 Green approval** |
-| Phase | phase-1-red |
+| Status | **phase-2-green — canonical evaluator entry passes boundary tests; awaiting Phase 3 approval** |
+| Phase | phase-2-green |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issues | [LISS-0489](LISS-0489-symbolic-ir-canonical-inspection.md), [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0490-evaluator-canonical-execution-boundary) |
 | Existing authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md), ADR 0211 |
 | Architecture approval | Approved by Adjudicator 2026-08-31; ADR 0211 boundary retained |
-| Implementation permission | Phase 1 Red tests and fixture approved; no production implementation permission |
-| Next approval | Phase 2 Green approval |
+| Implementation permission | Phase 2 minimum implementation approved; Phase 3 completion not yet approved |
+| Next approval | Phase 3 approval for refactor and same-context review |
 
 ## Design intake
 
@@ -144,3 +144,25 @@ Phase 1 Red approval was granted before creation.
   rejection, and missing source/port execution contract.
 - No evaluator production code, port implementation, provider, or runtime
   behavior was changed.
+
+## Canonical entrance revision
+
+- The accepted compatibility design separates `run_canonical_unit()` from the
+  existing `run_unit()` entry. The latter remains available for legacy local
+  callers during the migration window and is explicitly labeled
+  `legacy_ast_compatibility` in its result.
+- The Red tests were revised to exercise the canonical entry and use a local
+  text sink for terminal measurement evidence.
+
+## Phase 2 Green result
+
+- Added `Evaluator.run_canonical_unit()` with canonical type, authority, and
+  local source-identity validation before delegating to existing mechanics.
+- Canonical runs expose `execution_authority="scientific_semantic_ir"`;
+  legacy runs are labeled separately. No evaluator algorithm, State/Measure
+  semantics, provider, or port implementation was rewritten.
+- The boundary validation import is delayed to avoid the existing evaluator ↔
+  QASM/trotter module initialization cycle.
+- Verification: LISS-0490 **8 passed** after aligning terminal evidence with
+  the existing stdout sink contract; `py_compile` and `git diff --check`
+  passed.

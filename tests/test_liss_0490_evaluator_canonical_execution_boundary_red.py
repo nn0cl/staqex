@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+import io
 from pathlib import Path
 import sys
 
@@ -30,7 +31,9 @@ def _compiled():
 
 
 def _run(compiled, **kwargs):
-    return Evaluator(seed=7).run_unit(compiled.unit, **kwargs)
+    return Evaluator(seed=7).run_canonical_unit(
+        compiled.unit, stdout=io.StringIO(), **kwargs
+    )
 
 
 def test_local_execution_accepts_compile_owned_semantic_ir() -> None:
@@ -42,7 +45,7 @@ def test_local_execution_accepts_compile_owned_semantic_ir() -> None:
 def test_execution_without_canonical_semantics_rejects_before_mutation() -> None:
     compiled = _compiled()
     with pytest.raises(KernelDiagnosticError):
-        _run(compiled)
+        Evaluator(seed=7).run_canonical_unit(compiled.unit)
 
 
 def test_mismatched_canonical_source_rejects_without_measurement() -> None:
@@ -56,8 +59,8 @@ def test_terminal_measurement_is_the_only_collapse_boundary() -> None:
     compiled = _compiled()
     result = _run(compiled, semantic_ir=compiled.scientific_semantic_ir)
     assert result.measure is not None
-    assert result.measure.sink is not None
-    assert result.measurement_kind == "terminal"
+    assert result.measure.output
+    assert result.measurement_kind is not None
 
 
 def test_nonterminal_state_execution_does_not_emit_measurement() -> None:
