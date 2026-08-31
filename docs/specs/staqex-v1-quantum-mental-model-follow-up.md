@@ -440,6 +440,35 @@ For every row, mapping output must include `role`, `lane`, `source_id`,
 `provenance`, `exactness`, and `dimensions`. A missing field is a mapping
 contract failure even when a consumer can still render an artifact.
 
+### 5.7 LISS-0484 broader observation algebra design
+
+LISS-0480–0483 establish the lexical, contract, mapping, and bounded
+conformance foundations. The next local design slice defines the algebraic
+relationships without selecting a storage model or exposing mandatory source
+annotations.
+
+| Concept | Input relation | Output relation | Collapse | Required invariant | Current implementation boundary |
+|---|---|---|---:|---|---|
+| `Observable<T>` | operator/quantity over `State<T>` | expectation or measurement request | no by itself | observable identity and dimensions remain source-derived | compiler/IR category only |
+| `Projection<T>` | projector/reduction over `State<T>` | `State<T>` or vacuum | no implicit sampling | projection loss is explicit and no finite artifact is fabricated | compiler/IR category only |
+| `Observation<T>` | typed intent with operation and lane | projection, diagnostic view, measurement envelope, or protocol request | only `measure` | operation, lane, lineage, and capability are preserved | compiler/IR DTO candidate |
+| `DiagnosticView<T>` | `inspect(State<T>)` | non-destructive view | no | source state lineage remains available | shipped bounded IR metadata |
+| `MeasurementEnvelope<T>` | terminal `measure(State<T>)` | classical outcome + post-state metadata | yes | collapse is explicit and terminal | shipped Host result boundary |
+
+The algebra has four required laws: (1) `expect`, `project`, `inspect`, and
+`trace_out` are state-preserving or state-transforming but non-sampling; (2)
+only terminal `measure` may create a collapse outcome in the Static Kernel;
+(3) every result keeps source identity, lane, and provenance; and (4) an
+unsupported operation is rejected explicitly rather than coerced into a
+different observation kind.
+
+LISS-0484 must decide the vocabulary for operation kind, lane, lineage,
+exactness, dimensions, projection-loss, and capability status, plus the
+composition rules for `expect(project(P, state))`, `inspect(project(P, state))`,
+and repeated observation requests. It must not decide general Hilbert storage,
+POVM numerical semantics, tomography shot estimation, provider SDKs, or public
+surface annotations. Those are separate ADR/Issue boundaries.
+
 ### 5.6 LISS-0483 cross-feature conformance matrix
 
 Conformance is a deterministic proof ledger over accepted source behavior. Each
