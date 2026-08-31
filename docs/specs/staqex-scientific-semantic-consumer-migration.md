@@ -168,3 +168,27 @@ preservation, and no finite artifact or execution authorization from an
 injected equation. Phase 2 may add only the minimum validation/adapter guard.
 Numerical equation solving, physics IR replacement, provider/QPU, and S02
 migration are excluded.
+
+### LISS-0488 Physics IR canonical projection migration
+
+Physics IR is a projection DTO and is not a source-semantic authority. The
+compile-owned `ScientificSemanticIR` object must be passed explicitly to the
+Physics projection; the projection must not rebuild meaning from AST, HIR,
+string equations, or caller-injected Equation DTOs. The projection preserves
+canonical node identity, ordered structure, role/lane, type, dimensions,
+exactness, intent, and provenance. A required field that cannot be preserved
+causes a named diagnostic and no partial Physics artifact.
+
+Equation DTOs remain available only for the explicitly typed diagnostic
+compatibility role defined by LISS-0487. They cannot authorize execution,
+finiteization, allocation, QPU artifacts, or implicit `Realize`. The projection
+is deterministic for a given semantic snapshot and does not parse, evaluate,
+solve, allocate, call providers, or create finite plans.
+
+Phase 1 Red must cover canonical object identity, node/field conservation,
+caller-authority rejection, lossy-projection no-artifact behavior, exact versus
+finite boundary, diagnostic-only Equation metadata, and single-build identity.
+Phase 2 is limited to compile-owned projection wiring. Phase 3 may retire the
+old HIR-authority path only after no-bypass and unchanged-neighbor evidence.
+Provider/live QPU, Rust, S02, solver, and broad `symbolic_ir` migration remain
+separate work.
