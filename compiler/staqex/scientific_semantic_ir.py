@@ -136,6 +136,7 @@ class ScientificSemanticIR:
     ideal_meaning: "IdealMeaning | None" = None
     observation_contracts: dict[str, dict[str, Any]] = field(default_factory=dict)
     measurement_envelopes: dict[str, dict[str, Any]] = field(default_factory=dict)
+    observation_mappings: dict[str, dict[str, Any]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -378,6 +379,7 @@ def build_scientific_semantic_ir(
     )
     observation_contracts: dict[str, dict[str, Any]] = {}
     measurement_envelopes: dict[str, dict[str, Any]] = {}
+    observation_mappings: dict[str, dict[str, Any]] = {}
     if unit.main is not None:
         for statement in unit.main.body.stmts:
             if isinstance(statement, StateBind) and statement.names and isinstance(statement.expr, Inspect):
@@ -389,6 +391,20 @@ def build_scientific_semantic_ir(
                     "source_id": source_id,
                     "source_node_id": source_node_ids.get(id(statement), ""),
                 }
+                observation_mappings[statement.names[0]] = {
+                    "role": "DiagnosticView",
+                    "lane": "StaticKernel",
+                    "source_id": source_id,
+                    "provenance": {
+                        "source_node_id": source_node_ids.get(id(statement), ""),
+                        "line": statement.span.line,
+                        "col": statement.span.col,
+                    },
+                    "exactness": "preserved",
+                    "dimensions": "preserved",
+                    "projection_loss": None,
+                    "finite_artifact": False,
+                }
             if isinstance(statement, Measure) and isinstance(statement.expr, Var):
                 measurement_envelopes[statement.expr.name] = {
                     "kind": "MeasurementEnvelope",
@@ -396,6 +412,27 @@ def build_scientific_semantic_ir(
                     "sampling": True,
                     "lane": "StaticKernel",
                     "source_id": source_id,
+                }
+            if (
+                isinstance(statement, StateBind)
+                and statement.names
+                and isinstance(statement.expr, Call)
+                and isinstance(statement.expr.callee, Var)
+                and statement.expr.callee.name == "trace_out"
+            ):
+                observation_mappings[statement.names[0]] = {
+                    "role": "ReducedState",
+                    "lane": "StaticKernel",
+                    "source_id": source_id,
+                    "provenance": {
+                        "source_node_id": source_node_ids.get(id(statement), ""),
+                        "line": statement.span.line,
+                        "col": statement.span.col,
+                    },
+                    "exactness": "preserved",
+                    "dimensions": "reduced",
+                    "projection_loss": "subsystem_reduction",
+                    "finite_artifact": False,
                 }
     binder_lowering, binder_diagnostics = lower_finite_binders(unit)
     realize_source_node_id, finite_realization_record, realization_errors = (
@@ -427,6 +464,7 @@ def build_scientific_semantic_ir(
         finite_realization_record=finite_realization_record,
         observation_contracts=observation_contracts,
         measurement_envelopes=measurement_envelopes,
+        observation_mappings=observation_mappings,
     )
     ideal_payload = json.dumps(
         {
