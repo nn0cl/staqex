@@ -212,6 +212,33 @@ class KernelDiagnosticError(KernelError):
         self.provenance = provenance
 
 
+def _validate_canonical_semantic_ir(semantic_ir: ScientificSemanticIR | None) -> None:
+    """Reject execution authority that is absent, synthetic, or mismatched."""
+
+    from ..scientific_semantic_ir import ScientificSemanticIR
+
+    if semantic_ir is None:
+        raise KernelDiagnosticError(
+            "E_EVALUATOR_CANONICAL_AUTHORITY",
+            "canonical ScientificSemanticIR is required before execution",
+        )
+    if not isinstance(semantic_ir, ScientificSemanticIR):
+        raise KernelDiagnosticError(
+            "E_EVALUATOR_CANONICAL_AUTHORITY",
+            "evaluator requires ScientificSemanticIR input",
+        )
+    if semantic_ir.authority != "scientific_semantic_ir":
+        raise KernelDiagnosticError(
+            "E_EVALUATOR_CANONICAL_AUTHORITY",
+            "semantic input is not source-derived canonical authority",
+        )
+    if semantic_ir.source_id not in {"sqx", "<memory>"}:
+        raise KernelDiagnosticError(
+            "E_EVALUATOR_CANONICAL_AUTHORITY",
+            "semantic source identity does not match the local compiler",
+        )
+
+
 @dataclass(frozen=True)
 class ExplicitPropagator:
     """Runtime provenance for `exp(-i * H * duration / hbar)`.
@@ -311,28 +338,7 @@ class Evaluator:
     ) -> EvalResult:
         """Run one unit after validating its compile-owned semantic authority."""
 
-        from ..scientific_semantic_ir import ScientificSemanticIR
-
-        if semantic_ir is None:
-            raise KernelDiagnosticError(
-                "E_EVALUATOR_CANONICAL_AUTHORITY",
-                "canonical ScientificSemanticIR is required before execution",
-            )
-        if not isinstance(semantic_ir, ScientificSemanticIR):
-            raise KernelDiagnosticError(
-                "E_EVALUATOR_CANONICAL_AUTHORITY",
-                "evaluator requires ScientificSemanticIR input",
-            )
-        if semantic_ir.authority != "scientific_semantic_ir":
-            raise KernelDiagnosticError(
-                "E_EVALUATOR_CANONICAL_AUTHORITY",
-                "semantic input is not source-derived canonical authority",
-            )
-        if semantic_ir.source_id not in {"sqx", "<memory>"}:
-            raise KernelDiagnosticError(
-                "E_EVALUATOR_CANONICAL_AUTHORITY",
-                "semantic source identity does not match the local compiler",
-            )
+        _validate_canonical_semantic_ir(semantic_ir)
         result = self.run_unit(unit, stdout=stdout)
         result.execution_authority = "scientific_semantic_ir"
         return result

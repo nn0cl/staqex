@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-2-green — canonical evaluator entry passes boundary tests; awaiting Phase 3 approval** |
-| Phase | phase-2-green |
+| Status | **done — canonical evaluator entry boundary slice complete** |
+| Phase | phase-3-refactor-complete |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issues | [LISS-0489](LISS-0489-symbolic-ir-canonical-inspection.md), [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0490-evaluator-canonical-execution-boundary) |
 | Existing authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md), ADR 0211 |
 | Architecture approval | Approved by Adjudicator 2026-08-31; ADR 0211 boundary retained |
-| Implementation permission | Phase 2 minimum implementation approved; Phase 3 completion not yet approved |
-| Next approval | Phase 3 approval for refactor and same-context review |
+| Implementation permission | Phase 3 refactor and same-context review completed |
+| Next approval | None for this bounded slice; legacy run_unit retirement remains separate |
 
 ## Design intake
 
@@ -166,3 +166,16 @@ Phase 1 Red approval was granted before creation.
 - Verification: LISS-0490 **8 passed** after aligning terminal evidence with
   the existing stdout sink contract; `py_compile` and `git diff --check`
   passed.
+
+## Phase 3 result
+
+- Extracted canonical authority validation into `_validate_canonical_semantic_ir`
+  without changing the public behavior or assertions.
+- Same-context review completed; this isolation is weaker than
+  `separate_context`.
+- Review record:
+  `docs/collaboration/reviews/2026-08-31-liss-0490-phase3-review.md`.
+- Verification: LISS-0490 plus RngPort/MeasureSinkPort regressions
+  **18 passed**, `py_compile`, and `git diff --check` passed.
+
+Process review: no operating-contract deviation or operational problem found.
