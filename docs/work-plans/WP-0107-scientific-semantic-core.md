@@ -4,7 +4,7 @@
 |---|---|
 | Status | **Phase 2 Green bounded consumer migration complete — consumer-wide migration pending** |
 | Issue | [LISS-0444](../issues/LISS-0444-scientific-semantic-core.md) |
-| Follow-up Issues | [LISS-0476](../issues/LISS-0476-symbolic-ir-consumer-migration.md), [LISS-0477](../issues/LISS-0477-ast-dto-authority-retirement.md) |
+| Follow-up Issues | [LISS-0476](../issues/LISS-0476-symbolic-ir-consumer-migration.md), [LISS-0477](../issues/LISS-0477-ast-dto-authority-retirement.md), [LISS-0486](../issues/LISS-0486-evaluator-semantic-authority.md) |
 | Specification | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md) |
 | ADR | [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |
 | Detailed follow-up design | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design) |
