@@ -2,14 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **design-ready — awaiting Architecture approval** |
+| Status | **architecture-approved — awaiting Phase 1 Red approval** |
 | Phase | phase-0-architecture-design |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issues | [LISS-0488](LISS-0488-physics-ir-canonical-projection.md), [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0489-symbolic-ir-canonical-inspection-migration) |
 | Existing authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#acceptance-corpus-and-artifact-rules), ADR 0211 |
-| Implementation permission | None; design only |
-| Next approval | Architecture approval, then Phase 1 Red approval |
+| Architecture approval | Approved by Adjudicator 2026-08-31; ADR 0211 boundary retained |
+| Implementation permission | None; Phase 1 Red test creation is not yet approved |
+| Next approval | Phase 1 Red approval |
 
 ## Design intake
 
@@ -119,3 +120,22 @@ Approve or reject replacing direct `symbolic_ir` AST authority with the
 compile-owned `SemanticInspectionResult` boundary, including the derived
 compatibility-view window and no-allocation/fail-closed contract. Approval does
 not authorize Phase 1 tests or production implementation.
+
+## Architecture approval result
+
+- `SemanticInspectionResult` is accepted as the compile-owned canonical
+  inspection projection for this Issue.
+- `symbolic_ir` is accepted only as a derived compatibility view during the
+  bounded migration; its direct AST walk is not semantic authority.
+- The source-ID/provenance conservation, no-allocation, and fail-closed
+  contracts are accepted as Phase 1 targets.
+- No new ADR, technology choice, provider boundary, or implementation
+  permission is created by this approval.
+
+## Phase 1 Red readiness
+
+The exact Phase 1 candidate is fixed to
+`tests/test_liss_0489_symbolic_ir_canonical_inspection_red.py` and the
+`symbolic_inspection.sqx` fixture named in this Issue. The test batch will
+change no production code. Phase 1 Red requires a separate approval before
+those files are created.
