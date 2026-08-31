@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **ready — design complete; Phase 1 Red approval required** |
-| Phase | phase-0-design |
+| Status | **Phase 1 Red complete; Phase 2 Green approval required** |
+| Phase | phase-1-red |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design) |
 | Depends on | LISS-0480, LISS-0481, LISS-0482 |
 | Implementation permission | None |
-| Next approval | Conformance review, then typed Phase 1 Red approval |
+| Next approval | Typed Phase 2 Green approval |
 
 ## Scope
 
@@ -32,3 +32,14 @@ Stop when a test exposes an ADR/spec conflict; resolve it before Phase 1.
 
 Cross-feature fixtures, proof matrix, conformance Red tests, and documentation
 links only.
+
+## Phase 1 Red result
+
+- Added the cross-feature conformance matrix to the authoritative follow-up
+  specification for aliases, composition, migration, observation, and terminal
+  measurement.
+- Added `tests/test_liss_0483_observation_lexicon_conformance_red.py` covering
+  matrix completeness, review-boundary evidence, and deferred observation
+  rejection.
+- No conformance runner, provider, QPU, Rust, or broad example rewrite was
+  implemented.

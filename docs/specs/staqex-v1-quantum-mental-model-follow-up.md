@@ -440,6 +440,28 @@ For every row, mapping output must include `role`, `lane`, `source_id`,
 `provenance`, `exactness`, and `dimensions`. A missing field is a mapping
 contract failure even when a consumer can still render an artifact.
 
+### 5.6 LISS-0483 cross-feature conformance matrix
+
+Conformance is a deterministic proof ledger over accepted source behavior. Each
+row names the canonical behavior, the observable proof, and the result that
+must be reported when the behavior is deferred. A passing compile alone is not
+conformance evidence if the semantic meaning or review metadata is discarded.
+
+| Feature family | Canonical contract | Deterministic proof | Deferred/negative proof | Required evidence |
+|---|---|---|---|---|
+| scientific names | `psi/ψ`, `phi/φ`, `rho/ρ` share one meaning | lexer/parser token and binding identity test | unlisted spelling has stable actionable diagnostic | canonical/written spelling, source span |
+| probabilistic composition | `mix` is non-collapsing composition | semantic role/lane test | no rewrite to `measure` or `superpose` | role, lane, branch provenance |
+| coherent composition | `superpose` is distinct from `mix` | AST/IR role test | unsupported execution rejects explicitly | role, rejection code, source ID |
+| controlled operation | `controlled`/`Ctl` retains coherent-control meaning | call-form semantic test | no alias to mixture | operation role, control/target provenance |
+| migration | `when` is retired; `mix` is canonical | lexer diagnostic test | no compatibility fallback | diagnostic code, replacement, span |
+| observation | `inspect`/`project`/`trace_out` do not collapse | observation mapping test | unsupported observation has no fabricated result | kind, collapse, sampling, mapping evidence |
+| terminal boundary | only terminal `measure` samples/collapses | measurement envelope test | second implicit collapse rejects | outcome, post-state, collapse boundary |
+
+The conformance runner must return one record per matrix row with `feature`,
+`status`, `source_id`, `evidence`, and `diagnostic` (when applicable). A row
+without evidence is `inconclusive`, not `passed`. Conformance records prove
+language behavior only; they do not imply provider or hardware support.
+
 ### 5.2 Acceptance scenarios
 
 ```gherkin
