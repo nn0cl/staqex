@@ -192,3 +192,20 @@ Phase 2 is limited to compile-owned projection wiring. Phase 3 may retire the
 old HIR-authority path only after no-bypass and unchanged-neighbor evidence.
 Provider/live QPU, Rust, S02, solver, and broad `symbolic_ir` migration remain
 separate work.
+
+### LISS-0489 Symbolic IR canonical inspection migration
+
+Exact/symbolic inspection must consume the compile-owned
+`ScientificSemanticIR` through `SemanticInspectionResult`. The existing
+`symbolic_ir` dictionary may remain only as a derived compatibility view; its
+direct AST walk may not be a parallel semantic authority or rebuild canonical
+meaning. Canonical source node IDs, structure, role lanes, type/dimensions,
+exactness, intent, and provenance must be preserved or rejected explicitly.
+
+Inspection without source-visible `Realize` creates no finite plan, gates,
+allocation, or collapse record. Unresolved meaning produces no partial
+executable artifact while retaining diagnostic source IDs. Phase 1 covers
+authority/no-bypass, binder/indexed-operator provenance, exact/symbolic
+no-allocation, unresolved fail-closed behavior, and one-build identity. Phase 2
+only wires the canonical inspection into current local compatibility surfaces;
+Phase 3 may retire the direct AST walk after regression and no-bypass evidence.

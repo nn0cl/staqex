@@ -4,7 +4,7 @@
 |---|---|
 | Status | **Phase 2 Green bounded consumer migration complete — consumer-wide migration pending** |
 | Issue | [LISS-0444](../issues/LISS-0444-scientific-semantic-core.md) |
-| Follow-up Issues | [LISS-0487](../issues/LISS-0487-equation-dto-authority-retirement.md), [LISS-0488](../issues/LISS-0488-physics-ir-canonical-projection.md), plus the existing consumer migration records below |
+| Follow-up Issues | [LISS-0487](../issues/LISS-0487-equation-dto-authority-retirement.md), [LISS-0488](../issues/LISS-0488-physics-ir-canonical-projection.md), [LISS-0489](../issues/LISS-0489-symbolic-ir-canonical-inspection.md), plus the existing consumer migration records below |
 | Specification | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md) |
 | ADR | [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |
 | Architecture approval | User approved 2026-08-19 |
