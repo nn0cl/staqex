@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-2-green — minimum IR implementation passes acceptance tests; Phase 3 approval required** |
-| Phase | phase-2-green |
+| Status | **done — bounded observation algebra IR slice complete** |
+| Phase | phase-3-refactor-complete |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#liss-0484-broader-observation-algebra-design) |
 | Depends on | LISS-0481, LISS-0482, LISS-0483; ADR 0189/0211 |
-| Implementation permission | Phase 2 minimum implementation approved; no Phase 3 completion yet |
-| Next approval | Typed Phase 3 approval for refactor and same-context review |
+| Implementation permission | Phase 3 completed within approved bounded scope |
+| Next approval | None for this bounded slice; future algebra extensions require new scope |
 
 ## Scope
 
@@ -67,3 +67,18 @@ review record only.
   kind, lane, sampling/collapse flags, lineage, projection loss, finite
   artifact status, and nested composition metadata.
 - The four LISS-0484 acceptance tests pass under direct local execution.
+
+## Phase 3 result
+
+- Extracted simple observation input-lineage extraction into a pure helper.
+- Re-ran the bounded suite and the full spec verification suite.
+- Review summary: [LISS-0484 Phase 3 review](../collaboration/reviews/2026-08-31-liss-0484-phase3-review.md)
+- Process review: no operating-contract deviation or operational problem found.
+
+## Final verification
+
+- LISS-0484 suite: `4 passed` under direct local execution.
+- Spec verification: `161/161`, `100.00%`.
+- `git diff --check`: passed.
+- POVM, tomography execution, provider/QPU, AWS, and Rust support remain out
+  of scope.

@@ -172,6 +172,15 @@ class SemanticRejection:
     artifacts: None = None
 
 
+def _observation_input_name(expr: Any) -> str | None:
+    """Return the source binding carried by a simple observation expression."""
+    if isinstance(expr, Var):
+        return expr.name
+    if isinstance(expr, Inspect) and isinstance(expr.expr, Var):
+        return expr.expr.name
+    return None
+
+
 @dataclass(frozen=True, slots=True)
 class RealizationProvenance:
     realize_source_node_id: str
@@ -420,7 +429,7 @@ def build_scientific_semantic_ir(
                     "collapse": False,
                     "lineage": {
                         "source_id": source_id,
-                        "input": inner.expr.name if isinstance(inner, Inspect) and isinstance(inner.expr, Var) else inner.name if isinstance(inner, Var) else None,
+                        "input": _observation_input_name(inner),
                     },
                     "projection_loss": None,
                     "finite_artifact": False,
@@ -462,7 +471,11 @@ def build_scientific_semantic_ir(
                     "collapse": False,
                     "lineage": {
                         "source_id": source_id,
-                        "input": statement.expr.args[0].name if statement.expr.args and isinstance(statement.expr.args[0], Var) else None,
+                        "input": (
+                            _observation_input_name(statement.expr.args[0])
+                            if statement.expr.args
+                            else None
+                        ),
                     },
                     "projection_loss": "subsystem_reduction",
                     "finite_artifact": False,
