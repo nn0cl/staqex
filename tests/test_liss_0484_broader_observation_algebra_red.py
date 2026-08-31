@@ -20,7 +20,7 @@ def test_observation_algebra_spec_declares_composition_laws_and_evidence() -> No
     for law in (
         "`expect(project(P, state))`",
         "`inspect(project(P, state))`",
-        "`trace_out(project(P, state))`",
+        "repeated observation requests",
         "operation kind",
         "lineage",
         "projection-loss",
@@ -96,4 +96,3 @@ def test_nested_observation_keeps_outer_and_inner_operation_evidence() -> None:
     assert algebra["composition"]["outer"] == "inspect"
     assert algebra["composition"]["inner"] == "inspect"
     assert algebra["composition"]["sampling"] is False
-

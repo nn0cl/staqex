@@ -137,6 +137,7 @@ class ScientificSemanticIR:
     observation_contracts: dict[str, dict[str, Any]] = field(default_factory=dict)
     measurement_envelopes: dict[str, dict[str, Any]] = field(default_factory=dict)
     observation_mappings: dict[str, dict[str, Any]] = field(default_factory=dict)
+    observation_algebra: dict[str, dict[str, Any]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -380,6 +381,7 @@ def build_scientific_semantic_ir(
     observation_contracts: dict[str, dict[str, Any]] = {}
     measurement_envelopes: dict[str, dict[str, Any]] = {}
     observation_mappings: dict[str, dict[str, Any]] = {}
+    observation_algebra: dict[str, dict[str, Any]] = {}
     if unit.main is not None:
         for statement in unit.main.body.stmts:
             if isinstance(statement, StateBind) and statement.names and isinstance(statement.expr, Inspect):
@@ -404,6 +406,25 @@ def build_scientific_semantic_ir(
                     "dimensions": "preserved",
                     "projection_loss": None,
                     "finite_artifact": False,
+                }
+                inner = statement.expr.expr
+                composition = {
+                    "outer": "inspect",
+                    "inner": "inspect" if isinstance(inner, Inspect) else "state",
+                    "sampling": False,
+                }
+                observation_algebra[statement.names[0]] = {
+                    "operation_kind": "inspect",
+                    "lane": "StaticKernel",
+                    "sampling": False,
+                    "collapse": False,
+                    "lineage": {
+                        "source_id": source_id,
+                        "input": inner.expr.name if isinstance(inner, Inspect) and isinstance(inner.expr, Var) else inner.name if isinstance(inner, Var) else None,
+                    },
+                    "projection_loss": None,
+                    "finite_artifact": False,
+                    "composition": composition,
                 }
             if isinstance(statement, Measure) and isinstance(statement.expr, Var):
                 measurement_envelopes[statement.expr.name] = {
@@ -433,6 +454,23 @@ def build_scientific_semantic_ir(
                     "dimensions": "reduced",
                     "projection_loss": "subsystem_reduction",
                     "finite_artifact": False,
+                }
+                observation_algebra[statement.names[0]] = {
+                    "operation_kind": "trace_out",
+                    "lane": "StaticKernel",
+                    "sampling": False,
+                    "collapse": False,
+                    "lineage": {
+                        "source_id": source_id,
+                        "input": statement.expr.args[0].name if statement.expr.args and isinstance(statement.expr.args[0], Var) else None,
+                    },
+                    "projection_loss": "subsystem_reduction",
+                    "finite_artifact": False,
+                    "composition": {
+                        "outer": "trace_out",
+                        "inner": "state",
+                        "sampling": False,
+                    },
                 }
     binder_lowering, binder_diagnostics = lower_finite_binders(unit)
     realize_source_node_id, finite_realization_record, realization_errors = (
@@ -465,6 +503,7 @@ def build_scientific_semantic_ir(
         observation_contracts=observation_contracts,
         measurement_envelopes=measurement_envelopes,
         observation_mappings=observation_mappings,
+        observation_algebra=observation_algebra,
     )
     ideal_payload = json.dumps(
         {

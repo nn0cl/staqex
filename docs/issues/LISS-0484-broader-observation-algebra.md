@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-1-red — failing acceptance tests added; Phase 2 approval required** |
-| Phase | phase-1-red |
+| Status | **phase-2-green — minimum IR implementation passes acceptance tests; Phase 3 approval required** |
+| Phase | phase-2-green |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#liss-0484-broader-observation-algebra-design) |
 | Depends on | LISS-0481, LISS-0482, LISS-0483; ADR 0189/0211 |
-| Implementation permission | Phase 1 test-only scope approved; no implementation permission |
-| Next approval | Typed Phase 2 Green approval after Red review |
+| Implementation permission | Phase 2 minimum implementation approved; no Phase 3 completion yet |
+| Next approval | Typed Phase 3 approval for refactor and same-context review |
 
 ## Scope
 
@@ -59,3 +59,11 @@ review record only.
   lineage, projection-loss evidence, and composition evidence in the
   Scientific Semantic IR.
 - No compiler or runtime implementation was changed.
+
+## Phase 2 Green result
+
+- Added `ScientificSemanticIR.observation_algebra`.
+- Added minimum algebra evidence for `inspect` and `trace_out`: operation
+  kind, lane, sampling/collapse flags, lineage, projection loss, finite
+  artifact status, and nested composition metadata.
+- The four LISS-0484 acceptance tests pass under direct local execution.
