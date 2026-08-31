@@ -39,7 +39,7 @@ def test_unsupported_tomography_is_rejected_as_an_observation_capability() -> No
         """
     )
 
-    assert "OBSERVATION_CAPABILITY_UNSUPPORTED" in codes
+    assert "OBSERVATION_UNSUPPORTED" in codes
     assert "LINEAR_DUPLICATE_USE" not in codes
 
 

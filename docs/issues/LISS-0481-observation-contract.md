@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete; Phase 3 approval required** |
-| Phase | phase-2-green |
+| Status | **done — Phase 3 complete** |
+| Phase | phase-3-refactor |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design) |
 | Depends on | ADR 0189/0190; existing `DiagnosticView<T>` slice |
 | Implementation permission | Approved for the reviewed observation metadata and Static Kernel rejection slice only |
-| Next approval | Typed Phase 3 approval |
+| Next approval | None for this Issue; broader observation families require separate approval |
 
 ## Scope
 
@@ -55,3 +55,21 @@ negative Red tests only.
   the existing observation capability suite pass: `4 passed`.
 - General Hilbert storage, POVM execution, Host tomography, and public source
   annotations remain out of scope.
+
+## Phase 3 result
+
+- Changed IR observation maps to safe empty-map defaults with
+  `default_factory`.
+- Unified Static Kernel tomography rejection on the normative
+  `OBSERVATION_UNSUPPORTED` diagnostic with operation and lane metadata.
+- Updated the legacy observation capability test to the accepted diagnostic
+  contract without changing reviewed LISS-0481 assertions.
+- Process review: no operating-contract deviation or operational problem
+  found.
+
+## Final verification
+
+- LISS-0481 and related observation capability suites: `4 passed`.
+- `git diff --check`: passed.
+- General observation algebra, POVM, Host tomography, and QPU execution remain
+  separate future Issues.

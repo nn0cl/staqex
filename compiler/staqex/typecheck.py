@@ -4045,16 +4045,6 @@ class TypeChecker:
                     ),
                 }
             )
-            self.diagnostics.append(
-                {
-                    "code": "OBSERVATION_CAPABILITY_UNSUPPORTED",
-                    "line": expr.span.line,
-                    "col": expr.span.col,
-                    "operation": "tomography",
-                    "lane": "StaticKernel",
-                    "message": "compatibility alias for OBSERVATION_UNSUPPORTED",
-                }
-            )
             return Ty("Host", "ObservationReport", DIMLESS)
         if op_name == "tensor":
             if len(expr.args) != 2:

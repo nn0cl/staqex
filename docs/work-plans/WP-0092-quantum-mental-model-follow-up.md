@@ -242,6 +242,19 @@ files are intentionally included in a later phase.
   conflict was resolved by formal adoption of scientific-name aliases. Future
   lexicon families remain separate approval slices.
 
+## Implementation closeout — LISS-0481 observation contract slice
+
+- **Scope:** observation semantic types and operation boundaries for
+  `expect`, `project`, `inspect`, `trace_out`, terminal `measure`, and
+  Static-Kernel rejection of `tomography`.
+- **Implementation:** Scientific Semantic IR exposes inspect/measure contract
+  metadata; tomography emits the normative `OBSERVATION_UNSUPPORTED` result;
+  empty contract maps are safe by default.
+- **Verification:** targeted observation suites pass `4` tests and
+  `git diff --check` passes.
+- **Review:** Phase 3 same-context review and process review complete. General
+  Hilbert storage, POVM, Host tomography, and QPU execution remain open.
+
 ## Implementation closeout — `superpose` formal-grammar slice (LISS-0320, complete)
 
 - **Scope:** `superpose (control) { pat -> expr, … }` ordinary-surface

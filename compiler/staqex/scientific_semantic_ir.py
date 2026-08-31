@@ -7,7 +7,7 @@ remain explicit and are not treated as alternate authorities.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 import hashlib
 import json
 from typing import TYPE_CHECKING, Any, NamedTuple
@@ -134,8 +134,8 @@ class ScientificSemanticIR:
     realize_source_node_id: str | None = None
     finite_realization_record: FiniteRealizationRecord | None = None
     ideal_meaning: "IdealMeaning | None" = None
-    observation_contracts: dict[str, dict[str, Any]] = None  # type: ignore[assignment]
-    measurement_envelopes: dict[str, dict[str, Any]] = None  # type: ignore[assignment]
+    observation_contracts: dict[str, dict[str, Any]] = field(default_factory=dict)
+    measurement_envelopes: dict[str, dict[str, Any]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
