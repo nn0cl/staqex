@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import Any
 
 from .physics_equation import EquationNode, verify_physics_equation
@@ -33,7 +34,7 @@ class PhysicsProjection:
 
     module: PhysicsModule | None
     nodes: tuple[Any, ...]
-    metadata: dict[str, Any]
+    metadata: MappingProxyType
     diagnostics: tuple[str, ...] = ()
     finite_plan: None = None
     allocation: None = None
@@ -53,20 +54,9 @@ def build_physics_projection(
         raise ValueError("Physics projection requires the compile-owned semantic IR")
 
     fingerprint = semantic_fingerprint(semantic_ir)
-    metadata = {
-        "semantic_authority": PHYSICS_PROJECTION_AUTHORITY,
-        "projection_schema": "physics-projection-v1",
-        "equation_dto_role": "diagnostic_only",
-        "injected_equation_authorized": False,
-    }
+    metadata = _projection_metadata()
     if not semantic_ir.nodes:
-        return PhysicsProjection(
-            module=None,
-            nodes=(),
-            metadata=metadata,
-            diagnostics=(PHYSICS_PROJECTION_LOSSY,),
-            fingerprint=fingerprint,
-        )
+        return _lossy_projection(metadata, fingerprint)
 
     projected_nodes = tuple(_project_semantic_node(node) for node in semantic_ir.nodes)
     origins = tuple(node.origin for node in projected_nodes)
@@ -104,6 +94,27 @@ def _project_semantic_node(node: Any) -> Any:
             node.state_role,
         ),
         origin=origin,
+    )
+
+
+def _projection_metadata() -> MappingProxyType:
+    return MappingProxyType(
+        {
+            "semantic_authority": PHYSICS_PROJECTION_AUTHORITY,
+            "projection_schema": "physics-projection-v1",
+            "equation_dto_role": "diagnostic_only",
+            "injected_equation_authorized": False,
+        }
+    )
+
+
+def _lossy_projection(metadata: MappingProxyType, fingerprint: str) -> PhysicsProjection:
+    return PhysicsProjection(
+        module=None,
+        nodes=(),
+        metadata=metadata,
+        diagnostics=(PHYSICS_PROJECTION_LOSSY,),
+        fingerprint=fingerprint,
     )
 
 

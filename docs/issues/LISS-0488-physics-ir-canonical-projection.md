@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-2-green — minimum canonical Physics IR projection passes acceptance tests; awaiting Phase 3 approval** |
-| Phase | phase-2-green |
+| Status | **done — canonical Physics IR projection slice complete** |
+| Phase | phase-3-refactor-complete |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issue | [LISS-0487](LISS-0487-equation-dto-authority-retirement.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0488-physics-ir-canonical-projection-migration) |
 | ADR authority | [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |
 | Architecture approval | Approved by Adjudicator 2026-08-31; ADR 0211 boundary retained |
-| Implementation permission | Phase 2 minimum implementation approved; Phase 3 completion not yet approved |
-| Next approval | Phase 3 approval for refactor and same-context review |
+| Implementation permission | Phase 3 refactor and same-context review completed |
+| Next approval | None for this bounded slice; consumer-wide retirement remains separate |
 
 ## Design intake
 
@@ -187,3 +187,17 @@ granted before creation.
   Spec verification **161/161**; `py_compile` and `git diff --check` passed.
 - No provider, QPU submission, AWS, Rust, solver, or automatic finiteization
   behavior was added.
+
+## Phase 3 result
+
+- Extracted projection metadata and lossy-result construction into named
+  helpers and made projection metadata immutable without changing assertions or
+  behavior.
+- Same-context review completed; this isolation is weaker than
+  `separate_context`.
+- Review record:
+  `docs/collaboration/reviews/2026-08-31-liss-0488-phase3-review.md`.
+- Verification: related tests **21 passed**, `py_compile`, and
+  `git diff --check` passed.
+
+Process review: no operating-contract deviation or operational problem found.
