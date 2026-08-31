@@ -201,6 +201,9 @@ Exact/symbolic inspection must consume the compile-owned
 direct AST walk may not be a parallel semantic authority or rebuild canonical
 meaning. Canonical source node IDs, structure, role lanes, type/dimensions,
 exactness, intent, and provenance must be preserved or rejected explicitly.
+The legacy `resolved.source_node_ids` field remains stable for existing
+dictionary consumers; canonical IDs are exposed separately as
+`resolved.canonical_source_node_ids` until those consumers migrate.
 
 Inspection without source-visible `Realize` creates no finite plan, gates,
 allocation, or collapse record. Unresolved meaning produces no partial

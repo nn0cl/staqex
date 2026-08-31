@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-1-red — five canonical inspection migration tests fail as intended; awaiting Phase 2 Green approval** |
-| Phase | phase-1-red |
+| Status | **architecture-approved — acceptance contract revised for compatibility; awaiting Phase 1 Red re-approval** |
+| Phase | phase-0-architecture-design |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issues | [LISS-0488](LISS-0488-physics-ir-canonical-projection.md), [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0489-symbolic-ir-canonical-inspection-migration) |
 | Existing authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#acceptance-corpus-and-artifact-rules), ADR 0211 |
-| Architecture approval | Approved by Adjudicator 2026-08-31; ADR 0211 boundary retained |
-| Implementation permission | Phase 1 Red tests approved; no production implementation permission |
-| Next approval | Phase 2 Green approval |
+| Architecture approval | Approved by Adjudicator 2026-08-31; compatibility split approved 2026-08-31 |
+| Implementation permission | No production implementation permission; revised Red contract requires approval |
+| Next approval | Phase 1 Red re-approval |
 
 ## Design intake
 
@@ -140,7 +140,9 @@ The exact Phase 1 candidate is fixed to
 change no production code. Phase 1 Red requires a separate approval before
 those files are created.
 
-Phase 1 Red approval was granted before creation.
+Phase 1 Red approval was granted before the initial test creation. The
+compatibility split below is a revised acceptance contract and requires a new
+Phase 1 Red approval.
 
 ## Phase 1 Red result
 
@@ -155,3 +157,14 @@ Phase 1 Red approval was granted before creation.
   asserting that it contains no finite plan or allocation; this matches the
   accepted design boundary.
 - No production code or legacy path was changed.
+
+## Revised compatibility contract
+
+- The existing `resolved.source_node_ids` list remains the stable legacy
+  dictionary contract for current consumers.
+- The canonical projection adds `resolved.canonical_source_node_ids`, which
+  must equal `SemanticInspectionResult.source_node_ids` from the same compile.
+- Authority metadata and fingerprint are added in a dedicated compatibility
+  view field; the existing provenance metadata shape remains stable. The
+  legacy AST builder remains forbidden as semantic authority and is retired
+  only after canonical fields are wired and regression evidence is complete.

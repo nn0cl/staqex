@@ -35,7 +35,7 @@ def _compiled():
 def test_symbolic_view_shares_canonical_source_ids() -> None:
     compiled = _compiled()
     assert compiled.symbolic_ir is not None
-    assert compiled.symbolic_ir["resolved"]["source_node_ids"] == list(
+    assert compiled.symbolic_ir["resolved"]["canonical_source_node_ids"] == list(
         compiled.semantic_inspection.source_node_ids
     )
 
@@ -57,7 +57,7 @@ def test_legacy_ast_symbolic_builder_is_not_used_as_authority(monkeypatch) -> No
 def test_symbolic_view_preserves_canonical_structure_and_provenance() -> None:
     compiled = _compiled()
     assert compiled.symbolic_ir is not None
-    assert compiled.symbolic_ir["provenance"][0]["metadata"]["semantic_authority"] == (
+    assert compiled.symbolic_ir["authority"]["semantic_authority"] == (
         "scientific_semantic_ir"
     )
 
