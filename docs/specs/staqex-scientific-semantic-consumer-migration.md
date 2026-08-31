@@ -154,3 +154,17 @@ allocation, or QASM.
 
 Provider SDKs, live QPU, S02 numbers, solver families, automatic
 finiteization, and broad example redesign remain separate work.
+
+### LISS-0487 Equation DTO authority retirement
+
+`EquationNode` and `physics_equation` remain useful DTOs for module-local
+validation and diagnostics, but caller-injected or string equation payloads
+must not authorize semantic acceptance. This slice defines the negative
+authority boundary: canonical source-derived nodes remain authoritative, while
+Equation DTOs may be accepted only as explicitly typed diagnostic inputs.
+
+Phase 1 must prove caller-only DTO rejection, source identity/provenance
+preservation, and no finite artifact or execution authorization from an
+injected equation. Phase 2 may add only the minimum validation/adapter guard.
+Numerical equation solving, physics IR replacement, provider/QPU, and S02
+migration are excluded.
