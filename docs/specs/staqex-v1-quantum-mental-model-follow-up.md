@@ -5,7 +5,7 @@
 | Status | **Proposed specification** (2026-08-04) |
 | Parent | [ADR 0189](../architecture/adr/0189-quantum-mental-model-and-observation-contract.md) |
 | Work plan | [WP-0092](../work-plans/WP-0092-quantum-mental-model-follow-up.md) |
-| Follow-up Issues | [LISS-0480](../issues/LISS-0480-scientific-lexicon-contract.md), [LISS-0481](../issues/LISS-0481-observation-contract.md), [LISS-0482](../issues/LISS-0482-observation-semantic-mapping.md), [LISS-0483](../issues/LISS-0483-observation-lexicon-conformance.md) |
+| Follow-up Issues | [LISS-0480](../issues/LISS-0480-scientific-lexicon-contract.md), [LISS-0481](../issues/LISS-0481-observation-contract.md), [LISS-0482](../issues/LISS-0482-observation-semantic-mapping.md), [LISS-0483](../issues/LISS-0483-observation-lexicon-conformance.md), [LISS-0484](../issues/LISS-0484-broader-observation-algebra.md), [LISS-0485](../issues/LISS-0485-povm-observation-bridge.md) |
 | Scope | scientific lexicon, quantum composition surface, observation contracts |
 | Implementation status | bounded slices shipped: scientific aliases `psi/ψ`、`phi/φ`、`rho/ρ`, `DiagnosticView<T>` and observation mappings, Static Kernel tomography rejection, and conformance evidence report; public `Observable<T>`/`Projection<T>`/`Observation<T>`, general observation families, POVM/tomography execution, and provider/QPU support remain proposed |
 
@@ -468,6 +468,26 @@ composition rules for `expect(project(P, state))`, `inspect(project(P, state))`,
 and repeated observation requests. It must not decide general Hilbert storage,
 POVM numerical semantics, tomography shot estimation, provider SDKs, or public
 surface annotations. Those are separate ADR/Issue boundaries.
+
+### 5.8 LISS-0485 POVM observation bridge design
+
+LISS-0037/WP-0014 define the shipped terminal computational-basis measurement
+boundary, while LISS-0084 owns the XL mathematical work for general mixed
+states, channels, and POVMs. LISS-0485 specifies only the bridge from a future
+POVM request into the observation algebra.
+
+| Contract | Required evidence | Local responsibility | Explicitly deferred |
+|---|---|---|---|
+| POVM identity/domain | effect-set ID, outcome carrier, state domain | IR request metadata | matrix storage/evaluation |
+| effect validity | completeness/positivity status, no repair | stable verifier-result shape | Kraus/Choi mathematics |
+| terminal boundary | collapse, sampling, post-state identity | distinguish POVM measure from inspect/project | mid-circuit/dynamic execution |
+| lane/capability | `StaticKernel` vs `HostProtocol`, target status | fail-closed capability evidence | provider/QPU SDK and shots |
+| result envelope | outcome identity, provenance, exactness, dimensions | map to `MeasurementEnvelope<T>` | estimator/tomography report |
+
+The bridge preserves LISS-0484 laws: a POVM declaration is non-sampling until
+terminal measurement, invalid or incomplete effects are rejected rather than
+repaired, and unsupported targets retain the original POVM intent. LISS-0084
+remains authoritative for effect representation and execution mathematics.
 
 ### 5.6 LISS-0483 cross-feature conformance matrix
 

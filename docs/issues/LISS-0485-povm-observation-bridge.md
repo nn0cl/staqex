@@ -1,0 +1,52 @@
+# LISS-0485: POVM observation bridge
+
+| Field | Value |
+|---|---|
+| Status | **ready — design complete; Architecture/spec review required** |
+| Phase | phase-0-design |
+| Parent | WP-0092 |
+| Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#liss-0485-povm-observation-bridge-design) |
+| Related authority | [LISS-0037 / WP-0014](../work-plans/WP-0014-povm-measurement-contract.md), [LISS-0084](LISS-0084-general-mixed-states-channels-povms.md), ADR 0075 |
+| Depends on | LISS-0481, LISS-0482, LISS-0484 |
+| Implementation permission | None |
+| Next approval | Architecture/spec review, then typed Phase 1 Red approval |
+
+## Scope
+
+Define the Semantic IR bridge for future POVM observations. Record POVM
+identity, state domain, outcome carrier, effect validity, lane, capability,
+collapse boundary, provenance, exactness, and dimensions.
+
+## Acceptance scenarios
+
+- A POVM request remains non-sampling until terminal measurement.
+- A valid terminal POVM preserves effect-set identity and state lineage in its
+  measurement-envelope contract.
+- Incomplete, non-positive, or domain-mismatched effects reject explicitly and
+  are never silently repaired.
+- Unsupported targets preserve POVM intent and emit stable capability evidence
+  without fabricating an outcome.
+- Existing computational-basis pure/mixed measurement behavior is unchanged.
+
+## Boundary decisions
+
+- Define a source-derived POVM request metadata shape in Scientific Semantic
+  IR; do not add mandatory public syntax yet.
+- Represent `valid`, `incomplete`, `non_positive`, and `domain_mismatch` as
+  evidence statuses; do not normalize or repair.
+- Use `MeasurementEnvelope<T>` for terminal result metadata; repeated-shot
+  estimation belongs to Host tomography and LISS-0084.
+- LISS-0084 owns effect representation and execution mathematics; LISS-0485
+  owns only the observation-algebra bridge.
+
+## Exclusions and stop conditions
+
+No general effect storage, Kraus/Choi execution, positivity algorithms,
+tomography estimation, dynamic measurement, provider SDK, QPU, AWS, or Rust.
+Stop for a new ADR if the bridge changes `State<T>` semantics, public POVM
+syntax, or the LISS-0084 representation authority.
+
+## Phase 1 candidate files
+
+Normative bridge section, IR contract tests, invalid-effect evidence fixtures,
+and review record only.
