@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **architecture-approved — awaiting Phase 1 Red approval** |
-| Phase | phase-0-architecture-design |
+| Status | **phase-1-red — six canonical projection acceptance tests fail as intended; awaiting Phase 2 Green approval** |
+| Phase | phase-1-red |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issue | [LISS-0487](LISS-0487-equation-dto-authority-retirement.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0488-physics-ir-canonical-projection-migration) |
 | ADR authority | [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |
 | Architecture approval | Approved by Adjudicator 2026-08-31; ADR 0211 boundary retained |
-| Implementation permission | None; Phase 1 Red test creation is not yet approved |
-| Next approval | Phase 1 Red approval |
+| Implementation permission | Phase 1 Red tests and fixture approved; no production implementation permission |
+| Next approval | Phase 2 Green approval |
 
 ## Design intake
 
@@ -152,8 +152,20 @@ Phase 1 tests, Phase 2 implementation, or Phase 3 cleanup.
 
 ## Phase 1 Red readiness
 
-The exact Phase 1 candidate is now fixed to
+The exact Phase 1 candidate is fixed to
 `tests/test_liss_0488_physics_ir_canonical_projection_red.py` and the minimal
-source fixture named in this Issue. The test batch will contain the six
-acceptance scenarios above and will change no production code. Phase 1 Red
-requires a separate approval before those files are created.
+source fixture named in this Issue. The test batch contains the six acceptance
+scenarios above and changes no production code. Phase 1 Red approval was
+granted before creation.
+
+## Phase 1 Red result
+
+- Added `tests/test_liss_0488_physics_ir_canonical_projection_red.py` with the
+  six approved acceptance scenarios.
+- Added the minimal source fixture
+  `tests/fixtures/semantic_consumer_migration/physics_ir_projection.sqx`.
+- Red verification: **6 failed**, all at the missing canonical
+  `build_physics_projection` contract; no collection errors.
+- No production code, legacy fallback, or DTO implementation was changed.
+- Phase 2 Green must add only the minimum compile-owned projection API needed
+  to satisfy the reviewed tests.
