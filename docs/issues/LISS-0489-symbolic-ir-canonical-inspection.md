@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-2-green — canonical inspection compatibility view passes; awaiting Phase 3 approval** |
-| Phase | phase-2-green |
+| Status | **done — canonical symbolic inspection migration slice complete** |
+| Phase | phase-3-refactor-complete |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issues | [LISS-0488](LISS-0488-physics-ir-canonical-projection.md), [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0489-symbolic-ir-canonical-inspection-migration) |
 | Existing authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#acceptance-corpus-and-artifact-rules), ADR 0211 |
 | Architecture approval | Approved by Adjudicator 2026-08-31; compatibility split approved 2026-08-31 |
-| Implementation permission | Phase 2 minimum implementation approved; Phase 3 completion not yet approved |
-| Next approval | Phase 3 approval for refactor and same-context review |
+| Implementation permission | Phase 3 refactor and same-context review completed |
+| Next approval | None for this bounded slice; direct legacy-builder retirement remains separate |
 
 ## Design intake
 
@@ -184,6 +184,20 @@ by the Adjudicator before the test contract was finalized.
 - A separate LISS-0447 ordinary-QASM rejection test remains failing in the
   related aggregate (`31 passed, 1 failed`) and is outside this Issue's
   changed path; no QASM behavior was changed here.
+
+## Phase 3 result
+
+- Simplified canonical fingerprint ownership to an explicit import and kept
+  the legacy builder symbol available only for no-call instrumentation and
+  explicit compatibility callers.
+- Same-context review completed; this isolation is weaker than
+  `separate_context`.
+- Review record:
+  `docs/collaboration/reviews/2026-08-31-liss-0489-phase3-review.md`.
+- Verification: target and related regression suites **33 passed**,
+  `py_compile`, and `git diff --check` passed.
+
+Process review: no operating-contract deviation or operational problem found.
 
 ## Revised compatibility contract
 

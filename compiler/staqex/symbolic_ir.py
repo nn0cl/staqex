@@ -19,6 +19,7 @@ from .ast_nodes import (
     Var,
 )
 from .kernel_literals import SECOND_QUANTIZED_FAMILIES as _SECOND_QUANTIZED_FAMILIES
+from .scientific_semantic_ir import ScientificSemanticIR, semantic_fingerprint
 
 
 def _span(value: Any) -> dict[str, int] | None:
@@ -178,7 +179,7 @@ def build_symbolic_ir(unit: CompilationUnit) -> dict[str, Any]:
 
 
 def build_symbolic_compatibility_view(
-    semantic_ir: Any,
+    semantic_ir: ScientificSemanticIR,
     unit: CompilationUnit,
 ) -> dict[str, Any]:
     """Attach canonical identity to the legacy-shaped inspection view."""
@@ -187,7 +188,7 @@ def build_symbolic_compatibility_view(
     canonical_source_node_ids = [node.node_id for node in semantic_ir.nodes]
     view["authority"] = {
         "semantic_authority": semantic_ir.authority,
-        "semantic_fingerprint": _semantic_fingerprint(semantic_ir),
+        "semantic_fingerprint": semantic_fingerprint(semantic_ir),
         "role": "derived_inspection_compatibility",
     }
     view["resolved"]["canonical_source_node_ids"] = canonical_source_node_ids
@@ -209,11 +210,3 @@ def build_symbolic_compatibility_view(
         for node in semantic_ir.nodes
     ]
     return view
-
-
-def _semantic_fingerprint(semantic_ir: Any) -> str:
-    """Avoid making the legacy compatibility module a semantic dependency."""
-
-    from .scientific_semantic_ir import semantic_fingerprint
-
-    return semantic_fingerprint(semantic_ir)
