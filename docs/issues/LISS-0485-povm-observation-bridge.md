@@ -2,14 +2,22 @@
 
 | Field | Value |
 |---|---|
-| Status | **ready — design complete; Architecture/spec review required** |
-| Phase | phase-0-design |
+| Status | **architecture-approved — design accepted; Phase 1 Red approval required** |
+| Phase | phase-0-design-approved |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#liss-0485-povm-observation-bridge-design) |
 | Related authority | [LISS-0037 / WP-0014](../work-plans/WP-0014-povm-measurement-contract.md), [LISS-0084](LISS-0084-general-mixed-states-channels-povms.md), ADR 0075 |
 | Depends on | LISS-0481, LISS-0482, LISS-0484 |
-| Implementation permission | None |
-| Next approval | Architecture/spec review, then typed Phase 1 Red approval |
+| Implementation permission | None; Phase 1 test-only scope not yet approved |
+| Next approval | Phase 1 Red approval |
+
+## Architecture/spec approval
+
+- The bridge boundary is accepted as a Semantic IR contract only.
+- LISS-0084 remains authoritative for POVM effect representation and
+  execution mathematics.
+- No public POVM syntax, numerical effect evaluation, provider/QPU, AWS, or
+  Rust implementation is authorized by this approval.
 
 ## Scope
 
