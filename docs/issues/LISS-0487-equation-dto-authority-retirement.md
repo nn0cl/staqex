@@ -2,14 +2,21 @@
 
 | Field | Value |
 |---|---|
-| Status | **ready — design complete; Architecture/spec review required** |
-| Phase | phase-0-design |
+| Status | **architecture-approved — design accepted; Phase 1 Red approval required** |
+| Phase | phase-0-design-approved |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0487-equation-dto-authority-retirement) |
 | Related authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design), ADR 0211 |
 | Depends on | WP-0107 and the completed canonical IR boundary slices |
-| Implementation permission | None |
-| Next approval | Architecture/spec review, then typed Phase 1 Red approval |
+| Implementation permission | None; Phase 1 test-only scope not yet approved |
+| Next approval | Phase 1 Red approval |
+
+## Architecture/spec approval
+
+- Equation DTOs remain diagnostic-only and cannot authorize semantic meaning.
+- Scientific Semantic IR remains the sole source-derived authority.
+- No physics IR replacement, solver, numerical migration, provider/QPU/AWS,
+  or Rust implementation is authorized by this approval.
 
 ## Scope
 
