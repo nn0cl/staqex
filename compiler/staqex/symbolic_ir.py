@@ -104,8 +104,8 @@ def _second_quantized_metadata(stmt: StateBind) -> dict[str, Any]:
     }
 
 
-def build_symbolic_ir(unit: CompilationUnit) -> dict[str, Any]:
-    """Project the current compilation unit into an inspection shape."""
+def _build_symbolic_ir_legacy(unit: CompilationUnit) -> dict[str, Any]:
+    """Build the pre-canonical dictionary for compatibility only."""
     operators: dict[str, Any] = {}
     raw_exprs: dict[str, Any] = {}
     if unit.main is not None:
@@ -169,3 +169,51 @@ def build_symbolic_ir(unit: CompilationUnit) -> dict[str, Any]:
             "discretizations": discretizations,
         },
     }
+
+
+def build_symbolic_ir(unit: CompilationUnit) -> dict[str, Any]:
+    """Compatibility API for callers that explicitly request the legacy view."""
+
+    return _build_symbolic_ir_legacy(unit)
+
+
+def build_symbolic_compatibility_view(
+    semantic_ir: Any,
+    unit: CompilationUnit,
+) -> dict[str, Any]:
+    """Attach canonical identity to the legacy-shaped inspection view."""
+
+    view = _build_symbolic_ir_legacy(unit)
+    canonical_source_node_ids = [node.node_id for node in semantic_ir.nodes]
+    view["authority"] = {
+        "semantic_authority": semantic_ir.authority,
+        "semantic_fingerprint": _semantic_fingerprint(semantic_ir),
+        "role": "derived_inspection_compatibility",
+    }
+    view["resolved"]["canonical_source_node_ids"] = canonical_source_node_ids
+    view["canonical_nodes"] = [
+        {
+            "node_id": node.node_id,
+            "kind": node.kind,
+            "children": list(node.children),
+            "role_lane": node.role_lane,
+            "type": node.type,
+            "dimensions": node.dimensions,
+            "exactness": node.exactness,
+            "intent": node.intent,
+            "source_span": {
+                "line": node.provenance.line,
+                "col": node.provenance.col,
+            },
+        }
+        for node in semantic_ir.nodes
+    ]
+    return view
+
+
+def _semantic_fingerprint(semantic_ir: Any) -> str:
+    """Avoid making the legacy compatibility module a semantic dependency."""
+
+    from .scientific_semantic_ir import semantic_fingerprint
+
+    return semantic_fingerprint(semantic_ir)

@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-1-red — revised canonical/legacy compatibility contract has three intended failures; awaiting Phase 2 Green approval** |
-| Phase | phase-1-red |
+| Status | **phase-2-green — canonical inspection compatibility view passes; awaiting Phase 3 approval** |
+| Phase | phase-2-green |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issues | [LISS-0488](LISS-0488-physics-ir-canonical-projection.md), [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0489-symbolic-ir-canonical-inspection-migration) |
 | Existing authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#acceptance-corpus-and-artifact-rules), ADR 0211 |
 | Architecture approval | Approved by Adjudicator 2026-08-31; compatibility split approved 2026-08-31 |
-| Implementation permission | Revised Phase 1 Red tests approved; no production implementation permission |
-| Next approval | Phase 2 Green approval |
+| Implementation permission | Phase 2 minimum implementation approved; Phase 3 completion not yet approved |
+| Next approval | Phase 3 approval for refactor and same-context review |
 
 ## Design intake
 
@@ -167,6 +167,23 @@ by the Adjudicator before the test contract was finalized.
   field; existing provenance metadata remains backward compatible.
 - Phase 2 Green remains limited to canonical wiring and compatibility-view
   generation.
+
+## Phase 2 Green result
+
+- Added `build_symbolic_compatibility_view()` and isolated the previous
+  dictionary builder as an explicit compatibility-only implementation.
+- Compile paths now pass the compile-owned `ScientificSemanticIR` into the
+  compatibility view, which exposes canonical nodes, IDs, authority, and
+  semantic fingerprint while retaining existing operator/binder/mapping/
+  discretization dictionary fields.
+- The direct public `build_symbolic_ir()` API remains available for explicit
+  legacy callers; it is not used as compile-time semantic authority.
+- Verification: LISS-0489 plus symbolic/second-quantized/mapping/discretization
+  regression suites **33 passed**; Spec verification **161/161**;
+  `py_compile` and `git diff --check` passed.
+- A separate LISS-0447 ordinary-QASM rejection test remains failing in the
+  related aggregate (`31 passed, 1 failed`) and is outside this Issue's
+  changed path; no QASM behavior was changed here.
 
 ## Revised compatibility contract
 

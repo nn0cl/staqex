@@ -33,7 +33,7 @@ from .source_port import SourcePort
 from .nested_when import check_nested_when
 from .parser import ParseError, Parser
 from .physical_axioms import check_physical_axioms
-from .symbolic_ir import build_symbolic_ir
+from .symbolic_ir import build_symbolic_compatibility_view, build_symbolic_ir
 from .scientific_scopes import resolve_scientific_scopes
 from .workflow_surface import WorkflowContract, resolve_workflow_contracts
 from .continuous_lowering import GridHamiltonian, lower_discretization_bridges
@@ -856,7 +856,7 @@ def _analyze_unit(
     symbolic_ir = (
         None
         if scientific_semantic_ir.explicit_evolution is not None
-        else build_symbolic_ir(unit)
+        else build_symbolic_compatibility_view(scientific_semantic_ir, unit)
     )
     semantic_inspection = build_inspection(scientific_semantic_ir)
     algorithm_plan = build_algorithm_plan(scientific_semantic_ir)
