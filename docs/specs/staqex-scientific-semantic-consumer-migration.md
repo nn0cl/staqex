@@ -212,3 +212,20 @@ authority/no-bypass, binder/indexed-operator provenance, exact/symbolic
 no-allocation, unresolved fail-closed behavior, and one-build identity. Phase 2
 only wires the canonical inspection into current local compatibility surfaces;
 Phase 3 may retire the direct AST walk after regression and no-bypass evidence.
+
+### LISS-0490 Evaluator canonical execution boundary
+
+The runtime evaluator must receive the compile-owned `ScientificSemanticIR`
+through an explicit execution boundary. AST nodes may remain temporary
+mechanics inside an execution adapter only when they match canonical source
+node identity, role/lane, and provenance. AST-only execution is rejected
+before state mutation, measurement, allocation, or result publication.
+
+`State<T>` remains non-collapsed through pure evaluation and inspection;
+terminal `Measure` remains the only collapse/sink boundary. Exact/symbolic
+execution without source-visible `Realize` creates no finite artifact or
+allocation. `RngPort` and `MeasureSinkPort` remain injected ports, and no
+provider SDK or network adapter is part of this migration. Phase 1 covers
+canonical identity/no-bypass, State/Measure transitions, no hidden
+finiteization, port effects, and deterministic provenance; Phase 2 wires one
+local path only.
