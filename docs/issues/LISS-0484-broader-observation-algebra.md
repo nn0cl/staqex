@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **ready — design complete; Architecture/spec review required** |
-| Phase | phase-0-design |
+| Status | **phase-1-red — failing acceptance tests added; Phase 2 approval required** |
+| Phase | phase-1-red |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#liss-0484-broader-observation-algebra-design) |
 | Depends on | LISS-0481, LISS-0482, LISS-0483; ADR 0189/0211 |
-| Implementation permission | None |
-| Next approval | Architecture/spec review, then typed Phase 1 Red approval |
+| Implementation permission | Phase 1 test-only scope approved; no implementation permission |
+| Next approval | Typed Phase 2 Green approval after Red review |
 
 ## Scope
 
@@ -51,3 +51,11 @@ semantics change.
 
 Canonical spec algebra section, composition fixtures, role/lane Red tests, and
 review record only.
+
+## Phase 1 Red result
+
+- Added `tests/test_liss_0484_broader_observation_algebra_red.py`.
+- The tests require operation kind, non-sampling/non-collapse flags, nested
+  lineage, projection-loss evidence, and composition evidence in the
+  Scientific Semantic IR.
+- No compiler or runtime implementation was changed.
