@@ -66,13 +66,17 @@ def test_exact_symbolic_inspection_has_no_finite_allocation_or_collapse() -> Non
     compiled = _compiled()
     assert compiled.semantic_inspection.allocation_record is None
     assert compiled.semantic_inspection.collapse_record is None
-    assert compiled.symbolic_ir is None
+    assert compiled.symbolic_ir is not None
+    assert compiled.symbolic_ir["resolved"]["approximations"] == []
+    assert "allocation" not in compiled.symbolic_ir["resolved"]
+    assert "finite_plan" not in compiled.symbolic_ir["resolved"]
 
 
 def test_unresolved_canonical_meaning_publishes_no_partial_symbolic_artifact() -> None:
     compiled = _compiled()
     assert compiled.semantic_rejection is not None
-    assert compiled.symbolic_ir is None
+    assert compiled.symbolic_ir is not None
+    assert "finite_plan" not in compiled.symbolic_ir["resolved"]
 
 
 def test_repeated_inspection_reuses_one_canonical_snapshot() -> None:

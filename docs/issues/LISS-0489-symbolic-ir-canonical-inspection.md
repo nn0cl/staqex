@@ -147,8 +147,11 @@ Phase 1 Red approval was granted before creation.
 - Added `tests/test_liss_0489_symbolic_ir_canonical_inspection_red.py`.
 - Reused the existing `tests/fixtures/semantic_core/symbolic_inspection.sqx`;
   no new fixture was required.
-- Red verification: **5 failed, 1 passed**, with no collection errors.
+- Red verification: **3 failed, 3 passed**, with no collection errors.
 - Failures expose the direct AST builder bypass, mismatched canonical source
   IDs, missing authority metadata, and missing no-artifact compatibility
   contract.
+- The exact/symbolic cases explicitly allow a derived compatibility view while
+  asserting that it contains no finite plan or allocation; this matches the
+  accepted design boundary.
 - No production code or legacy path was changed.
