@@ -255,6 +255,18 @@ files are intentionally included in a later phase.
 - **Review:** Phase 3 same-context review and process review complete. General
   Hilbert storage, POVM, Host tomography, and QPU execution remain open.
 
+## Implementation closeout — LISS-0482 observation-to-IR mapping
+
+- **Scope:** source-derived mappings for `Inspect` → `DiagnosticView` and
+  `trace_out` → `ReducedState`.
+- **Implementation:** Scientific Semantic IR retains role, lane, source ID,
+  provenance, exactness, dimensions, projection-loss, and finite-artifact
+  status without changing evaluator behavior.
+- **Verification:** LISS-0482 plus LISS-0481 suites pass `6` tests;
+  `git diff --check` passes.
+- **Review:** Phase 3 same-context review and process review complete. Dynamic,
+  nested, general observation, and provider mappings remain separate work.
+
 ## Implementation closeout — `superpose` formal-grammar slice (LISS-0320, complete)
 
 - **Scope:** `superpose (control) { pat -> expr, … }` ordinary-surface

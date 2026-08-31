@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete; Phase 3 approval required** |
-| Phase | phase-2-green |
+| Status | **done — Phase 3 complete** |
+| Phase | phase-3-refactor |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design) |
 | Depends on | LISS-0481; ADR 0211 |
-| Implementation permission | None |
-| Next approval | Typed Phase 3 approval |
+| Implementation permission | Approved for the reviewed observation mapping slice only |
+| Next approval | None for this Issue; dynamic/general mapping requires separate approval |
 
 ## Scope
 
@@ -52,3 +52,18 @@ Mapping matrix, semantic fixtures, role/lane Red tests, and review records only.
   LISS-0481 dependency suites pass: `6 passed`.
 - Evaluator rewrites, storage changes, implicit realization, provider, and QPU
   behavior remain out of scope.
+
+## Phase 3 result
+
+- Re-read the mapping implementation against ADR 0211 and the LISS-0481
+  observation contract; no boundary violation or behavior-changing refactor
+  was required.
+- Confirmed mapping evidence is explicit and finite-artifact generation remains
+  disabled. Nested/dynamic/general observation mappings remain separate scope.
+- Process review: no operating-contract deviation or operational problem
+  found.
+
+## Final verification
+
+- LISS-0482 and LISS-0481 targeted suites: `6 passed`.
+- `git diff --check`: passed.
