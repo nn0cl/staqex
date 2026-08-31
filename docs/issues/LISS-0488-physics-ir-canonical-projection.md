@@ -166,6 +166,9 @@ granted before creation.
   `tests/fixtures/semantic_consumer_migration/physics_ir_projection.sqx`.
 - Red verification: **6 failed**, all at the missing canonical
   `build_physics_projection` contract; no collection errors.
+- The lossy-projection scenario uses an incomplete Semantic IR (`nodes=()`),
+  so successful projection and fail-closed rejection are tested with distinct
+  inputs.
 - No production code, legacy fallback, or DTO implementation was changed.
 - Phase 2 Green must add only the minimum compile-owned projection API needed
   to satisfy the reviewed tests.

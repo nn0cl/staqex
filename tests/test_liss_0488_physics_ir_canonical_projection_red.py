@@ -27,10 +27,10 @@ def _compiled():
     return compiled
 
 
-def _project(compiled):
+def _project(compiled, semantic_ir=None):
     project = getattr(physics_ir_lower, "build_physics_projection", None)
     assert callable(project), "Physics IR must expose the canonical projection API"
-    return project(compiled.scientific_semantic_ir)
+    return project(semantic_ir or compiled.scientific_semantic_ir)
 
 
 def test_projection_preserves_canonical_identity_and_semantic_fields() -> None:
@@ -56,7 +56,8 @@ def test_caller_owned_semantic_ir_cannot_be_projection_authority() -> None:
 
 def test_lossy_projection_returns_diagnostic_without_partial_artifact() -> None:
     compiled = _compiled()
-    projection = _project(compiled)
+    incomplete = replace(compiled.scientific_semantic_ir, nodes=())
+    projection = _project(compiled, incomplete)
     assert projection.module is None
     assert projection.diagnostics
 
