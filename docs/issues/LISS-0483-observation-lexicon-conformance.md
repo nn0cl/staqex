@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red complete; Phase 2 Green approval required** |
-| Phase | phase-1-red |
+| Status | **Phase 2 Green complete; Phase 3 approval required** |
+| Phase | phase-2-green |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design) |
 | Depends on | LISS-0480, LISS-0481, LISS-0482 |
 | Implementation permission | None |
-| Next approval | Typed Phase 2 Green approval |
+| Next approval | Typed Phase 3 approval |
 
 ## Scope
 
@@ -43,3 +43,16 @@ links only.
   rejection.
 - No conformance runner, provider, QPU, Rust, or broad example rewrite was
   implemented.
+
+## Phase 2 Green result
+
+- Added a deterministic `conformance_report` to `CompileResult` for the
+  reviewed observation slice.
+- Passing observation reports preserve feature, status, source ID, meaning,
+  and review-boundary evidence from the canonical IR mapping.
+- Static Kernel tomography reports `rejected` with
+  `OBSERVATION_UNSUPPORTED` and `fabricated_result=false`.
+- Reviewed Phase 1 tests were not modified to pass. LISS-0483 suite passes:
+  `3 passed`.
+- A complete cross-feature runner and provider/hardware conformance remain out
+  of scope.

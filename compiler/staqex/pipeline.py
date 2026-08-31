@@ -241,6 +241,7 @@ class CompileResult:
     state_transform_plan: H1StateTransformPlan | None = None
     strict_evolution: bool = False
     evolution_provenance: dict[str, Any] | None = None
+    conformance_report: dict[str, Any] | None = None
 
     @property
     def ok(self) -> bool:
@@ -921,6 +922,7 @@ def _analyze_unit(
     quantum_semantic_ir = _append_dynamic_mid_circuit_regions(
         unit, quantum_semantic_ir
     )
+    conformance_report = _build_conformance_report(scientific_semantic_ir, diags)
     semantic_rejection = build_rejection(scientific_semantic_ir, diags)
     if semantic_rejection is not None and not scientific_semantic_ir.has_explicit_realize:
         algorithm_plan = None
@@ -951,7 +953,44 @@ def _analyze_unit(
         execution_authority="scientific_semantic_ir",
         state_transform_plan=_surface_transform_plan(unit),
         strict_evolution=strict_evolution,
+        conformance_report=conformance_report,
     )
+
+
+def _build_conformance_report(
+    semantic_ir: ScientificSemanticIR, diagnostics: list[dict[str, Any]]
+) -> dict[str, Any]:
+    """Expose deterministic conformance evidence without becoming a new authority."""
+    unsupported = next(
+        (diagnostic for diagnostic in diagnostics if diagnostic.get("code") == "OBSERVATION_UNSUPPORTED"),
+        None,
+    )
+    if unsupported is not None:
+        return {
+            "feature": "observation",
+            "status": "rejected",
+            "source_id": semantic_ir.source_id,
+            "evidence": {"fabricated_result": False},
+            "diagnostic": unsupported,
+        }
+    if semantic_ir.observation_mappings:
+        return {
+            "feature": "observation",
+            "status": "passed",
+            "source_id": semantic_ir.source_id,
+            "evidence": {
+                "meaning": tuple(semantic_ir.observation_mappings),
+                "review_boundary": semantic_ir.observation_mappings,
+            },
+            "diagnostic": None,
+        }
+    return {
+        "feature": "observation",
+        "status": "inconclusive",
+        "source_id": semantic_ir.source_id,
+        "evidence": {},
+        "diagnostic": None,
+    }
 
 
 def compile_source(source: str, *, strict_evolution: bool = False) -> CompileResult:
