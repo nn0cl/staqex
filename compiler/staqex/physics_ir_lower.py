@@ -8,15 +8,103 @@ frozen Physics IR DTO module. Slice D also exposes this API from
 from __future__ import annotations
 
 from collections.abc import Iterable
+from dataclasses import dataclass
 from typing import Any
 
 from .physics_equation import EquationNode, verify_physics_equation
 from .physics_ir import (
     PhysicsDiagnostic,
     PhysicsModule,
+    PhysicsNode,
+    SourceOrigin,
     build_physics_ir,
     verify_physics_ir,
 )
+from .scientific_semantic_ir import ScientificSemanticIR, semantic_fingerprint
+
+
+PHYSICS_PROJECTION_LOSSY = "PHYSICS_PROJECTION_LOSSY"
+PHYSICS_PROJECTION_AUTHORITY = "scientific_semantic_ir"
+
+
+@dataclass(frozen=True, slots=True)
+class PhysicsProjection:
+    """Compile-owned, non-finite projection view of canonical semantics."""
+
+    module: PhysicsModule | None
+    nodes: tuple[Any, ...]
+    metadata: dict[str, Any]
+    diagnostics: tuple[str, ...] = ()
+    finite_plan: None = None
+    allocation: None = None
+    fingerprint: str = ""
+
+
+def build_physics_projection(
+    semantic_ir: ScientificSemanticIR,
+    *,
+    expected: ScientificSemanticIR | None = None,
+) -> PhysicsProjection:
+    """Project canonical semantics without finiteization or execution."""
+
+    if not isinstance(semantic_ir, ScientificSemanticIR):
+        raise TypeError("Physics projection requires ScientificSemanticIR")
+    if expected is not None and semantic_ir is not expected:
+        raise ValueError("Physics projection requires the compile-owned semantic IR")
+
+    fingerprint = semantic_fingerprint(semantic_ir)
+    metadata = {
+        "semantic_authority": PHYSICS_PROJECTION_AUTHORITY,
+        "projection_schema": "physics-projection-v1",
+        "equation_dto_role": "diagnostic_only",
+        "injected_equation_authorized": False,
+    }
+    if not semantic_ir.nodes:
+        return PhysicsProjection(
+            module=None,
+            nodes=(),
+            metadata=metadata,
+            diagnostics=(PHYSICS_PROJECTION_LOSSY,),
+            fingerprint=fingerprint,
+        )
+
+    projected_nodes = tuple(_project_semantic_node(node) for node in semantic_ir.nodes)
+    origins = tuple(node.origin for node in projected_nodes)
+    module = PhysicsModule(
+        spaces=(),
+        nodes=projected_nodes,
+        origins=origins,
+        source_origin=origins[0] if origins else None,
+        metadata=metadata,
+    )
+    return PhysicsProjection(
+        module=module,
+        nodes=semantic_ir.nodes,
+        metadata=metadata,
+        fingerprint=fingerprint,
+    )
+
+
+def _project_semantic_node(node: Any) -> Any:
+    """Convert one canonical node while retaining its source-backed shape."""
+
+    provenance = node.provenance
+    origin = SourceOrigin(provenance.source, provenance.line, provenance.col)
+    return PhysicsNode(
+        node_id=node.node_id,
+        kind=node.kind,
+        structure=(
+            node.children,
+            node.role_lane,
+            node.type,
+            node.dimensions,
+            node.exactness,
+            node.intent,
+            node.meaning_kind,
+            node.state_role,
+        ),
+        origin=origin,
+    )
 
 
 def lower_hir_to_physics_ir(

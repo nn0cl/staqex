@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-1-red — six canonical projection acceptance tests fail as intended; awaiting Phase 2 Green approval** |
-| Phase | phase-1-red |
+| Status | **phase-2-green — minimum canonical Physics IR projection passes acceptance tests; awaiting Phase 3 approval** |
+| Phase | phase-2-green |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issue | [LISS-0487](LISS-0487-equation-dto-authority-retirement.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0488-physics-ir-canonical-projection-migration) |
 | ADR authority | [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |
 | Architecture approval | Approved by Adjudicator 2026-08-31; ADR 0211 boundary retained |
-| Implementation permission | Phase 1 Red tests and fixture approved; no production implementation permission |
-| Next approval | Phase 2 Green approval |
+| Implementation permission | Phase 2 minimum implementation approved; Phase 3 completion not yet approved |
+| Next approval | Phase 3 approval for refactor and same-context review |
 
 ## Design intake
 
@@ -172,3 +172,18 @@ granted before creation.
 - No production code, legacy fallback, or DTO implementation was changed.
 - Phase 2 Green must add only the minimum compile-owned projection API needed
   to satisfy the reviewed tests.
+
+## Phase 2 Green result
+
+- Added `build_physics_projection()` and the immutable `PhysicsProjection`
+  result DTO in `compiler/staqex/physics_ir_lower.py`.
+- The projection validates `ScientificSemanticIR` type and optional
+  compile-owned identity, preserves canonical node IDs and source provenance,
+  and emits explicit authority/schema metadata.
+- Incomplete semantic input returns no Physics module and the named
+  `PHYSICS_PROJECTION_LOSSY` diagnostic. No finite plan or allocation is
+  created by this API.
+- Verification: related LISS-0488/LISS-0487/LISS-0445 tests **21 passed**;
+  Spec verification **161/161**; `py_compile` and `git diff --check` passed.
+- No provider, QPU submission, AWS, Rust, solver, or automatic finiteization
+  behavior was added.
