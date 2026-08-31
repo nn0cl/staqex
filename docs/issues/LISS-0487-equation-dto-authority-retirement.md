@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-2-green — minimum Equation DTO authority guard passes acceptance tests; Phase 3 approval required** |
-| Phase | phase-2-green |
+| Status | **done — bounded Equation DTO authority-retirement slice complete** |
+| Phase | phase-3-refactor-complete |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0487-equation-dto-authority-retirement) |
 | Related authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design), ADR 0211 |
 | Depends on | WP-0107 and the completed canonical IR boundary slices |
-| Implementation permission | Phase 2 minimum implementation approved; no Phase 3 completion yet |
-| Next approval | Phase 3 approval for refactor and same-context review |
+| Implementation permission | Phase 3 refactor and same-context review completed |
+| Next approval | None for this bounded slice; Physics IR replacement remains separate |
 
 ## Architecture/spec approval
 
@@ -74,3 +74,15 @@ Equation DTOs must become a new semantic authority or public API changes.
 
 Named authority-negative tests, caller-injection fixtures, this Issue/spec/WP
 records, and review record only. Production guard changes begin in Phase 2.
+
+## Phase 3 result
+
+- Extracted authority metadata construction into the named
+  `_authority_metadata` helper without changing the projection contract.
+- Same-context review completed; this isolation is weaker than
+  `separate_context`.
+- Review record: `docs/collaboration/reviews/2026-08-31-liss-0487-phase3-review.md`.
+- Verification: LISS-0487 acceptance tests 3/3, LISS-0445 regression tests 2/2,
+  Spec verification 161/161, `py_compile`, and `git diff --check` passed.
+
+Process review: no operating-contract deviation or operational problem found.

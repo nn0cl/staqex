@@ -7,6 +7,18 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-08-31
+- Class: authority-boundary
+- Pattern: a compatibility projection can retain legacy DTO nodes while still
+  making the canonical semantic authority explicit and machine-checkable.
+- What later design or implementation must do: preserve compatibility only
+  with an explicit diagnostic-only role and negative authorization metadata;
+  never let retained DTOs silently become execution or finiteization authority.
+- Source issue or work plan (adopter's own ID, if any): LISS-0487 / WP-0107
+- Status: applied
+
+## Lesson
+
 - Date: 2026-08-26
 - Class: status-drift
 - Pattern: ISSUE and work-plan status stayed `review` or `in_progress` after
