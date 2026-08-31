@@ -873,17 +873,7 @@ def _analyze_unit(
     diags.extend(mixed_state_diags)
     povm_contracts, povm_diags = resolve_measurement_contracts(unit)
     diags.extend(povm_diags)
-    povm_observation_rejections = [
-        {
-            "code": diagnostic.get("code"),
-            "requested_effect_set": diagnostic.get("requested_effect_set"),
-            "state_domain": diagnostic.get("state_domain"),
-            "repaired": False,
-            "fabricated_outcome": False,
-        }
-        for diagnostic in povm_diags
-        if diagnostic.get("code", "").startswith("POVM_")
-    ]
+    povm_observation_rejections = _povm_observation_rejections(povm_diags)
 
     scientific_semantic_ir = build_scientific_semantic_ir(unit, source_id=source_id)
     unit._canonical_semantic_ir = scientific_semantic_ir
@@ -968,6 +958,23 @@ def _analyze_unit(
         strict_evolution=strict_evolution,
         conformance_report=conformance_report,
     )
+
+
+def _povm_observation_rejections(
+    diagnostics: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Project POVM failures into explicit, non-fabricating evidence."""
+    return [
+        {
+            "code": diagnostic.get("code"),
+            "requested_effect_set": diagnostic.get("requested_effect_set"),
+            "state_domain": diagnostic.get("state_domain"),
+            "repaired": False,
+            "fabricated_outcome": False,
+        }
+        for diagnostic in diagnostics
+        if diagnostic.get("code", "").startswith("POVM_")
+    ]
 
 
 def _build_conformance_report(

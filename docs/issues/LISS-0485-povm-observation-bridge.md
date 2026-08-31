@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-2-green — minimum IR bridge implementation passes acceptance tests; Phase 3 approval required** |
-| Phase | phase-2-green |
+| Status | **done — bounded POVM observation bridge slice complete** |
+| Phase | phase-3-refactor-complete |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#liss-0485-povm-observation-bridge-design) |
 | Related authority | [LISS-0037 / WP-0014](../work-plans/WP-0014-povm-measurement-contract.md), [LISS-0084](LISS-0084-general-mixed-states-channels-povms.md), ADR 0075 |
 | Depends on | LISS-0481, LISS-0482, LISS-0484 |
-| Implementation permission | Phase 2 minimum implementation approved; no Phase 3 completion yet |
-| Next approval | Phase 3 approval for refactor and same-context review |
+| Implementation permission | Phase 3 completed within approved bounded scope |
+| Next approval | None for this bounded slice; general POVM math requires separate scope |
 
 ## Architecture/spec approval
 
@@ -75,3 +75,18 @@ syntax, or the LISS-0084 representation authority.
 
 Normative bridge section, IR contract tests, invalid-effect evidence fixtures,
 and review record only.
+
+## Phase 3 result
+
+- Extracted POVM rejection evidence projection into a focused pipeline helper.
+- Re-ran the bounded tests and full spec verification suite.
+- Review summary: [LISS-0485 Phase 3 review](../collaboration/reviews/2026-08-31-liss-0485-phase3-review.md)
+- Process review: no operating-contract deviation or operational problem found.
+
+## Final verification
+
+- LISS-0485 suite: `3 passed` under direct local execution.
+- Spec verification: `161/161`, `100.00%`.
+- `py_compile` and `git diff --check`: passed.
+- General POVM mathematics, tomography, provider/QPU, AWS, and Rust remain
+  out of scope.
