@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **architecture-approved — acceptance contract revised for compatibility; awaiting Phase 1 Red re-approval** |
-| Phase | phase-0-architecture-design |
+| Status | **phase-1-red — revised canonical/legacy compatibility contract has three intended failures; awaiting Phase 2 Green approval** |
+| Phase | phase-1-red |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issues | [LISS-0488](LISS-0488-physics-ir-canonical-projection.md), [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0489-symbolic-ir-canonical-inspection-migration) |
 | Existing authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#acceptance-corpus-and-artifact-rules), ADR 0211 |
 | Architecture approval | Approved by Adjudicator 2026-08-31; compatibility split approved 2026-08-31 |
-| Implementation permission | No production implementation permission; revised Red contract requires approval |
-| Next approval | Phase 1 Red re-approval |
+| Implementation permission | Revised Phase 1 Red tests approved; no production implementation permission |
+| Next approval | Phase 2 Green approval |
 
 ## Design intake
 
@@ -141,8 +141,8 @@ change no production code. Phase 1 Red requires a separate approval before
 those files are created.
 
 Phase 1 Red approval was granted before the initial test creation. The
-compatibility split below is a revised acceptance contract and requires a new
-Phase 1 Red approval.
+compatibility split below is a revised acceptance contract and was re-approved
+by the Adjudicator before the test contract was finalized.
 
 ## Phase 1 Red result
 
@@ -157,6 +157,16 @@ Phase 1 Red approval.
   asserting that it contains no finite plan or allocation; this matches the
   accepted design boundary.
 - No production code or legacy path was changed.
+
+## Phase 1 Red re-approval result
+
+- The revised separation of legacy and canonical source-ID fields is approved.
+- `resolved.source_node_ids` remains a compatibility field;
+  `resolved.canonical_source_node_ids` is the migration acceptance field.
+- The dedicated `authority` field is the authority/provenance acceptance
+  field; existing provenance metadata remains backward compatible.
+- Phase 2 Green remains limited to canonical wiring and compatibility-view
+  generation.
 
 ## Revised compatibility contract
 
