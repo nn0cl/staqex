@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-1-red — failing acceptance tests added; Phase 2 approval required** |
-| Phase | phase-1-red |
+| Status | **phase-2-green — minimum Equation DTO authority guard passes acceptance tests; Phase 3 approval required** |
+| Phase | phase-2-green |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0487-equation-dto-authority-retirement) |
 | Related authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design), ADR 0211 |
 | Depends on | WP-0107 and the completed canonical IR boundary slices |
-| Implementation permission | Phase 1 test-only scope approved; no implementation permission |
-| Next approval | Phase 2 Green approval |
+| Implementation permission | Phase 2 minimum implementation approved; no Phase 3 completion yet |
+| Next approval | Phase 3 approval for refactor and same-context review |
 
 ## Architecture/spec approval
 
@@ -24,6 +24,15 @@
 - The tests require diagnostic-only authority metadata, explicit canonical
   authority, and rejection of implicit string conversion.
 - No Physics IR or Equation DTO implementation was changed.
+
+## Phase 2 Green result
+
+- Physics IR projections now expose canonical semantic authority and
+  diagnostic-only Equation DTO role metadata.
+- Injected Equation DTOs are explicitly marked as unauthorized for execution
+  or finiteization; existing DTO validation and string rejection remain.
+- No equation solver, numerical implementation, or physics IR replacement was
+  added.
 
 ## Scope
 

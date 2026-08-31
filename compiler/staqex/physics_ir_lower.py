@@ -39,12 +39,20 @@ def lower_hir_to_physics_ir(
     equation_origins = tuple(
         equation.origin for equation in equation_nodes if equation.origin is not None
     )
+    metadata = dict(base.metadata)
+    metadata.update(
+        {
+            "semantic_authority": "scientific_semantic_ir",
+            "equation_dto_role": "diagnostic_only",
+            "injected_equation_authorized": False,
+        }
+    )
     return PhysicsModule(
         spaces=base.spaces,
         nodes=base.nodes + equation_nodes,
         origins=base.origins + equation_origins,
         source_origin=base.source_origin,
-        metadata=base.metadata,
+        metadata=metadata,
     )
 
 
