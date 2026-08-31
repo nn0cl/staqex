@@ -420,6 +420,26 @@ lineage. A diagnostic view or observation report with only rendered text and no
 lineage is not a conforming result. Unsupported behavior is a rejection, not a
 zero value, empty report, or implicit conversion to `measure`.
 
+### 5.5 LISS-0482 observation-to-IR mapping matrix
+
+The mapping layer is a source-derived projection. It may add consumer-facing
+metadata, but it must not replace the Scientific Semantic IR authority or
+materialize a finite artifact implicitly.
+
+| Source operation | Scientific Semantic IR role | Lane | Required identity/provenance | Exactness/dimensions | Projection-loss rule | Illegal transition |
+|---|---|---|---|---|---|---|
+| `expect(O, state)` | `ExpectationProjection` | `StaticKernel` | source ID, observable node ID, state lineage | preserve declared exactness and dimensions | report loss explicitly; never sample | reject classical-only observable or invalid lane |
+| `project(P, state)` | `Projection` | `StaticKernel` | source ID, projector node ID, state lineage | preserve dimensions; mark vacuum | record projection loss | reject if projection fabricates state |
+| `inspect(state)` | `DiagnosticView` | `StaticKernel` | source ID, state lineage, view node ID | preserve exactness and dimensions | no projection loss or finite allocation | reject if mapped to measurement |
+| `trace_out(state, subsystem)` | `ReducedState` | `StaticKernel` | source ID, subsystem ID, parent lineage | preserve remaining dimensions | record reduction loss | reject if treated as terminal outcome |
+| terminal `measure(state)` | `Measurement` | `StaticKernel` | source ID, measurement ID, outcome/post-state lineage | boundary-defined outcome exactness | collapse boundary explicit | reject a second implicit collapse |
+| dynamic measurement | `DynamicMeasurement` | `DynamicQpu` | source ID, dynamic token, branch lineage | preserve token and branch dimensions | no static projection substitution | reject if lowered to static measurement |
+| `tomography(plan)` | `ObservationProtocolRequest` | `HostProtocol` | source ID, plan/job ID, target capability | protocol-defined report exactness | no Kernel finite artifact | reject in StaticKernel with `OBSERVATION_UNSUPPORTED` |
+
+For every row, mapping output must include `role`, `lane`, `source_id`,
+`provenance`, `exactness`, and `dimensions`. A missing field is a mapping
+contract failure even when a consumer can still render an artifact.
+
 ### 5.2 Acceptance scenarios
 
 ```gherkin
