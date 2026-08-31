@@ -2,14 +2,23 @@
 
 | Field | Value |
 |---|---|
-| Status | **ready — design complete; Architecture/spec review required** |
-| Phase | phase-0-design |
+| Status | **architecture-approved — design accepted; Phase 1 Red approval required** |
+| Phase | phase-0-design-approved |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0486-evaluator-semantic-authority-migration) |
 | Related authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design), ADR 0211 |
 | Depends on | LISS-0476, LISS-0477, WP-0107 |
-| Implementation permission | None |
-| Next approval | Architecture/spec review, then typed Phase 1 Red approval |
+| Implementation permission | None; Phase 1 test-only scope not yet approved |
+| Next approval | Phase 1 Red approval |
+
+## Architecture/spec approval
+
+- The evaluator boundary is accepted as a local downstream consumer of the
+  compile-owned Scientific Semantic IR.
+- AST traversal remains operational dispatch only; it is not a second semantic
+  authority.
+- No evaluator semantic redesign, provider/QPU/AWS integration, or Rust work
+  is authorized by this approval.
 
 ## Scope
 
