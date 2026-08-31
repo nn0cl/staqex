@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **architecture-approved — awaiting Phase 1 Red approval** |
-| Phase | phase-0-architecture-design |
+| Status | **phase-1-red — eight evaluator boundary tests fail as intended; awaiting Phase 2 Green approval** |
+| Phase | phase-1-red |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issues | [LISS-0489](LISS-0489-symbolic-ir-canonical-inspection.md), [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0490-evaluator-canonical-execution-boundary) |
 | Existing authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md), ADR 0211 |
 | Architecture approval | Approved by Adjudicator 2026-08-31; ADR 0211 boundary retained |
-| Implementation permission | None; Phase 1 Red test creation is not yet approved |
-| Next approval | Phase 1 Red approval |
+| Implementation permission | Phase 1 Red tests and fixture approved; no production implementation permission |
+| Next approval | Phase 2 Green approval |
 
 ## Design intake
 
@@ -131,3 +131,16 @@ The exact Phase 1 candidate is fixed to
 state/terminal-measure fixture. The eight acceptance scenarios in this Issue
 will be tested without changing evaluator production code. Phase 1 Red
 requires a separate approval before those files are created.
+
+Phase 1 Red approval was granted before creation.
+
+## Phase 1 Red result
+
+- Added `tests/test_liss_0490_evaluator_canonical_execution_boundary_red.py`
+  with the eight approved scenarios.
+- Added `tests/fixtures/semantic_core/evaluator_boundary.sqx`.
+- Red verification: **8 failed**, with no collection errors. The failures
+  expose the missing canonical evaluator input, missing no-canonical
+  rejection, and missing source/port execution contract.
+- No evaluator production code, port implementation, provider, or runtime
+  behavior was changed.

@@ -1,0 +1,6 @@
+package evaluator_boundary
+
+pub fn main() -> Unit {
+    State<Int> observed = Coin()
+    Measure observed
+}
