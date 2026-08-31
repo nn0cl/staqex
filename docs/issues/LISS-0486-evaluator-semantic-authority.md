@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-2-green — minimum evaluator boundary implementation passes acceptance tests; Phase 3 approval required** |
-| Phase | phase-2-green |
+| Status | **done — bounded evaluator semantic-authority slice complete** |
+| Phase | phase-3-refactor-complete |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0486-evaluator-semantic-authority-migration) |
 | Related authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design), ADR 0211 |
 | Depends on | LISS-0476, LISS-0477, WP-0107 |
-| Implementation permission | Phase 2 minimum implementation approved; no Phase 3 completion yet |
-| Next approval | Phase 3 approval for refactor and same-context review |
+| Implementation permission | Phase 3 completed within approved bounded scope |
+| Next approval | None for this bounded slice; remaining consumers require separate scope |
 
 ## Architecture/spec approval
 
@@ -78,3 +78,19 @@ accepted terminal measurement contract.
 
 Named evaluator boundary tests/fixtures, this Issue/spec/WP status records,
 and review record only. Production evaluator changes begin in Phase 2.
+
+## Phase 3 result
+
+- Consolidated typing imports and formatted the canonical IR validation path
+  for readability without changing behavior.
+- Re-ran the bounded tests and full spec verification suite.
+- Review summary: [LISS-0486 Phase 3 review](../collaboration/reviews/2026-08-31-liss-0486-phase3-review.md)
+- Process review: no operating-contract deviation or operational problem found.
+
+## Final verification
+
+- LISS-0486 suite: `3 passed` under direct local execution.
+- Spec verification: `161/161`, `100.00%`.
+- `py_compile` and `git diff --check`: passed.
+- Equation/Physics DTO, H1, Algorithm Plan, provider/QPU, AWS, and Rust
+  remain outside this bounded slice.

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Mapping, TextIO
 
 if TYPE_CHECKING:
     from ..scientific_semantic_ir import ScientificSemanticIR
@@ -11,7 +11,6 @@ import cmath
 import random
 from dataclasses import dataclass, field
 from fractions import Fraction
-from typing import Any, Callable, Mapping, TextIO
 
 from ..continuous_field import (
     ContinuousFieldPort,
@@ -319,7 +318,9 @@ class Evaluator:
         if semantic_ir is None:
             return canonical
         if canonical is not None and semantic_ir is not canonical:
-            raise ValueError("caller-injected ScientificSemanticIR is not canonical")
+            raise ValueError(
+                "caller-injected ScientificSemanticIR is not canonical"
+            )
         from ..scientific_semantic_ir import ScientificSemanticIR
 
         if not isinstance(semantic_ir, ScientificSemanticIR):
