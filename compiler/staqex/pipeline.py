@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from dataclasses import replace
 from pathlib import Path
 from types import MappingProxyType
@@ -228,6 +228,7 @@ class CompileResult:
     grid_hamiltonians: Mapping[str, GridHamiltonian] | None = None
     mixed_state_contracts: Mapping[str, MixedStateContract] | None = None
     povm_contracts: Mapping[str, POVMContract] | None = None
+    povm_observation_rejections: list[dict[str, Any]] = field(default_factory=list)
     qpu_ir: Mapping[str, Any] | None = None
     physics_ir: PhysicsModule | None = None
     quantum_semantic_ir: QuantumSemanticModule | None = None
@@ -872,6 +873,17 @@ def _analyze_unit(
     diags.extend(mixed_state_diags)
     povm_contracts, povm_diags = resolve_measurement_contracts(unit)
     diags.extend(povm_diags)
+    povm_observation_rejections = [
+        {
+            "code": diagnostic.get("code"),
+            "requested_effect_set": diagnostic.get("requested_effect_set"),
+            "state_domain": diagnostic.get("state_domain"),
+            "repaired": False,
+            "fabricated_outcome": False,
+        }
+        for diagnostic in povm_diags
+        if diagnostic.get("code", "").startswith("POVM_")
+    ]
 
     scientific_semantic_ir = build_scientific_semantic_ir(unit, source_id=source_id)
     unit._canonical_semantic_ir = scientific_semantic_ir
@@ -939,6 +951,7 @@ def _analyze_unit(
         grid_hamiltonians=MappingProxyType(grid_hamiltonians),
         mixed_state_contracts=MappingProxyType(mixed_state_contracts),
         povm_contracts=MappingProxyType(povm_contracts),
+        povm_observation_rejections=povm_observation_rejections,
         qpu_ir=qpu_ir,
         evolution_provenance=(
             _realize_provenance(unit) or _formal_limit_provenance(unit)

@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-1-red — failing acceptance tests added; Phase 2 approval required** |
-| Phase | phase-1-red |
+| Status | **phase-2-green — minimum IR bridge implementation passes acceptance tests; Phase 3 approval required** |
+| Phase | phase-2-green |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#liss-0485-povm-observation-bridge-design) |
 | Related authority | [LISS-0037 / WP-0014](../work-plans/WP-0014-povm-measurement-contract.md), [LISS-0084](LISS-0084-general-mixed-states-channels-povms.md), ADR 0075 |
 | Depends on | LISS-0481, LISS-0482, LISS-0484 |
-| Implementation permission | Phase 1 test-only scope approved; no implementation permission |
-| Next approval | Phase 2 Green approval |
+| Implementation permission | Phase 2 minimum implementation approved; no Phase 3 completion yet |
+| Next approval | Phase 3 approval for refactor and same-context review |
 
 ## Architecture/spec approval
 
@@ -26,6 +26,15 @@
   and collapse boundary, post-state/provenance evidence, and explicit
   rejection evidence without repair or fabricated outcomes.
 - No POVM numerical or provider implementation was changed.
+
+## Phase 2 Green result
+
+- Added `ScientificSemanticIR.povm_observation_requests` for terminal POVM
+  identity, domain, lane, sampling/collapse, post-state, and provenance.
+- Added `CompileResult.povm_observation_rejections` with explicit
+  non-repair/non-fabrication evidence for POVM diagnostics.
+- Reused the existing computational-basis contract; no effect numerics,
+  tomography, provider, QPU, AWS, or Rust implementation was added.
 
 ## Scope
 

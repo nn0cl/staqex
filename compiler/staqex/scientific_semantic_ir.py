@@ -138,6 +138,7 @@ class ScientificSemanticIR:
     measurement_envelopes: dict[str, dict[str, Any]] = field(default_factory=dict)
     observation_mappings: dict[str, dict[str, Any]] = field(default_factory=dict)
     observation_algebra: dict[str, dict[str, Any]] = field(default_factory=dict)
+    povm_observation_requests: dict[str, dict[str, Any]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -391,7 +392,30 @@ def build_scientific_semantic_ir(
     measurement_envelopes: dict[str, dict[str, Any]] = {}
     observation_mappings: dict[str, dict[str, Any]] = {}
     observation_algebra: dict[str, dict[str, Any]] = {}
+    povm_observation_requests: dict[str, dict[str, Any]] = {}
     if unit.main is not None:
+        povm_names = {
+            statement.names[0]: statement.ty.args[0].name
+            for statement in unit.main.body.stmts
+            if (
+                isinstance(statement, StateBind)
+                and len(statement.names) == 1
+                and statement.ty is not None
+                and statement.ty.name == "POVM"
+                and statement.ty.args
+            )
+        }
+        state_domains = {
+            statement.names[0]: statement.ty.args[0].name
+            for statement in unit.main.body.stmts
+            if (
+                isinstance(statement, StateBind)
+                and len(statement.names) == 1
+                and statement.ty is not None
+                and statement.ty.name in {"State", "DensityState"}
+                and statement.ty.args
+            )
+        }
         for statement in unit.main.body.stmts:
             if isinstance(statement, StateBind) and statement.names and isinstance(statement.expr, Inspect):
                 observation_contracts[statement.names[0]] = {
@@ -443,6 +467,20 @@ def build_scientific_semantic_ir(
                     "lane": "StaticKernel",
                     "source_id": source_id,
                 }
+                if isinstance(statement.povm, Var) and statement.povm.name in povm_names:
+                    povm_observation_requests[statement.expr.name] = {
+                        "effect_set_id": statement.povm.name,
+                        "effect_kind": "ComputationalBasis",
+                        "state_domain": state_domains.get(statement.expr.name, "Unknown"),
+                        "lane": "StaticKernel",
+                        "sampling": True,
+                        "collapse": True,
+                        "post_state_identity": f"{statement.expr.name}:post_measurement",
+                        "provenance": {
+                            "source_id": source_id,
+                            "source_node_id": source_node_ids.get(id(statement), ""),
+                        },
+                    }
             if (
                 isinstance(statement, StateBind)
                 and statement.names
@@ -517,6 +555,7 @@ def build_scientific_semantic_ir(
         measurement_envelopes=measurement_envelopes,
         observation_mappings=observation_mappings,
         observation_algebra=observation_algebra,
+        povm_observation_requests=povm_observation_requests,
     )
     ideal_payload = json.dumps(
         {
