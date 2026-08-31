@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **architecture-approved — design accepted; Phase 1 Red approval required** |
-| Phase | phase-0-design-approved |
+| Status | **phase-1-red — failing acceptance tests added; Phase 2 approval required** |
+| Phase | phase-1-red |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0486-evaluator-semantic-authority-migration) |
 | Related authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design), ADR 0211 |
 | Depends on | LISS-0476, LISS-0477, WP-0107 |
-| Implementation permission | None; Phase 1 test-only scope not yet approved |
-| Next approval | Phase 1 Red approval |
+| Implementation permission | Phase 1 test-only scope approved; no implementation permission |
+| Next approval | Phase 2 Green approval |
 
 ## Architecture/spec approval
 
@@ -19,6 +19,13 @@
   authority.
 - No evaluator semantic redesign, provider/QPU/AWS integration, or Rust work
   is authorized by this approval.
+
+## Phase 1 Red result
+
+- Added `tests/test_liss_0486_evaluator_semantic_authority_red.py`.
+- The tests require explicit compile-owned IR propagation, identity retention,
+  and rejection of caller-injected semantic projections.
+- No evaluator or host implementation was changed.
 
 ## Scope
 
