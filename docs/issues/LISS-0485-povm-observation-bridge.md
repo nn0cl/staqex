@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **architecture-approved — design accepted; Phase 1 Red approval required** |
-| Phase | phase-0-design-approved |
+| Status | **phase-1-red — failing acceptance tests added; Phase 2 approval required** |
+| Phase | phase-1-red |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#liss-0485-povm-observation-bridge-design) |
 | Related authority | [LISS-0037 / WP-0014](../work-plans/WP-0014-povm-measurement-contract.md), [LISS-0084](LISS-0084-general-mixed-states-channels-povms.md), ADR 0075 |
 | Depends on | LISS-0481, LISS-0482, LISS-0484 |
-| Implementation permission | None; Phase 1 test-only scope not yet approved |
-| Next approval | Phase 1 Red approval |
+| Implementation permission | Phase 1 test-only scope approved; no implementation permission |
+| Next approval | Phase 2 Green approval |
 
 ## Architecture/spec approval
 
@@ -18,6 +18,14 @@
   execution mathematics.
 - No public POVM syntax, numerical effect evaluation, provider/QPU, AWS, or
   Rust implementation is authorized by this approval.
+
+## Phase 1 Red result
+
+- Added `tests/test_liss_0485_povm_observation_bridge_red.py`.
+- The tests require request/effect-set identity, state domain, lane, sampling
+  and collapse boundary, post-state/provenance evidence, and explicit
+  rejection evidence without repair or fabricated outcomes.
+- No POVM numerical or provider implementation was changed.
 
 ## Scope
 
