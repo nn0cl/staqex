@@ -7,7 +7,7 @@
 | Work plan | [WP-0092](../work-plans/WP-0092-quantum-mental-model-follow-up.md) |
 | Follow-up Issues | [LISS-0480](../issues/LISS-0480-scientific-lexicon-contract.md), [LISS-0481](../issues/LISS-0481-observation-contract.md), [LISS-0482](../issues/LISS-0482-observation-semantic-mapping.md), [LISS-0483](../issues/LISS-0483-observation-lexicon-conformance.md) |
 | Scope | scientific lexicon, quantum composition surface, observation contracts |
-| Implementation status | partially implemented: `inspect` is classified as `DiagnosticView<T>`; `superpose` formal grammar shipped ([LISS-0320](../issues/LISS-0320-superpose-formal-grammar.md), PR #345); `controlled(...)` call-form execution confirmed already shipped (2026-08-05, see §4.3 note — no separate Issue needed); remaining surface (scientific lexicon beyond `psi`/`phi`/`rho`/`cm`, public `Observable<T>`/`Projection<T>`/`Observation<T>`) and observation families remain proposed |
+| Implementation status | bounded slices shipped: scientific aliases `psi/ψ`、`phi/φ`、`rho/ρ`, `DiagnosticView<T>` and observation mappings, Static Kernel tomography rejection, and conformance evidence report; public `Observable<T>`/`Projection<T>`/`Observation<T>`, general observation families, POVM/tomography execution, and provider/QPU support remain proposed |
 
 ## 1. Purpose
 

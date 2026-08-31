@@ -272,7 +272,7 @@ Issue gives them a concrete scope:
   [WP-0092](../work-plans/WP-0092-quantum-mental-model-follow-up.md), following
   accepted [ADR 0189](adr/0189-quantum-mental-model-and-observation-contract.md)
   (§2 and the related Consequences bullet superseded in part by ADR 0190).
-  The detailed follow-up is decomposed into design-ready [LISS-0480](../issues/LISS-0480-scientific-lexicon-contract.md), [LISS-0481](../issues/LISS-0481-observation-contract.md), [LISS-0482](../issues/LISS-0482-observation-semantic-mapping.md), and [LISS-0483](../issues/LISS-0483-observation-lexicon-conformance.md); Phase 1 remains separately gated.
+  The detailed follow-up was decomposed into [LISS-0480](../issues/LISS-0480-scientific-lexicon-contract.md), [LISS-0481](../issues/LISS-0481-observation-contract.md), [LISS-0482](../issues/LISS-0482-observation-semantic-mapping.md), and [LISS-0483](../issues/LISS-0483-observation-lexicon-conformance.md); all four bounded slices are now complete. Broader observation algebra, POVM/tomography execution, and provider/QPU/Rust conformance remain separately gated.
   The first `DiagnosticView<T>` compiler classification shipped in PR #342
   (`abaa7cb`). The `mix` canonical grammar and `when` hard-retirement
   diagnostic also shipped, in PR #337 (`321de3a`), under ADR 0190/WP-0093
