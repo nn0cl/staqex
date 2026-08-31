@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-1-red — failing acceptance tests added; Phase 2 approval required** |
-| Phase | phase-1-red |
+| Status | **phase-2-green — minimum evaluator boundary implementation passes acceptance tests; Phase 3 approval required** |
+| Phase | phase-2-green |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0486-evaluator-semantic-authority-migration) |
 | Related authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design), ADR 0211 |
 | Depends on | LISS-0476, LISS-0477, WP-0107 |
-| Implementation permission | Phase 1 test-only scope approved; no implementation permission |
-| Next approval | Phase 2 Green approval |
+| Implementation permission | Phase 2 minimum implementation approved; no Phase 3 completion yet |
+| Next approval | Phase 3 approval for refactor and same-context review |
 
 ## Architecture/spec approval
 
@@ -26,6 +26,14 @@
 - The tests require explicit compile-owned IR propagation, identity retention,
   and rejection of caller-injected semantic projections.
 - No evaluator or host implementation was changed.
+
+## Phase 2 Green result
+
+- Evaluator accepts the compile-owned `ScientificSemanticIR` explicitly and
+  stores the exact identity for the run.
+- Caller-injected or non-canonical semantic projections are rejected.
+- Host execution propagates `CompileResult.scientific_semantic_ir` into the
+  evaluator without changing evaluator AST dispatch or result envelopes.
 
 ## Scope
 

@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..scientific_semantic_ir import ScientificSemanticIR
+
 import cmath
 import random
 from dataclasses import dataclass, field
@@ -289,12 +294,37 @@ class Evaluator:
         self.mixed_state_measured = False
         self.execution_lane: str | None = None
         self.grid_hamiltonians = dict(grid_hamiltonians or {})
+        self.semantic_ir: ScientificSemanticIR | None = None
 
-    def run_unit(self, unit: CompilationUnit, *, stdout: TextIO | None = None) -> EvalResult:
+    def run_unit(
+        self,
+        unit: CompilationUnit,
+        *,
+        stdout: TextIO | None = None,
+        semantic_ir: ScientificSemanticIR | None = None,
+    ) -> EvalResult:
+        self.semantic_ir = self._resolve_semantic_ir(unit, semantic_ir)
         from .joint import world_workers
 
         with world_workers(self.data_parallel_workers):
             return self._run_unit_body(unit, stdout=stdout)
+
+    @staticmethod
+    def _resolve_semantic_ir(
+        unit: CompilationUnit,
+        semantic_ir: ScientificSemanticIR | None,
+    ) -> ScientificSemanticIR | None:
+        """Accept only the compile-owned canonical semantic projection."""
+        canonical = getattr(unit, "_canonical_semantic_ir", None)
+        if semantic_ir is None:
+            return canonical
+        if canonical is not None and semantic_ir is not canonical:
+            raise ValueError("caller-injected ScientificSemanticIR is not canonical")
+        from ..scientific_semantic_ir import ScientificSemanticIR
+
+        if not isinstance(semantic_ir, ScientificSemanticIR):
+            raise ValueError("semantic_ir must be a ScientificSemanticIR")
+        return semantic_ir
 
     def _resolve_host_coefficient_arrays(self, unit: CompilationUnit) -> dict[str, Any]:
         """Wire HostInputPort into the ADR 0119 coefficient-tensor path

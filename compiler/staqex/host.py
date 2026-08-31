@@ -272,7 +272,11 @@ def _submit_compiled(
             data_parallel_workers=int(settings.get("data_parallel_workers") or 1),
             host_input=host_input,
         )
-        evaluated = evaluator.run_unit(compiled.unit, stdout=stdout)
+        evaluated = evaluator.run_unit(
+            compiled.unit,
+            stdout=stdout,
+            semantic_ir=compiled.scientific_semantic_ir,
+        )
         if dynamic_trace is not None:
             # LISS-0389 (ADR 0198 Amendment): reconcile Host's bookkeeping
             # dynamic_trace with what the real evaluator actually found.
