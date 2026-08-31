@@ -2,15 +2,15 @@
 
 | Field | Value |
 |---|---|
-| Status | **architecture-approved — awaiting Phase 1 Red approval** |
-| Phase | phase-0-architecture-design |
+| Status | **phase-1-red — five canonical inspection migration tests fail as intended; awaiting Phase 2 Green approval** |
+| Phase | phase-1-red |
 | Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | Related Issues | [LISS-0488](LISS-0488-physics-ir-canonical-projection.md), [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
 | Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0489-symbolic-ir-canonical-inspection-migration) |
 | Existing authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#acceptance-corpus-and-artifact-rules), ADR 0211 |
 | Architecture approval | Approved by Adjudicator 2026-08-31; ADR 0211 boundary retained |
-| Implementation permission | None; Phase 1 Red test creation is not yet approved |
-| Next approval | Phase 1 Red approval |
+| Implementation permission | Phase 1 Red tests approved; no production implementation permission |
+| Next approval | Phase 2 Green approval |
 
 ## Design intake
 
@@ -139,3 +139,16 @@ The exact Phase 1 candidate is fixed to
 `symbolic_inspection.sqx` fixture named in this Issue. The test batch will
 change no production code. Phase 1 Red requires a separate approval before
 those files are created.
+
+Phase 1 Red approval was granted before creation.
+
+## Phase 1 Red result
+
+- Added `tests/test_liss_0489_symbolic_ir_canonical_inspection_red.py`.
+- Reused the existing `tests/fixtures/semantic_core/symbolic_inspection.sqx`;
+  no new fixture was required.
+- Red verification: **5 failed, 1 passed**, with no collection errors.
+- Failures expose the direct AST builder bypass, mismatched canonical source
+  IDs, missing authority metadata, and missing no-artifact compatibility
+  contract.
+- No production code or legacy path was changed.
