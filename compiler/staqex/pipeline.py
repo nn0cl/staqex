@@ -960,9 +960,13 @@ def _analyze_unit(
 def _build_conformance_report(
     semantic_ir: ScientificSemanticIR, diagnostics: list[dict[str, Any]]
 ) -> dict[str, Any]:
-    """Expose deterministic conformance evidence without becoming a new authority."""
+    """Expose deterministic evidence without becoming a new authority."""
     unsupported = next(
-        (diagnostic for diagnostic in diagnostics if diagnostic.get("code") == "OBSERVATION_UNSUPPORTED"),
+        (
+            diagnostic
+            for diagnostic in diagnostics
+            if diagnostic.get("code") == "OBSERVATION_UNSUPPORTED"
+        ),
         None,
     )
     if unsupported is not None:

@@ -255,6 +255,18 @@ files are intentionally included in a later phase.
 - **Review:** Phase 3 same-context review and process review complete. General
   Hilbert storage, POVM, Host tomography, and QPU execution remain open.
 
+## Implementation closeout — LISS-0483 conformance closure
+
+- **Scope:** deterministic cross-feature proof matrix and observation
+  conformance evidence for the accepted slices.
+- **Implementation:** CompileResult exposes feature/status/source/evidence/
+  diagnostic without becoming a second semantic authority or implying
+  provider/hardware support.
+- **Verification:** LISS-0483 suite passes `3` tests; `git diff --check`
+  passes.
+- **Review:** Phase 3 same-context review and process review complete. A full
+  conformance runner and provider/QPU/Rust proofs remain future work.
+
 ## Implementation closeout — LISS-0482 observation-to-IR mapping
 
 - **Scope:** source-derived mappings for `Inspect` → `DiagnosticView` and
