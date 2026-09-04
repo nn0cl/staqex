@@ -181,7 +181,11 @@ def cmd_inspect(args: argparse.Namespace) -> int:
         unit.main.body.stmts = [s for s in unit.main.body.stmts if not isinstance(s, Measure)]
     buf: TextIO = sys.stdout
     ev = Evaluator(seed=args.seed, inspect_sink=buf)
-    result = ev.run_unit(unit, stdout=buf)
+    result = ev.run_canonical_unit(
+        unit,
+        semantic_ir=compiled.scientific_semantic_ir,
+        stdout=buf,
+    )
     print("--- joint marginals ---")
     for var in result.joint.variables():
         print(format_marginal_table(result.joint.marginal(var), label=var), end="")

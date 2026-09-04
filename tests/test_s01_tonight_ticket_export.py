@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import io
 import json
 import sys
@@ -161,7 +163,7 @@ def test_pauli_evolve_preserves_sibling_joint_coords() -> None:
         """
     compiled = compile_source(source)
     assert compiled.unit is not None
-    result = Evaluator(seed=0).run_unit(compiled.unit, stdout=io.StringIO())
+    result = run_canonical(compiled, Evaluator(seed=0), stdout=io.StringIO())
     assert result.measure is not None
     assert result.measure.vacuum is False
     assert "plan" in {k for w in result.joint.worlds for k in w.assign}

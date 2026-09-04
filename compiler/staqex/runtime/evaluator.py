@@ -4,9 +4,12 @@ from __future__ import annotations
 
 import cmath
 import random
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from fractions import Fraction
-from typing import Any, Callable, Mapping, TextIO
+from typing import TYPE_CHECKING, Any, Callable, Mapping, TextIO
+
+if TYPE_CHECKING:
+    from ..scientific_semantic_ir import ScientificSemanticIR
 
 from ..continuous_field import (
     ContinuousFieldPort,
@@ -183,6 +186,8 @@ class EvalResult:
     # (the run vacuumed). True (default) when unchecked or all confirmed.
     dynamic_outcomes_confirmed: bool = True
     evolution_provenance: dict[str, Any] | None = None
+    execution_authority: str | None = None
+    source_id: str = "<memory>"
 
 
 class KernelError(Exception):
@@ -206,6 +211,35 @@ class KernelDiagnosticError(KernelError):
         self.line = line
         self.col = col
         self.provenance = provenance
+
+
+def _validate_canonical_semantic_ir(semantic_ir: ScientificSemanticIR | None) -> None:
+    """Reject execution authority that is absent, synthetic, or mismatched."""
+
+    from ..scientific_semantic_ir import ScientificSemanticIR
+
+    if semantic_ir is None:
+        raise KernelDiagnosticError(
+            "E_EVALUATOR_CANONICAL_AUTHORITY",
+            "canonical ScientificSemanticIR is required before execution",
+        )
+    if not isinstance(semantic_ir, ScientificSemanticIR):
+        raise KernelDiagnosticError(
+            "E_EVALUATOR_CANONICAL_AUTHORITY",
+            "evaluator requires ScientificSemanticIR input",
+        )
+    if semantic_ir.authority != "scientific_semantic_ir":
+        raise KernelDiagnosticError(
+            "E_EVALUATOR_CANONICAL_AUTHORITY",
+            "semantic input is not source-derived canonical authority",
+        )
+    source_id = semantic_ir.source_id
+    is_local_path = source_id.startswith("/") and source_id.endswith(".sqx")
+    if source_id not in {"sqx", "<memory>"} and not is_local_path:
+        raise KernelDiagnosticError(
+            "E_EVALUATOR_CANONICAL_AUTHORITY",
+            "semantic source identity does not match the local compiler",
+        )
 
 
 @dataclass(frozen=True)
@@ -290,11 +324,322 @@ class Evaluator:
         self.execution_lane: str | None = None
         self.grid_hamiltonians = dict(grid_hamiltonians or {})
 
-    def run_unit(self, unit: CompilationUnit, *, stdout: TextIO | None = None) -> EvalResult:
+    def _execute_unit(self, unit: CompilationUnit, *, stdout: TextIO | None = None) -> EvalResult:
+        """Run evaluator mechanics without selecting a public authority lane."""
+
         from .joint import world_workers
 
         with world_workers(self.data_parallel_workers):
-            return self._run_unit_body(unit, stdout=stdout)
+            result = self._run_legacy_ast_body(unit, stdout=stdout)
+        return result
+
+    def run_canonical_unit(
+        self,
+        unit: CompilationUnit,
+        *,
+        semantic_ir: ScientificSemanticIR | None = None,
+        stdout: TextIO | None = None,
+    ) -> EvalResult:
+        """Run one unit after validating its compile-owned semantic authority."""
+
+        _validate_canonical_semantic_ir(semantic_ir)
+        from ..scientific_semantic_ir import build_runtime_execution_plan
+
+        plan = build_runtime_execution_plan(semantic_ir)
+        result = self._execute_runtime_plan(plan, unit, stdout=stdout)
+        result.execution_authority = "scientific_semantic_ir"
+        result.source_id = semantic_ir.source_id
+        return result
+
+    def _execute_runtime_plan(
+        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
+    ) -> EvalResult:
+        """Execute the supported runtime-plan family.
+
+        The first family owns only state bindings followed by terminal
+        measurement.  Other families remain on the explicitly named legacy
+        migration path until their own runtime-plan contract is approved.
+        """
+        if getattr(plan, "family", None) == "evolution":
+            return self._execute_evolution_plan(plan, unit, stdout=stdout)
+        if getattr(plan, "family", None) == "control_mixture":
+            return self._execute_control_mixture_plan(plan, unit, stdout=stdout)
+        if getattr(plan, "family", None) == "pure_transformation":
+            return self._execute_pure_transformation_plan(plan, unit, stdout=stdout)
+        if getattr(plan, "family", None) == "binder":
+            return self._execute_binder_plan(plan, unit, stdout=stdout)
+        if getattr(plan, "family", None) == "callable":
+            return self._execute_callable_plan(plan, unit, stdout=stdout)
+        if getattr(plan, "family", None) == "dynamic_lane":
+            return self._execute_dynamic_lane_plan(plan, unit, stdout=stdout)
+        if self._is_first_runtime_family(unit, plan):
+            return self._execute_first_runtime_family(unit, stdout=stdout)
+        return self._run_legacy_ast_body(unit, stdout=stdout)
+
+    def _execute_pure_transformation_plan(
+        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
+    ) -> EvalResult:
+        """Execute canonical pure transformations before terminal Measure."""
+        self._require_runtime_plan_family(
+            plan,
+            "pure_transformation",
+            "transformations",
+        )
+        return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
+
+    def _execute_control_mixture_plan(
+        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
+    ) -> EvalResult:
+        """Execute canonical single-level control mixtures."""
+        self._require_runtime_plan_family(plan, "control_mixture", "controls")
+        return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
+
+    @staticmethod
+    def _require_runtime_plan_family(
+        plan: Any, family: str, payload_name: str
+    ) -> None:
+        """Validate one plan family before entering shared runtime mechanics."""
+        from ..scientific_semantic_ir import RuntimeExecutionPlan
+
+        if not isinstance(plan, RuntimeExecutionPlan):
+            raise KernelError(f"{family} execution requires a runtime plan")
+        if getattr(plan, "family", None) != family:
+            raise KernelError(f"runtime plan family must be {family}")
+        if not getattr(plan, payload_name, ()):
+            raise KernelError(f"{family} plan has no {payload_name} nodes")
+
+    def _execute_evolution_plan(
+        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
+    ) -> EvalResult:
+        """Execute canonical local evolution before terminal Measure."""
+        self._require_runtime_plan_family(plan, "evolution", "evolutions")
+        if not self._is_minimal_local_evolution(unit):
+            return self._run_legacy_ast_body(unit, stdout=stdout)
+        return self._execute_deferred_state_measure_plan(
+            self._evolution_runtime_unit(unit), stdout=stdout
+        )
+
+    def _execute_binder_plan(
+        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
+    ) -> EvalResult:
+        """Execute the bounded local State/Measure slice around an operator binder."""
+        self._require_runtime_plan_family(plan, "binder", "binders")
+        return self._execute_deferred_state_measure_plan(
+            self._binder_runtime_unit(unit), stdout=stdout
+        )
+
+    def _execute_callable_plan(
+        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
+    ) -> EvalResult:
+        """Execute the bounded local callable/object State/Measure slice."""
+        self._require_runtime_plan_family(plan, "callable", "callables")
+        if not self._is_deferred_callable_eligible(unit):
+            return self._run_legacy_ast_body(unit, stdout=stdout)
+        return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
+
+    def _execute_dynamic_lane_plan(
+        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
+    ) -> EvalResult:
+        """Execute dynamic lanes through the existing capability-gated path."""
+        self._require_runtime_plan_family(plan, "dynamic_lane", "dynamic_lanes")
+        return self._run_legacy_ast_body(unit, stdout=stdout)
+
+    @staticmethod
+    def _is_deferred_callable_eligible(unit: CompilationUnit) -> bool:
+        """Keep class construction on its established compatibility path."""
+        class_names = {
+            declaration.qualified_name
+            for declaration in unit.decls
+            if isinstance(declaration, ClassDecl)
+        }
+        class_short_names = {name.rsplit(".", 1)[-1] for name in class_names}
+        if unit.main is None:
+            return False
+        for statement in unit.main.body.stmts:
+            if not isinstance(statement, StateBind):
+                continue
+            expression = statement.expr
+            if not isinstance(expression, Call):
+                continue
+            callee = expression.callee
+            if isinstance(callee, Var) and callee.name in class_short_names:
+                return False
+            if isinstance(callee, Attr) and callee.name in class_short_names:
+                return False
+        return True
+
+    @staticmethod
+    def _binder_runtime_unit(unit: CompilationUnit) -> CompilationUnit:
+        """Keep compile-time operator binders out of runtime state materialization."""
+        return Evaluator._unit_without_operator_declarations(unit)
+
+    @staticmethod
+    def _unit_without_operator_declarations(unit: CompilationUnit) -> CompilationUnit:
+        """Build the runtime payload without compile-time Operator declarations."""
+        assert unit.main is not None
+        return replace(
+            unit,
+            main=replace(
+                unit.main,
+                body=replace(
+                    unit.main.body,
+                    stmts=[
+                        statement
+                        for statement in unit.main.body.stmts
+                        if not (
+                            isinstance(statement, StateBind)
+                            and statement.ty is not None
+                            and statement.ty.name == "Operator"
+                        )
+                    ],
+                ),
+            ),
+        )
+
+    @staticmethod
+    def _evolution_runtime_unit(unit: CompilationUnit) -> CompilationUnit:
+        """Keep compile-time Operator declarations out of runtime bind steps."""
+        return Evaluator._unit_without_operator_declarations(unit)
+
+    @staticmethod
+    def _is_minimal_local_evolution(unit: CompilationUnit) -> bool:
+        """Keep Operator/Hamiltonian setup migration bounded to the first slice."""
+        if unit.main is None:
+            return False
+        evolution_count = 0
+        for statement in unit.main.body.stmts:
+            if isinstance(statement, Measure):
+                continue
+            if not isinstance(statement, StateBind):
+                return False
+            if statement.ty is not None and statement.ty.name == "Operator":
+                if not isinstance(statement.expr, OpPauli) and not Evaluator._explicit_propagator(statement.expr):
+                    return False
+                continue
+            if isinstance(statement.expr, EvolveExpr):
+                evolution_count += 1
+                continue
+            return False
+        return evolution_count == 1
+
+    @staticmethod
+    def _is_first_runtime_family(unit: CompilationUnit, plan: Any) -> bool:
+        """Return whether ``unit`` is fully covered by the first plan family."""
+        from ..scientific_semantic_ir import RuntimeExecutionPlan
+
+        if not isinstance(plan, RuntimeExecutionPlan):
+            return False
+        if unit.main is None:
+            return False
+        statements = unit.main.body.stmts
+        if not Evaluator._main_deferred_eligible(statements):
+            return False
+        plan_kinds = {node.kind for node in plan.nodes}
+        return "StateBind" in plan_kinds and "Measure" in plan_kinds
+
+    def _execute_first_runtime_family(
+        self, unit: CompilationUnit, *, stdout: TextIO | None = None
+    ) -> EvalResult:
+        """Execute the first State/Measure family through shared mechanics."""
+        return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
+
+    def _execute_deferred_state_measure_plan(
+        self, unit: CompilationUnit, *, stdout: TextIO | None = None
+    ) -> EvalResult:
+        """Run approved deferred State/Measure mechanics without dispatch.
+
+        The statement list is used only as the syntax payload associated with
+        the already-validated plan family.  Meaning, family eligibility, and
+        authority come from ``RuntimeExecutionPlan`` and its semantic IR.
+        """
+        self._prepare_first_family_context(unit)
+        inspect_stream = self.inspect_sink if self.inspect_sink is not None else stdout
+        inspect_out: MeasureSinkPort | None = (
+            TextIOMeasureSinkAdapter(inspect_stream)
+            if inspect_stream is not None
+            else None
+        )
+        stmts = unit.main.body.stmts
+        logs: list[str] = []
+        joint, measure_result, measurement_kind, deferred_binds_applied = (
+            self._run_deferred_state_binds(
+                Joint.unit(),
+                stmts,
+                logs=logs,
+                inspect_out=inspect_out,
+                stdout=stdout,
+                interproc_trace=self._main_interproc_trace_eligible(stmts),
+            )
+        )
+        return EvalResult(
+            joint=joint,
+            measure=measure_result,
+            rng_calls_before_measure=self._rng_calls_before_measure,
+            logs=logs,
+            mixed_state_measured=self.mixed_state_measured,
+            execution_lane=self.execution_lane,
+            measurement_kind=measurement_kind,
+            deferred_pushforward=True,
+            deferred_binds_applied=deferred_binds_applied,
+            last_algebraic_fusion=self.last_algebraic_fusion,
+            last_poly_fusion=self.last_poly_fusion,
+            data_parallel_workers=self.data_parallel_workers,
+            dynamic_outcomes_confirmed=self._dynamic_outcomes_confirmed,
+            evolution_provenance=self.evolution_provenance,
+        )
+
+    def _prepare_first_family_context(self, unit: CompilationUnit) -> None:
+        """Initialize only the evaluator context needed by State/Measure."""
+        from ..stdlib.prelude import PRELUDE_CONSTANTS
+
+        self.funs = {}
+        self.classes = {}
+        self.enums = {}
+        self.structs = {}
+        self.objects = {}
+        self.mixed_states = {}
+        self.ket_labels = {}
+        self.povms = {}
+        self.static_register_sizes = {}
+        self.operator_spaces = {}
+        self.mixed_state_measured = False
+        self.execution_lane = None
+        self._dynamic_outcomes_confirmed = True
+        self.evolution_provenance = None
+        self._this = None
+        self._unit = unit
+        self.operators = {}
+        self._compiled_operator_cache = {}
+        self.scalars = dict(PRELUDE_CONSTANTS)
+        self.scalar_units = {}
+        self._frame_units = {}
+        self._resolved_host_arrays = {}
+        for statement in unit.main.body.stmts if unit.main is not None else ():
+            if (
+                isinstance(statement, StateBind)
+                and statement.ty is not None
+                and statement.ty.name == "Operator"
+                and len(statement.names) == 1
+            ):
+                if isinstance(statement.expr, OpPauli):
+                    self.operators[statement.names[0]] = statement.expr
+                else:
+                    propagator = self._explicit_propagator(statement.expr)
+                    if propagator is not None:
+                        self.operators[statement.names[0]] = propagator
+        for declaration in unit.decls:
+            if isinstance(declaration, FunDecl) and declaration.name != "main":
+                self.funs[declaration.qualified_name] = declaration
+                self.funs[declaration.name] = declaration
+            elif isinstance(declaration, ClassDecl):
+                self.classes[declaration.qualified_name] = declaration
+                self.classes[declaration.name] = declaration
+            elif isinstance(declaration, EnumDecl):
+                self.enums[declaration.qualified_name] = declaration
+                self.enums[declaration.name] = declaration
+            elif isinstance(declaration, StructDecl):
+                self.structs[declaration.qualified_name] = declaration
+                self.structs[declaration.name] = declaration
 
     def _resolve_host_coefficient_arrays(self, unit: CompilationUnit) -> dict[str, Any]:
         """Wire HostInputPort into the ADR 0119 coefficient-tensor path
@@ -339,7 +684,7 @@ class Evaluator:
             raise KernelDiagnosticError(first["code"], first["message"])
         return arrays
 
-    def _run_unit_body(
+    def _run_legacy_ast_body(
         self, unit: CompilationUnit, *, stdout: TextIO | None = None
     ) -> EvalResult:
         joint = Joint.unit()
@@ -3022,6 +3367,13 @@ class Evaluator:
         while len(result) > 1 and abs(result[-1]) < 1e-15:
             result.pop()
         return result
+
+    def _run_unit_body(
+        self, unit: CompilationUnit, *, stdout: TextIO | None = None
+    ) -> EvalResult:
+        """Compatibility name for internal tests; canonical paths do not call it."""
+
+        return self._run_legacy_ast_body(unit, stdout=stdout)
 
     @staticmethod
     def _mul_poly(a: list[float], b: list[float]) -> list[float]:

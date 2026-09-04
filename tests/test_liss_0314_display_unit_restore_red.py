@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -35,7 +37,7 @@ def test_lhs_g_plus_kg_restores_g() -> None:
         d.get("code", "") for d in compiled.diagnostics
     }
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["a"] - 1001.0) < 1e-9
     assert ev.scalar_units.get("a") == "g"
 
@@ -52,7 +54,7 @@ def test_lhs_kg_plus_g_stays_kg() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["a"] - 1.001) < 1e-12
     assert ev.scalar_units.get("a") == "kg"
 
@@ -69,7 +71,7 @@ def test_lhs_f_plus_c_restores_f() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     # 32°F + 0°C in K → 546.3 K → restore to F
     expected = from_canonical_magnitude(546.3, "F")
     assert abs(ev.scalars["t"] - expected) < 1e-9

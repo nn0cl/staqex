@@ -9,6 +9,7 @@ from pathlib import Path
 from harness import AssertionFailure, as_main, assertNormEquals, assertSuperposition
 from harness.report import CaseResult
 from harness.state import State
+from harness.canonical_execution import run_canonical
 
 _REPO = Path(__file__).resolve().parents[3]
 if str(_REPO) not in sys.path:
@@ -29,7 +30,7 @@ def run() -> list[CaseResult]:
         if compiled.unit is None:
             raise AssertionFailure("PARSE_ERROR", str(compiled.diagnostics))
         ev = Evaluator(seed=0)
-        result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+        result = run_canonical(compiled, ev, stdout=io.StringIO())
         marg = result.joint.marginal("y")
         st = State(marg, payload_type=int)
         assertNormEquals(st, 1.0)
@@ -71,7 +72,7 @@ Measure z
 """)
         compiled = compile_source(src)
         ev = Evaluator(seed=0)
-        result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+        result = run_canonical(compiled, ev, stdout=io.StringIO())
         st = State(result.joint.marginal("z"), payload_type=int)
         assertNormEquals(st, 1.0)
         assertSuperposition(st, {10: 0.5, 20: 0.5})
@@ -108,7 +109,7 @@ Measure y
             raise AssertionFailure("PARSE_ERROR", str(compiled.diagnostics))
         buf = io.StringIO()
         ev = Evaluator(seed=0)
-        result = ev.run_unit(compiled.unit, stdout=buf)
+        result = run_canonical(compiled, ev, stdout=buf)
         if not result.joint.is_vacuum():
             raise AssertionFailure("NOT_VACUUM", f"joint={result.joint.support_rows()}")
         if result.measure is None or not result.measure.vacuum:
@@ -145,7 +146,7 @@ Measure y
 """)
         compiled = compile_source(src)
         ev = Evaluator(seed=0)
-        result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+        result = run_canonical(compiled, ev, stdout=io.StringIO())
         st = State(result.joint.marginal("y"), payload_type=int)
         assertSuperposition(st, {0: 0.5, 10: 0.5})
         out.append(
@@ -179,7 +180,7 @@ Measure z
 """)
         compiled = compile_source(src)
         ev = Evaluator(seed=0)
-        result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+        result = run_canonical(compiled, ev, stdout=io.StringIO())
         st = State(result.joint.marginal("z"), payload_type=int)
         assertNormEquals(st, 1.0)
         assertSuperposition(st, {1: 0.5, 2: 0.5})

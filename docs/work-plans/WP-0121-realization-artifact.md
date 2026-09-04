@@ -2,11 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Status | **complete — bounded finite realization and executable artifact release slice** |
+| Status | **complete — finite artifact contract and resource preflight evidence synchronized** |
 | Type | feature/release work plan |
 | Size | L |
 | Parent | [WP-0119](WP-0119-real-qpu-readiness-roadmap.md) |
-| Issues | LISS-0458, with downstream acceptance evidence from LISS-0459–0462 |
+| Issues | LISS-0458 |
 | Depends on | WP-0120 |
 | Blocks | WP-0122, WP-0123 |
 | Canonical authority | ADR 0210–0213; ideal-expression/realization boundary specification |
@@ -59,10 +59,12 @@ matrix.
 ## LISS-0458 closeout synchronization
 
 LISS-0458 is complete for the bounded finite realization/artifact contract
-slice. The downstream resource-preflight, route/schedule, static-QASM, and
-dynamic-QASM acceptance evidence is complete in LISS-0459–0462. The release
-slice is therefore closed without adding provider, credential, routing, or
-live-QPU behavior to this WP.
+slice. The resource-preflight and budget-overflow acceptance gap is covered by
+the existing provider-neutral LISS-0459 target preflight and LISS-0451 QPU
+rejection contracts; no new artifact API or budget DTO is required. Cross-
+consumer evidence confirms that rejection occurs before allocation and that
+the artifact remains absent. No provider, credential, routing, or live QPU
+work is implied.
 
 ## Risks / stop conditions
 
@@ -87,6 +89,20 @@ implicit, or provider payloads leak into the provider-neutral contract.
 
 ## Completion review
 
-- Completion record: [2026-08-30 completion review](../collaboration/reviews/2026-08-30-wp-0121-completion-review.md)
-- LISS-0458–0462 bounded contract suites: **22 passed**.
-- Process review: no operating-contract deviation or operational problem found.
+The WP-0121 release exit was re-read against the acceptance specification,
+LISS-0458 artifact contract, LISS-0459 target preflight, LISS-0451 rejection
+contract, and their deterministic tests. The remaining resource/budget gap is
+closed by existing provider-neutral boundaries rather than by coupling the
+artifact module to simulator or provider configuration.
+
+Verification: **18 passed** across LISS-0458, LISS-0459, LISS-0451, and local
+resource execution wiring; `git diff --check` passed.
+
+Same-context review found no blocker. Isolation was `same_context`, which is
+weaker than `separate_context`. Provider SDK, credentials, routing, and live
+execution remain outside this WP.
+
+Process review: no operating-contract deviation or operational problem found.
+
+WP-0121 is complete. WP-0122 target compilation and later provider/live-QPU
+work remain separately tracked.

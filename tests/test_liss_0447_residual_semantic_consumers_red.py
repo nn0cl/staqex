@@ -15,6 +15,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 import compiler.staqex.backend.qasm.emitter as emitter_module
+import compiler.staqex.backend.qasm.lower as lower_module
 from compiler.staqex.algorithm_plan_ir import ConsumerProjection, project_algorithm_plan
 from compiler.staqex.backend.qasm import emit_openqasm3
 from compiler.staqex.codegen_qasm import OpenQASM3Generator
@@ -154,7 +155,7 @@ def test_ordinary_qasm_canonical_fixture_never_calls_ast_fallback(monkeypatch) -
     def fail_if_called(*_args, **_kwargs):
         raise AssertionError("ordinary canonical QASM must not call AST fallback")
 
-    monkeypatch.setattr(emitter_module, "lower_unit_to_circuit", fail_if_called)
+    monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
     emitted = emit_openqasm3(
         compiled.unit,
         semantic_ir=compiled.scientific_semantic_ir,

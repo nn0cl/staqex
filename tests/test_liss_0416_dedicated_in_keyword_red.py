@@ -10,6 +10,8 @@ until LISS-0420 lands.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -51,7 +53,7 @@ def test_forEach_lowercase_in_is_unaffected() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
 
 
@@ -74,5 +76,5 @@ def test_operator_dsl_sum_binder_lowercase_in_is_unaffected() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None

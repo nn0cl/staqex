@@ -16,6 +16,8 @@ docs/issues/LISS-0336-Evolve-real-unit-canonicalization-bugs.md.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import cmath
 import io
 import sys
@@ -63,7 +65,7 @@ pub fn main() -> Unit {
 """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit, stdout=io.StringIO())
+    result = run_canonical(compiled, Evaluator(seed=0), stdout=io.StringIO())
 
     # H|0> = e * Z|0> = e|0> (Z eigenvalue +1 on |0>), so the correct
     # evolved amplitude is exp(-i * e * t_seconds / hbar) with

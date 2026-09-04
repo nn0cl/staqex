@@ -1,0 +1,7 @@
+package projection
+
+pub fn main() -> Unit {
+    Operator H = X + Z
+    State psi = |0>
+    Measure psi
+}

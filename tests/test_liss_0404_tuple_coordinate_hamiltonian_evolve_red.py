@@ -7,6 +7,8 @@ docs/issues/LISS-0404-tuple-coordinate-hamiltonian-Evolve.md.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import math
 import sys
 from pathlib import Path
@@ -56,7 +58,7 @@ def test_evolve_under_tuple_coordinate_matches_separate_coordinates_exactly() ->
     compiled = compile_source(_SOURCE_H)
     assert compiled.unit is not None, compiled.diagnostics
     evaluator = Evaluator(seed=0)
-    result = evaluator.run_unit(compiled.unit)
+    result = run_canonical(compiled, evaluator)
     assert result.measure is not None
     existing_marginal = result.measure.marginal
 
@@ -64,7 +66,7 @@ def test_evolve_under_tuple_coordinate_matches_separate_coordinates_exactly() ->
     # evolve a hand-built tuple-valued coordinate carrying the same
     # |0>|+> initial state (amp 1/sqrt(2) on (0,0) and (0,1)).
     evaluator2 = Evaluator(seed=0)
-    evaluator2.run_unit(compiled.unit)  # populate evaluator2.operators["H"]
+    run_canonical(compiled, evaluator2)  # populate evaluator2.operators["H"]
     nq, terms = _build_h_terms(evaluator2)
     assert nq == 2
 
@@ -107,7 +109,7 @@ pub fn main() -> Unit {
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
     evaluator = Evaluator(seed=0)
-    result = evaluator.run_unit(compiled.unit)
+    result = run_canonical(compiled, evaluator)
     assert result.measure is not None
     assert result.measure.vacuum is False
     assert isinstance(result.measure.value, tuple)
@@ -139,7 +141,7 @@ pub fn main() -> Unit {
     evaluator = Evaluator(seed=0)
     raised = False
     try:
-        evaluator.run_unit(compiled.unit)
+        run_canonical(compiled, evaluator)
     except KernelError:
         raised = True
     assert raised
@@ -152,7 +154,7 @@ def test_existing_separate_coordinate_evolve_is_unaffected() -> None:
     compiled = compile_source(_SOURCE_H)
     assert compiled.unit is not None, compiled.diagnostics
     evaluator = Evaluator(seed=0)
-    result = evaluator.run_unit(compiled.unit)
+    result = run_canonical(compiled, evaluator)
     assert result.measure is not None
     assert math.isclose(result.measure.marginal[0], 0.6078963648762783, rel_tol=1e-9)
     assert math.isclose(result.measure.marginal[1], 0.39210363512372154, rel_tol=1e-9)

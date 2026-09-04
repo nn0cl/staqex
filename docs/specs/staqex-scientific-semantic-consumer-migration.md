@@ -154,3 +154,285 @@ allocation, or QASM.
 
 Provider SDKs, live QPU, S02 numbers, solver families, automatic
 finiteization, and broad example redesign remain separate work.
+
+### LISS-0487 Equation DTO authority retirement
+
+`EquationNode` and `physics_equation` remain useful DTOs for module-local
+validation and diagnostics, but caller-injected or string equation payloads
+must not authorize semantic acceptance. This slice defines the negative
+authority boundary: canonical source-derived nodes remain authoritative, while
+Equation DTOs may be accepted only as explicitly typed diagnostic inputs.
+
+Phase 1 must prove caller-only DTO rejection, source identity/provenance
+preservation, and no finite artifact or execution authorization from an
+injected equation. Phase 2 may add only the minimum validation/adapter guard.
+Numerical equation solving, physics IR replacement, provider/QPU, and S02
+migration are excluded.
+
+### LISS-0488 Physics IR canonical projection migration
+
+Physics IR is a projection DTO and is not a source-semantic authority. The
+compile-owned `ScientificSemanticIR` object must be passed explicitly to the
+Physics projection; the projection must not rebuild meaning from AST, HIR,
+string equations, or caller-injected Equation DTOs. The projection preserves
+canonical node identity, ordered structure, role/lane, type, dimensions,
+exactness, intent, and provenance. A required field that cannot be preserved
+causes a named diagnostic and no partial Physics artifact.
+
+Equation DTOs remain available only for the explicitly typed diagnostic
+compatibility role defined by LISS-0487. They cannot authorize execution,
+finiteization, allocation, QPU artifacts, or implicit `Realize`. The projection
+is deterministic for a given semantic snapshot and does not parse, evaluate,
+solve, allocate, call providers, or create finite plans.
+
+Phase 1 Red must cover canonical object identity, node/field conservation,
+caller-authority rejection, lossy-projection no-artifact behavior, exact versus
+finite boundary, diagnostic-only Equation metadata, and single-build identity.
+Phase 2 is limited to compile-owned projection wiring. Phase 3 may retire the
+old HIR-authority path only after no-bypass and unchanged-neighbor evidence.
+Provider/live QPU, Rust, S02, solver, and broad `symbolic_ir` migration remain
+separate work.
+
+### LISS-0489 Symbolic IR canonical inspection migration
+
+Exact/symbolic inspection must consume the compile-owned
+`ScientificSemanticIR` through `SemanticInspectionResult`. The existing
+`symbolic_ir` dictionary may remain only as a derived compatibility view; its
+direct AST walk may not be a parallel semantic authority or rebuild canonical
+meaning. Canonical source node IDs, structure, role lanes, type/dimensions,
+exactness, intent, and provenance must be preserved or rejected explicitly.
+The legacy `resolved.source_node_ids` field remains stable for existing
+dictionary consumers; canonical IDs are exposed separately as
+`resolved.canonical_source_node_ids` until those consumers migrate.
+
+Inspection without source-visible `Realize` creates no finite plan, gates,
+allocation, or collapse record. Unresolved meaning produces no partial
+executable artifact while retaining diagnostic source IDs. Phase 1 covers
+authority/no-bypass, binder/indexed-operator provenance, exact/symbolic
+no-allocation, unresolved fail-closed behavior, and one-build identity. Phase 2
+only wires the canonical inspection into current local compatibility surfaces;
+Phase 3 may retire the direct AST walk after regression and no-bypass evidence.
+
+### LISS-0490 Evaluator canonical execution boundary
+
+The runtime evaluator must receive the compile-owned `ScientificSemanticIR`
+through an explicit execution boundary. AST nodes may remain temporary
+mechanics inside an execution adapter only when they match canonical source
+node identity, role/lane, and provenance. AST-only execution is rejected
+before state mutation, measurement, allocation, or result publication.
+
+`State<T>` remains non-collapsed through pure evaluation and inspection;
+terminal `Measure` remains the only collapse/sink boundary. Exact/symbolic
+execution without source-visible `Realize` creates no finite artifact or
+allocation. `RngPort` and `MeasureSinkPort` remain injected ports, and no
+provider SDK or network adapter is part of this migration. Phase 1 covers
+canonical identity/no-bypass, State/Measure transitions, no hidden
+finiteization, port effects, and deterministic provenance; Phase 2 wires one
+local path only.
+
+### LISS-0491 Evaluator legacy `run_unit()` retirement
+
+The legacy `Evaluator.run_unit(CompilationUnit)` entry is a compatibility-only
+execution lane. Canonical local execution enters through
+`run_canonical_unit(..., semantic_ir=...)`, where the compile-owned
+`ScientificSemanticIR` supplies execution eligibility, source identity, and
+provenance. Existing evaluator mechanics may remain behind that boundary
+temporarily.
+
+Retirement is staged: classify all direct and indirect callers; migrate
+delivery callers (`host.py`, `run.py`, and CLI); migrate verification and
+feature-test families; expose an observable compatibility/deprecation
+classification; then remove the legacy entry only after the production caller
+inventory is empty, no-bypass tests pass, State/Measure and injected-port
+regressions remain green, and full local regression is green. A new production
+direct caller must fail the migration guard. Canonical/source-provenance
+divergence is a rollback trigger that keeps the compatibility lane available.
+
+This migration does not define a release policy, provider/QPU/AWS integration,
+Rust implementation, numerical solver, or new port contract. The exact
+deprecation mechanism and final removal release remain Architecture decisions;
+no implementation or API removal is authorized by this section alone.
+
+### LISS-0492 Complete evaluator `run_unit()` removal
+
+After LISS-0491, `Evaluator.run_unit()` is no longer used by production
+delivery code, but remains referenced by local tests and specification
+verification suites. Complete removal requires migrating those callers in
+bounded families to `run_canonical_unit(..., semantic_ir=...)`, with the unit
+and semantic IR derived from the same compile result. Tests may use a private
+helper only when it obtains and passes that compile-owned IR; they may not
+fabricate authority or preserve the public compatibility API.
+
+The removal gate is: no callable public `run_unit`, no executable reference in
+production or tests, canonical source identity and authority on every local
+execution result, unchanged State/Measure and injected-port behavior, and
+green targeted plus full local regression. Any provenance or scientific
+behavior divergence retains the compatibility implementation and stops the
+removal. This section does not choose public versioning, packaging, provider
+integration, AWS/QPU behavior, Rust implementation, or solver policy.
+
+The LISS-0492 removal gate is satisfied: the public `run_unit()` entry and
+compatibility-only result metadata are removed, all local executable callers
+use the canonical semantic IR entry, and targeted/API regressions plus Spec
+Verification pass. The evaluator's internal AST mechanics remain an explicit
+separate future migration candidate.
+
+### LISS-0493 Evaluator internal AST mechanics retirement
+
+The public evaluator entry is canonical-only after LISS-0492, but its internal
+execution still dispatches directly over `CompilationUnit` and AST nodes. This
+is an implementation concern, not a second language authority, yet it prevents
+the runtime from consuming the canonical semantic structure directly.
+
+Retirement must therefore use an internal, non-public runtime execution plan
+lowered from `ScientificSemanticIR`. The plan preserves canonical source node
+identity, provenance, role/lane, exactness, and realization status. AST objects
+may remain temporary source metadata/mechanics during migration, but may not
+decide scientific meaning, execution eligibility, or finiteization.
+
+Migration proceeds by reviewed semantic families: state binding and terminal
+measurement first; then pure transformations, control, evolution, binders,
+functions/classes, and dynamic lanes. The retirement gate is no AST top-level
+dispatch reachable from canonical execution, source/provenance conservation for
+all migrated plan nodes, unchanged State/Measure and port behavior, and green
+full local regression. This work does not select a provider, QPU/AWS path, Rust
+implementation, solver, serialization format, or public runtime API.
+
+#### LISS-0493 Phase 3 first-family result
+
+The first runtime-plan family is now implemented for a main body consisting of
+state bindings followed by terminal `Measure`. Its dedicated executor consumes
+the canonical plan boundary and reuses only the existing state-binding and
+terminal-measure primitives. Canonical execution does not enter
+`_run_legacy_ast_body` for this family; unsupported families retain that
+explicit migration fallback until their own reviewed plan contract exists.
+
+The result preserves terminal collapse, RNG accounting, measurement-sink
+effects, and `EvalResult` source/authority evidence. The next migration unit is
+the pure-transformation family and requires its own Red contract and approval.
+
+#### LISS-0494 Pure-transformation runtime-plan family
+
+The next evaluator migration unit is the pure-transformation family: a
+non-destructive State pushforward, including a closed unary transformation
+chain, followed by terminal `Measure`. Its internal plan must classify the
+family from canonical semantic structure and conserve transformation input and
+output source node IDs, authority, and provenance. Canonical execution must
+use a dedicated plan executor for this family and must not enter the legacy AST
+body. `when`, `evolve`, operator/binder lowering, callable object mechanics,
+and dynamic lanes remain separate migration units.
+
+#### LISS-0495 Control-mixture runtime-plan family
+
+The next control migration unit is a single-level `Mix`/`when` family driven
+by an unmeasured State. Its canonical plan must preserve the control source
+node ID, branch rules, authority, and provenance, and must retain eligible
+branches in the joint until terminal `Measure`. Nested `Mix` and dynamic-lane
+control remain separate migration units.
+
+#### LISS-0496 Evolution runtime-plan family
+
+The next evolution migration unit is explicit local `Evolve` execution. Its
+canonical plan must conserve evolved State input/output source IDs, Hamiltonian
+and duration evidence, authority, provenance, and realization status. Local
+exact evolution must not imply target finiteization or early collapse.
+Suzuki/QASM target realization, continuous/open-system evolution, and solver
+policy remain separate consumers.
+
+#### LISS-0497 Binder runtime-plan family
+
+The next evaluator migration unit is the binder family represented by
+canonical `OpBinder` nodes, including `Sigma` and `Pi`. Its runtime plan must
+preserve the binder source identity, domain and body source identities, output
+identity, authority, provenance, and realization status. Binder projection is
+semantic-structure consumption only: it must not silently enumerate an
+unbounded or symbolic domain, allocate a finite target, or imply `Realize`.
+Canonical execution will later use a dedicated binder executor for the bounded
+local operator path. Classical binder evaluation, multi-binder constraints,
+symbolic domains, target/QASM finite lowering, and callable/dynamic binder
+forms remain separate migration units.
+
+LISS-0497 Phase 2 adds the internal `RuntimeBinderNode` projection and a
+bounded local evaluator route. The projection preserves canonical source
+identity and provenance while compile-time operator binders are excluded from
+deferred State/Measure materialization. No finite domain enumeration or target
+artifact is created by this route.
+
+LISS-0498 Phase 2 adds the internal `RuntimeCallableNode` projection and a
+bounded local evaluator route. The route preserves declaration, invocation,
+receiver, and output source evidence while keeping target realization and
+dynamic/cross-module dispatch outside this migration unit. Class construction
+continues through the existing compatibility path until its mechanics receive
+their own dedicated plan contract; this prevents a partial deferred executor
+from changing established namespace/class behavior.
+
+#### LISS-0499 Dynamic-lane runtime-plan family
+
+The next evaluator migration unit is the dynamic lane: a dynamic region,
+mid-circuit controller measurement, branch control, wire lifecycle, and
+physical-outcome confirmation. Its runtime plan must preserve region,
+controller, control-branch, and wire source identities, authority, provenance,
+and execution status. The dedicated route must keep dynamic measurement and
+feed-forward distinct from static mixture control and must not allocate a
+target or imply `Realize`. Provider capability negotiation, OpenQASM emission,
+and real-QPU execution remain separate consumers.
+
+LISS-0499 Phase 2 adds the internal `RuntimeDynamicLaneNode` projection and a
+dedicated capability-gated evaluator entry. The existing dynamic helper is
+retained as the compatibility payload until provider-neutral dynamic mechanics
+receive their own migration contract; canonical planning itself does not
+select a provider or allocate a target.
+
+#### LISS-0500 Symbolic legacy-builder retirement
+
+The next consumer migration retires the direct AST walk in
+`_build_symbolic_ir_legacy` from the canonical compatibility-view path. The
+legacy dictionary may remain as an explicit compatibility API, but canonical
+inspection must derive identity, structure, provenance, and no-allocation
+evidence from `ScientificSemanticIR` without rebuilding meaning from AST.
+Explicit legacy callers, unresolved semantics, and finite target realization
+remain separately gated and must not be silently widened by this retirement.
+
+LISS-0500 Phase 2 now builds the compatibility dictionary from canonical IR;
+source-derived operator aliases retain the stable dictionary shape without
+re-entering the direct AST builder. The explicit legacy API remains isolated
+until its own callers and projection families are migrated.
+
+#### LISS-0501 QASM fallback retirement proof
+
+The next QASM migration retires the direct AST fallback branch from the
+canonical `emit_unit()` entry. Canonical measure-only input already emits its
+source-derived Measure projection; the remaining proof must ensure the entry
+contains no direct `lower_unit_to_circuit()` call. The explicit lowerer symbol
+remains available only for separately approved compatibility callers.
+
+#### LISS-0502 QASM lowerer export retirement
+
+The next cleanup removes the legacy lowerer re-export from the QASM emitter
+module. Canonical callers already use QPU IR; explicit compatibility callers
+must import `lower_unit_to_circuit` from its owning lowerer module. This is an
+API-boundary cleanup only and does not delete the lowerer implementation or
+change provider/QPU behavior.
+
+#### LISS-0503 Unsupported evolution QASM rejection
+
+Canonical QASM emission must fail closed when `ScientificSemanticIR` contains
+an explicit evolution but `QpuProgram` contains no executable canonical
+instructions. The rejection code is `E_QPU_CANONICAL_PROVENANCE`; the result
+must have empty QASM, no gates, and no allocation side effect. This boundary
+is provider-neutral and must not infer finite evolution or invoke the legacy
+lowerer. Supported finite canonical projections remain on the existing QPU
+realization path. Target-specific evolution realization is a separate future
+consumer and is not part of this issue.
+
+#### LISS-0498 Callable/object runtime-plan family
+
+The next evaluator migration unit is callable and object mechanics: function
+declarations, class declarations, method invocation, receiver identity, and
+return flow. Its runtime plan must preserve declaration and invocation source
+IDs, receiver identity, output identity, authority, provenance, and execution
+status. Canonical execution will later route this family through a dedicated
+plan executor without allowing AST dispatch to choose scientific meaning.
+Operator binders, dynamic lanes, recursive/cross-module calls, and target
+realization remain separate contracts; callable planning must not allocate a
+finite target or imply `Realize`.

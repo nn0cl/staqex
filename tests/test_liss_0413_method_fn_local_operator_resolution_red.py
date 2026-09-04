@@ -15,6 +15,8 @@ finding: `Evaluator._bind_method` (runtime/evaluator.py) and
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -52,7 +54,7 @@ def test_class_method_local_operator_resolves_struct_field() -> None:
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
     assert result.measure.vacuum is False
 
@@ -77,7 +79,7 @@ def test_library_fn_local_operator_resolves_struct_field() -> None:
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
     assert result.measure.vacuum is False
 
@@ -128,8 +130,8 @@ def test_class_method_local_operator_matches_equivalent_literal_value() -> None:
     assert struct_compiled.unit is not None, struct_compiled.diagnostics
     assert literal_compiled.unit is not None, literal_compiled.diagnostics
 
-    struct_result = Evaluator(seed=0).run_unit(struct_compiled.unit)
-    literal_result = Evaluator(seed=0).run_unit(literal_compiled.unit)
+    struct_result = run_canonical(struct_compiled, Evaluator(seed=0))
+    literal_result = run_canonical(literal_compiled, Evaluator(seed=0))
     assert struct_result.measure is not None
     assert literal_result.measure is not None
     assert struct_result.measure.marginal == literal_result.measure.marginal
@@ -157,5 +159,5 @@ def test_class_method_local_operator_with_literal_coefficient_still_works() -> N
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None

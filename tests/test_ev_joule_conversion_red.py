@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -53,7 +55,7 @@ def test_ev_to_j_and_reverse() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["e"] - _E) < 1e-30
     assert abs(ev.scalars["raw"] - 1.0) < 1e-12
     assert abs(ev.scalars["back"] - 1.0) < 1e-12

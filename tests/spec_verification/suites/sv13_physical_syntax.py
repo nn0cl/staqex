@@ -9,6 +9,7 @@ from pathlib import Path
 from harness import AssertionFailure, as_main, assertNormEquals, assertSuperposition
 from harness.report import CaseResult
 from harness.state import State
+from harness.canonical_execution import run_canonical
 
 _REPO = Path(__file__).resolve().parents[3]
 if str(_REPO) not in sys.path:
@@ -72,7 +73,7 @@ def run() -> list[CaseResult]:
     try:
         compiled = compile_source(EVOLVE_HO)
         ev = Evaluator(seed=0)
-        result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+        result = run_canonical(compiled, ev, stdout=io.StringIO())
         mx = result.joint.marginal("x")
         mp = result.joint.marginal("p")
         st_x = State({round(k, 10): v for k, v in mx.items()}, payload_type=float)
@@ -125,7 +126,7 @@ Measure x
 """)
         compiled = compile_source(src)
         ev = Evaluator(seed=0)
-        result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+        result = run_canonical(compiled, ev, stdout=io.StringIO())
         # step1: (0.5, 1.0); step2: (0.5+0.5*1, 1-0.5*0.5)=(1.0, 0.75)
         x = list(result.joint.marginal("x").keys())[0]
         p = list(result.joint.marginal("p").keys())[0]
@@ -163,7 +164,7 @@ Measure x
             if compiled.unit is None:
                 raise AssertionFailure("PARSE_ERROR", f"{rel}: {compiled.diagnostics}")
             ev = Evaluator(seed=0)
-            ev.run_unit(compiled.unit, stdout=io.StringIO())
+            run_canonical(compiled, ev, stdout=io.StringIO())
         out.append(
             CaseResult(
                 "SV-13",

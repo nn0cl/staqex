@@ -7,6 +7,8 @@ Target: docs/issues/LISS-0424-classical-numeric-sigma.md.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -21,7 +23,7 @@ from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
 def _run(src: str):
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    return Evaluator(seed=0).run_unit(compiled.unit)
+    return run_canonical(compiled, Evaluator(seed=0))
 
 
 def test_bare_classical_sigma_sums_the_index() -> None:
@@ -63,7 +65,7 @@ def test_classical_sigma_indexes_a_tuple_valued_state_coordinate() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
     # C(3,2) = 3 of the 8 equally-weighted 3-bit patterns have exactly two
     # 1-bits.
@@ -88,7 +90,7 @@ def test_multi_binding_classical_sigma_with_guard_recurses_correctly() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     marg = result.measure.marginal
     # 000/001/010/100 -> 0 selected-pairs (4/8); 011/101/110 -> 1 (3/8);
     # 111 -> 3 (1/8). Hand-computed, not guessed.
@@ -112,7 +114,7 @@ def test_classical_sigma_rejects_pauli_atom_in_body() -> None:
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
     try:
-        Evaluator(seed=0).run_unit(compiled.unit)
+        run_canonical(compiled, Evaluator(seed=0))
         raise AssertionError("expected KernelError for Pauli atom in classical Sigma")
     except Exception as e:  # noqa: BLE001
         assert "non-classical" in str(e)

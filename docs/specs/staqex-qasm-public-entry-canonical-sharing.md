@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete — independent review COMPLETE** |
+| Status | **Accepted — Phase 3 refactor complete for the bounded local facade slice** |
 | Issue | [LISS-0446](../issues/LISS-0446-qasm-public-entry-canonical-sharing.md) |
 | WorkPlan | [WP-0109](../work-plans/WP-0109-qasm-public-entry-canonical-sharing.md) |
 | Authority | [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |
@@ -89,5 +89,5 @@ must not be resolved by rebuilding the IR in the facade.
 
 This Spec was accepted for Phase 1 Red and the user separately approved Phase
 2 Green implementation. It does not authorize technology selection, live
-submission, or a new architecture. Phase 2 implementation is complete; the
-independent review loop reached `COMPLETE`; no subsequent phase is approved.
+submission, or a new architecture. The bounded local facade slice is complete;
+dynamic QASM, CH0, live submission, and provider work remain separate.

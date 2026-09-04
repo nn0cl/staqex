@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -55,7 +57,7 @@ def test_r_to_k_f_and_c() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["k"] - 273.15) < 1e-9
     assert abs(ev.scalars["f"] - 32.0) < 1e-9
     assert abs(ev.scalars["c"] - 0.0) < 1e-9
@@ -74,7 +76,7 @@ def test_k_to_r() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["r"] - 491.67) < 1e-9
 
 

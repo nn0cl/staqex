@@ -16,6 +16,7 @@ if str(REPO) not in sys.path:
 
 import compiler.staqex.qpu_ir as qpu_ir_module
 import compiler.staqex.backend.qasm.emitter as emitter_module
+import compiler.staqex.backend.qasm.lower as lower_module
 from compiler.staqex.backend.qasm.emitter import QASM3Emitter
 from compiler.staqex.pipeline import compile_source
 
@@ -45,7 +46,7 @@ def test_unresolved_explicit_evolution_cannot_enter_qasm_ast_fallback(monkeypatc
     def fail_if_called(*_args, **_kwargs):
         raise AssertionError("unresolved canonical evolution must not enter AST lowering")
 
-    monkeypatch.setattr(emitter_module, "lower_unit_to_circuit", fail_if_called)
+    monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
     emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
 
     assert not emitted.ok

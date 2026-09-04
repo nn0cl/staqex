@@ -9,6 +9,7 @@ from pathlib import Path
 from harness import AssertionFailure, as_main, assertNormEquals, assertSuperposition
 from harness.report import CaseResult
 from harness.state import State
+from harness.canonical_execution import run_canonical
 
 _REPO = Path(__file__).resolve().parents[3]
 if str(_REPO) not in sys.path:
@@ -51,7 +52,7 @@ Measure dt
         if compiled.unit.main is None:
             raise AssertionFailure("PARSE_ERROR", "main missing")
         ev = Evaluator(seed=0)
-        result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+        result = run_canonical(compiled, ev, stdout=io.StringIO())
         marg = result.joint.marginal("dt")
         st = State(marg, payload_type=float)
         assertNormEquals(st, 1.0)

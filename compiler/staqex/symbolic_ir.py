@@ -19,6 +19,7 @@ from .ast_nodes import (
     Var,
 )
 from .kernel_literals import SECOND_QUANTIZED_FAMILIES as _SECOND_QUANTIZED_FAMILIES
+from .scientific_semantic_ir import ScientificSemanticIR, semantic_fingerprint
 
 
 def _span(value: Any) -> dict[str, int] | None:
@@ -104,8 +105,8 @@ def _second_quantized_metadata(stmt: StateBind) -> dict[str, Any]:
     }
 
 
-def build_symbolic_ir(unit: CompilationUnit) -> dict[str, Any]:
-    """Project the current compilation unit into an inspection shape."""
+def _build_symbolic_ir_legacy(unit: CompilationUnit) -> dict[str, Any]:
+    """Build the pre-canonical dictionary for compatibility only."""
     operators: dict[str, Any] = {}
     raw_exprs: dict[str, Any] = {}
     if unit.main is not None:
@@ -169,3 +170,101 @@ def build_symbolic_ir(unit: CompilationUnit) -> dict[str, Any]:
             "discretizations": discretizations,
         },
     }
+
+
+def build_symbolic_ir(unit: CompilationUnit) -> dict[str, Any]:
+    """Compatibility API for callers that explicitly request the legacy view."""
+
+    return _build_symbolic_ir_legacy(unit)
+
+
+def build_symbolic_compatibility_view(
+    semantic_ir: ScientificSemanticIR,
+    unit: CompilationUnit,
+) -> dict[str, Any]:
+    """Build the legacy-shaped inspection view from canonical meaning."""
+
+    del unit  # Compatibility shape is no longer allowed to inspect the AST.
+    view = _build_canonical_symbolic_payload(semantic_ir)
+    canonical_source_node_ids = [node.node_id for node in semantic_ir.nodes]
+    view["authority"] = {
+        "semantic_authority": semantic_ir.authority,
+        "semantic_fingerprint": semantic_fingerprint(semantic_ir),
+        "role": "derived_inspection_compatibility",
+    }
+    view["resolved"]["canonical_source_node_ids"] = canonical_source_node_ids
+    view["canonical_nodes"] = [
+        {
+            "node_id": node.node_id,
+            "kind": node.kind,
+            "children": list(node.children),
+            "role_lane": node.role_lane,
+            "type": node.type,
+            "dimensions": node.dimensions,
+            "exactness": node.exactness,
+            "intent": node.intent,
+            "source_span": {
+                "line": node.provenance.line,
+                "col": node.provenance.col,
+            },
+        }
+        for node in semantic_ir.nodes
+    ]
+    return view
+
+
+def _build_canonical_symbolic_payload(
+    semantic_ir: ScientificSemanticIR,
+) -> dict[str, Any]:
+    """Build stable compatibility fields without inspecting source AST."""
+    operators: dict[str, Any] = {}
+    operator_ids: list[str] = []
+    binder_payloads = semantic_ir.binder_lowering or {}
+    for name, source_node_id, provenance in semantic_ir.symbolic_operator_provenance:
+        payload = binder_payloads.get(name, {})
+        operator_tree = payload.get("operator_tree", {})
+        source_kind = next(
+            (node.kind for node in semantic_ir.nodes if node.node_id == source_node_id),
+            "",
+        )
+        has_binder_node = any(
+            "Binder" in node.kind or node.kind in {"Sigma", "Pi"}
+            for node in semantic_ir.nodes
+        )
+        operators[name] = {
+            "kind": "Binder"
+            if payload or "Binder" in source_kind or has_binder_node
+            else "OpExpr",
+            "node_id": f"operator:{name}",
+            "source_node_id": source_node_id,
+            "source_span": {
+                "line": dict(provenance).get("line", 0),
+                "col": dict(provenance).get("col", 0),
+            },
+            "domain": payload.get("domain"),
+            "operator_tree": operator_tree,
+        }
+        operator_ids.append(f"operator:{name}")
+    view = {
+        "kind": "SymbolicProgram",
+        "operators": operators,
+        "provenance": [
+            {
+                "pass": "source",
+                "input": "ScientificSemanticIR",
+                "output": "SymbolicProgram",
+                "output_node_ids": operator_ids,
+                "source_span": None,
+                "metadata": {"approximation": None, "mapping": None},
+            }
+        ],
+        "resolved": {
+            "kind": "ResolvedProgram",
+            "source_node_ids": operator_ids,
+            "status": "unresolved",
+            "approximations": [],
+            "mappings": [],
+            "discretizations": [],
+        },
+    }
+    return view

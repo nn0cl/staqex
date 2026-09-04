@@ -7,6 +7,8 @@ Target: docs/issues/LISS-0431-project-explicit-renorm.md.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -21,7 +23,7 @@ from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
 def _run(src: str):
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    return Evaluator(seed=0).run_unit(compiled.unit)
+    return run_canonical(compiled, Evaluator(seed=0))
 
 
 def test_basis_label_project_no_longer_renormalizes() -> None:
@@ -107,7 +109,7 @@ def test_project_onto_general_operator_rejects_non_diagonal() -> None:
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
     try:
-        Evaluator(seed=0).run_unit(compiled.unit)
+        run_canonical(compiled, Evaluator(seed=0))
         raise AssertionError("expected KernelError for a non-Set-domain Operator target")
     except Exception:  # noqa: BLE001
         pass

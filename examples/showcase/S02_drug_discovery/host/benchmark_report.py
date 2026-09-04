@@ -218,7 +218,10 @@ def run_shots(shots: int, base_seed: int) -> list[ShotOutcome]:
     for i in range(shots):
         seed = base_seed + i
         evaluator = Evaluator(seed=seed, host_input=host_input)
-        result = evaluator.run_unit(compiled.unit)
+        result = evaluator.run_canonical_unit(
+            compiled.unit,
+            semantic_ir=compiled.scientific_semantic_ir,
+        )
         if result.measure is None or result.measure.vacuum:
             outcomes.append(ShotOutcome(seed=seed, selection=None, vacuum=True))
         else:

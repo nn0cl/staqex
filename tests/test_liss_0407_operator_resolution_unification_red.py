@@ -12,6 +12,8 @@ Operator-returning function call inside a larger Operator expression.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -50,9 +52,9 @@ def test_float_array_param_threaded_into_binder() -> None:
     assert compiled.unit is not None, compiled.diagnostics
 
     ev_small = Evaluator(seed=0, host_input=MappingHostInputAdapter({"arr": [0.1, 0.1]}))
-    result_small = ev_small.run_unit(compiled.unit)
+    result_small = run_canonical(compiled, ev_small)
     ev_large = Evaluator(seed=0, host_input=MappingHostInputAdapter({"arr": [5.0, 5.0]}))
-    result_large = ev_large.run_unit(compiled.unit)
+    result_large = run_canonical(compiled, ev_large)
 
     assert result_small.measure is not None
     assert result_large.measure is not None
@@ -82,7 +84,7 @@ def test_struct_field_indirection_through_named_operator_variable() -> None:
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
     assert result.measure.vacuum is False
 
@@ -110,7 +112,7 @@ def test_nested_operator_returning_call_inside_larger_expression() -> None:
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
     assert result.measure.vacuum is False
 
@@ -141,7 +143,7 @@ def test_missing_binder_array_fails_closed_with_a_clear_diagnostic() -> None:
     assert compiled.unit is not None, compiled.diagnostics
     raised = None
     try:
-        Evaluator(seed=0, host_input=MappingHostInputAdapter({})).run_unit(compiled.unit)
+        run_canonical(compiled, Evaluator(seed=0, host_input=MappingHostInputAdapter({})))
     except KernelError as exc:
         raised = exc
     assert raised is not None

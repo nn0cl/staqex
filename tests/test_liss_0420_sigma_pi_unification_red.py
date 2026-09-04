@@ -6,6 +6,8 @@ Target: docs/issues/LISS-0420-sigma-pi-unification.md.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -34,7 +36,7 @@ def test_bare_ket_sum_is_literal_and_unnormalized() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
     total = sum(result.measure.marginal.values())
     assert abs(total - 16.0) < 1e-9
@@ -68,8 +70,8 @@ def test_coefficient_scaled_ket_sum_matches_prepare_selection_exactly() -> None:
     c2 = compile_source(src_prepare)
     assert c1.unit is not None, c1.diagnostics
     assert c2.unit is not None, c2.diagnostics
-    r1 = Evaluator(seed=0).run_unit(c1.unit)
-    r2 = Evaluator(seed=0).run_unit(c2.unit)
+    r1 = run_canonical(c1, Evaluator(seed=0))
+    r2 = run_canonical(c2, Evaluator(seed=0))
     assert r1.measure.marginal == r2.measure.marginal
 
 
@@ -91,7 +93,7 @@ def test_external_coefficient_applies_literally_as_amplitude_scale() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     total = sum(result.measure.marginal.values())
     assert abs(total - 1.0) < 1e-9
     for p in result.measure.marginal.values():
@@ -115,7 +117,7 @@ def test_operator_sigma_binder_still_works_with_In() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
 
 
@@ -133,7 +135,7 @@ def test_operator_pi_binder_still_works() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
 
 
@@ -153,7 +155,7 @@ def test_multi_binding_operator_sigma_with_guard_still_works() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
 
 

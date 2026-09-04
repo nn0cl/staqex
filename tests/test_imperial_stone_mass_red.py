@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -56,7 +58,7 @@ def test_st_lb_oz_kg_conversions() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["lb"] - 14.0) < 1e-12
     assert abs(ev.scalars["oz"] - 224.0) < 1e-12
     assert abs(ev.scalars["kg"] - _ST_KG) < 1e-12

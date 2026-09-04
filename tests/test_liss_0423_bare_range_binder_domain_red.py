@@ -6,6 +6,8 @@ Target: docs/issues/LISS-0423-bare-range-binder-domains.md.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -31,7 +33,7 @@ def test_bare_range_binder_domain_works() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
 
 
@@ -51,7 +53,7 @@ def test_bare_range_multi_binding_with_guard_works() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
 
 

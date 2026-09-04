@@ -1,0 +1,211 @@
+# LISS-0489: Symbolic IR canonical inspection migration
+
+| Field | Value |
+|---|---|
+| Status | **done — canonical symbolic inspection migration slice complete** |
+| Phase | phase-3-refactor-complete |
+| Parent | [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
+| Related Issues | [LISS-0488](LISS-0488-physics-ir-canonical-projection.md), [LISS-0447](LISS-0447-residual-semantic-consumer-reconciliation.md) |
+| Design authority | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md#liss-0489-symbolic-ir-canonical-inspection-migration) |
+| Existing authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#acceptance-corpus-and-artifact-rules), ADR 0211 |
+| Architecture approval | Approved by Adjudicator 2026-08-31; compatibility split approved 2026-08-31 |
+| Implementation permission | Phase 3 refactor and same-context review completed |
+| Next approval | None for this bounded slice; direct legacy-builder retirement remains separate |
+
+## Design intake
+
+- Scope: replace the non-explicit `symbolic_ir` AST walk used for inspection
+  with the compile-owned `SemanticInspectionResult` built from
+  `ScientificSemanticIR`.
+- Included context: `symbolic_ir.py`, `pipeline.py`,
+  `scientific_semantic_ir.py`, the symbolic-expression Spec, ADR 0211, WP-0107,
+  and the existing symbolic/inspection acceptance tests.
+- Omitted context: finite QASM, Algorithm Plan, evaluator execution,
+  continuous numerical lowering, provider/QPU/AWS, Rust, and solver work.
+- Routing: architecture review plus deterministic authority/provenance tests;
+  no external provider or AI output is involved.
+- Applicable lesson: canonical authority must be observable and legacy
+  compatibility must be explicitly diagnostic-only; no hidden AST rebuild is
+  allowed.
+
+## Objective
+
+Make exact/symbolic inspection consume one compile-owned canonical semantic
+snapshot. Preserve the existing `symbolic_ir` shape only as a compatibility
+view where existing consumers require it, and mark it as derived inspection
+data rather than a semantic authority. Inspection must not collapse state,
+allocate finite resources, create gates, or imply approximation.
+
+## Current boundary and problem
+
+`build_symbolic_ir(unit)` walks `CompilationUnit` and AST/operator DTOs directly,
+while the pipeline also exposes `semantic_inspection` from
+`ScientificSemanticIR`. This creates two inspection paths with potentially
+different node identity, provenance, binder handling, and approximation slots.
+Output equality is insufficient evidence because the old walk can produce
+plausible text while bypassing canonical source meaning.
+
+## Proposed boundary
+
+```text
+CompileResult.scientific_semantic_ir
+        │
+        ├── build_inspection(core) -> SemanticInspectionResult  (authority)
+        │
+        └── compatibility_symbolic_view(inspection, core)      (derived only)
+```
+
+- `build_inspection()` remains the canonical exact/symbolic inspection
+  projection and owns source node IDs, structure, role lanes, type/dimensions,
+  exactness, and intent.
+- `symbolic_ir` must be generated from that projection or be absent; it must
+  not call `build_symbolic_ir(unit)` as a second semantic build.
+- Existing dictionary fields (`kind`, `operators`, `provenance`, `resolved`)
+  may remain during a bounded compatibility window, but must carry canonical
+  source IDs and an explicit derived/inspection role.
+- If canonical meaning is unresolved, the compatibility view contains no
+  executable or finite artifact and retains the canonical rejection evidence.
+
+## Acceptance scenarios for Phase 1 Red
+
+1. Given a compiled symbolic program, when inspection is requested, then
+   `semantic_inspection.source_node_ids` and the compatibility view's source
+   IDs are identical and come from the same compile-owned semantic object.
+2. Given a monkeypatched legacy `build_symbolic_ir`, when compile and inspect
+   are run, then the legacy AST walk is not used as semantic authority.
+3. Given a binder, indexed operator, mapping, or discretization source, when
+   inspection is built, then its canonical structure and provenance survive;
+   no output-only equivalence assertion is sufficient.
+4. Given exact/symbolic input without source-visible `Realize`, when
+   inspection is built, then allocation, finite plan, gate sequence, and
+   collapse record are absent.
+5. Given unresolved or unsupported canonical meaning, when inspection is built,
+   then no partial finite/executable artifact is published and the diagnostic
+   source node IDs remain available.
+6. Given two inspections of one compile result, when both are requested, then
+   object identity/fingerprint is stable and the canonical semantic build is
+   not repeated.
+
+## Phase split and allowed files
+
+- Phase 1 Red: add only the fixed acceptance tests, one representative
+  symbolic-inspection fixture if needed, and Issue/Spec/WP/review records.
+  No production migration or deletion.
+- Phase 2 Green: wire `semantic_inspection` through the local inspection and
+  compatibility surfaces with the smallest canonical adapter; preserve only
+  tested dictionary compatibility.
+- Phase 3: retire the direct AST walk after no-bypass, source-ID, no-allocation,
+  and unchanged-neighbor evidence; update deprecation and documentation.
+
+Initial Phase 1 candidate files:
+
+- `tests/test_liss_0489_symbolic_ir_canonical_inspection_red.py`
+- `tests/fixtures/semantic_core/symbolic_inspection.sqx`
+- this Issue, the linked Spec/WP, and review/trace records
+
+Production files are not authorized until Phase 1 Red is reviewed and Phase 2
+implementation approval is granted.
+
+## Non-goals and stop conditions
+
+This Issue does not define a serialized interchange format, numerical solver,
+finiteization policy, QASM/QPU behavior, provider integration, Rust runtime,
+or broad example rewrite. Stop for a new ADR if canonical inspection requires
+new language syntax, changes `Realize`/`Limit` semantics, adds persistence, or
+introduces an external execution boundary.
+
+## Architecture approval request
+
+Approve or reject replacing direct `symbolic_ir` AST authority with the
+compile-owned `SemanticInspectionResult` boundary, including the derived
+compatibility-view window and no-allocation/fail-closed contract. Approval does
+not authorize Phase 1 tests or production implementation.
+
+## Architecture approval result
+
+- `SemanticInspectionResult` is accepted as the compile-owned canonical
+  inspection projection for this Issue.
+- `symbolic_ir` is accepted only as a derived compatibility view during the
+  bounded migration; its direct AST walk is not semantic authority.
+- The source-ID/provenance conservation, no-allocation, and fail-closed
+  contracts are accepted as Phase 1 targets.
+- No new ADR, technology choice, provider boundary, or implementation
+  permission is created by this approval.
+
+## Phase 1 Red readiness
+
+The exact Phase 1 candidate is fixed to
+`tests/test_liss_0489_symbolic_ir_canonical_inspection_red.py` and the
+`symbolic_inspection.sqx` fixture named in this Issue. The test batch will
+change no production code. Phase 1 Red requires a separate approval before
+those files are created.
+
+Phase 1 Red approval was granted before the initial test creation. The
+compatibility split below is a revised acceptance contract and was re-approved
+by the Adjudicator before the test contract was finalized.
+
+## Phase 1 Red result
+
+- Added `tests/test_liss_0489_symbolic_ir_canonical_inspection_red.py`.
+- Reused the existing `tests/fixtures/semantic_core/symbolic_inspection.sqx`;
+  no new fixture was required.
+- Red verification: **3 failed, 3 passed**, with no collection errors.
+- Failures expose the direct AST builder bypass, mismatched canonical source
+  IDs, missing authority metadata, and missing no-artifact compatibility
+  contract.
+- The exact/symbolic cases explicitly allow a derived compatibility view while
+  asserting that it contains no finite plan or allocation; this matches the
+  accepted design boundary.
+- No production code or legacy path was changed.
+
+## Phase 1 Red re-approval result
+
+- The revised separation of legacy and canonical source-ID fields is approved.
+- `resolved.source_node_ids` remains a compatibility field;
+  `resolved.canonical_source_node_ids` is the migration acceptance field.
+- The dedicated `authority` field is the authority/provenance acceptance
+  field; existing provenance metadata remains backward compatible.
+- Phase 2 Green remains limited to canonical wiring and compatibility-view
+  generation.
+
+## Phase 2 Green result
+
+- Added `build_symbolic_compatibility_view()` and isolated the previous
+  dictionary builder as an explicit compatibility-only implementation.
+- Compile paths now pass the compile-owned `ScientificSemanticIR` into the
+  compatibility view, which exposes canonical nodes, IDs, authority, and
+  semantic fingerprint while retaining existing operator/binder/mapping/
+  discretization dictionary fields.
+- The direct public `build_symbolic_ir()` API remains available for explicit
+  legacy callers; it is not used as compile-time semantic authority.
+- Verification: LISS-0489 plus symbolic/second-quantized/mapping/discretization
+  regression suites **33 passed**; Spec verification **161/161**;
+  `py_compile` and `git diff --check` passed.
+- A separate LISS-0447 ordinary-QASM rejection test remains failing in the
+  related aggregate (`31 passed, 1 failed`) and is outside this Issue's
+  changed path; no QASM behavior was changed here.
+
+## Phase 3 result
+
+- Simplified canonical fingerprint ownership to an explicit import and kept
+  the legacy builder symbol available only for no-call instrumentation and
+  explicit compatibility callers.
+- Same-context review completed; this isolation is weaker than
+  `separate_context`.
+- Review record:
+  `docs/collaboration/reviews/2026-08-31-liss-0489-phase3-review.md`.
+- Verification: target and related regression suites **33 passed**,
+  `py_compile`, and `git diff --check` passed.
+
+Process review: no operating-contract deviation or operational problem found.
+
+## Revised compatibility contract
+
+- The existing `resolved.source_node_ids` list remains the stable legacy
+  dictionary contract for current consumers.
+- The canonical projection adds `resolved.canonical_source_node_ids`, which
+  must equal `SemanticInspectionResult.source_node_ids` from the same compile.
+- Authority metadata and fingerprint are added in a dedicated compatibility
+  view field; the existing provenance metadata shape remains stable. The
+  legacy AST builder remains forbidden as semantic authority and is retired
+  only after canonical fields are wired and regression evidence is complete.

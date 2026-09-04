@@ -80,11 +80,11 @@ assets; it must not mechanically reimplement completed Issues.
 
 | Release | Work Plans | Exit meaning |
 |---|---|---|
-| R0 — planning baseline | WP-0120–0126 design records | Scope, ownership, dependencies, and approval gates are accepted |
+| R0 — planning baseline | WP-0120–0125 design records | Scope, ownership, dependencies, and approval gates are accepted |
 | R1 — semantic/finite boundary | WP-0120–0121 | Supported source meaning has one canonical path to a finite artifact |
 | R2 — offline target readiness | WP-0122 | Static/dynamic target artifacts pass offline conformance and preflight |
 | R3 — provider-ready Host | WP-0123 | Fake-provider lifecycle is safe, typed, credential-safe, and reproducible in tests |
-| R4 — human real-device pilot | WP-0126 | A human-authorized run produces validated, bounded evidence |
+| R4 — human real-device pilot | WP-0124 | A human-authorized run produces validated, bounded evidence |
 | R5 — optional operations | WP-0125 | Only a demonstrated delivery/operations need receives a separate contract |
 
 An R-level is not a release claim until its child WPs are reviewed, their
@@ -99,7 +99,7 @@ not permission for unattended production execution.
 | 0 | WP-0120 | [LISS-0455](../issues/LISS-0455-real-qpu-scope-reconciliation.md) | Reconcile this roadmap with the register and completed assets | Accepted scope, no stale work reopened |
 | 1 | WP-0120 | [LISS-0456](../issues/LISS-0456-semantic-consumer-qasm-entry.md) | Canonical IR ownership through all public QASM entry points | No AST/DTO bypass; Phase 3 reviewed |
 | 1 | WP-0120 | [LISS-0457](../issues/LISS-0457-meaning-family-qpu-readiness.md) | Product/tensor, continuous/open-system, and measurement readiness matrix | Family-specific disposition; unsupported cases remain explicit |
-| 1 | WP-0121 | [LISS-0458](../issues/LISS-0458-realization-artifact-contract.md) | Provider-neutral finite artifact envelope and serialization | Accepted artifact/provenance/no-artifact contract |
+| 1 | WP-0121 | [LISS-0458](../issues/LISS-0458-realization-artifact-contract.md) | Provider-neutral finite artifact envelope and serialization | Accepted artifact/provenance/no-artifact contract; WP complete |
 | 2 | WP-0122 | [LISS-0459](../issues/LISS-0459-target-capability-profile-hardening.md) | Device capability, resource, gate, dynamic, and rejection profile | Deterministic preflight matrix |
 | 2 | WP-0122 | [LISS-0460](../issues/LISS-0460-transpile-route-schedule-contract.md) | Native-gate mapping, topology routing, depth/timing schedule | Target-aware artifact with explicit approximation/cost |
 | 2 | WP-0122 | [LISS-0461](../issues/LISS-0461-static-qasm-conformance.md) | Static OpenQASM conformance and parser/device-envelope checks | Offline conformance against supported subset |
@@ -109,9 +109,8 @@ not permission for unattended production execution.
 | 3 | WP-0123 | [LISS-0465](../issues/LISS-0465-provider-submit-integration-hardening.md) | Existing provider adapter integration and provider-neutral mapping | Fake integration, idempotency, request/artifact identity |
 | 3 | WP-0123 | [LISS-0466](../issues/LISS-0466-job-lifecycle-result-integrity.md) | Submit/status/wait/result/cancel and structured result integrity | Lifecycle/error/partial-result matrix |
 | 4 | WP-0124 | [LISS-0467](../issues/LISS-0467-run-evidence-reproducibility.md) | Calibration, noise, compiler, seed, shot, and provenance evidence | Reproducible run envelope; no invented fidelity claim |
-| 4 | WP-0124 | [LISS-0468](../issues/LISS-0468-human-authorized-real-qpu-pilot.md) | Offline pilot checklist and dry-run protocol | Approval/cost/cancellation controls ready |
-| 4 | WP-0124 | [LISS-0469](../issues/LISS-0469-real-qpu-result-validation.md) | Offline result validation contract | Criteria and dispositions ready for real evidence |
-| 4 | WP-0126 | [LISS-0475](../issues/LISS-0475-human-real-qpu-execution.md) | Human-executed device run and raw evidence handoff | Explicit human approval and captured real evidence |
+| 4 | WP-0124 | [LISS-0468](../issues/LISS-0468-human-authorized-real-qpu-pilot.md) | Human-run first-device pilot protocol | Explicit human approval and captured real evidence |
+| 4 | WP-0124 | [LISS-0469](../issues/LISS-0469-real-qpu-result-validation.md) | Compare expected simulator behavior and measured result | Statistical/physics validation and disposition |
 | 5 | WP-0125 | [LISS-0470](../issues/LISS-0470-provider-neutral-delivery-operations.md) | Optional delivery, retention, monitoring, and incident contract | Separate ADR if deployment is required |
 
 ## Dependency graph
@@ -130,8 +129,8 @@ not permission for unattended production execution.
                                           ├── 0465 submit hardening
                                           └── 0466 lifecycle/result
                                                   └── 0467 run evidence
-                                                          └── 0468/0469 offline preparation
-                                                                  └── 0475 human real-device execution
+                                                          └── 0468 pilot
+                                                                  └── 0469 validation
                                                                           └── 0470 operations (optional)
 ```
 
@@ -211,10 +210,8 @@ synchronized.
 
 ## Next safe action
 
-LISS-0456 through LISS-0469 are complete for their bounded offline and
-provider-neutral slices. The next safe action is the separately tracked
-human-operated WP-0126
-pilot: select a supported target, review the dry-run artifact and cost/shots
-guard, and provide explicit real-time approval before any human submits. No
-provider installation or real-QPU submission is authorized for the agent by
-this WP alone.
+The local semantic, finite-artifact, target-QASM, and provider-neutral Host
+hardening slices are complete or explicitly deferred. The next non-local
+milestone is the human-authorized real-device pilot under WP-0124; it requires
+the human's own credentials and explicit run confirmation. No provider
+installation or real-QPU submission is authorized for an agent by this WP.

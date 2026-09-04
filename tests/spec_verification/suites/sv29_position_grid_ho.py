@@ -9,6 +9,7 @@ from pathlib import Path
 
 from harness import AssertionFailure, as_main
 from harness.report import CaseResult
+from harness.canonical_execution import run_canonical
 
 _REPO = Path(__file__).resolve().parents[3]
 if str(_REPO) not in sys.path:
@@ -32,7 +33,7 @@ def _eval(src: str, seed: int = 0):
     hard = [d for d in compiled.diagnostics if d.get("code") in {"PARSE_ERROR", "LEX_ERROR"}]
     if hard:
         raise AssertionFailure(hard[0]["code"], str(hard))
-    return Evaluator(seed=seed).run_unit(compiled.unit, stdout=io.StringIO()), compiled
+    return run_canonical(compiled, Evaluator(seed=seed), stdout=io.StringIO()), compiled
 
 
 def run() -> list[CaseResult]:

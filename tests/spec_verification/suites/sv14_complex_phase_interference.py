@@ -11,6 +11,7 @@ from pathlib import Path
 from harness import AssertionFailure, as_main, assertNormEquals, assertSuperposition
 from harness.report import CaseResult
 from harness.state import State
+from harness.canonical_execution import run_canonical
 
 _REPO = Path(__file__).resolve().parents[3]
 if str(_REPO) not in sys.path:
@@ -33,7 +34,7 @@ def _eval(src: str, seed: int = 0):
     if hard:
         raise AssertionFailure(hard[0]["code"], str(hard))
     ev = Evaluator(seed=seed)
-    return ev.run_unit(compiled.unit, stdout=io.StringIO())
+    return run_canonical(compiled, ev, stdout=io.StringIO())
 
 
 def run() -> list[CaseResult]:
@@ -191,7 +192,7 @@ Measure u
         if compiled.unit is None:
             raise AssertionFailure("PARSE_ERROR", str(compiled.diagnostics))
         ev = Evaluator(seed=0)
-        result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+        result = run_canonical(compiled, ev, stdout=io.StringIO())
         marg = result.joint.marginal("amplified")
         st = State(marg, payload_type=int)
         assertNormEquals(st, 1.0)

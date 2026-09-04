@@ -2,12 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green bounded consumer migration complete — consumer-wide migration pending** |
+| Status | **Phase 3 first evaluator family complete — consumer-wide migration pending** |
 | Issue | [LISS-0444](../issues/LISS-0444-scientific-semantic-core.md) |
-| Follow-up Issues | [LISS-0476](../issues/LISS-0476-symbolic-ir-consumer-migration.md), [LISS-0477](../issues/LISS-0477-ast-dto-authority-retirement.md) |
+| Follow-up Issues | [LISS-0487](../issues/LISS-0487-equation-dto-authority-retirement.md), [LISS-0488](../issues/LISS-0488-physics-ir-canonical-projection.md), [LISS-0489](../issues/LISS-0489-symbolic-ir-canonical-inspection.md), [LISS-0490](../issues/LISS-0490-evaluator-canonical-execution-boundary.md), [LISS-0491](../issues/LISS-0491-evaluator-legacy-run-unit-retirement.md), [LISS-0492](../issues/LISS-0492-evaluator-run-unit-complete-removal.md), [LISS-0493](../issues/LISS-0493-evaluator-ast-mechanics-retirement.md), [LISS-0494](../issues/LISS-0494-evaluator-pure-transformation-plan.md), [LISS-0495](../issues/LISS-0495-evaluator-control-mixture-plan.md), [LISS-0496](../issues/LISS-0496-evaluator-evolution-plan.md), [LISS-0497](../issues/LISS-0497-evaluator-binder-plan.md), [LISS-0498](../issues/LISS-0498-evaluator-callable-plan.md), [LISS-0499](../issues/LISS-0499-evaluator-dynamic-lane-plan.md), [LISS-0500](../issues/LISS-0500-symbolic-legacy-builder-retirement.md), [LISS-0501](../issues/LISS-0501-qasm-measure-only-fallback-retirement.md), [LISS-0502](../issues/LISS-0502-qasm-lowerer-export-retirement.md), [LISS-0503](../issues/LISS-0503-qasm-unsupported-evolution-rejection.md), plus the existing consumer migration records below |
 | Specification | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md) |
 | ADR | [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |
-| Detailed follow-up design | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design) |
 | Architecture approval | User approved 2026-08-19 |
 | Phase 1 Red approval | User approved 2026-08-19 |
 | Phase 2 Green approval | User approved 2026-08-20 |
@@ -138,6 +137,9 @@ semantic snapshot or fail-closed invariant diverges.
 | `explicit_evolution` | Scientific Semantic IR / target projection | canonical field consumed; target lowering deferred | remove AST fallback after explicit target-capability batch | explicit evolution provenance/fingerprint tests |
 | `binder_lowering` | Scientific Semantic IR / finite binder projection | canonical field and provenance consumed | retire duplicate diagnostic lowering after consumer migration | binder provenance/fingerprint tests |
 | QASM fallback / `symbolic_ir` | backend and simulator owners | deferred compatibility/diagnostic path | separate reviewed consumer-wide phase | future Issue/Phase approval |
+| evaluator `run_unit()` | runtime/delivery owners | canonical entry exists; legacy entry remains compatibility lane | zero production callers, no-bypass/deprecation evidence, full local regression | LISS-0491 inventory, migration, and removal-gate tests |
+| evaluator `run_unit()` complete removal | runtime/test migration owners | public legacy entry removed; internal AST mechanics remain separate | removal gate satisfied; broader unrelated Red owners remain | LISS-0492-A through D and final review |
+| evaluator internal AST mechanics | runtime architecture owners | first State/Measure family uses a dedicated plan executor; other families remain explicit fallback | each migrated family has plan/provenance/no-bypass evidence; then delete legacy mechanics | LISS-0493 semantic-family batches |
 
 #### Consumer-wide migration Phase 1 Red (approved and created)
 
@@ -205,6 +207,15 @@ semantic snapshot or fail-closed invariant diverges.
   remain outside this phase.
 
 ## Independent review request
+
+## Latest status synchronization
+
+- LISS-0503 is **phase-3-refactor-complete**: unsupported explicit evolution
+  now fails closed at the canonical QASM boundary with no partial artifact.
+- Verification for LISS-0503: **35 passed**, compile and diff checks passed.
+- Current Next Issue: select the next QASM/consumer migration Phase 1 Red
+  contract from the remaining backlog; provider/live-QPU realization remains
+  explicitly out of scope.
 
 > Review LISS-0444 / WP-0107 / ADR 0211 as an Architecture Path design. Do not
 > treat existing DTOs, golden fixtures, soft diagnostics, or importable modules

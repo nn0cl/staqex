@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **complete — binder canonical-projection slice; LISS-0446 parked** |
+| Status | **bounded binder canonical-projection slice complete; follow-up boundaries remain separately gated** |
 | Issue | [LISS-0445](../issues/LISS-0445-scientific-semantic-consumer-migration.md) |
 | Specification | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md) |
 | Parent | [WP-0107](WP-0107-scientific-semantic-core.md) / [LISS-0444](../issues/LISS-0444-scientific-semantic-core.md) |
@@ -131,10 +131,13 @@ edits.
 - No additional production refactor was required; Algorithm Plan, H1,
   ordinary QASM fallback, and public facade migration remain excluded or
   parked boundaries.
-- Phase 3 completion review accepted the bounded binder slice; LISS-0446
-  remains parked.
+- Phase 3 is `final-review-ready` pending completion-record review.
 
-## Completion review
+## Completion synchronization
 
-- Binder canonical-projection slice accepted after independent review.
-- Process review: no operating-contract deviation or operational problem found.
+- LISS-0445 bounded binder slice: **done** after same-context completion review.
+- Verification: the fixed consumer-migration suite is **12 passed**;
+  `git diff --check` passed.
+- Current Next Issue: LISS-0446 public QASM facade ownership remains parked
+  until its separate phase is approved; LISS-0503 unsupported-evolution
+  rejection is complete. No provider, live-QPU, S02, or solver work is opened.

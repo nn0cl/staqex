@@ -7,6 +7,18 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-08-31
+- Class: authority-boundary
+- Pattern: a compatibility projection can retain legacy DTO nodes while still
+  making the canonical semantic authority explicit and machine-checkable.
+- What later design or implementation must do: preserve compatibility only
+  with an explicit diagnostic-only role and negative authorization metadata;
+  never let retained DTOs silently become execution or finiteization authority.
+- Source issue or work plan (adopter's own ID, if any): LISS-0487 / WP-0107
+- Status: applied
+
+## Lesson
+
 - Date: 2026-08-26
 - Class: status-drift
 - Pattern: ISSUE and work-plan status stayed `review` or `in_progress` after
@@ -17,6 +29,19 @@ Record meta-level patterns only. No session transcripts.
   after. Leftover `review` / `in_progress` after merge is ledger drift, not
   open work.
 - Source issue or work plan (adopter's own ID, if any): LISS-0024
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-03
+- Class: phase-acceptance-boundary
+- Pattern: a canonical consumer migration can appear successful for supported
+  projections while an unsupported semantic family still produces a partial
+  artifact through a compatibility path.
+- What later design or implementation must do: include an explicit unsupported
+  acceptance scenario for each consumer migration and verify atomic,
+  provider-neutral rejection before declaring the boundary complete.
+- Source issue or work plan (adopter's own ID, if any): LISS-0503 / WP-0107
 - Status: applied
 
 ## Lesson

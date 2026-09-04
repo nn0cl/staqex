@@ -19,7 +19,7 @@ from ...scientific_semantic_ir import build_scientific_semantic_ir, semantic_fin
 from ...resource_enforcement import enforce_optional_budget
 from ...resource_profile import ResourceProfile, SimulationResourceEstimate
 from .circuit import Circuit, Gate
-from .lower import lower_unit_to_circuit, qudit_capability_reject
+from .lower import qudit_capability_reject
 from .router import route_circuit
 from .topology import Topology, grid, linear
 
@@ -49,6 +49,14 @@ def _source_scalar_bindings(unit: CompilationUnit) -> dict[str, float]:
         if len(names) == 1 and isinstance(value, (int, float)):
             bindings[names[0]] = float(value)
     return bindings
+
+
+def _has_executable_canonical_instructions(canonical: QpuProgram) -> bool:
+    """Identify canonical gate instructions without consulting the AST."""
+    return any(
+        instruction.opcode != "Measure"
+        for instruction in canonical.get("instructions", ())
+    )
 
 
 def _contains_var_named(value: object, name: str) -> bool:
@@ -191,36 +199,33 @@ class QASM3Emitter:
             )
         semantic_ir = semantic_ir or build_scientific_semantic_ir(unit)
         canonical = build_qpu_ir(unit, semantic_ir)
+        if (
+            semantic_ir.explicit_evolution is not None
+            and not any(node.kind == "Limit" for node in semantic_ir.nodes)
+            and not _has_executable_canonical_instructions(canonical)
+        ):
+            return EmitResult(
+                qasm="",
+                notes=[
+                    "E_QPU_CANONICAL_PROVENANCE: no executable canonical "
+                    "evolution projection is available"
+                ],
+                ok=False,
+                circuit=_empty_rejection_circuit(
+                    "E_QPU_CANONICAL_PROVENANCE",
+                    provenance={
+                        "reason": "canonical_evolution_projection_unavailable",
+                        "target_plan": None,
+                    },
+                ),
+            )
         qpu_result = self._emit_from_qpu_ir_when_available(
             canonical,
             parameter_values=_source_scalar_bindings(unit),
         )
         if qpu_result is not None:
             return qpu_result
-        has_executable_instructions = any(
-            instruction.opcode != "Measure"
-            for instruction in canonical.get("instructions", ())
-        )
-        if (
-            not has_executable_instructions
-            and canonical.get("instructions")
-            and not any(
-                isinstance(statement, StateBind)
-                and statement.ty is not None
-                and statement.ty.name == "QubitRegister"
-                for statement in getattr(main_body, "stmts", ())
-            )
-            and all(instruction.opcode == "Measure" for instruction in canonical["instructions"])
-        ):
-            circuit = lower_unit_to_circuit(unit)
-            if circuit.reject_code is None:
-                circ = route_circuit(circuit, self._resolve_topo(circuit.n_qubits)) if self.route else circuit
-                return EmitResult(
-                    qasm=self.render(circ),
-                    notes=list(circ.notes),
-                    ok=True,
-                    circuit=circ,
-                )
+        has_executable_instructions = _has_executable_canonical_instructions(canonical)
         if not has_executable_instructions:
             user_fn_names = {
                 declaration.name

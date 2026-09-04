@@ -17,6 +17,8 @@ not a literal transcription).
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -32,7 +34,7 @@ from compiler.staqex.runtime.hamiltonian import compile_hamiltonian  # noqa: E40
 def _run(src: str):
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    return Evaluator(seed=0).run_unit(compiled.unit)
+    return run_canonical(compiled, Evaluator(seed=0))
 
 
 def test_factory_scalar_param_bounds_sigma_index_domain() -> None:
@@ -58,7 +60,7 @@ def test_factory_scalar_param_bounds_sigma_index_domain() -> None:
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
     evaluator = Evaluator(seed=0)
-    evaluator.run_unit(compiled.unit)
+    run_canonical(compiled, evaluator)
     matrix = compile_hamiltonian(evaluator.operators["H"], env={}, n_qubits=3)
     diag = [matrix[i][i].real for i in range(8)]
     for idx in range(8):
@@ -89,7 +91,7 @@ def test_factory_scalar_param_bounds_two_index_sigma_with_guard() -> None:
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
     evaluator = Evaluator(seed=0)
-    evaluator.run_unit(compiled.unit)
+    run_canonical(compiled, evaluator)
     matrix = compile_hamiltonian(evaluator.operators["H"], env={}, n_qubits=3)
     diag = [matrix[i][i].real for i in range(8)]
     for idx in range(8):
@@ -135,7 +137,7 @@ def test_struct_attr_as_sigma_per_term_coefficient() -> None:
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
     evaluator = Evaluator(seed=0)
-    evaluator.run_unit(compiled.unit)
+    run_canonical(compiled, evaluator)
     matrix = compile_hamiltonian(evaluator.operators["H"], env={}, n_qubits=3)
     diag = [matrix[i][i].real for i in range(8)]
     for idx in range(8):
@@ -186,7 +188,7 @@ def test_main_selection_objective_hamiltonian_still_matches_hardcoded_baseline()
             "selectivity_weights": selectivity_w,
         }
     )
-    result = Evaluator(seed=0, host_input=host_input).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0, host_input=host_input))
     assert result.measure.vacuum is False
     assert result.measure.value == (0, 1, 1, 1, 1, 1, 0, 0)
 

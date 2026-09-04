@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -58,7 +60,7 @@ def test_explicit_to_converts_magnitude() -> None:
         in {"PARSE_ERROR", "TYPE_MISMATCH", "DIMENSION_MISMATCH_ERROR"}
     ]
     ev = Evaluator(seed=0)
-    result = ev.run_unit(compiled.unit)
+    result = run_canonical(compiled, ev)
     assert abs(ev.scalars["t"] - 0.005) < 1e-12
     assert result.measure is not None
 
@@ -75,7 +77,7 @@ def test_bare_suffix_stays_raw() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["t"] - 5.0) < 1e-12
 
 

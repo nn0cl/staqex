@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -52,7 +54,7 @@ def test_tonne_kg_g_conversions() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["kg"] - 1000.0) < 1e-12
     assert abs(ev.scalars["g"] - 1e6) < 1e-6
     assert abs(ev.scalars["raw"] - 1.0) < 1e-12

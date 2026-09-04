@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -61,7 +63,7 @@ def test_wave2_converts_and_bare_stays_raw() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["t"] - 2e-12) < 1e-24
     assert abs(ev.scalars["raw"] - 2.0) < 1e-12
 

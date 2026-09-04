@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import ast
 import io
 import subprocess
@@ -98,7 +100,7 @@ def test_custom_rng_port_is_used_for_measure() -> None:
     compiled = compile_source(src)
     assert compiled.ok and compiled.unit is not None
     ev = Evaluator(rng_port=FixedRng([0.9]))
-    result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+    result = run_canonical(compiled, ev, stdout=io.StringIO())
     assert result.measure is not None
     # Coin() is 50/50 on {0,1}; u=0.9 selects the second mass atom (1).
     assert result.measure.value == 1
