@@ -1,3 +1,4 @@
+// staqex-lane: experiment
 // CH-selection-spine — S02 finite candidate-selection experiment (LISS-0408).
 // Hard constraints (Projector) and soft objective (Hamiltonian evolution)
 // act on the SAME quantum coordinate: LISS-0404 (ADR 0205) shipped

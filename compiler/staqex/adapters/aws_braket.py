@@ -108,19 +108,34 @@ class RealAwsBraketClient:
         self._AwsQuantumTask = AwsQuantumTask
 
     def create_task(self, qasm: str, device_arn: str, shots: int) -> str:
-        device = self._AwsDevice(device_arn)
-        task = device.run(qasm, shots=shots)
+        try:
+            device = self._AwsDevice(device_arn)
+            task = device.run(qasm, shots=shots)
+        except Exception as exc:
+            if exc.__class__.__name__ in {
+                "NoCredentialsError",
+                "PartialCredentialsError",
+                "ProfileNotFound",
+            }:
+                raise BraketCredentialError(
+                    "AWS Braket submit refused: the AWS SDK could not resolve "
+                    "credentials from its standard credential chain"
+                ) from exc
+            raise
         return str(task.id)
 
     def task_state(self, task_arn: str) -> str:
-        return str(self._AwsQuantumTask(task_arn).state())
+        return str(self._AwsQuantumTask(arn=task_arn).state())
 
     def task_result(self, task_arn: str) -> Mapping[str, Any]:
-        result = self._AwsQuantumTask(task_arn).result()
-        return {"measurements": result.measurements.tolist()}
+        result = self._AwsQuantumTask(arn=task_arn).result()
+        measurements = result.measurements
+        if hasattr(measurements, "tolist"):
+            measurements = measurements.tolist()
+        return {"measurements": measurements, "task_arn": task_arn}
 
     def cancel_task(self, task_arn: str) -> None:
-        self._AwsQuantumTask(task_arn).cancel()
+        self._AwsQuantumTask(arn=task_arn).cancel()
 
 
 _STATE_MAP = {
@@ -150,6 +165,20 @@ class AwsBraketAdapter:
     default_shots: int = 100
 
     def _require_credentials(self) -> None:
+        # Accept either explicit environment credentials or a configured
+        # standard-chain source. The SDK then resolves the actual secret
+        # (including SSO/profile files) without this adapter reading or
+        # logging it.
+        if all(self.credentials.get(name) is not None for name in self.required_credentials):
+            return
+        chain_sources = (
+            "AWS_PROFILE",
+            "AWS_WEB_IDENTITY_TOKEN_FILE",
+            "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI",
+            "AWS_CONTAINER_CREDENTIALS_FULL_URI",
+        )
+        if any(self.credentials.get(name) is not None for name in chain_sources):
+            return
         missing = tuple(
             name for name in self.required_credentials if self.credentials.get(name) is None
         )

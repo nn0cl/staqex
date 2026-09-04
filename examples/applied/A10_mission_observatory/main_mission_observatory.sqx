@@ -1,5 +1,8 @@
 // staqex-lane: circuit
 // Mission observatory — slim integration capstone (modules + CPU/QPU lanes).
+// Honesty: this entry intentionally crosses the Hamiltonian lane (SSH Evolve)
+// and the Circuit lane (QubitRegister/apply); neither surface is rewritten as
+// the other, and the README documents both dialects.
 // Canonical deep dives live in B01–B12 and A06–A09; this is a read path only.
 // LISS-0296: selective import (ADR 0177).
 

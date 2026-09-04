@@ -32,10 +32,11 @@ inspect it before going any further.
    This is an optional dependency — it is not in this project's own
    dependency manifest and is never imported unless you actually run the
    commands below.
-2. AWS credentials in your environment
-   (`AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`, or anything your AWS
-   SDK setup already provides) — read via the standard environment, never
-   entered into Staqex source or CLI flags.
+2. AWS credentials available to the AWS SDK standard credential chain. This
+   includes environment variables (`AWS_ACCESS_KEY_ID` /
+   `AWS_SECRET_ACCESS_KEY`), `AWS_PROFILE`/SSO, web identity, or container
+   credential endpoints. Credentials are never entered into Staqex source or
+   CLI flags.
 3. A device ARN for an AWS Braket device you're entitled to use. Look
    this up yourself in the AWS Braket console or `aws braket
    search-devices` — do not trust a hardcoded ARN from this README, since

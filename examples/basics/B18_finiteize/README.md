@@ -4,8 +4,8 @@ Teaches ADR 0185 **Lane A**: continuous → finite is an **explicit** notebook
 step. There is no mid-program `Continuous` Kernel type.
 
 ```text
-state psi = finiteize(lo, hi, n_bins, n_samples[, seed])
-measure psi
+State psi = finiteize(lo, hi, n_bins, n_samples[, seed])
+Measure psi
 ```
 
 MVP uses Host equal-width histogram (ADR 0163/0164) of **uniform** continuous

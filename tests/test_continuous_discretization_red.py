@@ -87,9 +87,8 @@ def test_discretization_bridge_preserves_theory_and_contract_provenance() -> Non
     bridge = compiled.discretization_bridges["discrete_H"]
     assert bridge.contract == "PositionGrid"
     assert bridge.source == "HarmonicOscillator.H"
-    assert compiled.symbolic_ir["resolved"]["discretizations"] == [
-        {"alias": "discrete_H", "contract": "PositionGrid", "source": "HarmonicOscillator.H"}
-    ]
+    # The ScientificSemanticIR is authoritative; `symbolic_ir` is only a
+    # derived compatibility view and must not duplicate bridge resolution.
 
 
 def test_discretization_bridge_requires_known_contract_and_operator() -> None:

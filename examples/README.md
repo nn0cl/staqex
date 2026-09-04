@@ -54,8 +54,8 @@ $c\in\mathbb{C}$ with Born weight $|c|^2$. `phase` / `cis` / `Complex.cis`
 attach phases; `interfer` sums amplitudes then takes $|\sum c_i|^2$
 (destructive cancel → vacuum). `diffuse` is Grover inversion-about-mean.
 
-Surface vocabulary: `when` / `map` / `project` / `interfer` / `phase` /
-`diffuse` / `inspect` / `measure` / `evolve`.
+Surface vocabulary: `Mix` / `map` / `project` / `interfer` / `phase` /
+`diffuse` / `Inspect` / `Measure` / `Evolve`.
 
 ## Run
 

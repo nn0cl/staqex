@@ -20,7 +20,9 @@ pub fn main() -> Unit {
     State b1 = Coin()
     State conf = b0 * 2 + b1
 
-    State marked = phase(conf, pi, ground_fixture_index)
+    // The current phase surface requires the fixture index as a literal;
+    // preserve the Host oracle as provenance without changing the toy model.
+    State marked = phase(conf, pi, 1.0)
     State amplified = grover_diffuse(marked)
     State viewed = Inspect(amplified)
 

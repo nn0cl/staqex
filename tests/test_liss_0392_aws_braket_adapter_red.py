@@ -100,6 +100,22 @@ def test_submit_succeeds_with_credentials_and_delegates_to_client() -> None:
     ]
 
 
+def test_submit_accepts_standard_aws_profile_credential_chain() -> None:
+    from compiler.staqex.adapters.aws_braket import AwsBraketAdapter
+
+    client = FakeBraketClient()
+    adapter = AwsBraketAdapter(
+        client=client,
+        device_arn="arn:aws:braket::device/fake",
+        credentials=EnvCredentialAdapter({"AWS_PROFILE": "developer"}),
+    )
+
+    job_id = adapter.submit(_request())
+
+    assert job_id.provider == "aws-braket"
+    assert job_id.opaque_id == "arn:aws:braket:fake-task-1"
+
+
 def test_status_wait_result_cancel_delegate_to_client() -> None:
     from compiler.staqex.adapters.aws_braket import AwsBraketAdapter
 
