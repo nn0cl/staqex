@@ -477,8 +477,14 @@ class Evaluator:
 
     @staticmethod
     def _binder_runtime_unit(unit: CompilationUnit) -> CompilationUnit:
-        """Keep compile-time operator binders out of runtime state materialization."""
-        return Evaluator._unit_without_operator_declarations(unit)
+        """Keep the source operator declarations for deferred materialization.
+
+        Binder plans still need named operators that are consumed by a later
+        ``project`` or by a factory result.  The deferred executor handles
+        those declarations as compile-time metadata; removing them here
+        loses the source-level dependency chain before it can be resolved.
+        """
+        return unit
 
     @staticmethod
     def _unit_without_operator_declarations(unit: CompilationUnit) -> CompilationUnit:
@@ -1186,6 +1192,54 @@ class Evaluator:
                 return
             if isinstance(node, KetLit):
                 return
+            if isinstance(node, KetSumBinder):
+                domain = node.domain
+                walk(getattr(domain, "width", None))
+                return
+            if isinstance(node, NormExpr):
+                walk(node.state)
+                return
+            if isinstance(node, SetComprehension):
+                domain = node.domain
+                walk(getattr(domain, "start", None))
+                walk(getattr(domain, "end", None))
+                walk(getattr(domain, "width", None))
+                for condition in node.conditions:
+                    walk(condition)
+                names.discard(node.variable)
+                return
+            if isinstance(node, OpBinder):
+                domain = node.domain
+                walk(domain)
+                walk(getattr(domain, "start", None))
+                walk(getattr(domain, "end", None))
+                walk(getattr(domain, "width", None))
+                walk(node.guard)
+                walk(node.body)
+                names.discard(node.variable)
+                return
+            if isinstance(node, OpVar):
+                names.add(node.name)
+                return
+            if isinstance(node, OpIndexed):
+                walk(node.base)
+                walk(node.index)
+                return
+            if isinstance(node, (OpBin, OpPow, OpCall)):
+                if isinstance(node, OpBin):
+                    walk(node.lhs)
+                    walk(node.rhs)
+                elif isinstance(node, OpPow):
+                    walk(node.base)
+                else:
+                    for arg in node.args:
+                        walk(arg)
+                return
+            if isinstance(node, OpAttr):
+                walk(node.obj)
+                return
+            if isinstance(node, (OpLit, OpPauli, OpHop, OpNumber, OpQuadrature, OpGridQuad, OpIdentity)):
+                return
             if isinstance(node, BinOp):
                 walk(node.lhs)
                 walk(node.rhs)
@@ -1298,10 +1352,48 @@ class Evaluator:
         needed = self._deferred_bind_cone(
             pending,
             measure_stmt.expr,
-            extra_needed=set(measure_stmt.tracing_out),
+            extra_needed=(
+                set(measure_stmt.tracing_out)
+                | {
+                    name
+                    for stmt in pending
+                    if stmt.ty is not None and stmt.ty.name == "Operator"
+                    for name in self._expr_free_vars(stmt.expr)
+                }
+            ),
         )
         applied = 0
         for i, stmt in enumerate(pending):
+            if stmt.ty is not None and stmt.ty.name == "Operator":
+                if len(stmt.names) != 1:
+                    raise KernelError("Operator bind expects a single name")
+                name = stmt.names[0]
+                declared_space = operator_declared_space(stmt.ty)
+                if declared_space is not None:
+                    self.operator_spaces[name] = declared_space
+                explicit_propagator = self._explicit_propagator(stmt.expr)
+                op_val = (
+                    explicit_propagator
+                    if explicit_propagator is not None
+                    else self._resolve_operator_expr(stmt.expr)
+                )
+                if (
+                    isinstance(op_val, Call)
+                    and isinstance(op_val.callee, Var)
+                    and op_val.callee.name == "outer"
+                ):
+                    op_val = self._materialize_outer(joint, op_val)
+                self.operators[name] = op_val
+                applied += 1
+                continue
+            if (
+                stmt.ty is not None
+                and stmt.ty.name in {"Float", "Bool"}
+                and len(stmt.ty.args) >= 1
+            ):
+                # Coefficient arrays are compile-time inputs for Operator
+                # lowering and do not become Joint coordinates.
+                continue
             # POVM and DensityState declarations are execution metadata for
             # the terminal measurement, not Joint coordinates.  The deferred
             # callable path must register them before resolving the measure
