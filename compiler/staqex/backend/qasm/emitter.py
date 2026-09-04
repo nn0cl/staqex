@@ -125,6 +125,28 @@ class QASM3Emitter:
                 circuit=_empty_rejection_circuit("E_QPU_CANONICAL_PROVENANCE"),
             )
         main_body = getattr(getattr(unit, "main", None), "body", None)
+        user_fn_names = {
+            declaration.name
+            for declaration in getattr(unit, "decls", ())
+            if isinstance(declaration, FunDecl)
+        }
+        if any(
+            isinstance(statement, StateBind)
+            and isinstance(statement.expr, Call)
+            and isinstance(statement.expr.callee, Var)
+            and statement.expr.callee.name in user_fn_names
+            for statement in getattr(main_body, "stmts", ())
+        ):
+            return EmitResult(
+                qasm="",
+                notes=[
+                    "QASM_FUNCTION_CALL_UNSUPPORTED: Emitting QASM for "
+                    "function calls is currently unsupported. Please "
+                    "inline the function logic manually."
+                ],
+                ok=False,
+                circuit=_empty_rejection_circuit("QASM_FUNCTION_CALL_UNSUPPORTED"),
+            )
         operator_bindings = {
             statement.names[0]: statement.expr
             for statement in getattr(main_body, "stmts", ())
@@ -227,11 +249,6 @@ class QASM3Emitter:
             return qpu_result
         has_executable_instructions = _has_executable_canonical_instructions(canonical)
         if not has_executable_instructions:
-            user_fn_names = {
-                declaration.name
-                for declaration in getattr(unit, "decls", ())
-                if isinstance(declaration, FunDecl)
-            }
             if any(
                 isinstance(statement, StateBind)
                 and isinstance(statement.expr, Call)
