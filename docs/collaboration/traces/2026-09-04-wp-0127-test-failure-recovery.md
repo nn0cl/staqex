@@ -33,6 +33,12 @@
   through the eager path; preserve non-destructive observation semantics.
 - Result: targeted deferred-pushforward tests pass (5/5); Issue moved to
   review, next Issue is LISS-0506.
+- LISS-0506 Red reproduced: Jordan–Wigner execution and QASM were green, but
+  provenance tests read retired fields from `compile_source().symbolic_ir`.
+- Disposition: migrate the tests to the explicit `build_symbolic_ir(unit)`
+  compatibility API; do not restore a legacy AST-derived canonical authority.
+- Result: targeted Jordan–Wigner/second-quantized tests pass (18/18); Issue
+  moved to review, next Issue is LISS-0507.
 
 ## Verification
 
@@ -53,4 +59,4 @@
 
 ## Next Safe Action
 
-Review and resolve LISS-0506 by comparing its mapping-provenance expectations with the current canonical semantic IR before modifying runtime behavior.
+Review and resolve LISS-0507 by reproducing the linked operator factory runtime binding failure against its accepted callable contract.

@@ -10,6 +10,7 @@ if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
 from compiler.staqex.pipeline import compile_source  # noqa: E402
+from compiler.staqex.symbolic_ir import build_symbolic_ir  # noqa: E402
 
 
 def _codes(source: str) -> set[str]:
@@ -91,7 +92,8 @@ def test_fermion_canonical_order_records_exchange_sign() -> None:
         """
     )
 
-    metadata = compiled.symbolic_ir["operators"]["H"]["second_quantized"]
+    assert compiled.unit is not None
+    metadata = build_symbolic_ir(compiled.unit)["operators"]["H"]["second_quantized"]
     assert metadata["statistics"] == "fermionic"
     assert metadata["canonical_order"][0]["index"] == 0
     assert metadata["exchange_sign"] == -1
@@ -109,7 +111,9 @@ def test_boson_order_does_not_introduce_fermion_sign() -> None:
         """
     )
 
-    assert compiled.symbolic_ir["operators"]["H"]["second_quantized"]["exchange_sign"] == 1
+    assert compiled.unit is not None
+    metadata = build_symbolic_ir(compiled.unit)["operators"]["H"]["second_quantized"]
+    assert metadata["exchange_sign"] == 1
 
 
 def test_mapping_name_is_recorded_in_symbolic_ir() -> None:
@@ -125,7 +129,8 @@ def test_mapping_name_is_recorded_in_symbolic_ir() -> None:
         """
     )
 
-    assert compiled.symbolic_ir["resolved"]["mappings"] == [
+    assert compiled.unit is not None
+    assert build_symbolic_ir(compiled.unit)["resolved"]["mappings"] == [
         {"operator": "mapped", "mapping": "JordanWigner", "qubit_count": 1}
     ]
 

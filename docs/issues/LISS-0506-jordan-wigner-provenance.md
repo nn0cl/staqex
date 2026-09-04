@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0506
 - GitHub issue: none
-- Status: ready
-- Phase: phase-1-red
+- Status: review
+- Phase: phase-3-refactor
 - Type: bug
 - Priority: P1
 - Initial planning size: M
@@ -56,11 +56,26 @@ The one-body and two-body mapping provenance tests pass with stable mapping reco
 
 ## Work Notes
 
-- Red reproduced during WP-0127 intake.
+- Red reproduced during WP-0127 intake. The numerical Jordan–Wigner and QASM
+  paths were already green; the failing assertions treated the canonical
+  `compile_source().symbolic_ir` view as if it still owned legacy mapping and
+  second-quantized metadata.
+- Phase 2 fix: migrated these assertions to the explicit
+  `build_symbolic_ir(compiled.unit)` compatibility API. This preserves the
+  accepted metadata contract without restoring an AST-derived parallel
+  authority to the canonical compile result.
 
 ## Verification
 
-- Not yet complete.
+- `./.venv/bin/pytest -q tests/test_jordan_wigner_mapping_red.py tests/test_second_quantized_operators_red.py`: 18 passed.
+
+## Process Review
+
+- Outcome: no operating-contract deviation or operational problem found.
+- Isolation: same_context; weaker than separate_context.
+- Findings: apply none; the change is a compatibility-test migration and the
+  targeted numerical, QASM, and provenance tests pass.
+- Next requested approval type: Adjudicator Phase 3 review/acceptance.
 
 ## Process Review
 

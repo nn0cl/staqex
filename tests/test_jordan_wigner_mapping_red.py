@@ -29,6 +29,7 @@ if str(_REPO) not in sys.path:
 from compiler.staqex.backend.qasm.emitter import QASM3Emitter  # noqa: E402
 from compiler.staqex.host import run_source  # noqa: E402
 from compiler.staqex.pipeline import compile_source  # noqa: E402
+from compiler.staqex.symbolic_ir import build_symbolic_ir  # noqa: E402
 
 
 def _marginals_close(a: dict, b: dict, *, tol: float = 1e-9) -> bool:
@@ -241,7 +242,11 @@ def test_mapping_provenance_records_name_and_qubit_count() -> None:
     compiled = compile_source(_NUMBER_OPERATOR_JW)
     assert compiled.ok, compiled.diagnostics
 
-    mappings = compiled.symbolic_ir["resolved"]["mappings"]
+    # Mapping metadata is a legacy compatibility contract; request that view
+    # explicitly instead of treating compile_source().symbolic_ir as a second
+    # semantic authority after the Scientific Semantic IR migration.
+    assert compiled.unit is not None
+    mappings = build_symbolic_ir(compiled.unit)["resolved"]["mappings"]
     assert len(mappings) == 1
     record = mappings[0]
     assert record["operator"] == "mapped"
@@ -253,7 +258,8 @@ def test_two_body_mapping_provenance_records_qubit_count() -> None:
     compiled = compile_source(_TWO_BODY_DENSITY_JW)
     assert compiled.ok, compiled.diagnostics
 
-    mappings = compiled.symbolic_ir["resolved"]["mappings"]
+    assert compiled.unit is not None
+    mappings = build_symbolic_ir(compiled.unit)["resolved"]["mappings"]
     assert mappings[0]["qubit_count"] == 2
 
 
