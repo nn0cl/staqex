@@ -4,7 +4,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ...ast_nodes import Call, CompilationUnit, EvolveExpr, FunDecl, StateBind, Var
+from ...ast_nodes import (
+    Call,
+    CompilationUnit,
+    EvolveExpr,
+    FunDecl,
+    OpBin,
+    OpHop,
+    OpIndexed,
+    OpNumber,
+    OpPow,
+    OpQuadrature,
+    OpVar,
+    StateBind,
+    Var,
+)
 from ...qpu_ir import (
     QpuProgram,
     build_qpu_ir,
@@ -66,6 +80,18 @@ def _contains_var_named(value: object, name: str) -> bool:
         return any(_contains_var_named(item, name) for item in value)
     fields = getattr(value, "__dict__", None)
     return bool(fields) and any(_contains_var_named(item, name) for item in fields.values())
+
+
+def _contains_fock_operator(value: object) -> bool:
+    """Identify Fock/grid atoms before canonical QPU fallback can hide them."""
+    if isinstance(value, (OpNumber, OpQuadrature, OpHop)):
+        return True
+    if isinstance(value, OpVar) and value.name in {"N", "Q", "P"}:
+        return True
+    if isinstance(value, (list, tuple)):
+        return any(_contains_fock_operator(item) for item in value)
+    fields = getattr(value, "__dict__", None)
+    return bool(fields) and any(_contains_fock_operator(item) for item in fields.values())
 
 
 @dataclass
@@ -130,6 +156,16 @@ class QASM3Emitter:
             for declaration in getattr(unit, "decls", ())
             if isinstance(declaration, FunDecl)
         }
+        operator_bindings = {
+            statement.names[0]: statement.expr
+            for statement in getattr(main_body, "stmts", ())
+            if (
+                isinstance(statement, StateBind)
+                and statement.ty is not None
+                and statement.ty.name == "Operator"
+                and len(statement.names) == 1
+            )
+        }
         if any(
             isinstance(statement, StateBind)
             and isinstance(statement.expr, Call)
@@ -147,16 +183,21 @@ class QASM3Emitter:
                 ok=False,
                 circuit=_empty_rejection_circuit("QASM_FUNCTION_CALL_UNSUPPORTED"),
             )
-        operator_bindings = {
-            statement.names[0]: statement.expr
-            for statement in getattr(main_body, "stmts", ())
-            if (
-                isinstance(statement, StateBind)
-                and statement.ty is not None
-                and statement.ty.name == "Operator"
-                and len(statement.names) == 1
+        if any(
+            _contains_fock_operator(expression)
+            for expression in operator_bindings.values()
+        ):
+            return EmitResult(
+                qasm="",
+                notes=[
+                    "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE: Fock and grid "
+                    "Hamiltonians have no OpenQASM qubit projection."
+                ],
+                ok=False,
+                circuit=_empty_rejection_circuit(
+                    "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE"
+                ),
             )
-        }
         for statement in getattr(main_body, "stmts", ()):
             if not isinstance(statement, StateBind) or not isinstance(statement.expr, EvolveExpr):
                 continue
