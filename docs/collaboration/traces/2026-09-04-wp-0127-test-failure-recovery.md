@@ -63,6 +63,12 @@
 ## Verification
 
 - `pytest -q tests/test_continuous_discretization_red.py`: 4 passed.
+- Bounded WP-0127 regression set after all six fixes: 48 passed.
+- Full suite completed: `1843 passed / 36 failed` (2026-09-04). The remaining
+  failures are outside the 13-failure intake scope, primarily older callable/
+  binder expectations, QASM rejection contracts, and meaning-family
+  classification; WP-0127 remains open for reconciliation rather than being
+  marked complete.
 - Earlier WP baseline: spec verification 161/161; full pytest exposed 13 unrelated-to-Braket failures before interruption.
 - `git diff --check`: passed.
 
@@ -79,4 +85,4 @@
 
 ## Next Safe Action
 
-All six WP-0127 issue families are now in Phase 3 review; run the bounded regression suite and reconcile the full pytest baseline before WP closeout.
+All six WP-0127 issue families are in Phase 3 review; the bounded set is green, but the full-suite residuals require a separately scoped follow-up before WP closeout.
