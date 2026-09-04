@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0509
 - GitHub issue: none
-- Status: ready
-- Phase: phase-1-red
+- Status: review
+- Phase: phase-3-refactor
 - Type: bug
 - Priority: P1
 - Initial planning size: M
@@ -56,11 +56,26 @@ Restore equivalent behavior between named and call-form density measurement disp
 
 ## Work Notes
 
-- Red reproduced during WP-0127 intake.
+- Red reproduced during WP-0127 intake. The deferred callable path did not
+  register a terminal POVM declaration before resolving the measurement
+  effect, so a call-form `DensityState` measurement raised
+  `INVALID_POVM_EFFECT` even though the named form passed.
+- Phase 2 fix: deferred bind processing registers `POVM` and `DensityState`
+  metadata through their existing dedicated handlers before terminal
+  measurement. The call-form density resolver and terminal collapse boundary
+  remain unchanged.
 
 ## Verification
 
-- Not yet complete.
+- `PYTHONPATH=. ./.venv/bin/pytest -q tests/test_liss_0377_measure_call_mixed_dispatch_red.py`: 4 passed.
+
+## Process Review
+
+- Outcome: no operating-contract deviation or operational problem found.
+- Isolation: same_context; weaker than separate_context.
+- Findings: apply none; named and call-form measurement paths now share the
+  existing POVM/mixed-state handlers and the targeted contract tests pass.
+- Next requested approval type: Adjudicator Phase 3 review/acceptance.
 
 ## Process Review
 

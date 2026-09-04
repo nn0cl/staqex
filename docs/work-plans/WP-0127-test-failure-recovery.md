@@ -18,7 +18,7 @@ Restore the current test suite to the accepted language/runtime contracts withou
 | LISS-0506 | review | M | M | AIP-0127-0506-001 | - | - | codex/wp-0127-test-failure-recovery |
 | LISS-0507 | review | M | M | AIP-0127-0507-001 | - | - | codex/wp-0127-test-failure-recovery |
 | LISS-0508 | review | M | M | AIP-0127-0508-001 | - | - | codex/wp-0127-test-failure-recovery |
-| LISS-0509 | ready | M | M | AIP-0127-0509-001 | - | - | codex/wp-0127-test-failure-recovery |
+| LISS-0509 | review | M | M | AIP-0127-0509-001 | - | - | codex/wp-0127-test-failure-recovery |
 
 ## AI Planning Records
 

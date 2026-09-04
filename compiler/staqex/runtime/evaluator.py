@@ -1302,6 +1302,19 @@ class Evaluator:
         )
         applied = 0
         for i, stmt in enumerate(pending):
+            # POVM and DensityState declarations are execution metadata for
+            # the terminal measurement, not Joint coordinates.  The deferred
+            # callable path must register them before resolving the measure
+            # effect, including when the measured density state is returned
+            # by a zero-argument function rather than named in `mixed_states`.
+            if stmt.ty is not None and stmt.ty.name == "POVM":
+                self._bind_povm(stmt)
+                applied += 1
+                continue
+            if stmt.ty is not None and stmt.ty.name == "DensityState":
+                self._bind_mixed_state(stmt)
+                applied += 1
+                continue
             if not needed.intersection(stmt.names):
                 continue
             joint = self._bind_names(

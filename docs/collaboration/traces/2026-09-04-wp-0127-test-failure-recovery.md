@@ -52,6 +52,13 @@
   route classical-returning functions through the value/frame evaluator.
 - Result: free-function/struct argument tests pass (11/11); Issue moved to
   review, next Issue is LISS-0509.
+- LISS-0509 Red reproduced: deferred callable execution did not register the
+  POVM declaration before resolving a call-form DensityState measurement.
+- Disposition: register POVM/DensityState metadata through the existing
+  dedicated handlers before terminal measurement; preserve the mixed-state
+  call resolver and no-early-collapse contract.
+- Result: mixed measurement dispatch tests pass (4/4); all WP-0127 issue
+  families have reached Phase 3 review.
 
 ## Verification
 
@@ -72,4 +79,4 @@
 
 ## Next Safe Action
 
-Review and resolve LISS-0509 by reproducing the mixed measurement dispatch failure against the density/P-O-V-M observation contract.
+All six WP-0127 issue families are now in Phase 3 review; run the bounded regression suite and reconcile the full pytest baseline before WP closeout.
