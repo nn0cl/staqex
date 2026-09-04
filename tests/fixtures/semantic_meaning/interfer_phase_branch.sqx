@@ -1,0 +1,8 @@
+package fixtures.semantic_meaning
+
+pub fn main() -> Unit {
+    State left = |0>
+    State right = |0>
+    State phased = interfer(left, right)
+    Measure phased
+}
