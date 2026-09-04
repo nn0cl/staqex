@@ -156,6 +156,11 @@ class QASM3Emitter:
             for declaration in getattr(unit, "decls", ())
             if isinstance(declaration, FunDecl)
         }
+        user_fn_returns = {
+            declaration.name: declaration.return_type.name
+            for declaration in getattr(unit, "decls", ())
+            if isinstance(declaration, FunDecl) and declaration.return_type is not None
+        }
         operator_bindings = {
             statement.names[0]: statement.expr
             for statement in getattr(main_body, "stmts", ())
@@ -171,6 +176,7 @@ class QASM3Emitter:
             and isinstance(statement.expr, Call)
             and isinstance(statement.expr.callee, Var)
             and statement.expr.callee.name in user_fn_names
+            and user_fn_returns.get(statement.expr.callee.name) == "State"
             for statement in getattr(main_body, "stmts", ())
         ):
             return EmitResult(
