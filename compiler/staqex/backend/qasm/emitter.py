@@ -267,6 +267,27 @@ class QASM3Emitter:
                 circuit=rejected,
             )
         semantic_ir = semantic_ir or build_scientific_semantic_ir(unit)
+        interfer_node = next(
+            (node for node in semantic_ir.nodes if node.meaning_kind == "interference"),
+            None,
+        )
+        if interfer_node is not None:
+            return EmitResult(
+                qasm="",
+                notes=[
+                    "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE: coherent "
+                    "interference meaning has no approved finite projection."
+                ],
+                ok=False,
+                circuit=_empty_rejection_circuit(
+                    "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
+                    provenance={
+                        "reason": "interference_projection_unavailable",
+                        "source_node_id": interfer_node.node_id,
+                        "target_plan": None,
+                    },
+                ),
+            )
         canonical = build_qpu_ir(unit, semantic_ir)
         if (
             semantic_ir.explicit_evolution is not None

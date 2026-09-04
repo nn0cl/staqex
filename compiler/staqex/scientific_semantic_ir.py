@@ -94,6 +94,8 @@ class SemanticNode:
     child_source_node_ids: tuple[str, ...] = ()
     control_source_node_id: str | None = None
     branch_rules: tuple[tuple[tuple[str, Any], ...], ...] = ()
+    phase_metadata: tuple[tuple[str, Any], ...] = ()
+    branch_relationship: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -519,6 +521,8 @@ def semantic_fingerprint(core: ScientificSemanticIR) -> str:
                 "child_source_node_ids": node.child_source_node_ids,
                 "control_source_node_id": node.control_source_node_id,
                 "branch_rules": node.branch_rules,
+                "phase_metadata": node.phase_metadata,
+                "branch_relationship": node.branch_relationship,
             }
             for node in core.nodes
         ],
@@ -619,6 +623,8 @@ def build_scientific_semantic_ir(
         children = tuple(node.node_id for node in nodes[child_start:])
         control_source_node_id = None
         branch_rules: tuple[tuple[tuple[str, Any], ...], ...] = ()
+        phase_metadata: tuple[tuple[str, Any], ...] = ()
+        branch_relationship: str | None = None
         if name == "WhenExpr":
             control_value = value.ctrl
             if isinstance(control_value, Var) and unit.main is not None:
@@ -639,29 +645,41 @@ def build_scientific_semantic_ir(
                 )
                 for arm in value.arms
             )
+        is_interfer = (
+            isinstance(value, Call)
+            and isinstance(value.callee, Var)
+            and value.callee.name == "interfer"
+        )
+        if is_interfer:
+            operand_ids = tuple(source_node_ids.get(id(arg), "") for arg in value.args)
+            children = operand_ids
+            phase_metadata = (("phase_role", "relative_phase"), ("exactness", "exact"))
+            branch_relationship = "coherent_operand_superposition"
         nodes.append(
             SemanticNode(
                 node_id=node_id,
                 kind=name,
                 children=children,
-                role_lane=role,
+                role_lane="quantum" if is_interfer else role,
                 type=_type_for(name),
                 dimensions="unknown",
                 exactness="exact"
                 if name in {"Limit", "ExactExponential", "EvolveExpr"}
                 else "unresolved",
-                intent=_intent_for(name),
+                intent="interference" if is_interfer else _intent_for(name),
                 provenance=SemanticProvenance(
                     "sqx",
                     getattr(span, "line", 0),
                     getattr(span, "col", 0),
                     node_id,
                 ),
-                meaning_kind=_meaning_kind(name),
-                state_role=_state_role(name),
+                meaning_kind="interference" if is_interfer else _meaning_kind(name),
+                state_role="interference_state" if is_interfer else _state_role(name),
                 child_source_node_ids=children,
                 control_source_node_id=control_source_node_id,
                 branch_rules=branch_rules,
+                phase_metadata=phase_metadata,
+                branch_relationship=branch_relationship,
             )
         )
 
@@ -680,7 +698,9 @@ def build_scientific_semantic_ir(
                 SemanticProvenance("sqx", 0, 0, "ssc:unit"),
             )
         )
-    if any(node.kind == "WhenExpr" for node in nodes):
+    if any(node.meaning_kind == "interference" for node in nodes):
+        relation_kind = "interference"
+    elif any(node.kind == "WhenExpr" for node in nodes):
         relation_kind = "mixture"
     elif any("Binder" in node.kind or node.kind in {"Sigma", "Pi"} for node in nodes):
         relation_kind = "binder"
@@ -742,6 +762,8 @@ def build_scientific_semantic_ir(
                     node.child_source_node_ids,
                     node.control_source_node_id,
                     node.branch_rules,
+                    node.phase_metadata,
+                    node.branch_relationship,
                 )
                 for node in result.nodes
             ],

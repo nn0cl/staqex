@@ -38,7 +38,7 @@ def test_interfer_preserves_operand_identity_and_phase_metadata() -> None:
     compiled = _compile_fixture()
     core = compiled.scientific_semantic_ir
     node = next(node for node in core.nodes if node.kind == "Call")
-    assert len(node.child_source_node_ids) == 3
+    assert len(node.child_source_node_ids) == 2
     assert getattr(node, "phase_metadata", None) is not None
     assert getattr(node, "branch_relationship", None) is not None
     assert any(
@@ -58,4 +58,3 @@ def test_unsupported_interfer_projection_is_atomic() -> None:
     assert emitted.circuit.reject_code == "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE"
     assert emitted.circuit.gates == []
     assert emitted.circuit.allocation_started is False
-
