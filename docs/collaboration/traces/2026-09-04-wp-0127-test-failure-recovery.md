@@ -39,6 +39,12 @@
   compatibility API; do not restore a legacy AST-derived canonical authority.
 - Result: targeted Jordan–Wigner/second-quantized tests pass (18/18); Issue
   moved to review, next Issue is LISS-0507.
+- LISS-0507 Red reproduced: an imported `fn -> Operator` returned a local
+  `OpVar`, which the caller tried to bind as a Joint value.
+- Disposition: transfer resolved Operator results through the operator
+  environment and restore the caller environment around the transfer.
+- Result: linked operator-factory tests pass (6/6); Issue moved to review,
+  next Issue is LISS-0508.
 
 ## Verification
 
@@ -59,4 +65,4 @@
 
 ## Next Safe Action
 
-Review and resolve LISS-0507 by reproducing the linked operator factory runtime binding failure against its accepted callable contract.
+Review and resolve LISS-0508 by reproducing the free-function/struct argument binding failures against the current callable and value-boundary contracts.

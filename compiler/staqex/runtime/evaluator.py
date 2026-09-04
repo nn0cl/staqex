@@ -4939,6 +4939,24 @@ class Evaluator:
                 result_joint = self._trace_out_dead_fn_locals(joint, pre_live, names)
                 self.operators = saved_operators
                 return result_joint
+            # Operator-returning functions bind their result in the operator
+            # environment, not as a Joint coordinate.  A library function
+            # commonly ends with `return local_operator`; routing that
+            # OpVar through the ordinary value binder loses the callee-local
+            # operator and raises `cannot bind expr OpVar` at the caller.
+            if (
+                len(names) == 1
+                and fun.return_type is not None
+                and fun.return_type.name == "Operator"
+                and isinstance(fun.body.result, (Var, OpVar))
+                and fun.body.result.name in self.operators
+            ):
+                self.operators[names[0]] = self.operators[fun.body.result.name]
+                self.operators = {
+                    **saved_operators,
+                    names[0]: self.operators[names[0]],
+                }
+                return joint
             result_joint = self._bind_names(
                 joint,
                 names,

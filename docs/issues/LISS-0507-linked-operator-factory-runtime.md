@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0507
 - GitHub issue: none
-- Status: ready
-- Phase: phase-1-red
+- Status: review
+- Phase: phase-3-refactor
 - Type: bug
 - Priority: P1
 - Initial planning size: M
@@ -56,11 +56,24 @@ The linked operator factory tests execute successfully without bypassing the can
 
 ## Work Notes
 
-- Red reproduced during WP-0127 intake.
+- Red reproduced during WP-0127 intake. An imported `fn -> Operator` returned
+  a callee-local `OpVar`; `_bind_user_fun` sent that result through the Joint
+  value binder instead of the operator environment.
+- Phase 2 fix: operator-returning user functions now transfer the resolved
+  local operator to the caller binding while restoring the surrounding
+  operator environment. No provider or module-linking boundary was changed.
 
 ## Verification
 
-- Not yet complete.
+- `./.venv/bin/pytest -q tests/test_liss0107_examples_linker_runtime_red.py tests/test_liss0051_operator_factory_runtime_red.py`: 6 passed.
+
+## Process Review
+
+- Outcome: no operating-contract deviation or operational problem found.
+- Isolation: same_context; weaker than separate_context.
+- Findings: apply none; the fix is limited to operator-result binding and all
+  linked regression cases pass.
+- Next requested approval type: Adjudicator Phase 3 review/acceptance.
 
 ## Process Review
 
