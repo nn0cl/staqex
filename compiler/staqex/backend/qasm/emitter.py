@@ -282,6 +282,26 @@ class QASM3Emitter:
                     },
                 ),
             )
+        if (
+            any(
+                isinstance(statement, StateBind)
+                and statement.ty is not None
+                and statement.ty.name == "QubitRegister"
+                for statement in getattr(main_body, "stmts", ())
+            )
+            and not _has_executable_canonical_instructions(canonical)
+        ):
+            return EmitResult(
+                qasm="",
+                notes=[
+                    "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE: no executable "
+                    "canonical projection exists for the declared register."
+                ],
+                ok=False,
+                circuit=_empty_rejection_circuit(
+                    "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE"
+                ),
+            )
         qpu_result = self._emit_from_qpu_ir_when_available(
             canonical,
             parameter_values=_source_scalar_bindings(unit),
@@ -290,6 +310,23 @@ class QASM3Emitter:
             return qpu_result
         has_executable_instructions = _has_executable_canonical_instructions(canonical)
         if not has_executable_instructions:
+            if any(
+                isinstance(statement, StateBind)
+                and statement.ty is not None
+                and statement.ty.name == "QubitRegister"
+                for statement in getattr(main_body, "stmts", ())
+            ):
+                return EmitResult(
+                    qasm="",
+                    notes=[
+                        "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE: no executable "
+                        "canonical projection exists for the declared register."
+                    ],
+                    ok=False,
+                    circuit=_empty_rejection_circuit(
+                        "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE"
+                    ),
+                )
             if any(
                 isinstance(statement, StateBind)
                 and isinstance(statement.expr, Call)
