@@ -455,7 +455,14 @@ class Evaluator:
 
     @staticmethod
     def _is_deferred_callable_eligible(unit: CompilationUnit) -> bool:
-        """Keep class construction on its established compatibility path."""
+        """Keep callable deferral inside the currently closed scope boundary.
+
+        A library function may refer to a module-level struct while building a
+        local Operator (for example ``weights.a * X``).  The eager path owns
+        that caller frame today; deferring it would resolve the attribute with
+        no object frame and fail closed.  Route this narrow shape through the
+        established executor until callable global-object capture is modeled.
+        """
         class_names = {
             declaration.qualified_name
             for declaration in unit.decls
@@ -464,6 +471,17 @@ class Evaluator:
         class_short_names = {name.rsplit(".", 1)[-1] for name in class_names}
         if unit.main is None:
             return False
+        for declaration in unit.decls:
+            if not isinstance(declaration, FunDecl) or declaration.name == "main":
+                continue
+            if any(
+                statement.ty is not None
+                and statement.ty.name == "Operator"
+                and Evaluator._operator_expr_contains_attr(statement.expr)
+                for statement in declaration.body.stmts
+                if isinstance(statement, StateBind)
+            ):
+                return False
         for statement in unit.main.body.stmts:
             if not isinstance(statement, StateBind):
                 continue
@@ -476,6 +494,26 @@ class Evaluator:
             if isinstance(callee, Attr) and callee.name in class_short_names:
                 return False
         return True
+
+    @staticmethod
+    def _operator_expr_contains_attr(expr: Any) -> bool:
+        if isinstance(expr, OpAttr):
+            return True
+        if isinstance(expr, OpBin):
+            return Evaluator._operator_expr_contains_attr(expr.lhs) or Evaluator._operator_expr_contains_attr(expr.rhs)
+        if isinstance(expr, OpPow):
+            return Evaluator._operator_expr_contains_attr(expr.base)
+        if isinstance(expr, OpBinder):
+            return (
+                Evaluator._operator_expr_contains_attr(expr.domain)
+                or Evaluator._operator_expr_contains_attr(expr.guard)
+                or Evaluator._operator_expr_contains_attr(expr.body)
+            )
+        if isinstance(expr, OpIndexed):
+            return Evaluator._operator_expr_contains_attr(expr.base) or Evaluator._operator_expr_contains_attr(expr.index)
+        if isinstance(expr, OpCall):
+            return any(Evaluator._operator_expr_contains_attr(arg) for arg in expr.args)
+        return False
 
     @staticmethod
     def _binder_runtime_unit(unit: CompilationUnit) -> CompilationUnit:
