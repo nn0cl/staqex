@@ -1321,6 +1321,24 @@ class Evaluator:
                 joint, stmt.names, stmt.expr, logs=logs, inspect_out=inspect_out
             )
             applied += 1
+            # Keep the deferred path's classical environment in sync with
+            # the legacy executor.  Binder domains and classical functions
+            # resolve named Int/Float values through `self.scalars`, while
+            # `_bind_names` stores the value in the Joint coordinate.
+            if (
+                stmt.ty is not None
+                and stmt.ty.name
+                not in {
+                    "State",
+                    "Operator",
+                    "Delta",
+                    "POVM",
+                    "DensityState",
+                    "QubitRegister",
+                }
+                and len(stmt.names) == 1
+            ):
+                self._maybe_capture_classical_scalar(joint, stmt.names[0])
             if interproc_trace and self._is_library_user_call(stmt.expr):
                 later: list[Any] = [
                     s for s in pending[i + 1 :] if needed.intersection(s.names)
