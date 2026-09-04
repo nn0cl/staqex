@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -28,7 +30,7 @@ def test_mixed_kg_g_promotes_to_kg() -> None:
     assert "UNIT_MIXED_ARITHMETIC_ERROR" not in codes, codes
     assert "PARSE_ERROR" not in codes, codes
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["a"] - 1.001) < 1e-12
     assert ev.scalar_units.get("a") == "kg"
 
@@ -47,7 +49,7 @@ def test_same_unit_addition_ok() -> None:
     codes = {d.get("code", "") for d in compiled.diagnostics}
     assert "UNIT_MIXED_ARITHMETIC_ERROR" not in codes, codes
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["a"] - 3.0) < 1e-12
     assert ev.scalar_units.get("a") == "kg"
 
@@ -66,7 +68,7 @@ def test_explicit_to_then_same_unit_ok() -> None:
     codes = {d.get("code", "") for d in compiled.diagnostics}
     assert "UNIT_MIXED_ARITHMETIC_ERROR" not in codes, codes
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["a"] - 1001.0) < 1e-9
     assert ev.scalar_units.get("a") == "g"
 
@@ -87,7 +89,7 @@ def test_type_first_mixed_vars_promote() -> None:
     codes = {d.get("code", "") for d in compiled.diagnostics}
     assert "UNIT_MIXED_ARITHMETIC_ERROR" not in codes, codes
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["c"] - 1.001) < 1e-12
     assert ev.scalar_units.get("c") == "kg"
 
@@ -107,7 +109,7 @@ def test_celsius_fahrenheit_promote_restores_lhs_celsius() -> None:
     codes = {d.get("code", "") for d in compiled.diagnostics}
     assert "UNIT_MIXED_ARITHMETIC_ERROR" not in codes, codes
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     # 0°C + 32°F in K-space → 546.3 K → restore to C → 273.15 °C
     assert abs(ev.scalars["t"] - 273.15) < 1e-9
     assert ev.scalar_units.get("t") == "C"

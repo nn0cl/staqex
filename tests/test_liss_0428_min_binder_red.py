@@ -7,6 +7,8 @@ Target: docs/issues/LISS-0428-min-binder.md.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -21,7 +23,7 @@ from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
 def _run(src: str):
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    return Evaluator(seed=0).run_unit(compiled.unit)
+    return run_canonical(compiled, Evaluator(seed=0))
 
 
 def test_min_over_a_single_binding() -> None:
@@ -88,7 +90,7 @@ def test_min_target_shape_diversity_threshold_over_state_coordinate() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     marg = result.measure.marginal
     # D(0,1)=1, D(0,2)=2, D(1,2)=3 (stand-in: i+j). Violated only by 110
     # (selected pair (0,1), D=1<2) and 111 (min(1,2,3)=1<2): 2/8 False.

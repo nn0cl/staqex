@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete — independent review COMPLETE** |
+| Status | **done — Phase 3 refactor complete; public QASM ownership slice closed** |
 | Discovered in | [LISS-0445](LISS-0445-scientific-semantic-consumer-migration.md) Phase 2 Green review |
 | Proposed Spec | [QASM Public Entry Canonical Sharing](../specs/staqex-qasm-public-entry-canonical-sharing.md) |
 | Proposed WorkPlan | [WP-0109](../work-plans/WP-0109-qasm-public-entry-canonical-sharing.md) |
@@ -55,14 +55,34 @@ the caller has no `CompileResult`. No AST field or global cache is proposed.
 
 Phase 1 Red and the user-approved Phase 2 Green implementation are complete
 and recorded. The independent review loop reached `COMPLETE` with no remaining
-review blocker. This does not authorize a subsequent phase.
+review blocker.
 
 ## Phase 3 Refactor assessment
 
 The Phase 3 refactor was assessed after Phase 2 completion. No behavior-
-preserving simplification is currently justified: the explicit `semantic_ir`
-parameters make canonical ownership visible, while collapsing the public
-signatures would make the ownership boundary less legible. The three existing
-LISS-0445 Red failures remain outside this Issue, so no Phase 3 code change is
-performed here. The refactor is deferred until those independent contracts or
-the Phase 3 acceptance policy are resolved.
+preserving simplification is justified: the explicit `semantic_ir` parameters
+make canonical ownership visible, while collapsing the public signatures would
+make the ownership boundary less legible. The formerly related LISS-0445 Red
+cases are now separately recorded; unsupported explicit-evolution rejection is
+handled by LISS-0503, while the existing bare `Limit` rejection code remains
+unchanged.
+
+Same-context review re-read this Issue, WP-0109, the accepted specification,
+all included public-entry tests, and the emitter/facade implementation. No
+blocking finding remains within the approved slice. Review isolation was
+`same_context`, which is weaker than `separate_context`.
+
+Verification: `./.venv/bin/pytest -q
+tests/test_liss_0446_qasm_public_entry_red.py
+tests/test_liss_0503_qasm_unsupported_evolution_rejection_red.py
+tests/test_liss_0445_consumer_migration_red.py` — **28 passed**;
+`py_compile` and `git diff --check` passed.
+
+Reviewer empathy summary: every included facade exposes or forwards the
+compile-owned semantic IR explicitly; compatibility callers remain bounded to
+one invocation and no global cache is introduced.
+
+Process review: no operating-contract deviation or operational problem found.
+
+Issue complete. Dynamic QASM, CH0, provider/live-QPU, S02, and solver work
+remain separately gated.

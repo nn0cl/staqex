@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import io
 import subprocess
 import sys
@@ -66,7 +68,7 @@ def test_custom_measure_sink_port_receives_measure_text() -> None:
     sink = CaptureSink()
     # seed picks a deterministic atom; port must still receive the formatted line.
     ev = Evaluator(seed=0, measure_sink=sink)
-    result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+    result = run_canonical(compiled, ev, stdout=io.StringIO())
     assert result.measure is not None
     assert result.measure.output
     assert sink.chunks == [result.measure.output + "\n"]

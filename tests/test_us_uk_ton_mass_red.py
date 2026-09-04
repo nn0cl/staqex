@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -56,7 +58,7 @@ def test_short_ton_lb_kg_conversions() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["lb"] - 2000.0) < 1e-9
     assert abs(ev.scalars["kg"] - _LB * 2000.0) < 1e-9
     assert abs(ev.scalars["raw"] - 1.0) < 1e-12
@@ -83,7 +85,7 @@ def test_long_ton_and_metric_tonne_bridge() -> None:
         in {"PARSE_ERROR", "TYPE_MISMATCH", "DIMENSION_MISMATCH_ERROR"}
     ], compiled.diagnostics
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["lb"] - 2240.0) < 1e-9
     assert abs(ev.scalars["t"] - (_LB * 2240.0) / 1000.0) < 1e-12
     assert abs(ev.scalars["us"] - 2240.0 / 2000.0) < 1e-12

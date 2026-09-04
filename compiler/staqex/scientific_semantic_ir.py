@@ -103,6 +103,108 @@ class SemanticRelation:
 
 
 @dataclass(frozen=True, slots=True)
+class RuntimePlanNode:
+    """Internal execution-plan node projected from one semantic node."""
+
+    source_node_id: str
+    kind: str
+    authority: str
+    provenance: SemanticProvenance
+
+
+@dataclass(frozen=True, slots=True)
+class RuntimeTransformationNode:
+    """Internal pure-transformation edge projected from canonical nodes."""
+
+    input_source_node_ids: tuple[str, ...]
+    output_source_node_id: str
+    authority: str
+    provenance: SemanticProvenance
+
+
+@dataclass(frozen=True, slots=True)
+class RuntimeControlNode:
+    """Internal single-level control/mixture node from canonical meaning."""
+
+    source_node_id: str
+    control_source_node_id: str
+    branch_rules: tuple[tuple[tuple[str, Any], ...], ...]
+    authority: str
+    provenance: SemanticProvenance
+
+
+@dataclass(frozen=True, slots=True)
+class RuntimeEvolutionNode:
+    """Internal local-evolution node projected from canonical meaning."""
+
+    source_node_id: str
+    input_source_node_ids: tuple[str, ...]
+    output_source_node_id: str
+    hamiltonian_source_node_id: str
+    duration_source_node_id: str
+    authority: str
+    provenance: SemanticProvenance
+    realization_status: str
+
+
+@dataclass(frozen=True, slots=True)
+class RuntimeBinderNode:
+    """Internal operator-binder node projected from canonical meaning."""
+
+    source_node_id: str
+    binder_kind: str
+    domain_source_node_id: str
+    body_source_node_id: str
+    output_source_node_id: str
+    authority: str
+    provenance: SemanticProvenance
+    realization_status: str
+
+
+@dataclass(frozen=True, slots=True)
+class RuntimeCallableNode:
+    """Internal local callable/object invocation projected from meaning."""
+
+    declaration_source_node_ids: tuple[str, ...]
+    invocation_source_node_ids: tuple[str, ...]
+    receiver_source_node_id: str
+    output_source_node_id: str
+    authority: str
+    provenance: SemanticProvenance
+    execution_status: str
+
+
+@dataclass(frozen=True, slots=True)
+class RuntimeDynamicLaneNode:
+    """Internal dynamic-region node projected from canonical meaning."""
+
+    region_source_node_id: str
+    controller_source_node_id: str
+    control_source_node_ids: tuple[str, ...]
+    wire_source_node_ids: tuple[str, ...]
+    authority: str
+    provenance: SemanticProvenance
+    execution_status: str
+
+
+@dataclass(frozen=True, slots=True)
+class RuntimeExecutionPlan:
+    """Non-public runtime plan; never a replacement semantic authority."""
+
+    semantic_identity: "ScientificSemanticIR"
+    authority: str
+    source_id: str
+    nodes: tuple[RuntimePlanNode, ...]
+    family: str = "state_measurement"
+    transformations: tuple[RuntimeTransformationNode, ...] = ()
+    controls: tuple[RuntimeControlNode, ...] = ()
+    evolutions: tuple[RuntimeEvolutionNode, ...] = ()
+    binders: tuple[RuntimeBinderNode, ...] = ()
+    callables: tuple[RuntimeCallableNode, ...] = ()
+    dynamic_lanes: tuple[RuntimeDynamicLaneNode, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
 class FiniteRealizationRecord:
     source_node_id: str
     source_name: str | None
@@ -128,11 +230,234 @@ class ScientificSemanticIR:
     binder_lowering: dict[str, Any] | None = None
     binder_source_node_ids: tuple[str, ...] = ()
     binder_provenance: tuple[tuple[tuple[str, Any], ...], ...] = ()
+    symbolic_operator_provenance: tuple[tuple[str, str, tuple[tuple[str, Any], ...]], ...] = ()
     projection_errors: tuple[str, ...] = ()
     source_unit_identity: int | None = None
     realize_source_node_id: str | None = None
     finite_realization_record: FiniteRealizationRecord | None = None
     ideal_meaning: "IdealMeaning | None" = None
+
+
+def build_runtime_execution_plan(
+    semantic_ir: ScientificSemanticIR,
+) -> RuntimeExecutionPlan:
+    """Project canonical semantic nodes into an internal runtime plan."""
+
+    if not isinstance(semantic_ir, ScientificSemanticIR):
+        raise ValueError("runtime plan requires ScientificSemanticIR")
+    if semantic_ir.authority != "scientific_semantic_ir":
+        from .runtime.evaluator import KernelDiagnosticError
+
+        raise KernelDiagnosticError(
+            "E_RUNTIME_PLAN_CANONICAL_AUTHORITY",
+            "runtime plan requires canonical semantic authority",
+        )
+    if not semantic_ir.nodes:
+        raise ValueError("runtime plan requires canonical nodes")
+    nodes = tuple(
+        RuntimePlanNode(
+            source_node_id=node.node_id,
+            kind=node.kind,
+            authority=semantic_ir.authority,
+            provenance=node.provenance,
+        )
+        for node in semantic_ir.nodes
+    )
+    semantic_nodes_by_id = {node.node_id: node for node in semantic_ir.nodes}
+    semantic_node_ids = set(semantic_nodes_by_id)
+    transformations = tuple(
+        RuntimeTransformationNode(
+            input_source_node_ids=tuple(
+                child for child in node.children if child in semantic_node_ids
+            ),
+            output_source_node_id=node.node_id,
+            authority=semantic_ir.authority,
+            provenance=node.provenance,
+        )
+        for node in semantic_ir.nodes
+        if node.kind == "Pipe"
+    )
+    controls = tuple(
+        RuntimeControlNode(
+            source_node_id=node.node_id,
+            control_source_node_id=node.control_source_node_id or "",
+            branch_rules=node.branch_rules,
+            authority=semantic_ir.authority,
+            provenance=node.provenance,
+        )
+        for node in semantic_ir.nodes
+        if node.kind == "WhenExpr"
+    )
+    evolutions = tuple(
+        RuntimeEvolutionNode(
+            source_node_id=node.node_id,
+            input_source_node_ids=tuple(node.children[:1]),
+            output_source_node_id=node.node_id,
+            hamiltonian_source_node_id=(node.children[1] if len(node.children) > 1 else node.node_id),
+            duration_source_node_id=(node.children[2] if len(node.children) > 2 else node.node_id),
+            authority=semantic_ir.authority,
+            provenance=node.provenance,
+            realization_status=(
+                "target_profile_required"
+                if semantic_ir.explicit_evolution is not None
+                else "local_exact"
+            ),
+        )
+        for node in semantic_ir.nodes
+        if node.kind == "EvolveExpr"
+    )
+    binders = tuple(
+        RuntimeBinderNode(
+            source_node_id=node.node_id,
+            binder_kind=node.kind,
+            domain_source_node_id=next(
+                (
+                    child
+                    for child in node.children
+                    if semantic_nodes_by_id.get(child, None) is not None
+                    and semantic_nodes_by_id[child].kind == "IndexDomain"
+                ),
+                node.node_id,
+            ),
+            body_source_node_id=next(
+                (
+                    child
+                    for child in reversed(node.children)
+                    if semantic_nodes_by_id.get(child, None) is not None
+                    and semantic_nodes_by_id[child].kind
+                    not in {"Span", "BinderOrigin", "IndexDomain"}
+                ),
+                node.node_id,
+            ),
+            output_source_node_id=node.node_id,
+            authority=semantic_ir.authority,
+            provenance=node.provenance,
+            realization_status=(
+                "target_profile_required"
+                if semantic_ir.has_explicit_realize
+                else "local_bounded_pending"
+            ),
+        )
+        for node in semantic_ir.nodes
+        if "Binder" in node.kind or node.kind in {"Sigma", "Pi"}
+    )
+    callables = _build_runtime_callable_nodes(semantic_ir, semantic_nodes_by_id)
+    dynamic_lanes = _build_runtime_dynamic_lane_nodes(
+        semantic_ir, semantic_nodes_by_id
+    )
+    family = (
+        "dynamic_lane"
+        if dynamic_lanes
+        else "evolution"
+        if evolutions
+        else "control_mixture"
+        if controls
+        else "pure_transformation"
+        if transformations
+        else "binder"
+        if binders
+        else "callable"
+        if callables
+        else "state_measurement"
+    )
+    return RuntimeExecutionPlan(
+        semantic_identity=semantic_ir,
+        authority=semantic_ir.authority,
+        source_id=semantic_ir.source_id,
+        nodes=nodes,
+        family=family,
+        transformations=transformations,
+        controls=controls,
+        evolutions=evolutions,
+        binders=binders,
+        callables=callables,
+        dynamic_lanes=dynamic_lanes,
+    )
+
+
+def _build_runtime_callable_nodes(
+    semantic_ir: ScientificSemanticIR,
+    semantic_nodes_by_id: dict[str, SemanticNode],
+) -> tuple[RuntimeCallableNode, ...]:
+    """Project local declarations and calls without adding execution policy."""
+    declarations = tuple(
+        node.node_id
+        for node in semantic_ir.nodes
+        if node.kind in {"FunDecl", "ClassDecl"}
+    )
+    if not declarations:
+        return ()
+    return tuple(
+        RuntimeCallableNode(
+            declaration_source_node_ids=declarations,
+            invocation_source_node_ids=(invocation.node_id,),
+            receiver_source_node_id=next(
+                (
+                    child
+                    for child in invocation.children
+                    if semantic_nodes_by_id.get(child, None) is not None
+                    and semantic_nodes_by_id[child].kind == "Attr"
+                ),
+                invocation.node_id,
+            ),
+            output_source_node_id=invocation.node_id,
+            authority=semantic_ir.authority,
+            provenance=invocation.provenance,
+            execution_status="local_bounded_pending",
+        )
+        for invocation in semantic_ir.nodes
+        if invocation.kind == "Call"
+    )
+
+
+def _build_runtime_dynamic_lane_nodes(
+    semantic_ir: ScientificSemanticIR,
+    semantic_nodes_by_id: dict[str, SemanticNode],
+) -> tuple[RuntimeDynamicLaneNode, ...]:
+    """Project one-level dynamic regions without selecting a target profile."""
+    regions = [node for node in semantic_ir.nodes if node.kind == "DynamicQpuStmt"]
+    result: list[RuntimeDynamicLaneNode] = []
+    for region in regions:
+        region_nodes = [
+            node
+            for node in semantic_ir.nodes
+            if node.node_id in set(region.children)
+        ]
+        controller = next(
+            (
+                node
+                for node in region_nodes
+                if node.kind == "StateBind"
+                and any(
+                    semantic_nodes_by_id.get(child, None) is not None
+                    and semantic_nodes_by_id[child].kind == "MeasureExpr"
+                    for child in node.children
+                )
+            ),
+            region,
+        )
+        controls = tuple(
+            node.node_id
+            for node in region_nodes
+            if node.kind == "MatchStmt"
+        )
+        wires = tuple(
+            node.node_id
+            for node in region_nodes
+            if node.kind == "StateBind"
+        )
+        result.append(
+            RuntimeDynamicLaneNode(
+                region_source_node_id=region.node_id,
+                controller_source_node_id=controller.node_id,
+                control_source_node_ids=controls,
+                wire_source_node_ids=wires,
+                authority=semantic_ir.authority,
+                provenance=region.provenance,
+                execution_status="capability_profile_required",
+            )
+        )
+    return tuple(result)
 
 
 @dataclass(frozen=True, slots=True)
@@ -386,6 +711,7 @@ def build_scientific_semantic_ir(
         binder_lowering=binder_lowering or None,
         binder_source_node_ids=_binder_source_node_ids(unit, core),
         binder_provenance=_binder_provenance(unit, core),
+        symbolic_operator_provenance=_symbolic_operator_provenance(unit, core),
         projection_errors=tuple(
             dict.fromkeys(
                 (
@@ -952,6 +1278,33 @@ def _binder_provenance(
                         ("source_node_id", node_id),
                     )
                 )
+    return tuple(records)
+
+
+def _symbolic_operator_provenance(
+    unit: Any, core: ScientificSemanticIR
+) -> tuple[tuple[str, str, tuple[tuple[str, Any], ...]], ...]:
+    """Retain source-derived operator aliases for compatibility views."""
+    if unit.main is None:
+        return ()
+    records: list[tuple[str, str, tuple[tuple[str, Any], ...]]] = []
+    for stmt in unit.main.body.stmts:
+        if not (
+            isinstance(stmt, StateBind)
+            and stmt.ty is not None
+            and stmt.ty.name == "Operator"
+            and len(stmt.names) == 1
+        ):
+            continue
+        node_id = _source_node_id_for_span(core, stmt.span)
+        if node_id:
+            records.append(
+                (
+                    stmt.names[0],
+                    node_id,
+                    (("line", stmt.span.line), ("col", stmt.span.col)),
+                )
+            )
     return tuple(records)
 
 

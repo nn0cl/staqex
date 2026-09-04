@@ -78,7 +78,11 @@ def run_source(
         data_parallel_workers=data_parallel_workers,
     )
     out = stdout if stdout is not None else sys.stdout
-    result = ev.run_unit(compiled.unit, stdout=out)
+    result = ev.run_canonical_unit(
+        compiled.unit,
+        semantic_ir=compiled.scientific_semantic_ir,
+        stdout=out,
+    )
     return RunResult(eval=result, diagnostics=diagnostics, compile_ok=True)
 
 
@@ -109,7 +113,11 @@ def run_path(
         data_parallel_workers=data_parallel_workers,
     )
     out = stdout if stdout is not None else sys.stdout
-    result = ev.run_unit(compiled.unit, stdout=out)
+    result = ev.run_canonical_unit(
+        compiled.unit,
+        semantic_ir=compiled.scientific_semantic_ir,
+        stdout=out,
+    )
     return RunResult(eval=result, diagnostics=compiled.diagnostics, compile_ok=True)
 
 

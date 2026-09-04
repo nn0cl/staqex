@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status/phase | **Phase 3 refactor complete — binder slice final-review-ready; LISS-0446 parked** |
+| Status/phase | **done — bounded binder canonical-projection slice complete; LISS-0446 and LISS-0503 remain separate boundaries** |
 | WorkPlan | [WP-0108](../work-plans/WP-0108-scientific-semantic-consumer-migration.md) |
 | Specification | [Scientific Semantic Consumer Migration](../specs/staqex-scientific-semantic-consumer-migration.md) |
 | Parent design | [LISS-0444](LISS-0444-scientific-semantic-core.md) / [WP-0107](../work-plans/WP-0107-scientific-semantic-core.md) |
 | ADR authority | [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |
-| Approval status | Scope/design, Phase 1 Red, Phase 2 Green, and binder-slice implementation approved; LISS-0446 not approved for implementation |
+| Approval status | Scope/design, Phase 1 Red, Phase 2 Green, and binder-slice implementation approved; follow-up boundaries remain separately gated |
 
 ## Objective
 
@@ -62,3 +62,30 @@ current acceptance specification cannot prove safe replacement.
 - unsupported or unresolved meaning produces no executable artifact;
 - full regression and independent post-Green review pass;
 - WP-0107/open-work register/Issue status agree on completed and deferred work.
+
+## Completion review
+
+The approved bounded binder slice is complete. The canonical projection is
+compile-owned and is reused by pipeline, diagnostics, QPU, and direct QASM
+consumers without a hidden rebuild or cache. The former excluded Red cases
+have been separated into their own boundaries: public QASM facade ownership is
+tracked by LISS-0446, and unsupported explicit-evolution QASM rejection is
+closed by LISS-0503.
+
+Same-context review re-read this Issue, WP-0108, the migration specification,
+the binder implementation, the fixed Red suite, and the follow-up records.
+No blocking finding remains within the approved slice. Isolation was
+`same_context`, which is weaker than `separate_context`.
+
+Verification: `./.venv/bin/pytest -q
+tests/test_liss_0445_consumer_migration_red.py` — **12 passed**;
+`git diff --check` passed.
+
+Reviewer empathy summary: the canonical binder ownership boundary is explicit
+at the compile result and consumer call sites, while future public-facade and
+unsupported-realization work remains visibly separate.
+
+Process review: no operating-contract deviation or operational problem found.
+
+Issue complete for the approved bounded binder slice. No implementation
+approval is implied for LISS-0446 or other follow-up families.

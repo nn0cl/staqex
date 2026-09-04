@@ -13,6 +13,8 @@ call site and the factory-call path. `apply`/`capply` read
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -41,7 +43,7 @@ def test_apply_resolves_struct_field_coefficient() -> None:
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
     assert result.measure.vacuum is False
 
@@ -84,8 +86,8 @@ def test_apply_resolution_does_not_add_a_new_runtime_unitary_check() -> None:
     assert literal_compiled.unit is not None, literal_compiled.diagnostics
     assert struct_compiled.unit is not None, struct_compiled.diagnostics
 
-    literal_result = Evaluator(seed=0).run_unit(literal_compiled.unit)
-    struct_result = Evaluator(seed=0).run_unit(struct_compiled.unit)
+    literal_result = run_canonical(literal_compiled, Evaluator(seed=0))
+    struct_result = run_canonical(struct_compiled, Evaluator(seed=0))
     assert literal_result.measure is not None
     assert struct_result.measure is not None
     assert literal_result.measure.marginal == struct_result.measure.marginal
@@ -110,7 +112,7 @@ def test_operator_variable_indirection_still_works_via_operators_dict_shortcut()
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
 
 
@@ -142,7 +144,7 @@ def test_inline_compound_evolve_expression_was_never_supported() -> None:
     assert compiled.unit is not None, compiled.diagnostics
     raised = None
     try:
-        Evaluator(seed=0).run_unit(compiled.unit)
+        run_canonical(compiled, Evaluator(seed=0))
     except KernelError as exc:
         raised = exc
     assert raised is not None
@@ -170,6 +172,6 @@ def test_existing_liss_0407_cases_still_pass() -> None:
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
     assert result.measure.vacuum is False

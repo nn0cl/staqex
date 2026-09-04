@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **in progress — LISS-0458 bounded artifact contract complete; remaining WP-0121 acceptance gaps open** |
+| Status | **complete — finite artifact contract and resource preflight evidence synchronized** |
 | Type | feature/release work plan |
 | Size | L |
 | Parent | [WP-0119](WP-0119-real-qpu-readiness-roadmap.md) |
@@ -59,10 +59,12 @@ matrix.
 ## LISS-0458 closeout synchronization
 
 LISS-0458 is complete for the bounded finite realization/artifact contract
-slice. The WP remains in progress because the full release exit still needs
-explicit resource-preflight/budget-overflow coverage and any remaining
-cross-consumer acceptance evidence. No provider, credential, routing, or live
-QPU work is implied.
+slice. The resource-preflight and budget-overflow acceptance gap is covered by
+the existing provider-neutral LISS-0459 target preflight and LISS-0451 QPU
+rejection contracts; no new artifact API or budget DTO is required. Cross-
+consumer evidence confirms that rejection occurs before allocation and that
+the artifact remains absent. No provider, credential, routing, or live QPU
+work is implied.
 
 ## Risks / stop conditions
 
@@ -84,3 +86,23 @@ implicit, or provider payloads leak into the provider-neutral contract.
 - Model/reasoning: N/A; runtime does not expose displayed per-task values.
 - Planning size: L; basis is a cross-boundary contract with numeric and
   provenance invariants. Confidence: medium pending ADR/spec review.
+
+## Completion review
+
+The WP-0121 release exit was re-read against the acceptance specification,
+LISS-0458 artifact contract, LISS-0459 target preflight, LISS-0451 rejection
+contract, and their deterministic tests. The remaining resource/budget gap is
+closed by existing provider-neutral boundaries rather than by coupling the
+artifact module to simulator or provider configuration.
+
+Verification: **18 passed** across LISS-0458, LISS-0459, LISS-0451, and local
+resource execution wiring; `git diff --check` passed.
+
+Same-context review found no blocker. Isolation was `same_context`, which is
+weaker than `separate_context`. Provider SDK, credentials, routing, and live
+execution remain outside this WP.
+
+Process review: no operating-contract deviation or operational problem found.
+
+WP-0121 is complete. WP-0122 target compilation and later provider/live-QPU
+work remain separately tracked.

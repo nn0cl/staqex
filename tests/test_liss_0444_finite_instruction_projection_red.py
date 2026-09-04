@@ -10,6 +10,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 import compiler.staqex.backend.qasm.emitter as emitter_module
+import compiler.staqex.backend.qasm.lower as lower_module
 from compiler.staqex.backend.qasm.emitter import QASM3Emitter
 from compiler.staqex.pipeline import compile_source
 from compiler.staqex.qpu_ir import QpuInstruction, QpuProgram, instruction_fingerprint
@@ -102,7 +103,7 @@ def test_invalid_finite_suzuki_does_not_fall_back_to_ast_lowering(monkeypatch) -
     def fail_if_called(*_args, **_kwargs):
         raise AssertionError("invalid finite Suzuki must not use AST fallback")
 
-    monkeypatch.setattr(emitter_module, "lower_unit_to_circuit", fail_if_called)
+    monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
     emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
 
     assert not emitted.ok
@@ -162,7 +163,7 @@ def test_unresolved_finite_suzuki_order_is_fail_closed(monkeypatch) -> None:
     def fail_if_called(*_args, **_kwargs):
         raise AssertionError("unresolved finite Suzuki must not use AST fallback")
 
-    monkeypatch.setattr(emitter_module, "lower_unit_to_circuit", fail_if_called)
+    monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
     emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
 
     assert not emitted.ok
@@ -177,7 +178,7 @@ def test_finite_suzuki_qasm_does_not_use_compatibility_fallback(monkeypatch) -> 
     def fail_if_called(*_args, **_kwargs):
         raise AssertionError("finite Suzuki must be emitted from canonical instructions")
 
-    monkeypatch.setattr(emitter_module, "lower_unit_to_circuit", fail_if_called)
+    monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
     emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
 
     assert emitted.ok, emitted.notes
@@ -190,7 +191,7 @@ def test_finite_binder_qasm_does_not_use_compatibility_fallback(monkeypatch) -> 
     def fail_if_called(*_args, **_kwargs):
         raise AssertionError("finite binder must be emitted from canonical instructions")
 
-    monkeypatch.setattr(emitter_module, "lower_unit_to_circuit", fail_if_called)
+    monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
     emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
 
     assert emitted.ok, emitted.notes

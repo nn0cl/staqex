@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete — independent review COMPLETE** |
+| Status | **done — Phase 3 refactor complete; public QASM ownership slice closed** |
 | Issue | [LISS-0446](../issues/LISS-0446-qasm-public-entry-canonical-sharing.md) |
 | Specification | [QASM Public Entry Canonical Sharing](../specs/staqex-qasm-public-entry-canonical-sharing.md) |
 | Parent | [WP-0108](WP-0108-scientific-semantic-consumer-migration.md) |
@@ -66,8 +66,7 @@ must reject explicitly or carry a deterministic pairing token; rebuilding the
 IR is not an acceptable fallback.
 
 Phase 1 Red and the separately approved Phase 2 Green implementation are
-complete. The independent review loop reached `COMPLETE`; no subsequent phase
-is approved.
+complete. The independent review loop reached `COMPLETE`.
 
 ## Phase 3 Refactor disposition
 
@@ -78,4 +77,16 @@ Phase 3 was evaluated using the recommended conservative disposition:
   ownership rather than hiding it behind a convenience abstraction;
 - the three known LISS-0445 Red failures prevent claiming a full Phase 3 Green
   baseline and remain outside WP-0109;
-- Phase 3 is deferred, with no new implementation or scope expansion.
+- Phase 3 completed with no additional production refactor: explicit
+  `semantic_ir` parameters remain because they make canonical ownership
+  visible. Existing bare `Limit` rejection behavior was rechecked after the
+  LISS-0503 guard and remains stable.
+
+## Completion synchronization
+
+- LISS-0446: **done** for the approved public local QASM facade ownership
+  slice.
+- Verification: **28 passed** across LISS-0446, LISS-0445, and LISS-0503;
+  compile and diff checks passed.
+- Current Next Issue: dynamic QASM and CH0 remain explicit separate contracts;
+  provider/live-QPU work remains out of scope.

@@ -7,6 +7,8 @@ fires.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -33,7 +35,7 @@ def test_evolve_overflow_error_names_the_energy_scale_fix() -> None:
     assert compiled.unit is not None, compiled.diagnostics
     raised = None
     try:
-        Evaluator(seed=0).run_unit(compiled.unit)
+        run_canonical(compiled, Evaluator(seed=0))
     except KernelError as exc:
         raised = exc
     assert raised is not None, "expected the evolution step budget to overflow"

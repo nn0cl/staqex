@@ -99,7 +99,7 @@ not permission for unattended production execution.
 | 0 | WP-0120 | [LISS-0455](../issues/LISS-0455-real-qpu-scope-reconciliation.md) | Reconcile this roadmap with the register and completed assets | Accepted scope, no stale work reopened |
 | 1 | WP-0120 | [LISS-0456](../issues/LISS-0456-semantic-consumer-qasm-entry.md) | Canonical IR ownership through all public QASM entry points | No AST/DTO bypass; Phase 3 reviewed |
 | 1 | WP-0120 | [LISS-0457](../issues/LISS-0457-meaning-family-qpu-readiness.md) | Product/tensor, continuous/open-system, and measurement readiness matrix | Family-specific disposition; unsupported cases remain explicit |
-| 1 | WP-0121 | [LISS-0458](../issues/LISS-0458-realization-artifact-contract.md) | Provider-neutral finite artifact envelope and serialization | Accepted artifact/provenance/no-artifact contract |
+| 1 | WP-0121 | [LISS-0458](../issues/LISS-0458-realization-artifact-contract.md) | Provider-neutral finite artifact envelope and serialization | Accepted artifact/provenance/no-artifact contract; WP complete |
 | 2 | WP-0122 | [LISS-0459](../issues/LISS-0459-target-capability-profile-hardening.md) | Device capability, resource, gate, dynamic, and rejection profile | Deterministic preflight matrix |
 | 2 | WP-0122 | [LISS-0460](../issues/LISS-0460-transpile-route-schedule-contract.md) | Native-gate mapping, topology routing, depth/timing schedule | Target-aware artifact with explicit approximation/cost |
 | 2 | WP-0122 | [LISS-0461](../issues/LISS-0461-static-qasm-conformance.md) | Static OpenQASM conformance and parser/device-envelope checks | Offline conformance against supported subset |
@@ -210,6 +210,8 @@ synchronized.
 
 ## Next safe action
 
-Execute the acceptance-spec review for LISS-0456 and LISS-0457. Phase 1 tests
-remain separately gated; no provider installation or real-QPU submission is
-authorized by this WP alone.
+The local semantic, finite-artifact, target-QASM, and provider-neutral Host
+hardening slices are complete or explicitly deferred. The next non-local
+milestone is the human-authorized real-device pilot under WP-0124; it requires
+the human's own credentials and explicit run confirmation. No provider
+installation or real-QPU submission is authorized for an agent by this WP.

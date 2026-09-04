@@ -8,6 +8,8 @@ Target: docs/issues/LISS-0406-host-coefficient-tensor-evaluator-wiring.md.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -49,9 +51,9 @@ def test_host_coupling_reaches_a_real_evaluator_run() -> None:
     assert compiled.unit is not None, compiled.diagnostics
 
     ev_small = Evaluator(seed=0, host_input=MappingHostInputAdapter({"coupling": [0.1]}))
-    result_small = ev_small.run_unit(compiled.unit)
+    result_small = run_canonical(compiled, ev_small)
     ev_large = Evaluator(seed=0, host_input=MappingHostInputAdapter({"coupling": [5.0]}))
-    result_large = ev_large.run_unit(compiled.unit)
+    result_large = run_canonical(compiled, ev_large)
 
     assert result_small.measure is not None
     assert result_large.measure is not None
@@ -69,7 +71,7 @@ def test_missing_host_coefficient_fails_closed_from_a_real_evaluator_run() -> No
     ev = Evaluator(seed=0, host_input=MappingHostInputAdapter({}))
     raised = None
     try:
-        ev.run_unit(compiled.unit)
+        run_canonical(compiled, ev)
     except KernelError as exc:
         raised = exc
     assert raised is not None
@@ -94,7 +96,7 @@ def test_program_without_host_placeholders_is_unaffected() -> None:
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
     import math
 

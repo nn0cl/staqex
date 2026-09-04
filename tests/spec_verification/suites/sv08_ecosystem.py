@@ -10,6 +10,7 @@ from pathlib import Path
 from harness import AssertionFailure, as_main, assertNormEquals, assertSuperposition
 from harness.report import CaseResult
 from harness.state import State
+from harness.canonical_execution import run_canonical
 
 _REPO = Path(__file__).resolve().parents[3]
 if str(_REPO) not in sys.path:
@@ -60,7 +61,7 @@ Measure s
         if compiled.unit is None:
             raise AssertionFailure("PARSE_ERROR", str(compiled.diagnostics))
         ev = Evaluator(seed=0)
-        result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+        result = run_canonical(compiled, ev, stdout=io.StringIO())
         marg = result.joint.marginal("s")
         # sin(0)=0, sin(π/2)=1
         st = State({round(k, 10): v for k, v in marg.items()}, payload_type=float)
@@ -103,7 +104,7 @@ Measure y
         buf = io.StringIO()
         compiled = compile_source(src)
         ev = Evaluator(seed=0, inspect_sink=buf)
-        result = ev.run_unit(compiled.unit, stdout=io.StringIO())
+        result = run_canonical(compiled, ev, stdout=io.StringIO())
         st = State(result.joint.marginal("y"), payload_type=int)
         assertSuperposition(st, {0: 0.5, 1: 0.5})
         if "mass" not in buf.getvalue():
@@ -149,7 +150,7 @@ Measure x
             buf = io.StringIO()
             compiled = compile_source(src)
             ev = Evaluator(seed=0)
-            result = ev.run_unit(compiled.unit, stdout=buf)
+            result = run_canonical(compiled, ev, stdout=buf)
             text = buf.getvalue()
             if "value" not in text or "mass" not in text:
                 raise AssertionFailure("SUPERPOSITION_MISMATCH", f"Snapshot missing csv: {text!r}")

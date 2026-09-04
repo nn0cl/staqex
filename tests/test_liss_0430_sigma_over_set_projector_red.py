@@ -7,6 +7,8 @@ Target: docs/issues/LISS-0430-sigma-over-set-projector.md.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -23,7 +25,7 @@ def _p_f_matrix(src: str, n_qubits: int):
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     op_ast = ev.operators.get("P_F")
     assert op_ast is not None
     return compile_hamiltonian(op_ast, env={}, n_qubits=n_qubits)
@@ -123,7 +125,7 @@ def test_sigma_over_set_body_must_be_bound_variable_projector() -> None:
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
     try:
-        Evaluator(seed=0).run_unit(compiled.unit)
+        run_canonical(compiled, Evaluator(seed=0))
         raise AssertionError("expected KernelError for non-projector body")
     except Exception as e:  # noqa: BLE001
         assert "requires the body to be exactly" in str(e)

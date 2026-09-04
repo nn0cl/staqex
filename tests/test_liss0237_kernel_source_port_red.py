@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import subprocess
 import sys
 from pathlib import Path
@@ -78,7 +80,7 @@ def test_custom_source_port_overrides_disk_bytes() -> None:
     from compiler.staqex.runtime.evaluator import Evaluator
     import io
 
-    result = Evaluator(seed=0).run_unit(compiled.unit, stdout=io.StringIO())
+    result = run_canonical(compiled, Evaluator(seed=0), stdout=io.StringIO())
     assert result.measure is not None
     assert result.measure.output == "99"
 

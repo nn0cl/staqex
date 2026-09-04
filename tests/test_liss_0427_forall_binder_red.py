@@ -5,6 +5,8 @@ Target: docs/issues/LISS-0427-forall-binder.md.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -19,7 +21,7 @@ from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
 def _run(src: str):
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    return Evaluator(seed=0).run_unit(compiled.unit)
+    return run_canonical(compiled, Evaluator(seed=0))
 
 
 def test_forall_true_when_all_elements_satisfy_the_body() -> None:
@@ -66,7 +68,7 @@ def test_forall_target_shape_pairwise_implies_over_state_coordinate() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     marg = result.measure.marginal
     # compat(0,1)=True, compat(0,2)=True, compat(1,2)=False (1+2=3>2).
     # Violated only by patterns 011 and 111 (pair (1,2) both selected):
@@ -95,7 +97,7 @@ def test_pi_over_set_power_domain_no_longer_silently_becomes_a_ket_sum() -> None
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
     try:
-        Evaluator(seed=0).run_unit(compiled.unit)
+        run_canonical(compiled, Evaluator(seed=0))
         raise AssertionError("expected KernelError for non-Sigma {0,1}^n domain")
     except Exception as e:  # noqa: BLE001
         assert "bare-range binder domain" in str(e)

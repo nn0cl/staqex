@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -39,7 +41,7 @@ def test_atomic_mass_to_kg() -> None:
     codes = {d.get("code", "") for d in compiled.diagnostics}
     assert "PARSE_ERROR" not in codes, codes
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["kg"] - _U_KG) < 1e-36
     assert abs(ev.scalars["raw"] - 1.0) < 1e-12
 
@@ -60,7 +62,7 @@ def test_bare_ton_matches_ton_us() -> None:
     assert "UNIT_MIXED_ARITHMETIC_ERROR" not in codes, codes
     assert "PARSE_ERROR" not in codes, codes
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["lb"] - 2000.0) < 1e-9
     assert abs(ev.scalars["us"] - 1.0) < 1e-12
 

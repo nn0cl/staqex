@@ -6,6 +6,8 @@ Target: docs/issues/LISS-0429-set-comprehension.md.
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -20,7 +22,7 @@ from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
 def _run(src: str):
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    return Evaluator(seed=0).run_unit(compiled.unit)
+    return run_canonical(compiled, Evaluator(seed=0))
 
 
 def test_single_condition_filters_the_set_power_domain() -> None:

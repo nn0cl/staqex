@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -54,7 +56,7 @@ def test_lb_kg_round_trip() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["m"] - _LB_KG) < 1e-12
     assert abs(ev.scalars["raw"] - 1.0) < 1e-12
     assert abs(ev.scalars["p"] - 1.0) < 1e-12

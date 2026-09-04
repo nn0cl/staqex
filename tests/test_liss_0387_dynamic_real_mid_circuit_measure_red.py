@@ -6,6 +6,8 @@ synced at Green) / docs/architecture/adr/0200-dynamic-lane-real-kernel-execution
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -51,7 +53,7 @@ def test_measure_only_program_consistent_outcome_runs_to_completion() -> None:
 
     host_input = MappingHostInputAdapter({"dynamic:bit": "0"})
     evaluator = Evaluator(seed=0, host_input=host_input)
-    result = evaluator.run_unit(compiled.unit)
+    result = run_canonical(compiled, evaluator)
 
     assert result.measure is not None
     assert result.measure.vacuum is False
@@ -70,7 +72,7 @@ def test_measure_only_program_inconsistent_outcome_vacuums_the_run() -> None:
 
     host_input = MappingHostInputAdapter({"dynamic:bit": "1"})
     evaluator = Evaluator(seed=0, host_input=host_input)
-    result = evaluator.run_unit(compiled.unit)
+    result = run_canonical(compiled, evaluator)
 
     assert result.measure is not None
     assert result.measure.vacuum is True, (

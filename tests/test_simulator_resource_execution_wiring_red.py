@@ -104,7 +104,9 @@ def test_local_run_abort_stops_before_evaluator() -> None:
     def evaluator_must_not_run(*args: object, **kwargs: object) -> object:
         raise AssertionError("resource rejection must precede evaluator execution")
 
-    with _patched("compiler.staqex.run.Evaluator.run_unit", evaluator_must_not_run):
+    with _patched(
+        "compiler.staqex.run.Evaluator.run_canonical_unit", evaluator_must_not_run
+    ):
         result = run_source(
             _SOURCE,
             stdout=io.StringIO(),
@@ -127,7 +129,7 @@ def test_qasm_emission_rejects_before_lowering_even_when_policy_is_warn() -> Non
         raise AssertionError("resource rejection must precede QASM lowering")
 
     with _patched(
-        "compiler.staqex.backend.qasm.emitter.lower_unit_to_circuit",
+        "compiler.staqex.backend.qasm.lower.lower_unit_to_circuit",
         lowering_must_not_run,
     ):
         emitted = OpenQASM3Generator(route=False).generate_detailed(

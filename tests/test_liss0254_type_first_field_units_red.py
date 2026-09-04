@@ -27,6 +27,8 @@ Feature: dimful class/struct fields retain units
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -81,7 +83,7 @@ def test_class_mass_field_to_g_retains_source_unit() -> None:
     assert "PARSE_ERROR" not in hard, compiled.diagnostics
     assert compiled.ok and compiled.unit is not None, compiled.diagnostics
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(float(ev.scalars["grams"]) - 1000.0) < 1e-9, ev.scalars.get("grams")
     assert ev.scalar_units.get("grams") == "g", ev.scalar_units
 
@@ -114,7 +116,7 @@ def test_class_mass_fields_mixed_plus_promotes_to_kg() -> None:
     assert "PARSE_ERROR" not in hard, compiled.diagnostics
     assert compiled.ok and compiled.unit is not None, compiled.diagnostics
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     # Must promote 500 g → 0.5 kg, not raw 1+500=501.
     assert abs(float(ev.scalars["total"]) - 1.5) < 1e-9, ev.scalars.get("total")
     assert ev.scalar_units.get("total") == "kg", ev.scalar_units
@@ -141,7 +143,7 @@ def test_struct_mass_field_to_g_retains_source_unit() -> None:
     assert "PARSE_ERROR" not in hard, compiled.diagnostics
     assert compiled.ok and compiled.unit is not None, compiled.diagnostics
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(float(ev.scalars["grams"]) - 1000.0) < 1e-9, ev.scalars.get("grams")
     assert ev.scalar_units.get("grams") == "g", ev.scalar_units
 

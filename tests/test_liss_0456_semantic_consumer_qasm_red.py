@@ -12,6 +12,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 import compiler.staqex.backend.qasm.emitter as emitter_module
+import compiler.staqex.backend.qasm.lower as lower_module
 from compiler.staqex.backend.qasm import emit_openqasm3
 from compiler.staqex.pipeline import compile_source
 
@@ -41,7 +42,7 @@ def test_canonical_measure_projection_does_not_fallback_to_ast_lowering(
             "canonical QASM entry must not reconstruct meaning through AST/DAG"
         )
 
-    monkeypatch.setattr(emitter_module, "lower_unit_to_circuit", fail_ast_fallback)
+    monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_ast_fallback)
 
     emitted = emit_openqasm3(
         compiled.unit,

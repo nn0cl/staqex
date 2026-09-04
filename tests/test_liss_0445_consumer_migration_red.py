@@ -14,6 +14,7 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 import compiler.staqex.backend.qasm.emitter as emitter_module
+import compiler.staqex.backend.qasm.lower as lower_module
 import compiler.staqex.finite_binder as finite_binder_module
 import compiler.staqex.scientific_semantic_ir as semantic_ir_module
 import compiler.staqex.qpu_ir as qpu_ir_module
@@ -232,7 +233,7 @@ def test_ordinary_qasm_fixture_has_no_ast_fallback(monkeypatch) -> None:
     def fail_if_called(*_args, **_kwargs):
         raise AssertionError("ordinary canonical QASM must not call AST fallback")
 
-    monkeypatch.setattr(emitter_module, "lower_unit_to_circuit", fail_if_called)
+    monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
     monkeypatch.setattr(
         emitter_module,
         "build_scientific_semantic_ir",

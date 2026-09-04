@@ -13,6 +13,8 @@ Hamiltonian `under H for t` form is in scope; the `times N { body }` /
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -39,7 +41,7 @@ def test_bare_seed_block_run_form_parses_and_runs() -> None:
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
 
 
@@ -59,7 +61,7 @@ def test_tuple_seed_with_suzuki_block_run_form_parses_and_runs() -> None:
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
 
 
@@ -78,7 +80,7 @@ def test_until_max_block_run_form_parses_and_runs() -> None:
     """
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    result = Evaluator(seed=0).run_unit(compiled.unit)
+    result = run_canonical(compiled, Evaluator(seed=0))
     assert result.measure is not None
 
 

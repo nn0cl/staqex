@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from canonical_execution import run_canonical
+
 import sys
 from pathlib import Path
 
@@ -55,7 +57,7 @@ def test_troy_g_kg_oz_bridge() -> None:
         """
     )
     ev = Evaluator(seed=0)
-    ev.run_unit(compiled.unit)
+    run_canonical(compiled, ev)
     assert abs(ev.scalars["g"] - 31.1034768) < 1e-9
     assert abs(ev.scalars["kg"] - _OZ_T_KG) < 1e-15
     assert abs(ev.scalars["raw"] - 1.0) < 1e-12
