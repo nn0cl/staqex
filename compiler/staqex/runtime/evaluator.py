@@ -431,6 +431,8 @@ class Evaluator:
     ) -> EvalResult:
         """Execute the bounded local State/Measure slice around an operator binder."""
         self._require_runtime_plan_family(plan, "binder", "binders")
+        if unit.main is None or not self._main_deferred_eligible(unit.main.body.stmts):
+            return self._run_legacy_ast_body(unit, stdout=stdout)
         return self._execute_deferred_state_measure_plan(
             self._binder_runtime_unit(unit), stdout=stdout
         )
