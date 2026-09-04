@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .ast_nodes import Call, DynamicQpuStmt, StateBind, Var
 from .pipeline import compile_source
 
 
@@ -72,6 +73,65 @@ def _non_unitary_product_rejection(source_id: str) -> MeaningFamilyDecision:
     )
 
 
+def _deferred_continuous_decision(source_id: str) -> MeaningFamilyDecision:
+    return MeaningFamilyDecision(
+        family="continuous/open-system",
+        semantic_role="density/channel/evolution",
+        status="deferred",
+        code=None,
+        reason="discretization_required",
+        source_id=source_id,
+        artifact=None,
+        rewritten_as_unitary=False,
+        numerical_method=None,
+        provider_mapping=None,
+        qasm=None,
+        terminal_measurement_is_not_dynamic=True,
+    )
+
+
+def _dynamic_measurement_decision(source_id: str) -> MeaningFamilyDecision:
+    return MeaningFamilyDecision(
+        family="measurement",
+        semantic_role="dynamic_measurement_feedback",
+        status="rejected",
+        code="E_QPU_UNSUPPORTED_CAPABILITY",
+        reason="dynamic_measurement_unsupported",
+        source_id=source_id,
+        artifact=None,
+        rewritten_as_unitary=False,
+        numerical_method=None,
+        provider_mapping=None,
+        qasm=None,
+        terminal_measurement_is_not_dynamic=True,
+    )
+
+
+def _unit_has_dynamic_measurement(unit: object) -> bool:
+    main = getattr(unit, "main", None)
+    return any(
+        isinstance(statement, DynamicQpuStmt)
+        for statement in getattr(getattr(main, "body", None), "stmts", ())
+    )
+
+
+def _unit_has_continuous_open_system(unit: object) -> bool:
+    main = getattr(unit, "main", None)
+    for statement in getattr(getattr(main, "body", None), "stmts", ()):
+        if not isinstance(statement, StateBind):
+            continue
+        if statement.ty is not None and statement.ty.name == "DensityState":
+            return True
+        expression = statement.expr
+        if (
+            isinstance(expression, Call)
+            and isinstance(expression.callee, Var)
+            and expression.callee.name in {"lindblad", "master_equation"}
+        ):
+            return True
+    return False
+
+
 def classify_for_qpu(source: str, *, source_id: str) -> MeaningFamilyDecision:
     """Classify the currently accepted non-unitary Product/Tensor boundary.
 
@@ -82,5 +142,12 @@ def classify_for_qpu(source: str, *, source_id: str) -> MeaningFamilyDecision:
 
     if _contains_non_unitary_product(source):
         return _non_unitary_product_rejection(source_id)
+
+    compiled = compile_source(source)
+    if compiled.unit is not None:
+        if _unit_has_dynamic_measurement(compiled.unit):
+            return _dynamic_measurement_decision(source_id)
+        if _unit_has_continuous_open_system(compiled.unit):
+            return _deferred_continuous_decision(source_id)
 
     raise ValueError("unsupported meaning family")
