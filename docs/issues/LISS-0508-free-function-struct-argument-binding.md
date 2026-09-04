@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0508
 - GitHub issue: none
-- Status: ready
-- Phase: phase-1-red
+- Status: review
+- Phase: phase-3-refactor
 - Type: bug
 - Priority: P1
 - Initial planning size: M
@@ -57,11 +57,25 @@ All failures in the LISS-0290/LISS-0292/LISS-0294 group pass without changing ob
 
 ## Work Notes
 
-- Red reproduced during WP-0127 intake.
+- Red reproduced during WP-0127 intake. The callable-plan path routed
+  namespace-qualified struct constructors as methods, then attempted to bind
+  pure `Float`-returning free functions through Joint coordinates.
+- Phase 2 fix: `_bind_call` resolves qualified struct constructors before
+  method dispatch, and `_bind_names` sends classical-returning free functions
+  through the existing value/frame evaluator. Nested object and field
+  projections remain in the callee-local frame.
 
 ## Verification
 
-- Not yet complete.
+- `PYTHONPATH=. ./.venv/bin/pytest -q tests/test_liss_0290_adr_0180_residuals_red.py tests/test_liss_0292_typefirst_freefn_args_red.py tests/test_liss_0294_nested_freefn_args_red.py`: 11 passed.
+
+## Process Review
+
+- Outcome: no operating-contract deviation or operational problem found.
+- Isolation: same_context; weaker than separate_context.
+- Findings: apply none; the fix preserves pure value/object boundaries and
+  all targeted callable regression cases pass.
+- Next requested approval type: Adjudicator Phase 3 review/acceptance.
 
 ## Process Review
 

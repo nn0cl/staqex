@@ -1876,6 +1876,39 @@ class Evaluator:
                 return self._bind_call(joint, names[0], expr)
             fun = self.funs.get(expr.callee.name)
             if fun is not None:
+                # Pure classical free functions consume object/value frames,
+                # not Joint coordinates.  In the callable-plan path a
+                # `Float = score(report)` bind otherwise falls through to
+                # `_bind_user_fun`, whose Var argument handling quite
+                # correctly expects a quantum coordinate and rejects the
+                # struct object.  Reuse the established classical evaluator
+                # so nested field projections retain the caller frame.
+                classical_heads = {
+                    "Float",
+                    "Int",
+                    "Bool",
+                    "Mass",
+                    "Time",
+                    "Length",
+                    "Current",
+                    "Temperature",
+                    "Energy",
+                    "Frequency",
+                    "Stiffness",
+                    "Momentum",
+                }
+                if (
+                    len(names) == 1
+                    and fun.return_type is not None
+                    and fun.return_type.name in classical_heads
+                ):
+                    value, unit = self._eval_value_with_unit(expr, {})
+                    self._put_unit(self.scalar_units, names[0], unit)
+                    try:
+                        self.scalars[names[0]] = value
+                    except TypeError:
+                        pass
+                    return joint.bind_const(names[0], value)
                 return self._bind_user_fun(
                     joint, names, expr, fun, logs=logs, inspect_out=inspect_out
                 )
@@ -5154,6 +5187,13 @@ class Evaluator:
             q = self._expr_qualname(callee)
             if q is not None and q in self.funs:
                 return self._bind_user_fun(joint, [name], expr, self.funs[q])
+            # Namespace-qualified struct constructors are represented as an
+            # Attr (`D.Item(...)`), but are constructors rather than method
+            # calls.  Resolve them before receiver/method dispatch so the
+            # callable-plan path matches the value-evaluator path.
+            if q is not None and q in self.structs:
+                self.objects[name] = self._construct_struct(q, expr)
+                return joint
             if q is not None and q in self.classes:
                 raise KernelError(
                     f"construct `{q}()` via Type-First "

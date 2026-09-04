@@ -45,6 +45,13 @@
   environment and restore the caller environment around the transfer.
 - Result: linked operator-factory tests pass (6/6); Issue moved to review,
   next Issue is LISS-0508.
+- LISS-0508 Red reproduced: namespace-qualified struct constructors entered
+  method dispatch, and pure Float-returning free functions were bound as if
+  their object arguments were Joint coordinates.
+- Disposition: resolve qualified struct constructors before method dispatch;
+  route classical-returning functions through the value/frame evaluator.
+- Result: free-function/struct argument tests pass (11/11); Issue moved to
+  review, next Issue is LISS-0509.
 
 ## Verification
 
@@ -65,4 +72,4 @@
 
 ## Next Safe Action
 
-Review and resolve LISS-0508 by reproducing the free-function/struct argument binding failures against the current callable and value-boundary contracts.
+Review and resolve LISS-0509 by reproducing the mixed measurement dispatch failure against the density/P-O-V-M observation contract.
