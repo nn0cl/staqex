@@ -14,7 +14,7 @@ Restore the current test suite to the accepted language/runtime contracts withou
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | LISS-0504 | review | M | M | AIP-0127-0504-001 | - | - | codex/wp-0127-test-failure-recovery |
-| LISS-0505 | ready | M | M | AIP-0127-0505-001 | - | - | codex/wp-0127-test-failure-recovery |
+| LISS-0505 | review | M | M | AIP-0127-0505-001 | - | - | codex/wp-0127-test-failure-recovery |
 | LISS-0506 | ready | M | M | AIP-0127-0506-001 | - | - | codex/wp-0127-test-failure-recovery |
 | LISS-0507 | ready | M | M | AIP-0127-0507-001 | - | - | codex/wp-0127-test-failure-recovery |
 | LISS-0508 | ready | M | M | AIP-0127-0508-001 | - | - | codex/wp-0127-test-failure-recovery |
@@ -47,7 +47,7 @@ Restore the current test suite to the accepted language/runtime contracts withou
 
 ## Current Next Issue
 
-- Issue: LISS-0505
+- Issue: LISS-0506
 - Reason it is unblocked: existing Red tests reproduce the failure and no external dependency is required.
 - Adjudicator approval needed: implementation is explicitly authorized by the current request; no real-provider approval is needed.
 

@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0505
 - GitHub issue: none
-- Status: in_progress
-- Phase: phase-1-red
+- Status: review
+- Phase: phase-3-refactor
 - Type: bug
 - Priority: P1
 - Initial planning size: M
@@ -56,14 +56,21 @@ Both deferred-pushforward tests pass and preserve `Inspect` identity/non-collaps
 
 ## Work Notes
 
-- Red reproduced during WP-0127 intake.
+- Red reproduced during WP-0127 intake. The canonical `control_mixture`
+  dispatcher selected the deferred State/Measure fast path without applying
+  the existing `Inspect` eligibility guard.
+- Phase 2 fix: `control_mixture` now falls back to the established eager AST
+  path whenever the main body is not deferred-eligible; `Inspect` remains
+  non-destructive and terminal `Measure` behavior is unchanged.
 
 ## Verification
 
-- Not yet complete.
+- `./.venv/bin/pytest -q tests/test_deferred_pushforward_mvp_red.py`: 5 passed.
 
 ## Process Review
 
-- Outcome: not yet
-- Lesson written: not yet
-- Template-feedback path: none
+- Outcome: no operating-contract deviation or operational problem found.
+- Isolation: same_context; weaker than separate_context.
+- Findings: apply none; the fix is limited to the approved evaluator
+  scheduling boundary and the targeted deterministic tests pass.
+- Next requested approval type: Adjudicator Phase 3 review/acceptance.

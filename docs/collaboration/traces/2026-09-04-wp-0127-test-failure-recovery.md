@@ -26,6 +26,13 @@
 - LISS-0504 Red reproduced: stale assertion expected discretization provenance in legacy `symbolic_ir`.
 - Disposition: update the test to assert the authoritative `compiled.discretization_bridges` already checked by the same test; do not restore a parallel symbolic authority.
 - Result: targeted LISS-0504 tests pass (4/4); Issue moved to review, next Issue is LISS-0505.
+- LISS-0505 Red reproduced: the canonical `control_mixture` dispatcher marked
+  an `Inspect` program as deferred even though the evaluator's established
+  eligibility predicate rejected that body.
+- Disposition: add the missing dispatcher guard and route `Inspect` programs
+  through the eager path; preserve non-destructive observation semantics.
+- Result: targeted deferred-pushforward tests pass (5/5); Issue moved to
+  review, next Issue is LISS-0506.
 
 ## Verification
 
@@ -46,4 +53,4 @@
 
 ## Next Safe Action
 
-Review and resolve LISS-0505 by comparing its deferred/eager expectations with the current observation contract before modifying runtime behavior.
+Review and resolve LISS-0506 by comparing its mapping-provenance expectations with the current canonical semantic IR before modifying runtime behavior.

@@ -392,6 +392,13 @@ class Evaluator:
     ) -> EvalResult:
         """Execute canonical single-level control mixtures."""
         self._require_runtime_plan_family(plan, "control_mixture", "controls")
+        # A diagnostic read is an explicit observation boundary.  The
+        # control-mixture plan may still describe the surrounding mixture,
+        # but it must not route a program containing Inspect through the
+        # deferred State/Measure fast path.  Keep the read non-destructive and
+        # let the established AST path preserve its observation semantics.
+        if not self._main_deferred_eligible(unit.main.body.stmts if unit.main else []):
+            return self._run_legacy_ast_body(unit, stdout=stdout)
         return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
 
     @staticmethod
