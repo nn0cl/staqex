@@ -81,6 +81,7 @@ assertions explicitly updated. Remaining raw-source regex limitations (only
 the first simple-identifier commutator, no string-aware parsing) remain open
 for broader conformance; this merge must not claim complete alias handling.
 CI ignores `_red.py` suites, so the related 24-test local run is separate
-required evidence. Full local run remains in progress; the prior 30-second
-window was a tool yield, not a test timeout. Merge requires passing remote
+required evidence. Full local run completed: **1913 passed in 309.87s** using
+`.venv/bin/python -m pytest tests -q`. The prior 30-second window was a tool
+yield, not a test timeout. Merge requires passing remote
 checks. No Issue/WP completion is claimed by this review.
