@@ -64,6 +64,23 @@ completion was not established.
 ## Next safe action / approval gate
 
 Review the explicit 0482 assertion update and complete the full regression
-suite. Phase 3 review is required. Broader
+suite. Broader
 aliases/composition/projection conformance remains unfinished; do not mark the
 issue or WP done.
+
+## Merge preparation review
+
+User authorized commit, push and merge. Isolation: same_context (weaker than
+separate_context). Re-read production diff, tests, spec detailed 0480–0483
+design and CI configuration. The named comment/operand/value regressions pass
+24 related tests. No new execution authority or provider side effect appears
+in the change. Unknown semantic values remain observable.
+
+Findings/disposition: status drift in Issue/WP corrected; fixed-value legacy
+assertions explicitly updated. Remaining raw-source regex limitations (only
+the first simple-identifier commutator, no string-aware parsing) remain open
+for broader conformance; this merge must not claim complete alias handling.
+CI ignores `_red.py` suites, so the related 24-test local run is separate
+required evidence. Full local run remains in progress; the prior 30-second
+window was a tool yield, not a test timeout. Merge requires passing remote
+checks. No Issue/WP completion is claimed by this review.

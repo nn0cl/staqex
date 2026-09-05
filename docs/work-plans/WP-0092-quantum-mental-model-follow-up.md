@@ -13,9 +13,9 @@
 ## Goal
 
 Current bounded work (2026-09-05): [LISS-0483](../issues/LISS-0483-observation-lexicon-conformance.md)
-Phase 1 Red has 5 expected failures and 1 passing boundary check; legacy
-0480–0482 suites pass 18 tests. Awaiting test review and disposition of the
-legacy `preserved` assertions before Green. Full conformance remains open.
+The bounded correction and explicit legacy assertion update pass all 24
+related tests. Merge is authorized subject to CI. Full conformance remains
+open, including the broader composition/projection matrix.
 
 Turn the accepted ADR 0189 direction into reviewable language and semantic
 specifications without changing the compiler, tests, grammar, or official

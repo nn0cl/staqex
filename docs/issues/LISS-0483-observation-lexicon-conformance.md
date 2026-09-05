@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **in_progress — bounded Green slice complete; legacy test disposition required** |
+| Status | **in_progress — bounded correction prepared for merge; broader conformance remains open** |
 | Phase | phase-2-green (bounded regression slice) |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design) |
 | Depends on | LISS-0480, LISS-0481, LISS-0482 |
-| Implementation permission | None |
-| Next approval | Review legacy 0482 assertions and approve Phase 3/refinement |
+| Implementation permission | Bounded correction and explicit legacy assertion update authorized by continuation |
+| Next approval | Merge authorized; required CI checks must pass |
 
 ## Scope
 
@@ -53,13 +53,13 @@ Test file: `tests/test_liss_0483_observation_lexicon_conformance_red.py`.
 
 New suite: 5 failed, 1 passed before implementation; after the bounded Green
 change it is 6 passed. Existing 0480–0482 suites are 16 passed, 2 failed:
-two old 0482 assertions still require the literal `preserved` value and the
-synthetic lane phrase. They require review/disposition; they were not edited.
+two old 0482 assertions required the literal `preserved` value and the
+synthetic lane phrase. This was subsequently resolved explicitly in
+`d4ca0747`: the combined 0480–0483 suites now pass 24 tests.
 Inputs retain semantic IR but explicitly carry finite-evidence and approximation
 obligation diagnostics; these tests do not claim successful finite lowering.
-The existing 0482 test expects the literal `preserved`. Review must authorize
-replacing those assertions with actual canonical values before Green; do not
-silently edit previously reviewed tests. This is an implementation/test
+The former 0482 test expected the literal `preserved`. The authorized update
+compares actual canonical values. This was an implementation/test
 discrepancy against the spec's preservation requirement, not a grammar change.
 
 The full aliases/Mix/Superpose/controlled/when/projection matrix remains open.
