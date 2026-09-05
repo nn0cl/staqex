@@ -3,6 +3,5 @@ package fixtures.scientific_lexicon
 pub fn main() -> Unit {
     Operator C = cm(X, Y)
     State psi = |+>
-    State phi = |0>
     Measure psi
 }

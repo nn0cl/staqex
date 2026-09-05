@@ -84,3 +84,7 @@ retained, and the four old 0481 synthetic-success cases explicitly assert
 closed rejection. The focused source-evidence and related suites pass 24
 tests. No grammar or finite-realization authority changed. Remaining matrix
 gaps keep this Issue and WP open.
+
+The follow-up also validates multiple commutators and rejects compile-invalid
+lexicon inputs. The focused lexicon suite passes 13 tests after its fixture was
+made terminally valid. Broader nested-scope alias semantics remain open.

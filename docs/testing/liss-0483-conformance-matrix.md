@@ -14,7 +14,8 @@ named boundary; it does not imply complete language-family or hardware support.
 | ASCII psi and display identity | `test_liss_0480_scientific_lexicon_contract_red.py::test_ascii_alias_and_blackboard_display_form_share_one_identity` | Pass; phi/rho and typed-context variants need coverage |
 | Unicode source rejection | Same file, `test_unsupported_scientific_spelling_has_actionable_diagnostic` | Pass for API rejection; fixture is a fragment, not a full lexer acceptance proof |
 | Alias scope/shadowing | Same file, `test_contextual_classical_name_remains_available_and_shadowing_is_deterministic` | Pass is insufficient: fixture has no shadowed declaration |
-| Commutator display and comments | `test_liss_0483_observation_lexicon_conformance_red.py` | Pass; strings, multiple/nested calls and arbitrary operands remain uncovered |
+| Commutator display and comments | `test_liss_0483_observation_lexicon_conformance_red.py` | Pass for comments, actual operands and multiple calls; strings, nested calls and arbitrary operands remain uncovered |
+| Invalid lexicon source | Same file, `test_invalid_source_cannot_produce_lexicon_bindings` | Pass: compile-invalid source cannot yield bindings |
 | Mix control, branches and provenance | `test_liss_0448_coin_mix_semantic_red.py` | 8 pass; includes source spans, fingerprint changes and explicit QPU rejection |
 | Superpose AST and type | `test_liss_0320_superpose_formal_grammar_red.py` | Distinct AST/type tests pass |
 | Deferred Superpose evaluation | Same file, `test_evaluating_superpose_fails_closed_not_open` | Pass: COHERENT_EXECUTION_UNSUPPORTED and no measurements |
