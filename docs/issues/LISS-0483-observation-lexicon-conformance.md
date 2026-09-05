@@ -88,3 +88,7 @@ gaps keep this Issue and WP open.
 The follow-up also validates multiple commutators and rejects compile-invalid
 lexicon inputs. The focused lexicon suite passes 13 tests after its fixture was
 made terminally valid. Broader nested-scope alias semantics remain open.
+
+Nested-scope policy is now accepted in [ADR 0216](../architecture/adr/0216-lexical-block-scope-and-state-shadowing.md).
+Its parser/type-checker implementation is a separate follow-up Issue and is
+not silently included in this conformance slice.
