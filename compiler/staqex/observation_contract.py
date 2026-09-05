@@ -6,9 +6,9 @@ state, inserts a measurement, allocates a finite plan, or calls a provider.
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 
+from .ast_nodes import Call, StateBind, Var
 from .pipeline import compile_source
 
 
@@ -33,12 +33,7 @@ class ObservationInspection:
     operations: tuple[ObservationOperation, ...]
 
 
-_SYNTHETIC_OPERATION = re.compile(
-    r"^\s*(expect|project|trace_out|tomography)\s*\(.*\)\s*$",
-    re.DOTALL,
-)
-
-_SYNTHETIC_SEMANTIC_TYPES = {
+_CALL_SEMANTIC_TYPES = {
     "expect": "Observable",
     "project": "Projection",
     "trace_out": "State",
@@ -53,7 +48,7 @@ def _operation_metadata(kind: str) -> tuple[str, str, bool, bool]:
         return "DiagnosticView", "diagnostic", False, True
     if kind == "measure":
         return "Observation", "terminal_classical", True, False
-    semantic_type = _SYNTHETIC_SEMANTIC_TYPES[kind]
+    semantic_type = _CALL_SEMANTIC_TYPES[kind]
     lane = "host_protocol" if kind == "tomography" else "semantic"
     return semantic_type, lane, False, kind in {"project", "trace_out"}
 
@@ -72,16 +67,33 @@ def _operation_from_node(node) -> ObservationOperation:
     )
 
 
-def _synthetic_operation(source: str, *, source_id: str) -> ObservationInspection | None:
-    match = _SYNTHETIC_OPERATION.fullmatch(source)
-    if match is None:
-        return None
-
-    kind = match.group(1)
-    semantic_type, lane, collapses, preserves_lineage = _operation_metadata(kind)
-    return ObservationInspection(
-        source_id=source_id,
-        operations=(
+def _call_operations(compiled) -> tuple[ObservationOperation, ...]:
+    main = getattr(compiled.unit, "main", None)
+    statements = getattr(getattr(main, "body", None), "stmts", ())
+    operations = []
+    for statement in statements:
+        expression = getattr(statement, "expr", None)
+        if not isinstance(statement, StateBind) or not isinstance(expression, Call):
+            continue
+        if not isinstance(expression.callee, Var):
+            continue
+        kind = expression.callee.name.lower()
+        if kind not in _CALL_SEMANTIC_TYPES:
+            continue
+        node = next(
+            (
+                node
+                for node in compiled.scientific_semantic_ir.nodes
+                if node.kind == "Call"
+                and node.provenance.line == expression.span.line
+                and node.provenance.col == expression.span.col
+            ),
+            None,
+        )
+        if node is None:
+            continue
+        semantic_type, lane, collapses, preserves_lineage = _operation_metadata(kind)
+        operations.append(
             ObservationOperation(
                 kind=kind,
                 semantic_type=semantic_type,
@@ -89,32 +101,35 @@ def _synthetic_operation(source: str, *, source_id: str) -> ObservationInspectio
                 lane=lane,
                 collapses=collapses,
                 preserves_state_lineage=preserves_lineage,
-                source_node_id=f"synthetic:{kind}",
-            ),
-        ),
-    )
+                source_node_id=node.provenance.source_node_id,
+            )
+        )
+    return tuple(operations)
 
 
 def inspect_source(source: str, *, source_id: str) -> ObservationInspection:
     """Inspect observation meaning from canonical compilation evidence."""
 
     compiled = compile_source(source)
+    if not compiled.ok:
+        raise ValueError("observation realization unsupported")
     semantic_ir = compiled.scientific_semantic_ir
     if semantic_ir is None:
-        synthetic = _synthetic_operation(source, source_id=source_id)
-        if synthetic is not None:
-            return synthetic
         raise ValueError("observation realization unsupported")
 
-    operations = tuple(
+    ir_operations = tuple(
         _operation_from_node(node)
         for node in semantic_ir.nodes
         if node.kind in {"Inspect", "Measure"}
     )
+    operations = ir_operations + _call_operations(compiled)
+    positions = {
+        node.provenance.source_node_id: node.provenance.line
+        for node in semantic_ir.nodes
+    }
+    operations = tuple(
+        sorted(operations, key=lambda operation: positions[operation.source_node_id])
+    )
     if operations:
         return ObservationInspection(source_id=source_id, operations=operations)
-
-    synthetic = _synthetic_operation(source, source_id=source_id)
-    if synthetic is not None:
-        return synthetic
     raise ValueError("observation realization unsupported")

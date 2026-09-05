@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **in_progress — bounded correction prepared for merge; broader conformance remains open** |
-| Phase | phase-2-green (bounded regression slice) |
+| Status | **in_progress — prior correction merged; source-evidence Red ready for review** |
+| Phase | phase-1-red (source-evidence follow-up) |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design) |
 | Depends on | LISS-0480, LISS-0481, LISS-0482 |
-| Implementation permission | Bounded correction and explicit legacy assertion update authorized by continuation |
-| Next approval | Merge authorized; required CI checks must pass |
+| Implementation permission | Prior correction merged; new source-evidence production change awaits test review |
+| Next approval | Source-evidence Green and explicit update of four legacy synthetic-success test cases |
 
 ## Scope
 
@@ -34,6 +34,9 @@ Cross-feature fixtures, proof matrix, conformance Red tests, and documentation
 links only.
 
 ## Bounded Red evidence (2026-09-05)
+
+Historical slice: merged via PR #577 (`da011801`). Full regression at that
+boundary: 1913 pass. Current follow-up is described below.
 
 The Adjudicator's continuation authorized the previously proposed test-only
 slice. Size M; branch `codex/liss-0483-conformance-red`.
@@ -65,3 +68,19 @@ discrepancy against the spec's preservation requirement, not a grammar change.
 The full aliases/Mix/Superpose/controlled/when/projection matrix remains open.
 This bounded regression suite does not close LISS-0483.
 Resume evidence: [trace](../collaboration/traces/2026-09-05-liss-0483-conformance-red.md).
+
+## Current source-evidence follow-up
+
+Branch: `codex/liss-0483-source-evidence`; size M.
+[Cross-feature matrix](../testing/liss-0483-conformance-matrix.md) now maps
+all requested families to named tests or explicit gaps. Selected existing
+suites: 46 pass. New suite
+`tests/test_liss_0483_observation_source_evidence_red.py`: 5 expected failures.
+Four invalid fragments are accepted with invented IDs; a real projection
+is omitted from the inventory. Production and legacy tests remain unchanged.
+
+Green completed: synthetic fallback is removed, real projection evidence is
+retained, and the four old 0481 synthetic-success cases explicitly assert
+closed rejection. The focused source-evidence and related suites pass 24
+tests. No grammar or finite-realization authority changed. Remaining matrix
+gaps keep this Issue and WP open.
