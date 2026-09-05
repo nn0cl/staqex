@@ -54,13 +54,16 @@ On continuation, the bounded production correction was implemented:
 comments are excluded from lexicon scanning, commutator display retains its
 operands, observation comments do not alter lane handling, and mapping copies
 canonical IR exactness/dimensions. The new suite is **6 passed**. The legacy
-0482 suite is **16 passed, 2 failed** because two reviewed assertions encode
-the superseded fixed-value/synthetic-input behavior. Production was not
-rolled back and those tests were not silently changed.
+0482 suite is now **18 passed** after its two assertions were explicitly
+updated to compare canonical IR values and describe unsupported synthetic
+input accurately. Production was not rolled back. The combined 0480–0483
+suites now pass **24 tests**. A full `pytest tests -q` run reached 43% before
+the tool's 30-second execution window ended; no failure was reported, but
+completion was not established.
 
 ## Next safe action / approval gate
 
-Review the legacy 0482 assertions and authorize their explicit disposition,
-then run the full regression suite. Phase 3 review is required. Broader
+Review the explicit 0482 assertion update and complete the full regression
+suite. Phase 3 review is required. Broader
 aliases/composition/projection conformance remains unfinished; do not mark the
 issue or WP done.

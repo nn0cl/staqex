@@ -7,6 +7,8 @@ from pathlib import Path
 
 import pytest
 
+from compiler.staqex.pipeline import compile_source
+
 REPO = Path(__file__).resolve().parents[1]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
@@ -40,8 +42,13 @@ def test_inspect_mapping_preserves_role_lane_and_provenance() -> None:
     assert inspect.role_lane == "diagnostic"
     assert inspect.source_node_id
     assert inspect.provenance.source_id == source_id
-    assert inspect.exactness == "preserved"
-    assert inspect.dimensions == "preserved"
+    compiled = compile_source(source)
+    canonical = next(
+        node for node in compiled.scientific_semantic_ir.nodes
+        if node.provenance.source_node_id == inspect.source_node_id
+    )
+    assert inspect.exactness == canonical.exactness
+    assert inspect.dimensions == canonical.dimensions
     assert inspect.projection_loss is None
 
 
@@ -69,8 +76,8 @@ def test_mapping_never_creates_an_implicit_finite_artifact() -> None:
     assert result.projection_loss is None
 
 
-def test_illegal_role_lane_transition_is_rejected_explicitly() -> None:
-    with pytest.raises(ValueError, match="illegal observation role/lane transition"):
+def test_unsupported_observation_input_is_rejected_explicitly() -> None:
+    with pytest.raises(ValueError, match="unsupported observation semantic mapping"):
         _map(
             "measure as diagnostic",
             source_id="synthetic.observation.illegal-lane.sqx",
