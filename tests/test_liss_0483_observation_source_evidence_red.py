@@ -56,3 +56,29 @@ pub fn main() -> Unit {
     mapped = map_source(source, source_id="projection.sqx")
     assert [item.kind for item in mapped.operations] == ["project", "measure"]
     assert mapped.operations[0].semantic_role == "projection"
+
+
+@pytest.mark.parametrize(
+    ("operation", "semantic_type", "lineage"),
+    [("expect", "Observable", False), ("trace_out", "State", True)],
+)
+def test_real_non_collapsing_observation_calls_are_source_owned(
+    operation, semantic_type, lineage
+):
+    binding = "Float observed = expect(Z, psi)\n    Measure psi" if operation == "expect" else "State observed = trace_out(psi)\n    Measure observed"
+    source = f"""package conformance
+pub fn main() -> Unit {{
+    State psi = |0>
+    {binding}
+}}
+"""
+    compiled = compile_source(source)
+    assert compiled.ok, compiled.diagnostics
+    contract = inspect_source(source, source_id=f"{operation}.sqx")
+    mapped = map_source(source, source_id=f"{operation}.sqx")
+    assert contract.operations[0].kind == operation
+    assert contract.operations[0].semantic_type == semantic_type
+    assert contract.operations[0].collapses is False
+    assert contract.operations[0].preserves_state_lineage is lineage
+    assert [item.kind for item in mapped.operations] == [operation, "measure"]
+    assert mapped.operations[0].collapses is False

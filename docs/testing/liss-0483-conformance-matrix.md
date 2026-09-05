@@ -28,7 +28,7 @@ named boundary; it does not imply complete language-family or hardware support.
 | Tomography compiler capability | `test_quantum_observation_contract_red.py` | Pass: OBSERVATION_CAPABILITY_UNSUPPORTED |
 | Invalid observation fragments | `test_liss_0483_observation_source_evidence_red.py::test_invalid_fragment_cannot_fabricate_observation_evidence` | Pass: invalid source is rejected; no synthetic IDs |
 | Actual projection inventory | Same file, `test_real_projection_is_reported_before_terminal_measurement` | Pass: contract and mapping report Project then terminal Measure with canonical IDs |
-| expect / trace_out real-source inventory | Existing 0481 synthetic parameter cases | Not acceptance evidence; real-source operation mapping still needs design/tests |
+| expect / trace_out real-source inventory | `test_liss_0483_observation_source_evidence_red.py::test_real_non_collapsing_observation_calls_are_source_owned` | Pass: real calls retain source-owned IDs, non-collapsing lanes and lineage policy |
 
 ## Verification and next bounded correction
 

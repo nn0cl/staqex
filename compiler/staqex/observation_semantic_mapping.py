@@ -50,6 +50,8 @@ _POLICIES = {
         "terminal_measurement", "terminal_classical", True
     ),
     "Project": _ObservationPolicy("projection", "semantic", False),
+    "Expect": _ObservationPolicy("expectation_projection", "semantic", False),
+    "Trace_out": _ObservationPolicy("reduced_state", "semantic", False),
 }
 
 
@@ -75,14 +77,21 @@ def _map_node(node, *, source_id: str, semantic_kind: str | None = None) -> Obse
     )
 
 
-def _map_project_calls(compiled, *, source_id: str) -> tuple[ObservationMapping, ...]:
+def _map_call_operations(compiled, *, source_id: str) -> tuple[ObservationMapping, ...]:
     statements = getattr(getattr(getattr(compiled.unit, "main", None), "body", None), "stmts", ())
     result = []
     for statement in statements:
         expression = getattr(statement, "expr", None)
         if not isinstance(statement, StateBind) or not isinstance(expression, Call):
             continue
-        if not isinstance(expression.callee, Var) or expression.callee.name.lower() != "project":
+        if not isinstance(expression.callee, Var):
+            continue
+        semantic_kind = {
+            "project": "Project",
+            "expect": "Expect",
+            "trace_out": "Trace_out",
+        }.get(expression.callee.name.lower())
+        if semantic_kind not in _POLICIES:
             continue
         node = next(
             (
@@ -95,7 +104,7 @@ def _map_project_calls(compiled, *, source_id: str) -> tuple[ObservationMapping,
         )
         if node is None:
             continue
-        result.append(_map_node(node, source_id=source_id, semantic_kind="Project"))
+        result.append(_map_node(node, source_id=source_id, semantic_kind=semantic_kind))
     return tuple(result)
 
 
@@ -112,7 +121,7 @@ def map_source(source: str, *, source_id: str) -> ObservationSemanticMapping:
         for node in semantic_ir.nodes
         if node.kind in {"Inspect", "Measure"}
     )
-    operations += _map_project_calls(compiled, source_id=source_id)
+    operations += _map_call_operations(compiled, source_id=source_id)
     positions = {node.provenance.source_node_id: node.provenance.line for node in semantic_ir.nodes}
     operations = tuple(sorted(operations, key=lambda operation: positions[operation.source_node_id]))
     if not operations:
