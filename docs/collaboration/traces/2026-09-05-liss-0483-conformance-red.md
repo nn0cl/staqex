@@ -48,9 +48,19 @@ that requirement. No old tests were silently revised.
 - `docs/work-plans/WP-0092-quantum-mental-model-follow-up.md`
 - This trace.
 
+## Green continuation
+
+On continuation, the bounded production correction was implemented:
+comments are excluded from lexicon scanning, commutator display retains its
+operands, observation comments do not alter lane handling, and mapping copies
+canonical IR exactness/dimensions. The new suite is **6 passed**. The legacy
+0482 suite is **16 passed, 2 failed** because two reviewed assertions encode
+the superseded fixed-value/synthetic-input behavior. Production was not
+rolled back and those tests were not silently changed.
+
 ## Next safe action / approval gate
 
-Review the bounded Red tests and authorize correction of the legacy 0482
-fixed-value assertions before Phase 2 implementation. Post-Green review is
-required. Broader aliases/composition/projection conformance remains unfinished;
-do not mark the issue or WP done. No commit, push or merge performed.
+Review the legacy 0482 assertions and authorize their explicit disposition,
+then run the full regression suite. Phase 3 review is required. Broader
+aliases/composition/projection conformance remains unfinished; do not mark the
+issue or WP done.

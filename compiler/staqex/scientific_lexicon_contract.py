@@ -46,7 +46,7 @@ class LexiconInspection:
 _CONTRACT_VERSION = "scientific-lexicon-v1"
 _DISPLAY_SYMBOLS = MappingProxyType({"psi": "ψ", "phi": "φ", "rho": "ρ"})
 _SCIENTIFIC_NAMES = frozenset(_DISPLAY_SYMBOLS)
-_COMMUTATOR = re.compile(r"\bcm\s*\(")
+_COMMUTATOR = re.compile(r"\bcm\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*,\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)")
 _SCIENTIFIC_CONTEXT = "quantum_state"
 _ORDINARY_CONTEXT = "classical_scalar"
 
@@ -72,14 +72,19 @@ def _binding_for_statement(statement: StateBind) -> LexiconBinding:
     )
 
 
+def _source_without_comments(source: str) -> str:
+    return re.sub(r"//[^\n]*", "", source)
+
+
 def _commutator_operation(source: str) -> tuple[LexiconOperation, ...]:
-    if _COMMUTATOR.search(source) is None:
+    match = _COMMUTATOR.search(_source_without_comments(source))
+    if match is None:
         return ()
     return (
         LexiconOperation(
             canonical_id="commutator",
             written_form="cm",
-            display_form="[X, Y]",
+            display_form=f"[{match.group(1)}, {match.group(2)}]",
             token_class="scientific_operator_alias",
             semantic_operation="commutator",
         ),
@@ -89,7 +94,8 @@ def _commutator_operation(source: str) -> tuple[LexiconOperation, ...]:
 def inspect_source(source: str, *, source_id: str) -> LexiconInspection:
     """Inspect accepted lexicon metadata while preserving source provenance."""
 
-    if any(ord(character) > 127 for character in source):
+    code = _source_without_comments(source)
+    if any(ord(character) > 127 for character in code):
         raise ValueError(
             "unsupported scientific spelling; use the canonical ASCII spelling"
         )
