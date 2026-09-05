@@ -77,17 +77,15 @@ def _source_without_comments(source: str) -> str:
 
 
 def _commutator_operation(source: str) -> tuple[LexiconOperation, ...]:
-    match = _COMMUTATOR.search(_source_without_comments(source))
-    if match is None:
-        return ()
-    return (
+    return tuple(
         LexiconOperation(
             canonical_id="commutator",
             written_form="cm",
             display_form=f"[{match.group(1)}, {match.group(2)}]",
             token_class="scientific_operator_alias",
             semantic_operation="commutator",
-        ),
+        )
+        for match in _COMMUTATOR.finditer(_source_without_comments(source))
     )
 
 
@@ -101,6 +99,8 @@ def inspect_source(source: str, *, source_id: str) -> LexiconInspection:
         )
 
     compiled = compile_source(source)
+    if not compiled.ok:
+        raise ValueError("unsupported scientific spelling")
     unit = compiled.unit
     main = getattr(unit, "main", None)
     statements = getattr(getattr(main, "body", None), "stmts", ())

@@ -48,6 +48,27 @@ def test_commutator_display_retains_actual_operands():
     assert operations[0].display_form == "[Y, Z]"
 
 
+def test_all_source_commutators_are_reported_in_order():
+    source = SOURCE.replace(
+        "    State psi",
+        "    Operator A = cm(X, Y)\n    Operator B = cm(Y, Z)\n    State psi",
+    )
+    semantic_nodes(source)
+    operations = inspect_source(source, source_id="multiple.sqx").operations
+    assert [operation.display_form for operation in operations] == ["[X, Y]", "[Y, Z]"]
+
+
+def test_invalid_source_cannot_produce_lexicon_bindings():
+    source = """package conformance
+pub fn main() -> Unit {
+    State psi = |0>
+    this is not valid Staqex
+}
+"""
+    with pytest.raises(ValueError, match="unsupported scientific spelling"):
+        inspect_source(source, source_id="invalid.sqx")
+
+
 def test_comment_does_not_change_observation_lane_acceptance():
     commented = "// measure as diagnostic is explanatory text\n" + SOURCE
     semantic_nodes(commented)

@@ -73,18 +73,14 @@ def test_measure_is_the_only_collapsing_terminal_observation() -> None:
         ("tomography", "Observation", False),
     ),
 )
-def test_each_observation_operation_has_an_explicit_non_measure_boundary(
+def test_invalid_observation_fragment_is_rejected_without_fabricated_evidence(
     operation: str, semantic_type: str, collapses: bool
 ) -> None:
-    result = _inspect(
-        f"{operation}(synthetic)",
-        source_id=f"synthetic.observation.{operation}.sqx",
-    )
-
-    item = result.operations[0]
-    assert item.kind == operation
-    assert item.semantic_type == semantic_type
-    assert item.collapses is collapses
+    with pytest.raises(ValueError, match="observation realization unsupported"):
+        _inspect(
+            f"{operation}(synthetic)",
+            source_id=f"synthetic.observation.{operation}.sqx",
+        )
 
 
 def test_unsupported_observation_fails_closed_without_a_fabricated_result() -> None:

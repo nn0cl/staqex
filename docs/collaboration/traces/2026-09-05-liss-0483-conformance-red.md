@@ -85,3 +85,29 @@ required evidence. Full local run completed: **1913 passed in 309.87s** using
 `.venv/bin/python -m pytest tests -q`. The prior 30-second window was a tool
 yield, not a test timeout. Merge requires passing remote
 checks. No Issue/WP completion is claimed by this review.
+
+## Source-evidence follow-up / handoff
+
+- Prior delivery: PR #577 merged as `da011801`; remote CI passed all three jobs.
+- User requested continuation. Current branch: `codex/liss-0483-source-evidence`.
+- Scope/phase: size M, conformance inventory and Phase 1 source-evidence Red.
+- Planning: `docs/testing/liss-0483-conformance-matrix.md` names proofs,
+  limitations and the next correction. Source spec remains authoritative.
+- Included: 0481 API, 0480–0483 tests, 0320/0376/0448/0431 tests,
+  S02 controlled classification, tomography capability, accepted ADR 0191.
+- Lessons applied: unsupported boundaries require negative cases; observable
+  records need real source evidence; Issue/WP status updated together.
+- Findings: synthetic fragments produce noncanonical source IDs; real project
+  source is absent from the inventory. Projection rejection test catches its
+  own AssertionError; alias shadowing fixture never shadows anything.
+- Verification: 43 selected existing tests plus 3 S02 tests pass; new
+  `test_liss_0483_observation_source_evidence_red.py` has 5 expected failures.
+  No full rerun required for this intentionally Red, test-only increment.
+- Source compilation can retain finite-lowering diagnostics; the tests assert
+  compile.ok and canonical nodes where appropriate, not finite execution.
+- Changed: new matrix and Red test; Issue, WP and this trace synchronized.
+- Production and old tests unchanged. No commit/push performed in this follow-up.
+- Routing: host, same_context; no independent review claimed. Usage unavailable.
+- Next: review five Red cases and authorize Green plus explicit disposition of
+  four 0481 synthetic-success cases. Then remove fabricated metadata and map
+  source-owned projection. Broader matrix gaps remain separate follow-ups.

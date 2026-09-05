@@ -13,9 +13,11 @@
 ## Goal
 
 Current bounded work (2026-09-05): [LISS-0483](../issues/LISS-0483-observation-lexicon-conformance.md)
-The bounded correction and explicit legacy assertion update pass all 24
-related tests. Merge is authorized subject to CI. Full conformance remains
-open, including the broader composition/projection matrix.
+The initial correction merged via PR #577 (`da011801`), with 1913 full-suite
+passes. The [cross-feature matrix](../testing/liss-0483-conformance-matrix.md)
+now records the broader gaps. Source-evidence follow-up is Green with 24
+focused tests passing. Full conformance remains open for additional alias
+context, projection loss, and observation families.
 
 Turn the accepted ADR 0189 direction into reviewable language and semantic
 specifications without changing the compiler, tests, grammar, or official

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .ast_nodes import Call, StateBind, Var
 from .pipeline import compile_source
 
 
@@ -48,16 +49,20 @@ _POLICIES = {
     "Measure": _ObservationPolicy(
         "terminal_measurement", "terminal_classical", True
     ),
+    "Project": _ObservationPolicy("projection", "semantic", False),
+    "Expect": _ObservationPolicy("expectation_projection", "semantic", False),
+    "Trace_out": _ObservationPolicy("reduced_state", "semantic", False),
 }
 
 
-def _map_node(node, *, source_id: str) -> ObservationMapping:
-    policy = _POLICIES.get(node.kind)
+def _map_node(node, *, source_id: str, semantic_kind: str | None = None) -> ObservationMapping:
+    kind = semantic_kind or node.kind
+    policy = _POLICIES.get(kind)
     if policy is None:
         raise ValueError(f"unsupported observation semantic node: {node.kind}")
 
     return ObservationMapping(
-        kind=node.kind.lower(),
+        kind=kind.lower(),
         semantic_role=policy.semantic_role,
         role_lane=policy.role_lane,
         source_node_id=node.provenance.source_node_id,
@@ -70,6 +75,37 @@ def _map_node(node, *, source_id: str) -> ObservationMapping:
         projection_loss=None,
         collapses=policy.collapses,
     )
+
+
+def _map_call_operations(compiled, *, source_id: str) -> tuple[ObservationMapping, ...]:
+    statements = getattr(getattr(getattr(compiled.unit, "main", None), "body", None), "stmts", ())
+    result = []
+    for statement in statements:
+        expression = getattr(statement, "expr", None)
+        if not isinstance(statement, StateBind) or not isinstance(expression, Call):
+            continue
+        if not isinstance(expression.callee, Var):
+            continue
+        semantic_kind = {
+            "project": "Project",
+            "expect": "Expect",
+            "trace_out": "Trace_out",
+        }.get(expression.callee.name.lower())
+        if semantic_kind not in _POLICIES:
+            continue
+        node = next(
+            (
+                candidate for candidate in compiled.scientific_semantic_ir.nodes
+                if candidate.kind == "Call"
+                and candidate.provenance.line == expression.span.line
+                and candidate.provenance.col == expression.span.col
+            ),
+            None,
+        )
+        if node is None:
+            continue
+        result.append(_map_node(node, source_id=source_id, semantic_kind=semantic_kind))
+    return tuple(result)
 
 
 def map_source(source: str, *, source_id: str) -> ObservationSemanticMapping:
@@ -85,6 +121,9 @@ def map_source(source: str, *, source_id: str) -> ObservationSemanticMapping:
         for node in semantic_ir.nodes
         if node.kind in {"Inspect", "Measure"}
     )
+    operations += _map_call_operations(compiled, source_id=source_id)
+    positions = {node.provenance.source_node_id: node.provenance.line for node in semantic_ir.nodes}
+    operations = tuple(sorted(operations, key=lambda operation: positions[operation.source_node_id]))
     if not operations:
         raise ValueError("unsupported observation semantic mapping")
 
