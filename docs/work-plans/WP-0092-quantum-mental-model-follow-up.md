@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status | **open — observation-type slice shipped; composition taxonomy accepted via ADR 0190; work unit 6 (H1 theory/experiment diagnostic honesty) complete: LISS-0325 (PR #359) and LISS-0326 shipped; `controlled(...)` call-form execution confirmed already shipped (2026-08-05 correction, see work unit 2); remaining design/implementation slices open** (2026-08-05) |
+| Status | **open — bounded observation and scientific-lexicon metadata contracts shipped via LISS-0481/LISS-0480; public observation execution and remaining design/implementation slices remain open** (2026-09-04) |
 | Branch | Design: `codex/adr-quantum-mental-model`; implementation: PR #342 (`abaa7cb`) merged |
 | Parent | [ADR 0189](../architecture/adr/0189-quantum-mental-model-and-observation-contract.md); composition taxonomy refined by [ADR 0190](../architecture/adr/0190-s02-selection-boundary-and-mix-control.md) |
 | Detailed follow-up design | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design) |
 | Scope | specification design plus explicitly approved implementation slices |
-| Implementation | `DiagnosticView<T>` classification shipped (PR #342); `mix` canonical grammar and `when` hard-retirement diagnostic shipped (PR #337, commit `321de3a`, under ADR 0190/WP-0093 Phase 2 approval); `superpose` formal grammar/AST/type boundary **complete** on [LISS-0320](../issues/LISS-0320-superpose-formal-grammar.md), PR #345 — see below; `controlled(...)` call-form execution already shipped (confirmed live 2026-08-05, see work unit 2's correction note) — no separate Issue needed for it; remaining scientific lexicon (partial) and conformance/observation-surface changes still require their own approval |
+| Implementation | `DiagnosticView<T>` classification shipped (PR #342); bounded observation metadata and collapse/lane contract shipped via [LISS-0481](../issues/LISS-0481-observation-contract.md); bounded scientific lexicon metadata shipped via [LISS-0480](../issues/LISS-0480-scientific-lexicon-contract.md); `mix` canonical grammar and `when` hard-retirement diagnostic shipped (PR #337, commit `321de3a`, under ADR 0190/WP-0093 Phase 2 approval); `superpose` formal grammar/AST/type boundary **complete** on [LISS-0320](../issues/LISS-0320-superpose-formal-grammar.md), PR #345 — see below; `controlled(...)` call-form execution already shipped (confirmed live 2026-08-05, see work unit 2's correction note) — no separate Issue needed for it; remaining public observation execution, further scientific lexicon, and conformance changes still require their own approval |
 | Related registry | [Kernel stub and placeholder registry](../architecture/kernel-stub-and-placeholder-registry.md) — H1 authoring layer entry documents the three diagnostic gaps that work unit 6 closes |
 
 ## Goal
@@ -152,8 +152,10 @@ merged (PR #337). `superpose` grammar and the `controlled(...)` call form
 are both shipped (see work unit 2's 2026-08-05 correction for the latter).
 The scientific lexicon (partial — `hbar`/`dag`/`tp` aliases remain),
 public observation surface (`Observable<T>`/`Projection<T>`/
-`Observation<T>`), Semantic IR boundary mapping, and remaining conformance
-scenarios are still review questions.
+`Observation<T>`), and remaining conformance scenarios are still review
+questions. The bounded observation semantic mapping contract is recorded as
+complete in [LISS-0482](../issues/LISS-0482-observation-semantic-mapping.md);
+it does not authorize public observation execution.
 
 ## Verification
 

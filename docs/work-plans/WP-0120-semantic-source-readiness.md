@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **in progress — LISS-0455/LISS-0456/LISS-0457 Product/Tensor, LISS-0471 Measurement, and LISS-0472 Continuous/Open-system slices complete; broader family work deferred** |
+| Status | **in progress — bounded semantic readiness matrix complete; broader family realization deferred** |
 | Type | feature/release work plan |
 | Size | XL |
 | Parent | [WP-0119](WP-0119-real-qpu-readiness-roadmap.md) |
@@ -16,7 +16,7 @@
 | Post-review requirement | Issue-level acceptance review and typed Phase 1 approval |
 | Acceptance spec | [Real-QPU readiness acceptance](../specs/staqex-real-qpu-readiness-acceptance.md) |
 | Detailed follow-up design | [Real-QPU readiness acceptance](../specs/staqex-real-qpu-readiness-acceptance.md#liss-0479--residual-semantic-family-coverage) |
-| Current next | Proceed to next roadmap WP or design additional family slice; no family-wide implementation |
+| Current next | Proceed to the next roadmap WP; no family-wide implementation is authorized |
 
 ## Goal
 
@@ -83,8 +83,9 @@ meaning-family support.
 ## Detailed remaining design
 
 Residual source-family inventory and explicit ready/reject/defer dispositions
-are isolated in LISS-0479. Existing Product/Tensor, Measurement, and
-Continuous/Open-system bounded slices remain dependencies and are not reopened.
+are complete in LISS-0479. Existing Product/Tensor, Measurement, and
+Continuous/Open-system bounded slices remain complete dependencies and are not
+reopened. Deferred family realization requires a new family-specific Issue.
 - Author/environment: Codex host agent, local repository.
 - Model/reasoning: N/A; runtime does not expose displayed per-task values.
 - Planning size: XL; basis is multiple semantic consumers and architecture
