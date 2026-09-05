@@ -8,6 +8,7 @@ Target: docs/issues/LISS-0431-project-explicit-renorm.md.
 from __future__ import annotations
 
 from canonical_execution import run_canonical
+import pytest
 
 import sys
 from pathlib import Path
@@ -18,6 +19,7 @@ if str(_REPO) not in sys.path:
 
 from compiler.staqex.pipeline import compile_source  # noqa: E402
 from compiler.staqex.runtime.evaluator import Evaluator  # noqa: E402
+from compiler.staqex.runtime.evaluator import KernelError  # noqa: E402
 
 
 def _run(src: str):
@@ -108,11 +110,8 @@ def test_project_onto_general_operator_rejects_non_diagonal() -> None:
     """
     compiled = compile_source(src)
     assert compiled.unit is not None, compiled.diagnostics
-    try:
+    with pytest.raises(KernelError):
         run_canonical(compiled, Evaluator(seed=0))
-        raise AssertionError("expected KernelError for a non-Set-domain Operator target")
-    except Exception:  # noqa: BLE001
-        pass
 
 
 if __name__ == "__main__":
