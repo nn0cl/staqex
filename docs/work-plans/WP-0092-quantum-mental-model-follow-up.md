@@ -22,6 +22,10 @@ context, projection loss, and observation families.
 The accepted lexical scope decision is tracked as [LISS-0510](../issues/LISS-0510-lexical-scope-state-shadowing.md);
 its Phase 1 Red tests are the next implementation unit.
 
+LISS-0510 Phase 1 Red is now present in
+`tests/test_liss_0510_lexical_scope_red.py`; it awaits review before any
+parser/type-checker implementation.
+
 Turn the accepted ADR 0189 direction into reviewable language and semantic
 specifications without changing the compiler, tests, grammar, or official
 examples prematurely.

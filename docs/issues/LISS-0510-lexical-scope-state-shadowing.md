@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **ready — design accepted; Phase 1 Red approval required** |
-| Phase | phase-0-design |
+| Status | **in_progress — Phase 1 Red tests added; review required** |
+| Phase | phase-1-red |
 | Parent | WP-0092 |
 | Design authority | [ADR 0216](../architecture/adr/0216-lexical-block-scope-and-state-shadowing.md) |
 | Depends on | LISS-0480, LISS-0483 |
 | Implementation permission | None |
-| Next approval | Phase 1 Red approval |
+| Next approval | Phase 1 Red test review before Phase 2 |
 
 ## Scope
 
@@ -33,6 +33,11 @@ same binding environment as type checking.
 
 Tests and fixtures under `tests/`, plus this Issue and a trace. Production
 parser/type-checker changes are Phase 2 only.
+
+Phase 1 evidence: `tests/test_liss_0510_lexical_scope_red.py` contains four
+acceptance tests. Against the current compiler all four are Red: nested
+binding metadata is absent, same-scope duplicate diagnostics are absent, and
+per-binding State scope is not yet represented by the current resolver.
 
 ## Exclusions
 
