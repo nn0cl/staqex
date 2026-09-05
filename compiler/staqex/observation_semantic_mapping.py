@@ -65,8 +65,8 @@ def _map_node(node, *, source_id: str) -> ObservationMapping:
             source_id=source_id,
             source_node_id=node.provenance.source_node_id,
         ),
-        exactness="preserved",
-        dimensions="preserved",
+        exactness=node.exactness,
+        dimensions=node.dimensions,
         projection_loss=None,
         collapses=policy.collapses,
     )
@@ -74,9 +74,6 @@ def _map_node(node, *, source_id: str) -> ObservationMapping:
 
 def map_source(source: str, *, source_id: str) -> ObservationSemanticMapping:
     """Map source observation nodes without realizing or executing them."""
-
-    if "measure as diagnostic" in source:
-        raise ValueError("illegal observation role/lane transition")
 
     compiled = compile_source(source)
     semantic_ir = compiled.scientific_semantic_ir

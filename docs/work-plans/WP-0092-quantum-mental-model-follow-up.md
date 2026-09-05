@@ -12,6 +12,11 @@
 
 ## Goal
 
+Current bounded work (2026-09-05): [LISS-0483](../issues/LISS-0483-observation-lexicon-conformance.md)
+The bounded correction and explicit legacy assertion update pass all 24
+related tests. Merge is authorized subject to CI. Full conformance remains
+open, including the broader composition/projection matrix.
+
 Turn the accepted ADR 0189 direction into reviewable language and semantic
 specifications without changing the compiler, tests, grammar, or official
 examples prematurely.
