@@ -138,6 +138,9 @@ edits.
 - LISS-0445 bounded binder slice: **done** after same-context completion review.
 - Verification: the fixed consumer-migration suite is **12 passed**;
   `git diff --check` passed.
-- Current Next Issue: LISS-0446 public QASM facade ownership remains parked
-  until its separate phase is approved; LISS-0503 unsupported-evolution
-  rejection is complete. No provider, live-QPU, S02, or solver work is opened.
+- Current Next Issue: no implementation-authorized slice remains in this work
+  plan. LISS-0446 public QASM facade ownership and LISS-0503
+  unsupported-evolution rejection are complete. Further consumer migration
+  requires a refreshed inventory, a new bounded Issue/Spec review, and
+  separate Phase 1 approval. No provider, live-QPU, S02, or solver work is
+  opened.

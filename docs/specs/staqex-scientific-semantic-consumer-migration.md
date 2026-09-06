@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Accepted — Phase 2 Green binder slice complete; LISS-0446 follow-up parked** |
+| Status | **Accepted — binder and public-QASM ownership slices complete; further migration is design-gated** |
 | Issue | [LISS-0445](../issues/LISS-0445-scientific-semantic-consumer-migration.md) |
 | WorkPlan | [WP-0108](../work-plans/WP-0108-scientific-semantic-consumer-migration.md) |
 | Parent authority | [Scientific Semantic Core](staqex-scientific-semantic-core.md), [ADR 0211](../architecture/adr/0211-scientific-semantic-core-and-ir-authority.md) |

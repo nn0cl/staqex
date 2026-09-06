@@ -213,8 +213,11 @@ semantic snapshot or fail-closed invariant diverges.
 - LISS-0503 is **phase-3-refactor-complete**: unsupported explicit evolution
   now fails closed at the canonical QASM boundary with no partial artifact.
 - Verification for LISS-0503: **35 passed**, compile and diff checks passed.
-- Current Next Issue: select the next QASM/consumer migration Phase 1 Red
-  contract from the remaining backlog; provider/live-QPU realization remains
+- Current Next Issue: no implementation-authorized consumer migration slice
+  remains in this work plan. LISS-0446 public QASM ownership and LISS-0503
+  unsupported-evolution rejection are complete; any further consumer-wide
+  migration requires a refreshed inventory, a new bounded Issue/Spec review,
+  and separate Phase 1 approval. Provider/live-QPU realization remains
   explicitly out of scope.
 
 > Review LISS-0444 / WP-0107 / ADR 0211 as an Architecture Path design. Do not
