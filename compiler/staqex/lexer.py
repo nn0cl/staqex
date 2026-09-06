@@ -15,6 +15,15 @@ from .kernel_literals import DIRAC_LABEL_EXTRAS as _DIRAC_LABEL_EXTRAS
 
 _KET_CLOSE_CHARS = frozenset({">"})
 
+_SCIENTIFIC_ALIASES = {
+    "psi": "psi",
+    "ψ": "psi",
+    "phi": "phi",
+    "φ": "phi",
+    "rho": "rho",
+    "ρ": "rho",
+}
+
 
 class Lexer:
     def __init__(self, source: str) -> None:
@@ -150,6 +159,37 @@ class Lexer:
                 self.tokens.append(Token(single[c], c, start_line, start_col))
                 continue
 
+            if c in _SCIENTIFIC_ALIASES:
+                self._advance()
+                self.tokens.append(
+                    Token(
+                        TokenKind.IDENT,
+                        c,
+                        start_line,
+                        start_col,
+                        meta={
+                            "canonical_spelling": _SCIENTIFIC_ALIASES[c],
+                            "written_spelling": c,
+                        },
+                    )
+                )
+                continue
+
+            if c == "Ψ":
+                self._advance()
+                self.diagnostics.append(
+                    {
+                        "code": "LEXICON_UNSUPPORTED_SPELLING",
+                        "line": start_line,
+                        "col": start_col,
+                        "written_spelling": c,
+                        "suggestion": "psi",
+                        "message": "unsupported scientific spelling `Ψ`; use `psi` or `ψ`",
+                    }
+                )
+                self.tokens.append(Token(TokenKind.ERROR, c, start_line, start_col))
+                continue
+
             # unknown char — skip with error
             self._advance()
             self.diagnostics.append(
@@ -277,6 +317,21 @@ class Lexer:
 
         if lexeme in CONTEXTUAL:
             self.tokens.append(Token(CONTEXTUAL[lexeme], lexeme, line, col))
+            return
+
+        if lexeme in _SCIENTIFIC_ALIASES:
+            self.tokens.append(
+                Token(
+                    TokenKind.IDENT,
+                    lexeme,
+                    line,
+                    col,
+                    meta={
+                        "canonical_spelling": _SCIENTIFIC_ALIASES[lexeme],
+                        "written_spelling": lexeme,
+                    },
+                )
+            )
             return
 
         self.tokens.append(Token(TokenKind.IDENT, lexeme, line, col))

@@ -35,8 +35,10 @@ tests, production code, or review summaries. Fast Path uses the compact
 note in that skill. Do not skip this step when the host does not
 auto-discover the skill directory. Do not expose hidden chain-of-thought.
 
-Treat these approvals as distinct and never infer a later approval from an
-earlier one:
+Treat these approvals as distinct decisions. A short `承認`/`approved` may be
+accepted for the single approval target uniquely established by the
+immediately preceding exchange; otherwise require the typed approval form.
+Never infer a later approval from an earlier approval:
 
 - `Scope approval`: permission to investigate or design the named scope.
 - `Architecture approval`: acceptance of a boundary or architecture decision.
@@ -77,8 +79,9 @@ executing a bounded batch, follow `.agents/skills/execution-batch/SKILL.md`.
   ISSUE or work plan only when resuming that work or updating the ledger.
   Current rules come from policy documents, ADRs, and specifications, not
   from ISSUES or work plans.
-- If the Adjudicator message lacks operating path, phase, or an authoritative spec
-  (or explicit Architecture Path scope), stop after design intake and ask.
+- If the Adjudicator message and immediately preceding exchange lack an
+  operating path, phase, or authoritative spec (or explicit Architecture Path
+  scope), stop after design intake and ask.
 - Read `docs/collaboration/project-conventions.md` when present. If it is
   missing, stop and ask to create it from
   `docs/templates/project-conventions.md`.

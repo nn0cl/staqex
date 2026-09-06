@@ -321,6 +321,21 @@ rows retain inspectable meaning and emit no artifact. Phase 1 is limited to
 inventory assertions and selected-row negative cases; no provider capability or
 new numerical method is implied.
 
+#### Coverage matrix baseline
+
+| Construct family | Source fixture | Semantic role | Finite boundary | Status | Rejection code | Owner | Exit evidence |
+|---|---|---|---|---|---|---|---|
+| Product/tensor | `tests/fixtures/semantic_meaning/mixture_and_product.sqx` | mathematical product; state carrier remains `State<T>` | no implicit unitary finiteization | defer | `E_QPU_CANONICAL_PROJECTION_UNAVAILABLE` | semantic core / QASM | canonical product identity plus atomic no-artifact test |
+| Continuous/open-system | `examples/basics/B12_open_systems/main_open_systems.sqx` | continuous/domain or density/channel meaning | explicit discretization and authorized numerical method required | defer | `E_QPU_CANONICAL_PROJECTION_UNAVAILABLE` | continuous readiness | inspectable source meaning and explicit-discretization rejection |
+| Terminal measurement | `tests/fixtures/semantic_core/semantic_core.sqx` | terminal classical observation / collapse | target basis, shots, and result ordering | ready | `E_QPU_CAPABILITY_UNSUPPORTED` when target constraints fail | measurement boundary | terminal `Measure` remains the sole collapse boundary |
+| Dynamic measurement | `tests/fixtures/semantic_core/dynamic_measurement.sqx` | dynamic measurement/feed-forward | dynamic capability profile required | ready | `E_QPU_CAPABILITY_UNSUPPORTED` when dynamic target is absent | dynamic lane | dynamic token, post-measure state, and branch merge remain paired |
+| Interfer/phase/branch | `tests/fixtures/semantic_meaning/interfer_phase_branch.sqx` | coherent phase/interference and branch identity | finite synthesis is not authorized by this matrix | defer | `E_QPU_CANONICAL_PROJECTION_UNAVAILABLE` | semantic core | semantic inspection preserves meaning; no finite artifact |
+| Observation projection | `tests/fixtures/semantic_meaning/observation_projection.sqx` | source observation intent and semantic mapping | observation result adapter contract required | defer | `E_OBSERVATION_PROJECTION_UNAVAILABLE` | observation boundary | observation contract, mapping, and lexicon conformance evidence |
+
+The matrix is a coverage baseline, not implementation approval. A row may move
+from `defer` only through its own reviewed Issue and typed phase approvals;
+completion of one row must not widen another family's status.
+
 ## Non-goals
 
 This specification does not add syntax, select a new provider, install an SDK,

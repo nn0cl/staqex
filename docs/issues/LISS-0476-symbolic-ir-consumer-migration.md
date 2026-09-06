@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **ready — design complete; Phase 1 Red approval required** |
-| Phase | phase-0-design |
+| Status | **done — Phase 3 refactor/review complete** |
+| Phase | phase-3-refactor |
 | Parent | WP-0107 |
 | Design authority | [Scientific Semantic Core](../specs/staqex-scientific-semantic-core.md#consumer-wide-follow-up-design) |
 | Depends on | LISS-0445, LISS-0446 |
-| Implementation permission | None |
-| Next approval | Issue/spec review, then typed Phase 1 Red approval |
+| Implementation permission | Phase 3 refactor/review approved and complete |
+| Next approval | None for this Issue; LISS-0477 remains independent |
 
 ## Scope
 
@@ -36,3 +36,60 @@ the current Scientific Semantic IR authority must change.
 
 Named Red tests/fixtures, this Issue/WP/spec/review records, and the minimal
 inspection projection boundary only; no production implementation in Phase 1.
+
+## Phase 1 Red result
+
+The Adjudicator approved `LISS-0476 Phase 1 Red` on 2026-08-30. Added only
+`tests/test_liss_0476_symbolic_ir_consumer_migration_red.py`.
+
+The Red packet covers non-explicit `symbolic_ir` authority removal, the
+no-rebuild boundary, compile-owned inspection identity/source provenance, and
+the no-finite-artifact/no-collapse inspection contract. The two migration
+gates fail against the current pipeline because it still exposes and builds
+`symbolic_ir` for `ordinary_gate.sqx`; the two already-satisfied canonical
+inspection invariants pass. No production code was changed.
+
+Verification: `./.venv/bin/pytest -q
+tests/test_liss_0476_symbolic_ir_consumer_migration_red.py` reports `2 failed,
+ 2 passed`, and `git diff --check` passes. This Red evidence was reviewed
+ before Phase 2 Green implementation.
+
+## Phase 2 Green result
+
+The Adjudicator approved `LISS-0476 Phase 2 Green` on 2026-08-30. The
+pipeline now keeps Scientific Semantic IR as the sole authority for ordinary
+simulator/inspection compilation and constructs the legacy Symbolic IR only
+at the explicitly bounded operator/discretization compatibility boundary.
+Explicit-evolution compilation remains canonical and does not construct the
+legacy projection.
+
+Changed production file: `compiler/staqex/pipeline.py`. The reviewed Phase 1
+Red tests were not changed. The compatibility boundary preserves the existing
+specialized symbolic consumers while ordinary sources satisfy the new
+no-authority/no-rebuild contract.
+
+Verification: LISS-0476 plus related canonical and legacy consumer tests pass
+(`49 passed`); Python compilation and `git diff --check` pass. A full-suite
+run reached `854 passed` before being interrupted by a long-running existing
+matrix test. Phase 3 review/refactor requires separate approval.
+
+## Phase 3 closeout
+
+The Adjudicator approved `LISS-0476 Phase 3` on 2026-08-30. The compatibility
+boundary was refactored for readability by naming the legacy operator type set
+and formatting the declaration check without changing behavior or assertions.
+The reviewed tests were not changed.
+
+Same-context review re-read this Issue, the Scientific Semantic Core Spec,
+`compiler/staqex/pipeline.py`, and the LISS-0476 test packet. It found no
+blocker: ordinary sources use canonical Scientific Semantic IR, explicit
+evolution remains canonical, and the named legacy compatibility boundary
+preserves existing specialized consumers. Review isolation was
+`same_context`, which is weaker than `separate_context`.
+
+Verification: 49 related tests passed, Python compilation passed, and
+`git diff --check` passed. The full suite was intentionally interrupted after
+854 passes because an existing matrix test continued running; no failure was
+observed before interruption.
+
+Process review: no operating-contract deviation or operational problem found.

@@ -20,8 +20,17 @@ def test_tensor_alias_is_a_registered_quantum_combinator() -> None:
     assert "tensor" in PRELUDE_COMBINATORS
 
 
-def test_unicode_quantum_punctuation_is_rejected_as_source() -> None:
-    for source in ("ψ", "φ", "ρ", "⟨0|", "|0⟩", "⊗", "†"):
+def test_unicode_scientific_names_are_accepted_but_quantum_punctuation_stays_ascii() -> None:
+    for source in ("ψ", "φ", "ρ"):
+        tokens, diagnostics = Lexer(source).tokenize()
+
+        assert not diagnostics, source
+        name = next(token for token in tokens if token.kind is TokenKind.IDENT)
+        assert name.meta is not None
+        assert name.meta["canonical_spelling"] in {"psi", "phi", "rho"}
+        assert name.meta["written_spelling"] == source
+
+    for source in ("⟨0|", "|0⟩", "⊗", "†"):
         _, diagnostics = Lexer(source).tokenize()
 
         assert diagnostics, f"expected ASCII-source rejection for {source!r}"

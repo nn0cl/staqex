@@ -5,9 +5,9 @@
 | Status | **Proposed specification** (2026-08-04) |
 | Parent | [ADR 0189](../architecture/adr/0189-quantum-mental-model-and-observation-contract.md) |
 | Work plan | [WP-0092](../work-plans/WP-0092-quantum-mental-model-follow-up.md) |
-| Follow-up Issues | [LISS-0480](../issues/LISS-0480-scientific-lexicon-contract.md), [LISS-0481](../issues/LISS-0481-observation-contract.md), [LISS-0482](../issues/LISS-0482-observation-semantic-mapping.md), [LISS-0483](../issues/LISS-0483-observation-lexicon-conformance.md) |
+| Follow-up Issues | [LISS-0480](../issues/LISS-0480-scientific-lexicon-contract.md), [LISS-0481](../issues/LISS-0481-observation-contract.md), [LISS-0482](../issues/LISS-0482-observation-semantic-mapping.md), [LISS-0483](../issues/LISS-0483-observation-lexicon-conformance.md), [LISS-0484](../issues/LISS-0484-broader-observation-algebra.md), [LISS-0485](../issues/LISS-0485-povm-observation-bridge.md) |
 | Scope | scientific lexicon, quantum composition surface, observation contracts |
-| Implementation status | partially implemented: `inspect` is classified as `DiagnosticView<T>`; `superpose` formal grammar shipped ([LISS-0320](../issues/LISS-0320-superpose-formal-grammar.md), PR #345); `controlled(...)` call-form execution confirmed already shipped (2026-08-05, see §4.3 note — no separate Issue needed); remaining surface (scientific lexicon beyond `psi`/`phi`/`rho`/`cm`, public `Observable<T>`/`Projection<T>`/`Observation<T>`) and observation families remain proposed |
+| Implementation status | bounded slices shipped: scientific aliases `psi/ψ`、`phi/φ`、`rho/ρ`, `DiagnosticView<T>` and observation mappings, Static Kernel tomography rejection, and conformance evidence report; public `Observable<T>`/`Projection<T>`/`Observation<T>`, general observation families, POVM/tomography execution, and provider/QPU support remain proposed |
 
 ## 1. Purpose
 
@@ -95,6 +95,39 @@ values, measure a state, or create an alternative type system.
 The table is a proposal, not yet the final reserved inventory. In particular,
 `d`, `del`, `sum`, and `prod` require context-sensitive parsing so that
 ordinary identifiers and mathematical binders do not collide.
+
+### 3.4 LISS-0480 v1 lexicon contract
+
+The following matrix is the accepted v1 contract for the first lexicon slice.
+`canonical` is the semantic spelling used by the AST and Scientific Semantic
+IR; `written` is the exact source spelling retained for diagnostics and source
+maps. A display alias is accepted only in the listed context and must produce
+the same semantic identity as its canonical spelling.
+
+| Canonical | Display alias(es) | Token class | Accepted context | Collision rule | Version | Unsupported spelling diagnostic |
+|---|---|---|---|---|---|---|
+| `psi` | `ψ` | scientific name | quantum state binding/reference | ordinary local name may shadow only in a nested scope; duplicate binding in one scope is `LEXICON_COLLISION` | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `psi` or `ψ` |
+| `phi` | `φ` | scientific name | quantum state/test-state binding/reference | same canonical identity across source spellings; duplicate binding in one scope is deterministic | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `phi` or `φ` |
+| `rho` | `ρ` | scientific name | density-state binding/reference | same canonical identity across source spellings; duplicate binding in one scope is deterministic | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `rho` or `ρ` |
+| `H` | — | contextual scientific name | Hamiltonian/Hermitian operator position | remains an identifier outside operator position; no global reservation | v1 | `LEXICON_UNSUPPORTED_SPELLING` only for a rejected operator spelling |
+| `U` | — | contextual scientific name | unitary operator position | remains an identifier outside operator position; no global reservation | v1 | `LEXICON_UNSUPPORTED_SPELLING` only for a rejected operator spelling |
+| `hbar` | not active in v1 | scientific constant name | physics expression | ordinary local shadowing follows declaration scope when activated | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `hbar` |
+| `dag` | not active in v1 | postfix operator | adjoint expression | cannot be used as a declaration name when activated | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `dag` |
+| `tp` | not active in v1 | infix operator | tensor-product expression | cannot be used as a declaration name when activated | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `tp` |
+| `cm` | `[A,B]` | operator expression | commutator position | square brackets are disambiguated by syntactic position; `cm(A,B)` is not a second semantic operation | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `cm(A,B)` |
+| `controlled` | `Ctl` | reserved operation word | coherent control expression | reserved in operation position; never aliases `Mix`/`mix` | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `controlled` |
+| `superpose` | `Superpose` | reserved operation word | coherent phase-preserving operation | reserved operation position; never aliases `Mix`/`mix` | v1 | `LEXICON_UNSUPPORTED_SPELLING`, suggest `superpose` |
+
+The v1 matrix deliberately does not reserve `d`, `del`, `sum`, `prod`,
+`dsum`, `nab`, `ex`, `ket`, or `bra` globally. They remain proposal-level,
+context-sensitive candidates until a separate grammar decision specifies their
+binder/operator ownership. An implementation must not silently accept an
+unlisted spelling as a new dialect: it either preserves an ordinary identifier
+role or emits the actionable diagnostic above with the canonical suggestion.
+
+Each accepted alias test must expose both `canonical_spelling` and
+`written_spelling`; comparing only rendered text is insufficient evidence that
+the alias preserved meaning.
 
 The commutator keeps `[A,B]` as its canonical blackboard spelling. Square
 brackets are not rejected merely because other languages use them for lists or
@@ -370,6 +403,117 @@ The categories have these lowering rules:
 classical Host envelope containing execution metadata. Target capability is
 checked after semantic elaboration, so an unsupported target rejects the
 request without rewriting it as `State`, `Float`, or an early measurement.
+
+### 5.4 LISS-0481 observation contract matrix
+
+The following matrix is the v1 acceptance contract for observation intent and
+result boundaries. `lane` and `provenance` are observable metadata, not
+implementation-only annotations.
+
+| Operation | Semantic type | Result contract | Collapse | Sampling | Lane | Required provenance | Unsupported behavior |
+|---|---|---|---:|---:|---|---|---|
+| `expect(O, state)` | `Observable<T>` | expectation projection | no | no | `StaticKernel` | source ID, operator ID, input state ID | reject with operation and target capability |
+| `project(P, state)` | `Projection<T>` | `State<T>` or vacuum | no | no | `StaticKernel` | source ID, projector ID, input state ID, loss marker | reject without fabricated state |
+| `inspect(state)` | `DiagnosticView<T>` | non-destructive diagnostic view | no | no | `StaticKernel` | source ID, state lineage ID, exactness | reject without sampling or finite-plan allocation |
+| `trace_out(state, subsystem)` | `Projection<T>` | reduced `State<T>` | no | no | `StaticKernel` | source ID, subsystem ID, reduction/projection loss | reject without fabricated reduced state |
+| terminal `measure(state)` | `Observation<T>` → `MeasurementEnvelope<T>` | outcome plus post-state metadata | yes | yes | `StaticKernel` | source ID, measurement ID, outcome, post-state ID, collapse boundary | fail before a second implicit measurement |
+| `tomography(plan)` | `Observation<T>` → `ObservationReport` | Host reconstruction report | no in Kernel | repeated shots at Host | `HostProtocol` | source ID, job/plan ID, shot policy, target capability | Static Kernel must emit `OBSERVATION_UNSUPPORTED` and no report |
+
+Every accepted operation must preserve its source ID and semantic input
+lineage. A diagnostic view or observation report with only rendered text and no
+lineage is not a conforming result. Unsupported behavior is a rejection, not a
+zero value, empty report, or implicit conversion to `measure`.
+
+### 5.5 LISS-0482 observation-to-IR mapping matrix
+
+The mapping layer is a source-derived projection. It may add consumer-facing
+metadata, but it must not replace the Scientific Semantic IR authority or
+materialize a finite artifact implicitly.
+
+| Source operation | Scientific Semantic IR role | Lane | Required identity/provenance | Exactness/dimensions | Projection-loss rule | Illegal transition |
+|---|---|---|---|---|---|---|
+| `expect(O, state)` | `ExpectationProjection` | `StaticKernel` | source ID, observable node ID, state lineage | preserve declared exactness and dimensions | report loss explicitly; never sample | reject classical-only observable or invalid lane |
+| `project(P, state)` | `Projection` | `StaticKernel` | source ID, projector node ID, state lineage | preserve dimensions; mark vacuum | record projection loss | reject if projection fabricates state |
+| `inspect(state)` | `DiagnosticView` | `StaticKernel` | source ID, state lineage, view node ID | preserve exactness and dimensions | no projection loss or finite allocation | reject if mapped to measurement |
+| `trace_out(state, subsystem)` | `ReducedState` | `StaticKernel` | source ID, subsystem ID, parent lineage | preserve remaining dimensions | record reduction loss | reject if treated as terminal outcome |
+| terminal `measure(state)` | `Measurement` | `StaticKernel` | source ID, measurement ID, outcome/post-state lineage | boundary-defined outcome exactness | collapse boundary explicit | reject a second implicit collapse |
+| dynamic measurement | `DynamicMeasurement` | `DynamicQpu` | source ID, dynamic token, branch lineage | preserve token and branch dimensions | no static projection substitution | reject if lowered to static measurement |
+| `tomography(plan)` | `ObservationProtocolRequest` | `HostProtocol` | source ID, plan/job ID, target capability | protocol-defined report exactness | no Kernel finite artifact | reject in StaticKernel with `OBSERVATION_UNSUPPORTED` |
+
+For every row, mapping output must include `role`, `lane`, `source_id`,
+`provenance`, `exactness`, and `dimensions`. A missing field is a mapping
+contract failure even when a consumer can still render an artifact.
+
+### 5.7 LISS-0484 broader observation algebra design
+
+LISS-0480–0483 establish the lexical, contract, mapping, and bounded
+conformance foundations. The next local design slice defines the algebraic
+relationships without selecting a storage model or exposing mandatory source
+annotations.
+
+| Concept | Input relation | Output relation | Collapse | Required invariant | Current implementation boundary |
+|---|---|---|---:|---|---|
+| `Observable<T>` | operator/quantity over `State<T>` | expectation or measurement request | no by itself | observable identity and dimensions remain source-derived | compiler/IR category only |
+| `Projection<T>` | projector/reduction over `State<T>` | `State<T>` or vacuum | no implicit sampling | projection loss is explicit and no finite artifact is fabricated | compiler/IR category only |
+| `Observation<T>` | typed intent with operation and lane | projection, diagnostic view, measurement envelope, or protocol request | only `measure` | operation, lane, lineage, and capability are preserved | compiler/IR DTO candidate |
+| `DiagnosticView<T>` | `inspect(State<T>)` | non-destructive view | no | source state lineage remains available | shipped bounded IR metadata |
+| `MeasurementEnvelope<T>` | terminal `measure(State<T>)` | classical outcome + post-state metadata | yes | collapse is explicit and terminal | shipped Host result boundary |
+
+The algebra has four required laws: (1) `expect`, `project`, `inspect`, and
+`trace_out` are state-preserving or state-transforming but non-sampling; (2)
+only terminal `measure` may create a collapse outcome in the Static Kernel;
+(3) every result keeps source identity, lane, and provenance; and (4) an
+unsupported operation is rejected explicitly rather than coerced into a
+different observation kind.
+
+LISS-0484 must decide the vocabulary for operation kind, lane, lineage,
+exactness, dimensions, projection-loss, and capability status, plus the
+composition rules for `expect(project(P, state))`, `inspect(project(P, state))`,
+and repeated observation requests. It must not decide general Hilbert storage,
+POVM numerical semantics, tomography shot estimation, provider SDKs, or public
+surface annotations. Those are separate ADR/Issue boundaries.
+
+### 5.8 LISS-0485 POVM observation bridge design
+
+LISS-0037/WP-0014 define the shipped terminal computational-basis measurement
+boundary, while LISS-0084 owns the XL mathematical work for general mixed
+states, channels, and POVMs. LISS-0485 specifies only the bridge from a future
+POVM request into the observation algebra.
+
+| Contract | Required evidence | Local responsibility | Explicitly deferred |
+|---|---|---|---|
+| POVM identity/domain | effect-set ID, outcome carrier, state domain | IR request metadata | matrix storage/evaluation |
+| effect validity | completeness/positivity status, no repair | stable verifier-result shape | Kraus/Choi mathematics |
+| terminal boundary | collapse, sampling, post-state identity | distinguish POVM measure from inspect/project | mid-circuit/dynamic execution |
+| lane/capability | `StaticKernel` vs `HostProtocol`, target status | fail-closed capability evidence | provider/QPU SDK and shots |
+| result envelope | outcome identity, provenance, exactness, dimensions | map to `MeasurementEnvelope<T>` | estimator/tomography report |
+
+The bridge preserves LISS-0484 laws: a POVM declaration is non-sampling until
+terminal measurement, invalid or incomplete effects are rejected rather than
+repaired, and unsupported targets retain the original POVM intent. LISS-0084
+remains authoritative for effect representation and execution mathematics.
+
+### 5.6 LISS-0483 cross-feature conformance matrix
+
+Conformance is a deterministic proof ledger over accepted source behavior. Each
+row names the canonical behavior, the observable proof, and the result that
+must be reported when the behavior is deferred. A passing compile alone is not
+conformance evidence if the semantic meaning or review metadata is discarded.
+
+| Feature family | Canonical contract | Deterministic proof | Deferred/negative proof | Required evidence |
+|---|---|---|---|---|
+| scientific names | `psi/ψ`, `phi/φ`, `rho/ρ` share one meaning | lexer/parser token and binding identity test | unlisted spelling has stable actionable diagnostic | canonical/written spelling, source span |
+| probabilistic composition | `mix` is non-collapsing composition | semantic role/lane test | no rewrite to `measure` or `superpose` | role, lane, branch provenance |
+| coherent composition | `superpose` is distinct from `mix` | AST/IR role test | unsupported execution rejects explicitly | role, rejection code, source ID |
+| controlled operation | `controlled`/`Ctl` retains coherent-control meaning | call-form semantic test | no alias to mixture | operation role, control/target provenance |
+| migration | `when` is retired; `mix` is canonical | lexer diagnostic test | no compatibility fallback | diagnostic code, replacement, span |
+| observation | `inspect`/`project`/`trace_out` do not collapse | observation mapping test | unsupported observation has no fabricated result | kind, collapse, sampling, mapping evidence |
+| terminal boundary | only terminal `measure` samples/collapses | measurement envelope test | second implicit collapse rejects | outcome, post-state, collapse boundary |
+
+The conformance runner must return one record per matrix row with `feature`,
+`status`, `source_id`, `evidence`, and `diagnostic` (when applicable). A row
+without evidence is `inconclusive`, not `passed`. Conformance records prove
+language behavior only; they do not imply provider or hardware support.
 
 ### 5.2 Acceptance scenarios
 

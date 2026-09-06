@@ -7,7 +7,7 @@ remain explicit and are not treated as alternate authorities.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 import hashlib
 import json
 from typing import TYPE_CHECKING, Any, NamedTuple
@@ -25,6 +25,7 @@ from .ast_nodes import (
     LitFloat,
     LitInt,
     Measure,
+    Inspect,
     StateBind,
     Var,
 )
@@ -238,6 +239,11 @@ class ScientificSemanticIR:
     realize_source_node_id: str | None = None
     finite_realization_record: FiniteRealizationRecord | None = None
     ideal_meaning: "IdealMeaning | None" = None
+    observation_contracts: dict[str, dict[str, Any]] = field(default_factory=dict)
+    measurement_envelopes: dict[str, dict[str, Any]] = field(default_factory=dict)
+    observation_mappings: dict[str, dict[str, Any]] = field(default_factory=dict)
+    observation_algebra: dict[str, dict[str, Any]] = field(default_factory=dict)
+    povm_observation_requests: dict[str, dict[str, Any]] = field(default_factory=dict)
 
 
 def build_runtime_execution_plan(
@@ -494,6 +500,15 @@ class SemanticRejection:
     artifacts: None = None
 
 
+def _observation_input_name(expr: Any) -> str | None:
+    """Return the source binding carried by a simple observation expression."""
+    if isinstance(expr, Var):
+        return expr.name
+    if isinstance(expr, Inspect) and isinstance(expr.expr, Var):
+        return expr.expr.name
+    return None
+
+
 @dataclass(frozen=True, slots=True)
 class RealizationProvenance:
     realize_source_node_id: str
@@ -616,6 +631,10 @@ def build_scientific_semantic_ir(
                 name = "Limit"
             elif value.callee.name == "exp" and is_quantum_exponential(value):
                 name = "ExactExponential"
+            elif value.callee.name == "phase":
+                name = "PhaseExpr"
+            elif value.callee.name == "interfer":
+                name = "InterferenceExpr"
         role = _role_for(name)
         child_start = len(nodes)
         for field_name in value.__dataclass_fields__:
@@ -714,6 +733,141 @@ def build_scientific_semantic_ir(
         relations=(SemanticRelation(relation_kind, tuple(node.node_id for node in nodes)),),
         has_explicit_realize=_has_realize_call(unit),
     )
+    observation_contracts: dict[str, dict[str, Any]] = {}
+    measurement_envelopes: dict[str, dict[str, Any]] = {}
+    observation_mappings: dict[str, dict[str, Any]] = {}
+    observation_algebra: dict[str, dict[str, Any]] = {}
+    povm_observation_requests: dict[str, dict[str, Any]] = {}
+    if unit.main is not None:
+        povm_names = {
+            statement.names[0]: statement.ty.args[0].name
+            for statement in unit.main.body.stmts
+            if (
+                isinstance(statement, StateBind)
+                and len(statement.names) == 1
+                and statement.ty is not None
+                and statement.ty.name == "POVM"
+                and statement.ty.args
+            )
+        }
+        state_domains = {
+            statement.names[0]: statement.ty.args[0].name
+            for statement in unit.main.body.stmts
+            if (
+                isinstance(statement, StateBind)
+                and len(statement.names) == 1
+                and statement.ty is not None
+                and statement.ty.name in {"State", "DensityState"}
+                and statement.ty.args
+            )
+        }
+        for statement in unit.main.body.stmts:
+            if isinstance(statement, StateBind) and statement.names and isinstance(statement.expr, Inspect):
+                observation_contracts[statement.names[0]] = {
+                    "kind": "DiagnosticView",
+                    "collapse": False,
+                    "sampling": False,
+                    "lane": "StaticKernel",
+                    "source_id": source_id,
+                    "source_node_id": source_node_ids.get(id(statement), ""),
+                }
+                observation_mappings[statement.names[0]] = {
+                    "role": "DiagnosticView",
+                    "lane": "StaticKernel",
+                    "source_id": source_id,
+                    "provenance": {
+                        "source_node_id": source_node_ids.get(id(statement), ""),
+                        "line": statement.span.line,
+                        "col": statement.span.col,
+                    },
+                    "exactness": "preserved",
+                    "dimensions": "preserved",
+                    "projection_loss": None,
+                    "finite_artifact": False,
+                }
+                inner = statement.expr.expr
+                composition = {
+                    "outer": "inspect",
+                    "inner": "inspect" if isinstance(inner, Inspect) else "state",
+                    "sampling": False,
+                }
+                observation_algebra[statement.names[0]] = {
+                    "operation_kind": "inspect",
+                    "lane": "StaticKernel",
+                    "sampling": False,
+                    "collapse": False,
+                    "lineage": {
+                        "source_id": source_id,
+                        "input": _observation_input_name(inner),
+                    },
+                    "projection_loss": None,
+                    "finite_artifact": False,
+                    "composition": composition,
+                }
+            if isinstance(statement, Measure) and isinstance(statement.expr, Var):
+                measurement_envelopes[statement.expr.name] = {
+                    "kind": "MeasurementEnvelope",
+                    "collapse": True,
+                    "sampling": True,
+                    "lane": "StaticKernel",
+                    "source_id": source_id,
+                }
+                if isinstance(statement.povm, Var) and statement.povm.name in povm_names:
+                    povm_observation_requests[statement.expr.name] = {
+                        "effect_set_id": statement.povm.name,
+                        "effect_kind": "ComputationalBasis",
+                        "state_domain": state_domains.get(statement.expr.name, "Unknown"),
+                        "lane": "StaticKernel",
+                        "sampling": True,
+                        "collapse": True,
+                        "post_state_identity": f"{statement.expr.name}:post_measurement",
+                        "provenance": {
+                            "source_id": source_id,
+                            "source_node_id": source_node_ids.get(id(statement), ""),
+                        },
+                    }
+            if (
+                isinstance(statement, StateBind)
+                and statement.names
+                and isinstance(statement.expr, Call)
+                and isinstance(statement.expr.callee, Var)
+                and statement.expr.callee.name == "trace_out"
+            ):
+                observation_mappings[statement.names[0]] = {
+                    "role": "ReducedState",
+                    "lane": "StaticKernel",
+                    "source_id": source_id,
+                    "provenance": {
+                        "source_node_id": source_node_ids.get(id(statement), ""),
+                        "line": statement.span.line,
+                        "col": statement.span.col,
+                    },
+                    "exactness": "preserved",
+                    "dimensions": "reduced",
+                    "projection_loss": "subsystem_reduction",
+                    "finite_artifact": False,
+                }
+                observation_algebra[statement.names[0]] = {
+                    "operation_kind": "trace_out",
+                    "lane": "StaticKernel",
+                    "sampling": False,
+                    "collapse": False,
+                    "lineage": {
+                        "source_id": source_id,
+                        "input": (
+                            _observation_input_name(statement.expr.args[0])
+                            if statement.expr.args
+                            else None
+                        ),
+                    },
+                    "projection_loss": "subsystem_reduction",
+                    "finite_artifact": False,
+                    "composition": {
+                        "outer": "trace_out",
+                        "inner": "state",
+                        "sampling": False,
+                    },
+                }
     binder_lowering, binder_diagnostics = lower_finite_binders(unit)
     realize_source_node_id, finite_realization_record, realization_errors = (
         _build_finite_realization_record(unit, core)
@@ -743,6 +897,11 @@ def build_scientific_semantic_ir(
         source_unit_identity=id(unit),
         realize_source_node_id=realize_source_node_id,
         finite_realization_record=finite_realization_record,
+        observation_contracts=observation_contracts,
+        measurement_envelopes=measurement_envelopes,
+        observation_mappings=observation_mappings,
+        observation_algebra=observation_algebra,
+        povm_observation_requests=povm_observation_requests,
     )
     ideal_payload = json.dumps(
         {
@@ -1570,7 +1729,7 @@ def _build_finite_realization_record(
 def _role_for(name: str) -> str:
     if "Measure" in name:
         return "terminal_classical"
-    if name in {"Coin", "WhenExpr"}:
+    if name in {"Coin", "WhenExpr", "PhaseExpr", "InterferenceExpr"}:
         return "quantum"
     if name in {"Limit", "ExactExponential", "EvolveExpr"}:
         return "evolution"
@@ -1582,7 +1741,13 @@ def _role_for(name: str) -> str:
 
 
 def _type_for(name: str) -> str:
-    if "State" in name or name in {"EvolveExpr", "Limit", "ExactExponential"}:
+    if "State" in name or name in {
+        "EvolveExpr",
+        "Limit",
+        "ExactExponential",
+        "PhaseExpr",
+        "InterferenceExpr",
+    }:
         return "State<T>"
     if "Operator" in name:
         return "Operator"
@@ -1598,6 +1763,10 @@ def _intent_for(name: str) -> str:
         return "evolution"
     if name == "ExactExponential":
         return "exact_evolution"
+    if name == "PhaseExpr":
+        return "phase_transform"
+    if name == "InterferenceExpr":
+        return "interference"
     if "Measure" in name:
         return "measurement"
     return "expression"
@@ -1612,6 +1781,10 @@ def _meaning_kind(name: str) -> str:
         return "exact_exponential"
     if name == "WhenExpr":
         return "mixture"
+    if name == "PhaseExpr":
+        return "phase"
+    if name == "InterferenceExpr":
+        return "interference"
     if name in {"OpBin", "BinOp"}:
         return "mathematical_product"
     return "expression"
@@ -1624,6 +1797,10 @@ def _state_role(name: str) -> str:
         return "mixed_state"
     if name in {"Limit", "ExactExponential", "EvolveExpr"}:
         return "evolution_operator"
+    if name == "PhaseExpr":
+        return "phase_transform"
+    if name == "InterferenceExpr":
+        return "interference"
     return "unspecified"
 
 

@@ -82,6 +82,21 @@
 | continuous numerical adapter | `continuous_lowering.py` / `GridHamiltonian` | defer | separate Issue | explicit scope-boundary record |
 | live submit | `QpuSubmitPort` / host provider | defer | separate Issue | separate port/technology approval |
 
+### LISS-0486 evaluator semantic-authority migration
+
+The runtime evaluator remains a downstream execution consumer, not a second
+semantic authority. This slice defines the boundary for passing the
+compile-owned `ScientificSemanticIR` into evaluator setup and for proving that
+AST dispatch retains only operational structure. State values remain
+`State<T>`, terminal `measure` remains the sole collapse boundary, and
+unsupported meaning produces no fabricated runtime result.
+
+Phase 1 must cover compile-owned IR identity, AST mutation/caller-injected
+projection rejection, terminal measurement provenance, and no early collapse.
+Phase 2 may add only the minimum evaluator entry boundary. Provider/QPU,
+automatic finiteization, solver changes, and numerical semantic changes are
+excluded.
+
 Physics and Equation paths are tracked separately: `physics_ir` is the legacy
 projection path, while `EquationNode` is the caller-injected/string-capable
 path. They require separate no-authority tests and separate rollback proofs.

@@ -34,13 +34,13 @@ def resolve_measurement_contracts(
         elif statement.ty.name == "POVM":
             domain = _declared_domain(statement)
             if not _is_computational_basis(statement.expr):
-                diagnostics.append(
-                    _diagnostic(
+                diagnostic = _diagnostic(
                         "INVALID_POVM_EFFECT",
                         statement,
                         "the MVP POVM constructor is ComputationalBasis()",
                     )
-                )
+                diagnostic["requested_effect_set"] = name
+                diagnostics.append(diagnostic)
             povms[name] = POVMContract(
                 name=name,
                 domain=domain,
@@ -62,13 +62,14 @@ def resolve_measurement_contracts(
         if source_domain is not None:
             povm_domain = povms[statement.povm.name].domain
             if source_domain != povm_domain:
-                diagnostics.append(
-                    _diagnostic(
+                diagnostic = _diagnostic(
                         "POVM_DOMAIN_MISMATCH",
                         statement,
                         f"POVM domain `{povm_domain}` does not match `{source_domain}`",
                     )
-                )
+                diagnostic["requested_effect_set"] = statement.povm.name
+                diagnostic["state_domain"] = source_domain
+                diagnostics.append(diagnostic)
     return povms, diagnostics
 
 

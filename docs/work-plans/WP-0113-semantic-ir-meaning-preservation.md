@@ -100,3 +100,13 @@ Given/When/Then cases:
 The residual `interfer`/phase/branch slice is decomposed as LISS-0478. It is a
 semantic preservation and rejection contract only; it does not authorize gate
 synthesis, numerical approximation, or QPU execution.
+
+LISS-0478 is complete through Phase 3. The canonical semantic IR preserves
+distinct phase/interference meaning kinds, branch/control and operand
+identity, provenance, and inspection without finite QPU support. Unsupported
+finite projection remains fail-closed. Finite projection remains separately
+deferred.
+
+Follow-up classification review is complete with `22 passed` related tests;
+the semantic slice requires no further approval. Finite projection remains a
+separate future scope.

@@ -62,7 +62,10 @@ scope, rejects an assumption, or requests a new ADR.
 
 ## Approval Model
 
-Approval is typed and scoped. The following are distinct decisions:
+Approval is typed and scoped, but the syntax may be concise. A short
+`承認`/`approved` is sufficient when the immediately preceding exchange
+establishes exactly one approval target; otherwise the agent must request the
+typed form. The following remain distinct decisions:
 
 - `Scope approval`: investigate or design the named scope.
 - `Architecture approval`: accept a boundary or architecture decision.
@@ -122,7 +125,8 @@ Required for Phase 3:
 
 Agents must stop for Adjudicator decision when:
 
-- phase is not explicitly selected.
+- phase is neither explicitly selected nor uniquely established by the
+  immediately preceding exchange.
 - issue dependencies are unclear or unresolved.
 - requirements imply a new architecture decision.
 - a payload would need unrelated large context.

@@ -97,9 +97,9 @@ Use `.agents/skills/design-intake/SKILL.md` for design intake,
   ISSUE or work plan only when resuming that work or updating the ledger.
   Current rules come from policy documents, ADRs, and specifications, not
   from ISSUES or work plans.
-- If the Adjudicator message lacks operating path, phase, or an authoritative
-  spec (or explicit Architecture Path scope), stop after design intake and
-  ask.
+- If the Adjudicator message and immediately preceding exchange lack an
+  operating path, phase, or authoritative spec (or explicit Architecture Path
+  scope), stop after design intake and ask.
 - Read `docs/collaboration/project-conventions.md` when present. It holds
   project name, stack, ports, boundaries, non-decisions, and extra
   project-specific rules. Do not store those facts in this file. If the
@@ -180,8 +180,10 @@ concrete implementation. Do not add project ports to this file.
 
 ## Approval Model
 
-Treat these approvals as distinct and never infer a later approval from an
-earlier one: `Scope approval`, `Architecture approval`,
+Treat these approvals as distinct decisions. A short `承認`/`approved` may be
+accepted when the immediately preceding exchange establishes exactly one
+approval target; otherwise require the typed form. Never infer a later
+approval from an earlier approval: `Scope approval`, `Architecture approval`,
 `Technology selection approval`, `Phase approval`, `Implementation approval`.
 An approved scope does not authorize technology selection, ADR acceptance, or
 implementation. Review records must state the approved scope, current phase,

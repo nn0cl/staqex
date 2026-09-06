@@ -31,8 +31,9 @@ No hidden business logic in adapters.
   ISSUE or work plan only when resuming that work or updating the ledger.
   Current rules come from policy documents, ADRs, and specifications, not
   from ISSUES or work plans.
-- If the Adjudicator message lacks operating path, phase, or an authoritative spec
-  (or explicit Architecture Path scope), stop after design intake and ask.
+- If the Adjudicator message and immediately preceding exchange lack an
+  operating path, phase, or authoritative spec (or explicit Architecture Path
+  scope), stop after design intake and ask.
 - Read `docs/collaboration/project-conventions.md` when present. It holds
   project name, stack, ports, boundaries, non-decisions, and extra
   project-specific rules. Do not store those facts in this file. If the
@@ -137,8 +138,10 @@ auto-discover the skill directory.
 
 ## Approval Model
 
-Treat these approvals as distinct and never infer a later approval from an
-earlier one:
+Treat these approvals as distinct decisions. A short `承認`/`approved` may be
+accepted for the single approval target that is uniquely established by the
+immediately preceding exchange; otherwise require the typed approval form.
+Never infer a later approval from an earlier approval:
 
 - `Scope approval`: permission to investigate or design the named scope.
 - `Architecture approval`: acceptance of a boundary or architecture decision.
