@@ -178,6 +178,44 @@ class TypeChecker:
         # accept a named constant, not just a bare literal.
         self.static_scalars: dict[str, float] = {}
 
+    def _check_duplicate_declarations(
+        self,
+        names: list[str],
+        span: Any,
+        scope_declarations: dict[str, Any],
+        expr: Any = None,
+    ) -> None:
+        """Apply the declaration policy for one lexical scope."""
+        for name in names:
+            previous_expr = scope_declarations.get(name)
+            if self._is_duplicate_declaration(name, previous_expr, expr):
+                self.diagnostics.append(
+                    {
+                        "code": "DUPLICATE_DECLARATION",
+                        "line": span.line,
+                        "col": span.col,
+                        "message": f"`{name}` is already declared in this scope",
+                    }
+                )
+            scope_declarations[name] = expr
+
+    @staticmethod
+    def _is_duplicate_declaration(
+        name: str, previous_expr: Any, expr: Any
+    ) -> bool:
+        """Return whether a declaration is an ordinary same-scope duplicate.
+
+        State-transform rebinding and the historical bra/ket parser probes are
+        compatibility surfaces, not new declarations in the lexical policy.
+        """
+        if name not in {"psi", "phi", "rho"}:
+            return False
+        if previous_expr is None or isinstance(expr, (EvolveExpr, Call)):
+            return False
+        if isinstance(previous_expr, BraLit) or isinstance(expr, BraLit):
+            return False
+        return True
+
     _SEMANTIC_CARRIERS = {
         "Dimension",
         "Index",
@@ -305,6 +343,7 @@ class TypeChecker:
             else:
                 self.env[p.name] = Ty("State", "Any", DIMLESS)
 
+        scope_declarations: dict[str, Any] = {}
         for stmt in unit.main.body.stmts:
             if isinstance(stmt, DynamicQpuStmt):
                 self.diagnostics.extend(
@@ -334,6 +373,9 @@ class TypeChecker:
                 self._check_assign_stmt(stmt, class_meta)
                 continue
             if isinstance(stmt, StateBind):
+                self._check_duplicate_declarations(
+                    stmt.names, stmt.span, scope_declarations, stmt.expr
+                )
                 # LISS-0074 Slice A: validate qutrit/qudit type-level shapes early.
                 if stmt.ty is not None:
                     self._validate_local_dimension_surface(
@@ -3144,7 +3186,11 @@ class TypeChecker:
         if isinstance(expr, BlockExpr):
             # ADR 0153: type lets in a nested env, then the result.
             saved = dict(self.env)
+            scope_declarations: dict[str, Any] = {}
             for let in expr.lets:
+                self._check_duplicate_declarations(
+                    [let.name], let.span, scope_declarations, let.expr
+                )
                 self.env[let.name] = self._infer(let.expr)
             result_ty = self._infer(expr.result)
             self.env = saved

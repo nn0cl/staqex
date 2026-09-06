@@ -132,10 +132,14 @@ Feature: keyboard-friendly scientific names
     And the implementation does not reserve every Greek letter implicitly
 ```
 
-Open specification decisions: the complete inventory, whether `H` and `U`
-are contextual tokens or ordinary identifiers with scientific metadata,
-whether `ket(psi)` / `bra(psi)` are parser sugar or ordinary library calls,
-and shadowing rules for nested scopes.
+The nested-scope shadowing rule is settled by
+[ADR 0216](../architecture/adr/0216-lexical-block-scope-and-state-shadowing.md):
+braced blocks are lexical scopes, nearest declarations win, same-scope
+duplicates are rejected, and State linearity is tracked per binding identity.
+Remaining open questions are the complete scientific inventory, whether `H`
+and `U` are contextual tokens or ordinary identifiers with scientific
+metadata, and whether `ket(psi)` / `bra(psi)` are parser sugar or ordinary
+library calls.
 
 ## 4. Quantum composition acceptance boundary
 
