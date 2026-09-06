@@ -11,7 +11,7 @@ from dataclasses import dataclass
 import re
 from types import MappingProxyType
 
-from .ast_nodes import StateBind
+from .ast_nodes import BlockExpr, Dirac, EvolveExpr, KetLit, StateBind, Vacuum
 from .pipeline import compile_source
 
 
@@ -41,6 +41,18 @@ class LexiconInspection:
     bindings: dict[str, LexiconBinding]
     operations: tuple[LexiconOperation, ...]
     shadowing_policy: str
+    scoped_bindings: tuple["ScopedLexiconBinding", ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class ScopedLexiconBinding:
+    """Scientific alias metadata after lexical resolution."""
+
+    name: str
+    context: str
+    scope_depth: int
+    binding_id: str
+    declaration_span: tuple[int, int]
 
 
 _CONTRACT_VERSION = "scientific-lexicon-v1"
@@ -49,6 +61,9 @@ _SCIENTIFIC_NAMES = frozenset(_DISPLAY_SYMBOLS)
 _COMMUTATOR = re.compile(r"\bcm\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*,\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)")
 _SCIENTIFIC_CONTEXT = "quantum_state"
 _ORDINARY_CONTEXT = "classical_scalar"
+_LEXICON_FATAL_CODES = frozenset(
+    {"PARSE_ERROR", "LEX_ERROR", "TYPE_ERROR", "TYPE_MISMATCH", "TYPE_NOT_STATE"}
+)
 
 
 def _binding_for_statement(statement: StateBind) -> LexiconBinding:
@@ -89,6 +104,49 @@ def _commutator_operation(source: str) -> tuple[LexiconOperation, ...]:
     )
 
 
+def _scoped_bindings(main: object, source_id: str) -> tuple[ScopedLexiconBinding, ...]:
+    result: list[ScopedLexiconBinding] = []
+
+    def add(name: str, context: str, depth: int, span: object) -> None:
+        if name not in _SCIENTIFIC_NAMES:
+            return
+        line = int(getattr(span, "line", 0))
+        col = int(getattr(span, "col", 0))
+        result.append(
+            ScopedLexiconBinding(
+                name=name,
+                context=context,
+                scope_depth=depth,
+                binding_id=f"{source_id}:{line}:{col}:{depth}:{name}",
+                declaration_span=(line, col),
+            )
+        )
+
+    def walk_expr(expr: object, depth: int) -> None:
+        if isinstance(expr, BlockExpr):
+            for let in expr.lets:
+                context = (
+                    _SCIENTIFIC_CONTEXT
+                    if isinstance(let.expr, (KetLit, Dirac, Vacuum))
+                    else _ORDINARY_CONTEXT
+                )
+                add(let.name, context, depth + 1, let.span)
+                walk_expr(let.expr, depth + 1)
+            walk_expr(expr.result, depth + 1)
+        elif isinstance(expr, EvolveExpr) and expr.body is not None:
+            for let in expr.body.lets:
+                add(let.name, _SCIENTIFIC_CONTEXT, depth + 1, let.span)
+                walk_expr(let.expr, depth + 1)
+            walk_expr(expr.body.result, depth + 1)
+
+    statements = getattr(getattr(main, "body", None), "stmts", ())
+    for statement in statements:
+        if isinstance(statement, StateBind):
+            add(statement.name, _SCIENTIFIC_CONTEXT, 0, statement.span)
+            walk_expr(statement.expr, 0)
+    return tuple(result)
+
+
 def inspect_source(source: str, *, source_id: str) -> LexiconInspection:
     """Inspect accepted lexicon metadata while preserving source provenance."""
 
@@ -99,7 +157,13 @@ def inspect_source(source: str, *, source_id: str) -> LexiconInspection:
         )
 
     compiled = compile_source(source)
-    if not compiled.ok:
+    # Lexicon inspection is a source/provenance view.  Runtime readiness and
+    # linearity diagnostics are intentionally allowed here; syntax and basic
+    # type failures must still prevent metadata from being fabricated.
+    if any(
+        diagnostic.get("code") in _LEXICON_FATAL_CODES
+        for diagnostic in compiled.diagnostics
+    ):
         raise ValueError("unsupported scientific spelling")
     unit = compiled.unit
     main = getattr(unit, "main", None)
@@ -118,4 +182,5 @@ def inspect_source(source: str, *, source_id: str) -> LexiconInspection:
         bindings=bindings,
         operations=operations,
         shadowing_policy="nearest_typed_declaration",
+        scoped_bindings=_scoped_bindings(main, source_id),
     )

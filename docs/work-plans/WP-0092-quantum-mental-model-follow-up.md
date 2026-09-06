@@ -19,12 +19,11 @@ now records the broader gaps. Source-evidence follow-up is Green with 24
 focused tests passing. Full conformance remains open for additional alias
 context, projection loss, and observation families.
 
-The accepted lexical scope decision is tracked as [LISS-0510](../issues/LISS-0510-lexical-scope-state-shadowing.md);
-its Phase 1 Red tests are the next implementation unit.
-
-LISS-0510 Phase 1 Red is now present in
-`tests/test_liss_0510_lexical_scope_red.py`; it awaits review before any
-parser/type-checker implementation.
+The accepted lexical scope decision is tracked as [LISS-0510](../issues/LISS-0510-lexical-scope-state-shadowing.md).
+LISS-0510 is complete through Phase 3: scoped scientific binding identity and
+ordinary same-scope duplicate detection are implemented while preserving
+state-transform rebinding. Focused acceptance and regression tests pass
+(`31 passed`).
 
 Turn the accepted ADR 0189 direction into reviewable language and semantic
 specifications without changing the compiler, tests, grammar, or official
