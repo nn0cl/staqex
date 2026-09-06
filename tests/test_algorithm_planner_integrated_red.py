@@ -42,7 +42,7 @@ def _request(api, *, profile="SIM0_EXACT", provenance=True):
         hamiltonian_id="physics.hamiltonian.h2",
         observable_ids=("physics.observable.energy",),
         provenance=("source.h2", "physics.h2", "semantic.h2") if provenance else (),
-        operation="Evolve",
+        operation="evolve",
         profile=api["PlannerProfile"](
             profile_id=profile,
             resource_envelope=("active_qubits<=20", "symbolic_depth_allowed"),
