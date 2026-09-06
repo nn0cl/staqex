@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | **in_progress — prior correction merged; source-evidence Red ready for review** |
-| Phase | phase-1-red (source-evidence follow-up) |
+| Status | **bounded source-evidence slice complete; broader matrix follow-ups open** |
+| Phase | phase-3-refactor-complete |
 | Parent | WP-0092 |
 | Design authority | [Quantum mental-model follow-up specification](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design) |
 | Depends on | LISS-0480, LISS-0481, LISS-0482 |
-| Implementation permission | Prior correction merged; new source-evidence production change awaits test review |
-| Next approval | Source-evidence Green and explicit update of four legacy synthetic-success test cases |
+| Implementation permission | Phase 3 approved by Adjudicator; bounded correction already merged |
+| Next approval | None for this bounded slice; broader gaps require separate Issues |
 
 ## Scope
 
@@ -28,7 +28,7 @@ Map each proof to a deterministic test and preserve shipped behavior.
 No normative grammar change, provider, QPU, Rust, or broad example rewrite.
 Stop when a test exposes an ADR/spec conflict; resolve it before Phase 1.
 
-## Phase 1 candidate files
+## Phase 1 candidate files (historical)
 
 Cross-feature fixtures, proof matrix, conformance Red tests, and documentation
 links only.
@@ -40,7 +40,8 @@ boundary: 1913 pass. Current follow-up is described below.
 
 The Adjudicator's continuation authorized the previously proposed test-only
 slice. Size M; branch `codex/liss-0483-conformance-red`.
-Implementation remains unauthorized. Dependencies 0480–0482 are shipped,
+This is historical Red evidence; the bounded correction is now merged.
+Dependencies 0480–0482 are shipped,
 but the following conformance defects remain; their prior passing tests are
 not evidence of complete semantic preservation.
 
@@ -69,15 +70,15 @@ The full aliases/Mix/Superpose/controlled/when/projection matrix remains open.
 This bounded regression suite does not close LISS-0483.
 Resume evidence: [trace](../collaboration/traces/2026-09-05-liss-0483-conformance-red.md).
 
-## Current source-evidence follow-up
+## Current source-evidence follow-up (complete bounded slice)
 
-Branch: `codex/liss-0483-source-evidence`; size M.
+Historical branch: `codex/liss-0483-source-evidence`; size M.
 [Cross-feature matrix](../testing/liss-0483-conformance-matrix.md) now maps
 all requested families to named tests or explicit gaps. Selected existing
 suites: 46 pass. New suite
-`tests/test_liss_0483_observation_source_evidence_red.py`: 5 expected failures.
-Four invalid fragments are accepted with invented IDs; a real projection
-is omitted from the inventory. Production and legacy tests remain unchanged.
+`tests/test_liss_0483_observation_source_evidence_red.py`: the former five Red
+cases are now covered. Four invalid fragments no longer fabricate IDs, and a
+real projection is retained in the inventory.
 
 Green completed: synthetic fallback is removed, real projection evidence is
 retained, and the four old 0481 synthetic-success cases explicitly assert
@@ -88,6 +89,23 @@ gaps keep this Issue and WP open.
 The follow-up also validates multiple commutators and rejects compile-invalid
 lexicon inputs. The focused lexicon suite passes 13 tests after its fixture was
 made terminally valid. Broader nested-scope alias semantics remain open.
+
+## Phase 2 verification
+
+The approved source-evidence correction is present on main. The combined
+source-evidence, lexicon, observation-contract, and semantic-mapping suites
+pass **33 tests**. The correction remains bounded to source-owned evidence and
+does not claim complete alias-family, tomography, provider, or hardware
+support.
+
+## Phase 3 refactor and verification
+
+Historical Red evidence, bounded Green correction, and broader matrix gaps are
+now explicitly separated. No semantic authority, grammar, provider boundary,
+or test assertion changed in this phase. `git diff --check` passes and focused
+verification remains **33 passed**.
+
+Process review: no operating-contract deviation or operational problem found.
 
 Nested-scope policy is now accepted in [ADR 0216](../architecture/adr/0216-lexical-block-scope-and-state-shadowing.md).
 Its parser/type-checker implementation is a separate follow-up Issue and is

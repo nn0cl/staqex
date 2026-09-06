@@ -108,6 +108,23 @@ checks. No Issue/WP completion is claimed by this review.
 - Changed: new matrix and Red test; Issue, WP and this trace synchronized.
 - Production and old tests unchanged. No commit/push performed in this follow-up.
 - Routing: host, same_context; no independent review claimed. Usage unavailable.
-- Next: review five Red cases and authorize Green plus explicit disposition of
-  four 0481 synthetic-success cases. Then remove fabricated metadata and map
-  source-owned projection. Broader matrix gaps remain separate follow-ups.
+- Historical next step: review five Red cases and authorize Green. That step
+  is complete; broader matrix gaps remain separate follow-ups.
+
+## Phase 2 Green synchronization
+
+The approved source-evidence correction is already merged on main. Re-running
+the source-evidence, lexicon, observation-contract, and semantic-mapping
+suites produced **33 passed**. Issue and matrix language now distinguish this
+bounded Green slice from the broader alias, observation-family, tomography,
+provider, and hardware gaps. Phase 3 refactor approval was subsequently
+received.
+
+## Phase 3 result
+
+Historical Red evidence, bounded Green correction, and remaining broader matrix
+gaps were separated in the Issue and evidence matrix. Focused verification
+remains **33 passed** and `git diff --check` passes. No production code or
+semantic authority changed. Process review found no operating-contract
+deviation or operational problem. The bounded slice is complete; broader
+families require separate follow-up Issues.
