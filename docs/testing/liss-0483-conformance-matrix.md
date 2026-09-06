@@ -4,7 +4,8 @@ Evidence record, not a language specification. Authority:
 [mental-model follow-up](../specs/staqex-v1-quantum-mental-model-follow-up.md#detailed-follow-up-issue-design)
 and [ADR 0191](../architecture/adr/0191-ascii-quantum-notation-and-lexical-boundary.md).
 Date: 2026-09-05. Parent: WP-0092. Previous correction merged in PR #577,
-`da011801`; this inventory does not declare the issue complete.
+`da011801`; the bounded source-evidence correction is complete, but this
+inventory does not declare the broader issue complete.
 
 All test paths below are relative to `tests/`. A passing test proves only the
 named boundary; it does not imply complete language-family or hardware support.
