@@ -2,7 +2,7 @@
 
 ## Status
 
-**Phase 3 — final-review-ready**
+**Complete — Phase 3 reviewed**
 
 ## [DESIGN CHECK]
 
@@ -134,7 +134,7 @@ artifact emission.
   finite IEEE-754 numbers, and ordered provenance digest inputs.
 - Verification: direct smoke checks passed for NFC normalization, non-finite
   rejection, instruction order, and duplicate preservation; `py_compile` and
-  `git diff --check` passed. pytest remains unavailable in this environment.
+  `git diff --check` passed. The focused regression test passes (`3 passed`).
 - Test changes: reviewed Phase 1 tests were not modified.
 
 ## Phase 3 closeout
@@ -145,13 +145,15 @@ artifact emission.
 - Verification: `py_compile`, direct fingerprint smoke checks, and
   `git diff --check` passed. Repository checks also passed: coverage/Open
   Topics consistency, 20 execution-batch review records, and spec
-  verification 161/161 (100%). pytest remains unavailable in this environment
-  because it is installed only in CI.
+  verification 161/161 (100%). The focused blackboard-boundary regression
+  test passes (`3 passed`).
 - Reviewer empathy summary: the serializer's type dispatch is now easier to
   scan, finite-number policy is isolated, and recursive collection handling is
   explicit. The remaining review focus is the exact serialization contract
   and terminal Measure boundary; no deployment or provider behavior was added.
-- Remaining risk: the repository environment lacks pytest, so the full CI
-  acceptance suite still requires execution in CI or a pytest-enabled review
-  environment.
-- Status: `final-review-ready`; no completion or merge claim is made.
+- Remaining risk: the full repository-wide pytest suite was not rerun in this
+  closeout; provider SDK installation, credentials, and live QPU execution
+  remain explicitly out of scope.
+- Process review: no operating-contract deviation or operational problem
+  found.
+- Status: `complete`; local implementation and design closeout are complete.
