@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0505
 - GitHub issue: none
-- Status: review
-- Phase: phase-3-refactor
+- Status: done — Phase 3 refactor complete
+- Phase: phase-3-refactor-complete
 - Type: bug
 - Priority: P1
 - Initial planning size: M
@@ -73,4 +73,3 @@ Both deferred-pushforward tests pass and preserve `Inspect` identity/non-collaps
 - Isolation: same_context; weaker than separate_context.
 - Findings: apply none; the fix is limited to the approved evaluator
   scheduling boundary and the targeted deterministic tests pass.
-- Next requested approval type: Adjudicator Phase 3 review/acceptance.

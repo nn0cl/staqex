@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0506
 - GitHub issue: none
-- Status: review
-- Phase: phase-3-refactor
+- Status: done — Phase 3 refactor complete
+- Phase: phase-3-refactor-complete
 - Type: bug
 - Priority: P1
 - Initial planning size: M
@@ -75,10 +75,3 @@ The one-body and two-body mapping provenance tests pass with stable mapping reco
 - Isolation: same_context; weaker than separate_context.
 - Findings: apply none; the change is a compatibility-test migration and the
   targeted numerical, QASM, and provenance tests pass.
-- Next requested approval type: Adjudicator Phase 3 review/acceptance.
-
-## Process Review
-
-- Outcome: not yet
-- Lesson written: not yet
-- Template-feedback path: none

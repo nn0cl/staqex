@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0507
 - GitHub issue: none
-- Status: review
-- Phase: phase-3-refactor
+- Status: done — Phase 3 refactor complete
+- Phase: phase-3-refactor-complete
 - Type: bug
 - Priority: P1
 - Initial planning size: M
@@ -73,10 +73,3 @@ The linked operator factory tests execute successfully without bypassing the can
 - Isolation: same_context; weaker than separate_context.
 - Findings: apply none; the fix is limited to operator-result binding and all
   linked regression cases pass.
-- Next requested approval type: Adjudicator Phase 3 review/acceptance.
-
-## Process Review
-
-- Outcome: not yet
-- Lesson written: not yet
-- Template-feedback path: none

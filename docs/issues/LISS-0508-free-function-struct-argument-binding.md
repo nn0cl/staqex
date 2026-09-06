@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0508
 - GitHub issue: none
-- Status: review
-- Phase: phase-3-refactor
+- Status: done — Phase 3 refactor complete
+- Phase: phase-3-refactor-complete
 - Type: bug
 - Priority: P1
 - Initial planning size: M
@@ -75,10 +75,3 @@ All failures in the LISS-0290/LISS-0292/LISS-0294 group pass without changing ob
 - Isolation: same_context; weaker than separate_context.
 - Findings: apply none; the fix preserves pure value/object boundaries and
   all targeted callable regression cases pass.
-- Next requested approval type: Adjudicator Phase 3 review/acceptance.
-
-## Process Review
-
-- Outcome: not yet
-- Lesson written: not yet
-- Template-feedback path: none

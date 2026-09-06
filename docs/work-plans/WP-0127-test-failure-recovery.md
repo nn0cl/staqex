@@ -13,12 +13,12 @@ Restore the current test suite to the accepted language/runtime contracts withou
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| LISS-0504 | review | M | M | AIP-0127-0504-001 | - | - | codex/wp-0127-test-failure-recovery |
-| LISS-0505 | review | M | M | AIP-0127-0505-001 | - | - | codex/wp-0127-test-failure-recovery |
-| LISS-0506 | review | M | M | AIP-0127-0506-001 | - | - | codex/wp-0127-test-failure-recovery |
-| LISS-0507 | review | M | M | AIP-0127-0507-001 | - | - | codex/wp-0127-test-failure-recovery |
-| LISS-0508 | review | M | M | AIP-0127-0508-001 | - | - | codex/wp-0127-test-failure-recovery |
-| LISS-0509 | review | M | M | AIP-0127-0509-001 | - | - | codex/wp-0127-test-failure-recovery |
+| LISS-0504 | done | M | M | AIP-0127-0504-001 | - | - | integrated into main |
+| LISS-0505 | done | M | M | AIP-0127-0505-001 | - | - | integrated into main |
+| LISS-0506 | done | M | M | AIP-0127-0506-001 | - | - | integrated into main |
+| LISS-0507 | done | M | M | AIP-0127-0507-001 | - | - | integrated into main |
+| LISS-0508 | done | M | M | AIP-0127-0508-001 | - | - | integrated into main |
+| LISS-0509 | done | M | M | AIP-0127-0509-001 | - | - | integrated into main |
 
 ## AI Planning Records
 
@@ -47,9 +47,8 @@ Restore the current test suite to the accepted language/runtime contracts withou
 
 ## Current Next Issue
 
-- Issue: LISS-0509
-- Reason it is unblocked: existing Red tests reproduce the failure and no external dependency is required.
-- Adjudicator approval needed: implementation is explicitly authorized by the current request; no real-provider approval is needed.
+- None within WP-0127. LISS-0504 through LISS-0509 are complete and their
+  targeted regression families are green.
 
 ## Risks
 
@@ -65,6 +64,4 @@ Restore the current test suite to the accepted language/runtime contracts withou
 
 ## Process Review
 
-- Outcome: not yet
-- Lesson written: not yet
-- Template-feedback path: none
+Process review: no operating-contract deviation or operational problem found.

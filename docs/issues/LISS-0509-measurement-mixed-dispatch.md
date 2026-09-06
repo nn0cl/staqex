@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0509
 - GitHub issue: none
-- Status: review
-- Phase: phase-3-refactor
+- Status: done — Phase 3 refactor complete
+- Phase: phase-3-refactor-complete
 - Type: bug
 - Priority: P1
 - Initial planning size: M
@@ -75,10 +75,3 @@ Restore equivalent behavior between named and call-form density measurement disp
 - Isolation: same_context; weaker than separate_context.
 - Findings: apply none; named and call-form measurement paths now share the
   existing POVM/mixed-state handlers and the targeted contract tests pass.
-- Next requested approval type: Adjudicator Phase 3 review/acceptance.
-
-## Process Review
-
-- Outcome: not yet
-- Lesson written: not yet
-- Template-feedback path: none
