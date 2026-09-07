@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **proposed — Architecture Path design intake** |
+| Status | **Phase 1 Red complete — Phase 2 Green not approved** |
 | Size | M for Phase 1 Red; larger follow-up if realization is requested |
 | Issue | [LISS-0511](../issues/LISS-0511-product-tensor-meaning-preservation.md) |
 | Specification | [Product/Tensor Meaning Preservation](../specs/staqex-semantic-ir-product-tensor-preservation.md) |
@@ -56,6 +56,18 @@ Phase 2 may implement only the minimum accepted canonical semantic projection
 after a reviewed Red result and typed implementation approval. Phase 3 may
 refactor or retire a duplicate path only after independent review, unchanged-
 neighbor regression, provenance/fingerprint checks, and a no-bypass proof.
+
+## Phase 1 Red result
+
+- User approval: `LISS-0511 Phase 1 Red承認`, 2026-09-07.
+- Added the dedicated product/tensor fixture and four fixed acceptance tests.
+- Verification: **4 failed, 0 passed**, no collection errors; Python syntax and
+  `git diff --check` passed.
+- Red evidence identifies four bounded gaps: distinct canonical meaning kinds,
+  direct tensor factor identity/dimensions, grouped operator-product
+  structure, and atomic rejection of unsupported non-unitary projection.
+- Production implementation, deletion, fallback changes, provider/network
+  access, and real QPU execution were not performed.
 
 ## Dependencies and stop conditions
 

@@ -1,0 +1,10 @@
+package fixtures.semantic_meaning
+
+pub fn main() -> Unit {
+    Operator grouped = (X * Y) * Z
+    State left = |0>
+    State right = |1>
+    State pair = left *|* right
+    State result = Evolve() { grouped * pair }.run()
+    Measure result
+}

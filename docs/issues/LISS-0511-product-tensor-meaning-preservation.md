@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **proposed — design intake; Phase 1 Red not approved** |
+| Status | **Phase 1 Red complete — Phase 2 Green not approved** |
 | Type / priority | architecture / P0 |
 | WorkPlan | [WP-0128](../work-plans/WP-0128-product-tensor-meaning-preservation.md) |
 | Specification | [Product/Tensor Meaning Preservation](../specs/staqex-semantic-ir-product-tensor-preservation.md) |
@@ -52,9 +52,25 @@ and gate synthesis are excluded.
 4. Can ideal non-unitary products be inspected without a finite/QPU artifact?
 5. Are rejection and provenance atomic when a target cannot realize the product?
 
+## Phase 1 Red result
+
+- Added `tests/fixtures/semantic_meaning/product_tensor.sqx` with grouped
+  operator multiplication and a two-factor state tensor.
+- Added `tests/test_liss_0511_product_tensor_meaning_red.py` with four
+  acceptance contracts for distinct meanings, factor identity/dimensions,
+  source grouping, and atomic unsupported projection.
+- Verification: **4 failed, 0 passed**, no collection errors; `py_compile`
+  and `git diff --check` passed.
+- The failures are intentional migration gaps: `OpBin` is still classified as
+  `mathematical_product`, `TensorExpr` lacks direct factor identity/dimension
+  metadata, grouped product structure is not exposed as a canonical contract,
+  and the fixture still reaches a QPU circuit instead of failing closed.
+- No production code, fallback, lowering, provider, network, or QPU execution
+  was changed.
+
 ## Gate
 
-Request: Architecture/Scope approval for the design, followed separately by
-Phase 1 Red approval. Implementation permission: none. Post-review:
-independent review must return READY before any Phase 2 Green request.
-
+Phase 1 Red approval: granted by user on 2026-09-07. Implementation permission:
+none. Phase 2 Green requires a separate typed approval after review of these
+failures. Post-review: independent review must return READY before any Phase 2
+Green request.
