@@ -7,7 +7,7 @@ array coefficient, not only as a post-hoc scale of an already-built
 Operator.
 
 Target: docs/issues/LISS-0434-factory-scalar-domain-and-attr-coefficient.md.
-Found while reviewing S02's `objective_hamiltonian` (main_selection.sqx)
+Found while reviewing the selection example's objective Hamiltonian
 against its own blackboard equation: it hardcoded `0..7`/`Float[8]`
 disconnected from step 1/2's own `n`, and pulled `w.activity` etc. out of
 each Sigma as a post-hoc scale instead of writing it as the Sigma's own
@@ -163,9 +163,9 @@ def test_main_selection_objective_hamiltonian_still_matches_hardcoded_baseline()
     sqx = (
         _Path(__file__).resolve().parents[1]
         / "examples"
-        / "showcase"
-        / "S02_drug_discovery"
-        / "main_selection.sqx"
+        / "basics"
+        / "B19_constrained_selection"
+        / "constrained_selection.sqx"
     )
     host_dir = sqx.parent / "host"
     sys.path.insert(0, str(host_dir))
@@ -184,8 +184,8 @@ def test_main_selection_objective_hamiltonian_still_matches_hardcoded_baseline()
         {
             "pairwise_compatible": pairwise,
             "diversity": diversity,
-            "activity_weights": activity_w,
-            "selectivity_weights": selectivity_w,
+            "z_field_values": activity_w,
+            "x_field_values": selectivity_w,
         }
     )
     result = run_canonical(compiled, Evaluator(seed=0, host_input=host_input))

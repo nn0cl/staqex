@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red — implementation not approved** |
+| Status | **Phase 2 Green — refactor review pending** |
 | Size | M |
 | Issue | [LISS-0513](../issues/LISS-0513-basic-s02-example-migration.md) |
 | Parent context | [WP-0093](WP-0093-s02-language-expressiveness-and-selection.md) |

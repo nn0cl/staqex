@@ -9,7 +9,7 @@ S02 .sqx program exists yet to produce a real one.
 
 These tests intentionally describe the not-yet-implemented module. They
 must fail (ImportError) against the current repo, which has no
-examples/showcase/S02_drug_discovery/host/benchmark_result.py yet.
+examples/basics/B19_constrained_selection/host/benchmark_result.py yet.
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ _REPO = Path(__file__).resolve().parents[1]
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
-_HOST = _REPO / "examples/showcase/S02_drug_discovery/host"
+_HOST = _REPO / "examples/basics/B19_constrained_selection/host"
 if str(_HOST) not in sys.path:
     sys.path.insert(0, str(_HOST))
 

@@ -1,0 +1,68 @@
+// Basic constrained-selection boundary example.
+// The source keeps classical inputs, quantum State, finite projection,
+// Hamiltonian evolution, and terminal measurement visibly separate.
+
+package examples.basics.b19_constrained_selection
+
+struct Weights {
+    z_field: Float,
+    x_field: Float,
+    coupling: Float
+}
+
+fn selection_hamiltonian(w: Weights, n: Int, z_values: Float[8], x_values: Float[8]) -> Operator {
+    Operator z = Sigma (i In 0..n-1) { w.z_field * z_values[i] * Z[i] }
+    Operator x = Sigma (i In 0..n-1) { w.x_field * x_values[i] * X[i] }
+    Operator pair = Sigma (i In 0..n-1, j In 0..n-1) where i < j {
+        w.coupling * Z[i] * Z[j]
+    }
+    return z + x + pair
+}
+
+pub fn main() -> Unit {
+    Int n = 8
+    State psi_0 = (1.0 / sqrt(2.0 ^ n)) * Sigma (x In {0,1}^n) { |x> }
+
+    Bool[8][8] C = host("pairwise_compatible")
+    Float[8][8] D = host("diversity")
+    Float theta = 0.3
+
+    Set F = {
+        x In {0,1}^n :
+            Sigma (i In 0..n-1) { x[i] } == 3,
+            ForAll (i In 0..n-1, j In 0..n-1) where i < j {
+                (x[i] * x[j] == 1) Implies (C[i][j] == 1)
+            },
+            Min (i In 0..n-1, j In 0..n-1) where i < j, x[i] * x[j] == 1 {
+                D[i][j]
+            } >= theta
+    }
+
+    Operator P_F = Sigma (x In F) { |x><x| }
+    // The explicit norm division keeps the projected state normalized.
+    State psi_sel = (project psi_0 onto P_F) / ||project psi_0 onto P_F||
+    trace_out(psi_0)
+
+    Float[8] z_values = host("z_field_values")
+    Float[8] x_values = host("x_field_values")
+    Weights weights = Weights { z_field: 2.0, x_field: 1.0, coupling: 1.0 }
+    Energy scale = 1.0.eV to J
+    Operator H_obj = scale * selection_hamiltonian(weights, n, z_values, x_values)
+    Time dur = 0.6.fs
+    Operator U_t = exp(-i * H_obj * dur / hbar)
+
+    // Exact local evolution is explicit and separate from finite realization.
+    Operator U_formal = Limit N -> Infinity {
+        (I - i * H_obj * dur / (N * hbar)) ^ N
+    }
+    Operator U_qpu = Realize(
+        source = U_formal,
+        method = "suzuki",
+        order = 2,
+        steps = 8,
+        error_budget = 1e-6
+    )
+
+    State psi_final = Evolve() { U_t * psi_sel }.run()
+    Measure psi_final
+}

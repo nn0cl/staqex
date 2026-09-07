@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""S02 multi-shot benchmark report (LISS-0403).
+"""Multi-shot boundary report for the constrained-selection example.
 
-Wires main_selection.sqx's real Kernel execution together with the exact
+Wires constrained_selection.sqx's real Kernel execution together with the exact
 classical baseline into the S02 acceptance spec's actual Result contract
 (manifest identity, feasibility, baseline/objective/reranked scores,
 resource metadata, quality metrics, reproducibility, optimality claim) --
@@ -9,7 +9,7 @@ closing the gap LISS-0402 deliberately left open: that Issue proved the
 language can express the workflow; this one proves the workflow reports
 like a benchmark, not just a single "it ran" sample.
 
-Compiles main_selection.sqx once and evaluates it `shots` times with
+Compiles constrained_selection.sqx once and evaluates it `shots` times with
 different seeds (bypassing submit_path's per-call recompile -- this is
 benchmark orchestration, not a compile-pipeline test), matching the
 already-shipped BenchmarkResult DTO shape (LISS-0323) additively.
@@ -62,7 +62,7 @@ LOGICAL_WIDTH = N  # psi_sel's own width; no separate objective coordinate
 HAMILTONIAN_TERM_COUNT = N + N + (N * (N - 1)) // 2
 _BASELINE = (
     _REPO
-    / "examples/showcase/S02_drug_discovery/baseline/"
+    / "examples/basics/B19_constrained_selection/baseline/"
     / "s02_explicit_evolution_baseline.json"
 )
 
@@ -115,8 +115,8 @@ def _build_numeric_identity(
             {
                 "pairwise_compatible": pairwise,
                 "diversity": diversity,
-                "activity_weights": activity_weights,
-                "selectivity_weights": selectivity_weights,
+                "z_field_values": activity_weights,
+                "x_field_values": selectivity_weights,
             }
         ),
         "seed": {
@@ -209,8 +209,8 @@ def run_shots(shots: int, base_seed: int) -> list[ShotOutcome]:
         {
             "pairwise_compatible": pairwise,
             "diversity": diversity,
-            "activity_weights": activity_w,
-            "selectivity_weights": selectivity_w,
+            "z_field_values": activity_w,
+            "x_field_values": selectivity_w,
         }
     )
 

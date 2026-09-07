@@ -15,11 +15,11 @@ from pathlib import Path
 
 
 _REPO = Path(__file__).resolve().parents[1]
-_S02 = _REPO / "examples/showcase/S02_drug_discovery/main_selection.sqx"
-_REPORT = _REPO / "examples/showcase/S02_drug_discovery/host/benchmark_report.py"
+_S02 = _REPO / "examples/basics/B19_constrained_selection/constrained_selection.sqx"
+_REPORT = _REPO / "examples/basics/B19_constrained_selection/host/benchmark_report.py"
 _BASELINE = (
     _REPO
-    / "examples/showcase/S02_drug_discovery/baseline/s02_explicit_evolution_baseline.json"
+    / "examples/basics/B19_constrained_selection/baseline/s02_explicit_evolution_baseline.json"
 )
 
 
@@ -73,7 +73,7 @@ def test_benchmark_report_separates_exact_and_finite_lanes() -> None:
 def test_pre_migration_baseline_is_frozen_for_phase_1() -> None:
     """R2: Phase 1 records the current source and benchmark identity."""
 
-    expected_source_sha256 = "aa2913616b71945ef4d54fef65eac170b76ea63c4f812642ad2df98b181e3511"
+    expected_source_sha256 = "1a0a1da6c57960a15c17c054dfc644f5c34b9d4b8f0c2aa0d8aa197da3f89526"
     baseline = json.loads(_BASELINE.read_text(encoding="utf-8"))
 
     assert baseline["status"] == "pre-migration-reference"
@@ -90,7 +90,7 @@ def test_pre_migration_baseline_is_frozen_for_phase_1() -> None:
 def test_finite_lane_rejection_keeps_diagnostics_out_of_target_provenance() -> None:
     """R4: unsupported S02 target lowering is diagnostic-only and atomic."""
 
-    host = _REPO / "examples/showcase/S02_drug_discovery/host"
+    host = _REPO / "examples/basics/B19_constrained_selection/host"
     sys.path.insert(0, str(host))
     try:
         from benchmark_report import _explicit_evolution_comparison

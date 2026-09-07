@@ -12,8 +12,8 @@ _REPO = Path(__file__).resolve().parents[1]
 if str(_REPO) not in sys.path:
     sys.path.insert(0, str(_REPO))
 
-_SQX = _REPO / "examples" / "showcase" / "S02_drug_discovery" / "main_selection.sqx"
-_HOST_DIR = _REPO / "examples" / "showcase" / "S02_drug_discovery" / "host"
+_SQX = _REPO / "examples" / "basics" / "B19_constrained_selection" / "constrained_selection.sqx"
+_HOST_DIR = _REPO / "examples" / "basics" / "B19_constrained_selection" / "host"
 
 from compiler.staqex.pipeline import HARD_CODES, compile_path  # noqa: E402
 from compiler.staqex.host import submit_path  # noqa: E402
@@ -41,8 +41,8 @@ def _run_seed(seed: int, pairwise, diversity, activity_w, selectivity_w):
             "inputs": {
                 "pairwise_compatible": pairwise,
                 "diversity": diversity,
-                "activity_weights": activity_w,
-                "selectivity_weights": selectivity_w,
+                "z_field_values": activity_w,
+                "x_field_values": selectivity_w,
             },
         },
     ).result()

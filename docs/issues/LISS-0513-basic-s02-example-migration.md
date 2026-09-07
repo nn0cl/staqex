@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-1-red** |
-| Phase | phase-1-red |
+| Status | **phase-2-green** |
+| Phase | phase-2-green |
 | Type / priority | documentation/example migration / P1 |
 | WorkPlan | [WP-0130](../work-plans/WP-0130-basic-s02-example-migration.md) |
 | Specification | [S02 acceptance specification](../specs/staqex-v1-s02-drug-discovery-benchmark.md), limited to the current language-boundary behavior |
@@ -43,4 +43,17 @@ The future realistic quantum-drug-discovery S02 is explicitly out of scope.
 
 ## Next gate
 
-Phase 2 requires review of the Red result and explicit implementation approval.
+Phase 3 requires review of the Green result and explicit refactor/final-review
+approval.
+
+## Phase 2 Green result
+
+- User approval: `Feature Path / Phase 2 Green / 現行S02のBasic移管 実装承認`, 2026-09-07.
+- Moved the runnable boundary sample to `examples/basics/B19_constrained_selection/`.
+- Simplified the source and README to remove drug-discovery framing while
+  preserving State, Projector, exact evolution, finite `Realize`, and terminal
+  `measure` boundaries.
+- Updated current tests, baseline identity, Host paths, and the Basics catalog;
+  historical evidence documents were not rewritten.
+- Verification: migration and boundary suites **42 passed**; S02 execution and
+  baseline suites **14 passed**.

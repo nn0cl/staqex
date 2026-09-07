@@ -9,9 +9,9 @@ REPO = Path(__file__).resolve().parents[1]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
-EXAMPLE_DIR = REPO / "examples/showcase/S02_drug_discovery"
+EXAMPLE_DIR = REPO / "examples/basics/B19_constrained_selection"
 README = EXAMPLE_DIR / "README.md"
-SOURCE = EXAMPLE_DIR / "main_selection.sqx"
+SOURCE = EXAMPLE_DIR / "constrained_selection.sqx"
 
 
 def test_s02_readme_names_all_four_boundary_stages_and_partial_scope() -> None:

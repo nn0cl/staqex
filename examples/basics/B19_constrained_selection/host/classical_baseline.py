@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Classical baseline for main_selection.sqx (LISS-0402/0403, design doc §7
+"""Classical baseline for constrained_selection.sqx
 "Baseline discipline"): brute-force exact search over all 2^n selection
 patterns, using the identical feasibility predicates and objective the
 Kernel program and the benchmark report both use (scoring.py). Doubles as

@@ -10,7 +10,7 @@ from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[1]
 _HOST_DIR = (
-    _REPO / "examples" / "showcase" / "S02_drug_discovery" / "host"
+    _REPO / "examples" / "basics" / "B19_constrained_selection" / "host"
 )
 
 
