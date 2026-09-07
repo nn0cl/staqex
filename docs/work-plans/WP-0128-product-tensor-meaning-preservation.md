@@ -14,6 +14,23 @@ Make product/tensor meaning independently reviewable in the canonical
 Scientific Semantic IR without widening the existing Coin/Mix or interfer
 meaning slices and without implying finite or provider execution.
 
+## U1 implementation-reality inventory
+
+| Path | Current evidence | Authority disposition | Required follow-up |
+|---|---|---|---|
+| State tensor source (`*|*`, `tensor(a, b)`) | `parser.py` creates `TensorExpr`; `ast_nodes.py` retains only `left`, `right`, and span | source structure exists; canonical product/tensor meaning is not yet separately classified | Red must assert factor order, child identity, and dimensions from real source |
+| Operator product (`*`) | OpDSL creates `OpBin`; the Scientific Semantic IR currently maps `OpBin`/`BinOp` generically to `mathematical_product` | product meaning exists but operator product and tensor product are not distinct canonical kinds | decide and test grouping, operand role, carrier, and normalization boundaries |
+| Non-unitary product | `meaning_family_readiness.py` reads canonical `mathematical_product` nodes and rejects a bounded scalar/Pauli case | rejection path is a readiness consumer, not a complete product/tensor semantic contract | preserve ideal inspection and prove atomic no-artifact behavior for broader products |
+| Quantum semantic lowering | `quantum_semantic_ir.py` validates acting-space tensor factors and total dimensions | target-oriented validation; not the authority for source meaning | consume canonical product/tensor meaning without re-reading AST meaning |
+| QPU projection | `qpu_ir.py` consumes `ScientificSemanticIR`, but unsupported product/tensor cases remain family-specific | canonical consumer boundary exists; coverage is incomplete | add negative projection cases only after Phase 1 approval |
+| Existing fixture | `tests/fixtures/semantic_meaning/mixture_and_product.sqx` covers scalar/operator product and mixture, not explicit tensor factor order | useful neighbor fixture, not sufficient for this Issue | add a dedicated product/tensor fixture in Phase 1 |
+
+The inventory confirms a bounded design gap rather than an implementation
+permission: `OpBin` and `TensorExpr` are currently separate AST forms, while
+the canonical semantic classification is not yet equally explicit for both.
+This Issue therefore starts with source/IR contract tests and does not alter
+the existing readiness classifier or lowering paths during Phase 1.
+
 ## Work units
 
 | Unit | Scope | Exit evidence |
@@ -45,4 +62,3 @@ neighbor regression, provenance/fingerprint checks, and a no-bypass proof.
 Depends on ADR 0211/0212 and WP-0113's common meaning contract. Stop if the
 slice requires a new IR authority, syntax decision, storage engine, unitary
 interpretation of a non-unitary product, or a change to explicit `Realize`.
-
