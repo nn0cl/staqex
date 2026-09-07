@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 3 Refactor complete — final review pending** |
+| Status | **done** |
 | Size | M |
 | Issue | [LISS-0513](../issues/LISS-0513-basic-s02-example-migration.md) |
 | Parent context | [WP-0093](WP-0093-s02-language-expressiveness-and-selection.md) |
@@ -61,5 +61,6 @@ SDKs, and live QPU execution are excluded.
 - Verification: focused suites **56 passed**; spec verification **161/161**;
   `compileall` and `git diff --check` passed.
 - Review packet: [LISS-0513 Phase 3 review](../collaboration/reviews/2026-09-07-liss-0513-phase3-review.md).
-- Next gate: final Adjudicator review; do not mark done before approval and
-  completion process review.
+- Final approval: `Feature Path / Phase 3 最終レビュー 承認`, 2026-09-07.
+- Process review: no operating-contract deviation or operational problem found.
+- Completion evidence is recorded in LISS-0513 and the Phase 3 review packet.

@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-3-refactor-complete — final review pending** |
-| Phase | phase-3-refactor |
+| Status | **done** |
+| Phase | phase-3-refactor-complete |
 | Type / priority | documentation/example migration / P1 |
 | WorkPlan | [WP-0130](../work-plans/WP-0130-basic-s02-example-migration.md) |
 | Specification | [S02 acceptance specification](../specs/staqex-v1-s02-drug-discovery-benchmark.md), limited to the current language-boundary behavior |
@@ -70,7 +70,8 @@ approval.
   `compileall` and `git diff --check` passed.
 - Review packet: [LISS-0513 Phase 3 review](../collaboration/reviews/2026-09-07-liss-0513-phase3-review.md).
 
-## Next gate
+## Completion
 
-Final Adjudicator review and approval are required before marking this Issue
-and WP done.
+- Final approval: `Feature Path / Phase 3 最終レビュー 承認`, 2026-09-07.
+- Process review: no operating-contract deviation or operational problem found.
+- The future realistic S02 remains a separate, not-yet-defined work item.

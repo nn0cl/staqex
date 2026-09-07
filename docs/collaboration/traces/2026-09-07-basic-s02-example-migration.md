@@ -31,8 +31,9 @@
 - Verification: focused suites **56 passed**; spec verification **161/161**;
   `compileall` and `git diff --check` passed.
 - Review packet: `docs/collaboration/reviews/2026-09-07-liss-0513-phase3-review.md`.
-- Next safe action: obtain final Phase 3 review approval, then run completion
-  process review before marking LISS-0513/WP-0130 done.
+- Final approval: `Feature Path / Phase 3 最終レビュー 承認`, 2026-09-07.
+- Process review: no operating-contract deviation or operational problem found.
+- LISS-0513 and WP-0130 are now synchronized to `done`.
 
 ## Phase 2 Green
 
