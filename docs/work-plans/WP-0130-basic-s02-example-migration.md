@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green — refactor review pending** |
+| Status | **Phase 3 Refactor complete — final review pending** |
 | Size | M |
 | Issue | [LISS-0513](../issues/LISS-0513-basic-s02-example-migration.md) |
 | Parent context | [WP-0093](WP-0093-s02-language-expressiveness-and-selection.md) |
@@ -50,3 +50,16 @@ SDKs, and live QPU execution are excluded.
 - Estimate: N/A; repository does not expose a reliable token estimate
 - Basis: multiple example, test, and current-document references; no runtime behavior change intended
 - Confidence: medium; historical/current document classification must be checked during Phase 2
+
+## Phase 3 Refactor result
+
+- User approval: `Feature Path / Phase 3 Refactor / 現行S02のBasic移管 承認`, 2026-09-07.
+- Same-context review confirmed that the migrated Basic source, README, Host
+  fixture, and current references retain clear responsibilities and do not
+  introduce hidden QPU/provider behavior.
+- No additional behavior-preserving refactor was necessary.
+- Verification: focused suites **56 passed**; spec verification **161/161**;
+  `compileall` and `git diff --check` passed.
+- Review packet: [LISS-0513 Phase 3 review](../collaboration/reviews/2026-09-07-liss-0513-phase3-review.md).
+- Next gate: final Adjudicator review; do not mark done before approval and
+  completion process review.

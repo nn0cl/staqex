@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **phase-2-green** |
-| Phase | phase-2-green |
+| Status | **phase-3-refactor-complete — final review pending** |
+| Phase | phase-3-refactor |
 | Type / priority | documentation/example migration / P1 |
 | WorkPlan | [WP-0130](../work-plans/WP-0130-basic-s02-example-migration.md) |
 | Specification | [S02 acceptance specification](../specs/staqex-v1-s02-drug-discovery-benchmark.md), limited to the current language-boundary behavior |
@@ -57,3 +57,20 @@ approval.
   historical evidence documents were not rewritten.
 - Verification: migration and boundary suites **42 passed**; S02 execution and
   baseline suites **14 passed**.
+
+## Phase 3 Refactor result
+
+- Re-read the canonical source, README, migration tests, current references,
+  and historical evidence as a same-context reviewer.
+- Confirmed that the migration preserves the language boundary and keeps the
+  finite target plan explicit without implying live QPU execution.
+- No additional behavior-preserving code refactor was necessary; readability
+  and separation of concerns are preserved by the Basic source/README split.
+- Verification: focused suites **56 passed**; spec verification **161/161**;
+  `compileall` and `git diff --check` passed.
+- Review packet: [LISS-0513 Phase 3 review](../collaboration/reviews/2026-09-07-liss-0513-phase3-review.md).
+
+## Next gate
+
+Final Adjudicator review and approval are required before marking this Issue
+and WP done.
