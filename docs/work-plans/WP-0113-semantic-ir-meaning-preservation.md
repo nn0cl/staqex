@@ -6,7 +6,7 @@
 | Phase | **phase-3-refactor complete for the approved bounded slice** |
 | Size | XL |
 | Issue | [LISS-0450](../issues/LISS-0450-semantic-ir-meaning-preservation.md) |
-| Follow-up Issues | [LISS-0478](../issues/LISS-0478-interfer-phase-branch-meaning.md) |
+| Follow-up Issues | [LISS-0478](../issues/LISS-0478-interfer-phase-branch-meaning.md), [LISS-0511](../issues/LISS-0511-product-tensor-meaning-preservation.md) |
 | Specification | [Scientific Semantic IR Meaning Preservation](../specs/staqex-semantic-ir-meaning-preservation.md) |
 | Related authority | ADR 0211 and the physicist-first language vision |
 | Detailed follow-up design | [Meaning Preservation Specification](../specs/staqex-semantic-ir-meaning-preservation.md#residual-follow-up-design-liss-0478) |
@@ -110,3 +110,7 @@ deferred.
 Follow-up classification review is complete with `22 passed` related tests;
 the semantic slice requires no further approval. Finite projection remains a
 separate future scope.
+
+The next independent design unit is LISS-0511/WP-0128 for product/tensor
+meaning preservation. It is design-only at intake; no Phase 1 Red or
+implementation approval is implied by this parent work plan.
