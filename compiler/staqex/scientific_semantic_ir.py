@@ -1300,6 +1300,44 @@ def _build_qpu_projection(unit: Any, core: ScientificSemanticIR) -> CanonicalQpu
     return CanonicalQpuProjection(logical_qubits, tuple(operations), projection_error)
 
 
+_SUZUKI_OPCODE_MAP = {
+    "h": "H",
+    "x": "X",
+    "y": "Y",
+    "z": "Z",
+    "rx": "RX",
+    "ry": "RY",
+    "rz": "RZ",
+    "cx": "CX",
+}
+
+
+def _canonical_suzuki_operations(
+    gates: Any,
+    expr: EvolveExpr,
+    source_id: str,
+) -> list[CanonicalQpuOperation]:
+    """Attach the stable canonical provenance shared by Suzuki projections."""
+    provenance = (
+        ("line", expr.span.line),
+        ("col", expr.span.col),
+        ("source", "Evolve.Suzuki"),
+        ("source_node_id", source_id),
+    )
+    return [
+        CanonicalQpuOperation(
+            kind="gate",
+            provenance=provenance + (("comment", gate.comment),),
+            source_node_id=source_id,
+            opcode=_SUZUKI_OPCODE_MAP[gate.name],
+            qubits=gate.qubits,
+            parameter=gate.angle,
+        )
+        for gate in gates
+        if gate.name in _SUZUKI_OPCODE_MAP
+    ]
+
+
 def _finite_evolution_operations(
     unit: Any,
     core: ScientificSemanticIR,
@@ -1336,7 +1374,86 @@ def _finite_evolution_operations(
         ):
             scalars[stmt.names[0]] = float(stmt.expr.value)
     result: list[CanonicalQpuOperation] = []
+
+    def _operator_from_exp(source: Any) -> Any | None:
+        """Recover the declared Hamiltonian from a source-visible exp form."""
+        if not (
+            isinstance(source, Call)
+            and isinstance(source.callee, Var)
+            and source.callee.name == "exp"
+            and len(source.args) == 1
+        ):
+            return None
+
+        def find_operator(expr: Any) -> Any | None:
+            if isinstance(expr, Var) and expr.name in op_env:
+                return op_env[expr.name]
+            if isinstance(expr, BinOp):
+                return find_operator(expr.lhs) or find_operator(expr.rhs)
+            return None
+
+        return find_operator(source.args[0])
+
+    def _explicit_realize_operations(
+        expr: EvolveExpr,
+        source_id: str,
+    ) -> list[CanonicalQpuOperation]:
+        if expr.body is None or not isinstance(expr.body.result, BinOp):
+            return []
+        if expr.body.result.op != "*" or not isinstance(expr.body.result.lhs, Var):
+            return []
+        realize = op_env.get(expr.body.result.lhs.name)
+        if not (
+            isinstance(realize, Call)
+            and isinstance(realize.callee, Var)
+            and realize.callee.name == "Realize"
+        ):
+            return []
+        values = dict(realize.kwargs or ())
+        if getattr(values.get("method"), "value", None) != "suzuki":
+            return []
+        order = getattr(values.get("order"), "value", None)
+        steps = getattr(values.get("steps"), "value", None)
+        if not isinstance(order, int) or order not in {2, 4}:
+            return []
+        if not isinstance(steps, int) or steps <= 0:
+            return []
+        source_name = getattr(values.get("source"), "name", None)
+        hamiltonian = _operator_from_exp(op_env.get(source_name))
+        if hamiltonian is None:
+            return []
+        n_qubits = max(1, len(expr.seeds))
+        try:
+            terms = compile_hamiltonian(
+                hamiltonian,
+                env=op_env,
+                scalars=scalars,
+                n_qubits=n_qubits,
+            )
+            gates = suzuki_gates(
+                terms,
+                1.0,
+                tuple(range(n_qubits)),
+                steps=steps,
+                order=order,
+            )
+        except (TrotterError, ValueError, TypeError):
+            return []
+        return _canonical_suzuki_operations(gates, expr, source_id)
+
     for stmt in unit.main.body.stmts:
+        if (
+            isinstance(stmt, StateBind)
+            and isinstance(stmt.expr, EvolveExpr)
+            and stmt.expr.explicit_transform
+        ):
+            result.extend(
+                _explicit_realize_operations(
+                    stmt.expr,
+                    _source_node_id_for_span(core, stmt.expr.span),
+                )
+            )
+            continue
         if not (
             isinstance(stmt, StateBind)
             and isinstance(stmt.expr, EvolveExpr)
@@ -1367,28 +1484,7 @@ def _finite_evolution_operations(
             )
         except (TrotterError, ValueError, TypeError):
             continue
-        provenance = (
-            ("line", expr.span.line),
-            ("col", expr.span.col),
-            ("source", "Evolve.Suzuki"),
-            ("source_node_id", source_id),
-        )
-        opcode_map = {"h": "H", "x": "X", "y": "Y", "z": "Z", "rx": "RX", "ry": "RY", "rz": "RZ", "cx": "CX"}
-        for gate in gates:
-            opcode = opcode_map.get(gate.name)
-            if opcode is None:
-                continue
-            gate_provenance = provenance + (("comment", gate.comment),)
-            result.append(
-                CanonicalQpuOperation(
-                    kind="gate",
-                    provenance=gate_provenance,
-                    source_node_id=source_id,
-                    opcode=opcode,
-                    qubits=gate.qubits,
-                    parameter=gate.angle,
-                )
-            )
+        result.extend(_canonical_suzuki_operations(gates, expr, source_id))
     return result
 
 
@@ -1569,6 +1665,23 @@ def _projection_errors(
     if unit.main is None:
         return ()
     for stmt in unit.main.body.stmts:
+        if (
+            isinstance(stmt, StateBind)
+            and isinstance(stmt.expr, Call)
+            and isinstance(stmt.expr.callee, Var)
+            and stmt.expr.callee.name == "Realize"
+        ):
+            values = dict(stmt.expr.kwargs or ())
+            method = getattr(values.get("method"), "value", None)
+            order = getattr(values.get("order"), "value", None)
+            steps = getattr(values.get("steps"), "value", None)
+            if method == "suzuki" and (
+                not isinstance(order, int)
+                or order not in {2, 4}
+                or not isinstance(steps, int)
+                or steps <= 0
+            ):
+                errors.append("E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED")
         if isinstance(stmt, StateBind) and isinstance(stmt.expr, EvolveExpr):
             if (
                 stmt.expr.suzuki is not None
