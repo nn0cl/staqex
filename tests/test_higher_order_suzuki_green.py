@@ -32,7 +32,7 @@ def _source(policy: str) -> str:
     """
 
 
-def test_suzuki_direct_steps_lower_to_qasm_and_null_provenance() -> None:
+def test_suzuki_direct_steps_lower_to_qasm_from_canonical_projection() -> None:
     compiled = compile_source(_source("steps = 2"))
     assert compiled.ok, compiled.diagnostics
     provenance = compiled.evolution_provenance
@@ -42,8 +42,8 @@ def test_suzuki_direct_steps_lower_to_qasm_and_null_provenance() -> None:
     assert provenance["steps"] == 2
     assert provenance["error_budget"] == 1e-4
     emitted = OpenQASM3Generator(route=False).generate_detailed(compiled.unit)
-    assert not emitted.ok
-    assert any("E_QPU_CANONICAL_PROVENANCE" in note for note in emitted.notes)
+    assert emitted.ok, emitted.notes
+    assert "OPENQASM 3.0;" in emitted.qasm
 
 
 def test_suzuki_tolerance_derives_static_steps_for_each_error_mode() -> None:
@@ -64,4 +64,6 @@ def test_explicit_realization_keeps_target_projection_boundary() -> None:
     emitted = QASM3Emitter(route=False).emit_qpu_program(compiled.qpu_ir)
     assert emitted.ok
     assert emitted.circuit is not None
-    assert [gate.name for gate in emitted.circuit.gates] == ["measure"]
+    names = [gate.name for gate in emitted.circuit.gates]
+    assert names[-1] == "measure"
+    assert any(name != "measure" for name in names)

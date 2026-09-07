@@ -21,9 +21,16 @@ def _suzuki_source() -> str:
     package t
     pub fn main() -> Unit {
         Operator H = X + Z
+        Operator U_formal = exp(-i * H)
+        Operator U_qpu = Realize(
+            source = U_formal,
+            method = "suzuki",
+            order = 2,
+            steps = 2,
+            error_budget = 1e-4
+        )
         State psi = |0>
-        State evolved = Evolve { psi under H for 1.0.s using Suzuki(order = 2, steps = 2) }.run()
-        State psi = |0>
+        State evolved = Evolve() { U_qpu * psi }.run()
         Measure evolved
     }
     """

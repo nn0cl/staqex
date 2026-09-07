@@ -289,6 +289,17 @@ class QASM3Emitter:
                 ),
             )
         canonical = build_qpu_ir(unit, semantic_ir)
+        projection_error = canonical.get("projection_error")
+        if str(projection_error).startswith(
+            "E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED"
+        ):
+            reject_code = str(projection_error).split(":", 1)[0]
+            return EmitResult(
+                qasm="",
+                notes=[str(projection_error)],
+                ok=False,
+                circuit=_empty_rejection_circuit(reject_code),
+            )
         if (
             semantic_ir.explicit_evolution is not None
             and not any(node.kind == "Limit" for node in semantic_ir.nodes)
