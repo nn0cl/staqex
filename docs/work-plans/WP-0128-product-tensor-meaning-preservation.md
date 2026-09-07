@@ -83,6 +83,8 @@ neighbor regression, provenance/fingerprint checks, and a no-bypass proof.
   unrelated existing families; it did not reach a clean repository-wide
   completion and is not claimed as such.
 - Phase 3 refactor and broader tensor realization remain separately gated.
+- Review: [2026-09-07 Phase 2 Green review](../collaboration/reviews/2026-09-07-liss-0511-phase2-green-review.md)
+  is READY for the bounded slice and records the Phase 3 blockers.
 
 ## Dependencies and stop conditions
 

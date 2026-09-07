@@ -92,3 +92,4 @@ broader consumer migration request.
   long documentation-compression phase after **1169 passed and 9 failures**;
   the failures were outside LISS-0511's focused and related suites.
 - No provider SDK, network, credentials, or real QPU execution was used.
+- Review packet: [2026-09-07 Phase 2 Green review](../collaboration/reviews/2026-09-07-liss-0511-phase2-green-review.md).
