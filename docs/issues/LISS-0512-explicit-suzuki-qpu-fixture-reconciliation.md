@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status/phase | **Phase 3 refactor complete — final review pending** |
+| Status/phase | **done — Phase 3 refactor and final review complete** |
 | Type / priority | feature follow-up / P1 |
 | WorkPlan | [WP-0129](../work-plans/WP-0129-explicit-suzuki-qpu-fixture-reconciliation.md) |
 | Specification | [Explicit evolution surface](../specs/staqex-explicit-evolution-surface.md) |
 | Related | [LISS-0444](LISS-0444-scientific-semantic-core.md), [LISS-0017](LISS-0017-higher-order-suzuki.md) |
-| Branch | `feature/liss-0512-explicit-suzuki-qpu-fixture-red` |
+| Branch | merged to `main` via [PR #582](https://github.com/nn0cl/staqex/pull/582) |
 | Depends on | Phase 0 design trace dated 2026-09-07 |
 
 ## Objective
@@ -109,4 +109,8 @@ QPU execution, and consumer-wide migration remain excluded.
 - Same-context review packet: [2026-09-07 LISS-0512 Phase 3 review](../collaboration/reviews/2026-09-07-liss-0512-phase3-review.md).
 - Post-refactor verification: focused **64 passed**, Spec Verification
   **161/161**, compileall passed, and `git diff --check` passed.
-- Final Adjudicator review and issue closure remain pending.
+- Final Adjudicator review approval: `LISS-0512 Phase 3 最終レビュー 承認`, 2026-09-07.
+- Merged to `main` via PR #582; merge commit `cfcde2a9`.
+- Required CI passed: Kernel root suites, Repository sanity, and Spec verification.
+- Process review: no operating-contract deviation or operational problem found.
+- Status is synchronized as complete; provider SDK, live QPU, and Rust work remain excluded.
