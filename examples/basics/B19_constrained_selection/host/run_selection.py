@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run main_selection.sqx with its required HostInputPort data (LISS-0402).
+"""Run constrained_selection.sqx with its required HostInputPort data.
 
 pairwise_compatible / diversity matrices are Host-computed classical data
 (ADR 0119 coefficient-tensor path, LISS-0432 generalized to Bool dtype)
@@ -19,15 +19,14 @@ if str(_REPO) not in sys.path:
 from compiler.staqex.host import submit_path  # noqa: E402
 from scoring import build_candidate_scores  # noqa: E402
 
-_SQX = Path(__file__).resolve().parents[1] / "main_selection.sqx"
+_SQX = Path(__file__).resolve().parents[1] / "constrained_selection.sqx"
 
 N = 8
 
 
 def build_predicate_matrices() -> tuple[list[list[bool]], list[list[float]]]:
-    """Toy synthetic fixture: candidates 0/1 are incompatible (e.g. same
-    binding pocket); diversity scores fall off with candidate-index
-    distance (toy proxy for structural similarity)."""
+    """Toy finite fixture: positions 0/1 are incompatible; diversity scores
+    fall off with position distance."""
     pairwise = [[True] * N for _ in range(N)]
     pairwise[0][1] = pairwise[1][0] = False
     diversity = [
@@ -58,8 +57,8 @@ def main() -> int:
             "inputs": {
                 "pairwise_compatible": pairwise,
                 "diversity": diversity,
-                "activity_weights": activity_w,
-                "selectivity_weights": selectivity_w,
+                "z_field_values": activity_w,
+                "x_field_values": selectivity_w,
             },
         },
     )

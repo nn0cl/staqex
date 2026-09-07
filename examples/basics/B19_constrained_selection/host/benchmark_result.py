@@ -10,7 +10,7 @@ own open decision).
 `baseline_score`/`objective_score`/`reranked_score`/`quality_metrics`
 were deferred by LISS-0323 ("no S02 `.sqx` program exists yet to produce
 them") and are now populated by `benchmark_report.py` (LISS-0403), which
-runs `main_selection.sqx` for real and scores its output against the
+runs `constrained_selection.sqx` for real and scores its output against the
 exact classical baseline -- `build_benchmark_result` below stays as the
 single-shot, no-scoring builder LISS-0323 shipped, unchanged, for callers
 that only need the terminal-measurement mapping.

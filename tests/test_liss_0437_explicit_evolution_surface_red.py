@@ -429,7 +429,7 @@ def test_limit_is_source_preserving_but_requires_target_realization() -> None:
 
 
 def test_s02_fixture_exposes_propagator_application_without_claiming_equivalence() -> None:
-    source = (_REPO / "examples/showcase/S02_drug_discovery/main_selection.sqx").read_text()
+    source = (_REPO / "examples/basics/B19_constrained_selection/constrained_selection.sqx").read_text()
     assert "Operator U_t = exp(-i * H_obj * dur / hbar)" in source
     assert "Evolve()" in source
     assert "U_t * psi_sel" in source

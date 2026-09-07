@@ -224,9 +224,9 @@ def test_s02_source_contains_full_blackboard_derivation_before_numeric_migration
     source_path = (
         _REPO
         / "examples"
-        / "showcase"
-        / "S02_drug_discovery"
-        / "main_selection.sqx"
+        / "basics"
+        / "B19_constrained_selection"
+        / "constrained_selection.sqx"
     )
     source = source_path.read_text(encoding="utf-8")
     assert "Operator H_obj" in source
@@ -251,8 +251,8 @@ def test_s02_source_contains_full_blackboard_derivation_before_numeric_migration
         "project psi_0 onto P_F",
         "||project psi_0 onto P_F||",
         "trace_out(psi_0)",
-        'host("activity_weights")',
-        'host("selectivity_weights")',
+        'host("z_field_values")',
+        'host("x_field_values")',
         "/ hbar",
     ):
         assert passage in source, passage
@@ -280,7 +280,7 @@ def test_s02_source_contains_full_blackboard_derivation_before_numeric_migration
     assert baseline_data["benchmark_metrics"]["reproducibility_verified"] is True
     assert baseline_data["status"] == "pre-migration-reference"
     assert baseline_data["source_sha256"] == (
-        "aa2913616b71945ef4d54fef65eac170b76ea63c4f812642ad2df98b181e3511"
+        "1a0a1da6c57960a15c17c054dfc644f5c34b9d4b8f0c2aa0d8aa197da3f89526"
     )
     assert baseline_data["distribution"]["feasible_pattern_count"] == 25
     assert baseline_data["benchmark_metrics"]["shots"] == 20

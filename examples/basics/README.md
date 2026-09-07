@@ -46,8 +46,9 @@ capability reject — [ADR 0175](../../docs/architecture/decision-themes/dec-000
 | [B16](B16_effect_marking/) | Effect marking | `effects { Inspect }` on a pure-by-default `fn` |
 | [B17](B17_pipeline_pipe/) | Pipeline `\|\>` | unary pipe + Partial hole (after B08) |
 | [B18](B18_finiteize/) | `finiteize` surface | continuous → finite State (ADR 0185 Lane A; no Continuous type) |
+| [B19](B19_constrained_selection/) | Constrained selection boundary | Host inputs, Projector, evolution, terminal `measure` |
 
-**Complete:** B01–B18 Basics track (catalog v2 + LISS-0306/0307 + LISS-0313).
+**Complete:** B01–B19 Basics track (catalog v2 + LISS-0306/0307 + LISS-0313).
 
 Surface style for official samples:
 [surface-style-guide](../../docs/architecture/surface-style-guide.md).

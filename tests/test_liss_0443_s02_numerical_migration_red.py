@@ -13,8 +13,8 @@ from pathlib import Path
 
 
 _REPO = Path(__file__).resolve().parents[1]
-_HOST = _REPO / "examples/showcase/S02_drug_discovery/host"
-_SOURCE = _REPO / "examples/showcase/S02_drug_discovery/main_selection.sqx"
+_HOST = _REPO / "examples/basics/B19_constrained_selection/host"
+_SOURCE = _REPO / "examples/basics/B19_constrained_selection/constrained_selection.sqx"
 
 
 def _with_host_dir() -> None:

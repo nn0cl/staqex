@@ -19,6 +19,20 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-07
+- Class: migration-boundary
+- Pattern: moving a representative example can make current paths correct
+  while historical specifications and ADRs intentionally retain the former
+  identity.
+- What later design or implementation must do: classify references as current
+  or historical before editing; update executable/current navigation references
+  and preserve historical evidence unless the accepted scope explicitly
+  requires a historical rewrite.
+- Source issue or work plan (adopter's own ID, if any): LISS-0513 / WP-0130
+- Status: applied
+
+## Lesson
+
 - Date: 2026-08-26
 - Class: status-drift
 - Pattern: ISSUE and work-plan status stayed `review` or `in_progress` after
