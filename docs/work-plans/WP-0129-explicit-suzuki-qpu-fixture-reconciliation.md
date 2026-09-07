@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 3 refactor complete — final review pending** |
+| Status | **done — Phase 3 refactor and final review complete** |
 | Size | M (initial/current) |
 | Issue | [LISS-0512](../issues/LISS-0512-explicit-suzuki-qpu-fixture-reconciliation.md) |
 | Specification | [Explicit evolution surface](../specs/staqex-explicit-evolution-surface.md) |
@@ -81,4 +81,8 @@ Phase 3 Refactor approval was received through the user's subsequent
 - Same-context review packet: [LISS-0512 Phase 3 review](../collaboration/reviews/2026-09-07-liss-0512-phase3-review.md).
 - Verification: focused **64 passed**, Spec Verification **161/161**,
   compileall passed, and `git diff --check` passed.
-- Final issue/WP closure awaits Adjudicator review.
+- Final Adjudicator review approval: `LISS-0512 Phase 3 最終レビュー 承認`, 2026-09-07.
+- Merged to `main` via PR #582 (`cfcde2a9`); all required CI checks passed.
+- Process review: no operating-contract deviation or operational problem found.
+- Current Next Issue: none within WP-0129; broader consumer migration and
+  provider/live-QPU work remain separately scoped.
