@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red complete — Phase 2 Green not approved** |
+| Status | **Phase 2 Green bounded slice complete — Phase 3 not approved** |
 | Size | M for Phase 1 Red; larger follow-up if realization is requested |
 | Issue | [LISS-0511](../issues/LISS-0511-product-tensor-meaning-preservation.md) |
 | Specification | [Product/Tensor Meaning Preservation](../specs/staqex-semantic-ir-product-tensor-preservation.md) |
@@ -68,6 +68,21 @@ neighbor regression, provenance/fingerprint checks, and a no-bypass proof.
   structure, and atomic rejection of unsupported non-unitary projection.
 - Production implementation, deletion, fallback changes, provider/network
   access, and real QPU execution were not performed.
+
+## Phase 2 Green result
+
+- User approval: `LISS-0511 Phase 2 Green 承認`, 2026-09-07.
+- Added the minimum canonical `product_kind` metadata while preserving the
+  existing `meaning_kind` compatibility contract.
+- Added direct source-child retention for operator/tensor nodes, structural
+  tensor dimension metadata, and fail-closed rejection for the bounded
+  non-unitary scalar/operator product.
+- Verification: LISS-0511 **4 passed**; related suites **39 passed**; spec
+  verification **161/161**; `py_compile` and `git diff --check` passed.
+- The full pytest run was interrupted after **1169 passed and 9 failures** in
+  unrelated existing families; it did not reach a clean repository-wide
+  completion and is not claimed as such.
+- Phase 3 refactor and broader tensor realization remain separately gated.
 
 ## Dependencies and stop conditions
 

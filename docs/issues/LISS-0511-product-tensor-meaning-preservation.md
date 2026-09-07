@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red complete — Phase 2 Green not approved** |
+| Status | **Phase 2 Green bounded slice complete — Phase 3 not approved** |
 | Type / priority | architecture / P0 |
 | WorkPlan | [WP-0128](../work-plans/WP-0128-product-tensor-meaning-preservation.md) |
 | Specification | [Product/Tensor Meaning Preservation](../specs/staqex-semantic-ir-product-tensor-preservation.md) |
@@ -71,6 +71,24 @@ and gate synthesis are excluded.
 ## Gate
 
 Phase 1 Red approval: granted by user on 2026-09-07. Implementation permission:
-none. Phase 2 Green requires a separate typed approval after review of these
-failures. Post-review: independent review must return READY before any Phase 2
-Green request.
+granted by user on 2026-09-07 for the bounded slice below. Phase 3 refactor,
+broader product/tensor realization, and provider work are not approved.
+Post-review: independent review must return READY before Phase 3 or any
+broader consumer migration request.
+
+## Phase 2 Green result
+
+- `ScientificSemanticIR.SemanticNode` now records `product_kind` separately
+  from the existing `meaning_kind`, preserving the compatibility value
+  `mathematical_product` while distinguishing `operator_product` and
+  `tensor_product`.
+- Operator and tensor nodes retain direct child source IDs; tensor nodes expose
+  an honest structural dimension marker until resolved dimensions are available.
+- Canonical projection errors reject the bounded scalar/operator non-unitary
+  product before QPU artifact instructions are emitted.
+- Focused LISS-0511 suite: **4 passed**. Related product/semantic/QPU suites:
+  **39 passed**. Spec verification: **161/161**. Syntax and diff checks passed.
+- Full pytest was not a clean completion: it was stopped in the repository's
+  long documentation-compression phase after **1169 passed and 9 failures**;
+  the failures were outside LISS-0511's focused and related suites.
+- No provider SDK, network, credentials, or real QPU execution was used.

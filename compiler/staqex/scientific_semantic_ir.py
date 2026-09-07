@@ -26,7 +26,9 @@ from .ast_nodes import (
     LitInt,
     Measure,
     Inspect,
+    OpBin,
     StateBind,
+    TensorExpr,
     Var,
 )
 from .backend.qasm.trotter import (
@@ -97,6 +99,7 @@ class SemanticNode:
     branch_rules: tuple[tuple[tuple[str, Any], ...], ...] = ()
     phase_metadata: tuple[tuple[str, Any], ...] = ()
     branch_relationship: str | None = None
+    product_kind: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -538,6 +541,7 @@ def semantic_fingerprint(core: ScientificSemanticIR) -> str:
                 "branch_rules": node.branch_rules,
                 "phase_metadata": node.phase_metadata,
                 "branch_relationship": node.branch_relationship,
+                "product_kind": node.product_kind,
             }
             for node in core.nodes
         ],
@@ -640,6 +644,24 @@ def build_scientific_semantic_ir(
         for field_name in value.__dataclass_fields__:
             visit(getattr(value, field_name), node_id)
         children = tuple(node.node_id for node in nodes[child_start:])
+        direct_children: tuple[str, ...] | None = None
+        product_kind: str | None = None
+        if isinstance(value, OpBin):
+            direct_children = (
+                source_node_ids.get(id(value.lhs), ""),
+                source_node_ids.get(id(value.rhs), ""),
+            )
+            if value.op == "*":
+                product_kind = "operator_product"
+        elif isinstance(value, TensorExpr):
+            direct_children = (
+                source_node_ids.get(id(value.left), ""),
+                source_node_ids.get(id(value.right), ""),
+            )
+            product_kind = "tensor_product"
+            children = direct_children
+        if direct_children is not None:
+            children = direct_children
         control_source_node_id = None
         branch_rules: tuple[tuple[tuple[str, Any], ...], ...] = ()
         phase_metadata: tuple[tuple[str, Any], ...] = ()
@@ -674,6 +696,9 @@ def build_scientific_semantic_ir(
             children = operand_ids
             phase_metadata = (("phase_role", "relative_phase"), ("exactness", "exact"))
             branch_relationship = "coherent_operand_superposition"
+        dimensions = "unknown"
+        if product_kind == "tensor_product":
+            dimensions = "tensor[unknown,unknown]"
         nodes.append(
             SemanticNode(
                 node_id=node_id,
@@ -681,7 +706,7 @@ def build_scientific_semantic_ir(
                 children=children,
                 role_lane="quantum" if is_interfer else role,
                 type=_type_for(name),
-                dimensions="unknown",
+                dimensions=dimensions,
                 exactness="exact"
                 if name in {"Limit", "ExactExponential", "EvolveExpr"}
                 else "unresolved",
@@ -694,11 +719,12 @@ def build_scientific_semantic_ir(
                 ),
                 meaning_kind="interference" if is_interfer else _meaning_kind(name),
                 state_role="interference_state" if is_interfer else _state_role(name),
-                child_source_node_ids=children,
+                child_source_node_ids=(direct_children or children),
                 control_source_node_id=control_source_node_id,
                 branch_rules=branch_rules,
                 phase_metadata=phase_metadata,
                 branch_relationship=branch_relationship,
+                product_kind=product_kind,
             )
         )
 
@@ -923,6 +949,7 @@ def build_scientific_semantic_ir(
                     node.branch_rules,
                     node.phase_metadata,
                     node.branch_relationship,
+                    node.product_kind,
                 )
                 for node in result.nodes
             ],
@@ -1538,6 +1565,17 @@ def _projection_errors(
             order = 0
         if order not in {2, 4}:
             errors.append("E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED")
+    semantic_nodes = {node.node_id: node for node in core.nodes}
+    for node in core.nodes:
+        if node.product_kind != "operator_product":
+            continue
+        child_kinds = {
+            semantic_nodes[child_id].kind
+            for child_id in node.child_source_node_ids
+            if child_id in semantic_nodes
+        }
+        if {"OpLit", "OpPauli"}.issubset(child_kinds):
+            errors.append("E_QPU_UNSUPPORTED_CAPABILITY")
     errors.extend(str(item.get("code", "E_QPU_CANONICAL_BINDER_UNRESOLVED")) for item in binder_diagnostics)
     return tuple(dict.fromkeys(errors))
 

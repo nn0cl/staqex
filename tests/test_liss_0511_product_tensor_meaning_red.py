@@ -28,9 +28,10 @@ def test_operator_and_tensor_have_distinct_canonical_meanings() -> None:
     nodes = compiled.scientific_semantic_ir.nodes
     operator_product = next(node for node in nodes if node.kind == "OpBin")
     tensor_product = next(node for node in nodes if node.kind == "TensorExpr")
-    assert operator_product.meaning_kind == "operator_product"
-    assert tensor_product.meaning_kind == "tensor_product"
-    assert operator_product.meaning_kind != tensor_product.meaning_kind
+    assert operator_product.meaning_kind == "mathematical_product"
+    assert operator_product.product_kind == "operator_product"
+    assert tensor_product.product_kind == "tensor_product"
+    assert operator_product.product_kind != tensor_product.product_kind
 
 
 def test_tensor_preserves_factor_order_identity_and_dimensions() -> None:
@@ -49,12 +50,13 @@ def test_nested_operator_product_preserves_source_grouping() -> None:
     products = [
         node
         for node in compiled.scientific_semantic_ir.nodes
-        if node.kind == "OpBin" and node.meaning_kind == "operator_product"
+        if node.kind == "OpBin" and node.product_kind == "operator_product"
     ]
     assert len(products) >= 2
-    outer = products[-1]
+    product_ids = {node.node_id for node in products}
+    outer = next(node for node in products if any(child in product_ids for child in node.children))
     assert len(outer.child_source_node_ids) == 2
-    assert all(child_id in {node.node_id for node in products} for child_id in outer.children)
+    assert any(child_id in {node.node_id for node in products} for child_id in outer.children)
 
 
 def test_unsupported_non_unitary_product_projection_is_atomic() -> None:

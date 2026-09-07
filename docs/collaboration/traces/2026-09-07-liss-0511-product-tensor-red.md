@@ -43,3 +43,15 @@
 - Next safe action: independent review of the Red contract and typed Phase 2
   approval before any production change.
 
+## Phase 2 continuation
+
+- User approval: `LISS-0511 Phase 2 Green 承認`, 2026-09-07.
+- Implementation: added compatibility-preserving `product_kind` metadata,
+  direct product/tensor child identity, structural tensor dimensions, and
+  canonical non-unitary projection rejection.
+- Verification: focused **4 passed**; related **39 passed**; specification
+  verification **161/161**; syntax and diff checks passed.
+- Full pytest was interrupted after **1169 passed and 9 failures** in unrelated
+  existing families during the long documentation-compression phase. No clean
+  full-regression claim is made.
+- Phase 3 refactor and broader realization remain unapproved.
