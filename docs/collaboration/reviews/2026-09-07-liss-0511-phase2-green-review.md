@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Scope | Bounded product/tensor canonical-meaning projection |
-| Phase reviewed | Phase 2 Green |
-| Verdict | **READY for the bounded slice; NOT READY for Phase 3 or broader completion** |
+| Phase reviewed | Phase 2 Green and bounded Phase 3 Refactor |
+| Verdict | **READY for the bounded Phase 3 slice; NOT READY for broader completion** |
 | Isolation | `same_context` — weaker than `separate_context` |
 
 ## Canonical documents and files re-read
@@ -74,10 +74,17 @@
   broader forms remain rejected from completion claims.
 - Status records distinguish bounded Green from Phase 3 and broader work.
 
+## Phase 3 disposition
+
+- Refactor extracted the product-child, product-kind, tensor-dimension, and
+  bounded non-unitary helpers without changing the focused contract.
+- Related verification and specification verification remained green after the
+  refactor.
+- No new production capability or target behavior was added.
+
 ## Remaining blockers and next approval
 
-No blocker prevents the bounded Phase 2 Green record. F1–F3 prevent a Phase 3
-completion claim. The next requested approval type is **Phase 3 Refactor
-approval**, only after the Adjudicator accepts the bounded dispositions and
-the full-regression verification plan.
-
+F1–F3 prevent a broader product/tensor completion claim. No further approval is
+needed for this bounded refactor; the next request must be a new scoped design
+and Phase 1 approval for resolved dimensions, broader non-unitary coverage, or
+full-regression recovery.

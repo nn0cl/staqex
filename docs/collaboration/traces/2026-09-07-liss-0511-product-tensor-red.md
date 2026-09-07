@@ -55,3 +55,15 @@
   existing families during the long documentation-compression phase. No clean
   full-regression claim is made.
 - Phase 3 refactor and broader realization remain unapproved.
+
+## Phase 3 continuation
+
+- User approval: `LISS-0511 Phase 3 Refactor 承認`, 2026-09-07.
+- Refactor: extracted named helpers for direct product children, product-kind
+  classification, unresolved tensor dimensions, and bounded non-unitary
+  detection. No semantic fingerprint or rejection behavior changed.
+- Verification after refactor: related **39 passed**; spec verification
+  **161/161**; syntax and diff checks passed.
+- Process review: no operating-contract deviation or operational problem found.
+- Broader dimension resolution, non-unitary coverage, and clean full
+  repository regression remain explicitly open.

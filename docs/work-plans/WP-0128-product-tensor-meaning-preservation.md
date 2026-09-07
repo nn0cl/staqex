@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green bounded slice complete — Phase 3 not approved** |
+| Status | **Phase 3 refactor complete for bounded slice — broader follow-ups open** |
 | Size | M for Phase 1 Red; larger follow-up if realization is requested |
 | Issue | [LISS-0511](../issues/LISS-0511-product-tensor-meaning-preservation.md) |
 | Specification | [Product/Tensor Meaning Preservation](../specs/staqex-semantic-ir-product-tensor-preservation.md) |
@@ -85,6 +85,18 @@ neighbor regression, provenance/fingerprint checks, and a no-bypass proof.
 - Phase 3 refactor and broader tensor realization remain separately gated.
 - Review: [2026-09-07 Phase 2 Green review](../collaboration/reviews/2026-09-07-liss-0511-phase2-green-review.md)
   is READY for the bounded slice and records the Phase 3 blockers.
+
+## Phase 3 Refactor result
+
+- Named helpers now isolate direct product-child retention, product-kind
+  classification, unresolved tensor dimensions, and bounded non-unitary
+  detection. Behavior and compatibility fields are unchanged.
+- Verification: related suites **39 passed**; spec verification **161/161**;
+  `py_compile` and `git diff --check` passed.
+- F1–F3 remain open as broader design/verification follow-ups; this WP does
+  not claim resolved tensor dimensions, complete non-unitary coverage, or a
+  clean full repository regression.
+- Process review: no operating-contract deviation or operational problem found.
 
 ## Dependencies and stop conditions
 
