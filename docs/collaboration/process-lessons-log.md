@@ -33,6 +33,19 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-07
+- Class: acceptance-boundary
+- Pattern: a fail-closed semantic-family check can overmatch a valid neighboring
+  representation, such as treating Hamiltonian coefficient terms as a direct
+  non-unitary transform.
+- What later design or implementation must do: pair every negative projection
+  assertion with positive neighboring forms and scope rejection to the exact
+  source ownership/context that is unsupported.
+- Source issue or work plan (adopter's own ID, if any): LISS-0511 / WP-0128
+- Status: applied
+
+## Lesson
+
 - Date: 2026-09-03
 - Class: phase-acceptance-boundary
 - Pattern: a canonical consumer migration can appear successful for supported

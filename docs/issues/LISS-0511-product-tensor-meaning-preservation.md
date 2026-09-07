@@ -99,7 +99,10 @@ broader consumer migration request.
 - Extracted direct product-child lookup, product classification, unresolved
   tensor-dimension rendering, and bounded non-unitary detection into named
   helpers without changing the semantic fingerprint or rejection assertions.
-- Related verification remains **39 passed**; spec verification remains
+- Related verification remains **44 passed**; spec verification remains
   **161/161**; syntax and diff checks passed.
+- Post-review compatibility correction: rejection is limited to a direct
+  scalar×Pauli `Operator` declaration. Hamiltonian coefficient terms such as
+  `0.5 * I - 0.5 * Z` remain accepted; the regression check passes.
 - F1–F3 from the review remain explicit follow-ups and are not silently closed.
 - Process review: no operating-contract deviation or operational problem found.

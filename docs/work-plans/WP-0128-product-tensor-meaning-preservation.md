@@ -91,8 +91,11 @@ neighbor regression, provenance/fingerprint checks, and a no-bypass proof.
 - Named helpers now isolate direct product-child retention, product-kind
   classification, unresolved tensor dimensions, and bounded non-unitary
   detection. Behavior and compatibility fields are unchanged.
-- Verification: related suites **39 passed**; spec verification **161/161**;
+- Verification: related suites **44 passed**; spec verification **161/161**;
   `py_compile` and `git diff --check` passed.
+- Compatibility correction verified: the rejection helper only targets a
+  direct scalar×Pauli `Operator` declaration and does not reject Hamiltonian
+  coefficient terms used by explicit Suzuki lowering.
 - F1–F3 remain open as broader design/verification follow-ups; this WP does
   not claim resolved tensor dimensions, complete non-unitary coverage, or a
   clean full repository regression.

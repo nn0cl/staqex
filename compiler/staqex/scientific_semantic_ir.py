@@ -622,20 +622,29 @@ def _product_dimensions(product_kind: str | None) -> str:
     return "unknown"
 
 
-def _has_bounded_non_unitary_product(core: ScientificSemanticIR) -> bool:
-    """Detect the reviewed direct scalar/Pauli rejection form."""
+def _has_bounded_non_unitary_product(unit: Any, core: ScientificSemanticIR) -> bool:
+    """Detect a direct scalar/Pauli Operator declaration, not Hamiltonian terms."""
 
-    nodes = {node.node_id: node for node in core.nodes}
-    return any(
-        node.product_kind == "operator_product"
-        and {
-            nodes[child_id].kind
-            for child_id in node.child_source_node_ids
-            if child_id in nodes
-        }
-        >= {"OpLit", "OpPauli"}
-        for node in core.nodes
-    )
+    if unit.main is None:
+        return False
+    semantic_nodes = {node.node_id: node for node in core.nodes}
+    for statement in unit.main.body.stmts:
+        if (
+            not isinstance(statement, StateBind)
+            or statement.ty is None
+            or statement.ty.name != "Operator"
+            or not isinstance(statement.expr, OpBin)
+            or statement.expr.op != "*"
+        ):
+            continue
+        node_id = _source_node_id_for_span(core, statement.expr.span)
+        node = semantic_nodes.get(node_id)
+        if node is None or node.product_kind != "operator_product":
+            continue
+        operand_kinds = {type(statement.expr.lhs).__name__, type(statement.expr.rhs).__name__}
+        if {"OpLit", "OpPauli"}.issubset(operand_kinds):
+            return True
+    return False
 
 
 def build_scientific_semantic_ir(
@@ -1600,7 +1609,7 @@ def _projection_errors(
             order = 0
         if order not in {2, 4}:
             errors.append("E_QPU_CANONICAL_FINITE_EVOLUTION_UNSUPPORTED")
-    if _has_bounded_non_unitary_product(core):
+    if _has_bounded_non_unitary_product(unit, core):
         errors.append("E_QPU_UNSUPPORTED_CAPABILITY")
     errors.extend(str(item.get("code", "E_QPU_CANONICAL_BINDER_UNRESOLVED")) for item in binder_diagnostics)
     return tuple(dict.fromkeys(errors))

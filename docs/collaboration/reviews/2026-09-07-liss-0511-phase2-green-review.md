@@ -59,7 +59,7 @@
 ## Deterministic verification
 
 - LISS-0511 focused suite: **4 passed**.
-- Related product/semantic/QPU suites: **39 passed**.
+- Related product/semantic/QPU/Suzuki suites: **44 passed**.
 - Specification verification: **161/161 (100%)**.
 - `py_compile`: passed.
 - `git diff --check`: passed.
@@ -78,6 +78,10 @@
 
 - Refactor extracted the product-child, product-kind, tensor-dimension, and
   bounded non-unitary helpers without changing the focused contract.
+- Post-review verification found that a broad scalar/Pauli check would reject
+  valid Hamiltonian coefficient terms. The helper was narrowed to direct
+  scalar×Pauli `Operator` declarations; the related suite then returned to
+  **44 passed**.
 - Related verification and specification verification remained green after the
   refactor.
 - No new production capability or target behavior was added.

@@ -62,8 +62,11 @@
 - Refactor: extracted named helpers for direct product children, product-kind
   classification, unresolved tensor dimensions, and bounded non-unitary
   detection. No semantic fingerprint or rejection behavior changed.
-- Verification after refactor: related **39 passed**; spec verification
+- Verification after refactor: related **44 passed**; spec verification
   **161/161**; syntax and diff checks passed.
+- A compatibility regression found during verification was corrected by
+  limiting bounded rejection to direct scalar×Pauli `Operator` declarations;
+  valid Hamiltonian coefficient terms remain accepted.
 - Process review: no operating-contract deviation or operational problem found.
 - Broader dimension resolution, non-unitary coverage, and clean full
   repository regression remain explicitly open.
