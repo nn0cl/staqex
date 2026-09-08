@@ -10,7 +10,7 @@
 | Implementation permission | none; tests/production/provider/branch/commit/PR/mergeは今回実行しない |
 | Depends on | none for design; child implementation uses explicit dependency DAG below |
 | Inventory count | 28 total records: this parent WP/LISS pair plus 27 child WP/LISS pairs |
-| Current Next Issue | WP-0133/LISS-0516など依存先childのPhase 0審査; WP-0132/LISS-0515 M0は完了 |
+| Current Next Issue | WP-0135/LISS-0518 leakage-safe model validation; WP-0134/LISS-0517 D01 is complete |
 | Review | [independent correction review record](../collaboration/reviews/2026-09-08-scientific-workflow-design-review.md) |
 
 ## [DESIGN CHECK]

@@ -4,7 +4,7 @@
 
 | Area | Current status | Tracking | Boundary / acceptance note |
 |---|---|---|---|
-| 完成形科学Workflow / 新実測S02 | **WP-0132/LISS-0515 M0 complete; broader Phase 1 and implementation remain gated** | [WP-0131](../work-plans/WP-0131-scientific-workflow-program.md); [LISS-0514](../issues/LISS-0514-scientific-workflow-program.md); [ADR 0217](adr/0217-scientific-workflow-metadata-and-projection.md); [設計案](scientific-workflow-complete-design.md) | External Adapter/Metadata Graph/Domain Extension/source-derived Semantic IR/projections。全体28 records（親1＋子27、各WP/LISS pair）、S02優先、S01と連続場/天文/重力/太陽MHD/離散系を包含。0217-AとM0 G01/G02/G03は承認済み、WP-0132/LISS-0515はPhase 3完了。次は依存先WP-0133等の個別Phase 0審査。 |
+| 完成形科学Workflow / 新実測S02 | **WP-0132/LISS-0515 M0 complete; WP-0133/LISS-0516 complete; WP-0134/LISS-0517 D01 complete** | [WP-0131](../work-plans/WP-0131-scientific-workflow-program.md); [LISS-0514](../issues/LISS-0514-scientific-workflow-program.md); [ADR 0217](adr/0217-scientific-workflow-metadata-and-projection.md); [設計案](scientific-workflow-complete-design.md) | External Adapter/Metadata Graph/Domain Extension/source-derived Semantic IR/projections。全体28 records（親1＋子27、各WP/LISS pair）、S02優先、S01と連続場/天文/重力/太陽MHD/離散系を包含。0217-A、M0 G01/G02/G03、B01 Phase 0、D01 Phase 0、D01 Phase 1 Red、D01 Phase 2 Green、D01 Phase 3 Refactor、D01最終レビューは承認済み。次はWP-0135/LISS-0518 leakage-safe model validation。 |
 
 旧S02の合成選択境界は[WP-0130](../work-plans/WP-0130-basic-s02-example-migration.md)
 でBasicへ移管済み。下の旧S02 numerical/benchmark記録はそのlineageの証拠で、

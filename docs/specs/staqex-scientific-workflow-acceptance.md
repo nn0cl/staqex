@@ -1,12 +1,12 @@
 # Scientific Workflow acceptance proposal
 
-Status: **M0 G01/G02/G03 accepted for Phase 1 Red preparation; Phase 1 and implementation not authorized** (2026-09-08).
+Status: **M0 and B01 Phase 0 accepted; Phase 1 and implementation not authorized** (2026-09-08).
 Owner: [ADR 0217](../architecture/adr/0217-scientific-workflow-metadata-and-projection.md) / [complete design](../architecture/scientific-workflow-complete-design.md).
 Execution ledger: [WP-0131](../work-plans/WP-0131-scientific-workflow-program.md).
 
 この仕様は今後承認する観察可能な振る舞いを定義する。既存のscalar input、WorkflowPlan、
 terminal measure、Realize契約を置換しない。新構文・実行API名は各WPのPhase 0で確定する。
-M0 G01/G02/G03は2026-09-08に承認済み。個別WPは以下のscenario IDとfixture/profileを固定してからPhase 1承認を求める。
+M0 G01/G02/G03とB01のPhase 0設計は2026-09-08に承認済み。個別WPは以下のscenario IDとfixture/profileを固定してからPhase 1承認を求める。
 
 ## Preconditions / ownership / external dependencies
 
@@ -60,8 +60,8 @@ M0 exit: 上記3シナリオのpositive/negative対応、6分野fixtureの全必
 
 | ID | Given | When | Then / failure neighbor |
 |---|---|---|---|
-| B01 | typed Param/tensorとmetadata snapshot、unit/frame/index map | Bindingを検証しround-trip decode | source symbolとsnapshot版・欠損・観測/推定を追跡。正当な明示換算は証跡付きで受理、unknown換算/軸置換/Host keyだけの入力は拒否 |
-| D01 | version-pinned assay recordsにcompound/target/assay ID、endpoint、unit、relation、replicate、source | S02 Domainがcuration | measuredとpredictionを別記録化。互換endpointだけ集約し、censoredを等号にせず、単位/assay混在は拒否または明示quarantine |
+| B01 | typed Param/tensorとmetadata snapshot、unit/frame/index map | BindingContractを検証しround-trip decode | source symbol、snapshot版、shape/axis/index、欠損、観測/推定を追跡。identityまたは証跡付き明示unit/axis mappingのみ受理。stale snapshot、unknown unit、axis/shape不一致、Host keyだけの入力は診断付きで拒否 |
+| D01 | version-pinned assay recordsにcompound/target/assay ID、endpoint、unit、relation、replicate、source、checksum/license | S02 Domainがcuration | measuredとpredictionを別記録化。IC50・nM・互換assay-familyだけ集約し、censoredを等号にせず、単位/assay混在・identity collision・license欠落は明示quarantine |
 | D02 | availability cutoffと固定split、同一化合物/replicate group | fit/selection/evaluation | holdoutや未来roundをfitへ使わず、同一groupの漏れを検出。fit履歴はtrain IDsを示す。未知test labelのまま候補選定可能 |
 | D03 | 同じ候補集合、budget、hard constraints、objective、predefined baseline | 小規模oracleと古典選定を実行 | feasibilityとscoreを独立に検算。infeasibleはno-feasible-planであり空集合の成功ではない |
 | Q01 | 小さいbinary problemと明示encoding、scale、offset、index map | QUBO/Ising/Quantum Projectionへ変換 | 全割当energyとdecodeが合う。penalty-only低energyの違反を検出。非unitary projectorの無条件gate化は拒否 |
