@@ -1,5 +1,12 @@
 # Staqex hybrid workflow contract
 
+> Coverage note (2026-09-08): This accepted document owns the bounded Host
+> iteration contract. Broader scientific metadata, deadlines, plan approval,
+> rolling replanning, and explicit fallback are proposed in the
+> [Scientific Workflow specification](staqex-scientific-workflow-acceptance.md)
+> and [complete design](../architecture/scientific-workflow-complete-design.md).
+> They are not shipped by, or authorized through, this existing slice.
+
 | Field | Value |
 |---|---|
 | Status | **Accepted provider-neutral workflow boundary; surface/execution follow-up remains open** |
