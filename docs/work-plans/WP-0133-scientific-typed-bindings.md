@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | proposed |
+| Status | complete — Phase 3 Refactor reviewed 2026-09-08 |
 | Phase | phase-0-design |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
@@ -10,10 +10,10 @@
 | Depends on | [WP-0132](WP-0132-scientific-metadata-graph.md) |
 | Blocks | WP-0137, WP-0139, WP-0142, WP-0143, WP-0148, WP-0150, WP-0151 |
 | Owner / route | Sol: independent design correction and coordination; Luna: separately approved bounded phases |
-| Architecture | ADR 0217-A/B Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
+| Architecture | ADR 0217-A accepted; 0217-B Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), B01 |
 | Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0516 Phase 0 acceptance/profile review only |
+| Current Next Issue | None for this bounded B01 slice; broader binding families require new WP/approval |
 
 ## Scope
 
@@ -32,6 +32,31 @@ Phase 0でfixture identity、schema/source form/API boundary、tolerance/期待d
 数式sourceを変更する場合はparser→typed HIR→Semantic IR→consumer→Resultを検証する。
 Host-only契約ではport/APIの意味保存を検証し、source対応済みと主張しない。
 外部service不要のfake/固定fixtureを使う。実測profileの検証は権利確認済みsnapshotを使用する。
+
+## Phase 0 decisions
+
+- `BindingContract` is the conceptual Host boundary with exactly these
+  responsibilities: `source_symbol`, `snapshot_id`, `snapshot_revision`,
+  `shape`, ordered `axis_map`, `index_map`, `unit`, `dimension_signature`,
+  optional `frame`, and an explicit `mapping_kind`.
+- `mapping_kind` permits `identity`, `explicit_unit_conversion`, or
+  `explicit_axis_permutation` only when the transformation and evidence are
+  supplied. Unit, frame, axis, index, or snapshot inference is forbidden.
+- `DecodedBinding` must retain `source_symbol`, snapshot reference, original
+  semantic hash, decoded shape/axis map, and transformation evidence. A Host
+  key alone is not a source identity.
+- The M contract is Host-only and does not change `ScientificInput`,
+  `CoefficientTensor`, parser reachability, Semantic IR, or QPU behavior.
+- Canonical diagnostics are `BINDING_SNAPSHOT_MISMATCH`,
+  `BINDING_UNKNOWN_UNIT`, `BINDING_AXIS_MISMATCH`, `BINDING_SHAPE_MISMATCH`,
+  and `BINDING_SOURCE_IDENTITY_REQUIRED`. Diagnostics must identify the
+  offending contract field without exposing provider data.
+- Phase 1 test location is the root suite
+  `tests/test_scientific_typed_bindings_red.py`. Fixtures are six in-memory
+  cases: scalar angle identity, tensor with named axes, explicit unit
+  conversion, stale snapshot, unknown unit, and Host-key-only input.
+- No external dependency, library, file reader, database, provider SDK, or
+  concrete unit-conversion table is selected by this Phase 0 decision.
 
 ## Risk / stop conditions
 
@@ -64,3 +89,5 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - Estimated tokens range/midpoint/metric: N/A — fixture/API/technology review前で信頼できる見積根拠なし。
 - Basis/assumptions/confidence: 依存と拒否境界に基づく分割、既存port再利用を仮定、medium。
 - Revises: none; WP-0131親計画から新規分割。以前の承認済み見積は変更しない。
+
+Process review: no operating-contract deviation or operational problem found.
