@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0521 |
-| Status | Phase 3 Refactor complete; final review pending |
-| Phase | phase-3-refactor |
+| Status | Unit A complete; Unit B pending |
+| Phase | unit-a-complete |
 | Type / priority | feature / P0 |
 | Initial/current size | M / L — WP記載の境界複雑性により再分類 |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -44,3 +44,9 @@ scheduler、provider retry、actuationは未実装である。
 Phase 3 Refactor record: current-plan identityとapproval-current判定をpure helperへ
 抽出し、Unit Aのassertion、diagnostic code、adoption behaviorを変更していない。
 次の承認対象はUnit Aの最終レビューである。
+
+Unit A final review record: 2026-09-09にidentity binding、approval expiry/cancellation、
+stale result rejection、Job完了とPlan採用の分離を確認し、Unit Aを完了とした。Unit Bの
+event dedup、late event、timeout/cancel race、fallbackは未完了であり、WP全体はdoneではない。
+詳細は[Review Summary](../collaboration/reviews/2026-09-09-liss-0521-unit-a-final-review.md)。
+次の承認対象は`LISS-0521 Unit B Phase 1 Red 承認`である。

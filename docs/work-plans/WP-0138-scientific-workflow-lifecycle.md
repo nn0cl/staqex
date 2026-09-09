@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 3 Refactor complete; final review pending |
-| Phase | phase-3-refactor |
+| Status | Unit A complete; Unit B pending |
+| Phase | unit-a-complete |
 | Size initial/current | M / L — source/IR/consumerまたは複数状態境界のため設計reviewで再分類 |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0521](../issues/LISS-0521-scientific-workflow-lifecycle.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), W01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | LISS-0521 Unit A final review approval |
+| Current Next Issue | LISS-0521 Unit B Phase 1 Red approval |
 
 ## Scope
 
@@ -135,3 +135,10 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - Direct checks, syntax, diff, and document lifecycle checks passed.
 - Reviewer empathy: the adoption path now reads as identity validation,
   result validation, approval validation, and state validation in that order.
+
+## Unit A final review record
+
+Unit A final review approved on 2026-09-09. Identity binding, approval expiry/
+cancellation, stale result rejection, and separation of Job completion from Plan
+adoption are complete. Unit B event handling and explicit fallback remain open;
+see [Review Summary](../collaboration/reviews/2026-09-09-liss-0521-unit-a-final-review.md).
