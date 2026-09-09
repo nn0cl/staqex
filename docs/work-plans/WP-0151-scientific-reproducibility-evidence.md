@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | proposed |
-| Phase | phase-0-design |
+| Status | phase-0-accepted; Phase 1 ready for Unit A |
+| Phase | phase-0-accepted |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0534](../issues/LISS-0534-scientific-reproducibility-evidence.md) |
@@ -12,8 +12,8 @@
 | Owner / route | Sol: independent design correction and coordination; Luna: separately approved bounded phases |
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), E01 |
-| Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0534 Phase 0 acceptance/profile review only |
+| Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
+| Current Next Issue | LISS-0534 Unit A Phase 1 Red approval |
 
 ## Scope
 
@@ -32,6 +32,42 @@ Phase 0でfixture identity、schema/source form/API boundary、tolerance/期待d
 数式sourceを変更する場合はparser→typed HIR→Semantic IR→consumer→Resultを検証する。
 Host-only契約ではport/APIの意味保存を検証し、source対応済みと主張しない。
 外部service不要のfake/固定fixtureを使う。実測profileの検証は権利確認済みsnapshotを使用する。
+
+## Phase 0 decisions
+
+- E01は再現可能性・反証可能性・費用証拠を報告するprovider-neutral契約であり、
+  成功metricを良く見せるためのretuneや実機benchmarkではない。失敗・棄却・未検証も
+  claimの一部として保存する。
+- 固定fixtureは`manifest:s02-d03-v1`、`snapshot:s02-round-001`、
+  `model:s02-v1`、`baseline:greedy-feasible-v1`、`environment:local-python-v1`
+  とする。RunManifestはsource/fixture hash、input snapshot、model/baseline revision、
+  seed、numeric precision、software/runtime versions、command identity、created_atを
+  必須とする。
+- EvidenceRecordはrun ID、manifest hash、status、selected output、metric、uncertainty、
+  comparison population、cost breakdown、failure/diagnostic、source/license、
+  replay referenceを保持する。queue/encode/execute/decode/verificationの費用は
+  欠落時にゼロ補完せず、`EVIDENCE_COST_MISSING`で未完了とする。
+- Unit Aはmanifest identity、同一manifest replay、source/fixture hash変更、seed/環境
+  差分、numeric/statistical reproduction levelを扱う。完全一致を要求するのは
+  manifest/identity/構造であり、数値はprofileが宣言したabsolute/relative tolerance内、
+  統計結果は事前固定したsample count/confidence intervalで判定する。
+- Unit Bはclaim/evaluation protocol、heldout再利用、都合のよいrunだけの分母化、
+  失敗・棄却の隠蔽、費用欠落、prospective evidence欠落を扱う。claimは
+  `reproduced`、`falsified`、`inconclusive`、`not-evaluated`のいずれかとし、
+  `inconclusive`を成功扱いしない。
+- 期待diagnosticは`EVIDENCE_MANIFEST_MISMATCH`、`EVIDENCE_HASH_CHANGED`、
+  `EVIDENCE_HELDOUT_REUSE`、`EVIDENCE_DENOMINATOR_BIAS`、
+  `EVIDENCE_COST_MISSING`、`EVIDENCE_RUN_FAILURE_HIDDEN`、
+  `EVIDENCE_PROSPECTIVE_UNAVAILABLE`とする。seedだけで実機bit一致を主張せず、
+  provider差・確率性・未実行を別fieldで報告する。
+- Port境界は`RunManifestPort`、`EvidenceStorePort`、`CostObservationPort`とする。
+  manifest identity、claim判定、分母・heldout policy、失敗の可視化はUseCase/Domainが
+  所有し、adapterはrun情報と証拠の取得・保存だけを担う。外部provider SDKは選択しない。
+- Phase 1 testsはUnit Aを`tests/test_reproducibility_manifest_red.py`、Unit Bを
+  `tests/test_reproducibility_claims_red.py`へ分離する。まずUnit Aだけを実装し、Unit Bは
+  Unit Aの受入後に別承認する。
+- Process lessons applied: 完了した小profileを分野全体のcoverageと混同せず、成功だけでなく
+  rejection/failureと観測可能なreport metadataを同じ証拠境界で扱う。
 
 ## Risk / stop conditions
 

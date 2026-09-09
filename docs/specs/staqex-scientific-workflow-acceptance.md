@@ -67,6 +67,17 @@ M0 exit: 上記3シナリオのpositive/negative対応、6分野fixtureの全必
 | Q01 | 小さいbinary problemと明示encoding、scale、offset、index map | QUBO/Ising/Quantum Projectionへ変換 | 全割当energyとdecodeが合う。penalty-only低energyの違反を検出。非unitary projectorの無条件gate化は拒否 |
 | W01 | immutable snapshot、deadline、approval hash、fake Jobs/events | late event、duplicate、timeout、cancel raceを注入 | 新Plan revisionを作り、stale result/expired approvalは採用不可。明示fallbackは別lane/Job。安全制約の緩和は自動実行されない |
 
+### E01 Phase 0 profile (reproducibility, falsification, and cost evidence)
+
+E01は成功だけを集計するbenchmarkではなく、RunManifest、claim、evaluation、failure、
+costの証拠契約である。`manifest:s02-d03-v1`、`snapshot:s02-round-001`、
+`model:s02-v1`、`baseline:greedy-feasible-v1`、`environment:local-python-v1`を固定し、
+source/fixture hash、input/model/baseline identity、seed、precision、runtime、command、
+metric、uncertainty、comparison population、cost breakdown、failure/diagnostic、replay
+referenceを保持する。manifest identityは完全一致、数値は宣言済みtolerance、統計値は
+事前固定sample count/confidence intervalで判定する。heldout再利用、分母bias、費用欠落、
+失敗隠蔽は拒否し、実測・実機が無い場合は未検証と表示する。
+
 ### W01 Phase 0 profile (provider-neutral lifecycle)
 
 W01はJob実行基盤ではなく、WorkflowPlan/Jobのidentity・承認・期限・採用状態を管理する
