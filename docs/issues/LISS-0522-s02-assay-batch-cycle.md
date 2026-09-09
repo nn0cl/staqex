@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0522 |
-| Status | phase-0-accepted; Phase 1 blocked by dependencies |
+| Status | phase-0-accepted; Phase 1 ready |
 | Phase | phase-0-accepted |
 | Type / priority | feature / P0 |
 | Initial/current size | M / M |
@@ -29,5 +29,5 @@ round-002の未来labelはproposal生成時に不可視とし、後続実測は�
 diagnostic付きでfail-closedにする。QUBOはWP-0137/LISS-0520の責務である。
 
 Phase 0 acceptance outcome: profile/schema/API boundary、positive/negative fixture、
-port ownership、diagnostic、toleranceを確定した。ただしWP-0138/LISS-0521と
-WP-0151/LISS-0534が未完了のため、Phase 1 Redは依存完了または明示waiverまで開始しない。
+port ownership、diagnostic、toleranceを確定した。WP-0138/LISS-0521とWP-0151/LISS-0534が
+完了したため、依存は解消されPhase 1 Redがreadyになった。明示waiverは不要である。

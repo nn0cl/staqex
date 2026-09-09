@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | phase-0-accepted; Phase 1 blocked by dependencies |
+| Status | phase-0-accepted; Phase 1 ready |
 | Phase | phase-0-accepted |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
@@ -12,8 +12,8 @@
 | Owner / route | Sol: independent design correction and coordination; Luna: separately approved bounded phases |
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), D04 |
-| Implementation permission | no; no Phase 1 approval; dependency waiver not granted |
-| Current Next Issue | WP-0138/LISS-0521 and WP-0151/LISS-0534 dependency completion, then LISS-0522 Phase 1 Red |
+| Implementation permission | no; no Phase 1 approval |
+| Current Next Issue | LISS-0522 Phase 1 Red approval |
 
 ## Scope
 

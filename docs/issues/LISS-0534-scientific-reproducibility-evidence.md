@@ -62,3 +62,9 @@ prospective evidence未取得は`not-evaluated`、閾値超過は`falsified`、�
 Unit B Phase 3 Refactor record: heldout overlapとdenominator completenessの判定をpure
 helperへ抽出し、`reproduced`、`falsified`、`not-evaluated`および全diagnosticを維持した。
 次の承認対象はUnit Bの最終レビューである。
+
+Final review record: 2026-09-10にUnit A/Bを確認し、E01 bounded contractを完了とした。
+prospective assay validation、QPU比較、広範なbenchmarkは別作業として残す。詳細は
+[Review Summary](../collaboration/reviews/2026-09-10-liss-0534-final-review.md)。
+
+Process review: no operating-contract deviation or operational problem found.

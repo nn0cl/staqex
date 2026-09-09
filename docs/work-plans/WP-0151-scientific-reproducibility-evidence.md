@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 3 Refactor complete; final review pending |
-| Phase | phase-3-refactor |
+| Status | done |
+| Phase | complete |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0534](../issues/LISS-0534-scientific-reproducibility-evidence.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), E01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | LISS-0534 Unit B final review approval |
+| Current Next Issue | WP-0139 / LISS-0522 Phase 1 Red after D04 dependency review |
 
 ## Scope
 
@@ -118,6 +118,14 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - The reviewed Red suite was not changed. Unit B claim/evaluation/cost
   evidence remains out of scope.
 - Direct Green smoke checks, syntax, diff, and document lifecycle checks passed.
+
+## Final review record
+
+E01 Unit A/B final review approved on 2026-09-10. Manifest/replay evidence,
+claim classification, heldout/denominator checks, cost completeness, and
+prospective-evidence honesty are complete. See [Review Summary](../collaboration/reviews/2026-09-10-liss-0534-final-review.md).
+
+Process review: no operating-contract deviation or operational problem found.
 
 ## Phase 3 Refactor record — Unit B
 
