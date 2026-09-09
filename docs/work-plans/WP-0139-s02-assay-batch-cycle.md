@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | phase-0-accepted; Phase 1 ready |
-| Phase | phase-0-accepted |
+| Status | Phase 1 Red complete; Phase 2 pending |
+| Phase | phase-1-red |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0522](../issues/LISS-0522-s02-assay-batch-cycle.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), D04 |
 | Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0522 Phase 1 Red approval |
+| Current Next Issue | LISS-0522 Phase 2 Green / Implementation approval |
 
 ## Scope
 

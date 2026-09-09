@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0522 |
-| Status | phase-0-accepted; Phase 1 ready |
-| Phase | phase-0-accepted |
+| Status | Phase 1 Red complete; Phase 2 pending |
+| Phase | phase-1-red |
 | Type / priority | feature / P0 |
 | Initial/current size | M / M |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -31,3 +31,8 @@ diagnostic付きでfail-closedにする。QUBOはWP-0137/LISS-0520の責務で�
 Phase 0 acceptance outcome: profile/schema/API boundary、positive/negative fixture、
 port ownership、diagnostic、toleranceを確定した。WP-0138/LISS-0521とWP-0151/LISS-0534が
 完了したため、依存は解消されPhase 1 Redがreadyになった。明示waiverは不要である。
+
+Phase 1 Red record: `tests/test_s02_assay_batch_cycle_red.py` にproposalの選定理由・予測・
+制約・費用・承認対象、未来label、stale approval、stock変更、後続roundの新snapshot化を
+固定する5つの失敗契約を追加した。production codeは変更していない。次の承認対象は
+LISS-0522 Phase 2 Green / Implementationである。
