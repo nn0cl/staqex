@@ -117,6 +117,13 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
   separation of Job completion from Plan adoption.
 - Unit B tests and all production implementation remain out of this phase.
 
+## Phase 1 Red record — Unit B
+
+- Added only `tests/test_workflow_lifecycle_unit_b_red.py`.
+- The suite fixes the observable Unit B contract for event deduplication, late
+  event rejection, timeout/cancel race diagnostics, and new-Plan fallback.
+- Production implementation remains pending until Unit B Phase 2 approval.
+
 ## Phase 2 Green record — Unit A
 
 - Added `compiler/staqex/workflow_lifecycle.py` with immutable identity,

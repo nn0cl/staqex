@@ -50,3 +50,7 @@ stale result rejection、Job完了とPlan採用の分離を確認し、Unit Aを
 event dedup、late event、timeout/cancel race、fallbackは未完了であり、WP全体はdoneではない。
 詳細は[Review Summary](../collaboration/reviews/2026-09-09-liss-0521-unit-a-final-review.md)。
 次の承認対象は`LISS-0521 Unit B Phase 1 Red 承認`である。
+
+Unit B Phase 1 Red record: `tests/test_workflow_lifecycle_unit_b_red.py` にduplicate/
+late event、timeout/cancel race、fallback requires new Planの4つの失敗契約を追加した。
+production codeは変更していない。次の承認対象はUnit BのPhase 2 Green / Implementationである。
