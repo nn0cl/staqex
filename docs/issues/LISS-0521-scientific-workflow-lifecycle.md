@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0521 |
-| Status | phase-0-accepted; Phase 1 ready for Unit A |
-| Phase | phase-0-accepted |
+| Status | Phase 1 Red complete; Phase 2 pending |
+| Phase | phase-1-red |
 | Type / priority | feature / P0 |
 | Initial/current size | M / L — WP記載の境界複雑性により再分類 |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -30,3 +30,7 @@ Unit AとUnit Bのtestsとphase approvalは分離する。
 Phase 0 acceptance outcome: fixture identity、state/API boundary、ports、diagnostic、
 UTC timestamp rule、positive/negative cases、Unit A/B分割を確定した。Unit AはPhase 1
 Red ready、Unit BはUnit A受入後の別承認待ちである。
+
+Phase 1 Red record: `tests/test_workflow_lifecycle_unit_a_red.py` にUnit Aの5つの
+失敗契約を追加した。production code、Unit B、scheduler、provider接続は変更していない。
+次の承認対象はUnit AのPhase 2 Green / Implementationである。

@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | phase-0-accepted; Phase 1 ready for Unit A |
-| Phase | phase-0-accepted |
+| Status | Phase 1 Red complete; Phase 2 pending |
+| Phase | phase-1-red |
 | Size initial/current | M / L — source/IR/consumerまたは複数状態境界のため設計reviewで再分類 |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0521](../issues/LISS-0521-scientific-workflow-lifecycle.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), W01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | LISS-0521 Unit A Phase 1 Red approval |
+| Current Next Issue | LISS-0521 Unit A Phase 2 Green / Implementation approval |
 
 ## Scope
 
@@ -108,3 +108,11 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - **Unit B / W01-b / M**: Aにfake event/clock/既存Jobを接続し、重複/遅延/cancel raceと別lane fallbackを検証。scheduler実装は除外。
 
 親scenarioの既存期待を狭めずこの二つへ配分する。各unitは別のPhase 1 test review、Phase 2/Implementation、Phase 3承認を要する。WP全体の一括実装依頼は禁止。両unitの証拠がそろうまでWPはdoneにしない。
+
+## Phase 1 Red record — Unit A
+
+- Added only `tests/test_workflow_lifecycle_unit_a_red.py`.
+- The suite fixes the observable Unit A contract for current approval adoption,
+  expiry/cancellation rejection, stale or mismatched identity rejection, and
+  separation of Job completion from Plan adoption.
+- Unit B tests and all production implementation remain out of this phase.
