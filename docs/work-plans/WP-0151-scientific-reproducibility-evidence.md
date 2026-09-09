@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 2 Green complete; Phase 3 pending |
-| Phase | phase-2-green |
+| Status | Phase 3 Refactor complete; final review pending |
+| Phase | phase-3-refactor |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0534](../issues/LISS-0534-scientific-reproducibility-evidence.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), E01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | LISS-0534 Unit B Phase 3 Refactor approval |
+| Current Next Issue | LISS-0534 Unit B final review approval |
 
 ## Scope
 
@@ -118,6 +118,14 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - The reviewed Red suite was not changed. Unit B claim/evaluation/cost
   evidence remains out of scope.
 - Direct Green smoke checks, syntax, diff, and document lifecycle checks passed.
+
+## Phase 3 Refactor record — Unit B
+
+- Extracted heldout-overlap and denominator-completeness predicates into small
+  pure helpers.
+- Preserved `reproduced`, `falsified`, and `not-evaluated` outcomes and all
+  evidence diagnostics.
+- Direct checks, syntax, diff, and document lifecycle checks passed.
 
 ## Phase 3 Refactor record — Unit A
 

@@ -119,15 +119,23 @@ def _claim_not_evaluated(code: str, message: str) -> ClaimResult:
     )
 
 
+def _has_heldout_reuse(claim_input: ClaimInput) -> bool:
+    return bool(set(claim_input.training_ids) & set(claim_input.heldout_ids))
+
+
+def _has_denominator_bias(claim_input: ClaimInput) -> bool:
+    return set(claim_input.evaluated_run_ids) != set(claim_input.run_ids)
+
+
 def evaluate_claim(claim_input: ClaimInput) -> ClaimResult:
     """Evaluate a predeclared claim without hiding evidence gaps."""
 
-    if set(claim_input.training_ids) & set(claim_input.heldout_ids):
+    if _has_heldout_reuse(claim_input):
         return _claim_not_evaluated(
             "EVIDENCE_HELDOUT_REUSE",
             "training and heldout identities overlap",
         )
-    if set(claim_input.evaluated_run_ids) != set(claim_input.run_ids):
+    if _has_denominator_bias(claim_input):
         return _claim_not_evaluated(
             "EVIDENCE_DENOMINATOR_BIAS",
             "the claim evaluated only a subset of declared runs",

@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0534 |
-| Status | Phase 2 Green complete; Phase 3 pending |
-| Phase | phase-2-green |
+| Status | Phase 3 Refactor complete; final review pending |
+| Phase | phase-3-refactor |
 | Type / priority | feature / P0 |
 | Initial/current size | M / M |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -58,3 +58,7 @@ Unit B Phase 2 Green record: `compiler/staqex/reproducibility_evidence.py` にCo
 ClaimInput/Result、`evaluate_claim`を追加した。heldout再利用、分母bias、費用欠落、
 prospective evidence未取得は`not-evaluated`、閾値超過は`falsified`、完全な評価は
 `reproduced`として返す。Red suiteは変更していない。次の承認対象はUnit BのPhase 3 Refactorである。
+
+Unit B Phase 3 Refactor record: heldout overlapとdenominator completenessの判定をpure
+helperへ抽出し、`reproduced`、`falsified`、`not-evaluated`および全diagnosticを維持した。
+次の承認対象はUnit Bの最終レビューである。
