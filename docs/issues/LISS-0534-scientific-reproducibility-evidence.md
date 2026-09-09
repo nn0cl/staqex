@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0534 |
-| Status | Phase 1 Red complete; Phase 2 pending |
-| Phase | phase-1-red |
+| Status | Phase 3 Refactor complete; final review pending |
+| Phase | phase-3-refactor |
 | Type / priority | feature / P0 |
 | Initial/current size | M / M |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -39,3 +39,7 @@ Phase 2 Green record: `compiler/staqex/reproducibility_evidence.py` にimmutable
 RunManifest/EvidenceRecordとreplay比較を追加した。hash/manifest identity変更を拒否し、
 numeric tolerance超過をinconclusiveとして保持する。Red suiteとUnit Bは変更していない。
 次の承認対象はUnit AのPhase 3 Refactorである。
+
+Phase 3 Refactor record: hash比較とinconclusive結果構築をpure helperへ抽出し、
+manifest/hash mismatch、output mismatch、numeric tolerance、reproducedの挙動を維持した。
+次の承認対象はUnit Aの最終レビューである。

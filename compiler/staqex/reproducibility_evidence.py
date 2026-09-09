@@ -42,6 +42,17 @@ def _rejected(code: str, message: str) -> ReplayResult:
     return ReplayResult(status="rejected", diagnostic=Diagnostic(code, message))
 
 
+def _inconclusive(code: str, message: str) -> ReplayResult:
+    return ReplayResult(status="inconclusive", diagnostic=Diagnostic(code, message))
+
+
+def _hashes_match(original: RunManifest, replay: RunManifest) -> bool:
+    return (original.source_hash, original.fixture_hash) == (
+        replay.source_hash,
+        replay.fixture_hash,
+    )
+
+
 def compare_replay(
     original: EvidenceRecord,
     replay: EvidenceRecord,
@@ -50,21 +61,24 @@ def compare_replay(
 ) -> ReplayResult:
     """Compare a replay without silently accepting changed evidence."""
 
-    if (
-        original.manifest.source_hash != replay.manifest.source_hash
-        or original.manifest.fixture_hash != replay.manifest.fixture_hash
-    ):
-        return _rejected("EVIDENCE_HASH_CHANGED", "source or fixture hash changed between runs")
+    if not _hashes_match(original.manifest, replay.manifest):
+        return _rejected(
+            "EVIDENCE_HASH_CHANGED",
+            "source or fixture hash changed between runs",
+        )
     if original.manifest != replay.manifest:
-        return _rejected("EVIDENCE_MANIFEST_MISMATCH", "replay manifest identity or inputs differ")
+        return _rejected(
+            "EVIDENCE_MANIFEST_MISMATCH",
+            "replay manifest identity or inputs differ",
+        )
     if original.output_ids != replay.output_ids:
-        return ReplayResult(
-            status="inconclusive",
-            diagnostic=Diagnostic("EVIDENCE_OUTPUT_MISMATCH", "replay output identity differs"),
+        return _inconclusive(
+            "EVIDENCE_OUTPUT_MISMATCH",
+            "replay output identity differs",
         )
     if abs(original.numeric_value - replay.numeric_value) > absolute_tolerance:
-        return ReplayResult(
-            status="inconclusive",
-            diagnostic=Diagnostic("EVIDENCE_NUMERIC_MISMATCH", "numeric value exceeds tolerance"),
+        return _inconclusive(
+            "EVIDENCE_NUMERIC_MISMATCH",
+            "numeric value exceeds tolerance",
         )
     return ReplayResult(status="reproduced")
