@@ -61,6 +61,16 @@ def _same_identity(left: PlanIdentity, right: PlanIdentity) -> bool:
     return left == right
 
 
+def _identity_is_current(plan: WorkflowPlan, result: JobResultEnvelope) -> bool:
+    return _same_identity(plan.identity, result.plan_identity) and _same_identity(
+        plan.identity, plan.approval.plan_identity
+    )
+
+
+def _approval_is_current(plan: WorkflowPlan, *, now: str) -> bool:
+    return not plan.approval.cancelled and now < plan.approval.expires_at
+
+
 def apply_job_result(
     plan: WorkflowPlan,
     result: JobResultEnvelope,
@@ -69,9 +79,7 @@ def apply_job_result(
 ) -> TransitionResult:
     """Adopt a completed result only when the Unit A contract is current."""
 
-    if not _same_identity(plan.identity, result.plan_identity) or not _same_identity(
-        plan.identity, plan.approval.plan_identity
-    ):
+    if not _identity_is_current(plan, result):
         return _rejected(
             plan,
             "WORKFLOW_PLAN_IDENTITY_MISMATCH",
@@ -89,7 +97,7 @@ def apply_job_result(
             "WORKFLOW_APPROVAL_CANCELLED",
             "approval was cancelled before result adoption",
         )
-    if now >= plan.approval.expires_at:
+    if not _approval_is_current(plan, now=now):
         return _rejected(
             plan,
             "WORKFLOW_APPROVAL_EXPIRED",

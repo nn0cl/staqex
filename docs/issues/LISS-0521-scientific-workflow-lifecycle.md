@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0521 |
-| Status | Phase 2 Green complete; Phase 3 pending |
-| Phase | phase-2-green |
+| Status | Phase 3 Refactor complete; final review pending |
+| Phase | phase-3-refactor |
 | Type / priority | feature / P0 |
 | Initial/current size | M / L — WP記載の境界複雑性により再分類 |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -40,3 +40,7 @@ identity/approval/Plan/Job result DTOとpure adoption transitionを追加した�
 stale/identity不一致・未承認Planをfail-closedにし、Red suiteは変更していない。Unit B、
 scheduler、provider retry、actuationは未実装である。
 次の承認対象はUnit AのPhase 3 Refactorである。
+
+Phase 3 Refactor record: current-plan identityとapproval-current判定をpure helperへ
+抽出し、Unit Aのassertion、diagnostic code、adoption behaviorを変更していない。
+次の承認対象はUnit Aの最終レビューである。

@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 2 Green complete; Phase 3 pending |
-| Phase | phase-2-green |
+| Status | Phase 3 Refactor complete; final review pending |
+| Phase | phase-3-refactor |
 | Size initial/current | M / L — source/IR/consumerまたは複数状態境界のため設計reviewで再分類 |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0521](../issues/LISS-0521-scientific-workflow-lifecycle.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), W01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | LISS-0521 Unit A Phase 3 Refactor approval |
+| Current Next Issue | LISS-0521 Unit A final review approval |
 
 ## Scope
 
@@ -126,3 +126,12 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - The reviewed Red suite was not changed. Unit B event handling, scheduler,
   provider retry, and external actuation remain out of scope.
 - Direct Green smoke checks, syntax, diff, and document lifecycle checks passed.
+
+## Phase 3 Refactor record — Unit A
+
+- Extracted current-plan identity and approval-current predicates into small
+  pure helpers.
+- Preserved all Unit A assertions, diagnostic codes, and adoption behavior.
+- Direct checks, syntax, diff, and document lifecycle checks passed.
+- Reviewer empathy: the adoption path now reads as identity validation,
+  result validation, approval validation, and state validation in that order.
