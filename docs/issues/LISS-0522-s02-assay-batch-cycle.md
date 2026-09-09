@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0522 |
-| Status | Phase 2 Green complete; Phase 3 pending |
-| Phase | phase-2-green |
+| Status | Phase 3 Refactor complete; final review pending |
+| Phase | phase-3-refactor |
 | Type / priority | feature / P0 |
 | Initial/current size | M / M |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -40,4 +40,9 @@ LISS-0522 Phase 2 Green / Implementationである。
 Phase 2 Green record: `compiler/staqex/s02_assay_batch_cycle.py` にimmutable snapshot、
 approval-bound proposal、deterministic content hash、follow-up snapshot ingestionを追加した。
 future label、stale approval、stock変更をfail-closedにし、prospective evidence未取得は明示的に
-`unavailable`とする。Red suiteは変更していない。次の承認対象はPhase 3 Refactorである。
+`unavailable`とする。Red suiteは変更していない。
+
+Phase 3 Refactor record: proposal入力検証、候補選定、選定理由生成、content hash組み立てを
+名前付きhelperへ分離し、DTO・診断コード・受入挙動を維持した。AST、D04スモーク、差分、
+文書ライフサイクル検査は通過した。ローカル環境では`pytest`が利用できない。次の承認対象は
+`LISS-0522 Phase 3 最終レビュー 承認`である。

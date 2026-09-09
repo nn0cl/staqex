@@ -71,17 +71,14 @@ def _proposal_hash(values: Mapping[str, Any]) -> str:
     return "sha256:" + hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
 
-def create_batch_proposal(
+def _validate_proposal_inputs(
     *,
     snapshot: AssaySnapshot,
     candidates: tuple[Mapping[str, Any], ...],
     selected_candidate_ids: tuple[str, ...],
     approval: ApprovalPolicy,
-    prospective_available: bool,
-    future_labels: Mapping[str, float] | None = None,
-) -> ProposalResult:
-    """Create a human-approval proposal from one immutable assay snapshot."""
-
+    future_labels: Mapping[str, float] | None,
+) -> ProposalResult | None:
     if future_labels:
         return _rejected(
             "ASSAY_FUTURE_LABEL_VISIBLE",
@@ -101,27 +98,80 @@ def create_batch_proposal(
             "ASSAY_CANDIDATE_STATE_CHANGED",
             "selected candidate is no longer in stock",
         )
-    selected = [
+    return None
+
+
+def _selected_candidates(
+    candidates: tuple[Mapping[str, Any], ...],
+    selected_candidate_ids: tuple[str, ...],
+) -> list[Mapping[str, Any]]:
+    selected_ids = set(selected_candidate_ids)
+    return [
         candidate
         for candidate in candidates
-        if str(candidate["candidate_id"]) in selected_candidate_ids
+        if str(candidate["candidate_id"]) in selected_ids
     ]
-    predictions = tuple(float(candidate["predicted_ic50_nM"]) for candidate in selected)
-    reasons = tuple(
+
+
+def _selection_reasons(selected: list[Mapping[str, Any]]) -> tuple[str, ...]:
+    return tuple(
         f"lowest-predicted-ic50:{candidate['candidate_id']}"
         for candidate in selected
     )
-    cost = sum(int(candidate["cost"]) for candidate in selected)
-    plan_id = f"plan:{snapshot.round_id}:assay-batch"
-    content_hash = _proposal_hash(
+
+
+def _proposal_content(
+    *,
+    snapshot: AssaySnapshot,
+    approval: ApprovalPolicy,
+    selected_candidate_ids: tuple[str, ...],
+    predictions: tuple[float, ...],
+    cost: int,
+) -> str:
+    return _proposal_hash(
         {
-            "plan_id": plan_id,
+            "plan_id": f"plan:{snapshot.round_id}:assay-batch",
             "snapshot_id": snapshot.snapshot_id,
             "model_revision": approval.model_revision,
             "selected_candidate_ids": selected_candidate_ids,
             "predictions": predictions,
             "cost": cost,
         }
+    )
+
+
+def create_batch_proposal(
+    *,
+    snapshot: AssaySnapshot,
+    candidates: tuple[Mapping[str, Any], ...],
+    selected_candidate_ids: tuple[str, ...],
+    approval: ApprovalPolicy,
+    prospective_available: bool,
+    future_labels: Mapping[str, float] | None = None,
+) -> ProposalResult:
+    """Create a human-approval proposal from one immutable assay snapshot."""
+
+    rejection = _validate_proposal_inputs(
+        snapshot=snapshot,
+        candidates=candidates,
+        selected_candidate_ids=selected_candidate_ids,
+        approval=approval,
+        future_labels=future_labels,
+    )
+    if rejection is not None:
+        return rejection
+
+    selected = _selected_candidates(candidates, selected_candidate_ids)
+    predictions = tuple(float(candidate["predicted_ic50_nM"]) for candidate in selected)
+    reasons = _selection_reasons(selected)
+    cost = sum(int(candidate["cost"]) for candidate in selected)
+    plan_id = f"plan:{snapshot.round_id}:assay-batch"
+    content_hash = _proposal_content(
+        snapshot=snapshot,
+        approval=approval,
+        selected_candidate_ids=selected_candidate_ids,
+        predictions=predictions,
+        cost=cost,
     )
     return ProposalResult(
         status="awaiting-approval",
