@@ -71,7 +71,7 @@ Completion claimは二層に分ける。個別のclassical-only Scientific Workf
 | [WP-0134](WP-0134-s02-measured-assay-profile.md) / [LISS-0517](../issues/LISS-0517-s02-measured-assay-profile.md) | S02実測assay取込とcuration | D01 | WP-0132 | proposed |
 | [WP-0135](WP-0135-s02-leakage-safe-model.md) / [LISS-0518](../issues/LISS-0518-s02-leakage-safe-model.md) | S02 splitと予測Model検証 | D02 | WP-0134 | proposed |
 | [WP-0136](WP-0136-s02-classical-batch-baseline.md) / [LISS-0519](../issues/LISS-0519-s02-classical-batch-baseline.md) | S02古典batch目的とfeasibility oracle | D03 | WP-0135 | proposed |
-| [WP-0137](WP-0137-scientific-quantum-projection.md) / [LISS-0520](../issues/LISS-0520-scientific-quantum-projection.md) | 離散問題からQuantum Projectionの変換契約 | Q01 | WP-0133 | proposed |
+| [WP-0137](WP-0137-scientific-quantum-projection.md) / [LISS-0520](../issues/LISS-0520-scientific-quantum-projection.md) | 離散問題からQuantum Projectionの変換契約 | Q01 | WP-0133 | complete (bounded Q01 artifact/runtime unit) |
 | [WP-0138](WP-0138-scientific-workflow-lifecycle.md) / [LISS-0521](../issues/LISS-0521-scientific-workflow-lifecycle.md) | 期限・承認・再計画のWorkflow契約 | W01 | WP-0132 | proposed |
 | [WP-0139](WP-0139-s02-assay-batch-cycle.md) / [LISS-0522](../issues/LISS-0522-s02-assay-batch-cycle.md) | S02次回assay batchの閉ループ | D04 | WP-0133, WP-0136, WP-0138, WP-0151 | proposed |
 | [WP-0140](WP-0140-geographic-sensor-adapter-profile.md) / [LISS-0523](../issues/LISS-0523-geographic-sensor-adapter-profile.md) | CityGML・graph・SOSA/SensorThings接続 | X01 | WP-0132 | proposed |
@@ -84,7 +84,7 @@ Completion claimは二層に分ける。個別のclassical-only Scientific Workf
 | [WP-0147](WP-0147-adaptive-mesh-conservation.md) / [LISS-0530](../issues/LISS-0530-adaptive-mesh-conservation.md) | 適応メッシュと保存的transfer | N04 | WP-0144 | proposed |
 | [WP-0148](WP-0148-physical-experiment-gravity-profile.md) / [LISS-0531](../issues/LISS-0531-physical-experiment-gravity-profile.md) | 校正付き物理実験とNewton重力 | P01 | WP-0132, WP-0133, WP-0145 | proposed |
 | [WP-0149](WP-0149-linear-fluid-mhd-profile.md) / [LISS-0532](../issues/LISS-0532-linear-fluid-mhd-profile.md) | 流体・MHD線形検証縦切り | P02 | WP-0146 | proposed |
-| [WP-0150](WP-0150-discrete-interaction-profile.md) / [LISS-0533](../issues/LISS-0533-discrete-interaction-profile.md) | 一般離散graph・相互作用・Hamiltonian | R01 | WP-0133, WP-0137 | proposed |
+| [WP-0150](WP-0150-discrete-interaction-profile.md) / [LISS-0533](../issues/LISS-0533-discrete-interaction-profile.md) | 一般離散graph・相互作用・Hamiltonian | R01 | WP-0133, WP-0137 | Phase 0 accepted |
 | [WP-0151](WP-0151-scientific-reproducibility-evidence.md) / [LISS-0534](../issues/LISS-0534-scientific-reproducibility-evidence.md) | 分野共通の再現・反証・費用証拠 | E01 | WP-0133, WP-0138 | proposed |
 | [WP-0152](WP-0152-natural-language-observation-candidates.md) / [LISS-0535](../issues/LISS-0535-natural-language-observation-candidates.md) | 自然言語由来観測候補の信頼境界 | L01 | WP-0132 | proposed |
 | [WP-0153](WP-0153-cross-domain-conformance-completion.md) / [LISS-0536](../issues/LISS-0536-cross-domain-conformance-completion.md) | 分野拡張と完成判定のconformance | C01 | WP-0139, WP-0141, WP-0142, WP-0147, WP-0148, WP-0149, WP-0150, WP-0151, WP-0152, WP-0154, WP-0155, WP-0156, WP-0157, WP-0158 | proposed |

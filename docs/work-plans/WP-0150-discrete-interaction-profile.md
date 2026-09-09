@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | proposed |
-| Phase | phase-0-design |
+| Status | Phase 0 accepted; Phase 1 pending |
+| Phase | phase-0-accepted |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0533](../issues/LISS-0533-discrete-interaction-profile.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), R01 |
 | Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0533 Phase 0 acceptance/profile review only |
+| Current Next Issue | LISS-0533 Phase 1 Red |
 
 ## Scope
 
@@ -64,3 +64,36 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - Estimated tokens range/midpoint/metric: N/A — fixture/API/technology review前で信頼できる見積根拠なし。
 - Basis/assumptions/confidence: 依存と拒否境界に基づく分割、既存port再利用を仮定、medium。
 - Revises: none; WP-0131親計画から新規分割。以前の承認済み見積は変更しない。
+
+## Phase 0 decisions
+
+- R01の代表fixtureは`graph:r01-spin-chain-3-v1`とする。nodeは`spin:0`、
+  `spin:1`、`spin:2`、edgeは`spin:0--spin:1`（J=1.0）と
+  `spin:1--spin:2`（J=-0.5）、local fieldはh=(0.25, 0.0, -0.25)の
+  小規模Ising interactionとする。S02のassay/QUBO fixtureとは別identityにする。
+- Graph DTOはnode ID、edge ID、端点順、方向性、重み、重み単位、symmetry policy、
+  source/checksum/licenseを保持する。InteractionLawはedge weightとlocal fieldの
+  意味を所有し、Graph DTO自体はHamiltonianやoptimization costを意味しない。
+- Projection DTOは明示的に`kind: ising-hamiltonian`、variable/index map、
+  `H(s)=sum(J_ij s_i s_j)+sum(h_i s_i)+offset`、scale、offset、decode policy、
+  source graph identity、projection revisionを保持する。Hamiltonianの物理energyと
+  optimization costは別kindとして扱い、暗黙変換しない。
+- 正常系は全2^3 spin assignmentでedge対称性、energy、decodeを照合し、Q01の
+  `SQXA`/runtime loaderへ渡せる有限projectionとして表現する。数値toleranceは
+  fixtureのdecimal係数に対する`1e-12`、index/identity/hashは完全一致とする。
+- 拒否診断は`DISCRETE_GRAPH_AS_HAMILTONIAN`（projection指定なし）、
+  `DISCRETE_DUPLICATE_EDGE`、`DISCRETE_INDEX_MISMATCH`、
+  `DISCRETE_SYMMETRY_MISMATCH`、`DISCRETE_UNSUPPORTED_TARGET`を固定する。
+  拒否時はpartial Hamiltonian、SQXA、runtime inputを生成しない。
+- Phase 1のテストは`tests/test_liss_0533_discrete_interaction_red.py`に置く。
+  fixed in-memory fixtureのみを使用し、network、provider SDK、実機QPU、外部graph
+  libraryは使用しない。新規dependency採用判断は不要である。
+- Source/API boundaryはGraph -> validated InteractionLaw -> explicit Hamiltonian
+  Projection -> Q01 artifact/runtime inputとし、graph adapterは形式変換のみを担当する。
+  graphのsemantic authorityとHamiltonian projectionのauthorityを同一DTOへ統合しない。
+
+## Phase 0 acceptance record
+
+- Approval: `WP-0150 / LISS-0533 Phase 0 acceptance 承認`.
+- R01 fixture identity、schema/API boundary、energy/decode tolerance、diagnostics、
+  test placement、依存判断を確定した。次はPhase 1 Redである。
