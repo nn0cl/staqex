@@ -132,6 +132,19 @@ def _event_key(event: WorkflowEvent) -> tuple[str, int, int]:
     return (event.job_id, event.plan_revision, event.sequence)
 
 
+def _event_revision_is_stale(plan: WorkflowPlan, event: WorkflowEvent) -> bool:
+    return event.plan_revision < plan.identity.revision
+
+
+def _completed_plan(plan: WorkflowPlan, key: tuple[str, int, int]) -> WorkflowPlan:
+    return WorkflowPlan(
+        identity=plan.identity,
+        state="completed",
+        approval=plan.approval,
+        processed_event_keys=plan.processed_event_keys + (key,),
+    )
+
+
 def _event_rejected(plan: WorkflowPlan, code: str, message: str) -> EventApplicationResult:
     return EventApplicationResult(
         status="rejected",
@@ -150,7 +163,7 @@ def apply_event(plan: WorkflowPlan, event: WorkflowEvent) -> EventApplicationRes
             "WORKFLOW_DUPLICATE_EVENT",
             "the event has already been applied to this Plan",
         )
-    if event.plan_revision < plan.identity.revision:
+    if _event_revision_is_stale(plan, event):
         return _event_rejected(
             plan,
             "WORKFLOW_STALE_RESULT",
@@ -170,12 +183,7 @@ def apply_event(plan: WorkflowPlan, event: WorkflowEvent) -> EventApplicationRes
         )
     return EventApplicationResult(
         status="completed",
-        plan=WorkflowPlan(
-            identity=plan.identity,
-            state="completed",
-            approval=plan.approval,
-            processed_event_keys=plan.processed_event_keys + (key,),
-        ),
+        plan=_completed_plan(plan, key),
     )
 
 

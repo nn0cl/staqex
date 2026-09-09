@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0521 |
-| Status | Phase 2 Green complete; Phase 3 pending |
-| Phase | phase-2-green |
+| Status | Phase 3 Refactor complete; final review pending |
+| Phase | phase-3-refactor |
 | Type / priority | feature / P0 |
 | Initial/current size | M / L — WP記載の境界複雑性により再分類 |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -59,3 +59,7 @@ Unit B Phase 2 Green record: `compiler/staqex/workflow_lifecycle.py` にimmutabl
 processed event key、`apply_event`、`request_fallback`を追加した。duplicate/late event、
 timeout/cancel race、暗黙fallbackをdiagnostic付きで拒否し、Red suiteは変更していない。
 次の承認対象はUnit BのPhase 3 Refactorである。
+
+Unit B Phase 3 Refactor record: event revision判定とcompleted Plan構築をpure helperへ
+抽出し、duplicate/stale/race/fallbackの診断と既存assertionを維持した。次の承認対象は
+Unit Bの最終レビューである。
