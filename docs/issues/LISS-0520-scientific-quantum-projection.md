@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0520 |
-| Status | Phase 1 Red complete; Phase 2 pending |
-| Phase | phase-1-red |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Type / priority | feature / P1 |
 | Initial/current size | M / L — WP記載の境界複雑性により再分類 |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -24,3 +24,9 @@ Phase 1 Red record: `tests/test_liss_0520_sqxa_runtime_loader_red.py` に、`.sq
 content hash改ざん、未知schema、provider-neutral Runtime loader、unsupported runtimeの
 fail-closedを検証する5契約を追加した。production codeは変更していない。次は、Red確認後の
 Phase 2 Green / Implementationである。
+
+Phase 2 Green record: `compiler/staqex/quantum_artifact.py` に最小の`.sqxa` writer/readerと
+provider-neutral Runtime loaderを追加した。readerはschemaとcontent hashを検証し、loaderは
+`local-simulator`のみを受理してunsupported runtimeをfallbackなしで拒否する。Red suiteは
+変更していない。AST、直接スモーク、差分、文書ライフサイクル検査は通過した。次は
+`LISS-0520 Phase 3 Refactor 承認`である。
