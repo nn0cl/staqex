@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 0 accepted; Phase 1 pending |
-| Phase | phase-0-accepted |
+| Status | Phase 1 Red complete; Phase 2 pending |
+| Phase | phase-1-red |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0533](../issues/LISS-0533-discrete-interaction-profile.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), R01 |
 | Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0533 Phase 1 Red |
+| Current Next Issue | LISS-0533 Phase 2 Green / Implementation |
 
 ## Scope
 
@@ -97,3 +97,12 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - Approval: `WP-0150 / LISS-0533 Phase 0 acceptance 承認`.
 - R01 fixture identity、schema/API boundary、energy/decode tolerance、diagnostics、
   test placement、依存判断を確定した。次はPhase 1 Redである。
+
+## Phase 1 Red record
+
+- Added `tests/test_liss_0533_discrete_interaction_red.py` with five contracts
+  for explicit graph/law projection, energy/decode behavior, graph-as-
+  Hamiltonian rejection, duplicate-edge rejection, index mismatch, and
+  unsupported-target rejection.
+- Production code remains unchanged. The suite is intentionally Red until the
+  separately approved Phase 2 minimum implementation.

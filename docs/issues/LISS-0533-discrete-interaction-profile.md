@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0533 |
-| Status | Phase 0 accepted; Phase 1 pending |
-| Phase | phase-0-accepted |
+| Status | Phase 1 Red complete; Phase 2 pending |
+| Phase | phase-1-red |
 | Type / priority | feature / P1 |
 | Initial/current size | M / M |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -25,3 +25,8 @@ chainを代表fixtureとし、Graph、InteractionLaw、明示Hamiltonian Project
 全2^3 assignmentのenergy/decode、edge symmetry、Q01有限projection接続を検証し、graphの
 Hamiltonian暗黙化、duplicate edge、index/symmetry不一致、unsupported targetは診断付きで
 fail-closedにする。次は`LISS-0533 Phase 1 Red`である。
+
+Phase 1 Red record: `tests/test_liss_0533_discrete_interaction_red.py` に、明示graph/law
+projection、energy/decode、graph-as-Hamiltonian、duplicate edge、index mismatch、unsupported
+targetの5契約を追加した。production codeは変更していない。次は
+`LISS-0533 Phase 2 Green / Implementation`である。
