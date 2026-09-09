@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | proposed |
-| Phase | phase-0-design |
+| Status | Phase 1 Red complete; Phase 2 pending |
+| Phase | phase-1-red |
 | Size initial/current | M / L — source/IR/consumerまたは複数状態境界のため設計reviewで再分類 |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0520](../issues/LISS-0520-scientific-quantum-projection.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), Q01 |
 | Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0520 Phase 0 acceptance/profile review only |
+| Current Next Issue | LISS-0520 Phase 2 Green / Implementation |
 
 ## Scope
 
@@ -69,5 +69,14 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 
 - **Unit A / Q01-a / M**: QUBO/Isingの変数順・scale・offset・decodeをpure変換として固定し、全小割当energy一致を検証。回路/Jobは除外。
 - **Unit B / Q01-b / M**: Aの固定problemをsource Hamiltonian/encoding/Realizeへ接続し、supported結果と非unitary/overflow拒否を検証。A承認後のみ。
+
+## Phase 1 Red record
+
+- Added `tests/test_liss_0520_sqxa_runtime_loader_red.py` with five contracts
+  covering `.sqxa` round-trip identity, tamper rejection, unknown-schema
+  rejection, provider-neutral runtime loading, and unsupported-runtime
+  fail-closed behavior.
+- Production code remains unchanged. The suite is intentionally Red until
+  the separately approved Phase 2 minimum implementation.
 
 親scenarioの既存期待を狭めずこの二つへ配分する。各unitは別のPhase 1 test review、Phase 2/Implementation、Phase 3承認を要する。WP全体の一括実装依頼は禁止。両unitの証拠がそろうまでWPはdoneにしない。
