@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0521 |
-| Status | Phase 1 Red complete; Phase 2 pending |
-| Phase | phase-1-red |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Type / priority | feature / P0 |
 | Initial/current size | M / L — WP記載の境界複雑性により再分類 |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -34,3 +34,9 @@ Red ready、Unit BはUnit A受入後の別承認待ちである。
 Phase 1 Red record: `tests/test_workflow_lifecycle_unit_a_red.py` にUnit Aの5つの
 失敗契約を追加した。production code、Unit B、scheduler、provider接続は変更していない。
 次の承認対象はUnit AのPhase 2 Green / Implementationである。
+
+Phase 2 Green record: `compiler/staqex/workflow_lifecycle.py` にUnit Aのimmutable
+identity/approval/Plan/Job result DTOとpure adoption transitionを追加した。期限・取消・
+stale/identity不一致・未承認Planをfail-closedにし、Red suiteは変更していない。Unit B、
+scheduler、provider retry、actuationは未実装である。
+次の承認対象はUnit AのPhase 3 Refactorである。

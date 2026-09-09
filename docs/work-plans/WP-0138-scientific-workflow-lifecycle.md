@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 1 Red complete; Phase 2 pending |
-| Phase | phase-1-red |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Size initial/current | M / L — source/IR/consumerまたは複数状態境界のため設計reviewで再分類 |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0521](../issues/LISS-0521-scientific-workflow-lifecycle.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), W01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | LISS-0521 Unit A Phase 2 Green / Implementation approval |
+| Current Next Issue | LISS-0521 Unit A Phase 3 Refactor approval |
 
 ## Scope
 
@@ -116,3 +116,13 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
   expiry/cancellation rejection, stale or mismatched identity rejection, and
   separation of Job completion from Plan adoption.
 - Unit B tests and all production implementation remain out of this phase.
+
+## Phase 2 Green record — Unit A
+
+- Added `compiler/staqex/workflow_lifecycle.py` with immutable identity,
+  approval, plan, Job result, diagnostic, and transition result value objects.
+- Implemented only the Unit A adoption boundary: current identity, completed
+  Job, approval expiry/cancellation, and non-approved Plan rejection.
+- The reviewed Red suite was not changed. Unit B event handling, scheduler,
+  provider retry, and external actuation remain out of scope.
+- Direct Green smoke checks, syntax, diff, and document lifecycle checks passed.
