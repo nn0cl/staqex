@@ -10,7 +10,7 @@
 | Implementation permission | none; tests/production/provider/branch/commit/PR/mergeは今回実行しない |
 | Depends on | none for design; child implementation uses explicit dependency DAG below |
 | Inventory count | 28 total records: this parent WP/LISS pair plus 27 child WP/LISS pairs |
-| Current Next Issue | WP-0151/LISS-0534 Unit A Phase 1 Red; then WP-0139/LISS-0522 Phase 1 Red; QUBO is WP-0137/LISS-0520 |
+| Current Next Issue | WP-0151/LISS-0534 Unit B Phase 1 Red; then WP-0139/LISS-0522 Phase 1 Red; QUBO is WP-0137/LISS-0520 |
 | Review | [independent correction review record](../collaboration/reviews/2026-09-08-scientific-workflow-design-review.md) |
 
 ## [DESIGN CHECK]

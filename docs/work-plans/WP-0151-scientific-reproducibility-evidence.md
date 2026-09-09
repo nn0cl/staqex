@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 3 Refactor complete; final review pending |
-| Phase | phase-3-refactor |
+| Status | Unit A complete; Unit B pending |
+| Phase | unit-a-complete |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0534](../issues/LISS-0534-scientific-reproducibility-evidence.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), E01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | LISS-0534 Unit A final review approval |
+| Current Next Issue | LISS-0534 Unit B Phase 1 Red approval |
 
 ## Scope
 
@@ -126,3 +126,9 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - Preserved manifest mismatch, hash mismatch, output mismatch, numeric
   tolerance, and reproduced-result behavior.
 - Direct checks, syntax, diff, and document lifecycle checks passed.
+
+## Unit A final review record
+
+Unit A final review approved on 2026-09-10. Manifest/replay identity, hash
+change rejection, tolerance handling, and explicit inconclusive outcomes are
+complete. Unit B claim/evaluation/cost evidence remains open. See [Review Summary](../collaboration/reviews/2026-09-10-liss-0534-unit-a-final-review.md).
