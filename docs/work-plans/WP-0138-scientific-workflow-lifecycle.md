@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | proposed |
-| Phase | phase-0-design |
+| Status | phase-0-accepted; Phase 1 ready for Unit A |
+| Phase | phase-0-accepted |
 | Size initial/current | M / L — source/IR/consumerまたは複数状態境界のため設計reviewで再分類 |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0521](../issues/LISS-0521-scientific-workflow-lifecycle.md) |
@@ -12,8 +12,8 @@
 | Owner / route | Sol: independent design correction and coordination; Luna: separately approved bounded phases |
 | Architecture | ADR 0217-A/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), W01 |
-| Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0521 Phase 0 acceptance/profile review only |
+| Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
+| Current Next Issue | LISS-0521 Unit A Phase 1 Red approval |
 
 ## Scope
 
@@ -32,6 +32,43 @@ Phase 0でfixture identity、schema/source form/API boundary、tolerance/期待d
 数式sourceを変更する場合はparser→typed HIR→Semantic IR→consumer→Resultを検証する。
 Host-only契約ではport/APIの意味保存を検証し、source対応済みと主張しない。
 外部service不要のfake/固定fixtureを使う。実測profileの検証は権利確認済みsnapshotを使用する。
+
+## Phase 0 decisions
+
+- W01はWorkflowPlan/Jobの採用状態を管理するprovider-neutralな契約であり、Jobを
+  実行するschedulerやprovider retryを作るタスクではない。`Job status=completed`と
+  `Plan result=adoptable`は別の状態として保持する。
+- 固定fixtureは`plan:s02-round-001`、`snapshot:s02-round-001`、
+  `approval:s02-policy-v1`、`job:s02-fake-001`とし、fake clockの時刻を
+  `2026-09-09T00:00:00Z`から開始する。Plan identityはplan ID、snapshot ID、
+  content hash、revisionで構成し、Job resultはplan identityを反映する。
+- Unit Aのpure state transitionは、正常完了、approval期限内の採用、期限切れapproval、
+  取消済みapproval、snapshot/plan hash不一致、stale resultを対象とする。状態は
+  `draft -> awaiting-approval -> approved -> running -> completed`を基本とし、
+  expired/rejected/stale/cancelledは採用不能な終端または拒否状態とする。
+- Unit Bのfake event/clock接続は、duplicate event、late event、timeout/cancel race、
+  Job完了後のapproval取消、別lane fallbackを対象とする。event dedup keyはjob ID、
+  event sequence、plan revisionの組で固定し、同一eventの再受信は状態を二重適用しない。
+- approvalはplan content hash、snapshot ID、policy revision、approval ID、期限に
+  bindする。期限切れ、取消、identity変更、古いrevisionの結果は採用せず、
+  `WORKFLOW_APPROVAL_EXPIRED`、`WORKFLOW_APPROVAL_CANCELLED`、
+  `WORKFLOW_STALE_RESULT`、`WORKFLOW_PLAN_IDENTITY_MISMATCH`で診断する。
+- timeout/cancel raceは先着順の隠れた実装にせず、fake clockとevent sequenceを証跡に
+  残す。安全制約を緩和する自動fallbackは許可せず、fallbackは別laneの新Plan/Job
+  として明示する。旧Planを無条件に再利用しない。
+- Port境界は`WorkflowClockPort`、`WorkflowEventPort`、`JobStatusPort`、
+  `ApprovalStatePort`とする。Domain/UseCaseがidentity、期限、dedup、採用可否、
+  fallback policyを所有し、adapterはclock/event/job/approvalの入出力変換のみを担う。
+- 期待diagnosticは`WORKFLOW_APPROVAL_EXPIRED`、`WORKFLOW_APPROVAL_CANCELLED`、
+  `WORKFLOW_STALE_RESULT`、`WORKFLOW_PLAN_IDENTITY_MISMATCH`、
+  `WORKFLOW_DUPLICATE_EVENT`、`WORKFLOW_TIMEOUT_CANCEL_RACE`、
+  `WORKFLOW_FALLBACK_REQUIRES_NEW_PLAN`とする。identity/hash/sequenceは完全一致、
+  時刻比較はUTC instantで行い、実時間sleepや外部eventを受入条件にしない。
+- Unit AのPhase 1 testsは`tests/test_workflow_lifecycle_unit_a_red.py`、Unit Bは
+  `tests/test_workflow_lifecycle_unit_b_red.py`に分離する。Phase 1ではUnit Aのテスト
+  のみを作成し、Unit BはUnit Aのreview後に別のPhase 1承認を得る。
+- Process lesson applied: Job/Planの実行と採用、event状態と人間レビューの証跡を別々に
+  観測可能にする。完成した小さなfixtureをWorkflow全体の完成とは扱わない。
 
 ## Risk / stop conditions
 

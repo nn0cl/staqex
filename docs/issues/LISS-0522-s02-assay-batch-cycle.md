@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0522 |
-| Status | proposed |
-| Phase | phase-0-design |
+| Status | phase-0-accepted; Phase 1 blocked by dependencies |
+| Phase | phase-0-accepted |
 | Type / priority | feature / P0 |
 | Initial/current size | M / M |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -15,7 +15,19 @@
 | Related branch | none — branch operations forbidden in this design task |
 | Work plan / canonical planning record | [WP-0139](../work-plans/WP-0139-s02-assay-batch-cycle.md), AIP-WP-0139-2026-09-08-001 |
 | Acceptance notes | D04; [acceptance proposal](../specs/staqex-scientific-workflow-acceptance.md) |
-| Adjudicator decisions | ADR 0217/acceptance review; profile/technology if needed; distinct Phase 1, Phase 2/Implementation, Phase 3 approvals |
+| Adjudicator decisions | ADR 0217/acceptance review; D04 Phase 0 acceptance approved 2026-09-09; profile/technology if needed; distinct Phase 1, Phase 2/Implementation, Phase 3 approvals |
 
 Scope、Out of scope、検証、risk、完了条件、Luna phaseは上記WPを単一計画元とする。
 このIssueは新規提案で、既存完了Issueを再開しない。承認済みscope/phaseの継承はない。
+
+Phase 0 decision record: D04はS02のclassical closed loopであり、QUBOではない。
+`assay:s02-round-001`、`candidates:s02-fixture-v1`、`model:s02-v1`、
+`policy:s02-batch-v1`を固定し、candidate IDs、selection reason、prediction/uncertainty、
+constraint verdict、cost、provenance、approval hash、deadlineをproposalに保持する。
+round-002の未来labelはproposal生成時に不可視とし、後続実測は新snapshotへ取り込む。
+未来label混入、stale approval、candidate状態変更、重複round、provenance欠落を
+diagnostic付きでfail-closedにする。QUBOはWP-0137/LISS-0520の責務である。
+
+Phase 0 acceptance outcome: profile/schema/API boundary、positive/negative fixture、
+port ownership、diagnostic、toleranceを確定した。ただしWP-0138/LISS-0521と
+WP-0151/LISS-0534が未完了のため、Phase 1 Redは依存完了または明示waiverまで開始しない。
