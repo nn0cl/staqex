@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | phase-0-accepted; Phase 1 ready for Unit A |
-| Phase | phase-0-accepted |
+| Status | Phase 1 Red complete; Phase 2 pending |
+| Phase | phase-1-red |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0534](../issues/LISS-0534-scientific-reproducibility-evidence.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), E01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | LISS-0534 Unit A Phase 1 Red approval |
+| Current Next Issue | LISS-0534 Unit A Phase 2 Green / Implementation approval |
 
 ## Scope
 
@@ -68,6 +68,14 @@ Host-only契約ではport/APIの意味保存を検証し、source対応済みと
   Unit Aの受入後に別承認する。
 - Process lessons applied: 完了した小profileを分野全体のcoverageと混同せず、成功だけでなく
   rejection/failureと観測可能なreport metadataを同じ証拠境界で扱う。
+
+## Phase 1 Red record — Unit A
+
+- Added only `tests/test_reproducibility_manifest_red.py`.
+- The suite fixes same-manifest replay, hash/identity change rejection, and
+  numeric tolerance mismatch behavior.
+- Unit B claim/evaluation/cost tests and all production implementation remain
+  out of this phase.
 
 ## Risk / stop conditions
 

@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0534 |
-| Status | phase-0-accepted; Phase 1 ready for Unit A |
-| Phase | phase-0-accepted |
+| Status | Phase 1 Red complete; Phase 2 pending |
+| Phase | phase-1-red |
 | Type / priority | feature / P0 |
 | Initial/current size | M / M |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -30,3 +30,7 @@ Unit A/Bのtestsとphase approvalは分離する。
 
 Phase 0 acceptance outcome: schema、port ownership、diagnostic、tolerance、Unit分割を
 確定した。Unit AはPhase 1 Red ready、Unit BはUnit A受入後の別承認待ちである。
+
+Phase 1 Red record: `tests/test_reproducibility_manifest_red.py` にsame-manifest replay、
+hash/identity変更、numeric tolerance mismatchの4つの失敗契約を追加した。production codeと
+Unit Bは変更していない。次の承認対象はUnit AのPhase 2 Green / Implementationである。
