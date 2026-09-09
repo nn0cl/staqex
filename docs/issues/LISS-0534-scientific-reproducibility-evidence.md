@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0534 |
-| Status | Unit A complete; Unit B pending |
-| Phase | unit-a-complete |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Type / priority | feature / P0 |
 | Initial/current size | M / M |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -53,3 +53,8 @@ manifest/hash mismatch、output mismatch、numeric tolerance、reproducedの挙�
 Unit B Phase 1 Red record: `tests/test_reproducibility_claims_red.py` にreproduced claim、
 heldout再利用、分母bias、費用欠落、prospective evidence未取得の5つの失敗契約を追加した。
 Unit A実装は変更していない。次の承認対象はUnit BのPhase 2 Green / Implementationである。
+
+Unit B Phase 2 Green record: `compiler/staqex/reproducibility_evidence.py` にCostBreakdown、
+ClaimInput/Result、`evaluate_claim`を追加した。heldout再利用、分母bias、費用欠落、
+prospective evidence未取得は`not-evaluated`、閾値超過は`falsified`、完全な評価は
+`reproduced`として返す。Red suiteは変更していない。次の承認対象はUnit BのPhase 3 Refactorである。

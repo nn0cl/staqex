@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Unit A complete; Unit B pending |
-| Phase | unit-a-complete |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0534](../issues/LISS-0534-scientific-reproducibility-evidence.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), E01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | LISS-0534 Unit B Phase 1 Red approval |
+| Current Next Issue | LISS-0534 Unit B Phase 3 Refactor approval |
 
 ## Scope
 
@@ -140,3 +140,13 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 Unit A final review approved on 2026-09-10. Manifest/replay identity, hash
 change rejection, tolerance handling, and explicit inconclusive outcomes are
 complete. Unit B claim/evaluation/cost evidence remains open. See [Review Summary](../collaboration/reviews/2026-09-10-liss-0534-unit-a-final-review.md).
+
+## Phase 2 Green record — Unit B
+
+- Added `CostBreakdown`, `ClaimInput`, `ClaimResult`, and `evaluate_claim` to
+  `compiler/staqex/reproducibility_evidence.py`.
+- Implemented heldout reuse, denominator bias, missing cost, and unavailable
+  prospective evidence as `not-evaluated`; metric threshold failure is
+  `falsified` and a complete passing evaluation is `reproduced`.
+- The reviewed Unit B Red suite was not changed.
+- Direct Green smoke checks, syntax, diff, and document lifecycle checks passed.
