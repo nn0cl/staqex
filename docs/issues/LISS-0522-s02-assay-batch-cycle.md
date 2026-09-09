@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0522 |
-| Status | Phase 1 Red complete; Phase 2 pending |
-| Phase | phase-1-red |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Type / priority | feature / P0 |
 | Initial/current size | M / M |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -36,3 +36,8 @@ Phase 1 Red record: `tests/test_s02_assay_batch_cycle_red.py` にproposalの選�
 制約・費用・承認対象、未来label、stale approval、stock変更、後続roundの新snapshot化を
 固定する5つの失敗契約を追加した。production codeは変更していない。次の承認対象は
 LISS-0522 Phase 2 Green / Implementationである。
+
+Phase 2 Green record: `compiler/staqex/s02_assay_batch_cycle.py` にimmutable snapshot、
+approval-bound proposal、deterministic content hash、follow-up snapshot ingestionを追加した。
+future label、stale approval、stock変更をfail-closedにし、prospective evidence未取得は明示的に
+`unavailable`とする。Red suiteは変更していない。次の承認対象はPhase 3 Refactorである。

@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 1 Red complete; Phase 2 pending |
-| Phase | phase-1-red |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0522](../issues/LISS-0522-s02-assay-batch-cycle.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), D04 |
 | Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0522 Phase 2 Green / Implementation approval |
+| Current Next Issue | LISS-0522 Phase 3 Refactor approval |
 
 ## Scope
 
@@ -103,3 +103,15 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - Estimated tokens range/midpoint/metric: N/A — fixture/API/technology review前で信頼できる見積根拠なし。
 - Basis/assumptions/confidence: 依存と拒否境界に基づく分割、既存port再利用を仮定、medium。
 - Revises: none; WP-0131親計画から新規分割。以前の承認済み見積は変更しない。
+
+## Phase 2 Green record
+
+- Added `compiler/staqex/s02_assay_batch_cycle.py` with immutable assay
+  snapshots, approval-bound batch proposals, deterministic proposal hashes,
+  and follow-up snapshot ingestion.
+- Implemented future-label rejection, stale-approval rejection, candidate
+  stock-change rejection, explicit prospective-evidence status, and exact
+  follow-up revision advancement.
+- The reviewed D04 Red suite was not changed. No laboratory dispatch, provider,
+  QPU, or scheduler integration was added.
+- Direct Green smoke checks, syntax, diff, and document lifecycle checks passed.
