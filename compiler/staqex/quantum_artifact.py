@@ -60,24 +60,30 @@ def _document(artifact: SqxaArtifact) -> dict[str, Any]:
     return {"payload": payload, "content_hash": _content_hash(payload)}
 
 
+def _validate_schema(schema_version: Any) -> None:
+    if schema_version != _SUPPORTED_SCHEMA:
+        raise SqxaValidationError(f"unsupported schema: {schema_version}")
+
+
 def write_sqxa(artifact: SqxaArtifact, path: str | Path) -> None:
     """Write one self-contained, content-addressed SQXA artifact."""
 
-    if artifact.schema_version != _SUPPORTED_SCHEMA:
-        raise SqxaValidationError(
-            f"unsupported schema: {artifact.schema_version}"
-        )
+    _validate_schema(artifact.schema_version)
     Path(path).write_text(
         _canonical_json(_document(artifact)) + "\n",
         encoding="utf-8",
     )
 
 
+def _restore_encoding(payload: Mapping[str, Any]) -> dict[str, Any]:
+    encoding = dict(payload["encoding"])
+    if isinstance(encoding.get("bit_order"), list):
+        encoding["bit_order"] = tuple(encoding["bit_order"])
+    return encoding
+
+
 def _artifact_from_payload(payload: Mapping[str, Any]) -> SqxaArtifact:
     try:
-        encoding = dict(payload["encoding"])
-        if isinstance(encoding.get("bit_order"), list):
-            encoding["bit_order"] = tuple(encoding["bit_order"])
         return SqxaArtifact(
             schema_version=str(payload["schema_version"]),
             artifact_id=str(payload["artifact_id"]),
@@ -88,7 +94,7 @@ def _artifact_from_payload(payload: Mapping[str, Any]) -> SqxaArtifact:
                 for left, right, coefficient in payload["qubo_terms"]
             ),
             offset=float(payload["offset"]),
-            encoding=encoding,
+            encoding=_restore_encoding(payload),
             runtime=dict(payload["runtime"]),
             source_hash=str(payload["source_hash"]),
         )
@@ -96,21 +102,31 @@ def _artifact_from_payload(payload: Mapping[str, Any]) -> SqxaArtifact:
         raise SqxaValidationError("invalid SQXA payload") from error
 
 
-def read_sqxa(path: str | Path) -> SqxaArtifact:
-    """Read and validate an SQXA artifact before exposing its payload."""
-
+def _read_document(path: str | Path) -> tuple[Mapping[str, Any], Mapping[str, Any]]:
     try:
         document = json.loads(Path(path).read_text(encoding="utf-8"))
         payload = document["payload"]
-        schema_version = payload["schema_version"]
+        if not isinstance(document, Mapping) or not isinstance(payload, Mapping):
+            raise TypeError("SQXA document and payload must be objects")
+        return document, payload
     except (OSError, json.JSONDecodeError, KeyError, TypeError) as error:
         raise SqxaValidationError("invalid SQXA document") from error
 
-    if schema_version != _SUPPORTED_SCHEMA:
-        raise SqxaValidationError(f"unsupported schema: {schema_version}")
+
+def read_sqxa(path: str | Path) -> SqxaArtifact:
+    """Read and validate an SQXA artifact before exposing its payload."""
+
+    document, payload = _read_document(path)
+    _validate_schema(payload.get("schema_version"))
     if document.get("content_hash") != _content_hash(payload):
         raise SqxaValidationError("content hash mismatch")
     return _artifact_from_payload(payload)
+
+
+def _runtime_capability(runtime_kind: Any) -> str:
+    if runtime_kind != _SUPPORTED_RUNTIME:
+        raise RuntimeLoadError(f"unsupported runtime: {runtime_kind}")
+    return "finite-binary-projection"
 
 
 def load_runtime(path: str | Path) -> RuntimeInput:
@@ -118,11 +134,10 @@ def load_runtime(path: str | Path) -> RuntimeInput:
 
     artifact = read_sqxa(path)
     runtime_kind = artifact.runtime.get("kind")
-    if runtime_kind != _SUPPORTED_RUNTIME:
-        raise RuntimeLoadError(f"unsupported runtime: {runtime_kind}")
+    capability = _runtime_capability(runtime_kind)
     return RuntimeInput(
         status="ready",
         artifact=artifact,
         runtime_kind=_SUPPORTED_RUNTIME,
-        capability="finite-binary-projection",
+        capability=capability,
     )

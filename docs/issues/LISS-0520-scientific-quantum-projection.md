@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0520 |
-| Status | Phase 2 Green complete; Phase 3 pending |
-| Phase | phase-2-green |
+| Status | Phase 3 Refactor complete; final review pending |
+| Phase | phase-3-refactor |
 | Type / priority | feature / P1 |
 | Initial/current size | M / L — WP記載の境界複雑性により再分類 |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -30,3 +30,8 @@ provider-neutral Runtime loaderを追加した。readerはschemaとcontent hash�
 `local-simulator`のみを受理してunsupported runtimeをfallbackなしで拒否する。Red suiteは
 変更していない。AST、直接スモーク、差分、文書ライフサイクル検査は通過した。次は
 `LISS-0520 Phase 3 Refactor 承認`である。
+
+Phase 3 Refactor record: schema検証、document読込、encoding復元、runtime capability選択を
+名前付きhelperへ分離した。公開API、serialized payload、診断、accepted runtime behaviorは
+変更していない。AST、挙動維持スモーク、差分、文書ライフサイクル検査は通過した。次は
+`LISS-0520 Phase 3 最終レビュー 承認`である。
