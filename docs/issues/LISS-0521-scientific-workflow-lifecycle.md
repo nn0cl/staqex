@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0521 |
-| Status | Unit A complete; Unit B pending |
-| Phase | unit-a-complete |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Type / priority | feature / P0 |
 | Initial/current size | M / L — WP記載の境界複雑性により再分類 |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -54,3 +54,8 @@ event dedup、late event、timeout/cancel race、fallbackは未完了であり�
 Unit B Phase 1 Red record: `tests/test_workflow_lifecycle_unit_b_red.py` にduplicate/
 late event、timeout/cancel race、fallback requires new Planの4つの失敗契約を追加した。
 production codeは変更していない。次の承認対象はUnit BのPhase 2 Green / Implementationである。
+
+Unit B Phase 2 Green record: `compiler/staqex/workflow_lifecycle.py` にimmutableな
+processed event key、`apply_event`、`request_fallback`を追加した。duplicate/late event、
+timeout/cancel race、暗黙fallbackをdiagnostic付きで拒否し、Red suiteは変更していない。
+次の承認対象はUnit BのPhase 3 Refactorである。

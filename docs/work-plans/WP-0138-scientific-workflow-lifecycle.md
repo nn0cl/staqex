@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Unit A complete; Unit B pending |
-| Phase | unit-a-complete |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Size initial/current | M / L — source/IR/consumerまたは複数状態境界のため設計reviewで再分類 |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0521](../issues/LISS-0521-scientific-workflow-lifecycle.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), W01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | LISS-0521 Unit B Phase 1 Red approval |
+| Current Next Issue | LISS-0521 Unit B Phase 3 Refactor approval |
 
 ## Scope
 
@@ -149,3 +149,13 @@ Unit A final review approved on 2026-09-09. Identity binding, approval expiry/
 cancellation, stale result rejection, and separation of Job completion from Plan
 adoption are complete. Unit B event handling and explicit fallback remain open;
 see [Review Summary](../collaboration/reviews/2026-09-09-liss-0521-unit-a-final-review.md).
+
+## Unit B Phase 2 Green record
+
+- Added `WorkflowEvent`, immutable processed-event keys, `apply_event`, and
+  `request_fallback` to `compiler/staqex/workflow_lifecycle.py`.
+- Implemented only duplicate suppression, stale revision rejection,
+  timeout/cancel race diagnostics, and explicit new-Plan fallback rejection.
+- The reviewed Unit B Red suite was not changed. No scheduler, provider retry,
+  or external event transport was added.
+- Direct Green smoke checks, syntax, diff, and document lifecycle checks passed.

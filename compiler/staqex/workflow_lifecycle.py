@@ -27,6 +27,7 @@ class WorkflowPlan:
     identity: PlanIdentity
     state: str
     approval: ApprovalBinding
+    processed_event_keys: tuple[tuple[str, int, int], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -46,6 +47,21 @@ class Diagnostic:
 class TransitionResult:
     status: str
     plan_identity: PlanIdentity
+    diagnostic: Diagnostic | None = None
+
+
+@dataclass(frozen=True)
+class WorkflowEvent:
+    job_id: str
+    plan_revision: int
+    sequence: int
+    kind: str
+
+
+@dataclass(frozen=True)
+class EventApplicationResult:
+    status: str
+    plan: WorkflowPlan
     diagnostic: Diagnostic | None = None
 
 
@@ -110,3 +126,64 @@ def apply_job_result(
             "completed Job does not imply an approved Plan",
         )
     return TransitionResult(status="accepted-for-plan", plan_identity=plan.identity)
+
+
+def _event_key(event: WorkflowEvent) -> tuple[str, int, int]:
+    return (event.job_id, event.plan_revision, event.sequence)
+
+
+def _event_rejected(plan: WorkflowPlan, code: str, message: str) -> EventApplicationResult:
+    return EventApplicationResult(
+        status="rejected",
+        plan=plan,
+        diagnostic=Diagnostic(code=code, message=message),
+    )
+
+
+def apply_event(plan: WorkflowPlan, event: WorkflowEvent) -> EventApplicationResult:
+    """Apply one provider-neutral event without reapplying duplicate events."""
+
+    key = _event_key(event)
+    if key in plan.processed_event_keys:
+        return _event_rejected(
+            plan,
+            "WORKFLOW_DUPLICATE_EVENT",
+            "the event has already been applied to this Plan",
+        )
+    if event.plan_revision < plan.identity.revision:
+        return _event_rejected(
+            plan,
+            "WORKFLOW_STALE_RESULT",
+            "the event belongs to an older Plan revision",
+        )
+    if event.kind == "timeout-after-cancel":
+        return _event_rejected(
+            plan,
+            "WORKFLOW_TIMEOUT_CANCEL_RACE",
+            "timeout and cancellation reached the same Job boundary",
+        )
+    if event.kind != "job-completed":
+        return _event_rejected(
+            plan,
+            "WORKFLOW_STALE_RESULT",
+            "event kind is not adoptable by Unit B",
+        )
+    return EventApplicationResult(
+        status="completed",
+        plan=WorkflowPlan(
+            identity=plan.identity,
+            state="completed",
+            approval=plan.approval,
+            processed_event_keys=plan.processed_event_keys + (key,),
+        ),
+    )
+
+
+def request_fallback(plan: WorkflowPlan, *, reason: str) -> TransitionResult:
+    """Reject implicit fallback; a fallback must be a separately approved Plan."""
+
+    return _rejected(
+        plan,
+        "WORKFLOW_FALLBACK_REQUIRES_NEW_PLAN",
+        f"fallback reason {reason!r} requires a new Plan and approval",
+    )
