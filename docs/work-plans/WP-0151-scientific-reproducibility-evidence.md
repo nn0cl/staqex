@@ -127,6 +127,14 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
   tolerance, and reproduced-result behavior.
 - Direct checks, syntax, diff, and document lifecycle checks passed.
 
+## Phase 1 Red record — Unit B
+
+- Added only `tests/test_reproducibility_claims_red.py`.
+- The suite fixes the observable Unit B contract for reproduced claims,
+  heldout reuse rejection, denominator bias, missing costs, and unavailable
+  prospective evidence.
+- Production implementation remains pending until Unit B Phase 2 approval.
+
 ## Unit A final review record
 
 Unit A final review approved on 2026-09-10. Manifest/replay identity, hash

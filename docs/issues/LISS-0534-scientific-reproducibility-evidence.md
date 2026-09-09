@@ -49,3 +49,7 @@ tolerance、不一致のinconclusive扱いを確認し、Unit Aを完了とし�
 Phase 3 Refactor record: hash比較とinconclusive結果構築をpure helperへ抽出し、
 manifest/hash mismatch、output mismatch、numeric tolerance、reproducedの挙動を維持した。
 次の承認対象はUnit Aの最終レビューである。
+
+Unit B Phase 1 Red record: `tests/test_reproducibility_claims_red.py` にreproduced claim、
+heldout再利用、分母bias、費用欠落、prospective evidence未取得の5つの失敗契約を追加した。
+Unit A実装は変更していない。次の承認対象はUnit BのPhase 2 Green / Implementationである。
