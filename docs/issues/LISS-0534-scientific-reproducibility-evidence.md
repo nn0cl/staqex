@@ -34,3 +34,8 @@ Phase 0 acceptance outcome: schema、port ownership、diagnostic、tolerance、U
 Phase 1 Red record: `tests/test_reproducibility_manifest_red.py` にsame-manifest replay、
 hash/identity変更、numeric tolerance mismatchの4つの失敗契約を追加した。production codeと
 Unit Bは変更していない。次の承認対象はUnit AのPhase 2 Green / Implementationである。
+
+Phase 2 Green record: `compiler/staqex/reproducibility_evidence.py` にimmutableな
+RunManifest/EvidenceRecordとreplay比較を追加した。hash/manifest identity変更を拒否し、
+numeric tolerance超過をinconclusiveとして保持する。Red suiteとUnit Bは変更していない。
+次の承認対象はUnit AのPhase 3 Refactorである。

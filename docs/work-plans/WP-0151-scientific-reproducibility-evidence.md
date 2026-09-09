@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 1 Red complete; Phase 2 pending |
-| Phase | phase-1-red |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0534](../issues/LISS-0534-scientific-reproducibility-evidence.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), E01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | LISS-0534 Unit A Phase 2 Green / Implementation approval |
+| Current Next Issue | LISS-0534 Unit A Phase 3 Refactor approval |
 
 ## Scope
 
@@ -108,3 +108,13 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - Estimated tokens range/midpoint/metric: N/A — fixture/API/technology review前で信頼できる見積根拠なし。
 - Basis/assumptions/confidence: 依存と拒否境界に基づく分割、既存port再利用を仮定、medium。
 - Revises: none; WP-0131親計画から新規分割。以前の承認済み見積は変更しない。
+
+## Phase 2 Green record — Unit A
+
+- Added `compiler/staqex/reproducibility_evidence.py` with immutable
+  `RunManifest`, `EvidenceRecord`, diagnostics, and replay comparison.
+- Implemented exact manifest/hash identity checks and explicit numeric
+  tolerance handling; changed evidence is rejected or marked inconclusive.
+- The reviewed Red suite was not changed. Unit B claim/evaluation/cost
+  evidence remains out of scope.
+- Direct Green smoke checks, syntax, diff, and document lifecycle checks passed.
