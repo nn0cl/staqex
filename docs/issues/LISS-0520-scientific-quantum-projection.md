@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0520 |
-| Status | Phase 3 Refactor complete; final review pending |
-| Phase | phase-3-refactor |
+| Status | done |
+| Phase | complete |
 | Type / priority | feature / P1 |
 | Initial/current size | M / L — WP記載の境界複雑性により再分類 |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -35,3 +35,10 @@ Phase 3 Refactor record: schema検証、document読込、encoding復元、runtim
 名前付きhelperへ分離した。公開API、serialized payload、診断、accepted runtime behaviorは
 変更していない。AST、挙動維持スモーク、差分、文書ライフサイクル検査は通過した。次は
 `LISS-0520 Phase 3 最終レビュー 承認`である。
+
+Final review record: targeted pytest was executed in a temporary uv
+environment and passed **5 tests**. Q01のbounded `.sqxa` artifact/runtime
+loader unit is complete; provider SDK、live QPU、general QUBO automationは
+引き続き別scopeである。
+
+Process review: no operating-contract deviation or operational problem found.

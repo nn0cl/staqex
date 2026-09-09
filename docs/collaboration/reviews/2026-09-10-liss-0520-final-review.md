@@ -7,11 +7,10 @@
 
 ## Final review result
 
-**Conditional — not ready to mark done.** The implementation and Phase 3
-refactor remain within the accepted Q01 boundary. No product or architecture
-finding requires code changes at this stage. The final acceptance evidence is
-incomplete because the targeted pytest suite cannot run in the current
-environment (`pytest` is not installed).
+**Approved for completion.** The implementation and Phase 3 refactor remain
+within the accepted Q01 boundary. No product or architecture finding requires
+code changes at this stage. The targeted acceptance suite was executed in a
+temporary uv environment and passed all five tests.
 
 ## Evidence rechecked
 
@@ -23,20 +22,20 @@ environment (`pytest` is not installed).
   acceptance while separating internal responsibilities.
 - AST checks, direct round-trip/tamper/schema/runtime smoke checks,
   `git diff --check`, and document lifecycle checks passed.
+- `uv run --with pytest python -m pytest -q
+  tests/test_liss_0520_sqxa_runtime_loader_red.py`: **5 passed**.
 
 ## Remaining condition
 
-Run `python3 -m pytest -q tests/test_liss_0520_sqxa_runtime_loader_red.py` in
-CI or a provisioned pytest environment and attach the result. Do not interpret
-direct smoke checks as a substitute for the accepted test runner.
+No Phase 3 review condition remains. CI may repeat the same targeted test as
+the repository's authoritative environment check.
 
 ## Status disposition
 
-Keep `LISS-0520` and `WP-0137` at `Phase 3 Refactor complete; final review
-pending`. The completion process review is deferred because the issue/work
-plan is not being marked `done`.
+`LISS-0520` and `WP-0137` may be marked `done` after the synchronized ledger
+update and completion process review.
 
 ## Next approval
 
-After the targeted pytest evidence is available, request:
-`LISS-0520 Phase 3 最終レビュー 承認`.
+Final review approval is complete; no further phase approval is required for
+this bounded Q01 unit.
