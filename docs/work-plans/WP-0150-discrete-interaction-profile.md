@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 2 Green complete; Phase 3 pending |
-| Phase | phase-2-green |
+| Status | Phase 3 Refactor complete; final review pending |
+| Phase | phase-3-refactor |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0533](../issues/LISS-0533-discrete-interaction-profile.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), R01 |
 | Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0533 Phase 3 Refactor approval |
+| Current Next Issue | LISS-0533 Phase 3 final review |
 
 ## Scope
 
@@ -118,3 +118,12 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
   document lifecycle checks also passed.
 - Provider SDK, live QPU, and automatic graph-to-Hamiltonian inference remain
   out of scope.
+
+## Phase 3 Refactor record
+
+- Separated target validation, explicit-law resolution, node index creation,
+  edge validation, and projection term construction into named helpers.
+- Public types, diagnostics, energy/decode behavior, and the Red suite remain
+  unchanged. Targeted pytest passed **5 tests**; AST, diff, and document
+  lifecycle checks also passed.
+- Next gate: `LISS-0533 Phase 3 最終レビュー 承認`.

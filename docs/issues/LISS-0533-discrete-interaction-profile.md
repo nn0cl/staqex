@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0533 |
-| Status | Phase 2 Green complete; Phase 3 pending |
-| Phase | phase-2-green |
+| Status | Phase 3 Refactor complete; final review pending |
+| Phase | phase-3-refactor |
 | Type / priority | feature / P1 |
 | Initial/current size | M / M |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -35,3 +35,8 @@ Phase 2 Green record: `compiler/staqex/discrete_interaction_profile.py` にGraph
 InteractionLaw、明示IsingProjectionの境界と、node/index・duplicate edge・symmetry・target
 検証、energy/decodeを実装した。Red suiteは変更していない。対象pytestは5件通過し、ASTと
 文書ライフサイクル検査も通過した。次は`LISS-0533 Phase 3 Refactor 承認`である。
+
+Phase 3 Refactor record: target判定、explicit law解決、node index生成、edge検証、projection
+term構築を名前付きhelperへ分離した。公開型、diagnostic、energy/decode挙動、Red suiteは
+変更していない。対象pytestは5件通過し、AST・差分・文書ライフサイクル検査も通過した。
+次は`LISS-0533 Phase 3 最終レビュー 承認`である。

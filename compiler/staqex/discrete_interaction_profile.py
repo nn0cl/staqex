@@ -46,8 +46,14 @@ class IsingProjection:
         if len(spins) != len(self.variable_index):
             raise DiscreteProfileError("spin assignment does not match index")
         return self.offset + self.scale * (
-            sum(weight * spins[left] * spins[right] for left, right, weight in self.interactions)
-            + sum(field * spins[index] for index, field in enumerate(self.local_fields))
+            sum(
+                weight * spins[left] * spins[right]
+                for left, right, weight in self.interactions
+            )
+            + sum(
+                field * spins[index]
+                for index, field in enumerate(self.local_fields)
+            )
         )
 
     def decode(self, spins: tuple[int, ...]) -> dict[str, int]:
@@ -66,13 +72,29 @@ class DiscreteProfileError(ValueError):
 _SUPPORTED_TARGET = "finite-binary-projection"
 
 
-def _validate_graph(graph: InteractionGraph, law: InteractionLaw | None) -> None:
+def _validate_target(target: str) -> None:
+    if target != _SUPPORTED_TARGET:
+        raise DiscreteProfileError(f"unsupported target: {target}")
+
+
+def _require_law(law: InteractionLaw | None) -> InteractionLaw:
     if law is None:
         raise DiscreteProfileError(
             "graph is not a Hamiltonian without an explicit interaction law"
         )
+    return law
+
+
+def _variable_index(graph: InteractionGraph) -> dict[str, int]:
     if len(set(graph.nodes)) != len(graph.nodes):
         raise DiscreteProfileError("index mismatch: graph nodes are not unique")
+    return {node: index for index, node in enumerate(graph.nodes)}
+
+
+def _validate_edges(
+    graph: InteractionGraph,
+    variable_index: Mapping[str, int],
+) -> None:
     node_set = set(graph.nodes)
     seen_edges: set[tuple[str, str]] = set()
     for edge in graph.edges:
@@ -82,6 +104,8 @@ def _validate_graph(graph: InteractionGraph, law: InteractionLaw | None) -> None
         if key in seen_edges:
             raise DiscreteProfileError("duplicate edge in interaction graph")
         seen_edges.add(key)
+    if set(variable_index) != node_set:
+        raise DiscreteProfileError("index mismatch: graph index does not cover nodes")
 
 
 def _validate_law(graph: InteractionGraph, law: InteractionLaw) -> None:
@@ -89,6 +113,23 @@ def _validate_law(graph: InteractionGraph, law: InteractionLaw) -> None:
         raise DiscreteProfileError("index mismatch: local fields do not cover graph nodes")
     if law.symmetry != "undirected":
         raise DiscreteProfileError("symmetry mismatch: R01 requires undirected interactions")
+
+
+def _build_interactions(
+    graph: InteractionGraph,
+    variable_index: Mapping[str, int],
+) -> tuple[tuple[int, int, float], ...]:
+    return tuple(
+        (variable_index[edge.left], variable_index[edge.right], float(edge.weight))
+        for edge in graph.edges
+    )
+
+
+def _build_local_fields(
+    graph: InteractionGraph,
+    law: InteractionLaw,
+) -> tuple[float, ...]:
+    return tuple(float(law.local_fields[node]) for node in graph.nodes)
 
 
 def project_interaction(
@@ -99,25 +140,18 @@ def project_interaction(
 ) -> IsingProjection:
     """Build an explicit finite Ising projection from a graph and law."""
 
-    if target != _SUPPORTED_TARGET:
-        raise DiscreteProfileError(f"unsupported target: {target}")
-    _validate_graph(graph, law)
-    assert law is not None
-    _validate_law(graph, law)
-
-    variable_index = {node: index for index, node in enumerate(graph.nodes)}
-    interactions = tuple(
-        (variable_index[edge.left], variable_index[edge.right], float(edge.weight))
-        for edge in graph.edges
-    )
-    local_fields = tuple(float(law.local_fields[node]) for node in graph.nodes)
+    _validate_target(target)
+    resolved_law = _require_law(law)
+    variable_index = _variable_index(graph)
+    _validate_edges(graph, variable_index)
+    _validate_law(graph, resolved_law)
     return IsingProjection(
         kind="ising-hamiltonian",
         graph_id=graph.graph_id,
-        law_id=law.law_id,
+        law_id=resolved_law.law_id,
         variable_index=variable_index,
-        interactions=interactions,
-        local_fields=local_fields,
+        interactions=_build_interactions(graph, variable_index),
+        local_fields=_build_local_fields(graph, resolved_law),
         offset=0.0,
         scale=1.0,
         source_hash=graph.source_hash,
