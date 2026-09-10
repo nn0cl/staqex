@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 1 Red complete; Phase 2 pending |
-| Phase | phase-1-red |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0533](../issues/LISS-0533-discrete-interaction-profile.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), R01 |
 | Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0533 Phase 2 Green / Implementation |
+| Current Next Issue | LISS-0533 Phase 3 Refactor approval |
 
 ## Scope
 
@@ -106,3 +106,15 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
   unsupported-target rejection.
 - Production code remains unchanged. The suite is intentionally Red until the
   separately approved Phase 2 minimum implementation.
+
+## Phase 2 Green record
+
+- Added `compiler/staqex/discrete_interaction_profile.py` with explicit
+  `InteractionGraph`, `InteractionLaw`, and `IsingProjection` boundaries.
+- Implemented graph/law validation, undirected duplicate-edge detection,
+  complete node/index coverage, finite target gating, Ising energy evaluation,
+  and spin decode without partial projection on rejection.
+- The Red suite was not changed. Targeted pytest passed **5 tests**; AST and
+  document lifecycle checks also passed.
+- Provider SDK, live QPU, and automatic graph-to-Hamiltonian inference remain
+  out of scope.

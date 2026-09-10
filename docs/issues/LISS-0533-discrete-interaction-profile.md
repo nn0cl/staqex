@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0533 |
-| Status | Phase 1 Red complete; Phase 2 pending |
-| Phase | phase-1-red |
+| Status | Phase 2 Green complete; Phase 3 pending |
+| Phase | phase-2-green |
 | Type / priority | feature / P1 |
 | Initial/current size | M / M |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -30,3 +30,8 @@ Phase 1 Red record: `tests/test_liss_0533_discrete_interaction_red.py` に、明
 projection、energy/decode、graph-as-Hamiltonian、duplicate edge、index mismatch、unsupported
 targetの5契約を追加した。production codeは変更していない。次は
 `LISS-0533 Phase 2 Green / Implementation`である。
+
+Phase 2 Green record: `compiler/staqex/discrete_interaction_profile.py` にGraph、
+InteractionLaw、明示IsingProjectionの境界と、node/index・duplicate edge・symmetry・target
+検証、energy/decodeを実装した。Red suiteは変更していない。対象pytestは5件通過し、ASTと
+文書ライフサイクル検査も通過した。次は`LISS-0533 Phase 3 Refactor 承認`である。
