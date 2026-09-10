@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 3 Refactor complete; final review pending |
-| Phase | phase-3-refactor |
+| Status | done |
+| Phase | complete |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0533](../issues/LISS-0533-discrete-interaction-profile.md) |
@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), R01 |
 | Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0533 Phase 3 final review |
+| Current Next Issue | none for R01 bounded unit; broader profiles remain separately gated |
 
 ## Scope
 
@@ -135,3 +135,11 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - Re-review targeted pytest passed **6 tests**; AST, diff, and document
   lifecycle checks passed. The previous diagnostic observability finding is
   resolved; corrected final approval remains pending.
+
+## Final review and completion record
+
+- `LISS-0533 Phase 3 最終レビュー 承認`を受領し、6件のpytest、AST、差分、文書ライフサイクル
+  検査を確認した。
+- R01 bounded unitをdoneとした。自動graph-to-Hamiltonian化、provider SDK、live QPUは引き続き
+  out of scopeである。
+- Process review: no operating-contract deviation or operational problem found.

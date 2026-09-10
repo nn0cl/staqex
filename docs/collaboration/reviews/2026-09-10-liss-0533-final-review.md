@@ -46,11 +46,9 @@ projection assertion must be paired with an exact, scoped rejection contract.
   `DISCRETE_DUPLICATE_EDGE`, `DISCRETE_INDEX_MISMATCH`,
   `DISCRETE_SYMMETRY_MISMATCH`, and `DISCRETE_UNSUPPORTED_TARGET`.
 
-## Status and next step
+## Final approval and status
 
-Keep LISS-0533/WP-0150 at `Phase 3 Refactor complete; final review pending`.
-The implementation finding is resolved. Do not mark the unit done until the
-Adjudicator gives final review approval for the corrected evidence.
+The implementation finding is resolved, the corrected evidence is approved,
+and LISS-0533/WP-0150 may be marked `done`.
 
-No process-review record is added because the issue/work plan is not being
-closed.
+Process review: no operating-contract deviation or operational problem found.
