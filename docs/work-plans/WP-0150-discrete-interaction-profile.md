@@ -127,3 +127,11 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
   unchanged. Targeted pytest passed **5 tests**; AST, diff, and document
   lifecycle checks also passed.
 - Next gate: `LISS-0533 Phase 3 最終レビュー 承認`.
+
+## Final review correction record
+
+- Structured the fixed rejection diagnostic code on `DiscreteProfileError`
+  and asserted all five exact codes in five negative tests.
+- Re-review targeted pytest passed **6 tests**; AST, diff, and document
+  lifecycle checks passed. The previous diagnostic observability finding is
+  resolved; corrected final approval remains pending.

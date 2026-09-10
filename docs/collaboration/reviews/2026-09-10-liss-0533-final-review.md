@@ -30,18 +30,27 @@ implementation raises `DiscreteProfileError` with message text only, and the
 Red tests match messages rather than asserting those codes. A consumer cannot
 reliably distinguish the documented rejection reasons without parsing prose.
 
-Disposition: **apply**. Add a structured code to the rejection error/result,
-update the five negative tests to assert exact codes, and keep rejection
-atomic. This is a small contract completion, not a reason to broaden R01.
+Disposition: **resolved on re-review**. `DiscreteProfileError` now carries a
+structured `code`, and the five negative tests assert the exact fixed codes.
+Rejection remains atomic. This was a small contract completion and did not
+broaden R01.
 
 This finding applies the existing acceptance-boundary lesson: every negative
 projection assertion must be paired with an exact, scoped rejection contract.
 
+## Re-review evidence
+
+- Targeted pytest after correction: **6 passed**.
+- AST parsing, `git diff --check`, and document lifecycle checks: passed.
+- Verified codes: `DISCRETE_GRAPH_AS_HAMILTONIAN`,
+  `DISCRETE_DUPLICATE_EDGE`, `DISCRETE_INDEX_MISMATCH`,
+  `DISCRETE_SYMMETRY_MISMATCH`, and `DISCRETE_UNSUPPORTED_TARGET`.
+
 ## Status and next step
 
 Keep LISS-0533/WP-0150 at `Phase 3 Refactor complete; final review pending`.
-Do not mark the unit done until the diagnostic-code contract is implemented,
-tested, and re-reviewed.
+The implementation finding is resolved. Do not mark the unit done until the
+Adjudicator gives final review approval for the corrected evidence.
 
 No process-review record is added because the issue/work plan is not being
 closed.

@@ -40,3 +40,7 @@ Phase 3 Refactor record: target判定、explicit law解決、node index生成、
 term構築を名前付きhelperへ分離した。公開型、diagnostic、energy/decode挙動、Red suiteは
 変更していない。対象pytestは5件通過し、AST・差分・文書ライフサイクル検査も通過した。
 次は`LISS-0533 Phase 3 最終レビュー 承認`である。
+
+Final review correction record: diagnostic codeを`DiscreteProfileError.code`として構造化し、
+5つのnegative testで5種のexact codeを検証した。修正後pytestは6件通過し、再レビューで指摘解消を
+確認した。次は修正後の`LISS-0533 Phase 3 最終レビュー 承認`である。

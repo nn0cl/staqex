@@ -62,12 +62,13 @@ def test_r01_projects_explicit_graph_and_law_with_energy_decode_round_trip() -> 
 def test_r01_rejects_graph_as_hamiltonian_without_explicit_interaction_law() -> None:
     module = _profile_module()
 
-    with pytest.raises(module.DiscreteProfileError, match="Hamiltonian"):
+    with pytest.raises(module.DiscreteProfileError, match="Hamiltonian") as error:
         module.project_interaction(
             graph=_graph(module),
             law=None,
             target="finite-binary-projection",
         )
+    assert error.value.code == "DISCRETE_GRAPH_AS_HAMILTONIAN"
 
 
 def test_r01_rejects_duplicate_edge_before_projection() -> None:
@@ -80,12 +81,13 @@ def test_r01_rejects_duplicate_edge_before_projection() -> None:
         source_hash=graph.source_hash,
     )
 
-    with pytest.raises(module.DiscreteProfileError, match="duplicate edge"):
+    with pytest.raises(module.DiscreteProfileError, match="duplicate edge") as error:
         module.project_interaction(
             graph=duplicate,
             law=_law(module),
             target="finite-binary-projection",
         )
+    assert error.value.code == "DISCRETE_DUPLICATE_EDGE"
 
 
 def test_r01_rejects_index_map_that_does_not_cover_graph_nodes() -> None:
@@ -98,20 +100,41 @@ def test_r01_rejects_index_map_that_does_not_cover_graph_nodes() -> None:
         symmetry=law.symmetry,
     )
 
-    with pytest.raises(module.DiscreteProfileError, match="index"):
+    with pytest.raises(module.DiscreteProfileError, match="index") as error:
         module.project_interaction(
             graph=_graph(module),
             law=mismatched,
             target="finite-binary-projection",
         )
+    assert error.value.code == "DISCRETE_INDEX_MISMATCH"
+
+
+def test_r01_rejects_interaction_law_with_unsupported_symmetry() -> None:
+    module = _profile_module()
+    law = _law(module)
+    directed = module.InteractionLaw(
+        law_id=law.law_id,
+        local_fields=law.local_fields,
+        weight_unit=law.weight_unit,
+        symmetry="directed",
+    )
+
+    with pytest.raises(module.DiscreteProfileError, match="symmetry") as error:
+        module.project_interaction(
+            graph=_graph(module),
+            law=directed,
+            target="finite-binary-projection",
+        )
+    assert error.value.code == "DISCRETE_SYMMETRY_MISMATCH"
 
 
 def test_r01_rejects_unsupported_projection_target_without_partial_result() -> None:
     module = _profile_module()
 
-    with pytest.raises(module.DiscreteProfileError, match="unsupported target"):
+    with pytest.raises(module.DiscreteProfileError, match="unsupported target") as error:
         module.project_interaction(
             graph=_graph(module),
             law=_law(module),
             target="generic-live-qpu",
         )
+    assert error.value.code == "DISCRETE_UNSUPPORTED_TARGET"

@@ -44,7 +44,10 @@ class IsingProjection:
 
     def energy(self, spins: tuple[int, ...]) -> float:
         if len(spins) != len(self.variable_index):
-            raise DiscreteProfileError("spin assignment does not match index")
+            raise DiscreteProfileError(
+                "DISCRETE_INDEX_MISMATCH",
+                "spin assignment does not match index",
+            )
         return self.offset + self.scale * (
             sum(
                 weight * spins[left] * spins[right]
@@ -58,7 +61,10 @@ class IsingProjection:
 
     def decode(self, spins: tuple[int, ...]) -> dict[str, int]:
         if len(spins) != len(self.variable_index):
-            raise DiscreteProfileError("spin assignment does not match index")
+            raise DiscreteProfileError(
+                "DISCRETE_INDEX_MISMATCH",
+                "spin assignment does not match index",
+            )
         return {
             variable: spins[index]
             for variable, index in self.variable_index.items()
@@ -68,18 +74,26 @@ class IsingProjection:
 class DiscreteProfileError(ValueError):
     """Raised when an R01 graph cannot be projected safely."""
 
+    def __init__(self, code: str, message: str) -> None:
+        super().__init__(message)
+        self.code = code
+
 
 _SUPPORTED_TARGET = "finite-binary-projection"
 
 
 def _validate_target(target: str) -> None:
     if target != _SUPPORTED_TARGET:
-        raise DiscreteProfileError(f"unsupported target: {target}")
+        raise DiscreteProfileError(
+            "DISCRETE_UNSUPPORTED_TARGET",
+            f"unsupported target: {target}",
+        )
 
 
 def _require_law(law: InteractionLaw | None) -> InteractionLaw:
     if law is None:
         raise DiscreteProfileError(
+            "DISCRETE_GRAPH_AS_HAMILTONIAN",
             "graph is not a Hamiltonian without an explicit interaction law"
         )
     return law
@@ -87,7 +101,10 @@ def _require_law(law: InteractionLaw | None) -> InteractionLaw:
 
 def _variable_index(graph: InteractionGraph) -> dict[str, int]:
     if len(set(graph.nodes)) != len(graph.nodes):
-        raise DiscreteProfileError("index mismatch: graph nodes are not unique")
+        raise DiscreteProfileError(
+            "DISCRETE_INDEX_MISMATCH",
+            "index mismatch: graph nodes are not unique",
+        )
     return {node: index for index, node in enumerate(graph.nodes)}
 
 
@@ -99,20 +116,35 @@ def _validate_edges(
     seen_edges: set[tuple[str, str]] = set()
     for edge in graph.edges:
         if edge.left not in node_set or edge.right not in node_set:
-            raise DiscreteProfileError("index mismatch: edge endpoint is not a graph node")
+            raise DiscreteProfileError(
+                "DISCRETE_INDEX_MISMATCH",
+                "index mismatch: edge endpoint is not a graph node",
+            )
         key = tuple(sorted((edge.left, edge.right)))
         if key in seen_edges:
-            raise DiscreteProfileError("duplicate edge in interaction graph")
+            raise DiscreteProfileError(
+                "DISCRETE_DUPLICATE_EDGE",
+                "duplicate edge in interaction graph",
+            )
         seen_edges.add(key)
     if set(variable_index) != node_set:
-        raise DiscreteProfileError("index mismatch: graph index does not cover nodes")
+        raise DiscreteProfileError(
+            "DISCRETE_INDEX_MISMATCH",
+            "index mismatch: graph index does not cover nodes",
+        )
 
 
 def _validate_law(graph: InteractionGraph, law: InteractionLaw) -> None:
     if set(law.local_fields) != set(graph.nodes):
-        raise DiscreteProfileError("index mismatch: local fields do not cover graph nodes")
+        raise DiscreteProfileError(
+            "DISCRETE_INDEX_MISMATCH",
+            "index mismatch: local fields do not cover graph nodes",
+        )
     if law.symmetry != "undirected":
-        raise DiscreteProfileError("symmetry mismatch: R01 requires undirected interactions")
+        raise DiscreteProfileError(
+            "DISCRETE_SYMMETRY_MISMATCH",
+            "symmetry mismatch: R01 requires undirected interactions",
+        )
 
 
 def _build_interactions(
