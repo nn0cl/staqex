@@ -76,3 +76,10 @@
 ## Next Approval Required
 
 `LISS-0543 Phase 3 最終レビュー 承認`
+
+## Adjudicator Decision
+
+- Approved 2026-09-11: `LISS-0543 Phase 3 最終レビュー 承認`.
+- Completion status is not inferred from approval: the 19 active-Red entries
+  still name LISS-0543 as their open owner, and the lifecycle contract rejects
+  exclusions owned by a completed issue.

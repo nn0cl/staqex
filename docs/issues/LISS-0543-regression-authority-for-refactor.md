@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0543
 - GitHub issue: none
-- Status: phase-3-refactor-awaiting-final-review
+- Status: phase-3-final-review-approved-active-red-reconciliation-required
 - Phase: phase-3-refactor
 - Type: test infrastructure / process
 - Priority: P0
@@ -118,10 +118,16 @@ determinism, document lifecycle, and diff checks.
   bytes, tests, and assertions.
 - Final review packet:
   [2026-09-11 LISS-0543 Phase 3 Refactor](../collaboration/reviews/2026-09-11-liss-0543-phase3-refactor-review.md).
-- Next approval: `LISS-0543 Phase 3 最終レビュー 承認`.
+- Final review approval: `LISS-0543 Phase 3 最終レビュー 承認`, received
+  2026-09-11.
+- Completion blocker: all 19 active-Red entries currently name LISS-0543 as
+  their open owner. Marking this issue done would correctly fail lifecycle
+  validation. They require accepted successor issue ownership before this
+  issue can close.
 
 ## Process Review
 
-- Outcome: not yet
+- Outcome: operational problem found — final approval cannot be converted to
+  `done` while LISS-0543 remains the owner of 19 active-Red exclusions.
 - Lesson written: existing regression-authority lesson will be applied
 - Template-feedback path: none
