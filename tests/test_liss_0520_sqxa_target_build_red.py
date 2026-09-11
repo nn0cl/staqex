@@ -166,6 +166,48 @@ def test_runtime_target_mismatch_does_not_construct_or_call_provider(
     assert FakeProvider.constructions == 0
 
 
+def test_runtime_rejects_malformed_capability_expiry_before_provider_access(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "malformed-expiry.aws-braket.sqxa"
+    write_sqxa(
+        path,
+        build_target_variant(
+            _portable(),
+            route="aws-braket",
+            device_id="arn:aws:braket:us-east-1::device/qpu/ionq/Aria-1",
+            capability_fingerprint="sha256:capability",
+            target_fingerprint="sha256:target",
+            payload_format="openqasm3",
+            capability_expires_at="not-a-timestamp",
+        ),
+    )
+
+    with raises(SqxaFormatError, match="invalid capability expiry"):
+        SqxaRuntime().prepare(path, expected_route="aws-braket")
+
+
+def test_runtime_rejects_timezone_naive_capability_expiry(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "naive-expiry.aws-braket.sqxa"
+    write_sqxa(
+        path,
+        build_target_variant(
+            _portable(),
+            route="aws-braket",
+            device_id="arn:aws:braket:us-east-1::device/qpu/ionq/Aria-1",
+            capability_fingerprint="sha256:capability",
+            target_fingerprint="sha256:target",
+            payload_format="openqasm3",
+            capability_expires_at="2026-09-01T00:00:00",
+        ),
+    )
+
+    with raises(SqxaFormatError, match="invalid capability expiry"):
+        SqxaRuntime().prepare(path, expected_route="aws-braket")
+
+
 def test_sqxa_rejects_secret_bearing_manifest_or_payload(tmp_path: Path) -> None:
     path = tmp_path / "secret.sqxa"
     artifact = SqxaArtifact(

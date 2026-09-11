@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 3 Refactor complete — final review pending** |
-| Phase | phase-3-refactor |
+| Status | **done — Phase 3 final review complete** |
+| Phase | phase-3-final-review |
 | Type | architecture / artifact contract |
 | Priority | P0 |
 | Size | L |
@@ -11,7 +11,7 @@
 | Depends on | WP-0121, WP-0122, ADR 0217, ADR 0218 |
 | Blocks | Runtime target deployment and provider pilot packaging |
 | Acceptance authority | Proposed ADR 0219; real-QPU readiness acceptance |
-| Implementation permission | **Phase 3 refactor complete; final review pending** |
+| Implementation permission | **Phase 3 final review approved; bounded unit complete** |
 
 ## Design check
 
@@ -91,6 +91,13 @@ would require changing `ExecutionArtifact`, `QpuArtifact`, submit orchestration,
 or provider adapters. Targeted tests, compilation, diff, and document checks
 passed. Provider SDKs, credentials, network access, and live-QPU execution
 remain out of scope. Final review is still required.
+
+The independent final review identified and corrected malformed or
+timezone-naive capability expiry handling. The Runtime now rejects both cases
+with `SqxaFormatError` before provider construction; the targeted suite passes
+8 tests. Review summary: [2026-09-11 LISS-0520 Phase 3 final review](../collaboration/reviews/2026-09-11-liss-0520-phase3-final-review.md).
+
+Process review: no operating-contract deviation or operational problem found.
 
 ## First implementation slice after approval
 

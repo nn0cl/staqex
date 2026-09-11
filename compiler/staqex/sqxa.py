@@ -197,7 +197,12 @@ def _validate_capability_expiry(
     expires_at = target.get("capability_expires_at")
     if expires_at is None:
         return
-    expiry = datetime.fromisoformat(str(expires_at))
+    try:
+        expiry = datetime.fromisoformat(str(expires_at))
+    except (TypeError, ValueError) as error:
+        raise SqxaFormatError("invalid capability expiry") from error
+    if expiry.tzinfo is None or expiry.utcoffset() is None:
+        raise SqxaFormatError("invalid capability expiry")
     current = now or datetime.now(timezone.utc)
     if current >= expiry:
         raise SqxaFormatError("capability expired")

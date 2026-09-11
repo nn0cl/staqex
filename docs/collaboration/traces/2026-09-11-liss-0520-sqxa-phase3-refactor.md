@@ -6,7 +6,7 @@
 | Scope | LISS-0520 / WP-0137 `.sqxa` artifact packaging and target build |
 | Phase | Phase 3 Refactor |
 | Approval | `LISS-0520 Phase 3 承認` |
-| Outcome | Refactor complete; final review pending |
+| Outcome | Final review complete; bounded unit done |
 
 ## Intent
 
@@ -20,12 +20,16 @@ Runtime preflight boundaries explicit without changing the Phase 2 contract.
 - Extracted capability-expiry validation from Runtime preparation.
 - Audited existing `ExecutionArtifact`, `QpuArtifact`, submit, CLI, and adapter
   references; no legacy consumer of `SqxaArtifact` exists to migrate.
+- Final review correction rejects malformed and timezone-naive capability
+  expiry values with `SqxaFormatError` before provider construction.
 
 ## Verification
 
 - `UV_CACHE_DIR=/private/tmp/qpex-uv-cache uv run --with pytest python3 -m pytest -q tests/test_liss_0520_sqxa_target_build_red.py`
-- Result: 6 passed.
+- Result: 8 passed after final-review correction.
 - `python3 -m compileall -q compiler/staqex/sqxa.py`
 - `git diff --check`
 
 No SDK, credentials, network call, or live QPU was used.
+
+Process review: no operating-contract deviation or operational problem found.

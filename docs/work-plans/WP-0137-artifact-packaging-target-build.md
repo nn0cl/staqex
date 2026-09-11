@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 3 Refactor complete — final review pending** |
+| Status | **done — Phase 3 final review complete** |
 | Type | architecture / feature contract |
 | Size | L |
 | Parent | WP-0131; WP-0119 |
 | Issue | LISS-0520 |
 | Depends on | WP-0121, WP-0122, WP-0123, ADR 0217, ADR 0218 |
 | Blocks | Runtime provider deployment and real-QPU pilot packaging |
-| Implementation permission | **Phase 3 refactor complete; final review pending** |
+| Implementation permission | **Phase 3 final review approved; bounded unit complete** |
 
 ## Goal
 
@@ -70,4 +70,7 @@ fail-closed behavior while making the portable/targeted artifact boundary
 reviewable. The repository audit found no legacy consumer requiring migration
 in this issue. The six targeted tests, compilation, diff, and document checks
 pass; provider SDK/network and real-device execution remain excluded. Final
-review is pending.
+review is complete. The independent review also required malformed and
+timezone-naive capability expiry values to fail closed as `SqxaFormatError`;
+the correction and two focused tests are included. Process review: no
+operating-contract deviation or operational problem found.
