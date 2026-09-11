@@ -33,6 +33,11 @@ def _canonical(value: Any) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"))
 
 
+def _payload_hash(payload: Mapping[str, Any]) -> str:
+    digest = hashlib.sha256(_canonical(payload).encode("utf-8")).hexdigest()
+    return "sha256:" + digest
+
+
 def _contains_secret(value: Any) -> bool:
     if isinstance(value, Mapping):
         return any(
@@ -70,9 +75,7 @@ def _manifest(artifact: SqxaArtifact, payload: Mapping[str, Any]) -> dict[str, A
         "provenance": dict(artifact.provenance),
         "execution_policy": dict(artifact.execution_policy),
         "target": target,
-        "payload_hash": "sha256:" + hashlib.sha256(
-            _canonical(payload).encode("utf-8")
-        ).hexdigest(),
+        "payload_hash": _payload_hash(payload),
     }
 
 
@@ -98,9 +101,7 @@ def _artifact_from_document(document: Mapping[str, Any]) -> SqxaArtifact:
             raise TypeError("manifest and payload must be objects")
         if manifest.get("format") != "sqxa":
             raise SqxaFormatError("unsupported artifact format")
-        expected_hash = "sha256:" + hashlib.sha256(
-            _canonical(payload).encode("utf-8")
-        ).hexdigest()
+        expected_hash = _payload_hash(payload)
         if manifest.get("payload_hash") != expected_hash:
             raise SqxaFormatError("payload hash mismatch")
         if _contains_secret(document):
@@ -126,11 +127,16 @@ def load_sqxa(path: str | Path, *, expected_route: str | None = None) -> SqxaArt
         artifact = _artifact_from_document(document)
     except (OSError, json.JSONDecodeError, TypeError) as error:
         raise SqxaFormatError("invalid SQXA document") from error
-    if expected_route is not None:
-        route = artifact.target.get("route") if artifact.target else None
-        if route != expected_route:
-            raise SqxaFormatError("target route mismatch")
+    _validate_route(artifact, expected_route)
     return artifact
+
+
+def _validate_route(artifact: SqxaArtifact, expected_route: str | None) -> None:
+    if expected_route is None:
+        return
+    route = artifact.target.get("route") if artifact.target else None
+    if route != expected_route:
+        raise SqxaFormatError("target route mismatch")
 
 
 def build_target_variant(
@@ -179,12 +185,19 @@ class SqxaRuntime:
         artifact = load_sqxa(path, expected_route=expected_route)
         if artifact.target is None:
             raise SqxaFormatError("target metadata is required")
-        expires_at = artifact.target.get("capability_expires_at")
-        if expires_at is not None:
-            expiry = datetime.fromisoformat(str(expires_at))
-            current = now or datetime.now(timezone.utc)
-            if current >= expiry:
-                raise SqxaFormatError("capability expired")
+        _validate_capability_expiry(artifact.target, now=now)
         if self._provider is None and self._provider_factory is not None:
             self._provider = self._provider_factory()
         return artifact
+
+
+def _validate_capability_expiry(
+    target: Mapping[str, Any], *, now: datetime | None
+) -> None:
+    expires_at = target.get("capability_expires_at")
+    if expires_at is None:
+        return
+    expiry = datetime.fromisoformat(str(expires_at))
+    current = now or datetime.now(timezone.utc)
+    if current >= expiry:
+        raise SqxaFormatError("capability expired")

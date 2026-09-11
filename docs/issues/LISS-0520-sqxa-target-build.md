@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 2 Green complete — Phase 3 pending** |
-| Phase | phase-2-green |
+| Status | **Phase 3 Refactor complete — final review pending** |
+| Phase | phase-3-refactor |
 | Type | architecture / artifact contract |
 | Priority | P0 |
 | Size | L |
@@ -11,7 +11,7 @@
 | Depends on | WP-0121, WP-0122, ADR 0217, ADR 0218 |
 | Blocks | Runtime target deployment and provider pilot packaging |
 | Acceptance authority | Proposed ADR 0219; real-QPU readiness acceptance |
-| Implementation permission | **Phase 2 implementation complete; Phase 3 not authorized** |
+| Implementation permission | **Phase 3 refactor complete; final review pending** |
 
 ## Design check
 
@@ -80,6 +80,17 @@ test variable typo was corrected from `provider` to `FakeProvider` without
 weakening the contract. Targeted pytest passed **6 tests**; AST, diff, and
 document lifecycle checks passed. No SDK, credentials, network, or live QPU
 call was used.
+
+## Phase 3 Refactor record
+
+Refactored the provider-neutral implementation without changing its public
+contract: canonical payload hashing, expected-route validation, and capability
+expiry validation now have explicit helpers at the serialization/runtime
+boundary. The legacy consumer audit found no `SqxaArtifact` integration that
+would require changing `ExecutionArtifact`, `QpuArtifact`, submit orchestration,
+or provider adapters. Targeted tests, compilation, diff, and document checks
+passed. Provider SDKs, credentials, network access, and live-QPU execution
+remain out of scope. Final review is still required.
 
 ## First implementation slice after approval
 
