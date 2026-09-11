@@ -39,7 +39,12 @@ def _jsonable(value: Any) -> Any:
 
 
 def _canonical(value: Any) -> str:
-    return json.dumps(_jsonable(value), ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return json.dumps(
+        _jsonable(value),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
 
 
 def _evidence(kind: str, status: str, payload: Any) -> dict[str, Any]:
@@ -101,7 +106,8 @@ def _qasm_case(root: Path, case: Mapping[str, Any]) -> dict[str, Any]:
     try:
         qasm = StaqexCompiler().compile_to_qasm3(str(source))
     except (OSError, RuntimeError, ValueError) as error:
-        return _evidence("qasm", "rejected", {"error": str(error).replace(str(root), "<root>")})
+        normalized_error = str(error).replace(str(root), "<root>")
+        return _evidence("qasm", "rejected", {"error": normalized_error})
     return _evidence("qasm", "accepted", {"qasm": qasm})
 
 
@@ -124,36 +130,48 @@ def _load_cases(path: Path) -> dict[str, Any]:
     return document
 
 
-def build_baseline(root: Path, cases_path: Path) -> dict[str, Any]:
-    root_text = str(root)
-    if root_text not in sys.path:
-        sys.path.insert(0, root_text)
-    cases = _load_cases(cases_path)
-    all_cases: list[tuple[str, Mapping[str, Any]]] = []
+def _case_definitions(cases: Mapping[str, Any]) -> list[tuple[str, Mapping[str, Any]]]:
+    definitions: list[tuple[str, Mapping[str, Any]]] = []
     for family in ("runtime_case", "qasm_case", "diagnostic_case"):
-        for case in cases.get(family, []):
-            _source_path(root, str(case["source"]))
-            all_cases.append((family, case))
+        definitions.extend((family, case) for case in cases.get(family, []))
+    return definitions
 
-    public_modules = {
-        str(name): _public_symbols(str(name))
-        for name in cases.get("public_modules", [])
-    }
-    evidence: dict[str, Any] = {}
+
+def _capture_cases(
+    root: Path,
+    definitions: list[tuple[str, Mapping[str, Any]]],
+) -> dict[str, Any]:
     builders = {
         "runtime_case": _runtime_case,
         "qasm_case": _qasm_case,
         "diagnostic_case": _diagnostic_case,
     }
-    for family, case in all_cases:
+    evidence: dict[str, Any] = {}
+    for family, case in definitions:
         case_id = str(case["id"])
         if case_id in evidence:
             raise ValueError(f"duplicate case id: {case_id}")
         evidence[case_id] = builders[family](root, case)
+    return evidence
+
+
+def build_baseline(root: Path, cases_path: Path) -> dict[str, Any]:
+    root_text = str(root)
+    if root_text not in sys.path:
+        sys.path.insert(0, root_text)
+    cases = _load_cases(cases_path)
+    definitions = _case_definitions(cases)
+    for _, case in definitions:
+        _source_path(root, str(case["source"]))
+
+    public_modules = {
+        str(name): _public_symbols(str(name))
+        for name in cases.get("public_modules", [])
+    }
     return {
         "schema_version": 1,
         "public_modules": public_modules,
-        "cases": evidence,
+        "cases": _capture_cases(root, definitions),
     }
 
 
@@ -186,7 +204,13 @@ def main(argv: list[str] | None = None) -> int:
     except FileNotFoundError as error:
         print(f"REFACTOR_BASELINE_INPUT_MISSING: {error}")
         return 1
-    except (ImportError, OSError, TypeError, ValueError, tomllib.TOMLDecodeError) as error:
+    except (
+        ImportError,
+        OSError,
+        TypeError,
+        ValueError,
+        tomllib.TOMLDecodeError,
+    ) as error:
         print(f"REFACTOR_BASELINE_INVALID: {error}")
         return 1
     print(f"REFACTOR_BASELINE_OK cases={len(document['cases'])}")

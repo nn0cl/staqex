@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0543
 - GitHub issue: none
-- Status: phase-2-green-awaiting-review
-- Phase: phase-2-green
+- Status: phase-3-refactor-awaiting-final-review
+- Phase: phase-3-refactor
 - Type: test infrastructure / process
 - Priority: P0
 - Initial/current planning size: L / L
@@ -107,6 +107,18 @@ determinism, document lifecycle, and diff checks.
 - Acceptance review packet:
   [2026-09-11 LISS-0543 Phase 2 Green](../collaboration/reviews/2026-09-11-liss-0543-phase2-green-review.md).
 - Next approval after Green review: `LISS-0543 Phase 3 Refactor 承認`.
+
+## Phase 3 Refactor record
+
+- Approval: `LISS-0543 Phase 3 Refactor 承認`, received 2026-09-11.
+- Split lifecycle validation into test-reference, review-deadline, and
+  issue-reference responsibilities.
+- Split baseline orchestration into case collection and evidence capture.
+- Preserved CLI output, diagnostic codes, exact pytest selection, baseline
+  bytes, tests, and assertions.
+- Final review packet:
+  [2026-09-11 LISS-0543 Phase 3 Refactor](../collaboration/reviews/2026-09-11-liss-0543-phase3-refactor-review.md).
+- Next approval: `LISS-0543 Phase 3 最終レビュー 承認`.
 
 ## Process Review
 

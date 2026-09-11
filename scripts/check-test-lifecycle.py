@@ -78,6 +78,59 @@ def _required_text(entry: dict[str, Any], key: str, index: int, errors: list[str
     return value.strip()
 
 
+def _validate_test_reference(
+    root: Path,
+    test: str,
+    *,
+    seen_tests: set[str],
+) -> list[str]:
+    errors: list[str] = []
+    if test in seen_tests:
+        errors.append(_diagnostic("ACTIVE_RED_DUPLICATE", test))
+    seen_tests.add(test)
+
+    test_path = test.split("::", 1)[0]
+    if not test_path.startswith("tests/") or not (root / test_path).is_file():
+        errors.append(_diagnostic("ACTIVE_RED_TEST_MISSING", test_path))
+    return errors
+
+
+def _validate_review_deadline(review_by: str, *, as_of: date) -> list[str]:
+    try:
+        deadline = date.fromisoformat(review_by)
+    except ValueError:
+        return [_diagnostic("ACTIVE_RED_REVIEW_DATE_INVALID", review_by)]
+    if deadline < as_of:
+        return [_diagnostic("ACTIVE_RED_REVIEW_EXPIRED", review_by)]
+    return []
+
+
+def _validate_issue_reference(root: Path, issue: str, phase: str) -> list[str]:
+    issue_path = _issue_file(root, issue)
+    if issue_path is None:
+        return [_diagnostic("ACTIVE_RED_ISSUE_UNKNOWN", issue)]
+
+    errors: list[str] = []
+    issue_text = issue_path.read_text(encoding="utf-8")
+    status = _metadata_value(issue_text, "Status")
+    issue_phase = _metadata_value(issue_text, "Phase")
+    if status is None or _is_terminal_status(status):
+        errors.append(
+            _diagnostic(
+                "ACTIVE_RED_ISSUE_DONE",
+                f"{issue}: {status or 'missing status'}",
+            )
+        )
+    if phase and issue_phase is not None and issue_phase.casefold() != phase.casefold():
+        errors.append(
+            _diagnostic(
+                "ACTIVE_RED_PHASE_MISMATCH",
+                f"{issue}: manifest={phase}, issue={issue_phase}",
+            )
+        )
+    return errors
+
+
 def _validate_entry(
     root: Path,
     entry: dict[str, Any],
@@ -95,41 +148,13 @@ def _validate_entry(
     _required_text(entry, "review_condition", index, errors)
 
     if test:
-        if test in seen_tests:
-            errors.append(_diagnostic("ACTIVE_RED_DUPLICATE", test))
-        seen_tests.add(test)
-        test_path = test.split("::", 1)[0]
-        if not test_path.startswith("tests/") or not (root / test_path).is_file():
-            errors.append(_diagnostic("ACTIVE_RED_TEST_MISSING", test_path))
+        errors.extend(_validate_test_reference(root, test, seen_tests=seen_tests))
 
     if review_by:
-        try:
-            deadline = date.fromisoformat(review_by)
-        except ValueError:
-            errors.append(_diagnostic("ACTIVE_RED_REVIEW_DATE_INVALID", review_by))
-        else:
-            if deadline < as_of:
-                errors.append(_diagnostic("ACTIVE_RED_REVIEW_EXPIRED", review_by))
+        errors.extend(_validate_review_deadline(review_by, as_of=as_of))
 
     if issue:
-        issue_path = _issue_file(root, issue)
-        if issue_path is None:
-            errors.append(_diagnostic("ACTIVE_RED_ISSUE_UNKNOWN", issue))
-        else:
-            issue_text = issue_path.read_text(encoding="utf-8")
-            status = _metadata_value(issue_text, "Status")
-            issue_phase = _metadata_value(issue_text, "Phase")
-            if status is None or _is_terminal_status(status):
-                errors.append(
-                    _diagnostic("ACTIVE_RED_ISSUE_DONE", f"{issue}: {status or 'missing status'}")
-                )
-            if phase and issue_phase is not None and issue_phase.casefold() != phase.casefold():
-                errors.append(
-                    _diagnostic(
-                        "ACTIVE_RED_PHASE_MISMATCH",
-                        f"{issue}: manifest={phase}, issue={issue_phase}",
-                    )
-                )
+        errors.extend(_validate_issue_reference(root, issue, phase))
     return errors
 
 

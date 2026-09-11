@@ -48,6 +48,7 @@
 - `WP-0160 / Core module decomposition Architecture承認` received 2026-09-11.
 - `LISS-0543 Phase 1 Red 承認` received 2026-09-11.
 - `LISS-0543 Phase 2 Green / Implementation 承認` received 2026-09-11.
+- `LISS-0543 Phase 3 Refactor 承認` received 2026-09-11.
 
 ## Verification
 
@@ -74,6 +75,12 @@
 - Final Phase 2 checks also passed baseline byte comparison, active-Red
   lifecycle validation (19 entries), script compilation, document lifecycle,
   coverage-ledger consistency, and `git diff --check`.
+- Phase 3 Refactor separated lifecycle validation concerns and baseline case
+  orchestration without changing assertions, CLI contracts, selection output,
+  or committed baseline bytes. Focused checks passed before the final full
+  verification run.
+- Final Phase 3 evidence: 2,043 blocking tests passed with the same 19 exact
+  active-Red nodes deselected; Spec Verification passed 161/161.
 
 ## Changed Files
 
@@ -82,8 +89,10 @@
   the Phase 1 review packet.
 - Phase 2: two repository scripts, active-Red metadata, generated baseline,
   CI selection and reproducibility checks, and Phase 2 status synchronization.
+- Phase 3: readability-only script extraction, final-review packet, and phase
+  metadata synchronization.
 
 ## Next Safe Action
 
-Complete the same-context Green review, then request
-`LISS-0543 Phase 3 Refactor 承認`.
+Complete deterministic final verification, then request
+`LISS-0543 Phase 3 最終レビュー 承認`.

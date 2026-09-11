@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| Status | in progress — LISS-0543 Phase 2 Green awaiting review |
+| Status | in progress — LISS-0543 Phase 3 awaiting final review |
 | Architecture approval | Adjudicator approved 2026-09-11 |
-| Implementation permission | LISS-0543 Phase 2 granted 2026-09-11 |
+| Implementation permission | LISS-0543 Phase 3 granted 2026-09-11 |
 
 ## Goal
 
@@ -22,7 +22,7 @@ units while preserving all externally observable behavior and public imports.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---:|---:|---|---|---|---|
-| LISS-0543 | Phase 2 Green awaiting review | L | L | AIP-0543-001 | - | 0544–0550 | `codex/liss-0543-red` |
+| LISS-0543 | Phase 3 awaiting final review | L | L | AIP-0543-001 | - | 0544–0550 | `codex/liss-0543-red` |
 | LISS-0544 | proposed | L | L | AIP-0544-001 | 0543 | 0545 | `refactor/evaluator-orchestration` |
 | LISS-0545 | proposed | XL | XL | AIP-0545-001 | 0544 | 0550 | `refactor/evaluator-domain-families` |
 | LISS-0546 | proposed | XL | XL | AIP-0546-001 | 0543 | 0550 | `refactor/typechecker-families` |
@@ -71,8 +71,8 @@ units while preserving all externally observable behavior and public imports.
 - Issue: LISS-0543
 - Reason it is unblocked: it changes verification authority, not production
   semantics, and is a prerequisite for honest Phase 3 evidence.
-- Adjudicator approval needed: review the Green implementation and verification;
-  next request is `LISS-0543 Phase 3 Refactor 承認`.
+- Adjudicator approval needed: final review of the behavior-preserving
+  refactor; next request is `LISS-0543 Phase 3 最終レビュー 承認`.
 
 ## Risks
 
