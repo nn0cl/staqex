@@ -1,15 +1,15 @@
-# WP-0137: Artifact packaging and target build
+# WP-0159: Artifact packaging and target build
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red accepted — Phase 2 approval pending** |
+| Status | **done — Phase 3 final review complete** |
 | Type | architecture / feature contract |
 | Size | L |
-| Parent | WP-0131; WP-0119 |
-| Issue | LISS-0520 |
+| Parent | WP-0119 |
+| Issue | LISS-0542 |
 | Depends on | WP-0121, WP-0122, WP-0123, ADR 0217, ADR 0218 |
 | Blocks | Runtime provider deployment and real-QPU pilot packaging |
-| Implementation permission | **Phase 1 Red complete; Phase 2 not authorized** |
+| Implementation permission | **Phase 3 final review approved; bounded unit complete** |
 
 ## Goal
 
@@ -52,3 +52,27 @@ signing, or Rust runtime implementation.
 Phase 0 design and ADR approval -> Phase 1 Red -> Phase 1 review -> Phase 2
 Green -> Phase 2 review -> Phase 3 cross-provider review. Each phase requires
 its own typed approval.
+
+## Phase 2 Green record
+
+Implemented the minimum provider-neutral `compiler/staqex/sqxa.py` package:
+canonical portable/targeted writer and reader, fake target variant builder,
+and Runtime preflight that validates target route and capability expiry before
+provider construction. Secret-bearing manifests/payloads are rejected. The
+targeted suite passes **6 tests**; no SDK, credential, network, or live-QPU
+operation was used.
+
+## Phase 3 Refactor record
+
+Separated canonical payload hashing, route matching, and capability-expiry
+validation into named internal helpers. This preserves the Phase 2 API and
+fail-closed behavior while making the portable/targeted artifact boundary
+reviewable. The repository audit found no legacy consumer requiring migration
+in this issue. The six targeted tests, compilation, diff, and document checks
+pass; provider SDK/network and real-device execution remain excluded. Final
+review is complete. The independent review also required malformed and
+timezone-naive capability expiry values to fail closed as `SqxaFormatError`;
+the correction and two focused tests are included. This unit is canonically
+tracked as WP-0159, leaving the existing scientific Quantum Projection
+WP-0137 unchanged. Process review: no operating-contract deviation or
+operational problem found.

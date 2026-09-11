@@ -23,7 +23,7 @@ The Runtime may target-build from portable `.sqxa` or execute a pre-built
 targeted `.sqxa`.
 Provider SDKs, credentials, and human approval prose remain in the Host
 execution environment. The detailed design is proposed in [ADR 0219](../architecture/adr/0219-sqxa-target-build-boundary.md)
-and [LISS-0520](../issues/LISS-0520-sqxa-target-build.md); implementation
+and [LISS-0542](../issues/LISS-0542-sqxa-target-build.md); implementation
 is not authorized by this proposal.
 
 ## Design note

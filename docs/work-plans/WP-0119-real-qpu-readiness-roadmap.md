@@ -100,7 +100,7 @@ provider and access-route decomposition is tracked separately under
 | Azure Quantum fan-out | [WP-0134](WP-0134-azure-quantum-provider-fanout.md) | proposed |
 | Google QCS direct | [WP-0135](WP-0135-google-quantum-computing-service.md) | proposed; access-dependent |
 | Direct provider parity | [WP-0136](WP-0136-direct-provider-parity.md) | proposed; add only where justified |
-| Artifact packaging / target build | [WP-0137](WP-0137-artifact-packaging-target-build.md) | proposed; portable to targeted `.sqxa` |
+| Artifact packaging / target build | [WP-0159](WP-0159-artifact-packaging-target-build.md) | done; portable to targeted `.sqxa` |
 
 These child WPs authorize planning only. They do not select a provider/device,
 install an SDK, or authorize live submission.

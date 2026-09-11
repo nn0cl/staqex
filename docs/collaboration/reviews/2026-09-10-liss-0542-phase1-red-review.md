@@ -1,4 +1,4 @@
-# LISS-0520 Phase 1 Red review
+# LISS-0542 Phase 1 Red review
 
 | Field | Value |
 |---|---|
@@ -12,8 +12,8 @@
 ## Reviewed artifacts
 
 - ADR 0219: `.sqxa` target-build boundary
-- LISS-0520 and WP-0137
-- `tests/test_liss_0520_sqxa_target_build_red.py`
+- LISS-0542 and WP-0159
+- `tests/test_liss_0542_sqxa_target_build_red.py`
 - ADR 0217 capability freshness and ADR 0218 Host approval boundary
 
 ## Findings
@@ -27,7 +27,7 @@ Phase 1 Red approval.
 
 ### F2 — capability expiry rejection is not represented (P1)
 
-LISS-0520 scenario 4 includes expired capability rejection and ADR 0217 makes
+LISS-0542 scenario 4 includes expired capability rejection and ADR 0217 makes
 freshness fail-closed. Add an offline Red scenario proving that an expired
 target capability cannot produce or load a deployable targeted `.sqxa`.
 
