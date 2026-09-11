@@ -95,6 +95,24 @@ assets; it must not mechanically reimplement completed Issues.
 | R4 — human real-device pilot | WP-0124 | A human-authorized run produces validated, bounded evidence |
 | R5 — optional operations | WP-0125 | Only a demonstrated delivery/operations need receives a separate contract |
 
+### Multi-provider route extension
+
+The common readiness and human-pilot controls above remain authoritative. The
+provider and access-route decomposition is tracked separately under
+[WP-0131](WP-0131-multi-provider-real-qpu-connectivity.md):
+
+| Route family | Work Plan | Disposition |
+|---|---|---|
+| IBM Quantum direct | [WP-0132](WP-0132-ibm-quantum-real-qpu.md) | proposed |
+| AWS Braket fan-out | [WP-0133](WP-0133-aws-braket-provider-fanout.md) | proposed; extends existing AWS hardening |
+| Azure Quantum fan-out | [WP-0134](WP-0134-azure-quantum-provider-fanout.md) | proposed |
+| Google QCS direct | [WP-0135](WP-0135-google-quantum-computing-service.md) | proposed; access-dependent |
+| Direct provider parity | [WP-0136](WP-0136-direct-provider-parity.md) | proposed; add only where justified |
+| Artifact packaging / target build | [WP-0159](WP-0159-artifact-packaging-target-build.md) | done; portable to targeted `.sqxa` |
+
+These child WPs authorize planning only. They do not select a provider/device,
+install an SDK, or authorize live submission.
+
 An R-level is not a release claim until its child WPs are reviewed, their
 Issues are complete or explicitly deferred, CI is green, and the register and
 trace are synchronized. R4 is specifically a human-operated evidence milestone,

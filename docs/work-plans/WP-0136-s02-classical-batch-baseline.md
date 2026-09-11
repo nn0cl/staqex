@@ -2,18 +2,18 @@
 
 | Field | Value |
 |---|---|
-| Status | proposed |
-| Phase | phase-0-design |
+| Status | done |
+| Phase | complete |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0519](../issues/LISS-0519-s02-classical-batch-baseline.md) |
 | Depends on | [WP-0135](WP-0135-s02-leakage-safe-model.md) |
 | Blocks | WP-0139 |
-| Owner / route | Sora/Sol: design coordination; Luna: separately approved bounded phases |
-| Architecture | ADR 0217-A Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
+| Owner / route | Sol: independent design correction and coordination; Luna: separately approved bounded phases |
+| Architecture | ADR 0217-A accepted; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), D03 |
-| Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0519 Phase 0 acceptance/profile review only |
+| Implementation permission | approved for bounded D03 implementation only; completed |
+| Current Next Issue | WP-0139 / LISS-0522 QUBO feasibility and encoding |
 
 ## Scope
 
@@ -32,6 +32,87 @@ Phase 0でfixture identity、schema/source form/API boundary、tolerance/期待d
 数式sourceを変更する場合はparser→typed HIR→Semantic IR→consumer→Resultを検証する。
 Host-only契約ではport/APIの意味保存を検証し、source対応済みと主張しない。
 外部service不要のfake/固定fixtureを使う。実測profileの検証は権利確認済みsnapshotを使用する。
+
+## Phase 0 decisions
+
+- Input is the single WP-0134/WP-0135 S02 profile plus a frozen candidate
+  inventory. Candidate records retain candidate ID, predicted IC50 in nM,
+  uncertainty, stock status, cost units, and diversity group. The fixture is
+  deterministic and synthetic; it is not a prospective assay recommendation.
+- The candidate set is fixed to five opaque IDs (`candidate:001` through
+  `candidate:005`) and batch size is exactly two. The budget is 8 cost units;
+  stock must be available; at most one candidate from a diversity group may be
+  selected. These are hard constraints, not penalties.
+- The objective is to minimize the sum of predicted IC50 values over the
+  selected batch. Uncertainty is reported beside the score but is not silently
+  substituted into the objective. Every candidate and constraint input is
+  identical for enumeration and the baseline.
+- The enumeration oracle evaluates every two-candidate subset and independently
+  returns feasibility, objective score, and selected IDs. If no subset is
+  feasible, the result is `no-feasible-plan`, never an empty successful plan.
+- The predefined classical baseline is `greedy-feasible-v1`: sort by predicted
+  IC50 ascending, then candidate ID for ties; append a candidate only when all
+  hard constraints remain satisfied. This is a deterministic reference, not a
+  technology selection or claim of optimality beyond the oracle-sized fixture.
+- The use case owns objective, hard-constraint, infeasibility, and comparison
+  policy. `CandidateSourcePort` supplies the frozen inventory and
+  `ClassicalSelectionPort` supplies the baseline lane; neither adapter owns
+  scientific policy. No optimizer library, database, provider, or QPU is
+  selected.
+- Stable diagnostics are `BATCH_CANDIDATE_SET_MISMATCH`,
+  `BATCH_CONSTRAINT_MISMATCH`, `BATCH_SCORE_MISMATCH`, and
+  `BATCH_NO_FEASIBLE_PLAN`. Constraint verdict and score are returned as
+  separate fields so penalty-only low scores cannot be accepted as feasible.
+- Phase 1 tests live in `tests/test_s02_classical_batch_baseline_red.py` and
+  cover oracle/baseline agreement on the feasible fixture, independent
+  constraint verification, candidate-set mismatch, score mismatch, and the
+  no-feasible-plan result.
+
+## Phase 1 Red record
+
+- Added only `tests/test_s02_classical_batch_baseline_red.py`.
+- The suite fixes the observable D03 contract for oracle/baseline agreement,
+  explicit no-feasible-plan semantics, candidate-set mismatch quarantine, and
+  non-comparable constraint/score results.
+- The expected implementation module is
+  `compiler.staqex.s02_classical_batch_baseline`; it is intentionally absent
+  until Phase 2/Implementation approval.
+
+## Phase 2 Green record
+
+- Implemented `compiler/staqex/s02_classical_batch_baseline.py` for the bounded
+  D03 contract only.
+- Exhaustive enumeration and `greedy-feasible-v1` share the same candidate
+  records and hard feasibility checks; score and feasibility remain separate.
+- Candidate-set, constraint, and score mismatches are quarantined, and an
+  infeasible fixture returns `no-feasible-plan` rather than empty success.
+- No optimizer library, quantum circuit, provider, database, or experiment
+  ordering was added.
+
+## Phase 3 Refactor record
+
+- Centralized comparison quarantine result construction in a small helper.
+- Preserved oracle／baseline selection, feasibility, score, and diagnostic
+  behavior without changing assertions.
+- Direct refactor checks, syntax, diff, and document lifecycle checks passed.
+
+## Final review record
+
+Phase 3 final review approved on 2026-09-09. The bounded D03 slice is complete;
+larger-scale optimization, experiment ordering, and quantum comparison remain
+explicitly out of scope. See [Review Summary](../collaboration/reviews/2026-09-09-liss-0519-phase3-final-review.md).
+
+Process review: no operating-contract deviation or operational problem found.
+
+## Phase 1 Red record
+
+- Added only `tests/test_s02_classical_batch_baseline_red.py`.
+- The suite fixes the observable D03 contract for oracle/baseline agreement,
+  explicit no-feasible-plan semantics, candidate-set mismatch quarantine, and
+  non-comparable constraint/score results.
+- The expected implementation module is
+  `compiler.staqex.s02_classical_batch_baseline`; it is intentionally absent
+  until Phase 2/Implementation approval.
 
 ## Risk / stop conditions
 
@@ -58,7 +139,7 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 ## AI planning record
 
 - ID: AIP-WP-0136-2026-09-08-001; status: proposed.
-- Author/environment: Sora role, Codex desktop, local shared worktree.
+- Author/environment: Sol role, Codex desktop, local shared worktree.
 - Model/reasoning: N/A — role指定のみ、実行構成の表示値は取得していない。
 - Created: 2026-09-08; size: M; execution scope: 上記一契約/一profile、Lunaへ各phase別に渡す。
 - Estimated tokens range/midpoint/metric: N/A — fixture/API/technology review前で信頼できる見積根拠なし。

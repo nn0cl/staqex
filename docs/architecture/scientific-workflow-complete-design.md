@@ -3,7 +3,8 @@
 | 項目 | 状態 |
 |---|---|
 | 文書の役割 | 完成形設計の単一提案元。Current proposal / 非Normative |
-| 承認 | 2026-09-08 設計修正Scopeのみ依頼済み。Architecture / Technology / Phase 1 / Implementationは未承認 |
+| 承認 | 2026-09-08 ADR 0217-AのArchitecture承認済み。0217-B/C、Technology / Phase 1 / Implementationは未承認 |
+| Review | Solが別task/worktreeでSora案を独立点検後に修正。修正後のfresh independent contract reviewは完了（approve / findingsなし）。0217-Aは承認済み、Phase 1 / Implementationは未承認 |
 | 決定案 | [ADR 0217](adr/0217-scientific-workflow-metadata-and-projection.md) |
 | 受入案 | [Scientific Workflow acceptance](../specs/staqex-scientific-workflow-acceptance.md) |
 | 計画 | [WP-0131](../work-plans/WP-0131-scientific-workflow-program.md) |
@@ -104,6 +105,11 @@ validatedは型とschemaが合うことだけを示し、科学的妥当性や�
 外部クラスをStaqex class/keywordとして全コピーしない。Adapter profileごとに版、対応範囲、
 必須mapping、変換理由、保持する未解釈拡張、拒否項目を契約化する。
 
+ここでは二段階のgateを分ける。mapping proposal は外部概念を内部のどの意味へ接続し、
+何を推定・昇格してはならないかだけを示す。profile decision は特定version/encoding/subset、
+必須field、round-trip/loss policy、license、採用Adapter/libraryを別のTechnology/Phase 0判断で固定する。
+下表はすべて前者であり、後者は未決定である。
+
 | 外部語彙/形式 | 提案mappingと守る境界 | 一次資料 |
 |---|---|---|
 | CityGML | city object -> Entity/FeatureOfInterest、geometry/LoD -> Space、relations -> typed Relation。道路の通行可否は別Observation/Domain判定 | [OGC CityGML](https://www.ogc.org/standards/citygml/) |
@@ -147,7 +153,8 @@ SolverはDomainのSolverProblem/SolverPolicy/SolverResult契約とUseCaseの実�
 NumericalSolverPortの具体Adapterに分ける。残差、収束理由、iteration/mesh履歴、error boundか
 empirical estimateか、数値精度、費用、deadlineを返す。residualが小さいだけでmodel妥当性を認定しない。
 Solver不収束や発散は部分値をsuccessful resultへ変えない。診断用partial値は用途制限付きResult。
-明示された有限化を伴うCPU近似にもADR 0211のRealize境界を適用する。
+明示された有限化を伴うCPU近似にはADRs 0210/0212のRealize境界と、
+ADR 0211のsource-derived Semantic IR権威をともに適用する。
 
 物理実験は校正/測定モデル、天文はtime/frame/coverage、重力はmetric/geometry/gauge/unitsと
 初期拘束、流体はmass/momentum/energy、MHDは磁場divergenceと境界・source項を追加する。
@@ -177,6 +184,9 @@ Realize policy、error/resource budget、capability判定を持つ。
 
 Quantum Projectionを使わないclassical-only科学Workflowも同じModel/Result契約を通る。
 量子ルートはclassical baselineとの比較候補であり、科学Workflowの成立条件ではない。
+したがって個別Workflowの科学的有効性判定は量子laneの有無で失敗させない。一方、
+本programが「classical/quantum接続まで設計・検証済み」と主張する最終gateでは、
+別途Q01/D05の変換・比較証拠を要求する。この二つのcompletion claimを混同しない。
 
 ## 7. 型付き境界と変換証跡
 

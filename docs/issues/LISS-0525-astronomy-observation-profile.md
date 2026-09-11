@@ -7,11 +7,11 @@
 | Phase | phase-0-design |
 | Type / priority | feature / P1 |
 | Initial/current size | M / M |
-| Owner | Sora design; Luna only after phase-specific approval |
+| Owner | Sol independent design correction; Luna only after phase-specific approval |
 | GitHub issue | none |
 | Parent | LISS-0514 |
 | Depends on | LISS-0515, LISS-0516 |
-| Blocks | LISS-0531, LISS-0536, LISS-0539 |
+| Blocks | LISS-0536, LISS-0539 |
 | Related branch | none — branch operations forbidden in this design task |
 | Work plan / canonical planning record | [WP-0142](../work-plans/WP-0142-astronomy-observation-profile.md), AIP-WP-0142-2026-09-08-001 |
 | Acceptance notes | A01; [acceptance proposal](../specs/staqex-scientific-workflow-acceptance.md) |

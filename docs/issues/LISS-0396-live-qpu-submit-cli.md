@@ -3,7 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0396
-- Status/phase: **complete** (2026-08-10) — Adjudicator Completion
+- Status/phase: **complete; amended 2026-09-10** — Host config and interactive
+  approval added under ADR 0218
   approval; PR [#506](https://github.com/nn0cl/staqex/pull/506)
 - Type: Feature Path (Delivery — new `cli.py` subcommand wiring the
   already-shipped `submit_live_qpu` UseCase entrypoint; no Kernel change,
@@ -94,12 +95,11 @@ full job-lifecycle CLI is a separably-scoped, larger surface.
   up front) better than a REPL buffer someone might submit by habit.
   Deferred as a separate, explicitly optional future Issue if the
   Adjudicator wants it — not silently folded in here.
-- **Cost/budget guardrails, shot-count caps, or a blocking confirmation
-  prompt before submit.** ADR 0203 Decision 4 already places
-  cost/budget guardrails as "the user's own responsibility, per ADR
-  0202" — this Issue adds a one-line stderr notice before submitting
-  (see Plan-locked decisions) but does not invent enforcement not asked
-  for.
+- **Provider billing enforcement** remains out of scope. The CLI now reads
+  non-secret `device_arn`, `shots`, and declared `cost_ceiling_usd` from the
+  Host TOML config (ADR 0218) and requires interactive `y`/`yes` approval
+  immediately before submission. The ceiling must be positive; provider
+  price estimation remains outside this Issue.
 - **Provider selection beyond AWS Braket.** `--provider` is accepted for
   forward-compatible spelling but only `aws-braket` is implemented;
   anything else fails closed with a clear message. No provider registry
@@ -190,8 +190,17 @@ full job-lifecycle CLI is a separably-scoped, larger surface.
       `_build_live_qpu_adapter`, `submit-live-qpu` subparser, and
       `main()` dispatch-set entry. All 5 pass; no test logic edited (only
       the one fixture source string, before Green, per above).
-- [x] Phase 3 Refactor: reviewed diff — matches the Plan's design exactly
-      (`cli.py` +75 lines, additive only); no further changes needed.
+- [x] Phase 3 Refactor: reviewed config/approval boundary, no-secret config
+      handling, and cancellation-before-provider-call behavior.
 - [x] Full regression sweep re-run: **1417 passed** (2026-08-10), up from
       1412 by exactly the 5 new tests.
 - [x] Completion approval (2026-08-10).
+
+## ADR 0218 amendment
+
+The CLI now accepts an optional `--config` TOML path and otherwise reads the
+Host default config path. `device_arn`, `shots`, and positive
+`cost_ceiling_usd` are non-secret settings; explicit CLI values override the
+file. Immediately before adapter construction and submission, the CLI asks
+for interactive `y`/`yes` confirmation. Any other response cancels with no
+provider call. AWS credentials remain in the Host environment/standard chain.

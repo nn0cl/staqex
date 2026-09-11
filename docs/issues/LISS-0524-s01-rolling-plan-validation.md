@@ -7,7 +7,7 @@
 | Phase | phase-0-design |
 | Type / priority | feature / P1 |
 | Initial/current size | M / M |
-| Owner | Sora design; Luna only after phase-specific approval |
+| Owner | Sol independent design correction; Luna only after phase-specific approval |
 | GitHub issue | none |
 | Parent | LISS-0514 |
 | Depends on | LISS-0521, LISS-0523, LISS-0534 |

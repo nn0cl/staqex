@@ -9,7 +9,7 @@
 | Issue | [LISS-0541](../issues/LISS-0541-s02-quantum-baseline-comparison.md) |
 | Depends on | [WP-0137](WP-0137-scientific-quantum-projection.md); [WP-0139](WP-0139-s02-assay-batch-cycle.md); [WP-0151](WP-0151-scientific-reproducibility-evidence.md) |
 | Blocks | WP-0153 |
-| Owner / route | Sora/Sol: design coordination; Luna: separately approved bounded phases |
+| Owner / route | Sol: independent design correction and coordination; Luna: separately approved bounded phases |
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), D05/Q01/E01 |
 | Implementation permission | no; no Phase 1 approval |
@@ -58,7 +58,7 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 ## AI planning record
 
 - ID: AIP-WP-0158-2026-09-08-001; status: proposed.
-- Author/environment: Sora role, Codex desktop, local shared worktree.
+- Author/environment: Sol role, Codex desktop, local shared worktree.
 - Model/reasoning: N/A — role指定のみ、実行構成の表示値は取得していない。
 - Created: 2026-09-08; size: M; execution scope: 上記一契約/一profile、Lunaへ各phase別に渡す。
 - Estimated tokens range/midpoint/metric: N/A — fixture/API/technology review前で信頼できる見積根拠なし。

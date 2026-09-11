@@ -3,11 +3,11 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0534 |
-| Status | proposed |
-| Phase | phase-0-design |
+| Status | Phase 3 Refactor complete; final review pending |
+| Phase | phase-3-refactor |
 | Type / priority | feature / P0 |
 | Initial/current size | M / M |
-| Owner | Sora design; Luna only after phase-specific approval |
+| Owner | Sol independent design correction; Luna only after phase-specific approval |
 | GitHub issue | none |
 | Parent | LISS-0514 |
 | Depends on | LISS-0516, LISS-0521 |
@@ -15,7 +15,56 @@
 | Related branch | none — branch operations forbidden in this design task |
 | Work plan / canonical planning record | [WP-0151](../work-plans/WP-0151-scientific-reproducibility-evidence.md), AIP-WP-0151-2026-09-08-001 |
 | Acceptance notes | E01; [acceptance proposal](../specs/staqex-scientific-workflow-acceptance.md) |
-| Adjudicator decisions | ADR 0217/acceptance review; profile/technology if needed; distinct Phase 1, Phase 2/Implementation, Phase 3 approvals |
+| Adjudicator decisions | ADR 0217/acceptance review; E01 Phase 0 acceptance approved 2026-09-09; profile/technology if needed; distinct Unit A/Unit B phase approvals |
 
 Scope、Out of scope、検証、risk、完了条件、Luna phaseは上記WPを単一計画元とする。
 このIssueは新規提案で、既存完了Issueを再開しない。承認済みscope/phaseの継承はない。
+
+Phase 0 decision record: E01はprovider-neutralな再現・反証・費用証拠契約である。
+`manifest:s02-d03-v1`、`snapshot:s02-round-001`、`model:s02-v1`、
+`baseline:greedy-feasible-v1`、`environment:local-python-v1`を固定し、manifest hash、
+input/model/baseline identity、seed、precision、runtime、command、cost breakdown、
+failure/diagnostic、replay referenceを証拠へ保持する。Unit Aはmanifest/replay identityと
+hash/tolerance、Unit Bはclaim、heldout再利用、分母bias、失敗/費用欠落を扱う。
+Unit A/Bのtestsとphase approvalは分離する。
+
+Phase 0 acceptance outcome: schema、port ownership、diagnostic、tolerance、Unit分割を
+確定した。Unit AはPhase 1 Red ready、Unit BはUnit A受入後の別承認待ちである。
+
+Phase 1 Red record: `tests/test_reproducibility_manifest_red.py` にsame-manifest replay、
+hash/identity変更、numeric tolerance mismatchの4つの失敗契約を追加した。production codeと
+Unit Bは変更していない。次の承認対象はUnit AのPhase 2 Green / Implementationである。
+
+Phase 2 Green record: `compiler/staqex/reproducibility_evidence.py` にimmutableな
+RunManifest/EvidenceRecordとreplay比較を追加した。hash/manifest identity変更を拒否し、
+numeric tolerance超過をinconclusiveとして保持する。Red suiteとUnit Bは変更していない。
+次の承認対象はUnit AのPhase 3 Refactorである。
+
+Unit A final review record: 2026-09-10にmanifest/replay identity、hash変更拒否、
+tolerance、不一致のinconclusive扱いを確認し、Unit Aを完了とした。Unit Bのclaim、heldout、
+分母、失敗、費用、prospective evidenceは未完了であり、LISS全体はdoneではない。
+詳細は[Review Summary](../collaboration/reviews/2026-09-10-liss-0534-unit-a-final-review.md)。
+次の承認対象は`LISS-0534 Unit B Phase 1 Red 承認`である。
+
+Phase 3 Refactor record: hash比較とinconclusive結果構築をpure helperへ抽出し、
+manifest/hash mismatch、output mismatch、numeric tolerance、reproducedの挙動を維持した。
+次の承認対象はUnit Aの最終レビューである。
+
+Unit B Phase 1 Red record: `tests/test_reproducibility_claims_red.py` にreproduced claim、
+heldout再利用、分母bias、費用欠落、prospective evidence未取得の5つの失敗契約を追加した。
+Unit A実装は変更していない。次の承認対象はUnit BのPhase 2 Green / Implementationである。
+
+Unit B Phase 2 Green record: `compiler/staqex/reproducibility_evidence.py` にCostBreakdown、
+ClaimInput/Result、`evaluate_claim`を追加した。heldout再利用、分母bias、費用欠落、
+prospective evidence未取得は`not-evaluated`、閾値超過は`falsified`、完全な評価は
+`reproduced`として返す。Red suiteは変更していない。次の承認対象はUnit BのPhase 3 Refactorである。
+
+Unit B Phase 3 Refactor record: heldout overlapとdenominator completenessの判定をpure
+helperへ抽出し、`reproduced`、`falsified`、`not-evaluated`および全diagnosticを維持した。
+次の承認対象はUnit Bの最終レビューである。
+
+Final review record: 2026-09-10にUnit A/Bを確認し、E01 bounded contractを完了とした。
+prospective assay validation、QPU比較、広範なbenchmarkは別作業として残す。詳細は
+[Review Summary](../collaboration/reviews/2026-09-10-liss-0534-final-review.md)。
+
+Process review: no operating-contract deviation or operational problem found.

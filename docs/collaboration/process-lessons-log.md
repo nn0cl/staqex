@@ -7,6 +7,54 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-10
+- Class: boundary-completeness
+- Pattern: fake-port tests can pass after a port extension while a concrete
+  adapter implementation still lacks the new method.
+- What later design or implementation must do: every port extension must be
+  checked against all concrete implementations and include a deterministic
+  concrete-surface regression assertion without requiring live credentials.
+- Source issue or work plan (adopter's own ID, if any): LISS-0516 / WP-0133
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-10
+- Class: authority-boundary
+- Pattern: adding a new safe observation API does not close an unsafe legacy
+  projection that remains reachable through an existing port method.
+- What later design or implementation must do: when a contract tightens,
+  audit every legacy entry point and its delegated callers; test unknown and
+  failure states through each externally reachable projection.
+- Source issue or work plan (adopter's own ID, if any): LISS-0516 / WP-0133
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-10
+- Class: phase-acceptance-boundary
+- Pattern: a provider adapter Phase 2 change can satisfy new contract tests
+  while accidentally regressing the existing adapter surface.
+- What later design or implementation must do: Phase 2 Green evidence must
+  include the new approved gap suite plus the nearest existing adapter
+  regression suite and the provider-neutral contract suite.
+- Source issue or work plan (adopter's own ID, if any): LISS-0516 / WP-0133
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-10
+- Class: phase-acceptance-boundary
+- Pattern: a Red suite can contain multiple valid gap tests while its direct
+  runner reports only the first failure, weakening phase acceptance evidence.
+- What later design or implementation must do: bounded direct runners must
+  execute every named test, report each failure, and exit non-zero only after
+  complete failure collection.
+- Source issue or work plan (adopter's own ID, if any): LISS-0516 / WP-0133
+- Status: applied
+
+## Lesson
+
 - Date: 2026-08-31
 - Class: authority-boundary
 - Pattern: a compatibility projection can retain legacy DTO nodes while still
@@ -44,6 +92,20 @@ Record meta-level patterns only. No session transcripts.
   open work.
 - Source issue or work plan (adopter's own ID, if any): LISS-0024
 - Status: applied
+
+## Lesson
+
+- Date: 2026-09-08
+- Class: coverage-authority-boundary
+- Pattern: a completed representation or small demonstration can be mistaken
+  for complete scientific workflow coverage; importing richer metadata can
+  also accidentally create a second executable semantic authority.
+- What later design or implementation must do: separate metadata authority,
+  source-derived execution meaning, profile-specific capability, and scientific
+  validation. Track each domain's positive execution and neighboring rejection
+  evidence; keep successor scope distinct from completed example migrations.
+- Source issue or work plan: LISS-0514 / WP-0131
+- Status: applied in design; implementation application remains per phase gate
 
 ## Lesson
 

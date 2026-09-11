@@ -2,9 +2,14 @@
 
 ## Status
 
-**Proposed — Architecture approval pending, 2026-09-08.**
+**Proposed overall — 0217-A Architecture approved, 2026-09-08.**
 User-authorized scope is design correction across scientific domains only.
-No technology selection, Phase 1, implementation, SDK, credentials, or real submission is authorized.
+0217-B/C remain Proposed. No technology selection, Phase 1, implementation,
+SDK, credentials, or real submission is authorized.
+Sol independently inspected the separate Sora draft before correcting it. A
+fresh independent read-only contract review of the corrected proposal completed
+with `approve` and no P0/P1/P2 findings; this does not grant Architecture,
+Phase, or Implementation approval.
 
 ## Context
 
@@ -78,11 +83,19 @@ Phase 1 or implementation permission. Technology choices require separate record
 
 | Decision key | Scope | Status |
 |---|---|---|
-| 0217-A | Metadata identity/trust/roles and its non-executable relationship to Semantic IR; adapter mapping responsibility, no technology choice (decision 1–3 and 8, metadata portion only) | Proposed |
+| 0217-A | Metadata identity/trust/roles and its non-executable relationship to Semantic IR; adapter mapping responsibility, no technology choice (decision 1–3 and 8, metadata portion only) | **Accepted — Architecture approval 2026-09-08** |
 | 0217-B | Rich binding, continuous numerical profiles, and quantum transformation contracts (decision 4–5) | Proposed |
 | 0217-C | Deadline/replan/approval/fallback lifecycle (decision 6–7) | Proposed |
 
-The next minimum Architecture target is **0217-A + M0 acceptance**, not approval
-of B/C or the whole program. A partial approval must name its key and retained
-exclusions in this table; the ADR as a whole remains Proposed until all keys
-are decided. Every later WP must name the relevant accepted key(s).
+The next minimum target is **M0 acceptance** for WP-0132/LISS-0515. 0217-B/C
+and the ADR as a whole remain Proposed. This partial approval names its key and
+retained exclusions in this table; every later WP must name the relevant
+accepted key(s).
+
+## Architecture approval record
+
+- Adjudicator decision: `ADR 0217-A Architecture承認` (2026-09-08).
+- Accepted boundary: Metadata identity/trust/roles, adapter mapping
+  responsibility, and the non-executable relationship to Scientific Semantic IR.
+- Retained exclusions: 0217-B/C, technology selection, Phase 1, implementation,
+  provider/SDK, credentials, and live submission.

@@ -4,12 +4,13 @@
 
 | Area | Current status | Tracking | Boundary / acceptance note |
 |---|---|---|---|
-| 完成形科学Workflow / 新実測S02 | **phase-0-design review; implementation not authorized** | [WP-0131](../work-plans/WP-0131-scientific-workflow-program.md); [LISS-0514](../issues/LISS-0514-scientific-workflow-program.md); [ADR 0217 Proposed](adr/0217-scientific-workflow-metadata-and-projection.md); [設計案](scientific-workflow-complete-design.md) | External Adapter/Metadata Graph/Domain Extension/source-derived Semantic IR/projections。全分野の27 bounded child WP、S02優先、S01と連続場/天文/重力/太陽MHD/離散系を包含。次はWP-0132 M0のArchitecture/acceptance審査。 |
+| 完成形科学Workflow / 新実測S02 | **WP-0132/LISS-0515 M0 complete; WP-0133/LISS-0516 complete; WP-0134/LISS-0517 D01 complete; WP-0135/LISS-0518 D02 complete; WP-0136/LISS-0519 D03 complete; WP-0137/LISS-0520 Q01 complete; WP-0138/LISS-0521 W01 complete; WP-0139/LISS-0522 Phase 1 Red; WP-0150/LISS-0533 R01 complete; WP-0151/LISS-0534 E01 complete** | [WP-0131](../work-plans/WP-0131-scientific-workflow-program.md); [LISS-0514](../issues/LISS-0514-scientific-workflow-program.md); [ADR 0217](adr/0217-scientific-workflow-metadata-and-projection.md); [設計案](scientific-workflow-complete-design.md) | External Adapter/Metadata Graph/Domain Extension/source-derived Semantic IR/projections。全体28 records（親1＋子27、各WP/LISS pair）、S02優先、S01と連続場/天文/重力/太陽MHD/離散系を包含。D04 proposal閉ループのRed契約を固定。次はWP-0139/LISS-0522 Phase 2 Green。Q01のbounded `.sqxa` artifact/runtime loaderとR01 bounded discrete interaction projectionは完了し、Q01-b/量子比較と追加profileは別途継続。 |
 
 旧S02の合成選択境界は[WP-0130](../work-plans/WP-0130-basic-s02-example-migration.md)
 でBasicへ移管済み。下の旧S02 numerical/benchmark記録はそのlineageの証拠で、
 新しい実測hit-to-lead Workflowの完成状態ではない。
-完了済みWPは再開せず、新規分割と既存未完了ownerの扱いはWP-0131のreconciliationを参照する。
+完了済みWP/LISSは変更・再開せず、新規分割と既存未完了ownerの扱いは
+[WP-0131](../work-plans/WP-0131-scientific-workflow-program.md)のreconciliationを参照する。
 
 This is the canonical cross-reference for capabilities that are intentionally
 open, deferred, or still awaiting a dedicated local Issue. It complements the

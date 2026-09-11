@@ -2,18 +2,18 @@
 
 | Field | Value |
 |---|---|
-| Status | proposed |
-| Phase | phase-0-design |
+| Status | done |
+| Phase | complete |
 | Size initial/current | M / L — source/IR/consumerまたは複数状態境界のため設計reviewで再分類 |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0521](../issues/LISS-0521-scientific-workflow-lifecycle.md) |
 | Depends on | [WP-0132](WP-0132-scientific-metadata-graph.md) |
 | Blocks | WP-0139, WP-0141, WP-0151, WP-0157 |
-| Owner / route | Sora/Sol: design coordination; Luna: separately approved bounded phases |
+| Owner / route | Sol: independent design correction and coordination; Luna: separately approved bounded phases |
 | Architecture | ADR 0217-A/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), W01 |
-| Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0521 Phase 0 acceptance/profile review only |
+| Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
+| Current Next Issue | WP-0151 / LISS-0534 Phase 0 acceptance/profile review |
 
 ## Scope
 
@@ -32,6 +32,43 @@ Phase 0でfixture identity、schema/source form/API boundary、tolerance/期待d
 数式sourceを変更する場合はparser→typed HIR→Semantic IR→consumer→Resultを検証する。
 Host-only契約ではport/APIの意味保存を検証し、source対応済みと主張しない。
 外部service不要のfake/固定fixtureを使う。実測profileの検証は権利確認済みsnapshotを使用する。
+
+## Phase 0 decisions
+
+- W01はWorkflowPlan/Jobの採用状態を管理するprovider-neutralな契約であり、Jobを
+  実行するschedulerやprovider retryを作るタスクではない。`Job status=completed`と
+  `Plan result=adoptable`は別の状態として保持する。
+- 固定fixtureは`plan:s02-round-001`、`snapshot:s02-round-001`、
+  `approval:s02-policy-v1`、`job:s02-fake-001`とし、fake clockの時刻を
+  `2026-09-09T00:00:00Z`から開始する。Plan identityはplan ID、snapshot ID、
+  content hash、revisionで構成し、Job resultはplan identityを反映する。
+- Unit Aのpure state transitionは、正常完了、approval期限内の採用、期限切れapproval、
+  取消済みapproval、snapshot/plan hash不一致、stale resultを対象とする。状態は
+  `draft -> awaiting-approval -> approved -> running -> completed`を基本とし、
+  expired/rejected/stale/cancelledは採用不能な終端または拒否状態とする。
+- Unit Bのfake event/clock接続は、duplicate event、late event、timeout/cancel race、
+  Job完了後のapproval取消、別lane fallbackを対象とする。event dedup keyはjob ID、
+  event sequence、plan revisionの組で固定し、同一eventの再受信は状態を二重適用しない。
+- approvalはplan content hash、snapshot ID、policy revision、approval ID、期限に
+  bindする。期限切れ、取消、identity変更、古いrevisionの結果は採用せず、
+  `WORKFLOW_APPROVAL_EXPIRED`、`WORKFLOW_APPROVAL_CANCELLED`、
+  `WORKFLOW_STALE_RESULT`、`WORKFLOW_PLAN_IDENTITY_MISMATCH`で診断する。
+- timeout/cancel raceは先着順の隠れた実装にせず、fake clockとevent sequenceを証跡に
+  残す。安全制約を緩和する自動fallbackは許可せず、fallbackは別laneの新Plan/Job
+  として明示する。旧Planを無条件に再利用しない。
+- Port境界は`WorkflowClockPort`、`WorkflowEventPort`、`JobStatusPort`、
+  `ApprovalStatePort`とする。Domain/UseCaseがidentity、期限、dedup、採用可否、
+  fallback policyを所有し、adapterはclock/event/job/approvalの入出力変換のみを担う。
+- 期待diagnosticは`WORKFLOW_APPROVAL_EXPIRED`、`WORKFLOW_APPROVAL_CANCELLED`、
+  `WORKFLOW_STALE_RESULT`、`WORKFLOW_PLAN_IDENTITY_MISMATCH`、
+  `WORKFLOW_DUPLICATE_EVENT`、`WORKFLOW_TIMEOUT_CANCEL_RACE`、
+  `WORKFLOW_FALLBACK_REQUIRES_NEW_PLAN`とする。identity/hash/sequenceは完全一致、
+  時刻比較はUTC instantで行い、実時間sleepや外部eventを受入条件にしない。
+- Unit AのPhase 1 testsは`tests/test_workflow_lifecycle_unit_a_red.py`、Unit Bは
+  `tests/test_workflow_lifecycle_unit_b_red.py`に分離する。Phase 1ではUnit Aのテスト
+  のみを作成し、Unit BはUnit Aのreview後に別のPhase 1承認を得る。
+- Process lesson applied: Job/Planの実行と採用、event状態と人間レビューの証跡を別々に
+  観測可能にする。完成した小さなfixtureをWorkflow全体の完成とは扱わない。
 
 ## Risk / stop conditions
 
@@ -58,7 +95,7 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 ## AI planning record
 
 - ID: AIP-WP-0138-2026-09-08-001; status: proposed.
-- Author/environment: Sora role, Codex desktop, local shared worktree.
+- Author/environment: Sol role, Codex desktop, local shared worktree.
 - Model/reasoning: N/A — role指定のみ、実行構成の表示値は取得していない。
 - Created: 2026-09-08; size: L (initial M); execution scope: 上記一契約/一profile、Lunaへ各phase別に渡す。
 - Estimated tokens range/midpoint/metric: N/A — fixture/API/technology review前で信頼できる見積根拠なし。
@@ -71,3 +108,72 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - **Unit B / W01-b / M**: Aにfake event/clock/既存Jobを接続し、重複/遅延/cancel raceと別lane fallbackを検証。scheduler実装は除外。
 
 親scenarioの既存期待を狭めずこの二つへ配分する。各unitは別のPhase 1 test review、Phase 2/Implementation、Phase 3承認を要する。WP全体の一括実装依頼は禁止。両unitの証拠がそろうまでWPはdoneにしない。
+
+## Phase 1 Red record — Unit A
+
+- Added only `tests/test_workflow_lifecycle_unit_a_red.py`.
+- The suite fixes the observable Unit A contract for current approval adoption,
+  expiry/cancellation rejection, stale or mismatched identity rejection, and
+  separation of Job completion from Plan adoption.
+- Unit B tests and all production implementation remain out of this phase.
+
+## Phase 1 Red record — Unit B
+
+- Added only `tests/test_workflow_lifecycle_unit_b_red.py`.
+- The suite fixes the observable Unit B contract for event deduplication, late
+  event rejection, timeout/cancel race diagnostics, and new-Plan fallback.
+- Production implementation remains pending until Unit B Phase 2 approval.
+
+## Phase 2 Green record — Unit A
+
+- Added `compiler/staqex/workflow_lifecycle.py` with immutable identity,
+  approval, plan, Job result, diagnostic, and transition result value objects.
+- Implemented only the Unit A adoption boundary: current identity, completed
+  Job, approval expiry/cancellation, and non-approved Plan rejection.
+- The reviewed Red suite was not changed. Unit B event handling, scheduler,
+  provider retry, and external actuation remain out of scope.
+- Direct Green smoke checks, syntax, diff, and document lifecycle checks passed.
+
+## Final review record
+
+W01 Unit A/B final review approved on 2026-09-09. Identity/approval lifecycle,
+event deduplication, stale result handling, timeout/cancel race diagnostics, and
+explicit new-Plan fallback are complete. See [Review Summary](../collaboration/reviews/2026-09-09-liss-0521-final-review.md).
+
+Process review: no operating-contract deviation or operational problem found.
+
+## Unit B Phase 3 Refactor record
+
+- Extracted event revision validation and completed-plan construction into
+  small pure helpers.
+- Preserved event deduplication, stale rejection, race diagnostics, fallback
+  rejection, and all reviewed assertions.
+- Direct checks, syntax, diff, and document lifecycle checks passed.
+- Reviewer empathy: event application now separates key/revision validation,
+  rejection construction, and immutable completed-plan construction.
+
+## Phase 3 Refactor record — Unit A
+
+- Extracted current-plan identity and approval-current predicates into small
+  pure helpers.
+- Preserved all Unit A assertions, diagnostic codes, and adoption behavior.
+- Direct checks, syntax, diff, and document lifecycle checks passed.
+- Reviewer empathy: the adoption path now reads as identity validation,
+  result validation, approval validation, and state validation in that order.
+
+## Unit A final review record
+
+Unit A final review approved on 2026-09-09. Identity binding, approval expiry/
+cancellation, stale result rejection, and separation of Job completion from Plan
+adoption are complete. Unit B event handling and explicit fallback remain open;
+see [Review Summary](../collaboration/reviews/2026-09-09-liss-0521-unit-a-final-review.md).
+
+## Unit B Phase 2 Green record
+
+- Added `WorkflowEvent`, immutable processed-event keys, `apply_event`, and
+  `request_fallback` to `compiler/staqex/workflow_lifecycle.py`.
+- Implemented only duplicate suppression, stale revision rejection,
+  timeout/cancel race diagnostics, and explicit new-Plan fallback rejection.
+- The reviewed Unit B Red suite was not changed. No scheduler, provider retry,
+  or external event transport was added.
+- Direct Green smoke checks, syntax, diff, and document lifecycle checks passed.

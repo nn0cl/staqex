@@ -45,19 +45,22 @@ inspect it before going any further.
    real QPU, for your very first run — it costs far less and confirms the
    whole pipeline before you spend real QPU time.
 
+4. Copy [`qpu.toml.example`](qpu.toml.example) to
+   `~/.config/staqex/qpu.toml` and set the device ARN, shots, and positive
+   `cost_ceiling_usd`. The file contains no credentials; credentials remain in
+   the AWS standard credential chain.
+
 ## Step 3 — submit for real (you run this, not an agent)
 
 ```bash
 python3 -m compiler.staqex submit-live-qpu \
   examples/host/live_qpu_braket_demo/main_bell_pair.sqx \
-  --device-arn "<your device ARN>" \
-  --shots 100
+  --config "$HOME/.config/staqex/qpu.toml"
 ```
 
-Prints `provider=aws-braket id=<opaque-id>` on success. This call can
-incur real cost on real hardware (the CLI prints a one-line reminder to
-stderr before submitting) — cost/budget guardrails are your own
-responsibility, same as any other AWS Braket usage
+Prints `provider=aws-braket id=<opaque-id>` on success. Immediately before
+any provider call, the CLI prints the resolved device, shots, and cost ceiling
+and waits for `y`/`yes`; anything else cancels without a provider call.
 ([ADR 0203](../../../docs/architecture/adr/0203-live-qpu-submit-entrypoint.md)
 Decision 4).
 

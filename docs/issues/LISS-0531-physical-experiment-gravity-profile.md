@@ -7,10 +7,10 @@
 | Phase | phase-0-design |
 | Type / priority | feature / P1 |
 | Initial/current size | M / M |
-| Owner | Sora design; Luna only after phase-specific approval |
+| Owner | Sol independent design correction; Luna only after phase-specific approval |
 | GitHub issue | none |
 | Parent | LISS-0514 |
-| Depends on | LISS-0525, LISS-0528 |
+| Depends on | LISS-0515, LISS-0516, LISS-0528 |
 | Blocks | LISS-0536, LISS-0537, LISS-0540 |
 | Related branch | none — branch operations forbidden in this design task |
 | Work plan / canonical planning record | [WP-0148](../work-plans/WP-0148-physical-experiment-gravity-profile.md), AIP-WP-0148-2026-09-08-001 |
