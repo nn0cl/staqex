@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | Local ID | LISS-0520 |
-| Status | proposed |
-| Phase | phase-0-design |
+| Status | done |
+| Phase | complete |
 | Type / priority | feature / P1 |
 | Initial/current size | M / L — WP記載の境界複雑性により再分類 |
 | Owner | Sol independent design correction; Luna only after phase-specific approval |
@@ -19,3 +19,26 @@
 
 Scope、Out of scope、検証、risk、完了条件、Luna phaseは上記WPを単一計画元とする。
 このIssueは新規提案で、既存完了Issueを再開しない。承認済みscope/phaseの継承はない。
+
+Phase 1 Red record: `tests/test_liss_0520_sqxa_runtime_loader_red.py` に、`.sqxa`のround-trip、
+content hash改ざん、未知schema、provider-neutral Runtime loader、unsupported runtimeの
+fail-closedを検証する5契約を追加した。production codeは変更していない。次は、Red確認後の
+Phase 2 Green / Implementationである。
+
+Phase 2 Green record: `compiler/staqex/quantum_artifact.py` に最小の`.sqxa` writer/readerと
+provider-neutral Runtime loaderを追加した。readerはschemaとcontent hashを検証し、loaderは
+`local-simulator`のみを受理してunsupported runtimeをfallbackなしで拒否する。Red suiteは
+変更していない。AST、直接スモーク、差分、文書ライフサイクル検査は通過した。次は
+`LISS-0520 Phase 3 Refactor 承認`である。
+
+Phase 3 Refactor record: schema検証、document読込、encoding復元、runtime capability選択を
+名前付きhelperへ分離した。公開API、serialized payload、診断、accepted runtime behaviorは
+変更していない。AST、挙動維持スモーク、差分、文書ライフサイクル検査は通過した。次は
+`LISS-0520 Phase 3 最終レビュー 承認`である。
+
+Final review record: targeted pytest was executed in a temporary uv
+environment and passed **5 tests**. Q01のbounded `.sqxa` artifact/runtime
+loader unit is complete; provider SDK、live QPU、general QUBO automationは
+引き続き別scopeである。
+
+Process review: no operating-contract deviation or operational problem found.

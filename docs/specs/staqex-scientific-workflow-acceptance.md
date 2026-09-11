@@ -62,11 +62,44 @@ M0 exit: 上記3シナリオのpositive/negative対応、6分野fixtureの全必
 |---|---|---|---|
 | B01 | typed Param/tensorとmetadata snapshot、unit/frame/index map | BindingContractを検証しround-trip decode | source symbol、snapshot版、shape/axis/index、欠損、観測/推定を追跡。identityまたは証跡付き明示unit/axis mappingのみ受理。stale snapshot、unknown unit、axis/shape不一致、Host keyだけの入力は診断付きで拒否 |
 | D01 | version-pinned assay recordsにcompound/target/assay ID、endpoint、unit、relation、replicate、source、checksum/license | S02 Domainがcuration | measuredとpredictionを別記録化。IC50・nM・互換assay-familyだけ集約し、censoredを等号にせず、単位/assay混在・identity collision・license欠落は明示quarantine |
-| D02 | availability cutoffと固定split、同一化合物/replicate group | fit/selection/evaluation | holdoutや未来roundをfitへ使わず、同一groupの漏れを検出。fit履歴はtrain IDsを示す。未知test labelのまま候補選定可能 |
-| D03 | 同じ候補集合、budget、hard constraints、objective、predefined baseline | 小規模oracleと古典選定を実行 | feasibilityとscoreを独立に検算。infeasibleはno-feasible-planであり空集合の成功ではない |
+| D02 | WP-0134 curated IC50 profile、固定availability cutoffとcompound/replicate group split | fit/selection/evaluation | holdoutや未来roundをfitへ使わず、同一groupの漏れを検出。FitRecordはtrain/transform/feature-selection IDsとcutoffを示す。未知holdout label、prediction uncertainty、applicabilityを保持し、漏洩は`MODEL_SPLIT_GROUP_OVERLAP`等でfail-closed |
+| D03 | 固定candidate inventory、batch size 2、budget 8、stock/diversity hard constraints、predicted IC50 objective、predefined baseline | 小規模全subset oracleと`greedy-feasible-v1`を同一入力で実行 | feasibilityとscoreを独立に検算。candidate set不一致・constraint/score不一致は診断し、infeasibleは`no-feasible-plan`であり空集合の成功ではない |
 | Q01 | 小さいbinary problemと明示encoding、scale、offset、index map | QUBO/Ising/Quantum Projectionへ変換 | 全割当energyとdecodeが合う。penalty-only低energyの違反を検出。非unitary projectorの無条件gate化は拒否 |
 | W01 | immutable snapshot、deadline、approval hash、fake Jobs/events | late event、duplicate、timeout、cancel raceを注入 | 新Plan revisionを作り、stale result/expired approvalは採用不可。明示fallbackは別lane/Job。安全制約の緩和は自動実行されない |
+
+### E01 Phase 0 profile (reproducibility, falsification, and cost evidence)
+
+E01は成功だけを集計するbenchmarkではなく、RunManifest、claim、evaluation、failure、
+costの証拠契約である。`manifest:s02-d03-v1`、`snapshot:s02-round-001`、
+`model:s02-v1`、`baseline:greedy-feasible-v1`、`environment:local-python-v1`を固定し、
+source/fixture hash、input/model/baseline identity、seed、precision、runtime、command、
+metric、uncertainty、comparison population、cost breakdown、failure/diagnostic、replay
+referenceを保持する。manifest identityは完全一致、数値は宣言済みtolerance、統計値は
+事前固定sample count/confidence intervalで判定する。heldout再利用、分母bias、費用欠落、
+失敗隠蔽は拒否し、実測・実機が無い場合は未検証と表示する。
+
+### W01 Phase 0 profile (provider-neutral lifecycle)
+
+W01はJob実行基盤ではなく、WorkflowPlan/Jobのidentity・承認・期限・採用状態を管理する
+契約である。`plan:s02-round-001`、`snapshot:s02-round-001`、`approval:s02-policy-v1`、
+`job:s02-fake-001`とfake UTC clockを固定し、Plan採用とJob完了を別状態として記録する。
+Unit Aはpure state transition、期限切れ/取消承認、stale result、identity不一致を扱う。
+Unit Bはfake event/clockでduplicate・late event・timeout/cancel race・別lane fallbackを
+扱う。期限、snapshot/plan hash、approval policy、event sequenceの不一致はdiagnostic付き
+で拒否し、fallbackは新しいPlan/Jobとしてのみ許可する。scheduler、provider retry、
+実運用actuationは受入範囲外である。
 | D04 | train/validation/holdoutを隔離した実測snapshotと候補在庫、承認policy | 次回assay batchを提案し、凍結した後続round結果を後から取込 | candidate IDs、selection理由、予測/不確実性、constraint verdict、費用、approval対象を報告。実測なしのhit改善は未検証と表示 |
+
+### D04 Phase 0 profile (S02 closed loop)
+
+D04はQUBO/量子実行ではなく、`assay:s02-round-001`のimmutable curated snapshot、
+`candidates:s02-fixture-v1`、`model:s02-v1`、`policy:s02-batch-v1`から次回assay
+proposalを作り、後続roundを新snapshotとして取り込むclassical closed loopである。
+Proposalはcandidate IDs、selection reason、prediction/uncertainty、hard-constraint
+verdict、cost、snapshot/model/policy identity、approval hash、deadlineを保持する。
+proposal生成時に後続roundのlabelが見えた場合、またはapproval期限・snapshot・candidate
+状態が変わった場合はdiagnostic付きで採用拒否する。実測がない場合は未検証と表示し、
+hit改善を主張しない。QUBO/encodingはQ01のWP-0137/LISS-0520で扱う。
 | X01 | CityGML objectとnode/edge graph、SensorThings/SOSA profile fixture | external portからGraphにmapping | topology/geometry/LoD、time/FOI/property/procedure/sourceを保持。道路のgeometryだけではpassableと断定しない |
 | S01 | 既存K-ku storyとfake観測/不足資源、公平性・安全policy | 道路閉鎖/欠測/期限超過に対してrolling replan | 各Planの到達可能性・capacity・minimum service違反と未充足需要を表示。人間承認前の指示なし。前Planが危険なら無条件再利用なし |
 | A01 | ObsCore dataset metadataとVOTableのflux/uncertainty/null/units/time-frame fixture | Adapterとcalibration modelを経由 | tableを意味付きObservationへ接続。time scale/CRS不一致を検出、上限値を検出値へ変えない。既知signalの推定とcoverage不足を区別 |
