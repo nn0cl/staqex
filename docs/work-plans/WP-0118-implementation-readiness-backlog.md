@@ -1,5 +1,13 @@
 # WP-0118: Implementation-readiness backlog
 
+## Related scientific program proposal (2026-09-08)
+
+[WP-0131](WP-0131-scientific-workflow-program.md) adds the complete scientific
+Workflow roadmap, with measured-data S02 first and cross-domain validation.
+It reuses completed semantic/artifact/Job/evidence boundaries from this lineage.
+Its new WPs have no inherited approval. Live hardware, SDK/credentials, and
+conditional delivery remain with WP-0123/WP-0126/WP-0125 respectively.
+
 ## Status
 
 **approved planning baseline — phase-0-design**
