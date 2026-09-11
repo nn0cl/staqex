@@ -22,7 +22,7 @@ units while preserving all externally observable behavior and public imports.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---:|---:|---|---|---|---|
-| LISS-0543 | proposed | L | L | AIP-0543-001 | - | 0544–0550 | `refactor/regression-authority` |
+| LISS-0543 | Phase 1 Red awaiting review | L | L | AIP-0543-001 | - | 0544–0550 | `codex/liss-0543-red` |
 | LISS-0544 | proposed | L | L | AIP-0544-001 | 0543 | 0545 | `refactor/evaluator-orchestration` |
 | LISS-0545 | proposed | XL | XL | AIP-0545-001 | 0544 | 0550 | `refactor/evaluator-domain-families` |
 | LISS-0546 | proposed | XL | XL | AIP-0546-001 | 0543 | 0550 | `refactor/typechecker-families` |
@@ -71,8 +71,8 @@ units while preserving all externally observable behavior and public imports.
 - Issue: LISS-0543
 - Reason it is unblocked: it changes verification authority, not production
   semantics, and is a prerequisite for honest Phase 3 evidence.
-- Adjudicator approval needed: architecture is approved; next request is
-  `LISS-0543 Phase 1 Red 承認`.
+- Adjudicator approval needed: review the 12 Red contracts; after acceptance,
+  next request is `LISS-0543 Phase 2 Green / Implementation 承認`.
 
 ## Risks
 

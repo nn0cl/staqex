@@ -46,18 +46,24 @@
 ## Adjudicator Decisions
 
 - `WP-0160 / Core module decomposition Architecture承認` received 2026-09-11.
-- No Phase 1/2/3 implementation permission is inferred from the request.
+- `LISS-0543 Phase 1 Red 承認` received 2026-09-11.
+- No Phase 2 implementation permission is inferred from either approval.
 
 ## Verification
 
-- Required after edits: document lifecycle, coverage-ledger consistency,
-  unresolved placeholders, duplicate LISS/WP IDs, and `git diff --check`.
+- Phase 0: document lifecycle, coverage-ledger consistency, unresolved
+  placeholders, duplicate LISS/WP IDs, and `git diff --check` passed.
+- Phase 1 Red: 12 tests collected and intentionally failed because both
+  expected production scripts are absent; test `py_compile` and diff check
+  passed.
 
 ## Changed Files
 
-- Proposed spec, WP-0160, LISS-0543–0550, and this trace.
+- Phase 0: accepted spec, WP-0160, LISS-0543–0550, and this trace.
+- Phase 1: two Red test files, two test fixtures, LISS/WP synchronization, and
+  the Phase 1 review packet.
 
 ## Next Safe Action
 
-Request `LISS-0543 Phase 1 Red 承認`; begin only that test/process-contract
-phase after its separate approval.
+Request Adjudicator review of the Phase 1 Red contracts. After acceptance,
+request `LISS-0543 Phase 2 Green / Implementation 承認`.

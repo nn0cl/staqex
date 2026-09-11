@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0543
 - GitHub issue: none
-- Status: proposed
-- Phase: phase-0-design
+- Status: phase-1-red-awaiting-review
+- Phase: phase-1-red
 - Type: test infrastructure / process
 - Priority: P0
 - Initial/current planning size: L / L
@@ -67,6 +67,27 @@ baselines required by later behavior-preserving extraction.
 
 CI selector unit tests, full pytest, Spec Verification 161/161, manifest
 determinism, document lifecycle, and diff checks.
+
+## Phase 1 Red record
+
+- Approval: `LISS-0543 Phase 1 Red 承認`, received 2026-09-11.
+- Added `tests/test_liss_0543_test_lifecycle_red.py` with eight contracts for a
+  valid open Phase 1 entry, done/unknown issue rejection, missing test,
+  duplicate registration, deterministic review expiry, global glob rejection,
+  and validated per-file pytest arguments.
+- Added `tests/test_liss_0543_refactor_baseline_red.py` with four contracts for
+  deterministic baseline bytes, required public/behavior evidence, absence of
+  machine-specific paths/timestamps, and atomic missing-input rejection.
+- Added only test fixtures under `tests/fixtures/liss_0543/`. No checker,
+  baseline generator, CI change, active-Red production manifest, or compiler
+  implementation was added.
+- Focused pytest collected and failed all 12 tests because
+  `scripts/check-test-lifecycle.py` and
+  `scripts/capture-refactor-baseline.py` do not exist. Both test files pass
+  `py_compile`; `git diff --check` passes.
+- Review packet:
+  [2026-09-11 LISS-0543 Phase 1 Red](../collaboration/reviews/2026-09-11-liss-0543-phase1-red-review.md).
+- Next approval after review: `LISS-0543 Phase 2 Green / Implementation 承認`.
 
 ## Process Review
 
