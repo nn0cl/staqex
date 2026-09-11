@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **done — Phase 3 final review complete** |
+| Status | **Phase 3 final review blocked — duplicate canonical ID** |
 | Type | architecture / feature contract |
 | Size | L |
 | Parent | WP-0131; WP-0119 |
 | Issue | LISS-0520 |
 | Depends on | WP-0121, WP-0122, WP-0123, ADR 0217, ADR 0218 |
 | Blocks | Runtime provider deployment and real-QPU pilot packaging |
-| Implementation permission | **Phase 3 final review approved; bounded unit complete** |
+| Implementation permission | **Phase 3 correction complete; final review blocked** |
 
 ## Goal
 
@@ -73,4 +73,6 @@ pass; provider SDK/network and real-device execution remain excluded. Final
 review is complete. The independent review also required malformed and
 timezone-naive capability expiry values to fail closed as `SqxaFormatError`;
 the correction and two focused tests are included. Process review: no
-operating-contract deviation or operational problem found.
+operating-contract deviation or operational problem found. However, this WP
+duplicates the existing scientific Quantum Projection WP-0137; canonical
+identity must be resolved before completion. Process review is deferred.

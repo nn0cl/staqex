@@ -41,10 +41,18 @@
    SDK binaries, signing, registry, and live deployment are not implemented
    in this bounded unit. **Disposition: out of scope** under ADR 0219,
    LISS-0520, and WP-0137 exclusions; they remain separately gated work.
+5. `LISS-0520` and `WP-0137` are already canonical IDs for the scientific
+   Quantum Projection Issue/WP referenced by the active WP-0131 ledger. The
+   new `.sqxa` Issue/WP use the same IDs with different scope and are not
+   linked into the canonical register. **Disposition: apply/blocker.** Assign
+   a unique approved Issue/WP identity or consolidate the two records before
+   either unit is marked done; do not overwrite or revive the existing record
+   implicitly.
 
 ## Blockers
 
-No correctness blocker remains for this bounded unit.
+The malformed-expiry correctness finding is fixed and verified, but the
+duplicate canonical Issue/WP identity is a documentation/ledger blocker.
 
 ## Deterministic verification re-run
 
@@ -55,11 +63,12 @@ No correctness blocker remains for this bounded unit.
 
 ## Reviewer conclusion
 
-The Phase 3 refactor and the malformed-expiry fail-closed correction are
-accepted for this bounded unit. This review does not grant implementation
-approval for unrelated provider work.
+The Phase 3 refactor and malformed-expiry correction are technically sound,
+but final acceptance is withheld until the duplicate Issue/WP identity is
+resolved. This review does not grant implementation approval for unrelated
+provider work.
 
 ## Next requested approval
 
-Final review approval is complete; no further phase approval is required for
-this bounded unit.
+`LISS-0520 Phase 3 最終レビュー 再承認` after canonical ID/ledger resolution
+and synchronized status update.

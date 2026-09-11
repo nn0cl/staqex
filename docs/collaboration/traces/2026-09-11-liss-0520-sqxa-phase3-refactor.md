@@ -6,7 +6,7 @@
 | Scope | LISS-0520 / WP-0137 `.sqxa` artifact packaging and target build |
 | Phase | Phase 3 Refactor |
 | Approval | `LISS-0520 Phase 3 承認` |
-| Outcome | Final review complete; bounded unit done |
+| Outcome | Final review blocked by duplicate canonical ID |
 
 ## Intent
 
@@ -32,4 +32,6 @@ Runtime preflight boundaries explicit without changing the Phase 2 contract.
 
 No SDK, credentials, network call, or live QPU was used.
 
-Process review: no operating-contract deviation or operational problem found.
+Final review found a duplicate canonical `LISS-0520`/`WP-0137` identity with
+the existing scientific Quantum Projection records. Process review is
+deferred until the canonical identity and status ledger are resolved.

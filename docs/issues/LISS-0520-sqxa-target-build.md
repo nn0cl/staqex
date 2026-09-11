@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **done — Phase 3 final review complete** |
+| Status | **Phase 3 final review blocked — duplicate canonical ID** |
 | Phase | phase-3-final-review |
 | Type | architecture / artifact contract |
 | Priority | P0 |
@@ -11,7 +11,7 @@
 | Depends on | WP-0121, WP-0122, ADR 0217, ADR 0218 |
 | Blocks | Runtime target deployment and provider pilot packaging |
 | Acceptance authority | Proposed ADR 0219; real-QPU readiness acceptance |
-| Implementation permission | **Phase 3 final review approved; bounded unit complete** |
+| Implementation permission | **Phase 3 correction complete; final review blocked** |
 
 ## Design check
 
@@ -97,7 +97,11 @@ timezone-naive capability expiry handling. The Runtime now rejects both cases
 with `SqxaFormatError` before provider construction; the targeted suite passes
 8 tests. Review summary: [2026-09-11 LISS-0520 Phase 3 final review](../collaboration/reviews/2026-09-11-liss-0520-phase3-final-review.md).
 
-Process review: no operating-contract deviation or operational problem found.
+Final review blocker: `LISS-0520`/`WP-0137` are duplicated by the existing
+scientific Quantum Projection records used by the canonical WP-0131 ledger.
+Resolve the identity/consolidation with the Adjudicator before marking this
+unit done. Process review is deferred until status synchronization is
+resolved.
 
 ## First implementation slice after approval
 
