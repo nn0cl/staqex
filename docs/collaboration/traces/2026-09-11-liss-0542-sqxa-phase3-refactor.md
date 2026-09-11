@@ -5,7 +5,7 @@
 | Date | 2026-09-11 |
 | Scope | LISS-0542 / WP-0159 `.sqxa` artifact packaging and target build |
 | Phase | Phase 3 Refactor |
-| Approval | `LISS-0520 Phase 3 承認` (scope later assigned canonical ID LISS-0542) |
+| Approval | `LISS-0520 Phase 3 承認`; canonical identity resolved to `LISS-0542` |
 | Outcome | Final review complete |
 
 ## Intent

@@ -242,7 +242,7 @@ def _run() -> int:
         print("Phase 1 Red — expected failures:")
         print("\n".join(failures))
         return 1
-    print("UNEXPECTED: LISS-0520 Red tests passed")
+    print("UNEXPECTED: LISS-0542 Red tests passed")
     return 1
 
 

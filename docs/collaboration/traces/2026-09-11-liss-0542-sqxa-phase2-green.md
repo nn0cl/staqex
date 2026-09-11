@@ -1,4 +1,4 @@
-# LISS-0520 SQXA target-build Phase 2 Green trace
+# LISS-0542 SQXA target-build Phase 2 Green trace
 
 - Date: 2026-09-11 (Asia/Tokyo).
 - Scope: provider-neutral `.sqxa` model, writer/reader, fake target builder,
@@ -13,4 +13,4 @@
   lifecycle checks passed.
 - Out of scope: SDK installation, credentials, network, signing, registry,
   deployment infrastructure, and live QPU submission.
-- Next gate: `LISS-0520 Phase 3 approval`.
+- Next gate: `LISS-0520 Phase 3 approval` (canonical unit: `LISS-0542`).
