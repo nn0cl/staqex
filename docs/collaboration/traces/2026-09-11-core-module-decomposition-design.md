@@ -47,7 +47,7 @@
 
 - `WP-0160 / Core module decomposition Architecture承認` received 2026-09-11.
 - `LISS-0543 Phase 1 Red 承認` received 2026-09-11.
-- No Phase 2 implementation permission is inferred from either approval.
+- `LISS-0543 Phase 2 Green / Implementation 承認` received 2026-09-11.
 
 ## Verification
 
@@ -56,14 +56,34 @@
 - Phase 1 Red: 12 tests collected and intentionally failed because both
   expected production scripts are absent; test `py_compile` and diff check
   passed.
+- Phase 2 attempt 1: focused Red contracts passed, but direct baseline capture
+  failed because execution from `scripts/` did not place repository root on
+  `sys.path`. The correction explicitly adds the selected root before imports;
+  planning size remains L because it was already multi-file and multi-attempt.
+- Phase 2 Green: lifecycle checking, exact-node pytest selection, deterministic
+  baseline generation, and CI baseline comparison implemented without compiler
+  or runtime behavior changes. Focused tests pass 12/12 and Spec Verification
+  passes 161/161; the full blocking-suite result is recorded after completion.
+- Phase 2 contract review found that the first public-symbol filter was narrower
+  than Python's actual no-`__all__` export behavior. It now records every
+  non-underscore name. Final Green evidence is 2,043 passed with 19 exact-node
+  deselections, 12/12 focused tests, and 161/161 Spec Verification checks.
+- Because LISS-0543 is size L and review routing is `same_context`, the
+  same-model review cannot claim independent approval. A deterministic human
+  acceptance packet was produced for the next phase gate.
+- Final Phase 2 checks also passed baseline byte comparison, active-Red
+  lifecycle validation (19 entries), script compilation, document lifecycle,
+  coverage-ledger consistency, and `git diff --check`.
 
 ## Changed Files
 
 - Phase 0: accepted spec, WP-0160, LISS-0543–0550, and this trace.
 - Phase 1: two Red test files, two test fixtures, LISS/WP synchronization, and
   the Phase 1 review packet.
+- Phase 2: two repository scripts, active-Red metadata, generated baseline,
+  CI selection and reproducibility checks, and Phase 2 status synchronization.
 
 ## Next Safe Action
 
-Request Adjudicator review of the Phase 1 Red contracts. After acceptance,
-request `LISS-0543 Phase 2 Green / Implementation 承認`.
+Complete the same-context Green review, then request
+`LISS-0543 Phase 3 Refactor 承認`.

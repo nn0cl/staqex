@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0543
 - GitHub issue: none
-- Status: phase-1-red-awaiting-review
-- Phase: phase-1-red
+- Status: phase-2-green-awaiting-review
+- Phase: phase-2-green
 - Type: test infrastructure / process
 - Priority: P0
 - Initial/current planning size: L / L
@@ -88,6 +88,25 @@ determinism, document lifecycle, and diff checks.
 - Review packet:
   [2026-09-11 LISS-0543 Phase 1 Red](../collaboration/reviews/2026-09-11-liss-0543-phase1-red-review.md).
 - Next approval after review: `LISS-0543 Phase 2 Green / Implementation 承認`.
+
+## Phase 2 Green record
+
+- Approval: `LISS-0543 Phase 2 Green / Implementation 承認`, received
+  2026-09-11.
+- Added a standard-library lifecycle checker and an issue-linked TOML manifest
+  for the 19 currently active Red nodes. CI now deselects only those exact
+  nodes and rejects global `*_red.py` exclusions, stale issues, missing tests,
+  duplicate entries, phase drift, and expired review dates.
+- Added an atomic deterministic baseline generator and committed evidence for
+  six public modules plus representative fixed-seed runtime, QASM, and
+  diagnostic cases.
+- CI regenerates and byte-compares the baseline, and pins Python 3.12 for the
+  repository-sanity scripts that use `tomllib`.
+- No compiler, runtime, language semantics, diagnostic, QASM, or provider
+  implementation changed.
+- Acceptance review packet:
+  [2026-09-11 LISS-0543 Phase 2 Green](../collaboration/reviews/2026-09-11-liss-0543-phase2-green-review.md).
+- Next approval after Green review: `LISS-0543 Phase 3 Refactor 承認`.
 
 ## Process Review
 

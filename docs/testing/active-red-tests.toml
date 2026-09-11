@@ -1,0 +1,155 @@
+version = 1
+
+# These node IDs are being reconciled by LISS-0543. Keeping the exclusions at
+# node granularity returns every passing test in the same files to CI.
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_evolve_until_red.py::test_bounded_evolve_until_is_a_state_preserving_expression"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "classify against the current canonical evolve-until contract"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss0056_empty_domain_identity_red.py::test_empty_sum_is_a_warning_and_not_a_hard_compile_error"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "classify against the current empty-domain identity contract"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss0056_empty_domain_identity_red.py::test_empty_product_is_a_warning_and_not_a_hard_compile_error"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "classify against the current empty-domain identity contract"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss0056_empty_domain_identity_red.py::test_identity_with_explicit_register_runs_at_that_register_shape"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "classify against the current empty-domain identity contract"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss0234_dirac_paper_var_sugar_red.py::test_paper_inner_with_ident_labels_desugars_to_inner_vars"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "classify against current nested-scope and Dirac sugar rules"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss0234_dirac_paper_var_sugar_red.py::test_paper_outer_with_ident_labels_desugars_to_outer_vars"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "classify against current nested-scope and Dirac sugar rules"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss_0476_symbolic_ir_consumer_migration_red.py::test_non_explicit_compile_does_not_expose_symbolic_ir_authority"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "reconcile the completed symbolic-IR consumer contract"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss_0477_ast_dto_authority_retirement_red.py::test_missing_canonical_projection_fails_closed_before_qasm_artifact"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "reconcile the completed AST/DTO authority contract"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss_0478_interfer_phase_branch_meaning_red.py::test_interfer_has_a_distinct_canonical_meaning"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "reconcile canonical interfer meaning"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss_0478_interfer_phase_branch_meaning_red.py::test_interfer_preserves_operand_identity_and_phase_metadata"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "reconcile canonical interfer provenance"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss_0485_povm_observation_bridge_red.py::test_povm_rejection_preserves_reason_without_repair_or_fabricated_outcome"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "reconcile the completed POVM rejection contract"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss_0486_evaluator_semantic_authority_red.py::test_evaluator_receives_compile_owned_semantic_ir_identity"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "reconcile the evaluator semantic-authority evidence surface"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_liss_0486_evaluator_semantic_authority_red.py::test_evaluator_rejects_caller_injected_semantic_ir"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "reconcile the evaluator semantic-authority error contract"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_operator_algebra_red.py::test_inner_and_outer_preserve_state_operator_boundary"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "classify against current operator-algebra and scope rules"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_pipeline_currying_red.py::test_pipeline_is_left_associative_and_preserves_state"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "classify against current pipeline and scope rules"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_quantum_observation_contract_red.py::test_unsupported_tomography_is_rejected_as_an_observation_capability"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "reconcile the current observation diagnostic catalog"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_s02_assay_profile_red.py::test_d01_accepts_one_measured_ic50_activity_without_editing_raw_snapshot"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "reconcile the S02 assay record DTO contract"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_s02_assay_profile_red.py::test_d01_preserves_censored_relation_instead_of_turning_it_into_equality"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "reconcile the S02 assay record DTO contract"
+
+[[active_red]]
+issue = "LISS-0543"
+test = "tests/test_s02_assay_profile_red.py::test_d01_quarantines_an_identity_collision_without_merging_compounds"
+phase = "phase-2-green"
+owner = "WP-0160"
+review_by = "2026-10-01"
+review_condition = "reconcile the S02 assay record DTO contract"

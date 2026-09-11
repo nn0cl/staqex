@@ -7,6 +7,20 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-11
+- Class: compatibility-baseline
+- Pattern: a structural-refactor baseline can miss reachable imports when it
+  substitutes a hand-selected notion of public symbols for the language's
+  actual export rules.
+- What later design or implementation must do: derive compatibility manifests
+  from the runtime's real export behavior (`__all__` when present, otherwise
+  every non-underscore module name in Python), then preserve intentional
+  retirement as a separately approved migration.
+- Source issue or work plan (adopter's own ID, if any): LISS-0543 / WP-0160
+- Status: applied
+
+## Lesson
+
 - Date: 2026-09-10
 - Class: boundary-completeness
 - Pattern: fake-port tests can pass after a port extension while a concrete
