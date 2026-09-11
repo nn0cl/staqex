@@ -1,4 +1,4 @@
-# LISS-0520 Phase 1 Red review
+# LISS-0542 Phase 1 Red review
 
 | Field | Value |
 |---|---|
@@ -13,7 +13,7 @@
 
 - ADR 0219: `.sqxa` target-build boundary
 - LISS-0520 and WP-0137
-- `tests/test_liss_0520_sqxa_target_build_red.py`
+- `tests/test_liss_0542_sqxa_target_build_red.py`
 - ADR 0217 capability freshness and ADR 0218 Host approval boundary
 
 ## Findings

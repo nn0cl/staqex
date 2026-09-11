@@ -1,12 +1,12 @@
-# AI work trace: LISS-0520 Phase 3 Refactor
+# AI work trace: LISS-0542 Phase 3 Refactor
 
 | Field | Value |
 |---|---|
 | Date | 2026-09-11 |
-| Scope | LISS-0520 / WP-0137 `.sqxa` artifact packaging and target build |
+| Scope | LISS-0542 / WP-0159 `.sqxa` artifact packaging and target build |
 | Phase | Phase 3 Refactor |
-| Approval | `LISS-0520 Phase 3 承認` |
-| Outcome | Final review blocked by duplicate canonical ID |
+| Approval | `LISS-0520 Phase 3 承認` (scope later assigned canonical ID LISS-0542) |
+| Outcome | Final review complete |
 
 ## Intent
 
@@ -25,13 +25,13 @@ Runtime preflight boundaries explicit without changing the Phase 2 contract.
 
 ## Verification
 
-- `UV_CACHE_DIR=/private/tmp/qpex-uv-cache uv run --with pytest python3 -m pytest -q tests/test_liss_0520_sqxa_target_build_red.py`
+- `UV_CACHE_DIR=/private/tmp/qpex-uv-cache uv run --with pytest python3 -m pytest -q tests/test_liss_0542_sqxa_target_build_red.py`
 - Result: 8 passed after final-review correction.
 - `python3 -m compileall -q compiler/staqex/sqxa.py`
 - `git diff --check`
 
 No SDK, credentials, network call, or live QPU was used.
 
-Final review found a duplicate canonical `LISS-0520`/`WP-0137` identity with
-the existing scientific Quantum Projection records. Process review is
-deferred until the canonical identity and status ledger are resolved.
+Final review found a duplicate canonical identity. The unit was renamed to
+`LISS-0542` / `WP-0159`; the existing scientific Quantum Projection records
+remain unchanged. Process review found no operating-contract deviation.

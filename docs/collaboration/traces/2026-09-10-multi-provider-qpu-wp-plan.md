@@ -431,8 +431,9 @@ invoke the live command or provider itself.
   and interactive approval. Existing WP-0121/0122 cover in-memory and
   target-neutral contracts but do not define serialized portable versus
   target-resolved `.sqxa` variants.
-- Result: did not reopen completed WPs. Added proposed ADR 0219, LISS-0520,
-  and WP-0137 for the `.sqxa` packaging/target-build boundary.
+- Result: did not reopen completed WPs. Added proposed ADR 0219, LISS-0542,
+  and WP-0159 for the `.sqxa` packaging/target-build boundary; the associated
+  Issue is LISS-0542.
 - Verification: document/link inventory and `git diff --check`; no
   implementation, SDK installation, credentials, network, or live provider
   call.
@@ -440,7 +441,7 @@ invoke the live command or provider itself.
 ## Next Safe Action
 
 Request typed Architecture approval for ADR 0219, then typed Phase 1 approval
-for LISS-0520 before writing artifact serialization or Runtime loader code.
+for LISS-0542 before writing artifact serialization or Runtime loader code.
 
 ### Attempt 26
 
@@ -461,7 +462,7 @@ for LISS-0520 before writing artifact serialization or Runtime loader code.
 - Agent: Codex host agent in Phase 1 Red role
 - Scope: execute the `.sqxa`-only Phase 1 Red boundary after Architecture
   approval.
-- Result: added `tests/test_liss_0520_sqxa_target_build_red.py`. The direct
+- Result: added `tests/test_liss_0542_sqxa_target_build_red.py`. The direct
   runner fails at the intentionally absent `compiler.staqex.sqxa` module;
   the test file itself passes `py_compile`.
 - Verification: `git diff --check` and document lifecycle check passed. No
@@ -470,17 +471,17 @@ for LISS-0520 before writing artifact serialization or Runtime loader code.
 
 ## Next Safe Action
 
-Request typed Phase 1 Red review/approval for LISS-0520. Do not implement the
+Request typed Phase 1 Red review/approval for LISS-0542. Do not implement the
 `.sqxa` writer/reader or Runtime loader until that approval is received.
 
 ### Attempt 29
 
 - Agent: Codex host agent in same-context reviewer role
-- Scope: review LISS-0520 Phase 1 Red tests after human review/approval request.
+- Scope: review LISS-0542 Phase 1 Red tests after human review/approval request.
 - Result: changes requested. The test packet lacks target metadata assertions,
   capability-expiry rejection, and observable provider non-contact before
   Runtime acceptance; the direct runner also uses a shared temporary path.
-- Verification: re-read ADR 0217/0218, ADR 0219, LISS-0520, WP-0137, and the
+- Verification: re-read ADR 0217/0218, ADR 0219, LISS-0542, WP-0159, and the
   Red test; `py_compile`, `git diff --check`, and document lifecycle checks
   passed. No implementation or provider access.
 - Next gate: correct only the Phase 1 tests, repeat review, then request typed
@@ -489,7 +490,7 @@ Request typed Phase 1 Red review/approval for LISS-0520. Do not implement the
 ### Attempt 30
 
 - Agent: Codex host agent in same-context reviewer role
-- Scope: re-review corrected LISS-0520 Phase 1 Red tests.
+- Scope: re-review corrected LISS-0542 Phase 1 Red tests.
 - Result: F1–F4 resolved; Phase 1 Red accepted. Issue/WP/review packet status
   synchronized. Phase 2 remains separately gated.
 - Verification: `py_compile`, `git diff --check`, and document lifecycle check
@@ -501,8 +502,8 @@ Request typed Phase 1 Red review/approval for LISS-0520. Do not implement the
 - Agent: Codex host agent in Phase 1 Red role
 - Scope: apply the approved `.sqxa`-only architecture and define the first
   offline serialization/target-build contract tests.
-- Result: ADR 0219 marked accepted; added LISS-0520 Phase 1 Red tests and
-  synchronized WP-0137/LISS-0520 statuses. `.qpa` remains retired.
+- Result: ADR 0219 marked accepted; added LISS-0542 Phase 1 Red tests and
+  synchronized WP-0159/LISS-0542 statuses. `.qpa` remains retired.
 - Verification: Phase 1 direct runner is expected Red because the production
   `compiler.staqex.sqxa` module is intentionally absent; no SDK, credentials,
   provider network, or live submission used.

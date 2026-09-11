@@ -1,22 +1,22 @@
-# LISS-0520 / WP-0137 Phase 3 Final Review
+# LISS-0542 / WP-0159 Phase 3 Final Review
 
 | Field | Value |
 |---|---|
 | Date | 2026-09-11 |
 | Scope | `.sqxa` serialization, target build, and provider-neutral Runtime preflight |
-| Reviewed commit | `a8431814 refactor(sqxa): clarify target artifact boundaries` |
+| Reviewed commits | `a8431814`, review correction `91e19c1e`, identity synchronization `c9bcfb34` |
 | Isolation | `separate_context` worktree review; stronger than same-context review |
-| Approval requested | `LISS-0520 Phase 3 最終レビュー 承認` |
+| Approval | `LISS-0520 Phase 3 最終レビュー 承認` |
 
 ## Canonical artifacts re-read
 
-- `docs/issues/LISS-0520-sqxa-target-build.md`
-- `docs/work-plans/WP-0137-artifact-packaging-target-build.md`
+- `docs/issues/LISS-0542-sqxa-target-build.md`
+- `docs/work-plans/WP-0159-artifact-packaging-target-build.md`
 - `docs/specs/staqex-real-qpu-readiness-acceptance.md`
 - `docs/architecture/adr/0219-sqxa-target-build-boundary.md`
 - `compiler/staqex/sqxa.py`
-- `tests/test_liss_0520_sqxa_target_build_red.py`
-- `docs/collaboration/traces/2026-09-11-liss-0520-sqxa-phase3-refactor.md`
+- `tests/test_liss_0542_sqxa_target_build_red.py`
+- `docs/collaboration/traces/2026-09-11-liss-0542-sqxa-phase3-refactor.md`
 - Commit diff for `a8431814`
 
 ## Findings and dispositions
@@ -40,19 +40,17 @@
 4. Provider-specific payload translation, approval interaction, credentials,
    SDK binaries, signing, registry, and live deployment are not implemented
    in this bounded unit. **Disposition: out of scope** under ADR 0219,
-   LISS-0520, and WP-0137 exclusions; they remain separately gated work.
-5. `LISS-0520` and `WP-0137` are already canonical IDs for the scientific
-   Quantum Projection Issue/WP referenced by the active WP-0131 ledger. The
-   new `.sqxa` Issue/WP use the same IDs with different scope and are not
-   linked into the canonical register. **Disposition: apply/blocker.** Assign
-   a unique approved Issue/WP identity or consolidate the two records before
-   either unit is marked done; do not overwrite or revive the existing record
-   implicitly.
+   LISS-0542, and WP-0159 exclusions; they remain separately gated work.
+5. The artifact-packaging unit originally reused canonical IDs belonging to
+   the scientific Quantum Projection records. **Disposition: already closed
+   with evidence.** The unit was renamed to `LISS-0542` / `WP-0159`; the
+   existing scientific records were left unchanged and roadmap/spec references
+   were synchronized.
 
 ## Blockers
 
-The malformed-expiry correctness finding is fixed and verified, but the
-duplicate canonical Issue/WP identity is a documentation/ledger blocker.
+The malformed-expiry correctness finding and duplicate canonical identity
+finding are fixed and verified. No blocker remains.
 
 ## Deterministic verification re-run
 
@@ -63,12 +61,10 @@ duplicate canonical Issue/WP identity is a documentation/ledger blocker.
 
 ## Reviewer conclusion
 
-The Phase 3 refactor and malformed-expiry correction are technically sound,
-but final acceptance is withheld until the duplicate Issue/WP identity is
-resolved. This review does not grant implementation approval for unrelated
-provider work.
+The Phase 3 refactor, malformed-expiry correction, and canonical identity
+resolution are complete. This review does not grant implementation approval
+for unrelated provider work.
 
 ## Next requested approval
 
-`LISS-0520 Phase 3 最終レビュー 再承認` after canonical ID/ledger resolution
-and synchronized status update.
+No further phase approval is required for this bounded artifact-packaging unit.

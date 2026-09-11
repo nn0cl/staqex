@@ -1,17 +1,17 @@
-# LISS-0520: `.sqxa` serialization and target build
+# LISS-0542: `.sqxa` serialization and target build
 
 | Field | Value |
 |---|---|
-| Status | **Phase 3 final review blocked — duplicate canonical ID** |
+| Status | **done — Phase 3 final review complete** |
 | Phase | phase-3-final-review |
 | Type | architecture / artifact contract |
 | Priority | P0 |
 | Size | L |
-| Parent | WP-0131; WP-0119 |
+| Parent | WP-0119 |
 | Depends on | WP-0121, WP-0122, ADR 0217, ADR 0218 |
 | Blocks | Runtime target deployment and provider pilot packaging |
 | Acceptance authority | Proposed ADR 0219; real-QPU readiness acceptance |
-| Implementation permission | **Phase 3 correction complete; final review blocked** |
+| Implementation permission | **Phase 3 final review approved; bounded unit complete** |
 
 ## Design check
 
@@ -54,7 +54,7 @@
 
 ## Phase 1 Red artifact
 
-Added `tests/test_liss_0520_sqxa_target_build_red.py`. The intentionally
+Added `tests/test_liss_0542_sqxa_target_build_red.py`. The intentionally
 missing `compiler.staqex.sqxa` module makes the suite Red. The tests define the
 single `.sqxa` format, portable/targeted manifest variants, common identity
 preservation, target mismatch rejection, and secret-bearing artifact rejection.
@@ -63,7 +63,7 @@ network is included.
 
 ## Phase 1 Red review
 
-Review packet: [2026-09-10 LISS-0520 Phase 1 Red review](../collaboration/reviews/2026-09-10-liss-0520-phase1-red-review.md).
+Review packet: [2026-09-10 LISS-0542 Phase 1 Red review](../collaboration/reviews/2026-09-10-liss-0542-phase1-red-review.md).
 The review findings were corrected and re-reviewed: target metadata,
 capability expiry, provider non-contact, and isolated direct-runner paths are
 covered. Phase 2 remains unauthorized until separate approval.
@@ -95,13 +95,13 @@ remain out of scope. Final review is still required.
 The independent final review identified and corrected malformed or
 timezone-naive capability expiry handling. The Runtime now rejects both cases
 with `SqxaFormatError` before provider construction; the targeted suite passes
-8 tests. Review summary: [2026-09-11 LISS-0520 Phase 3 final review](../collaboration/reviews/2026-09-11-liss-0520-phase3-final-review.md).
+8 tests. Review summary: [2026-09-11 LISS-0542 Phase 3 final review](../collaboration/reviews/2026-09-11-liss-0542-phase3-final-review.md).
 
-Final review blocker: `LISS-0520`/`WP-0137` are duplicated by the existing
-scientific Quantum Projection records used by the canonical WP-0131 ledger.
-Resolve the identity/consolidation with the Adjudicator before marking this
-unit done. Process review is deferred until status synchronization is
-resolved.
+The independent final review identified and corrected the canonical identity
+collision: this artifact-packaging unit is tracked as `LISS-0542` under
+`WP-0159`, while the existing scientific Quantum Projection records remain
+unchanged. Process review: no operating-contract deviation or operational
+problem found.
 
 ## First implementation slice after approval
 
