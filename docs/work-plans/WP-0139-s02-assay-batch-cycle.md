@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 3 Refactor complete; final review pending |
-| Phase | phase-3-refactor |
+| Status | complete |
+| Phase | complete |
 | Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
 | Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
 | Issue | [LISS-0522](../issues/LISS-0522-s02-assay-batch-cycle.md) |
@@ -12,8 +12,8 @@
 | Owner / route | Sol: independent design correction and coordination; Luna: separately approved bounded phases |
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), D04 |
-| Implementation permission | no; no Phase 1 approval |
-| Current Next Issue | LISS-0522 final review |
+| Implementation permission | complete |
+| Current Next Issue | WP-0158 / LISS-0541 Phase 0 acceptance/profile review |
 
 ## Scope
 
@@ -124,4 +124,60 @@ profile一つの完了を分野全体の完成と扱わない。追加profileは
 - The Red suite remains unchanged. AST parsing, direct D04 smoke checks,
   `git diff --check`, and document lifecycle checks passed; local `pytest` is
   unavailable in this environment.
+- Historical next gate before the follow-up review: `LISS-0522 Phase 3 最終レビュー 承認`.
+
+The 2026-09-11 final review found missing accepted D04 boundaries. The earlier
+Phase 2/3 records remain historical evidence of the first bounded attempt and
+do not establish completion or carry implementation permission into the
+follow-up.
+
+## Follow-up Phase 1 Red record
+
+- After the final-review blocker, added only the missing D04 Red scenarios to
+  `tests/test_s02_assay_batch_cycle_red.py`: approval identity/deadline,
+  missing provenance, and duplicate follow-up round.
+- The suite now contains nine bounded acceptance tests. Production code remains
+  unchanged in this phase.
+- The normal fixture now carries fixed provenance and a future approval
+  deadline; expiry and missing-provenance cases use separate explicit fixtures.
+- `py_compile` and `git diff --check` pass; pytest is unavailable locally.
+- Historical next gate before the follow-up implementation: `LISS-0522 Phase 2 Green / Implementation 承認`.
+
+## Follow-up Phase 2 Green record
+
+- Extended `BatchProposal` with policy identity, approval hash, deadline,
+  uncertainty, and provenance; proposal content hashes now include these
+  fields.
+- Added deterministic expiry, provenance, and model-revision validation and
+  fail-closed duplicate-round handling. The reviewed Red suite was unchanged.
+- `py_compile`, direct D04 smoke checks, and `git diff --check` pass; pytest is
+  unavailable locally.
+- Next gate: `LISS-0522 Phase 3 Refactor 承認`.
+
+## Follow-up Phase 3 Refactor record
+
+- Extracted candidate selection, provenance extraction, model-revision
+  validation, and proposal observation assembly into named helpers.
+- Preserved DTOs, diagnostic codes, acceptance behavior, and the reviewed Red
+  suite. No provider, scheduler, laboratory, or QPU behavior was added.
+- `py_compile`, direct D04 smoke checks, and `git diff --check` pass; pytest is
+  unavailable locally.
 - Next gate: `LISS-0522 Phase 3 最終レビュー 承認`.
+
+## Final review record
+
+- Fixture correction後のD04 focused suite: 9 passed.
+- Related S02 suites: 23 passed / 3 failed; the failures are confined to the
+  pre-existing LISS-0517 DTO surface and are outside this WP's changed files.
+- `py_compile` and `git diff --check` pass. D04 acceptance, fail-closed
+  diagnostics, provider-neutral boundary, and documentation synchronization
+  were reviewed and accepted.
+- Process review: no operating-contract deviation or operational problem found.
+
+## Phase 1 Red fixture correction record
+
+- Updated only the follow-up Red fixture so `round:002` explicitly carries
+  `revision=2`; production code and acceptance assertions were unchanged.
+- Focused pytest result: 9 passed. `py_compile` and `git diff --check` pass.
+- The final-review blocker is resolved at the test-fixture level. Next gate:
+  `LISS-0522 Phase 3 最終レビュー 承認`.

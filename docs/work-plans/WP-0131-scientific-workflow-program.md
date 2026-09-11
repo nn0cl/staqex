@@ -10,7 +10,7 @@
 | Implementation permission | none; tests/production/provider/branch/commit/PR/mergeは今回実行しない |
 | Depends on | none for design; child implementation uses explicit dependency DAG below |
 | Inventory count | 28 total records: this parent WP/LISS pair plus 27 child WP/LISS pairs |
-| Current Next Issue | WP-0139/LISS-0522 Phase 2 Green / Implementation; QUBO is WP-0137/LISS-0520 |
+| Current Next Issue | WP-0158/LISS-0541 Phase 0 acceptance/profile review; QUBO is WP-0137/LISS-0520 |
 | Review | [independent correction review record](../collaboration/reviews/2026-09-08-scientific-workflow-design-review.md) |
 
 ## [DESIGN CHECK]
@@ -73,7 +73,7 @@ Completion claimは二層に分ける。個別のclassical-only Scientific Workf
 | [WP-0136](WP-0136-s02-classical-batch-baseline.md) / [LISS-0519](../issues/LISS-0519-s02-classical-batch-baseline.md) | S02古典batch目的とfeasibility oracle | D03 | WP-0135 | proposed |
 | [WP-0137](WP-0137-scientific-quantum-projection.md) / [LISS-0520](../issues/LISS-0520-scientific-quantum-projection.md) | 離散問題からQuantum Projectionの変換契約 | Q01 | WP-0133 | complete (bounded Q01 artifact/runtime unit) |
 | [WP-0138](WP-0138-scientific-workflow-lifecycle.md) / [LISS-0521](../issues/LISS-0521-scientific-workflow-lifecycle.md) | 期限・承認・再計画のWorkflow契約 | W01 | WP-0132 | proposed |
-| [WP-0139](WP-0139-s02-assay-batch-cycle.md) / [LISS-0522](../issues/LISS-0522-s02-assay-batch-cycle.md) | S02次回assay batchの閉ループ | D04 | WP-0133, WP-0136, WP-0138, WP-0151 | proposed |
+| [WP-0139](WP-0139-s02-assay-batch-cycle.md) / [LISS-0522](../issues/LISS-0522-s02-assay-batch-cycle.md) | S02次回assay batchの閉ループ | D04 | WP-0133, WP-0136, WP-0138, WP-0151 | complete |
 | [WP-0140](WP-0140-geographic-sensor-adapter-profile.md) / [LISS-0523](../issues/LISS-0523-geographic-sensor-adapter-profile.md) | CityGML・graph・SOSA/SensorThings接続 | X01 | WP-0132 | proposed |
 | [WP-0141](WP-0141-s01-rolling-plan-validation.md) / [LISS-0524](../issues/LISS-0524-s01-rolling-plan-validation.md) | S01安全・公平・資源のrolling検証 | S01 | WP-0138, WP-0140, WP-0151 | proposed |
 | [WP-0142](WP-0142-astronomy-observation-profile.md) / [LISS-0525](../issues/LISS-0525-astronomy-observation-profile.md) | ObsCore/VOTable天文観測縦切り | A01 | WP-0132, WP-0133 | proposed |
@@ -92,7 +92,7 @@ Completion claimは二層に分ける。個別のclassical-only Scientific Workf
 | [WP-0155](WP-0155-nonlinear-fluid-profile.md) / [LISS-0538](../issues/LISS-0538-nonlinear-fluid-profile.md) | 非線形流体とclosureの明示境界 | P04 | WP-0144, WP-0147, WP-0149 | proposed |
 | [WP-0156](WP-0156-solar-mhd-profile.md) / [LISS-0539](../issues/LISS-0539-solar-mhd-profile.md) | 太陽/MHD観測結合と磁場拘束 | P05/A01 | WP-0142, WP-0147, WP-0149, WP-0155 | proposed |
 | [WP-0157](WP-0157-inverse-ensemble-scientific-workflow.md) / [LISS-0540](../issues/LISS-0540-inverse-ensemble-scientific-workflow.md) | 逆問題・ensemble・実験再計画 | P06/E01/W01 | WP-0138, WP-0148, WP-0151 | proposed |
-| [WP-0158](WP-0158-s02-quantum-baseline-comparison.md) / [LISS-0541](../issues/LISS-0541-s02-quantum-baseline-comparison.md) | S02量子projectionと古典baseline比較 | D05/Q01/E01 | WP-0137, WP-0139, WP-0151 | proposed |
+| [WP-0158](WP-0158-s02-quantum-baseline-comparison.md) / [LISS-0541](../issues/LISS-0541-s02-quantum-baseline-comparison.md) | S02量子projectionと古典baseline比較 | D05/Q01/E01 | WP-0137, WP-0139, WP-0151 | complete (bounded provider-neutral comparison kernel) |
 
 ## Required end-state coverage
 
