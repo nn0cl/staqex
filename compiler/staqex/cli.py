@@ -20,6 +20,7 @@ from .credentials import EnvCredentialAdapter
 from .format import format_source
 from .ir.dag import lower_source_ast
 from .live_submit import submit_live_qpu
+from .live_qpu_config import LiveQpuConfigError, load_aws_braket_config
 from .migrate_unicode_math import migrate_unicode_math_source
 from .pipeline import HARD_CODES, compile_path, compile_source
 from .host import run_path as host_run_path, run_source as host_run_source
@@ -298,17 +299,45 @@ def cmd_submit_live_qpu(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
         return 1
+    try:
+        config = load_aws_braket_config(getattr(args, "config", None))
+    except LiveQpuConfigError as exc:
+        print(f"submit-live-qpu: {exc}", file=sys.stderr)
+        return 1
+    device_arn = getattr(args, "device_arn", None) or config.device_arn
+    shots = getattr(args, "shots", None) if getattr(args, "shots", None) is not None else config.shots
+    cost_ceiling = (
+        getattr(args, "cost_ceiling_usd", None)
+        if getattr(args, "cost_ceiling_usd", None) is not None
+        else config.cost_ceiling_usd
+    )
+    if not device_arn:
+        print("submit-live-qpu: device_arn is required in config or CLI", file=sys.stderr)
+        return 1
+    if shots is not None and shots <= 0:
+        print("submit-live-qpu: shots must be positive", file=sys.stderr)
+        return 1
+    if cost_ceiling is None or cost_ceiling <= 0:
+        print("submit-live-qpu: positive cost_ceiling_usd is required in config or CLI", file=sys.stderr)
+        return 1
     source = _load_source(args)
     execution_settings: dict[str, object] = {}
-    if getattr(args, "shots", None) is not None:
-        execution_settings["shots"] = args.shots
+    if shots is not None:
+        execution_settings["shots"] = shots
     print(
-        f"submit-live-qpu: submitting to AWS Braket device {args.device_arn} "
-        "-- this may incur real cost on real hardware",
+        f"submit-live-qpu: AWS Braket device={device_arn} shots={shots or 100} "
+        f"cost_ceiling_usd={cost_ceiling} -- this may incur real cost",
         file=sys.stderr,
     )
     try:
-        adapter = _build_live_qpu_adapter(args.device_arn)
+        answer = input("submit-live-qpu: approve this submission? [y/N] ").strip().lower()
+    except EOFError:
+        answer = ""
+    if answer not in {"y", "yes"}:
+        print("submit-live-qpu: submission cancelled; no provider call made", file=sys.stderr)
+        return 1
+    try:
+        adapter = _build_live_qpu_adapter(device_arn)
         job_id, diagnostics = submit_live_qpu(
             source, adapter=adapter, execution_settings=execution_settings
         )
@@ -530,9 +559,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     add_src(psl)
     psl.add_argument(
-        "--device-arn", required=True, help="provider device identifier (e.g. AWS Braket ARN)"
+        "--device-arn", required=False, help="provider device identifier; overrides config"
     )
     psl.add_argument("--shots", type=int, default=None, help="default: adapter's own default")
+    psl.add_argument("--cost-ceiling-usd", type=float, default=None, help="declared cost ceiling; overrides config")
+    psl.add_argument("--config", help="TOML config path (default: $XDG_CONFIG_HOME/staqex/qpu.toml)")
     psl.add_argument(
         "--provider", default="aws-braket", help="only aws-braket is currently available"
     )

@@ -23,6 +23,11 @@ and cost/shots guard, obtain explicit real-time human approval, submit, observe
 the Job lifecycle, retrieve the raw result, and hand the redacted evidence to
 the validation process.
 
+AWS CLI execution settings are read from the Host TOML configuration described
+in [ADR 0218](../architecture/adr/0218-host-qpu-config-and-interactive-approval.md).
+The CLI performs the real-time human approval with an interactive `y`/`yes`
+prompt immediately before submission; configuration files contain no secrets.
+
 ## Explicit exclusions
 
 - no agent-operated submission or credential handling;

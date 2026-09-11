@@ -150,6 +150,10 @@ not to `submit_source` generally.
    fake `QpuSubmitPort`, confirm `submit_source`/`submit_path` unaffected
    (no diff).
 
+The optional CLI configuration and interactive human-approval boundary are
+defined by the later [ADR 0218](0218-host-qpu-config-and-interactive-approval.md)
+and do not alter the asynchronous entrypoint shape.
+
 ## Acceptance boundary
 
 Acceptance of this ADR approves the **entrypoint shape and honesty

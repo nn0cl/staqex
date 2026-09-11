@@ -24,10 +24,13 @@ because they govern this file's behavior, not just its design record):
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
 from dataclasses import dataclass
+import hashlib
 from typing import Any, Mapping, Protocol
 
 from ..credentials import CredentialPort
+from ..qpu_contract import CapabilityProfile, JobObservation, map_provider_job_state
 from ..qpu_submit import ProviderJobId, ProviderJobState, QpuSubmitRequest
 
 _MIN_SAFE_BRAKET_SDK_VERSION = "1.117.0"
@@ -50,6 +53,10 @@ class BraketClientPort(Protocol):
     def cancel_task(self, task_arn: str) -> None:
         ...
 
+    def device_capabilities(self, device_arn: str) -> Mapping[str, Any]:
+        """Return the provider capability snapshot for a device."""
+        ...
+
 
 class BraketCredentialError(Exception):
     """Raised when required AWS credentials are missing (fail closed)."""
@@ -57,6 +64,10 @@ class BraketCredentialError(Exception):
 
 class BraketDependencyError(Exception):
     """Raised when amazon-braket-sdk is absent or below the CVE-fixed version."""
+
+
+class BraketUnknownJobStateError(ValueError):
+    """Raised when the legacy state projection cannot classify a raw state."""
 
 
 def _installed_braket_sdk_version() -> str | None:
@@ -137,6 +148,25 @@ class RealAwsBraketClient:
     def cancel_task(self, task_arn: str) -> None:
         self._AwsQuantumTask(arn=task_arn).cancel()
 
+    def device_capabilities(self, device_arn: str) -> Mapping[str, Any]:
+        """Fetch and normalize the SDK device metadata for the Host port."""
+        device = self._AwsDevice(device_arn)
+        properties = device.properties
+        raw_properties = properties.dict() if hasattr(properties, "dict") else {}
+        actions = raw_properties.get("action", {})
+        openqasm_action = actions.get("braket.ir.openqasm.program", {})
+        supported_operations = tuple(openqasm_action.get("supportedOperations", ()))
+        capabilities = set(str(operation) for operation in supported_operations)
+        if openqasm_action:
+            capabilities.update({"measure", "openqasm3"})
+        return {
+            "provider_name": device.provider_name,
+            "device_status": device.status,
+            "provider_device_id": device.arn,
+            "capabilities": tuple(sorted(capabilities)),
+            "captured_at": datetime.now(timezone.utc),
+        }
+
 
 _STATE_MAP = {
     "CREATED": ProviderJobState.QUEUED,
@@ -163,6 +193,7 @@ class AwsBraketAdapter:
     credentials: CredentialPort
     required_credentials: tuple[str, ...] = ("AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY")
     default_shots: int = 100
+    capability_ttl: timedelta = timedelta(minutes=5)
 
     def _require_credentials(self) -> None:
         # Accept either explicit environment credentials or a configured
@@ -196,7 +227,49 @@ class AwsBraketAdapter:
 
     def status(self, job_id: ProviderJobId) -> ProviderJobState:
         raw = self.client.task_state(job_id.opaque_id)
-        return _STATE_MAP.get(raw, ProviderJobState.RUNNING)
+        try:
+            return _STATE_MAP[raw.upper()]
+        except KeyError as exc:
+            raise BraketUnknownJobStateError(
+                f"AWS Braket returned an unmapped job state: {raw!r}"
+            ) from exc
+
+    def status_observation(self, job_id: ProviderJobId) -> JobObservation:
+        """Return raw Braket state plus the provider-neutral observation."""
+        raw = self.client.task_state(job_id.opaque_id)
+        return map_provider_job_state(provider_state=raw)
+
+    def capability_profile(self) -> CapabilityProfile:
+        """Translate one Braket device snapshot into the Host contract."""
+        snapshot = self.client.device_capabilities(self.device_arn)
+        provider_name = str(snapshot["provider_name"])
+        device_id = str(snapshot.get("provider_device_id", self.device_arn))
+        captured_at = snapshot.get("captured_at")
+        if not isinstance(captured_at, datetime):
+            captured_at = datetime.now(timezone.utc)
+        if captured_at.tzinfo is None:
+            captured_at = captured_at.replace(tzinfo=timezone.utc)
+        capabilities = frozenset(str(item) for item in snapshot.get("capabilities", ()))
+        fingerprint_input = "|".join(
+            (self.device_arn, provider_name, device_id, *sorted(capabilities))
+        ).encode("utf-8")
+        fingerprint = hashlib.sha256(fingerprint_input).hexdigest()
+        return CapabilityProfile(
+            access_route="aws-braket",
+            hardware_provider=provider_name.lower(),
+            device_id=device_id,
+            profile_fingerprint=fingerprint,
+            source="aws-braket-device-capabilities",
+            availability=str(snapshot.get("device_status", "unknown")).lower(),
+            captured_at=captured_at,
+            expires_at=captured_at + self.capability_ttl,
+            calibration_reference=(
+                str(snapshot["calibration_reference"])
+                if snapshot.get("calibration_reference") is not None
+                else None
+            ),
+            capabilities=capabilities,
+        )
 
     def wait(self, job_id: ProviderJobId) -> ProviderJobState:
         return self.status(job_id)
@@ -214,5 +287,6 @@ __all__ = [
     "BraketClientPort",
     "BraketCredentialError",
     "BraketDependencyError",
+    "BraketUnknownJobStateError",
     "RealAwsBraketClient",
 ]

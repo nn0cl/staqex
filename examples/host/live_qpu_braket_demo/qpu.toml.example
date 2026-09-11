@@ -1,0 +1,8 @@
+# Non-secret Host settings for `staqex submit-live-qpu`.
+# Copy to ~/.config/staqex/qpu.toml and replace the device ARN.
+
+[aws_braket]
+provider = "aws-braket"
+device_arn = "arn:aws:braket:<region>::device/qpu/<provider>/<device>"
+shots = 100
+cost_ceiling_usd = 1.00
