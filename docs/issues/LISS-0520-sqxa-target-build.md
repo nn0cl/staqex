@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red accepted — Phase 2 approval pending** |
-| Phase | phase-1-red |
+| Status | **Phase 2 Green complete — Phase 3 pending** |
+| Phase | phase-2-green |
 | Type | architecture / artifact contract |
 | Priority | P0 |
 | Size | L |
@@ -11,7 +11,7 @@
 | Depends on | WP-0121, WP-0122, ADR 0217, ADR 0218 |
 | Blocks | Runtime target deployment and provider pilot packaging |
 | Acceptance authority | Proposed ADR 0219; real-QPU readiness acceptance |
-| Implementation permission | **Phase 1 Red complete; Phase 2 not authorized** |
+| Implementation permission | **Phase 2 implementation complete; Phase 3 not authorized** |
 
 ## Design check
 
@@ -67,6 +67,19 @@ Review packet: [2026-09-10 LISS-0520 Phase 1 Red review](../collaboration/review
 The review findings were corrected and re-reviewed: target metadata,
 capability expiry, provider non-contact, and isolated direct-runner paths are
 covered. Phase 2 remains unauthorized until separate approval.
+
+## Phase 2 Green record
+
+Added `compiler/staqex/sqxa.py` with the minimum provider-neutral `.sqxa`
+artifact model, canonical writer/reader, fake target variant builder, and
+Runtime preflight. Common source/semantic identity and provenance are retained;
+target route, device, capability expiry, payload format, and target fingerprint
+are recorded separately. Target mismatch, expired capability, and secret-bearing
+artifact cases fail closed before provider construction/access. A pre-existing
+test variable typo was corrected from `provider` to `FakeProvider` without
+weakening the contract. Targeted pytest passed **6 tests**; AST, diff, and
+document lifecycle checks passed. No SDK, credentials, network, or live QPU
+call was used.
 
 ## First implementation slice after approval
 

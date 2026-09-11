@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Status | **Phase 1 Red accepted — Phase 2 approval pending** |
+| Status | **Phase 2 Green complete — Phase 3 pending** |
 | Type | architecture / feature contract |
 | Size | L |
 | Parent | WP-0131; WP-0119 |
 | Issue | LISS-0520 |
 | Depends on | WP-0121, WP-0122, WP-0123, ADR 0217, ADR 0218 |
 | Blocks | Runtime provider deployment and real-QPU pilot packaging |
-| Implementation permission | **Phase 1 Red complete; Phase 2 not authorized** |
+| Implementation permission | **Phase 2 implementation complete; Phase 3 not authorized** |
 
 ## Goal
 
@@ -52,3 +52,12 @@ signing, or Rust runtime implementation.
 Phase 0 design and ADR approval -> Phase 1 Red -> Phase 1 review -> Phase 2
 Green -> Phase 2 review -> Phase 3 cross-provider review. Each phase requires
 its own typed approval.
+
+## Phase 2 Green record
+
+Implemented the minimum provider-neutral `compiler/staqex/sqxa.py` package:
+canonical portable/targeted writer and reader, fake target variant builder,
+and Runtime preflight that validates target route and capability expiry before
+provider construction. Secret-bearing manifests/payloads are rejected. The
+targeted suite passes **6 tests**; no SDK, credential, network, or live-QPU
+operation was used.

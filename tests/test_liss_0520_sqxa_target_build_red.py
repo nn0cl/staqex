@@ -134,7 +134,7 @@ def test_runtime_rejects_expired_capability_before_provider_access(
             expected_route="aws-braket",
             now=datetime(2026, 9, 10, tzinfo=timezone.utc),
         )
-    assert provider.calls == 0
+    assert FakeProvider.calls == 0
 
 
 def test_runtime_target_mismatch_does_not_construct_or_call_provider(
