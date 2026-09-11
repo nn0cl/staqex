@@ -95,6 +95,20 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-08
+- Class: coverage-authority-boundary
+- Pattern: a completed representation or small demonstration can be mistaken
+  for complete scientific workflow coverage; importing richer metadata can
+  also accidentally create a second executable semantic authority.
+- What later design or implementation must do: separate metadata authority,
+  source-derived execution meaning, profile-specific capability, and scientific
+  validation. Track each domain's positive execution and neighboring rejection
+  evidence; keep successor scope distinct from completed example migrations.
+- Source issue or work plan: LISS-0514 / WP-0131
+- Status: applied in design; implementation application remains per phase gate
+
+## Lesson
+
 - Date: 2026-09-07
 - Class: acceptance-boundary
 - Pattern: a fail-closed semantic-family check can overmatch a valid neighboring

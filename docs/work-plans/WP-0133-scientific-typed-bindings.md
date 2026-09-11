@@ -1,0 +1,93 @@
+# WP-0133: 意味を保持する型付き古典入力とdecode
+
+| Field | Value |
+|---|---|
+| Status | complete — Phase 3 Refactor reviewed 2026-09-08 |
+| Phase | phase-0-design |
+| Size initial/current | M / M — one bounded profile or boundary; elapsed-time estimateではない |
+| Parent | [WP-0131](WP-0131-scientific-workflow-program.md) |
+| Issue | [LISS-0516](../issues/LISS-0516-scientific-typed-bindings.md) |
+| Depends on | [WP-0132](WP-0132-scientific-metadata-graph.md) |
+| Blocks | WP-0137, WP-0139, WP-0142, WP-0143, WP-0148, WP-0150, WP-0151 |
+| Owner / route | Sol: independent design correction and coordination; Luna: separately approved bounded phases |
+| Architecture | ADR 0217-A accepted; 0217-B Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
+| Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), B01 |
+| Implementation permission | no; no Phase 1 approval |
+| Current Next Issue | None for this bounded B01 slice; broader binding families require new WP/approval |
+
+## Scope
+
+既存ScientificInput/Param/CoefficientTensorの1経路にBindingContractを接続し、source symbol、snapshot、unit/frame/axis/index、decode対応を保持する。
+
+## Out of scope
+
+新量子型、外部file reader、全consumer一括移行。 共通除外: branch/commit/PR操作は今回禁止、provider SDK/認証/live QPUは独立WP。
+
+## Acceptance scenarios and verification
+
+B01のGiven/When/Thenを適用する。具体的検証: 正当な明示mappingのround-trip、同shape異axis、unknown unit、stale snapshot、hostキーだけの入力の拒否。
+
+Phase 0でfixture identity、schema/source form/API boundary、tolerance/期待diagnostic、
+対象testsの配置、外部依存versionと採用判断の要否を確定する。
+数式sourceを変更する場合はparser→typed HIR→Semantic IR→consumer→Resultを検証する。
+Host-only契約ではport/APIの意味保存を検証し、source対応済みと主張しない。
+外部service不要のfake/固定fixtureを使う。実測profileの検証は権利確認済みsnapshotを使用する。
+
+## Phase 0 decisions
+
+- `BindingContract` is the conceptual Host boundary with exactly these
+  responsibilities: `source_symbol`, `snapshot_id`, `snapshot_revision`,
+  `shape`, ordered `axis_map`, `index_map`, `unit`, `dimension_signature`,
+  optional `frame`, and an explicit `mapping_kind`.
+- `mapping_kind` permits `identity`, `explicit_unit_conversion`, or
+  `explicit_axis_permutation` only when the transformation and evidence are
+  supplied. Unit, frame, axis, index, or snapshot inference is forbidden.
+- `DecodedBinding` must retain `source_symbol`, snapshot reference, original
+  semantic hash, decoded shape/axis map, and transformation evidence. A Host
+  key alone is not a source identity.
+- The M contract is Host-only and does not change `ScientificInput`,
+  `CoefficientTensor`, parser reachability, Semantic IR, or QPU behavior.
+- Canonical diagnostics are `BINDING_SNAPSHOT_MISMATCH`,
+  `BINDING_UNKNOWN_UNIT`, `BINDING_AXIS_MISMATCH`, `BINDING_SHAPE_MISMATCH`,
+  and `BINDING_SOURCE_IDENTITY_REQUIRED`. Diagnostics must identify the
+  offending contract field without exposing provider data.
+- Phase 1 test location is the root suite
+  `tests/test_scientific_typed_bindings_red.py`. Fixtures are six in-memory
+  cases: scalar angle identity, tensor with named axes, explicit unit
+  conversion, stale snapshot, unknown unit, and Host-key-only input.
+- No external dependency, library, file reader, database, provider SDK, or
+  concrete unit-conversion table is selected by this Phase 0 decision.
+
+## Risk / stop conditions
+
+旧Host配列が意味検証を迂回すること。既存scalarを不必要に破壊すること。
+承認済みspecと衝突する場合はArchitecture Pathへ戻す。
+一つの契約/代表profileを越える場合はMのままLunaへ渡さず子Issueへ再分割する。
+依存はdoneまたは明示waiverが必要。計画の作成/レビューは実装依存の完了を意味しない。
+
+## Completion conditions
+
+受入positive/negativeの対、sourceまたはportからの意味保存、実行/拒否の証拠、
+profile限界、費用/誤差/出典の適用fieldを示す。Phase 3 review、Adjudicator final review、
+LISS/WP/register同期とprocess reviewを経てdoneにする。
+profile一つの完了を分野全体の完成と扱わない。追加profileはWP-0131のcoverage gateへ戻す。
+
+## Luna implementation phases
+
+0. このWPのscopeとB01の具体fixture/期待値をreview。ADR承認とreadinessを確認。
+1. 個別Phase 1承認後、受入に対応するRed testsだけを作り、意図した失敗を提示。
+2. testsの人間reviewとPhase 2/Implementation承認後、当該境界だけ最小Green。
+3. Phase 3承認後、意味を変えずRefactor、再検証、review evidenceと台帳同期。
+一回の依頼で複数phaseを実行しない。既存実装と一致する受入は先に証拠を確認し重複実装しない。
+
+## AI planning record
+
+- ID: AIP-WP-0133-2026-09-08-001; status: proposed.
+- Author/environment: Sol role, Codex desktop, local shared worktree.
+- Model/reasoning: N/A — role指定のみ、実行構成の表示値は取得していない。
+- Created: 2026-09-08; size: M; execution scope: 上記一契約/一profile、Lunaへ各phase別に渡す。
+- Estimated tokens range/midpoint/metric: N/A — fixture/API/technology review前で信頼できる見積根拠なし。
+- Basis/assumptions/confidence: 依存と拒否境界に基づく分割、既存port再利用を仮定、medium。
+- Revises: none; WP-0131親計画から新規分割。以前の承認済み見積は変更しない。
+
+Process review: no operating-contract deviation or operational problem found.

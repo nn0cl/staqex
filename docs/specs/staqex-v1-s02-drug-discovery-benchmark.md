@@ -1,5 +1,13 @@
 # Staqex v1 S02 — indication-agnostic drug-discovery benchmark
 
+> Lineage notice (2026-09-08): The synthetic selection-boundary sample governed
+> by this specification moved to Basic under
+> [LISS-0513](../issues/LISS-0513-basic-s02-example-migration.md).
+> Status narratives below retain that bounded historical implementation context.
+> They do not describe the new measured-data hit-to-lead S02, whose current
+> design proposal is the [Scientific Workflow specification](staqex-scientific-workflow-acceptance.md).
+> This notice does not change the accepted benchmark behavior or its original approvals.
+
 | Field | Value |
 |---|---|
 | Status | **Accepted acceptance specification — Phase 2 implementation in progress** |

@@ -1,5 +1,11 @@
 # Staqex scientific input and parameter binding acceptance specification
 
+> Coverage note (2026-09-08): The accepted scalar contract below remains in
+> force. Metadata Graph and richer typed bindings are a separate
+> [Scientific Workflow proposal](staqex-scientific-workflow-acceptance.md),
+> with WP-0132/WP-0133 ownership. Deferred geometry/tensor/quality here does
+> not limit the complete scientific model or approve those extensions.
+
 ## Status
 
 Accepted for LISS-0045 Phase 2 Green. This document is the acceptance
