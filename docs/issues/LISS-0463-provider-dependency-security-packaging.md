@@ -78,3 +78,13 @@ Changing provider/range requires typed technology approval.
   found.
 - Actual SDK adoption, dependency pinning, credentials, network access, and
   live submission remain separately gated.
+
+## Isolated runtime smoke evidence
+
+On 2026-09-10, the approved SDK range was installed only in the temporary
+venv `/private/tmp/staqex-aws-sdk-smoke-20260910`. Version `1.127.0` passed
+the adapter floor `>=1.117.0,<2`; the SDK classes and lazy real-client
+constructor imported successfully. The CLI reached the resolved target and
+interactive approval prompt, then cancelled on `n` before adapter submission.
+No repository dependency manifest, credentials, provider API, or billed task
+was touched.

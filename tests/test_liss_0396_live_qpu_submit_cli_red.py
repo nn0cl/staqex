@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import io
 import sys
+import tempfile
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
@@ -30,15 +31,16 @@ pub fn main() -> Unit {
 _SOURCE_HARD_DIAGNOSTIC = "package t\npub fn main() -> Unit {\n"
 
 
-def _run_cli(argv: list[str]) -> tuple[int, str, str]:
+def _run_cli(argv: list[str], *, answer: str = "y") -> tuple[int, str, str]:
     out = io.StringIO()
     err = io.StringIO()
     with redirect_stdout(out), redirect_stderr(err):
-        try:
-            code = main(argv)
-        except SystemExit as exc:
-            raw = exc.code
-            code = 0 if raw is None else (raw if isinstance(raw, int) else 1)
+        with patch("builtins.input", return_value=answer):
+            try:
+                code = main(argv)
+            except SystemExit as exc:
+                raw = exc.code
+                code = 0 if raw is None else (raw if isinstance(raw, int) else 1)
     return int(code), out.getvalue(), err.getvalue()
 
 
@@ -72,6 +74,8 @@ def test_missing_braket_sdk_fails_closed_for_real() -> None:
             _SOURCE_OK,
             "--device-arn",
             "arn:aws:braket::device/fake",
+            "--cost-ceiling-usd",
+            "1",
         ]
     )
     assert code == 1
@@ -109,6 +113,8 @@ def test_successful_submission_prints_provider_job_id() -> None:
                 _SOURCE_OK,
                 "--device-arn",
                 "arn:aws:braket::device/fake",
+                "--cost-ceiling-usd",
+                "1",
             ]
         )
     assert code == 0, stderr
@@ -127,12 +133,63 @@ def test_missing_credentials_fails_closed_before_submit() -> None:
                 _SOURCE_OK,
                 "--device-arn",
                 "arn:aws:braket::device/fake",
+                "--cost-ceiling-usd",
+                "1",
             ]
         )
     assert code == 1
     assert "provider=" not in stdout
     assert "credentials" in stderr.lower()
     assert fake_client.create_task_calls == []
+
+
+def test_declined_confirmation_never_constructs_or_submits_provider() -> None:
+    fake_client = _FakeBraketClient()
+    with patch("compiler.staqex.cli.RealAwsBraketClient", return_value=fake_client), \
+         patch("os.environ", {"AWS_ACCESS_KEY_ID": "fake-key", "AWS_SECRET_ACCESS_KEY": "fake-secret"}):
+        code, stdout, stderr = _run_cli(
+            [
+                "submit-live-qpu",
+                "-e",
+                _SOURCE_OK,
+                "--device-arn",
+                "arn:aws:braket::device/fake",
+                "--cost-ceiling-usd",
+                "1",
+            ],
+            answer="n",
+        )
+    assert code == 1
+    assert "provider=" not in stdout
+    assert "cancelled" in stderr
+    assert fake_client.create_task_calls == []
+
+
+def test_config_file_supplies_device_shots_and_cost_ceiling() -> None:
+    fake_client = _FakeBraketClient()
+    with tempfile.TemporaryDirectory() as directory:
+        config_path = Path(directory) / "qpu.toml"
+        config_path.write_text(
+            "[aws_braket]\n"
+            "device_arn = \"arn:aws:braket::device/from-config\"\n"
+            "shots = 17\n"
+            "cost_ceiling_usd = 2.5\n",
+            encoding="utf-8",
+        )
+        env = {"AWS_ACCESS_KEY_ID": "fake-key", "AWS_SECRET_ACCESS_KEY": "fake-secret"}
+        with patch("compiler.staqex.cli.RealAwsBraketClient", return_value=fake_client), \
+             patch.dict("os.environ", env, clear=False):
+            code, stdout, stderr = _run_cli(
+                ["submit-live-qpu", "-e", _SOURCE_OK, "--config", str(config_path)]
+            )
+    assert code == 0, stderr
+    assert stdout.strip() == "provider=aws-braket id=fake-task-arn"
+    assert fake_client.create_task_calls
+    assert fake_client.create_task_calls[0][1:] == (
+        "arn:aws:braket::device/from-config",
+        17,
+    )
+    assert "cost_ceiling_usd=2.5" in stderr
 
 
 def test_hard_compile_diagnostic_prints_diagnostics_not_provider() -> None:
@@ -147,8 +204,25 @@ def test_hard_compile_diagnostic_prints_diagnostics_not_provider() -> None:
                 _SOURCE_HARD_DIAGNOSTIC,
                 "--device-arn",
                 "arn:aws:braket::device/fake",
+                "--cost-ceiling-usd",
+                "1",
             ]
         )
     assert code == 1
     assert "provider=" not in stdout
     assert fake_client.create_task_calls == []
+
+
+if __name__ == "__main__":
+    tests = [
+        test_unsupported_provider_fails_closed,
+        test_missing_braket_sdk_fails_closed_for_real,
+        test_successful_submission_prints_provider_job_id,
+        test_missing_credentials_fails_closed_before_submit,
+        test_declined_confirmation_never_constructs_or_submits_provider,
+        test_config_file_supplies_device_shots_and_cost_ceiling,
+        test_hard_compile_diagnostic_prints_diagnostics_not_provider,
+    ]
+    for test in tests:
+        test()
+    print("OK — LISS-0396 config and interactive approval")
