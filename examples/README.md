@@ -9,7 +9,7 @@ collapse happens only at terminal `measure`.
 
 | Track | Path | Status |
 |-------|------|--------|
-| **Basics** | [`basics/`](basics/) | B01–B15 — language axioms through multi-register |
+| **Basics** | [`basics/`](basics/) | B01–B19 — language axioms, host/resource surfaces, finiteization, constrained selection |
 | **Applied** | [`applied/`](applied/) | A01–A11 — integration and domain toys |
 | **Showcase** | [`showcase/`](showcase/) | Language-spec benchmark programs (see last row below) |
 
@@ -32,6 +32,11 @@ python3 -m compiler.staqex run examples/showcase/S01_quantum_disaster_response/m
 ```
 
 Older `showcase/quantum_matter_discovery/` is salvage only (superseded mission).
+
+The scientific S02 workflow is implemented as provider-neutral Python modules
+and offline fixtures under `compiler/staqex/` and `tests/`; it is not currently
+an additional example-program track. Its bounded quantum-vs-classical
+comparison does not claim quantum advantage and does not require a live QPU.
 
 ## Program structure
 

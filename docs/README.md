@@ -1,12 +1,21 @@
 # Staqex documentation — current entry
 
-## Scientific Workflow design under review
+## Scientific Workflow implementation status
 
 [完成形設計案](architecture/scientific-workflow-complete-design.md)、
 [受入仕様案](specs/staqex-scientific-workflow-acceptance.md)、
 [WP-0131ロードマップ](work-plans/WP-0131-scientific-workflow-program.md)を追加した。
-全科学分野を対象とし、実測S02を最優先にする。いずれも**Proposed**で、
-以下の現行Normative文書や実装許可を置換しない。
+全科学分野を対象とし、実測S02を最優先にする。設計案・ロードマップと、個別に完了した
+bounded実装単位を区別する。以下の現行Normative文書を置換しない。
+
+S02では、assay batch cycle、再現性証拠、provider-neutralな量子・古典baseline比較を
+ローカルPython APIとoffline fixtureで実装済みです。lineage、candidate、decode／feasibility、
+objective、cost、runtime rejectionを検証します。これは実機実行や量子優位の主張ではなく、
+AWS Braketなどのprovider接続はHost adapter側の別境界です。
+
+実装進捗の現在値は[open-work register](architecture/open-work-register.md)、科学workflowの
+全体計画は[WP-0131](work-plans/WP-0131-scientific-workflow-program.md)、受入境界は
+[scientific workflow acceptance](specs/staqex-scientific-workflow-acceptance.md)を参照してください。
 
 Read this page first. Detailed ADRs, Issues, Work Plans, and Traces are source
 records, not parallel introductions to the project.
