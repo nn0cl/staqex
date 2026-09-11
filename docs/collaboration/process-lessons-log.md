@@ -7,6 +7,20 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-11
+- Class: regression-authority-lifecycle
+- Pattern: Phase 1 test filenames retained a `_red.py` suffix after Green and
+  completion, while CI excluded that suffix globally. Completed acceptance
+  contracts could regress without failing the merge gate.
+- What later design or implementation must do: represent active Red state with
+  explicit issue-linked lifecycle metadata, make completed contract tests
+  blocking, and reject stale exclusions automatically. A filename is not an
+  authoritative phase ledger.
+- Source issue or work plan: repository-wide source-code review; follow-up WP-A
+- Status: proposed for application in the next design intake
+
+## Lesson
+
 - Date: 2026-09-10
 - Class: boundary-completeness
 - Pattern: fake-port tests can pass after a port extension while a concrete
