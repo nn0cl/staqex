@@ -97,3 +97,17 @@ Record meta-level patterns only. No session transcripts.
   the earlier claim on the ID and renumber the later file.
 - Source issue or work plan (adopter's own ID, if any): LISS-0024
 - Status: applied
+
+## Lesson
+
+- Date: 2026-09-08
+- Class: coverage-authority-boundary
+- Pattern: a completed representation or small demonstration can be mistaken
+  for complete scientific workflow coverage; importing richer metadata can
+  also accidentally create a second executable semantic authority.
+- What later design or implementation must do: separate metadata authority,
+  source-derived execution meaning, profile-specific capability, and scientific
+  validation. Track each domain's positive execution and neighboring rejection
+  evidence; keep successor scope distinct from completed example migrations.
+- Source issue or work plan: LISS-0514 / WP-0131
+- Status: applied in design; implementation application remains per phase gate

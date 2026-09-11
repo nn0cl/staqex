@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | **Work units A–E complete as the former selection-boundary benchmark; the runnable boundary sample moved to Basic via LISS-0513.** The scientific S02 replacement is not yet defined. |
+| Status | **Work units A–E complete as the former selection-boundary benchmark; the runnable boundary sample moved to Basic via LISS-0513.** The measured-data scientific S02 successor is now proposed in [WP-0131](WP-0131-scientific-workflow-program.md), specifically WP-0134–0139 and WP-0158; it is not approved or implemented. |
 | Scope | S02 drug-discovery benchmark and the language boundaries it exposes |
 | Parent direction | [State-transformer language review](../architecture/staqex-state-transformer-language-review.md) |
 | Representative-program lineage | [Rebaseline §7](../specs/staqex-v1-representative-program-rebaseline.md#7-examplesshowcase-two-phase-benchmark-role-and-the-s02-lineage-2026-08-05) (2026-08-05) — S02 is that document's anticipated "S2+" successor; subject to the two-phase examples/showcase benchmark role (current language-coverage validation, future real-hardware gap discovery) |

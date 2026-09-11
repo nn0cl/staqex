@@ -1,5 +1,13 @@
 # Staqex documentation — current entry
 
+## Scientific Workflow design under review
+
+[完成形設計案](architecture/scientific-workflow-complete-design.md)、
+[受入仕様案](specs/staqex-scientific-workflow-acceptance.md)、
+[WP-0131ロードマップ](work-plans/WP-0131-scientific-workflow-program.md)を追加した。
+全科学分野を対象とし、実測S02を最優先にする。いずれも**Proposed**で、
+以下の現行Normative文書や実装許可を置換しない。
+
 Read this page first. Detailed ADRs, Issues, Work Plans, and Traces are source
 records, not parallel introductions to the project.
 

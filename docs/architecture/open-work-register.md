@@ -1,5 +1,16 @@
 # Staqex open-work register
 
+## Scientific Workflow program — design proposal (2026-09-08)
+
+| Area | Current status | Tracking | Boundary / acceptance note |
+|---|---|---|---|
+| 完成形科学Workflow / 新実測S02 | **phase-0-design review; implementation not authorized** | [WP-0131](../work-plans/WP-0131-scientific-workflow-program.md); [LISS-0514](../issues/LISS-0514-scientific-workflow-program.md); [ADR 0217 Proposed](adr/0217-scientific-workflow-metadata-and-projection.md); [設計案](scientific-workflow-complete-design.md) | External Adapter/Metadata Graph/Domain Extension/source-derived Semantic IR/projections。全分野の27 bounded child WP、S02優先、S01と連続場/天文/重力/太陽MHD/離散系を包含。次はWP-0132 M0のArchitecture/acceptance審査。 |
+
+旧S02の合成選択境界は[WP-0130](../work-plans/WP-0130-basic-s02-example-migration.md)
+でBasicへ移管済み。下の旧S02 numerical/benchmark記録はそのlineageの証拠で、
+新しい実測hit-to-lead Workflowの完成状態ではない。
+完了済みWPは再開せず、新規分割と既存未完了ownerの扱いはWP-0131のreconciliationを参照する。
+
 This is the canonical cross-reference for capabilities that are intentionally
 open, deferred, or still awaiting a dedicated local Issue. It complements the
 completed Issue ledger; an item listed here is not implementation approval.
