@@ -42,6 +42,18 @@
 - Attempt boundary: direct 19-node reproduction through document proposal
 - Notes: all 19 failed directly in 0.53s
 
+### Attempt 2 — LISS-0551 Phase 1
+
+- Agent/environment: Codex host, local workspace
+- Model/reasoning setting: unavailable from repository runtime
+- Estimated/actual tokens and metric: N/A; compatible values unavailable
+- Scope: adopt and review the exact eight fixture-conformance nodes
+- Result: 8 failed with no collection error; no duplicate test or production
+  implementation added
+- Attempt boundary: phase approval through Red review packet
+- Notes: assertion changes and fixture migration remain unauthorized until
+  Phase 2 Green / Implementation approval
+
 ## Cost / Reasoning Control
 
 - Operating path: Architecture Path
@@ -62,6 +74,7 @@
 - `WP-0161 / Active Red remediation Architecture承認` received 2026-09-12.
 - Approval accepts ownership handoff and issue boundaries; it does not grant
   Phase 1 or implementation permission.
+- `LISS-0551 Phase 1 Red 承認` received 2026-09-12.
 
 ## Verification
 
@@ -79,4 +92,4 @@
 
 ## Next Safe Action
 
-- Request `LISS-0551 Phase 1 Red 承認`.
+- Request `LISS-0551 Phase 2 Green / Implementation 承認`.

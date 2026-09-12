@@ -8,6 +8,19 @@ Record meta-level patterns only. No session transcripts.
 ## Lesson
 
 - Date: 2026-09-12
+- Class: red-contract-reuse
+- Pattern: a lifecycle-managed failing node may already provide the complete
+  Phase 1 acceptance contract; adding a second test creates competing authority
+  without improving evidence.
+- What later design or implementation must do: adopt and review the existing
+  exact node when its assertion is still authoritative, then limit Green to the
+  setup or implementation gap identified by that node.
+- Source issue or work plan (adopter's own ID, if any): LISS-0551 / WP-0161
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-12
 - Class: test-lifecycle-ownership
 - Pattern: a test-infrastructure issue cannot both finish and remain the open
   owner of unrelated feature-level active-Red exclusions.

@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0551
 - GitHub issue: none
-- Status: ready
-- Phase: phase-0-design
+- Status: phase-1-red-awaiting-review
+- Phase: phase-1-red
 - Type: test fixture migration
 - Priority: P0
 - Initial/current planning size: M / M
@@ -40,6 +40,19 @@ evolve-until, empty identity, Dirac sugar, operator, and pipeline assertions.
 - Review each removal/nested-scope edit against its original assertion.
 - WP-0161 Architecture approved 2026-09-12; no Phase 1 permission is inferred.
 
+## Phase 1 Red Record
+
+- Approval: `LISS-0551 Phase 1 Red 承認`, received 2026-09-12.
+- Adopted the eight existing exact manifest nodes as the Red contract; no
+  duplicate test was created.
+- Direct result: 8 failed with no collection error. The setup contains
+  same-scope duplicate Type-First `State` declarations that violate the
+  accepted lexical-scope contract.
+- No assertion, fixture, test file, compiler, runtime, or backend code changed.
+- Review packet:
+  [2026-09-12 LISS-0551 Phase 1 Red](../collaboration/reviews/2026-09-12-liss-0551-phase1-red-review.md).
+- Next approval: `LISS-0551 Phase 2 Green / Implementation 承認`.
+
 ## Context and Verification
 
 - Included: five test files and current lexical/scope specifications.
@@ -49,7 +62,7 @@ evolve-until, empty identity, Dirac sugar, operator, and pipeline assertions.
 
 ## AI Planning Record — AIP-0551-001
 
-- Status/date/size: proposed, 2026-09-11, M
+- Status/date/size: accepted, 2026-09-11, M
 - Route/scope: host; eight fixture nodes only
 - Estimate: N/A; compatible metric unavailable
 - Basis/assumption/confidence: git history shows the setup survived a mechanical
