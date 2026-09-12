@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0551
 - GitHub issue: none
-- Status: proposed
+- Status: ready
 - Phase: phase-0-design
 - Type: test fixture migration
 - Priority: P0
@@ -38,6 +38,7 @@ evolve-until, empty identity, Dirac sugar, operator, and pipeline assertions.
 
 - Approve fixture-only Phase 1 changes and the exact eight-node batch.
 - Review each removal/nested-scope edit against its original assertion.
+- WP-0161 Architecture approved 2026-09-12; no Phase 1 permission is inferred.
 
 ## Context and Verification
 
@@ -60,4 +61,3 @@ evolve-until, empty identity, Dirac sugar, operator, and pipeline assertions.
 - Outcome: not yet
 - Lesson written: not yet
 - Template-feedback path: none
-

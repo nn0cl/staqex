@@ -86,6 +86,9 @@
   name LISS-0543, while the lifecycle checker correctly rejects any exclusion
   whose owner issue is done. Final review is approved, but status remains open
   until accepted successor remediation issues own those nodes.
+- WP-0161 Architecture was approved on 2026-09-12. The 19 nodes were reassigned
+  to LISS-0551–0559, lifecycle validation passed, and LISS-0543 closed without
+  reopening any completed predecessor issue.
 
 ## Changed Files
 
@@ -99,5 +102,5 @@
 
 ## Next Safe Action
 
-Obtain Adjudicator disposition for a separate remediation work plan and
-successor ownership of the 19 active-Red nodes; then close LISS-0543.
+LISS-0544 is unblocked for later core decomposition. The selected immediate
+path is WP-0161 / LISS-0551 Phase 1 fixture reconciliation.

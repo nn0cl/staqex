@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | in progress — LISS-0543 final review approved; active-Red ownership unresolved |
+| Status | in progress — LISS-0543 done; LISS-0544 is unblocked |
 | Architecture approval | Adjudicator approved 2026-09-11 |
 | Implementation permission | LISS-0543 Phase 3 granted 2026-09-11 |
 
@@ -22,7 +22,7 @@ units while preserving all externally observable behavior and public imports.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---:|---:|---|---|---|---|
-| LISS-0543 | Final review approved; completion blocked | L | L | AIP-0543-001 | - | 0544–0550 | `codex/liss-0543-red` |
+| LISS-0543 | done | L | L | AIP-0543-001 | - | 0544–0550 | `codex/liss-0543-red` |
 | LISS-0544 | proposed | L | L | AIP-0544-001 | 0543 | 0545 | `refactor/evaluator-orchestration` |
 | LISS-0545 | proposed | XL | XL | AIP-0545-001 | 0544 | 0550 | `refactor/evaluator-domain-families` |
 | LISS-0546 | proposed | XL | XL | AIP-0546-001 | 0543 | 0550 | `refactor/typechecker-families` |
@@ -68,12 +68,11 @@ units while preserving all externally observable behavior and public imports.
 
 ## Current Next Issue
 
-- Issue: LISS-0543
-- Reason it is unblocked: it changes verification authority, not production
-  semantics, and is a prerequisite for honest Phase 3 evidence.
-- Adjudicator decision needed: approve a separate remediation work plan and
-  successor issue ownership for the 19 active-Red nodes. LISS-0543 cannot be
-  marked done while it remains their owner.
+- Issue: LISS-0544
+- Reason it is unblocked: LISS-0543 is done and the 19 active-Red nodes now
+  have independently accepted WP-0161 ownership.
+- Adjudicator approval needed: `LISS-0544 Phase 0 acceptance 承認` when core
+  decomposition resumes; WP-0161 remediation is currently prioritized.
 
 ## Risks
 

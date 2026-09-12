@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0543
 - GitHub issue: none
-- Status: phase-3-final-review-approved-active-red-reconciliation-required
+- Status: done
 - Phase: phase-3-refactor
 - Type: test infrastructure / process
 - Priority: P0
@@ -120,14 +120,14 @@ determinism, document lifecycle, and diff checks.
   [2026-09-11 LISS-0543 Phase 3 Refactor](../collaboration/reviews/2026-09-11-liss-0543-phase3-refactor-review.md).
 - Final review approval: `LISS-0543 Phase 3 最終レビュー 承認`, received
   2026-09-11.
-- Completion blocker: all 19 active-Red entries currently name LISS-0543 as
-  their open owner. Marking this issue done would correctly fail lifecycle
-  validation. They require accepted successor issue ownership before this
-  issue can close.
+- Completion disposition: WP-0161 Architecture was approved on 2026-09-12 and
+  all 19 active-Red entries were transferred to LISS-0551–0559 before this
+  issue was marked done. Completed predecessor issues were not reopened.
 
 ## Process Review
 
-- Outcome: operational problem found — final approval cannot be converted to
-  `done` while LISS-0543 remains the owner of 19 active-Red exclusions.
-- Lesson written: existing regression-authority lesson will be applied
+- Outcome: deviation (lifecycle ownership) resolved by the approved WP-0161
+  successor handoff before status became `done`.
+- Lesson written: yes — active Red must be owned by the feature-remediation
+  issue, not by infrastructure that validates the lifecycle.
 - Template-feedback path: none

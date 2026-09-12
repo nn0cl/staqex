@@ -7,6 +7,19 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-12
+- Class: test-lifecycle-ownership
+- Pattern: a test-infrastructure issue cannot both finish and remain the open
+  owner of unrelated feature-level active-Red exclusions.
+- What later design or implementation must do: assign every active Red to the
+  smallest feature-remediation issue before final infrastructure review; the
+  lifecycle mechanism validates ownership but does not become a permanent
+  umbrella owner.
+- Source issue or work plan (adopter's own ID, if any): LISS-0543 / WP-0161
+- Status: applied
+
+## Lesson
+
 - Date: 2026-09-11
 - Class: compatibility-baseline
 - Pattern: a structural-refactor baseline can miss reachable imports when it

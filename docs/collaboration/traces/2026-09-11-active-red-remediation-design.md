@@ -59,21 +59,24 @@
 ## Adjudicator Decisions
 
 - LISS-0543 Phase 3 final review approved 2026-09-11.
-- WP-0161 architecture and ownership handoff are not yet approved.
+- `WP-0161 / Active Red remediation Architecture承認` received 2026-09-12.
+- Approval accepts ownership handoff and issue boundaries; it does not grant
+  Phase 1 or implementation permission.
 
 ## Verification
 
 - Direct active nodes: 19 failed, confirming manifest accuracy.
 - Ownership IDs checked free: LISS-0551–0559 and WP-0161.
+- Lifecycle checker passed after all 19 entries moved to open successors and
+  LISS-0543 changed to done.
 - Document lifecycle, coverage ledger, duplicate-ID search, placeholder scan,
   and diff check run after artifact creation.
 
 ## Changed Files
 
-- Proposed remediation spec, WP-0161, LISS-0551–0559, and this trace only.
+- Remediation spec, WP-0161, LISS-0551–0559, ownership manifest, LISS-0543,
+  WP-0160, process lesson, and this trace.
 
 ## Next Safe Action
 
-- Request `WP-0161 / Active Red remediation Architecture承認`. After approval,
-  reassign manifest ownership, close LISS-0543, and request LISS-0551 Phase 1.
-
+- Request `LISS-0551 Phase 1 Red 承認`.

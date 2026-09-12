@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | Proposed |
+| Status | Accepted — Architecture approved 2026-09-12 |
 | Owner | WP-0161 / LISS-0551–0559 |
 | Trigger | LISS-0543 final-review completion blocker |
 | Scope | 19 exact pytest nodes captured 2026-09-11 |
@@ -85,6 +85,13 @@ logic.
 4. Remove a manifest node immediately after its accepted contract passes; an
    issue is done only when none of its nodes remain excluded.
 
+## Architecture approval
+
+The Adjudicator approved `WP-0161 / Active Red remediation Architecture` on
+2026-09-12. This accepts the classification vocabulary, nine successor
+boundaries, ownership handoff, and execution order. It does not authorize any
+test or production implementation phase.
+
 ## Explicit exclusions
 
 - Live QPU, provider SDK, AWS credentials, network, deployment, and Rust work.
@@ -101,4 +108,3 @@ logic.
 - Spec Verification 161/161;
 - lifecycle, document-lifecycle, coverage-ledger, compile, and diff checks;
 - no manifest owner with terminal status and no expired review date.
-

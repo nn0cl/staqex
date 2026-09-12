@@ -2,10 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Status | proposed — Architecture review required |
+| Status | accepted — Architecture approved; LISS-0551 ready for Phase 1 review |
 | Phase | phase-0-design |
 | Parent trigger | LISS-0543 completion blocker |
 | Canonical specification | [Active-Red remediation](../specs/staqex-active-red-remediation.md) |
+| Architecture approval | Adjudicator approved 2026-09-12 |
 | Implementation permission | none |
 
 ## Goal
@@ -26,7 +27,7 @@ each exclusion through independently approved work.
 
 | Issue | Status | Initial/current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---:|---|---|---|---|
-| LISS-0551 fixture conformance | proposed | M / M | AIP-0551-001 | - | 0552 | `codex/liss-0551-fixture-conformance` |
+| LISS-0551 fixture conformance | ready | M / M | AIP-0551-001 | - | 0552 | `codex/liss-0551-fixture-conformance` |
 | LISS-0552 projection diagnostic isolation | proposed | L / L | AIP-0552-001 | 0551 | - | `codex/liss-0552-projection-diagnostics` |
 | LISS-0553 symbolic compatibility supersession | proposed | M / M | AIP-0553-001 | - | - | `codex/liss-0553-symbolic-contract` |
 | LISS-0554 QASM canonical fail-closed | proposed | M / M | AIP-0554-001 | - | - | `codex/liss-0554-qasm-canonical-input` |
@@ -65,7 +66,7 @@ each exclusion through independently approved work.
 - Issue: LISS-0551 after ownership handoff.
 - Reason: it removes invalid same-scope duplicate setup before diagnosing
   behavior, minimizing the chance of fixing production for a broken fixture.
-- Approval needed now: `WP-0161 / Active Red remediation Architecture承認`.
+- Approval needed now: `LISS-0551 Phase 1 Red 承認`.
 
 ## Risks
 
@@ -88,4 +89,3 @@ every issue. Test changes require explicit replacement evidence in review.
 - Lesson written: existing status-drift, authority-boundary, and
   acceptance-boundary lessons applied
 - Template-feedback path: none
-
