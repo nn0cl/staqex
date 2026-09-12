@@ -54,6 +54,19 @@
 - Notes: assertion changes and fixture migration remain unauthorized until
   Phase 2 Green / Implementation approval
 
+### Attempt 3 — LISS-0551 Phase 2 Green
+
+- Agent/environment: Codex host, local workspace
+- Model/reasoning setting: unavailable from repository runtime
+- Estimated/actual tokens and metric: N/A; compatible values unavailable
+- Scope: fixture-only correction of the eight approved nodes
+- Result: removed unused same-scope duplicate setup declarations; two nodes
+  passed and left the active-Red manifest; six residual nodes moved unchanged
+  to LISS-0552 Phase 0 with exact diagnostic families recorded
+- Attempt boundary: Phase 2 approval through Green review packet
+- Notes: no assertion, compiler, runtime, backend, provider, or deployment code
+  changed
+
 ## Cost / Reasoning Control
 
 - Operating path: Architecture Path
@@ -75,6 +88,7 @@
 - Approval accepts ownership handoff and issue boundaries; it does not grant
   Phase 1 or implementation permission.
 - `LISS-0551 Phase 1 Red 承認` received 2026-09-12.
+- `LISS-0551 Phase 2 Green / Implementation 承認` received 2026-09-12.
 
 ## Verification
 
@@ -84,6 +98,14 @@
   LISS-0543 changed to done.
 - Document lifecycle, coverage ledger, duplicate-ID search, placeholder scan,
   and diff check run after artifact creation.
+- LISS-0551 Phase 2 exact batch: two passed and six residual failures were
+  inventoried; `DUPLICATE_DECLARATION` is absent after fixture correction.
+- Nearest lexical-scope and recovered-node suite: 11 passed.
+- Full blocking pytest after lifecycle transfer: 2,045 passed, 17 exact nodes
+  deselected.
+- Spec Verification: 161/161 passed.
+- Active-Red lifecycle (17 entries), document lifecycle, coverage-ledger
+  consistency, changed-test compileall, and diff check passed.
 
 ## Changed Files
 
@@ -92,4 +114,4 @@
 
 ## Next Safe Action
 
-- Request `LISS-0551 Phase 2 Green / Implementation 承認`.
+- Request `LISS-0551 Phase 3 Refactor 承認`.

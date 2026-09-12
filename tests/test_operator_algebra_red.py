@@ -41,8 +41,6 @@ def test_inner_and_outer_preserve_state_operator_boundary() -> None:
             State phi = |1>
             State overlap = inner(phi, psi)
             Operator projector = outer(psi, phi)
-            State psi = |0>
-            State phi = |0>
             Measure overlap
         }
         """

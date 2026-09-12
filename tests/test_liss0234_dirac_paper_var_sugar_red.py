@@ -42,8 +42,6 @@ def test_paper_inner_with_ident_labels_desugars_to_inner_vars() -> None:
         State psi = |0{KET}
         State ov = inner(phi, psi)
         State viewed = Inspect(ov)
-        State phi = |0>
-        State psi = |0>
         Measure viewed
     }}
     """
@@ -87,8 +85,6 @@ def test_paper_outer_with_ident_labels_desugars_to_outer_vars() -> None:
         State psi = |0{KET}
         State phi = |1{KET}
         Operator P = outer(|psi{KET}, {BRA}phi|)
-        State psi = |0>
-        State phi = |0>
         State bit = Coin()
         Measure bit
     }}

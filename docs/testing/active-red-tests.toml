@@ -1,54 +1,47 @@
 version = 1
 
-# These node IDs are being reconciled by LISS-0543. Keeping the exclusions at
-# node granularity returns every passing test in the same files to CI.
+# These node IDs are being reconciled by WP-0161 feature-level Issues. Keeping
+# the exclusions at node granularity returns every passing test in the same
+# files to CI.
 [[active_red]]
-issue = "LISS-0551"
-test = "tests/test_evolve_until_red.py::test_bounded_evolve_until_is_a_state_preserving_expression"
-phase = "phase-1-red"
-owner = "WP-0161"
-review_by = "2026-10-01"
-review_condition = "classify against the current canonical evolve-until contract"
-
-[[active_red]]
-issue = "LISS-0551"
+issue = "LISS-0552"
 test = "tests/test_liss0056_empty_domain_identity_red.py::test_empty_sum_is_a_warning_and_not_a_hard_compile_error"
-phase = "phase-1-red"
+phase = "phase-0-design"
 owner = "WP-0161"
 review_by = "2026-10-01"
-review_condition = "classify against the current empty-domain identity contract"
+review_condition = "isolate local acceptance from projection and retired-evolution diagnostics"
 
 [[active_red]]
-issue = "LISS-0551"
+issue = "LISS-0552"
 test = "tests/test_liss0056_empty_domain_identity_red.py::test_empty_product_is_a_warning_and_not_a_hard_compile_error"
-phase = "phase-1-red"
+phase = "phase-0-design"
 owner = "WP-0161"
 review_by = "2026-10-01"
-review_condition = "classify against the current empty-domain identity contract"
+review_condition = "isolate local acceptance from projection and retired-evolution diagnostics"
 
 [[active_red]]
-issue = "LISS-0551"
+issue = "LISS-0552"
 test = "tests/test_liss0056_empty_domain_identity_red.py::test_identity_with_explicit_register_runs_at_that_register_shape"
-phase = "phase-1-red"
+phase = "phase-0-design"
 owner = "WP-0161"
 review_by = "2026-10-01"
-review_condition = "classify against the current empty-domain identity contract"
+review_condition = "isolate explicit acting-space acceptance from projection diagnostics"
 
 [[active_red]]
-issue = "LISS-0551"
+issue = "LISS-0552"
 test = "tests/test_liss0234_dirac_paper_var_sugar_red.py::test_paper_inner_with_ident_labels_desugars_to_inner_vars"
-phase = "phase-1-red"
+phase = "phase-0-design"
 owner = "WP-0161"
 review_by = "2026-10-01"
-review_condition = "classify against current nested-scope and Dirac sugar rules"
+review_condition = "isolate local Dirac-sugar acceptance from linear and projection diagnostics"
 
 [[active_red]]
-issue = "LISS-0551"
+issue = "LISS-0552"
 test = "tests/test_liss0234_dirac_paper_var_sugar_red.py::test_paper_outer_with_ident_labels_desugars_to_outer_vars"
-phase = "phase-1-red"
+phase = "phase-0-design"
 owner = "WP-0161"
 review_by = "2026-10-01"
-review_condition = "classify against current nested-scope and Dirac sugar rules"
+review_condition = "isolate local Dirac-sugar acceptance from linear and projection diagnostics"
 
 [[active_red]]
 issue = "LISS-0553"
@@ -107,20 +100,12 @@ review_by = "2026-10-01"
 review_condition = "reconcile the evaluator semantic-authority error contract"
 
 [[active_red]]
-issue = "LISS-0551"
+issue = "LISS-0552"
 test = "tests/test_operator_algebra_red.py::test_inner_and_outer_preserve_state_operator_boundary"
-phase = "phase-1-red"
+phase = "phase-0-design"
 owner = "WP-0161"
 review_by = "2026-10-01"
-review_condition = "classify against current operator-algebra and scope rules"
-
-[[active_red]]
-issue = "LISS-0551"
-test = "tests/test_pipeline_currying_red.py::test_pipeline_is_left_associative_and_preserves_state"
-phase = "phase-1-red"
-owner = "WP-0161"
-review_by = "2026-10-01"
-review_condition = "classify against current pipeline and scope rules"
+review_condition = "isolate local operator-algebra acceptance from linear and projection diagnostics"
 
 [[active_red]]
 issue = "LISS-0558"

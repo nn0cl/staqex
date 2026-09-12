@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0551
 - GitHub issue: none
-- Status: phase-1-red-awaiting-review
-- Phase: phase-1-red
+- Status: phase-2-green-awaiting-review
+- Phase: phase-2-green
 - Type: test fixture migration
 - Priority: P0
 - Initial/current planning size: M / M
@@ -51,7 +51,21 @@ evolve-until, empty identity, Dirac sugar, operator, and pipeline assertions.
 - No assertion, fixture, test file, compiler, runtime, or backend code changed.
 - Review packet:
   [2026-09-12 LISS-0551 Phase 1 Red](../collaboration/reviews/2026-09-12-liss-0551-phase1-red-review.md).
-- Next approval: `LISS-0551 Phase 2 Green / Implementation 承認`.
+
+## Phase 2 Green Record
+
+- Approval: `LISS-0551 Phase 2 Green / Implementation 承認`, received
+  2026-09-12.
+- Removed only eight unused same-scope duplicate `State` setup declarations
+  across the five approved test files; no assertion or production source was
+  changed.
+- Direct result: bounded evolve-until and pipeline associativity are Green.
+- The other six nodes no longer report `DUPLICATE_DECLARATION`; they retain
+  local/linear/projection diagnostics and were transferred exactly to
+  LISS-0552 at Phase 0 rather than weakened here.
+- Review packet:
+  [2026-09-12 LISS-0551 Phase 2 Green](../collaboration/reviews/2026-09-12-liss-0551-phase2-green-review.md).
+- Next approval: `LISS-0551 Phase 3 Refactor 承認`.
 
 ## Context and Verification
 
@@ -71,6 +85,6 @@ evolve-until, empty identity, Dirac sugar, operator, and pipeline assertions.
 
 ## Process Review
 
-- Outcome: not yet
-- Lesson written: not yet
+- Outcome: pending Phase 3
+- Lesson written: residual-diagnostic ownership boundary recorded
 - Template-feedback path: none

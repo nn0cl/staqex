@@ -8,6 +8,20 @@ Record meta-level patterns only. No session transcripts.
 ## Lesson
 
 - Date: 2026-09-12
+- Class: residual-diagnostic-ownership
+- Pattern: repairing invalid test setup can expose a second, independent
+  semantic failure; forcing the original fixture issue to make every adopted
+  node Green would weaken assertions or expand implementation scope silently.
+- What later design or implementation must do: rerun the exact nodes after a
+  fixture migration, remove passing nodes from lifecycle exclusion, and move
+  each residual failure with its complete diagnostic inventory to the smallest
+  accepted successor issue.
+- Source issue or work plan (adopter's own ID, if any): LISS-0551 / WP-0161
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-12
 - Class: red-contract-reuse
 - Pattern: a lifecycle-managed failing node may already provide the complete
   Phase 1 acceptance contract; adding a second test creates competing authority
