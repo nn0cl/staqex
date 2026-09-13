@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0552
 - GitHub issue: none
-- Status: phase-0-accepted-awaiting-phase-1-approval
-- Phase: phase-0-accepted
+- Status: phase-1-red-awaiting-test-review
+- Phase: phase-1-red
 - Type: architecture / compiler diagnostics
 - Priority: P0
 - Initial/current planning size: L / L
@@ -80,7 +80,21 @@ local-acceptance, linear-use, and target-projection lanes before any expected
 Accepted resolution: one local `CompileResult` with explicit `local_ok` and
 tagged advisory evidence, plus a separate authoritative target-projection
 request. ADR 0220 Architecture and Phase 0 acceptance were approved on
-2026-09-13. Next approval: `LISS-0552 Phase 1 Red 承認`.
+2026-09-13. `LISS-0552 Phase 1 Red 承認` was received on 2026-09-13.
+
+## Phase 1 Red Record
+
+- The six transferred active-Red fixtures now use the accepted explicit
+  propagator and terminal `tracing_out` forms; their assertions were retained
+  verbatim and all six now pass.
+- The six entries were removed from `active-red-tests.toml`; LISS-0552 no
+  longer owns an active-Red exclusion.
+- Five focused contracts remain intentionally Red in
+  `tests/test_liss0552_projection_diagnostic_isolation_red.py`: `local_ok`,
+  QSEM advisory metadata, linear hard behavior through `local_ok`, QPU IR
+  operation-conservation rejection, and atomic QASM rejection.
+- No production source changed. Next approval:
+  `LISS-0552 Phase 1 Red テストレビュー承認`.
 
 ## Context and Verification
 
@@ -99,6 +113,6 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
 
 ## Process Review
 
-- Outcome: Architecture/Phase 0 accepted; Phase 1 pending
+- Outcome: Phase 1 Red complete; human test review pending
 - Lesson written: diagnostic scope versus target readiness recorded
 - Template-feedback path: none

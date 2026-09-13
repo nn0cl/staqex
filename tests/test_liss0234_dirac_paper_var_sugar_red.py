@@ -42,7 +42,7 @@ def test_paper_inner_with_ident_labels_desugars_to_inner_vars() -> None:
         State psi = |0{KET}
         State ov = inner(phi, psi)
         State viewed = Inspect(ov)
-        Measure viewed
+        Measure viewed tracing_out phi, psi
     }}
     """
     compiled = compile_source(src)
@@ -86,7 +86,7 @@ def test_paper_outer_with_ident_labels_desugars_to_outer_vars() -> None:
         State phi = |1{KET}
         Operator P = outer(|psi{KET}, {BRA}phi|)
         State bit = Coin()
-        Measure bit
+        Measure bit tracing_out psi, phi
     }}
     """
     compiled = compile_source(src)

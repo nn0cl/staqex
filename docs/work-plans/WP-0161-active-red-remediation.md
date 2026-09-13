@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | in progress — LISS-0552 Phase 0 accepted; Phase 1 awaiting approval |
-| Phase | LISS-0552 phase-0-accepted |
+| Status | in progress — LISS-0552 Phase 1 Red awaiting test review |
+| Phase | LISS-0552 phase-1-red |
 | Parent trigger | LISS-0543 completion blocker |
 | Canonical specification | [Active-Red remediation](../specs/staqex-active-red-remediation.md) |
 | Architecture approval | Adjudicator approved 2026-09-12 |
@@ -28,7 +28,7 @@ each exclusion through independently approved work.
 | Issue | Status | Initial/current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---:|---|---|---|---|
 | LISS-0551 fixture conformance | done — final review approved 2026-09-13 | M / M | AIP-0551-001 | - | 0552 | `codex/liss-0551-fixture-conformance` |
-| LISS-0552 projection diagnostic isolation | Phase 0 accepted; Phase 1 awaiting approval | L / L | AIP-0552-001 | 0551 | - | `codex/liss-0552-projection-diagnostics` |
+| LISS-0552 projection diagnostic isolation | Phase 1 Red awaiting test review | L / L | AIP-0552-001 | 0551 | - | `codex/liss-0552-projection-diagnostics` |
 | LISS-0553 symbolic compatibility supersession | proposed | M / M | AIP-0553-001 | - | - | `codex/liss-0553-symbolic-contract` |
 | LISS-0554 QASM canonical fail-closed | proposed | M / M | AIP-0554-001 | - | - | `codex/liss-0554-qasm-canonical-input` |
 | LISS-0555 interfer node contract | proposed | M / M | AIP-0555-001 | - | - | `codex/liss-0555-interfer-contract` |
@@ -63,10 +63,10 @@ each exclusion through independently approved work.
 
 ## Current Next Issue
 
-- Issue: LISS-0552 Phase 1 Red.
-- Reason: ADR 0220 now fixes the local/linear/target boundary; the six fixture
-  corrections and focused failing contracts are the next bounded unit.
-- Approval needed next: `LISS-0552 Phase 1 Red 承認`.
+- Issue: LISS-0552 Phase 1 Red review.
+- Reason: six historical active-Red nodes now pass after fixture reconciliation;
+  five new boundary contracts fail against absent production behavior.
+- Approval needed next: `LISS-0552 Phase 1 Red テストレビュー承認`.
 
 ## Risks
 

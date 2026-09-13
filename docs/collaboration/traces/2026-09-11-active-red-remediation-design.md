@@ -93,6 +93,19 @@
   reconciled without softening linearity; a neighboring check exposed unsafe
   measure-only QASM for retained unprojected `inner`/`outer` meaning
 
+### Attempt 6 — LISS-0552 Phase 1 Red
+
+- Agent/environment: Codex host, local workspace
+- Model/reasoning setting: unavailable from repository runtime
+- Estimated/actual tokens and metric: N/A; compatible values unavailable
+- Scope: six fixture corrections plus five focused contracts for the accepted
+  local/finite-projection boundary
+- Result: six exact lifecycle nodes now pass and were removed from the active
+  exclusion manifest; five new contracts fail only for absent `local_ok`,
+  QSEM metadata, and operation-conservation rejection behavior
+- Attempt boundary: Phase 1 approval through deterministic Red evidence
+- Notes: no production source, provider, or deployment code changed
+
 ## Cost / Reasoning Control
 
 - Operating path: Architecture Path
@@ -122,6 +135,7 @@
   2026-09-13. The accepted boundary separates local compilation from finite
   target projection, retains hard linear-use diagnostics, and requires QPU IR
   operation-conservation rejection. Phase 1 remains separately gated.
+- `LISS-0552 Phase 1 Red 承認` received 2026-09-13.
 
 ## LISS-0551 Completion Process Review
 
@@ -152,13 +166,16 @@
 - LISS-0551 Phase 3 rerun: nearest lexical/recovered-node suite 11 passed;
   full blocking pytest 2,045 passed with 17 exact nodes deselected; Spec
   Verification 161/161; lifecycle, document, coverage, and diff checks passed.
+- LISS-0552 Phase 1 direct suite: 17 passed (including the six former
+  active-Red nodes) and five new focused contracts failed as expected.
 
 ## Changed Files
 
-- Remediation spec, WP-0161, LISS-0551–0559, ownership manifest, LISS-0543,
-  WP-0160, process lesson, and this trace.
+- LISS-0552 fixture tests, its new focused Red test, active-Red manifest,
+  WP-0161, LISS-0552, and this trace.
 
 ## Next Safe Action
 
-- Request `LISS-0552 Phase 1 Red 承認`; do not modify tests or implementation
-  until that distinct phase approval is received.
+- Review the five focused Red tests and request
+  `LISS-0552 Phase 1 Red テストレビュー承認`; do not modify production code
+  until the distinct Phase 2 Green / Implementation approval is received.
