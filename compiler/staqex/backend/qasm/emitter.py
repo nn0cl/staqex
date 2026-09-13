@@ -120,6 +120,21 @@ def _empty_rejection_circuit(
     )
 
 
+def _projection_rejection(
+    notes: list[str],
+    code: str,
+    *,
+    provenance: dict[str, object] | None = None,
+) -> EmitResult:
+    """Build the fail-closed result shared by canonical projection rejects."""
+    return EmitResult(
+        qasm="",
+        notes=notes,
+        ok=False,
+        circuit=_empty_rejection_circuit(code, provenance=provenance),
+    )
+
+
 class QASM3Emitter:
     def __init__(
         self,
@@ -510,21 +525,17 @@ class QASM3Emitter:
                         "projection_error_source_node_ids", ()
                     )
                 )
-                return EmitResult(
-                    qasm="",
-                    notes=validation_error.notes,
-                    ok=False,
-                    circuit=_empty_rejection_circuit(
-                        "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
-                        provenance={
-                            "reason": reason,
-                            "source_node_id": source_node_ids[0]
-                            if source_node_ids
-                            else "",
-                            "source_node_ids": source_node_ids,
-                            "target_plan": None,
-                        },
-                    ),
+                return _projection_rejection(
+                    validation_error.notes,
+                    "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
+                    provenance={
+                        "reason": reason,
+                        "source_node_id": source_node_ids[0]
+                        if source_node_ids
+                        else "",
+                        "source_node_ids": source_node_ids,
+                        "target_plan": None,
+                    },
                 )
             if projection_error.startswith(f"{MIXTURE_PROJECTION_REJECTION_CODE}:"):
                 _code, _separator, reason = projection_error.partition(":")
@@ -554,14 +565,10 @@ class QASM3Emitter:
                         "col": mixture.provenance.col if mixture is not None else 0,
                     },
                 }
-                return EmitResult(
-                    qasm="",
-                    notes=validation_error.notes,
-                    ok=False,
-                    circuit=_empty_rejection_circuit(
-                        MIXTURE_PROJECTION_REJECTION_CODE,
-                        provenance=provenance,
-                    ),
+                return _projection_rejection(
+                    validation_error.notes,
+                    MIXTURE_PROJECTION_REJECTION_CODE,
+                    provenance=provenance,
                 )
             return validation_error
         shape = program["hilbert_shape"]

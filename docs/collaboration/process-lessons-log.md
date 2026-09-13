@@ -17,9 +17,10 @@ Record meta-level patterns only. No session transcripts.
   rejection envelope; never use a local compile boolean as target
   authorization.
 - Source issue or work plan (adopter's own ID, if any): LISS-0552 / WP-0161
-- Status: applied in Phase 0 design and Phase 1 Red; the new tests separately
-  prove local acceptance, diagnostic scope, semantic-operation conservation,
-  and target artifact rejection.
+- Status: applied in Phase 0 design, Phase 1 Red, Phase 2 Green, and Phase 3
+  Refactor; the tests and full blocking suite separately prove local
+  acceptance, diagnostic scope, semantic-operation conservation, and target
+  artifact rejection.
 
 ## Lesson
 

@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0552
 - GitHub issue: none
-- Status: phase-2-green-awaiting-refactor-approval
-- Phase: phase-2-green
+- Status: phase-3-refactor-awaiting-final-review
+- Phase: phase-3-refactor
 - Type: architecture / compiler diagnostics
 - Priority: P0
 - Initial/current planning size: L / L
@@ -89,7 +89,7 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
   verbatim and all six now pass.
 - The six entries were removed from `active-red-tests.toml`; LISS-0552 no
   longer owns an active-Red exclusion.
-- Five focused contracts remain intentionally Red in
+- Five focused contracts were added as Red in
   `tests/test_liss0552_projection_diagnostic_isolation_red.py`: `local_ok`,
   QSEM advisory metadata, linear hard behavior through `local_ok`, QPU IR
   operation-conservation rejection, and atomic QASM rejection.
@@ -112,7 +112,19 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
 - Verification passed: direct 22 tests, neighboring 63 tests, and full
   blocking suite 2,056 passed with 11 lifecycle exclusions.
 - No provider, live-QPU, or deployment test was performed. Phase 3 remains
-  separately gated.
+  separately gated. `LISS-0552 Phase 3 Refactor 承認` was received on
+  2026-09-14.
+
+## Phase 3 Refactor Record
+
+- Consolidated the repeated canonical-projection rejection result construction
+  in the QASM adapter into `_projection_rejection`.
+- Kept QPU IR as the semantic projection authority; the adapter remains a
+  consumer and does not inspect source meaning.
+- Preserved diagnostic code, reason, source-node provenance, empty QASM,
+  allocation state, and partial-program behavior.
+- No test assertion or production behavior was intentionally changed.
+- Final review is pending.
 
 ## Context and Verification
 
@@ -123,7 +135,7 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
 
 ## AI Planning Record — AIP-0552-001
 
-- Status/date/size: phase-2-green, 2026-09-13, L
+- Status/date/size: phase-3-refactor, 2026-09-14, L
 - Route/scope: host architecture review; residual nodes only
 - Estimate: N/A; compatible metric unavailable
 - Basis/assumption/confidence: diagnostics appear across multiple source
@@ -131,6 +143,6 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
 
 ## Process Review
 
-- Outcome: Phase 2 Green complete; Phase 3 pending
+- Outcome: Phase 3 Refactor complete; final review pending
 - Lesson written: diagnostic scope versus target readiness recorded
 - Template-feedback path: none
