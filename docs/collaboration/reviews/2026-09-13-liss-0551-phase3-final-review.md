@@ -4,12 +4,12 @@
 
 - Artifact: current-source fixture conformance for eight historical active-Red
   nodes
-- Current phase: Phase 3 Refactor, final review awaiting approval
-- Requested approval: accept the final review and close LISS-0551
+- Current phase: Phase 3 final review approved; LISS-0551 closed
+- Requested approval: accepted 2026-09-13
 - Approval type: Phase 3 final review
 - Approved scope: five test fixture files and their lifecycle/status evidence
 - Implementation allowed: no additional implementation is requested
-- Post-review required: yes; human Adjudicator approval closes the Issue
+- Post-review required: complete
 - Execution batch ID: not applicable
 
 ## Canonical Documents and Files Re-read
@@ -96,4 +96,5 @@
 
 ## Next Approval Required
 
-`LISS-0551 Phase 3 最終レビュー 承認`
+Final approval received 2026-09-13. LISS-0551 is done. The next independent
+decision boundary is `LISS-0552 Phase 0 acceptance / Architecture review`.
