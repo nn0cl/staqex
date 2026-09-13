@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | in progress — LISS-0551 Phase 2 Green awaiting review |
+| Status | in progress — LISS-0551 Phase 3 final review awaiting approval |
 | Phase | phase-0-design |
 | Parent trigger | LISS-0543 completion blocker |
 | Canonical specification | [Active-Red remediation](../specs/staqex-active-red-remediation.md) |
@@ -27,7 +27,7 @@ each exclusion through independently approved work.
 
 | Issue | Status | Initial/current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---:|---|---|---|---|
-| LISS-0551 fixture conformance | Phase 2 Green awaiting review | M / M | AIP-0551-001 | - | 0552 | `codex/liss-0551-fixture-conformance` |
+| LISS-0551 fixture conformance | Phase 3 final review awaiting approval | M / M | AIP-0551-001 | - | 0552 | `codex/liss-0551-fixture-conformance` |
 | LISS-0552 projection diagnostic isolation | proposed; six residual nodes received | L / L | AIP-0552-001 | 0551 | - | `codex/liss-0552-projection-diagnostics` |
 | LISS-0553 symbolic compatibility supersession | proposed | M / M | AIP-0553-001 | - | - | `codex/liss-0553-symbolic-contract` |
 | LISS-0554 QASM canonical fail-closed | proposed | M / M | AIP-0554-001 | - | - | `codex/liss-0554-qasm-canonical-input` |
@@ -63,10 +63,11 @@ each exclusion through independently approved work.
 
 ## Current Next Issue
 
-- Issue: LISS-0551 Phase 3 review, then LISS-0552 Phase 0 architecture.
+- Issue: LISS-0551 final Adjudicator review, then LISS-0552 Phase 0
+  architecture.
 - Reason: fixture conformance made two nodes Green and exposed six residual
   local/linear/projection conflicts without changing their assertions.
-- Approval needed now: `LISS-0551 Phase 3 Refactor 承認`.
+- Approval needed now: `LISS-0551 Phase 3 最終レビュー 承認`.
 
 ## Risks
 

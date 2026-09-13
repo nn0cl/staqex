@@ -67,6 +67,18 @@
 - Notes: no assertion, compiler, runtime, backend, provider, or deployment code
   changed
 
+### Attempt 4 — LISS-0551 Phase 3 Refactor
+
+- Agent/environment: Codex host, local workspace
+- Model/reasoning setting: unavailable from repository runtime
+- Estimated/actual tokens and metric: N/A; compatible values unavailable
+- Scope: readability and ownership-boundary review of the five fixture edits
+- Result: no additional source refactor applied; direct deletion is the
+  smallest and clearest expression of the accepted fixture correction
+- Attempt boundary: Phase 3 approval through final-review packet preparation
+- Notes: shared helpers or comments would add indirection without removing
+  duplication; behavior, assertions, and LISS-0552 ownership remain unchanged
+
 ## Cost / Reasoning Control
 
 - Operating path: Architecture Path
@@ -89,6 +101,7 @@
   Phase 1 or implementation permission.
 - `LISS-0551 Phase 1 Red 承認` received 2026-09-12.
 - `LISS-0551 Phase 2 Green / Implementation 承認` received 2026-09-12.
+- `LISS-0551 Phase 3 Refactor 承認` received 2026-09-13.
 
 ## Verification
 
@@ -106,6 +119,9 @@
 - Spec Verification: 161/161 passed.
 - Active-Red lifecycle (17 entries), document lifecycle, coverage-ledger
   consistency, changed-test compileall, and diff check passed.
+- LISS-0551 Phase 3 rerun: nearest lexical/recovered-node suite 11 passed;
+  full blocking pytest 2,045 passed with 17 exact nodes deselected; Spec
+  Verification 161/161; lifecycle, document, coverage, and diff checks passed.
 
 ## Changed Files
 
@@ -114,4 +130,4 @@
 
 ## Next Safe Action
 
-- Request `LISS-0551 Phase 3 Refactor 承認`.
+- Request `LISS-0551 Phase 3 最終レビュー 承認`.

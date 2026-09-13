@@ -7,6 +7,19 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-13
+- Class: quantitative-traceability
+- Pattern: a review record can conflate the number of acceptance nodes with
+  the number of changed source declarations even when the underlying diff is
+  correct.
+- What later design or implementation must do: label the unit of every count
+  in phase evidence and derive changed-line or artifact counts from the
+  committed diff before final review.
+- Source issue or work plan (adopter's own ID, if any): LISS-0551 / WP-0161
+- Status: applied
+
+## Lesson
+
 - Date: 2026-09-12
 - Class: residual-diagnostic-ownership
 - Pattern: repairing invalid test setup can expose a second, independent

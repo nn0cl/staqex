@@ -22,7 +22,7 @@
 
 ## What Changed
 
-- Removed eight unused, same-scope duplicate `State` declarations from five
+- Removed nine unused, same-scope duplicate `State` declarations from five
   test source strings.
 - Preserved every Python assertion and all production source.
 - The bounded evolve-until and pipeline associativity nodes now pass and were
