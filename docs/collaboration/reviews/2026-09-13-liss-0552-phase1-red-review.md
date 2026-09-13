@@ -3,9 +3,8 @@
 ## Review Target
 
 - Artifact: six reconciled source fixtures and five focused Phase 1 Red tests
-- Current phase: Phase 1 Red, awaiting human test review
-- Requested approval: accept the failing-test contract and authorize the next
-  distinct Phase 2 Green / Implementation decision
+- Current phase: Phase 1 Red, accepted 2026-09-13
+- Requested approval: completed — the failing-test contract was accepted
 - Approval type: phase
 - Approved scope: only LISS-0552's accepted local-compile/finite-projection
   boundary; no provider, deployment, or physical-algorithm scope
@@ -90,6 +89,14 @@
 - [ ] The six manifest removals correspond to passing exact nodes.
 - [ ] Implementation permission is not inferred.
 
+## Adjudicator Decision
+
+Approved on 2026-09-13 with the typed decision:
+`LISS-0552 Phase 1 Red テストレビュー承認`.
+
+This accepts the test contract only. It does not authorize Phase 2 or
+production implementation.
+
 ## Next Approval Required
 
-`LISS-0552 Phase 1 Red テストレビュー承認`
+`LISS-0552 Phase 2 Green / Implementation 承認`

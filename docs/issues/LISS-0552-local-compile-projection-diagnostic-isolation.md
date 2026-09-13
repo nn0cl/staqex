@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0552
 - GitHub issue: none
-- Status: phase-1-red-awaiting-test-review
-- Phase: phase-1-red
+- Status: phase-1-red-reviewed-awaiting-phase-2-approval
+- Phase: phase-1-red-reviewed
 - Type: architecture / compiler diagnostics
 - Priority: P0
 - Initial/current planning size: L / L
@@ -93,8 +93,8 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
   `tests/test_liss0552_projection_diagnostic_isolation_red.py`: `local_ok`,
   QSEM advisory metadata, linear hard behavior through `local_ok`, QPU IR
   operation-conservation rejection, and atomic QASM rejection.
-- No production source changed. Next approval:
-  `LISS-0552 Phase 1 Red テストレビュー承認`.
+- No production source changed. The Phase 1 test review was approved on
+  2026-09-13. Next approval: `LISS-0552 Phase 2 Green / Implementation 承認`.
 
 ## Context and Verification
 
@@ -105,7 +105,7 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
 
 ## AI Planning Record — AIP-0552-001
 
-- Status/date/size: phase-0-accepted, 2026-09-13, L
+- Status/date/size: phase-1-red-reviewed, 2026-09-13, L
 - Route/scope: host architecture review; residual nodes only
 - Estimate: N/A; compatible metric unavailable
 - Basis/assumption/confidence: diagnostics appear across multiple source
@@ -113,6 +113,6 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
 
 ## Process Review
 
-- Outcome: Phase 1 Red complete; human test review pending
+- Outcome: Phase 1 Red test contract accepted; Phase 2 pending
 - Lesson written: diagnostic scope versus target readiness recorded
 - Template-feedback path: none

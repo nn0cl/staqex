@@ -136,6 +136,8 @@
   target projection, retains hard linear-use diagnostics, and requires QPU IR
   operation-conservation rejection. Phase 1 remains separately gated.
 - `LISS-0552 Phase 1 Red 承認` received 2026-09-13.
+- `LISS-0552 Phase 1 Red テストレビュー承認` received 2026-09-13. It accepts
+  the five failing contracts and does not grant implementation permission.
 
 ## LISS-0551 Completion Process Review
 
@@ -176,6 +178,5 @@
 
 ## Next Safe Action
 
-- Review the five focused Red tests and request
-  `LISS-0552 Phase 1 Red テストレビュー承認`; do not modify production code
-  until the distinct Phase 2 Green / Implementation approval is received.
+- Request `LISS-0552 Phase 2 Green / Implementation 承認`; do not modify
+  production code until that distinct approval is received.
