@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0552
 - GitHub issue: none
-- Status: phase-3-refactor-awaiting-final-review
-- Phase: phase-3-refactor
+- Status: done
+- Phase: done
 - Type: architecture / compiler diagnostics
 - Priority: P0
 - Initial/current planning size: L / L
@@ -124,7 +124,13 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
 - Preserved diagnostic code, reason, source-node provenance, empty QASM,
   allocation state, and partial-program behavior.
 - No test assertion or production behavior was intentionally changed.
-- Final review is pending.
+- Final review was approved on 2026-09-14.
+
+## Final Review Record
+
+- Approval: `LISS-0552 Phase 3 最終レビュー 承認`, received 2026-09-14.
+- Disposition: approved with no remaining blocker for this Issue.
+- Completion: LISS-0552 is done; it owns no active-Red manifest entry.
 
 ## Context and Verification
 
@@ -143,6 +149,8 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
 
 ## Process Review
 
-- Outcome: Phase 3 Refactor complete; final review pending
+- Outcome: Phase 3 Refactor and final review complete
 - Lesson written: diagnostic scope versus target readiness recorded
 - Template-feedback path: none
+
+Process review: no operating-contract deviation or operational problem found.
