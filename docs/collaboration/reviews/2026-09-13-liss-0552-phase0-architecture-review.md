@@ -70,9 +70,14 @@
   `separate_context`.
 - LISS-0552 is size L, so the authoring model cannot claim an independent
   same-context approval. This packet is evidence for the human Adjudicator.
-- Blocker: ADR 0220 and the companion acceptance specification are proposed,
-  not accepted. Phase 1 cannot start before typed approval.
+- Resolution: the Adjudicator accepted ADR 0220 and the companion acceptance
+  specification on 2026-09-13. The Phase 0 blocker is cleared.
+- Phase 1 remains separately gated; this approval does not authorize test
+  changes or implementation.
 
-## Next Approval Required
+## Adjudicator Decision
 
-`ADR 0220 Architecture / LISS-0552 Phase 0 acceptance 承認`
+Approved on 2026-09-13 with the typed decision:
+`ADR 0220 Architecture / LISS-0552 Phase 0 acceptance 承認`.
+
+Next approval required: `LISS-0552 Phase 1 Red 承認`.

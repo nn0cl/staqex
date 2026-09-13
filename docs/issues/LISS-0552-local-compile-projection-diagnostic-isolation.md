@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0552
 - GitHub issue: none
-- Status: phase-0-architecture-review-awaiting-approval
-- Phase: phase-0-design
+- Status: phase-0-accepted-awaiting-phase-1-approval
+- Phase: phase-0-accepted
 - Type: architecture / compiler diagnostics
 - Priority: P0
 - Initial/current planning size: L / L
@@ -77,10 +77,10 @@ local-acceptance, linear-use, and target-projection lanes before any expected
 - No Phase 1 starts until these six residual nodes and expected `.ok` semantics
   are reviewed and named in an accepted specification.
 
-Proposed resolution: one local `CompileResult` with explicit `local_ok` and
+Accepted resolution: one local `CompileResult` with explicit `local_ok` and
 tagged advisory evidence, plus a separate authoritative target-projection
-request. Next approval:
-`ADR 0220 Architecture / LISS-0552 Phase 0 acceptance 承認`.
+request. ADR 0220 Architecture and Phase 0 acceptance were approved on
+2026-09-13. Next approval: `LISS-0552 Phase 1 Red 承認`.
 
 ## Context and Verification
 
@@ -91,7 +91,7 @@ request. Next approval:
 
 ## AI Planning Record — AIP-0552-001
 
-- Status/date/size: architecture-review-ready, 2026-09-13, L
+- Status/date/size: phase-0-accepted, 2026-09-13, L
 - Route/scope: host architecture review; residual nodes only
 - Estimate: N/A; compatible metric unavailable
 - Basis/assumption/confidence: diagnostics appear across multiple source
@@ -99,6 +99,6 @@ request. Next approval:
 
 ## Process Review
 
-- Outcome: pending Architecture/Phase 0 acceptance
+- Outcome: Architecture/Phase 0 accepted; Phase 1 pending
 - Lesson written: diagnostic scope versus target readiness recorded
 - Template-feedback path: none

@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | Proposed — Phase 0 acceptance and ADR 0220 Architecture approval required |
+| Status | Accepted — ADR 0220 Architecture / Phase 0 approved 2026-09-13 |
 | Owner | WP-0161 / LISS-0552 |
 | Depends on | LISS-0551 complete |
 | Architecture proposal | [ADR 0220](../architecture/adr/0220-local-compile-and-finite-projection-diagnostic-isolation.md) |

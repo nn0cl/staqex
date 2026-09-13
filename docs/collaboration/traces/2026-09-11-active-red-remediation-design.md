@@ -118,8 +118,10 @@
 - `LISS-0551 Phase 3 Refactor 承認` received 2026-09-13.
 - `LISS-0551 Phase 3 最終レビュー 承認` received 2026-09-13; LISS-0551
   closed with no active-Red ownership remaining.
-- LISS-0552 Phase 0 architecture review requested 2026-09-13; ADR 0220 and
-  Phase 0 acceptance remain unapproved.
+- `ADR 0220 Architecture / LISS-0552 Phase 0 acceptance 承認` received
+  2026-09-13. The accepted boundary separates local compilation from finite
+  target projection, retains hard linear-use diagnostics, and requires QPU IR
+  operation-conservation rejection. Phase 1 remains separately gated.
 
 ## LISS-0551 Completion Process Review
 
@@ -158,5 +160,5 @@
 
 ## Next Safe Action
 
-- Request `ADR 0220 Architecture / LISS-0552 Phase 0 acceptance 承認`; do not
-  start Phase 1 from the proposed ADR.
+- Request `LISS-0552 Phase 1 Red 承認`; do not modify tests or implementation
+  until that distinct phase approval is received.

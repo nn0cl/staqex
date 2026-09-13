@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed — requires typed Architecture approval.
+Accepted — Adjudicator approved 2026-09-13.
 
 ## Context
 
@@ -93,3 +93,6 @@ Code review should reject:
 Architecture approval accepts this boundary and the companion LISS-0552
 acceptance specification. It does not authorize Phase 1 tests or Phase 2
 implementation.
+
+Approval received:
+`ADR 0220 Architecture / LISS-0552 Phase 0 acceptance 承認` on 2026-09-13.
