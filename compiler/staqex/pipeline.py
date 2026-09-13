@@ -210,6 +210,13 @@ HARD_CODES = {
 # Backward-compatible alias (older docs / local patches).
 _HARD_CODES = HARD_CODES
 
+_LOCAL_QSEM_ADVISORY_CODES = frozenset(
+    {
+        "QSEM_FINITE_EVIDENCE_MISSING",
+        "QSEM_APPROXIMATION_OBLIGATION_MISSING",
+    }
+)
+
 
 @dataclass
 class CompileResult:
@@ -239,7 +246,7 @@ class CompileResult:
     evolution_provenance: dict[str, Any] | None = None
 
     @property
-    def ok(self) -> bool:
+    def local_ok(self) -> bool:
         return not any(
             d.get("code") in HARD_CODES
             or (
@@ -248,6 +255,31 @@ class CompileResult:
             )
             for d in self.diagnostics
         )
+
+    @property
+    def ok(self) -> bool:
+        """Backward-compatible alias for local source acceptance."""
+        return self.local_ok
+
+
+def _tag_local_qsem_advisories(
+    diagnostics: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Copy local QSEM obligations without mutating pure lowering output."""
+    tagged: list[dict[str, Any]] = []
+    for diagnostic in diagnostics:
+        if diagnostic.get("code") not in _LOCAL_QSEM_ADVISORY_CODES:
+            tagged.append(dict(diagnostic))
+            continue
+        tagged.append(
+            {
+                **diagnostic,
+                "severity": "advisory",
+                "phase": "quantum-semantic-lowering",
+                "blocking_scope": "finite-projection",
+            }
+        )
+    return tagged
 
 
 def _soft_physics_ir(
@@ -891,9 +923,9 @@ def _analyze_unit(
         if all(diagnostic.get("code") in deferred_codes for diagnostic in qsem_diags):
             pass
         else:
-            diags.extend(qsem_diags)
+            diags.extend(_tag_local_qsem_advisories(qsem_diags))
     else:
-        diags.extend(qsem_diags)
+        diags.extend(_tag_local_qsem_advisories(qsem_diags))
     quantum_semantic_ir = _append_dynamic_timing_regions(unit, quantum_semantic_ir)
     quantum_semantic_ir = _append_dynamic_mid_circuit_regions(
         unit, quantum_semantic_ir

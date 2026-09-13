@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0552
 - GitHub issue: none
-- Status: phase-1-red-reviewed-awaiting-phase-2-approval
-- Phase: phase-1-red-reviewed
+- Status: phase-2-green-awaiting-refactor-approval
+- Phase: phase-2-green
 - Type: architecture / compiler diagnostics
 - Priority: P0
 - Initial/current planning size: L / L
@@ -94,7 +94,25 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
   QSEM advisory metadata, linear hard behavior through `local_ok`, QPU IR
   operation-conservation rejection, and atomic QASM rejection.
 - No production source changed. The Phase 1 test review was approved on
-  2026-09-13. Next approval: `LISS-0552 Phase 2 Green / Implementation 承認`.
+  2026-09-13. `LISS-0552 Phase 2 Green / Implementation 承` was received on
+  2026-09-13.
+
+## Phase 2 Green Record
+
+- `CompileResult.local_ok` is the explicit local acceptance signal and `ok`
+  remains its compatibility alias.
+- The two QSEM obligations are copied to the local diagnostic surface with
+  advisory severity, quantum-semantic phase, and finite-projection scope;
+  pure lowering diagnostics remain unmutated.
+- Canonical `inner`/`outer` operations without an approved finite projection
+  now reject in QPU IR with source-node provenance; QASM consumes the
+  rejection and emits no artifact or allocation.
+- Existing linear hard diagnostics and supported neighboring QPU/QASM behavior
+  remain intact.
+- Verification passed: direct 22 tests, neighboring 63 tests, and full
+  blocking suite 2,056 passed with 11 lifecycle exclusions.
+- No provider, live-QPU, or deployment test was performed. Phase 3 remains
+  separately gated.
 
 ## Context and Verification
 
@@ -105,7 +123,7 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
 
 ## AI Planning Record — AIP-0552-001
 
-- Status/date/size: phase-1-red-reviewed, 2026-09-13, L
+- Status/date/size: phase-2-green, 2026-09-13, L
 - Route/scope: host architecture review; residual nodes only
 - Estimate: N/A; compatible metric unavailable
 - Basis/assumption/confidence: diagnostics appear across multiple source
@@ -113,6 +131,6 @@ request. ADR 0220 Architecture and Phase 0 acceptance were approved on
 
 ## Process Review
 
-- Outcome: Phase 1 Red test contract accepted; Phase 2 pending
+- Outcome: Phase 2 Green complete; Phase 3 pending
 - Lesson written: diagnostic scope versus target readiness recorded
 - Template-feedback path: none

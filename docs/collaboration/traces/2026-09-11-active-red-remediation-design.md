@@ -138,6 +138,9 @@
 - `LISS-0552 Phase 1 Red 承認` received 2026-09-13.
 - `LISS-0552 Phase 1 Red テストレビュー承認` received 2026-09-13. It accepts
   the five failing contracts and does not grant implementation permission.
+- `LISS-0552 Phase 2 Green / Implementation 承` received 2026-09-13 and was
+  interpreted as the uniquely established Phase 2 Green / Implementation
+  approval. It authorized only the five reviewed contracts.
 
 ## LISS-0551 Completion Process Review
 
@@ -170,13 +173,16 @@
   Verification 161/161; lifecycle, document, coverage, and diff checks passed.
 - LISS-0552 Phase 1 direct suite: 17 passed (including the six former
   active-Red nodes) and five new focused contracts failed as expected.
+- LISS-0552 Phase 2 direct suite: 22 passed; neighboring suite: 63 passed;
+  full blocking suite: 2,056 passed with 11 lifecycle exclusions. The
+  implementation touched only compiler pipeline/QPU IR/QASM boundary files.
 
 ## Changed Files
 
-- LISS-0552 fixture tests, its new focused Red test, active-Red manifest,
-  WP-0161, LISS-0552, and this trace.
+- LISS-0552 fixture tests, its focused contract test, pipeline/QPU IR/QASM
+  implementation, active-Red manifest, WP-0161, LISS-0552, and this trace.
 
 ## Next Safe Action
 
-- Request `LISS-0552 Phase 2 Green / Implementation 承認`; do not modify
-  production code until that distinct approval is received.
+- Request `LISS-0552 Phase 3 Refactor 承認`; preserve all reviewed tests and do
+  not broaden the implementation scope.

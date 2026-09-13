@@ -499,6 +499,33 @@ class QASM3Emitter:
                         },
                     ),
                 )
+            if projection_error.startswith(
+                "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE:"
+                "semantic_operation_projection_unavailable"
+            ):
+                _code, _separator, reason = projection_error.partition(":")
+                source_node_ids = tuple(
+                    str(source_node_id)
+                    for source_node_id in program.get(
+                        "projection_error_source_node_ids", ()
+                    )
+                )
+                return EmitResult(
+                    qasm="",
+                    notes=validation_error.notes,
+                    ok=False,
+                    circuit=_empty_rejection_circuit(
+                        "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE",
+                        provenance={
+                            "reason": reason,
+                            "source_node_id": source_node_ids[0]
+                            if source_node_ids
+                            else "",
+                            "source_node_ids": source_node_ids,
+                            "target_plan": None,
+                        },
+                    ),
+                )
             if projection_error.startswith(f"{MIXTURE_PROJECTION_REJECTION_CODE}:"):
                 _code, _separator, reason = projection_error.partition(":")
                 canonical = program.get("canonical_semantic_ir")
