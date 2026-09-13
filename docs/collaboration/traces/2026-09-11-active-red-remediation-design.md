@@ -79,6 +79,20 @@
 - Notes: shared helpers or comments would add indirection without removing
   duplication; behavior, assertions, and LISS-0552 ownership remain unchanged
 
+### Attempt 5 — LISS-0552 Phase 0 Architecture review
+
+- Agent/environment: Codex host, local workspace
+- Model/reasoning setting: unavailable from repository runtime
+- Estimated/actual tokens and metric: N/A; compatible values unavailable
+- Scope: six residual local/linear/QSEM nodes and their nearest QPU artifact
+  boundary
+- Result: proposed ADR 0220 and a dedicated acceptance specification; no test
+  or production implementation changed
+- Attempt boundary: Phase 0 investigation through human-review-ready proposal
+- Notes: deterministic candidates showed all six local fixtures can be
+  reconciled without softening linearity; a neighboring check exposed unsafe
+  measure-only QASM for retained unprojected `inner`/`outer` meaning
+
 ## Cost / Reasoning Control
 
 - Operating path: Architecture Path
@@ -104,6 +118,8 @@
 - `LISS-0551 Phase 3 Refactor 承認` received 2026-09-13.
 - `LISS-0551 Phase 3 最終レビュー 承認` received 2026-09-13; LISS-0551
   closed with no active-Red ownership remaining.
+- LISS-0552 Phase 0 architecture review requested 2026-09-13; ADR 0220 and
+  Phase 0 acceptance remain unapproved.
 
 ## LISS-0551 Completion Process Review
 
@@ -142,4 +158,5 @@
 
 ## Next Safe Action
 
-- Begin LISS-0552 Phase 0 architecture review after its explicit approval.
+- Request `ADR 0220 Architecture / LISS-0552 Phase 0 acceptance 承認`; do not
+  start Phase 1 from the proposed ADR.

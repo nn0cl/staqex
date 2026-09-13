@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | in progress — LISS-0551 done; LISS-0552 Phase 0 next |
+| Status | in progress — LISS-0552 Phase 0 architecture awaiting approval |
 | Phase | phase-0-design |
 | Parent trigger | LISS-0543 completion blocker |
 | Canonical specification | [Active-Red remediation](../specs/staqex-active-red-remediation.md) |
@@ -28,7 +28,7 @@ each exclusion through independently approved work.
 | Issue | Status | Initial/current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---:|---|---|---|---|
 | LISS-0551 fixture conformance | done — final review approved 2026-09-13 | M / M | AIP-0551-001 | - | 0552 | `codex/liss-0551-fixture-conformance` |
-| LISS-0552 projection diagnostic isolation | proposed; six residual nodes received | L / L | AIP-0552-001 | 0551 | - | `codex/liss-0552-projection-diagnostics` |
+| LISS-0552 projection diagnostic isolation | Phase 0 architecture awaiting approval | L / L | AIP-0552-001 | 0551 | - | `codex/liss-0552-projection-diagnostics` |
 | LISS-0553 symbolic compatibility supersession | proposed | M / M | AIP-0553-001 | - | - | `codex/liss-0553-symbolic-contract` |
 | LISS-0554 QASM canonical fail-closed | proposed | M / M | AIP-0554-001 | - | - | `codex/liss-0554-qasm-canonical-input` |
 | LISS-0555 interfer node contract | proposed | M / M | AIP-0555-001 | - | - | `codex/liss-0555-interfer-contract` |
@@ -63,10 +63,11 @@ each exclusion through independently approved work.
 
 ## Current Next Issue
 
-- Issue: LISS-0552 Phase 0 architecture review.
-- Reason: LISS-0551 is complete; its fixture correction made two nodes Green
-  and isolated six residual local/linear/projection conflicts under LISS-0552.
-- Approval needed next: `LISS-0552 Phase 0 acceptance / Architecture review`.
+- Issue: ADR 0220 / LISS-0552 Phase 0 acceptance.
+- Reason: the six nodes need one accepted local/linear/target boundary before
+  fixture, diagnostic metadata, or QPU projection tests change.
+- Approval needed next:
+  `ADR 0220 Architecture / LISS-0552 Phase 0 acceptance 承認`.
 
 ## Risks
 

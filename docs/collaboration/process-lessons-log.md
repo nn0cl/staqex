@@ -8,6 +8,20 @@ Record meta-level patterns only. No session transcripts.
 ## Lesson
 
 - Date: 2026-09-13
+- Class: diagnostic-scope-versus-readiness
+- Pattern: non-hard target-evidence diagnostics may coexist with local compile
+  success, but local success is not proof that a downstream artifact producer
+  conservatively projected every semantic operation.
+- What later design or implementation must do: classify diagnostic blocking
+  scope explicitly and verify downstream operation conservation plus an empty
+  rejection envelope; never use a local compile boolean as target
+  authorization.
+- Source issue or work plan (adopter's own ID, if any): LISS-0552 / WP-0161
+- Status: applied in Phase 0 design
+
+## Lesson
+
+- Date: 2026-09-13
 - Class: quantitative-traceability
 - Pattern: a review record can conflate the number of acceptance nodes with
   the number of changed source declarations even when the underlying diff is
