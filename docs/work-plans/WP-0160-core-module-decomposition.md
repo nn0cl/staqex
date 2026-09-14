@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | in progress — LISS-0543 done; LISS-0544 is unblocked |
+| Status | in progress — LISS-0543 and LISS-0544 done |
 | Architecture approval | Adjudicator approved 2026-09-11 |
 | Implementation permission | LISS-0543 Phase 3 granted 2026-09-11 |
 
@@ -23,7 +23,7 @@ units while preserving all externally observable behavior and public imports.
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---:|---:|---|---|---|---|
 | LISS-0543 | done | L | L | AIP-0543-001 | - | 0544–0550 | `codex/liss-0543-red` |
-| LISS-0544 | proposed | L | L | AIP-0544-001 | 0543 | 0545 | `refactor/evaluator-orchestration` |
+| LISS-0544 | done | L | L | AIP-0544-001 | 0543 | 0545 | `refactor/evaluator-orchestration` |
 | LISS-0545 | proposed | XL | XL | AIP-0545-001 | 0544 | 0550 | `refactor/evaluator-domain-families` |
 | LISS-0546 | proposed | XL | XL | AIP-0546-001 | 0543 | 0550 | `refactor/typechecker-families` |
 | LISS-0547 | proposed | XL | XL | AIP-0547-001 | 0543 | 0550 | `refactor/parser-families` |

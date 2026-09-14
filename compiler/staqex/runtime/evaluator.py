@@ -99,6 +99,7 @@ from .joint import EPS, Joint, sample_from_marginal
 from .mixed_state import DensityStateValue, density_from_call, matrix_from_list
 from .lindblad import evolve_lindblad
 from .matrix import Matrix
+from .evaluation.plans import dispatch_runtime_plan
 from ..static_hilbert import MVP_MAX_LOGICAL_QUBITS
 from ..kernel_literals import SECOND_QUANTIZED_FAMILIES as _SECOND_QUANTIZED_FAMILIES
 from ..scientific_vocabulary import resolve_scientific_binding
@@ -346,35 +347,10 @@ class Evaluator:
         from ..scientific_semantic_ir import build_runtime_execution_plan
 
         plan = build_runtime_execution_plan(semantic_ir)
-        result = self._execute_runtime_plan(plan, unit, stdout=stdout)
+        result = dispatch_runtime_plan(self, plan, unit, stdout=stdout)
         result.execution_authority = "scientific_semantic_ir"
         result.source_id = semantic_ir.source_id
         return result
-
-    def _execute_runtime_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute the supported runtime-plan family.
-
-        The first family owns only state bindings followed by terminal
-        measurement.  Other families remain on the explicitly named legacy
-        migration path until their own runtime-plan contract is approved.
-        """
-        if getattr(plan, "family", None) == "evolution":
-            return self._execute_evolution_plan(plan, unit, stdout=stdout)
-        if getattr(plan, "family", None) == "control_mixture":
-            return self._execute_control_mixture_plan(plan, unit, stdout=stdout)
-        if getattr(plan, "family", None) == "pure_transformation":
-            return self._execute_pure_transformation_plan(plan, unit, stdout=stdout)
-        if getattr(plan, "family", None) == "binder":
-            return self._execute_binder_plan(plan, unit, stdout=stdout)
-        if getattr(plan, "family", None) == "callable":
-            return self._execute_callable_plan(plan, unit, stdout=stdout)
-        if getattr(plan, "family", None) == "dynamic_lane":
-            return self._execute_dynamic_lane_plan(plan, unit, stdout=stdout)
-        if self._is_first_runtime_family(unit, plan):
-            return self._execute_first_runtime_family(unit, stdout=stdout)
-        return self._run_legacy_ast_body(unit, stdout=stdout)
 
     def _execute_pure_transformation_plan(
         self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None

@@ -8,6 +8,19 @@ Record meta-level patterns only. No session transcripts.
 ## Lesson
 
 - Date: 2026-09-14
+- Class: evaluator-state-ownership
+- Pattern: extracting runtime behavior from a large evaluator can create a
+  second mutable state owner even when public behavior initially passes.
+- What later design or implementation must do: keep all mutable runtime maps
+  in `Evaluator`, pass a narrow explicit context to extracted services, and
+  verify that extracted modules do not reconstruct or retain unsynchronized
+  copies.
+- Source issue or work plan (adopter's own ID, if any): LISS-0544 / WP-0160
+- Status: applied in Phase 0 design
+
+## Lesson
+
+- Date: 2026-09-14
 - Class: compatibility-authority-boundary
 - Pattern: an old absence assertion can mistake a derived compatibility payload
   for a second semantic authority after a canonical IR migration.
