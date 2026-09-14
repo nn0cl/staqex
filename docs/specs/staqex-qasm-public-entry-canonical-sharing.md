@@ -36,6 +36,8 @@
 3. Unit-only compatibility calls may create one source-derived projection for
    that invocation when no compile result is available, but may not store it in
    the AST, a module-global cache, or an implicit process cache.
+   The compatibility facade must pass that projection explicitly to the QASM
+   emitter; the emitter itself rejects a missing projection.
 4. All QASM output and rejection behavior must remain unchanged except for
    eliminating duplicate semantic construction.
 5. Live QPU submission, provider adapters, dynamic-QPU semantics, S02, solver,

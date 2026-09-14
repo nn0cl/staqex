@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from dataclasses import replace
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Mapping
@@ -217,11 +216,22 @@ _LOCAL_QSEM_ADVISORY_CODES = frozenset(
     }
 )
 
+_POVM_REJECTION_CODES = frozenset(
+    {
+        "POVM_DOMAIN_MISMATCH",
+        "INVALID_POVM_EFFECT",
+        "INCOMPLETE_POVM",
+    }
+)
+
 
 @dataclass
 class CompileResult:
     unit: CompilationUnit | None
     diagnostics: list[dict[str, Any]]
+    povm_observation_rejections: list[dict[str, Any]] = field(
+        default_factory=list
+    )
     checker: TypeChecker | None = None
     symbolic_ir: dict[str, Any] | None = None
     scope_contracts: Mapping[str, ScientificScopeContract] | None = None
@@ -260,6 +270,37 @@ class CompileResult:
     def ok(self) -> bool:
         """Backward-compatible alias for local source acceptance."""
         return self.local_ok
+
+
+def _project_povm_observation_rejections(
+    diagnostics: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Expose POVM rejection evidence without creating measurement results.
+
+    Measurement resolution owns the diagnostic contents. The compile result
+    only projects that evidence for callers; it never repairs the request or
+    evaluates an effect set.
+    """
+    rejections: list[dict[str, Any]] = []
+    for diagnostic in diagnostics:
+        if diagnostic.get("code") not in _POVM_REJECTION_CODES:
+            continue
+        rejection = {
+            key: diagnostic[key]
+            for key in (
+                "code",
+                "line",
+                "col",
+                "message",
+                "requested_effect_set",
+                "state_domain",
+            )
+            if key in diagnostic
+        }
+        rejection["repaired"] = False
+        rejection["fabricated_outcome"] = False
+        rejections.append(rejection)
+    return rejections
 
 
 def _tag_local_qsem_advisories(
@@ -937,6 +978,7 @@ def _analyze_unit(
     return CompileResult(
         unit=unit,
         diagnostics=diags,
+        povm_observation_rejections=_project_povm_observation_rejections(diags),
         checker=checker,
         symbolic_ir=symbolic_ir,
         scope_contracts=MappingProxyType(scope_contracts),

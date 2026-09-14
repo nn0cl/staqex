@@ -135,6 +135,20 @@ def _projection_rejection(
     )
 
 
+def _missing_canonical_input_rejection() -> EmitResult:
+    """Reject direct emitter calls that lack compile-owned semantic IR."""
+
+    return EmitResult(
+        qasm="",
+        notes=[
+            "E_QPU_CANONICAL_PROVENANCE: compile-owned semantic IR is "
+            "required for QASM emission"
+        ],
+        ok=False,
+        circuit=_empty_rejection_circuit("E_QPU_CANONICAL_PROVENANCE"),
+    )
+
+
 class QASM3Emitter:
     def __init__(
         self,
@@ -155,7 +169,9 @@ class QASM3Emitter:
         resource_profile: ResourceProfile | None = None,
         resource_estimate: SimulationResourceEstimate | None = None,
     ) -> EmitResult:
-        if semantic_ir is not None and semantic_ir.source_unit_identity != id(unit):
+        if semantic_ir is None:
+            return _missing_canonical_input_rejection()
+        if semantic_ir.source_unit_identity != id(unit):
             return EmitResult(
                 qasm="",
                 notes=[

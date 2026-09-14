@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | in progress — LISS-0552 done; LISS-0553 is next |
-| Phase | LISS-0552 done / LISS-0553 phase-0-design |
+| Status | in progress — LISS-0551–0556 done; LISS-0557 is next |
+| Phase | LISS-0556 done / LISS-0557 phase-0-design |
 | Parent trigger | LISS-0543 completion blocker |
 | Canonical specification | [Active-Red remediation](../specs/staqex-active-red-remediation.md) |
 | Architecture approval | Adjudicator approved 2026-09-12 |
@@ -29,10 +29,10 @@ each exclusion through independently approved work.
 |---|---|---:|---|---|---|---|
 | LISS-0551 fixture conformance | done — final review approved 2026-09-13 | M / M | AIP-0551-001 | - | 0552 | `codex/liss-0551-fixture-conformance` |
 | LISS-0552 projection diagnostic isolation | done — final review approved 2026-09-14 | L / L | AIP-0552-001 | 0551 | - | `codex/liss-0552-projection-diagnostics` |
-| LISS-0553 symbolic compatibility supersession | proposed | M / M | AIP-0553-001 | - | - | `codex/liss-0553-symbolic-contract` |
-| LISS-0554 QASM canonical fail-closed | proposed | M / M | AIP-0554-001 | - | - | `codex/liss-0554-qasm-canonical-input` |
-| LISS-0555 interfer node contract | proposed | M / M | AIP-0555-001 | - | - | `codex/liss-0555-interfer-contract` |
-| LISS-0556 POVM rejection projection | proposed | M / M | AIP-0556-001 | - | - | `codex/liss-0556-povm-rejection` |
+| LISS-0553 symbolic compatibility supersession | done — final review approved 2026-09-14 | M / M | AIP-0553-001 | - | - | `codex/liss-0553-symbolic-contract` |
+| LISS-0554 QASM canonical fail-closed | done — final review approved 2026-09-14 | M / M | AIP-0554-001 | - | - | `codex/liss-0554-qasm-canonical-input` |
+| LISS-0555 interfer node contract | done — final review approved 2026-09-14 | M / M | AIP-0555-001 | - | - | `codex/liss-0555-interfer-contract` |
+| LISS-0556 POVM rejection projection | done — final review approved 2026-09-14 | M / M | AIP-0556-001 | - | - | `codex/liss-0556-povm-rejection` |
 | LISS-0557 evaluator authority evidence | proposed | M / M | AIP-0557-001 | - | - | `codex/liss-0557-evaluator-authority` |
 | LISS-0558 observation diagnostic name | proposed | S / S | - | - | - | `codex/liss-0558-observation-diagnostic` |
 | LISS-0559 S02 assay DTO | proposed | M / M | AIP-0559-001 | - | - | `codex/liss-0559-s02-assay-dto` |
@@ -63,10 +63,10 @@ each exclusion through independently approved work.
 
 ## Current Next Issue
 
-- Issue: LISS-0553 Phase 0 architecture review.
-- Reason: LISS-0552 is complete and no longer owns an active-Red exclusion;
-  the next independent successor is the symbolic compatibility contract.
-- Approval needed next: `LISS-0553 Phase 0 acceptance / Architecture review`.
+- Issue: LISS-0557 Phase 0 design.
+- Reason: LISS-0556 is complete and its active-Red exclusion has been removed;
+  the next remaining node is evaluator semantic-authority evidence.
+- Approval needed next: `LISS-0557 Phase 0 acceptance / Architecture review`.
 
 ## Risks
 

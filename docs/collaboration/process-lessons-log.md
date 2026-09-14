@@ -7,6 +7,19 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-14
+- Class: compatibility-authority-boundary
+- Pattern: an old absence assertion can mistake a derived compatibility payload
+  for a second semantic authority after a canonical IR migration.
+- What later design or implementation must do: supersede such assertions only
+  with explicit authority/provenance and negative-artifact checks; retain the
+  compatibility surface only while its diagnostic-only role is machine-
+  checkable and its removal has a separate consumer decision.
+- Source issue or work plan (adopter's own ID, if any): LISS-0553 / WP-0161
+- Status: applied
+
+## Lesson
+
 - Date: 2026-09-13
 - Class: diagnostic-scope-versus-readiness
 - Pattern: non-hard target-evidence diagnostics may coexist with local compile

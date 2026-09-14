@@ -187,11 +187,7 @@ def build_symbolic_compatibility_view(
     del unit  # Compatibility shape is no longer allowed to inspect the AST.
     view = _build_canonical_symbolic_payload(semantic_ir)
     canonical_source_node_ids = [node.node_id for node in semantic_ir.nodes]
-    view["authority"] = {
-        "semantic_authority": semantic_ir.authority,
-        "semantic_fingerprint": semantic_fingerprint(semantic_ir),
-        "role": "derived_inspection_compatibility",
-    }
+    view["authority"] = _derived_compatibility_authority(semantic_ir)
     view["resolved"]["canonical_source_node_ids"] = canonical_source_node_ids
     view["canonical_nodes"] = [
         {
@@ -211,6 +207,24 @@ def build_symbolic_compatibility_view(
         for node in semantic_ir.nodes
     ]
     return view
+
+
+def _derived_compatibility_authority(
+    semantic_ir: ScientificSemanticIR,
+) -> dict[str, Any]:
+    """Describe a compatibility view without granting execution authority."""
+
+    return {
+        "semantic_authority": semantic_ir.authority,
+        "semantic_fingerprint": semantic_fingerprint(semantic_ir),
+        "role": "derived_inspection_compatibility",
+        "authorization": {
+            "execute": False,
+            "realize": False,
+            "allocate": False,
+            "qpu_projection": False,
+        },
+    }
 
 
 def _build_canonical_symbolic_payload(

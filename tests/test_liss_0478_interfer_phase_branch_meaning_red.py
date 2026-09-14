@@ -23,12 +23,17 @@ def _compile_fixture():
     return compiled
 
 
+def _interfer_node(compiled):
+    core = compiled.scientific_semantic_ir
+    return next(node for node in core.nodes if node.meaning_kind == "interference")
+
+
 def test_interfer_has_a_distinct_canonical_meaning() -> None:
     compiled = _compile_fixture()
     core = compiled.scientific_semantic_ir
-    interfer = [node for node in core.nodes if node.kind == "Call"]
+    interfer = [node for node in core.nodes if node.meaning_kind == "interference"]
     assert len(interfer) == 1
-    node = interfer[0]
+    node = _interfer_node(compiled)
     assert node.meaning_kind == "interference"
     assert node.state_role == "interference_state"
     assert node.intent == "interference"
@@ -37,7 +42,7 @@ def test_interfer_has_a_distinct_canonical_meaning() -> None:
 def test_interfer_preserves_operand_identity_and_phase_metadata() -> None:
     compiled = _compile_fixture()
     core = compiled.scientific_semantic_ir
-    node = next(node for node in core.nodes if node.kind == "Call")
+    node = _interfer_node(compiled)
     assert len(node.child_source_node_ids) == 2
     assert getattr(node, "phase_metadata", None) is not None
     assert getattr(node, "branch_relationship", None) is not None

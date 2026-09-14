@@ -4,46 +4,6 @@ version = 1
 # the exclusions at node granularity returns every passing test in the same
 # files to CI.
 [[active_red]]
-issue = "LISS-0553"
-test = "tests/test_liss_0476_symbolic_ir_consumer_migration_red.py::test_non_explicit_compile_does_not_expose_symbolic_ir_authority"
-phase = "phase-0-design"
-owner = "WP-0161"
-review_by = "2026-10-01"
-review_condition = "reconcile the completed symbolic-IR consumer contract"
-
-[[active_red]]
-issue = "LISS-0554"
-test = "tests/test_liss_0477_ast_dto_authority_retirement_red.py::test_missing_canonical_projection_fails_closed_before_qasm_artifact"
-phase = "phase-0-design"
-owner = "WP-0161"
-review_by = "2026-10-01"
-review_condition = "reconcile the completed AST/DTO authority contract"
-
-[[active_red]]
-issue = "LISS-0555"
-test = "tests/test_liss_0478_interfer_phase_branch_meaning_red.py::test_interfer_has_a_distinct_canonical_meaning"
-phase = "phase-0-design"
-owner = "WP-0161"
-review_by = "2026-10-01"
-review_condition = "reconcile canonical interfer meaning"
-
-[[active_red]]
-issue = "LISS-0555"
-test = "tests/test_liss_0478_interfer_phase_branch_meaning_red.py::test_interfer_preserves_operand_identity_and_phase_metadata"
-phase = "phase-0-design"
-owner = "WP-0161"
-review_by = "2026-10-01"
-review_condition = "reconcile canonical interfer provenance"
-
-[[active_red]]
-issue = "LISS-0556"
-test = "tests/test_liss_0485_povm_observation_bridge_red.py::test_povm_rejection_preserves_reason_without_repair_or_fabricated_outcome"
-phase = "phase-0-design"
-owner = "WP-0161"
-review_by = "2026-10-01"
-review_condition = "reconcile the completed POVM rejection contract"
-
-[[active_red]]
 issue = "LISS-0557"
 test = "tests/test_liss_0486_evaluator_semantic_authority_red.py::test_evaluator_receives_compile_owned_semantic_ir_identity"
 phase = "phase-0-design"
