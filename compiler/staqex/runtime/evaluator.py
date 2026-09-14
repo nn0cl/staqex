@@ -100,6 +100,10 @@ from .mixed_state import DensityStateValue, density_from_call, matrix_from_list
 from .lindblad import evolve_lindblad
 from .matrix import Matrix
 from .evaluation.plans import dispatch_runtime_plan
+from .evaluation.calls import bind_call
+from .evaluation.evolution import execute_evolution
+from .evaluation.operators import resolve_operator
+from .evaluation.values import evaluate_value
 from ..static_hilbert import MVP_MAX_LOGICAL_QUBITS
 from ..kernel_literals import SECOND_QUANTIZED_FAMILIES as _SECOND_QUANTIZED_FAMILIES
 from ..scientific_vocabulary import resolve_scientific_binding
@@ -844,7 +848,7 @@ class Evaluator:
                 continue
             if isinstance(stmt, ExprStmt):
                 if isinstance(stmt.expr, Call):
-                    joint = self._bind_call(joint, "__expr_stmt", stmt.expr)
+                    joint = bind_call(self, joint, "__expr_stmt", stmt.expr)
                     continue
                 raise KernelError("unsupported expression statement")
             if isinstance(stmt, StateBind):
@@ -890,7 +894,7 @@ class Evaluator:
                         if stmt.names[0] in lowered_binders
                         else explicit_propagator
                         if explicit_propagator is not None
-                        else self._resolve_operator_expr(stmt.expr)
+                        else resolve_operator(self, stmt.expr)
                     )
                     # LISS-0229: materialize outer(psi, phi) against the live Joint.
                     if (
@@ -907,7 +911,7 @@ class Evaluator:
                     and len(stmt.names) == 1
                     and self._looks_like_operator_rhs(stmt.expr)
                 ):
-                    op_val = self._resolve_operator_expr(stmt.expr)
+                    op_val = resolve_operator(self, stmt.expr)
                     self.operators[stmt.names[0]] = op_val
                     continue
                 if stmt.ty is not None and stmt.ty.name in _SECOND_QUANTIZED_FAMILIES:
@@ -945,7 +949,7 @@ class Evaluator:
                 if stmt.ty is not None and len(stmt.names) == 1:
                     tname = stmt.ty.name
                     if tname in self.enums:
-                        val = self._eval_value(stmt.expr, {})
+                        val = evaluate_value(self, stmt.expr, {})
                         if not isinstance(val, EnumValue) or (
                             val.enum_name not in {tname, self.enums[tname].qualified_name}
                             and val.enum_name.split(".")[-1] != tname.split(".")[-1]
@@ -1391,7 +1395,7 @@ class Evaluator:
                 op_val = (
                     explicit_propagator
                     if explicit_propagator is not None
-                    else self._resolve_operator_expr(stmt.expr)
+                    else resolve_operator(self, stmt.expr)
                 )
                 if (
                     isinstance(op_val, Call)
@@ -1578,7 +1582,7 @@ class Evaluator:
             hamiltonian = self._resolve_lindblad_hamiltonian(expr.args[1], n_qubits)
             jumps = self._resolve_lindblad_jumps(expr.args[2], n_qubits)
             try:
-                total_time = float(self._eval_value(expr.args[3], {}))
+                total_time = float(evaluate_value(self, expr.args[3], {}))
                 evolved = evolve_lindblad(
                     source.matrix,
                     hamiltonian,
@@ -1778,7 +1782,7 @@ class Evaluator:
                     args=[call.args[0], Var(name=wire, span=stmt.span)],
                     span=call.span,
                 )
-                joint = self._bind_call(joint, wire, expanded)
+                joint = bind_call(self, joint, wire, expanded)
         return joint
 
     def _run_dynamic_qpu_block(
@@ -1916,7 +1920,7 @@ class Evaluator:
                 )
                 continue
             if isinstance(body_stmt, ExprStmt) and isinstance(body_stmt.expr, Call):
-                joint = self._bind_call(joint, "__dynamic_expr_stmt", body_stmt.expr)
+                joint = bind_call(self, joint, "__dynamic_expr_stmt", body_stmt.expr)
                 continue
         return joint
 
@@ -2006,13 +2010,13 @@ class Evaluator:
             if any(isinstance(a, Hole) for a in expr.args):
                 if len(names) != 1:
                     raise KernelError("Partial bind expects a single name")
-                return self._bind_call(joint, names[0], expr)
+                return bind_call(self, joint, names[0], expr)
             if expr.callee.name in self.objects and isinstance(
                 self.objects[expr.callee.name], PartialValue
             ):
                 if len(names) != 1:
                     raise KernelError("Partial completion expects a single name")
-                return self._bind_call(joint, names[0], expr)
+                return bind_call(self, joint, names[0], expr)
             fun = self.funs.get(expr.callee.name)
             if fun is not None:
                 # Pure classical free functions consume object/value frames,
@@ -2222,7 +2226,7 @@ class Evaluator:
         if isinstance(times, int):
             n = times
         else:
-            raw = self._eval_value(times, {})
+            raw = evaluate_value(self, times, {})
             try:
                 n = int(float(raw))
             except (TypeError, ValueError) as e:
@@ -2254,7 +2258,7 @@ class Evaluator:
                 sn = seed.name
                 init[name] = lambda a, sn=sn: a[sn]
             else:
-                init[name] = lambda a, s=seed: self._eval_value(s, a)
+                init[name] = lambda a, s=seed: evaluate_value(self, s, a)
         joint = joint.bind_multi(init)
 
         if expr.body is None:
@@ -2270,7 +2274,7 @@ class Evaluator:
                     joint = self._bind(joint, ln, le)
                 else:
                     joint = joint.bind_pushforward(
-                        ln, lambda a, e=le: self._eval_value(e, a)
+                        ln, lambda a, e=le: evaluate_value(self, e, a)
                     )
             res = expr.body.result
             if isinstance(res, Call) and isinstance(res.callee, Var):
@@ -2282,7 +2286,7 @@ class Evaluator:
                 if len(res.items) != len(names):
                     raise KernelError("evolve result tuple arity mismatch")
                 updates = {
-                    name: (lambda a, e=item: self._eval_value(e, a))
+                    name: (lambda a, e=item: evaluate_value(self, e, a))
                     for name, item in zip(names, res.items)
                 }
                 joint = joint.bind_multi(updates)
@@ -2293,7 +2297,7 @@ class Evaluator:
                     joint = self._bind(joint, names[0], res)
                 else:
                     joint = joint.bind_pushforward(
-                        names[0], lambda a, e=res: self._eval_value(e, a)
+                        names[0], lambda a, e=res: evaluate_value(self, e, a)
                     )
         # ADR 0142: drop evolve-local let axes (and other non-live coords).
         return self._trace_out_dead_fn_locals(joint, pre_live, names)
@@ -2508,15 +2512,15 @@ class Evaluator:
                 sn = seed.name
                 init[name] = lambda a, sn=sn: a[sn]
             else:
-                init[name] = lambda a, s=seed: self._eval_value(s, a)
+                init[name] = lambda a, s=seed: evaluate_value(self, s, a)
         joint = joint.bind_multi(init)
 
         if expr.until_predicate is None:
-            return self._hamiltonian_evolve_one_step(joint, names, expr)
+            return execute_evolution(self, joint, names, expr)
 
         max_n = self._eval_max_steps(expr.max_steps)
         for _ in range(max_n):
-            joint = self._hamiltonian_evolve_one_step(joint, names, expr)
+            joint = execute_evolution(self, joint, names, expr)
             if self._eval_until_predicate(joint, names, expr.until_predicate):
                 return joint
         raise KernelDiagnosticError(
@@ -2526,7 +2530,7 @@ class Evaluator:
             col=expr.span.col,
         )
 
-    def _hamiltonian_evolve_one_step(
+    def _legacy_hamiltonian_evolve_one_step(
         self, joint: Joint, names: list[str], expr: EvolveExpr
     ) -> Joint:
         from .hamiltonian import compile_hamiltonian, hop_basis_dim, op_n_qubits
@@ -2958,7 +2962,7 @@ class Evaluator:
                     raise KernelError(f"{op} requires (theta)")
                 if n_wires != 1:
                     raise KernelError(f"{op} is 1-qubit; pass one target wire")
-                theta = float(self._eval_value(u_expr.args[0], {}))
+                theta = float(evaluate_value(self, u_expr.args[0], {}))
                 return rotation_gate_matrix(op[1], theta)
             qft_mat = self._qft_family_matrix(u_expr, n_wires)
             if qft_mat is not None:
@@ -3244,8 +3248,8 @@ class Evaluator:
             )
         if isinstance(expr, Dirac):
             if self._is_closed(expr.arg):
-                return joint.bind_const(name, self._eval_value(expr.arg, {}))
-            return joint.bind_pushforward(name, lambda a: self._eval_value(expr.arg, a))
+                return joint.bind_const(name, evaluate_value(self, expr.arg, {}))
+            return joint.bind_pushforward(name, lambda a: evaluate_value(self, expr.arg, a))
         if isinstance(expr, (LitInt, LitFloat, LitBool, LitString)):
             return joint.bind_const(name, self._lit(expr))
         if isinstance(expr, Var):
@@ -3278,11 +3282,11 @@ class Evaluator:
             # the norm bars), and divides every amplitude by that norm.
             return self._bind_state_divided_by_norm(joint, name, expr.lhs, expr.rhs)
         if isinstance(expr, BinOp):
-            return joint.bind_pushforward(name, lambda a: self._eval_value(expr, a))
+            return joint.bind_pushforward(name, lambda a: evaluate_value(self, expr, a))
         if isinstance(expr, Attr):
-            return joint.bind_pushforward(name, lambda a: self._eval_value(expr, a))
+            return joint.bind_pushforward(name, lambda a: evaluate_value(self, expr, a))
         if isinstance(expr, UnitConvert):
-            return joint.bind_pushforward(name, lambda a: self._eval_value(expr, a))
+            return joint.bind_pushforward(name, lambda a: evaluate_value(self, expr, a))
         if isinstance(expr, WhenExpr):
             return self._bind_when(joint, name, expr)
         if isinstance(expr, SuperposeExpr):
@@ -3298,7 +3302,7 @@ class Evaluator:
                 col=expr.span.col,
             )
         if isinstance(expr, Call):
-            return self._bind_call(joint, name, expr)
+            return bind_call(self, joint, name, expr)
         if isinstance(expr, Pipe):
             fused = self._try_bind_fused_unary_pipe(
                 joint, name, expr, logs=logs, inspect_out=inspect_out
@@ -3306,7 +3310,7 @@ class Evaluator:
             if fused is not None:
                 return fused
             if isinstance(expr.rhs, Call):
-                return self._bind_call(joint, name, self._piped_call(expr))
+                return bind_call(self, joint, name, self._piped_call(expr))
             if isinstance(expr.rhs, Var):
                 # ADR 0152: tuple |> multi-hole Partial → fill all remaining holes.
                 if isinstance(expr.lhs, TupleExpr):
@@ -3319,11 +3323,11 @@ class Evaluator:
                                 args=list(expr.lhs.items),
                                 span=expr.span,
                             )
-                            return self._bind_call(joint, name, synthetic)
+                            return bind_call(self, joint, name, synthetic)
                 synthetic = Call(
                     callee=expr.rhs, args=[expr.lhs], span=expr.span
                 )
-                return self._bind_call(joint, name, synthetic)
+                return bind_call(self, joint, name, synthetic)
             raise KernelError(
                 "PIPE_CALLABLE_ERROR: pipeline right-hand side must be a function call "
                 "or unary fn name"
@@ -3346,14 +3350,14 @@ class Evaluator:
                 joint = self._bind(joint, ln, le)
             else:
                 joint = joint.bind_pushforward(
-                    ln, lambda a, e=le: self._eval_value(e, a)
+                    ln, lambda a, e=le: evaluate_value(self, e, a)
                 )
         res = expr.result
         if isinstance(res, Call):
             joint = self._bind(joint, name, res)
         else:
             joint = joint.bind_pushforward(
-                name, lambda a, e=res: self._eval_value(e, a)
+                name, lambda a, e=res: evaluate_value(self, e, a)
             )
         return self._trace_out_dead_fn_locals(joint, pre_live, [name])
 
@@ -3491,8 +3495,8 @@ class Evaluator:
             if slot is None:
                 env[param.name] = assign[src]
             else:
-                env[param.name] = self._eval_value(slot, assign)
-        return self._eval_value(ret, env)
+                env[param.name] = evaluate_value(self, slot, assign)
+        return evaluate_value(self, ret, env)
 
     def _compose_affine_pipe(
         self, funs: list[FunDecl], returns: list[Expr]
@@ -3716,7 +3720,7 @@ class Evaluator:
                                 )
                             )
                 else:
-                    val = self._eval_value(arm_body, w.assign)
+                    val = evaluate_value(self, arm_body, w.assign)
                     out_worlds.append(
                         World(
                             assign={**w.assign, name: val},
@@ -3744,7 +3748,7 @@ class Evaluator:
             )
         if isinstance(ctrl, (LitInt, LitFloat, LitBool)):
             return {self._lit(ctrl): 1.0}
-        v = self._eval_value(ctrl, assign)
+        v = evaluate_value(self, ctrl, assign)
         return {v: 1.0}
 
     def _expr_qualname(self, expr: Expr) -> str | None:
@@ -3787,10 +3791,10 @@ class Evaluator:
         for fbind in cls.fields:
             if len(fbind.names) != 1:
                 raise KernelError("class field must be a single name")
-            fields[fbind.names[0]] = self._eval_value(fbind.expr, {})
+            fields[fbind.names[0]] = evaluate_value(self, fbind.expr, {})
         for mem in cls.members:
             if mem.default is not None:
-                fields[mem.name] = self._eval_value(mem.default, {})
+                fields[mem.name] = evaluate_value(self, mem.default, {})
             if mem.mutable:
                 mutable.add(mem.name)
 
@@ -3852,7 +3856,7 @@ class Evaluator:
                 if isinstance(stmt, StateBind):
                     if len(stmt.names) != 1:
                         raise KernelError("`init` binds must be single-name")
-                    val = self._eval_value(stmt.expr, local)
+                    val = evaluate_value(self, stmt.expr, local)
                     local[stmt.names[0]] = val
                 else:
                     raise KernelError(
@@ -3969,7 +3973,7 @@ class Evaluator:
                 return False
         return False
 
-    def _resolve_operator_expr(
+    def _legacy_resolve_operator(
         self,
         expr: Any,
         *,
@@ -4169,7 +4173,7 @@ class Evaluator:
                 elements = self._eval_set_comprehension(stmt.expr, {})
                 domain = stmt.expr.domain
                 width = (
-                    int(self._eval_value(domain.width, {}))
+                    int(evaluate_value(self, domain.width, {}))
                     if isinstance(domain, SetPowerDomain)
                     else 0
                 )
@@ -4306,7 +4310,7 @@ class Evaluator:
                 local_objects[param.name] = self.objects[arg.name]
                 continue
             try:
-                local_scalars[param.name] = float(self._eval_value(arg, {}))
+                local_scalars[param.name] = float(evaluate_value(self, arg, {}))
             except (KernelError, TypeError, ValueError):
                 if isinstance(arg, Var) and arg.name in self.scalars:
                     local_scalars[param.name] = float(self.scalars[arg.name])
@@ -4355,7 +4359,7 @@ class Evaluator:
                 # that instead of only folding the (already-crashed)
                 # result afterward.
                 pre_folded = _fold_scalars_and_attrs(stmt.expr)
-                raw = self._resolve_operator_expr(
+                raw = resolve_operator(self,
                     pre_folded, objects=attr_objects, extra_arrays=local_arrays
                 )
                 local_ops[stmt.names[0]] = _materialize_op(raw)
@@ -4388,7 +4392,7 @@ class Evaluator:
                     continue
                 try:
                     local_scalars[stmt.names[0]] = float(
-                        self._eval_value(stmt.expr, local_assign)
+                        evaluate_value(self, stmt.expr, local_assign)
                     )
                     local_assign[stmt.names[0]] = local_scalars[stmt.names[0]]
                 except (KernelError, TypeError, ValueError):
@@ -4456,7 +4460,7 @@ class Evaluator:
                 if param.ty is not None and param.ty.name == "Operator":
                     continue
                 try:
-                    local_scalars[param.name] = float(self._eval_value(arg, {}))
+                    local_scalars[param.name] = float(evaluate_value(self, arg, {}))
                 except (KernelError, TypeError, ValueError):
                     if isinstance(arg, Var) and arg.name in self.scalars:
                         local_scalars[param.name] = float(self.scalars[arg.name])
@@ -4493,7 +4497,7 @@ class Evaluator:
                 if stmt.ty.name == "Float" and len(stmt.names) == 1:
                     try:
                         local_scalars[stmt.names[0]] = float(
-                            self._eval_value(stmt.expr, {})
+                            evaluate_value(self, stmt.expr, {})
                         )
                     except (KernelError, TypeError, ValueError):
                         pass
@@ -4663,7 +4667,7 @@ class Evaluator:
                         # its raw AST, so a struct-field coefficient
                         # (`weights.a * X`) failed with `cannot compile
                         # operator node OpAttr`.
-                        self.operators[stmt.names[0]] = self._resolve_operator_expr(
+                        self.operators[stmt.names[0]] = resolve_operator(self,
                             stmt.expr
                         )
                         continue
@@ -4796,7 +4800,7 @@ class Evaluator:
                         f"`{expr.callee.name}` expects exactly 1 argument, "
                         f"got {len(expr.args)}"
                     )
-                arg_val = self._eval_value(expr.args[0], assign or {})
+                arg_val = evaluate_value(self, expr.args[0], assign or {})
                 return math_ops.apply_math(expr.callee.name, arg_val)
             fun = self.funs.get(expr.callee.name)
             if fun is None:
@@ -4868,7 +4872,7 @@ class Evaluator:
                 elif isinstance(arg, Var) and arg.name in self.scalars:
                     local[param.name] = self.scalars[arg.name]
                 else:
-                    local[param.name] = self._eval_value(arg, {})
+                    local[param.name] = evaluate_value(self, arg, {})
             for stmt in method.body.stmts:
                 if isinstance(stmt, AssignStmt):
                     self._exec_assign(stmt, local)
@@ -4883,7 +4887,7 @@ class Evaluator:
             )
             if result is None:
                 raise KernelError(f"method `{method_name}` has no return")
-            return self._eval_value(result, local)
+            return evaluate_value(self, result, local)
         finally:
             self._this = prev_this
 
@@ -5011,7 +5015,7 @@ class Evaluator:
                     )
                     if ret is None:
                         raise KernelError(f"method `{method_name}` has no return")
-                    return self._eval_value(ret, dict(inst.fields)), None
+                    return evaluate_value(self, ret, dict(inst.fields)), None
             return self._eval_value_with_unit(result, local)
         finally:
             self._this = prev_this
@@ -5042,7 +5046,7 @@ class Evaluator:
         # Bind arguments onto parameter coordinates
         for param, arg in zip(fun.params, expr.args):
             if param.ty is not None and param.ty.name == "Operator":
-                self.operators[param.name] = self._resolve_operator_expr(arg)
+                self.operators[param.name] = resolve_operator(self, arg)
                 continue
             if isinstance(arg, Var) and arg.name == param.name:
                 continue
@@ -5088,7 +5092,7 @@ class Evaluator:
                     # its raw AST unresolved (unlike this same function's
                     # own Operator-typed *parameter* binding a few lines
                     # above, which already resolves).
-                    self.operators[stmt.names[0]] = self._resolve_operator_expr(
+                    self.operators[stmt.names[0]] = resolve_operator(self,
                         stmt.expr
                     )
                     continue
@@ -5274,7 +5278,7 @@ class Evaluator:
         # ADR 0131: stepwise Partial.
         return PartialValue(fun_name=partial.fun_name, slots=new_slots)
 
-    def _bind_call(self, joint: Joint, name: str, expr: Call) -> Joint:
+    def _legacy_bind_call(self, joint: Joint, name: str, expr: Call) -> Joint:
         callee = expr.callee
 
         # Class / struct construction reached via a free-function's own
@@ -5317,7 +5321,7 @@ class Evaluator:
                 if isinstance(filled, PartialValue):
                     self.objects[name] = filled
                     return joint
-                return self._bind_call(joint, name, filled)
+                return bind_call(self, joint, name, filled)
 
         # ADR 0056: instance.method(args)
         if isinstance(callee, Attr):
@@ -5372,7 +5376,7 @@ class Evaluator:
                 if callee.name == "cis":
                     if len(expr.args) != 1:
                         raise KernelError("Complex.cis requires (theta)")
-                    theta = float(self._eval_value(expr.args[0], {}))
+                    theta = float(evaluate_value(self, expr.args[0], {}))
                     from .joint import World
 
                     return Joint(
@@ -5464,7 +5468,7 @@ class Evaluator:
                             "computational |0⟩/|1⟩ (and bitstrings) only"
                         )
                 else:
-                    label = self._eval_value(target, {})
+                    label = evaluate_value(self, target, {})
                 projected = joint.project_coord(src_expr.name, lambda v, lab=label: v == lab)
             if projected.is_vacuum():
                 return Joint.empty()
@@ -5493,7 +5497,7 @@ class Evaluator:
                     amps[self._lit(arg)] += complex(1.0, 0.0)
                 else:
                     for w in joint.worlds:
-                        val = self._eval_value(arg, w.assign)
+                        val = evaluate_value(self, arg, w.assign)
                         amps[val] += w.amp
             # Drop cancelled bins; renormalize Born measure (SV-07 mixture).
             alive = {v: c for v, c in amps.items() if abs(c) ** 2 > EPS}
@@ -5512,10 +5516,10 @@ class Evaluator:
             if len(expr.args) < 2 or not isinstance(expr.args[0], Var):
                 raise KernelError("phase requires (src, theta[, only])")
             src = expr.args[0].name
-            theta = float(self._eval_value(expr.args[1], {}))
+            theta = float(evaluate_value(self, expr.args[1], {}))
             only = None
             if len(expr.args) >= 3:
-                only = self._eval_value(expr.args[2], {})
+                only = evaluate_value(self, expr.args[2], {})
             return joint.phase_copy(src, name, theta, only=only)
 
         if op in {"grover_diffuse", "diffuse"}:
@@ -5528,7 +5532,7 @@ class Evaluator:
             # cis(theta): unit |0⟩ with amplitude e^{iθ}
             if len(expr.args) != 1:
                 raise KernelError("cis requires (theta)")
-            theta = float(self._eval_value(expr.args[0], {}))
+            theta = float(evaluate_value(self, expr.args[0], {}))
             from .joint import World
 
             return Joint(worlds=[World(assign={name: 0}, amp=cmath.exp(1j * theta))])
@@ -5666,7 +5670,7 @@ class Evaluator:
             if len(expr.args) != 2 or not isinstance(expr.args[0], Var):
                 raise KernelError("occupation requires (stateVar, siteIndex)")
             src = expr.args[0].name
-            k = self._eval_value(expr.args[1], {})
+            k = evaluate_value(self, expr.args[1], {})
             if not isinstance(k, int):
                 try:
                     k = int(k)
@@ -5687,7 +5691,7 @@ class Evaluator:
         if op == "Dirac":
             if not expr.args:
                 raise KernelError("dirac requires an argument (point mass δ_c)")
-            return joint.bind_pushforward(name, lambda a: self._eval_value(expr.args[0], a))
+            return joint.bind_pushforward(name, lambda a: evaluate_value(self, expr.args[0], a))
         if op == "finiteize":
             # ADR 0185 Lane A: finiteize(lo, hi, n_bins, n_samples[, seed])
             # Host equal-width histogram of uniform continuous draws on [lo, hi).
@@ -5724,14 +5728,14 @@ class Evaluator:
                 raise KernelError(
                     "wavepacket requires (xmin, xmax, n, x0, sigma)"
                 )
-            xmin = float(self._eval_value(expr.args[0], {}))
-            xmax = float(self._eval_value(expr.args[1], {}))
-            n_raw = self._eval_value(expr.args[2], {})
+            xmin = float(evaluate_value(self, expr.args[0], {}))
+            xmax = float(evaluate_value(self, expr.args[1], {}))
+            n_raw = evaluate_value(self, expr.args[2], {})
             if type(n_raw) is not int:
                 raise KernelError("wavepacket n must be Int")
             n = n_raw
-            x0 = float(self._eval_value(expr.args[3], {}))
-            sigma = float(self._eval_value(expr.args[4], {}))
+            x0 = float(evaluate_value(self, expr.args[3], {}))
+            sigma = float(evaluate_value(self, expr.args[4], {}))
             if n < 2:
                 raise KernelError("wavepacket needs n >= 2")
             if sigma <= 0:
@@ -5780,7 +5784,7 @@ class Evaluator:
         `bind_split` takes a probability `p` and computes `amp =
         parent_amp * sqrt(p)`, so `p = 1.0` per branch yields amplitude 1,
         i.e. literal unnormalized addition."""
-        width_raw = self._eval_value(expr.domain.width, {})
+        width_raw = evaluate_value(self, expr.domain.width, {})
         try:
             n = int(width_raw)
         except (TypeError, ValueError) as e:
@@ -5970,7 +5974,7 @@ class Evaluator:
         expr>` (LISS-0420)."""
         from .joint import World, _coalesce
 
-        scale = self._eval_value(scalar_expr, {})
+        scale = evaluate_value(self, scalar_expr, {})
         temp = f"__scale_tmp_{id(state_expr)}"
         sub = self._bind(joint, temp, state_expr)
         out: list[World] = []
@@ -6116,7 +6120,7 @@ class Evaluator:
                 "set-power literal) -- a bare-range domain is not yet "
                 "supported"
             )
-        width_raw = self._eval_value(domain.width, assign)
+        width_raw = evaluate_value(self, domain.width, assign)
         n = int(width_raw)
         labels = tuple(domain.labels)
 
@@ -6140,7 +6144,7 @@ class Evaluator:
         (LISS-0324)."""
         if len(expr.args) != 1:
             raise KernelError("prepare_selection requires (n)")
-        n_raw = self._eval_value(expr.args[0], {})
+        n_raw = evaluate_value(self, expr.args[0], {})
         if type(n_raw) is not int:
             raise KernelError("prepare_selection n must be Int")
         n = n_raw
@@ -6171,17 +6175,17 @@ class Evaluator:
             raise KernelError(
                 "finiteize requires (lo, hi, n_bins, n_samples[, seed])"
             )
-        lo = float(self._eval_value(expr.args[0], {}))
-        hi = float(self._eval_value(expr.args[1], {}))
-        n_bins_raw = self._eval_value(expr.args[2], {})
-        n_samples_raw = self._eval_value(expr.args[3], {})
+        lo = float(evaluate_value(self, expr.args[0], {}))
+        hi = float(evaluate_value(self, expr.args[1], {}))
+        n_bins_raw = evaluate_value(self, expr.args[2], {})
+        n_samples_raw = evaluate_value(self, expr.args[3], {})
         if type(n_bins_raw) is not int or type(n_samples_raw) is not int:
             raise KernelError("finiteize n_bins and n_samples must be Int")
         n_bins = n_bins_raw
         n_samples = n_samples_raw
         seed: int | None = self.seed
         if len(expr.args) == 5:
-            seed_raw = self._eval_value(expr.args[4], {})
+            seed_raw = evaluate_value(self, expr.args[4], {})
             if type(seed_raw) is not int:
                 raise KernelError("finiteize seed must be Int")
             seed = seed_raw
@@ -6234,15 +6238,15 @@ class Evaluator:
                 "finiteize(Continuous, lo, hi, n_bins[, seed]) requires 4-5 arguments"
             )
         continuous_value = self.objects[expr.args[0].name]  # type: ignore[union-attr]
-        lo = float(self._eval_value(expr.args[1], {}))
-        hi = float(self._eval_value(expr.args[2], {}))
-        n_bins_raw = self._eval_value(expr.args[3], {})
+        lo = float(evaluate_value(self, expr.args[1], {}))
+        hi = float(evaluate_value(self, expr.args[2], {}))
+        n_bins_raw = evaluate_value(self, expr.args[3], {})
         if type(n_bins_raw) is not int:
             raise KernelError("finiteize n_bins must be Int")
         n_bins = n_bins_raw
         seed: int | None = self.seed
         if len(expr.args) == 5:
-            seed_raw = self._eval_value(expr.args[4], {})
+            seed_raw = evaluate_value(self, expr.args[4], {})
             if type(seed_raw) is not int:
                 raise KernelError("finiteize seed must be Int")
             seed = seed_raw
@@ -6284,8 +6288,8 @@ class Evaluator:
         """
         if len(expr.args) != 2:
             raise KernelError("field_from_host requires (source, domain)")
-        source = self._eval_value(expr.args[0], {})
-        domain = self._eval_value(expr.args[1], {})
+        source = evaluate_value(self, expr.args[0], {})
+        domain = evaluate_value(self, expr.args[1], {})
         if not isinstance(source, str) or not isinstance(domain, str):
             raise KernelError("field_from_host requires string (source, domain)")
         if self.continuous_field is None:
@@ -6381,7 +6385,7 @@ class Evaluator:
             param = fn.param
 
             def f(v: Any) -> Any:
-                return self._eval_value(fn.body, {param: v})
+                return evaluate_value(self, fn.body, {param: v})
 
             return f
         raise KernelError("map/project fn must be a lambda (x -> expr)")
@@ -6508,7 +6512,7 @@ class Evaluator:
             # ADR 0174 / LISS-0292: field units from objects or free-fn locals.
             field_unit = self._attr_field_unit(expr, assign)
             if field_unit is not None or self._attr_is_object_field(expr, assign):
-                return self._eval_value(expr, assign), field_unit
+                return evaluate_value(self, expr, assign), field_unit
         if isinstance(expr, UnitConvert):
             return self._eval_unit_convert(expr, assign), expr.target_unit
         if isinstance(expr, Var):
@@ -6547,7 +6551,7 @@ class Evaluator:
             if lu and ru and lu != ru:
                 out_unit = None
             return _apply_op(expr.op, l, r), out_unit
-        return self._eval_value(expr, assign), None
+        return evaluate_value(self, expr, assign), None
 
     @staticmethod
     def _put_unit(store: dict[str, str], name: str, unit: str | None) -> None:
@@ -6589,7 +6593,7 @@ class Evaluator:
         if isinstance(recv_expr, Var):
             return None
         try:
-            candidate = self._eval_value(recv_expr, assign or {})
+            candidate = evaluate_value(self, recv_expr, assign or {})
         except KernelError:
             return None
         if isinstance(candidate, (ClassInstance, StructValue)):
@@ -6610,7 +6614,7 @@ class Evaluator:
             return None
         return host.field_units.get(expr.name)
 
-    def _eval_value(self, expr: Expr, assign: dict[str, Any]) -> Any:
+    def _legacy_evaluate_value(self, expr: Expr, assign: dict[str, Any]) -> Any:
         if isinstance(expr, LitInt):
             return expr.value
         if isinstance(expr, LitFloat):
@@ -6633,13 +6637,13 @@ class Evaluator:
         if isinstance(expr, Vacuum):
             raise KernelError("vacuum() is not a classical value")
         if isinstance(expr, Dirac):
-            return self._eval_value(expr.arg, assign)
+            return evaluate_value(self, expr.arg, assign)
         if isinstance(expr, BinOp):
             if expr.op in {"+", "-"}:
                 value, _unit = self._eval_value_with_unit(expr, assign)
                 return value
-            l = self._eval_value(expr.lhs, assign)
-            r = self._eval_value(expr.rhs, assign)
+            l = evaluate_value(self, expr.lhs, assign)
+            r = evaluate_value(self, expr.rhs, assign)
             return _apply_op(expr.op, l, r)
         if isinstance(expr, UnitConvert):
             return self._eval_unit_convert(expr, assign)
@@ -6707,7 +6711,7 @@ class Evaluator:
                     return fields[expr.name]
                 if isinstance(inst, EnumValue):
                     raise KernelError("enum values have no fields")
-            obj = self._eval_value(expr.obj, assign)
+            obj = evaluate_value(self, expr.obj, assign)
             if isinstance(obj, (ClassInstance, StructValue)):
                 fields = obj.fields
                 cname = (
@@ -6720,13 +6724,13 @@ class Evaluator:
                 raise KernelError("enum values have no fields")
             raise KernelError(f"cannot evaluate attribute `.{expr.name}` on {obj!r}")
         if isinstance(expr, WhenExpr):
-            ctrl = self._eval_value(expr.ctrl, assign)
+            ctrl = evaluate_value(self, expr.ctrl, assign)
             for arm in expr.arms:
                 if not arm.is_else and arm.pat == ctrl:
-                    return self._eval_value(arm.body, assign)
+                    return evaluate_value(self, arm.body, assign)
             for arm in expr.arms:
                 if arm.is_else:
-                    return self._eval_value(arm.body, assign)
+                    return evaluate_value(self, arm.body, assign)
             raise KernelError("mix: no matching arm")
         if isinstance(expr, Call):
             q = self._expr_qualname(expr.callee)
@@ -6756,7 +6760,7 @@ class Evaluator:
             return {}
         for w in joint.worlds:
             try:
-                v = self._eval_value(expr, w.assign)
+                v = evaluate_value(self, expr, w.assign)
             except KernelError:
                 continue
             acc[v] += abs(w.amp) ** 2
