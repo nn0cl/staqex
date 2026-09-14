@@ -287,14 +287,16 @@ def test_unit_only_compatibility_builds_at_most_once(monkeypatch) -> None:
     compiled = compile_source(_source())
     assert compiled.ok, compiled.diagnostics
     calls = 0
-    original = emitter_module.build_scientific_semantic_ir
+    original = codegen_qasm_module.build_scientific_semantic_ir
 
     def count_build(unit):
         nonlocal calls
         calls += 1
         return original(unit)
 
-    monkeypatch.setattr(emitter_module, "build_scientific_semantic_ir", count_build)
+    monkeypatch.setattr(
+        codegen_qasm_module, "build_scientific_semantic_ir", count_build
+    )
     emitted = OpenQASM3Generator(route=False).generate_detailed(compiled.unit)
 
     assert emitted.ok, emitted.notes

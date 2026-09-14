@@ -20,6 +20,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
       - name: Check required project documents
         shell: bash
         run: |
@@ -70,6 +75,8 @@ jobs:
             "docs/collaboration/process-lessons.md"
             "docs/collaboration/process-review.md"
             "docs/collaboration/project-conventions.md"
+            "docs/testing/active-red-tests.toml"
+            "docs/testing/refactor-baseline.json"
             "docs/collaboration/reviews/.gitkeep"
             "docs/collaboration/template-feedback/.gitkeep"
             "docs/architecture/README.md"
@@ -109,6 +116,8 @@ jobs:
             "scripts/init-llm-context.sh"
             "scripts/check-execution-batch-reviews.py"
             "scripts/check-document-lifecycle.py"
+            "scripts/check-test-lifecycle.py"
+            "scripts/capture-refactor-baseline.py"
             "scripts/lib/collaboration-template-paths.sh"
           )
 
@@ -162,6 +171,18 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/check-coverage-ledger-consistency.py
+
+      - name: Check active-Red test lifecycle
+        run: python3 scripts/check-test-lifecycle.py
+
+      - name: Check behavior-preservation baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/capture-refactor-baseline.py \
+            --cases tests/fixtures/liss_0543/baseline-cases.toml \
+            --output /tmp/refactor-baseline.json
+          cmp docs/testing/refactor-baseline.json /tmp/refactor-baseline.json
 
       - name: Check unresolved conflict markers
         shell: bash
@@ -294,13 +315,13 @@ jobs:
         run: python3 -m pip install --upgrade pip pytest
 
       - name: Run root suites
-        # Phase 1 Red suites are intentionally failing until their approved
-        # Green slice lands. Keep them out of the blocking regression run;
-        # mixed legacy files are excluded by their explicit test names below.
-        run: >-
-          python3 -m pytest tests/ -q
-          --ignore-glob='*_red.py'
-          -k 'not trotter_ising_evolve_qasm and not trotter_rejects_fock_hamiltonian'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t active_red_args < <(
+            python3 scripts/check-test-lifecycle.py --pytest-ignore-args
+          )
+          python3 -m pytest tests/ -q "${active_red_args[@]}"
 
   spec-verification:
     name: Spec verification

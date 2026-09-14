@@ -1,0 +1,23 @@
+version = 1
+
+public_modules = [
+  "compiler.staqex.runtime.evaluator",
+  "compiler.staqex.typecheck",
+  "compiler.staqex.parser",
+  "compiler.staqex.scientific_semantic_ir",
+  "compiler.staqex.backend.qasm.lower",
+  "compiler.staqex.pipeline",
+]
+
+[[runtime_case]]
+id = "runtime:b01-fixed-seed"
+source = "examples/basics/B01_never_leave_the_state/never_leave_the_state.sqx"
+seed = 0
+
+[[qasm_case]]
+id = "qasm:a08-entangled-ancilla"
+source = "examples/applied/A08_entangled_compute_ancilla/main_entangled_compute_ancilla.sqx"
+
+[[diagnostic_case]]
+id = "diagnostic:missing-expression"
+source = "tests/fixtures/liss_0543/missing-expression.sqx"

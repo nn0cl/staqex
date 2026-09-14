@@ -650,6 +650,11 @@ def build_qpu_ir(
     """Build the immutable provider-neutral boundary without provider lowering."""
     semantic_ir = semantic_ir or build_scientific_semantic_ir(unit)
     canonical_operations = semantic_ir.qpu_projection.operations if semantic_ir.qpu_projection else ()
+    projection_error_source_node_ids = tuple(
+        operation.source_node_id
+        for operation in canonical_operations
+        if operation.kind == "unsupported"
+    )
     measurement = {"terminal": any(operation.kind == "measure" for operation in canonical_operations)}
     if measurement["terminal"]:
         measurement["operation"] = "Measure"
@@ -686,6 +691,7 @@ def build_qpu_ir(
         "instruction_fingerprint": instruction_fingerprint(instructions),
         "projection_error": projection_error,
         "projection_errors": semantic_ir.projection_errors,
+        "projection_error_source_node_ids": projection_error_source_node_ids,
         "binder_source_node_ids": semantic_ir.binder_source_node_ids,
         "binder_provenance": semantic_ir.binder_provenance,
     }

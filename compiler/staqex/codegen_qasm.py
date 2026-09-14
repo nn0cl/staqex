@@ -17,7 +17,7 @@ from .backend.qasm import EmitResult, QASM3Emitter, emit_openqasm3
 from .finite_binder import identity_acting_space_diagnostics
 from .pipeline import compile_path, compile_source
 from .resource_profile import ResourceProfile, SimulationResourceEstimate
-from .scientific_semantic_ir import ScientificSemanticIR
+from .scientific_semantic_ir import ScientificSemanticIR, build_scientific_semantic_ir
 
 
 class OpenQASM3Generator:
@@ -61,6 +61,8 @@ class OpenQASM3Generator:
         resource_profile: ResourceProfile | None = None,
         resource_estimate: SimulationResourceEstimate | None = None,
     ) -> EmitResult:
+        if semantic_ir is None:
+            semantic_ir = build_scientific_semantic_ir(unit)
         return QASM3Emitter(topology=self.topology, route=self.route).emit_unit(
             unit,
             semantic_ir=semantic_ir,

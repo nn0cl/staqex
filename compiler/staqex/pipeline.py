@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from dataclasses import replace
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any, Mapping
@@ -210,11 +209,29 @@ HARD_CODES = {
 # Backward-compatible alias (older docs / local patches).
 _HARD_CODES = HARD_CODES
 
+_LOCAL_QSEM_ADVISORY_CODES = frozenset(
+    {
+        "QSEM_FINITE_EVIDENCE_MISSING",
+        "QSEM_APPROXIMATION_OBLIGATION_MISSING",
+    }
+)
+
+_POVM_REJECTION_CODES = frozenset(
+    {
+        "POVM_DOMAIN_MISMATCH",
+        "INVALID_POVM_EFFECT",
+        "INCOMPLETE_POVM",
+    }
+)
+
 
 @dataclass
 class CompileResult:
     unit: CompilationUnit | None
     diagnostics: list[dict[str, Any]]
+    povm_observation_rejections: list[dict[str, Any]] = field(
+        default_factory=list
+    )
     checker: TypeChecker | None = None
     symbolic_ir: dict[str, Any] | None = None
     scope_contracts: Mapping[str, ScientificScopeContract] | None = None
@@ -239,7 +256,7 @@ class CompileResult:
     evolution_provenance: dict[str, Any] | None = None
 
     @property
-    def ok(self) -> bool:
+    def local_ok(self) -> bool:
         return not any(
             d.get("code") in HARD_CODES
             or (
@@ -248,6 +265,62 @@ class CompileResult:
             )
             for d in self.diagnostics
         )
+
+    @property
+    def ok(self) -> bool:
+        """Backward-compatible alias for local source acceptance."""
+        return self.local_ok
+
+
+def _project_povm_observation_rejections(
+    diagnostics: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Expose POVM rejection evidence without creating measurement results.
+
+    Measurement resolution owns the diagnostic contents. The compile result
+    only projects that evidence for callers; it never repairs the request or
+    evaluates an effect set.
+    """
+    rejections: list[dict[str, Any]] = []
+    for diagnostic in diagnostics:
+        if diagnostic.get("code") not in _POVM_REJECTION_CODES:
+            continue
+        rejection = {
+            key: diagnostic[key]
+            for key in (
+                "code",
+                "line",
+                "col",
+                "message",
+                "requested_effect_set",
+                "state_domain",
+            )
+            if key in diagnostic
+        }
+        rejection["repaired"] = False
+        rejection["fabricated_outcome"] = False
+        rejections.append(rejection)
+    return rejections
+
+
+def _tag_local_qsem_advisories(
+    diagnostics: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Copy local QSEM obligations without mutating pure lowering output."""
+    tagged: list[dict[str, Any]] = []
+    for diagnostic in diagnostics:
+        if diagnostic.get("code") not in _LOCAL_QSEM_ADVISORY_CODES:
+            tagged.append(dict(diagnostic))
+            continue
+        tagged.append(
+            {
+                **diagnostic,
+                "severity": "advisory",
+                "phase": "quantum-semantic-lowering",
+                "blocking_scope": "finite-projection",
+            }
+        )
+    return tagged
 
 
 def _soft_physics_ir(
@@ -891,9 +964,9 @@ def _analyze_unit(
         if all(diagnostic.get("code") in deferred_codes for diagnostic in qsem_diags):
             pass
         else:
-            diags.extend(qsem_diags)
+            diags.extend(_tag_local_qsem_advisories(qsem_diags))
     else:
-        diags.extend(qsem_diags)
+        diags.extend(_tag_local_qsem_advisories(qsem_diags))
     quantum_semantic_ir = _append_dynamic_timing_regions(unit, quantum_semantic_ir)
     quantum_semantic_ir = _append_dynamic_mid_circuit_regions(
         unit, quantum_semantic_ir
@@ -905,6 +978,7 @@ def _analyze_unit(
     return CompileResult(
         unit=unit,
         diagnostics=diags,
+        povm_observation_rejections=_project_povm_observation_rejections(diags),
         checker=checker,
         symbolic_ir=symbolic_ir,
         scope_contracts=MappingProxyType(scope_contracts),

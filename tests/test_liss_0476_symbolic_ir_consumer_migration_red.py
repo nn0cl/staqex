@@ -1,8 +1,8 @@
 """LISS-0476 / WP-0107 Phase 1 Red contracts.
 
 These tests describe the remaining non-explicit ``symbolic_ir`` migration.
-They intentionally fail until the compile pipeline stops constructing a live
-Symbolic IR compatibility projection for migrated consumers.
+They intentionally fail until the derived compatibility view exposes the
+accepted authority and negative-authorization contract.
 """
 
 from __future__ import annotations
@@ -16,19 +16,41 @@ if str(REPO) not in sys.path:
 
 import compiler.staqex.pipeline as pipeline_module
 from compiler.staqex.pipeline import compile_path
+from compiler.staqex.scientific_semantic_ir import semantic_fingerprint
 
 
 ORDINARY_GATE = REPO / "tests/fixtures/semantic_consumer_migration/ordinary_gate.sqx"
 
 
-def test_non_explicit_compile_does_not_expose_symbolic_ir_authority() -> None:
+def test_non_explicit_compile_exposes_only_derived_symbolic_view() -> None:
     compiled = compile_path(ORDINARY_GATE)
 
     assert compiled.ok, compiled.diagnostics
     assert compiled.scientific_semantic_ir is not None
     assert compiled.semantic_inspection is not None
     assert compiled.execution_authority == "scientific_semantic_ir"
-    assert compiled.symbolic_ir is None
+    assert compiled.symbolic_ir is not None
+    authority = compiled.symbolic_ir["authority"]
+    assert authority["semantic_authority"] == "scientific_semantic_ir"
+    assert authority["role"] == "derived_inspection_compatibility"
+    assert authority["semantic_fingerprint"] == semantic_fingerprint(
+        compiled.scientific_semantic_ir
+    )
+
+
+def test_derived_symbolic_view_cannot_authorize_execution_or_realization() -> None:
+    compiled = compile_path(ORDINARY_GATE)
+
+    assert compiled.ok, compiled.diagnostics
+    assert compiled.symbolic_ir is not None
+    authority = compiled.symbolic_ir["authority"]
+
+    assert authority["authorization"] == {
+        "execute": False,
+        "realize": False,
+        "allocate": False,
+        "qpu_projection": False,
+    }
 
 
 def test_non_explicit_consumers_do_not_rebuild_symbolic_ir(monkeypatch) -> None:

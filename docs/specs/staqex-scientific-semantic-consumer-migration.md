@@ -413,6 +413,20 @@ source-derived operator aliases retain the stable dictionary shape without
 re-entering the direct AST builder. The explicit legacy API remains isolated
 until its own callers and projection families are migrated.
 
+#### LISS-0553 Symbolic compatibility contract reconciliation
+
+The non-explicit `symbolic_ir` field may remain during the bounded migration
+only as a derived, diagnostic-only compatibility view. `ScientificSemanticIR`
+and `SemanticInspectionResult` remain the sole semantic and inspection
+authority. The view must preserve compile-owned source identity and semantic
+fingerprint, must not call `build_symbolic_ir(unit)` or walk the AST for
+meaning, and must contain no executable plan, finiteization, allocation, QPU
+artifact, or collapse record. The old absence assertion is therefore
+superseded narrowly by positive authority/provenance and negative-artifact
+coverage; final field removal requires a separate consumer inventory and
+architecture decision. See [ADR 0221](../architecture/adr/0221-symbolic-compatibility-view-authority.md)
+and [LISS-0553](../issues/LISS-0553-symbolic-compatibility-contract-reconciliation.md).
+
 #### LISS-0501 QASM fallback retirement proof
 
 The next QASM migration retires the direct AST fallback branch from the

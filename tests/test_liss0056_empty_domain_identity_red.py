@@ -35,9 +35,11 @@ def _program(operator: str, *, register: int | None = None) -> str:
 package t
 pub fn main() -> Unit {{
 {register_decl}    Operator H = {operator}
+    Energy scale = 1.0.eV to J
+    Time dt = 0.1.fs
+    Operator U = exp(-i * (scale * H) * dt / hbar)
     State psi = |0>
-    State psi = |0>
-    State out = Evolve {{ psi under H for 0.1 using Suzuki(order = 2, steps = 1) }}.run()
+    State out = Evolve() {{ U * psi }}.run()
     Measure out
 }}
 """

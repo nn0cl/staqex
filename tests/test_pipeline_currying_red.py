@@ -22,7 +22,6 @@ def test_pipeline_is_left_associative_and_preserves_state() -> None:
         package t
         pub fn main() -> Unit {
             State psi = Dirac(0)
-            State psi = |0>
             State result = psi |> phase(0.5) |> phase(0.25)
             Measure result
         }

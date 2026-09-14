@@ -493,6 +493,18 @@ terminal measurement, invalid or incomplete effects are rejected rather than
 repaired, and unsupported targets retain the original POVM intent. LISS-0084
 remains authoritative for effect representation and execution mathematics.
 
+#### LISS-0556 rejection-evidence projection amendment
+
+When a terminal POVM request is rejected, the compiler result exposes a
+`povm_observation_rejections` collection derived from the canonical diagnostic.
+Each record preserves the rejection `code`, source `line`/`col` and `message`,
+the `requested_effect_set`, and the `state_domain`; it also states
+`repaired=false` and `fabricated_outcome=false`. A rejection record is
+evidence only: it contains no sampled outcome, post-state, finite target, or
+provider artifact. This projection does not evaluate effect matrices or
+repair a domain mismatch, and it does not alter valid computational-basis
+measurement behavior.
+
 ### 5.6 LISS-0483 cross-feature conformance matrix
 
 Conformance is a deterministic proof ledger over accepted source behavior. Each

@@ -7,6 +7,103 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-14
+- Class: compatibility-authority-boundary
+- Pattern: an old absence assertion can mistake a derived compatibility payload
+  for a second semantic authority after a canonical IR migration.
+- What later design or implementation must do: supersede such assertions only
+  with explicit authority/provenance and negative-artifact checks; retain the
+  compatibility surface only while its diagnostic-only role is machine-
+  checkable and its removal has a separate consumer decision.
+- Source issue or work plan (adopter's own ID, if any): LISS-0553 / WP-0161
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-13
+- Class: diagnostic-scope-versus-readiness
+- Pattern: non-hard target-evidence diagnostics may coexist with local compile
+  success, but local success is not proof that a downstream artifact producer
+  conservatively projected every semantic operation.
+- What later design or implementation must do: classify diagnostic blocking
+  scope explicitly and verify downstream operation conservation plus an empty
+  rejection envelope; never use a local compile boolean as target
+  authorization.
+- Source issue or work plan (adopter's own ID, if any): LISS-0552 / WP-0161
+- Status: applied in Phase 0 design, Phase 1 Red, Phase 2 Green, and Phase 3
+  Refactor; the tests and full blocking suite separately prove local
+  acceptance, diagnostic scope, semantic-operation conservation, and target
+  artifact rejection.
+
+## Lesson
+
+- Date: 2026-09-13
+- Class: quantitative-traceability
+- Pattern: a review record can conflate the number of acceptance nodes with
+  the number of changed source declarations even when the underlying diff is
+  correct.
+- What later design or implementation must do: label the unit of every count
+  in phase evidence and derive changed-line or artifact counts from the
+  committed diff before final review.
+- Source issue or work plan (adopter's own ID, if any): LISS-0551 / WP-0161
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-12
+- Class: residual-diagnostic-ownership
+- Pattern: repairing invalid test setup can expose a second, independent
+  semantic failure; forcing the original fixture issue to make every adopted
+  node Green would weaken assertions or expand implementation scope silently.
+- What later design or implementation must do: rerun the exact nodes after a
+  fixture migration, remove passing nodes from lifecycle exclusion, and move
+  each residual failure with its complete diagnostic inventory to the smallest
+  accepted successor issue.
+- Source issue or work plan (adopter's own ID, if any): LISS-0551 / WP-0161
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-12
+- Class: red-contract-reuse
+- Pattern: a lifecycle-managed failing node may already provide the complete
+  Phase 1 acceptance contract; adding a second test creates competing authority
+  without improving evidence.
+- What later design or implementation must do: adopt and review the existing
+  exact node when its assertion is still authoritative, then limit Green to the
+  setup or implementation gap identified by that node.
+- Source issue or work plan (adopter's own ID, if any): LISS-0551 / WP-0161
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-12
+- Class: test-lifecycle-ownership
+- Pattern: a test-infrastructure issue cannot both finish and remain the open
+  owner of unrelated feature-level active-Red exclusions.
+- What later design or implementation must do: assign every active Red to the
+  smallest feature-remediation issue before final infrastructure review; the
+  lifecycle mechanism validates ownership but does not become a permanent
+  umbrella owner.
+- Source issue or work plan (adopter's own ID, if any): LISS-0543 / WP-0161
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-11
+- Class: compatibility-baseline
+- Pattern: a structural-refactor baseline can miss reachable imports when it
+  substitutes a hand-selected notion of public symbols for the language's
+  actual export rules.
+- What later design or implementation must do: derive compatibility manifests
+  from the runtime's real export behavior (`__all__` when present, otherwise
+  every non-underscore module name in Python), then preserve intentional
+  retirement as a separately approved migration.
+- Source issue or work plan (adopter's own ID, if any): LISS-0543 / WP-0160
+- Status: applied
+
+## Lesson
+
 - Date: 2026-09-10
 - Class: boundary-completeness
 - Pattern: fake-port tests can pass after a port extension while a concrete

@@ -14,6 +14,8 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from compiler.staqex.codegen_qasm import OpenQASM3Generator
+import compiler.staqex.backend.qasm.emitter as emitter_module
+from compiler.staqex.backend.qasm.emitter import QASM3Emitter
 from compiler.staqex.lexer import Lexer
 from compiler.staqex.parser import Parser
 from compiler.staqex.pipeline import compile_path
@@ -68,7 +70,28 @@ def test_missing_canonical_projection_fails_closed_before_qasm_artifact() -> Non
     unit = Parser(tokens).parse()
 
     assert lex_diagnostics == []
-    emitted = OpenQASM3Generator(route=False).generate_detailed(unit)
+    emitted = QASM3Emitter(route=False).emit_unit(unit)
+
+    assert not emitted.ok
+    assert emitted.circuit is not None
+    assert emitted.circuit.reject_code == "E_QPU_CANONICAL_PROVENANCE"
+    assert emitted.qasm == ""
+    assert emitted.circuit.gates == []
+    assert emitted.circuit.allocation_started is False
+
+
+def test_missing_canonical_projection_does_not_rebuild_semantic_ir(monkeypatch) -> None:
+    source = ORDINARY_GATE.read_text(encoding="utf-8")
+    tokens, lex_diagnostics = Lexer(source).tokenize()
+    unit = Parser(tokens).parse()
+
+    assert lex_diagnostics == []
+
+    def fail_if_called(*_args, **_kwargs):
+        raise AssertionError("missing canonical input must not rebuild semantic IR")
+
+    monkeypatch.setattr(emitter_module, "build_scientific_semantic_ir", fail_if_called)
+    emitted = QASM3Emitter(route=False).emit_unit(unit)
 
     assert not emitted.ok
     assert emitted.circuit is not None

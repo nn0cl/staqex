@@ -1057,6 +1057,22 @@ def _build_qpu_projection(unit: Any, core: ScientificSemanticIR) -> CanonicalQpu
             ("source_node_id", source_node_id(span)),
         )
 
+    for stmt in unit.main.body.stmts:
+        if not (
+            isinstance(stmt, StateBind)
+            and isinstance(stmt.expr, Call)
+            and isinstance(stmt.expr.callee, Var)
+            and stmt.expr.callee.name in {"inner", "outer"}
+        ):
+            continue
+        operations.append(
+            CanonicalQpuOperation(
+                kind="unsupported",
+                provenance=provenance(stmt.expr.span, stmt.expr.callee.name),
+                source_node_id=source_node_id(stmt.expr.span),
+            )
+        )
+
     operations.extend(
         _finite_evolution_operations(
             unit,
@@ -1291,6 +1307,11 @@ def _build_qpu_projection(unit: Any, core: ScientificSemanticIR) -> CanonicalQpu
         projection_error = (
             "E_QPU_RESOURCE_UNSUPPORTED: canonical QPU projection exceeds "
             f"{QPU_PROJECTION_MAX_QUBITS} logical qubits"
+        )
+    elif any(operation.kind == "unsupported" for operation in operations):
+        projection_error = (
+            "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE:"
+            "semantic_operation_projection_unavailable"
         )
     elif any(node.kind == "WhenExpr" for node in core.nodes):
         projection_error = (

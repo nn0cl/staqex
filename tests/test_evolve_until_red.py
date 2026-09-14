@@ -28,7 +28,6 @@ def test_bounded_evolve_until_is_a_state_preserving_expression() -> None:
             Operator H = scale * X
             Operator U = exp(-i * H * dt / hbar)
             State result = Evolve() { U * psi until converged(psi) max 64 }.run()
-            State psi = |0>
             Measure result
         }
         """
