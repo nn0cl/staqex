@@ -36,7 +36,10 @@ def run() -> list[CaseResult]:
         compiled = compile_source(PORTABLE)
         if compiled.unit is None:
             raise AssertionFailure("PARSE_ERROR", str(compiled.diagnostics))
-        emitted = emit_openqasm3(compiled.unit)
+        emitted = emit_openqasm3(
+            compiled.unit,
+            semantic_ir=compiled.scientific_semantic_ir,
+        )
         if emitted.ok:
             raise AssertionFailure("PARSE_ERROR", "Coin/Mix must not emit a unitary fallback")
         if emitted.qasm:

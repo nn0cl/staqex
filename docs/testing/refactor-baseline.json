@@ -36,12 +36,18 @@
       "evidence": {
         "diagnostics": [
           {
+            "blocking_scope": "finite-projection",
             "code": "QSEM_FINITE_EVIDENCE_MISSING",
-            "message": "finite carrier evidence is required for Semantic lowering"
+            "message": "finite carrier evidence is required for Semantic lowering",
+            "phase": "quantum-semantic-lowering",
+            "severity": "advisory"
           },
           {
+            "blocking_scope": "finite-projection",
             "code": "QSEM_APPROXIMATION_OBLIGATION_MISSING",
-            "message": "non-exact lowering requires an explicit approximation obligation"
+            "message": "non-exact lowering requires an explicit approximation obligation",
+            "phase": "quantum-semantic-lowering",
+            "severity": "advisory"
           }
         ],
         "measurements": [
@@ -62,7 +68,7 @@
         "stdout": "42\n"
       },
       "kind": "runtime",
-      "sha256": "sha256:9cd451c8d65cd72ae4adb0769ebfcc008f501267638127a3a47e9e75706e0d22",
+      "sha256": "sha256:2d6276d48afcdb424b5dc196a6f34b5cb5de75def94a37b86058aa204a1fcfbd",
       "status": "accepted"
     }
   },
@@ -308,6 +314,7 @@
       "compile_path",
       "compile_source",
       "dataclass",
+      "field",
       "load_module_graph",
       "lower_discretization_bridges",
       "lower_hir_to_physics_ir",

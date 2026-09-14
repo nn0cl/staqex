@@ -40,7 +40,12 @@ def run() -> list[CaseResult]:
     try:
         compiled = compile_source(BELL)
         assert compiled.unit is not None
-        emitted = emit_openqasm3(compiled.unit, topology="linear", route=True)
+        emitted = emit_openqasm3(
+            compiled.unit,
+            semantic_ir=compiled.scientific_semantic_ir,
+            topology="linear",
+            route=True,
+        )
         if emitted.ok or emitted.qasm:
             raise AssertionFailure("PARSE_ERROR", "Coin/Mix emitted QASM")
         if emitted.circuit is None:
@@ -77,7 +82,10 @@ def run() -> list[CaseResult]:
     # The QASM consumer must not use the retired AST gate mapping for Coin/Mix.
     try:
         compiled = compile_source(BELL)
-        em = QASM3Emitter(route=False).emit_unit(compiled.unit)
+        em = QASM3Emitter(route=False).emit_unit(
+            compiled.unit,
+            semantic_ir=compiled.scientific_semantic_ir,
+        )
         if em.ok or em.qasm or em.circuit is None:
             raise AssertionFailure("PARSE_ERROR", "Coin/Mix emitted a gate fallback")
         if em.circuit.reject_code != "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE":
