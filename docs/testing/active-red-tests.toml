@@ -1,3 +1,2 @@
 version = 1
-
-# LISS-0454 Phase 2 Green passed both previously active Red nodes.
+# LISS-0523 Phase 2 Green passed all previously active Red nodes.

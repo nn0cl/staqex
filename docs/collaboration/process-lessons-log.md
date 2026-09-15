@@ -8,6 +8,20 @@ Record meta-level patterns only. No session transcripts.
 ## Lesson
 
 - Date: 2026-09-16
+- Class: boundary-completeness
+- Pattern: external geospatial and sensor standards can carry enough familiar
+  vocabulary to tempt an adapter into inferring domain decisions such as road
+  passability or execution readiness.
+- What later design or implementation must do: freeze one versioned mapping
+  profile with source identity, unknown/invalid handling, and explicit negative
+  non-inference tests; keep external vocabulary in Metadata Graph evidence and
+  route execution meaning through the accepted Semantic IR/use-case boundary.
+- Source issue or work plan (adopter's own ID, if any): LISS-0523 / WP-0140
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-16
 - Class: contract-trace
 - Pattern: numerical optimizer behavior can appear equivalent while silently
   deleting small but nonzero coefficients or admitting non-finite values into
