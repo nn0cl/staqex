@@ -1484,7 +1484,7 @@ class TypeChecker:
             return self._is_classical_coefficient_expr(expr.expr)
         return False
 
-    def _check_operator_expr(self, expr: OpExpr) -> None:
+    def _legacy_check_operator(self, expr: OpExpr) -> None:
         """Check a symbolic operator tree without expanding or executing it."""
         if isinstance(expr, OpBinder):
             domain_ty: Ty | None = None
@@ -2724,7 +2724,7 @@ class TypeChecker:
                         }
                     )
 
-    def _check_function_body(
+    def _legacy_check_declaration(
         self,
         fun: FunDecl,
         base_env: dict[str, Ty],
@@ -3018,7 +3018,7 @@ class TypeChecker:
         self.typed[id(expr)] = ty
         return ty
 
-    def _infer_inner(self, expr: Expr) -> Ty:
+    def _legacy_infer_expression(self, expr: Expr) -> Ty:
         if isinstance(expr, LitInt):
             return Ty("State", "Int", DIMLESS)
         if isinstance(expr, LitFloat):
@@ -3944,7 +3944,7 @@ class TypeChecker:
             return right.unit
         return None
 
-    def _infer_call(self, expr: Call) -> Ty:
+    def _legacy_infer_call(self, expr: Call) -> Ty:
         # Math.sin(x) / sin(x) / cis(theta): argument must be dimensionless
         op_name = _call_op_name(expr)
         self._check_call_effects(expr)
@@ -4381,7 +4381,7 @@ class TypeChecker:
             return Ty("Register", "Qubit", DIMLESS)
         return Ty("State", "Any", DIMLESS)
 
-    def _infer_evolve(self, expr: EvolveExpr) -> Ty:
+    def _legacy_check_evolution(self, expr: EvolveExpr) -> Ty:
         if expr.explicit_transform:
             if expr.body is None:
                 self.diagnostics.append(
@@ -4609,6 +4609,16 @@ class TypeChecker:
                 }
             )
         self._infer(expr.until_predicate)
+
+
+# Compatibility aliases keep existing callers stable while each typechecking
+# family moves in its own bounded slice. Assignment avoids duplicate method
+# definitions in the public facade.
+TypeChecker._check_operator_expr = TypeChecker._legacy_check_operator
+TypeChecker._infer_inner = TypeChecker._legacy_infer_expression
+TypeChecker._infer_call = TypeChecker._legacy_infer_call
+TypeChecker._infer_evolve = TypeChecker._legacy_check_evolution
+TypeChecker._check_function_body = TypeChecker._legacy_check_declaration
 
 
 def _call_op_name(expr: Call) -> str:

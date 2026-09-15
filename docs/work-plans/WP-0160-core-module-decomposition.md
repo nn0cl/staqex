@@ -25,7 +25,7 @@ units while preserving all externally observable behavior and public imports.
 | LISS-0543 | done | L | L | AIP-0543-001 | - | 0544–0550 | `codex/liss-0543-red` |
 | LISS-0544 | done | L | L | AIP-0544-001 | 0543 | 0545 | `refactor/evaluator-orchestration` |
 | LISS-0545 | done | XL | XL | AIP-0545-001 | 0544 | 0550 | `refactor/evaluator-domain-families` |
-| LISS-0546 | proposed | XL | XL | AIP-0546-001 | 0543 | 0550 | `refactor/typechecker-families` |
+| LISS-0546 | done | XL | XL | AIP-0546-001 | 0543 | 0550 | `refactor/typechecker-families` |
 | LISS-0547 | proposed | XL | XL | AIP-0547-001 | 0543 | 0550 | `refactor/parser-families` |
 | LISS-0548 | proposed | L | L | AIP-0548-001 | 0543 | 0549, 0550 | `refactor/scientific-semantic-ir` |
 | LISS-0549 | proposed | L | L | AIP-0549-001 | 0543, 0548 | 0550 | `refactor/qasm-lowering` |
