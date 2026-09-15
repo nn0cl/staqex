@@ -510,7 +510,7 @@ class Parser:
         target = self._expect_ident_like()
         return H1RealizeDecl(target=target, span=start)
 
-    def _h1_scope_decl(self) -> TheoryDecl | ExperimentDecl:
+    def _legacy_parse_scientific_scope(self) -> TheoryDecl | ExperimentDecl:
         """Parse the source-preserving H1 declaration skeleton."""
 
         start = self._span()
@@ -1139,7 +1139,7 @@ class Parser:
             or self._check(TokenKind.FOREACH)
         )
 
-    def _skip_until_toplevel_resync(self) -> None:
+    def _legacy_recover_top_level(self) -> None:
         """Recover after TOPLEVEL_EXECUTION_ERROR: skip one statement-ish chunk."""
         # Prefer consuming a well-formed stmt so diagnostics stay localized.
         try:
@@ -1735,7 +1735,7 @@ class Parser:
         expression = self._op_expression() if operator_return else self._expression()
         return ReturnStmt(expr=expression, span=sp)
 
-    def _stmt(self):
+    def _legacy_parse_statement(self):
         if self._check(TokenKind.FOREACH):
             return self._foreach_stmt()
         if self._check(TokenKind.DYNAMIC):
@@ -2500,7 +2500,7 @@ class Parser:
                 break
         return expr
 
-    def _primary(self):
+    def _legacy_parse_expression(self):
         sp = self._span()
         tok = self._peek()
 
@@ -3368,7 +3368,7 @@ class Parser:
             expr = OpCall(name="adjoint", args=[expr], span=expr.span)
         return expr
 
-    def _op_primary(self):
+    def _legacy_parse_operator_expression(self):
         sp = self._span()
         if self._match(TokenKind.LPAREN):
             expr = self._op_expression()
@@ -3667,3 +3667,13 @@ class Parser:
             )
             guard = None
         return body
+
+
+# Compatibility aliases preserve existing Parser consumers while grammar
+# families migrate one bounded unit at a time. Assignment avoids duplicate
+# method definitions in the public facade.
+Parser._primary = Parser._legacy_parse_expression
+Parser._stmt = Parser._legacy_parse_statement
+Parser._op_primary = Parser._legacy_parse_operator_expression
+Parser._h1_scope_decl = Parser._legacy_parse_scientific_scope
+Parser._skip_until_toplevel_resync = Parser._legacy_recover_top_level
