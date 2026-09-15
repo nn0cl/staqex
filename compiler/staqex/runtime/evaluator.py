@@ -6808,6 +6808,14 @@ class Evaluator:
         )
 
 
+# Compatibility aliases preserve existing consumers while each domain-family
+# body is migrated in its own bounded slice. Assignment avoids duplicate
+# method definitions in the public facade.
+Evaluator._eval_value = Evaluator._legacy_evaluate_value
+Evaluator._bind_call = Evaluator._legacy_bind_call
+Evaluator._resolve_operator_expr = Evaluator._legacy_resolve_operator
+
+
 def _is_numeric(value: Any) -> bool:
     try:
         float(value)

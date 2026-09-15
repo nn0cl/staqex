@@ -50,7 +50,13 @@ class EvaluatorContext(Protocol):
 
     def _evaluate_value(self, expr: Any, assign: dict[str, Any]) -> Any: ...
 
-    def _resolve_operator(self, expr: Any) -> Any: ...
+    def _resolve_operator(
+        self,
+        expr: Any,
+        *,
+        objects: dict[str, Any] | None = None,
+        extra_arrays: dict[str, Any] | None = None,
+    ) -> Any: ...
 
     def _execute_evolution(
         self, joint: Any, names: list[str], expr: Any
