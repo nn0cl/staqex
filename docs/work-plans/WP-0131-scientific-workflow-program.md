@@ -10,7 +10,7 @@
 | Implementation permission | none; tests/production/provider/branch/commit/PR/mergeは今回実行しない |
 | Depends on | none for design; child implementation uses explicit dependency DAG below |
 | Inventory count | 28 total records: this parent WP/LISS pair plus 27 child WP/LISS pairs |
-| Current Next Issue | WP-0158/LISS-0541 Phase 0 acceptance/profile review; QUBO is WP-0137/LISS-0520 |
+| Current Next Issue | WP-0141/LISS-0524 Phase 0 acceptance/profile review; broader profiles remain separately gated |
 | Review | [independent correction review record](../collaboration/reviews/2026-09-08-scientific-workflow-design-review.md) |
 
 ## [DESIGN CHECK]
@@ -62,19 +62,20 @@ Completion claimは二層に分ける。個別のclassical-only Scientific Workf
 ## WP / LISS dependency inventory
 
 各リンク先がScope / Out of scope / ADR / 受入 / 検証 / risk / 完了条件 / Luna phasesの詳細を持つ。
-すべて新規提案であり、下表のstatusは実装着手状態を意味しない。
+下表は設計時点の計画と、その後の承認済み完了状態を併記する。`proposed`は未着手、
+`complete`/`done`は当該bounded sliceの完了を示し、親program全体の完成を意味しない。
 
 | WP / LISS | Scope title | Acceptance | Depends on | Status |
 |---|---|---|---|---|
-| [WP-0132](WP-0132-scientific-metadata-graph.md) / [LISS-0515](../issues/LISS-0515-scientific-metadata-graph.md) | 科学Metadata Graphの同一性と観測信頼 | G01/G02/G03 | none | proposed |
-| [WP-0133](WP-0133-scientific-typed-bindings.md) / [LISS-0516](../issues/LISS-0516-scientific-typed-bindings.md) | 意味を保持する型付き古典入力とdecode | B01 | WP-0132 | proposed |
-| [WP-0134](WP-0134-s02-measured-assay-profile.md) / [LISS-0517](../issues/LISS-0517-s02-measured-assay-profile.md) | S02実測assay取込とcuration | D01 | WP-0132 | proposed |
-| [WP-0135](WP-0135-s02-leakage-safe-model.md) / [LISS-0518](../issues/LISS-0518-s02-leakage-safe-model.md) | S02 splitと予測Model検証 | D02 | WP-0134 | proposed |
-| [WP-0136](WP-0136-s02-classical-batch-baseline.md) / [LISS-0519](../issues/LISS-0519-s02-classical-batch-baseline.md) | S02古典batch目的とfeasibility oracle | D03 | WP-0135 | proposed |
+| [WP-0132](WP-0132-scientific-metadata-graph.md) / [LISS-0515](../issues/LISS-0515-scientific-metadata-graph.md) | 科学Metadata Graphの同一性と観測信頼 | G01/G02/G03 | none | complete |
+| [WP-0133](WP-0133-scientific-typed-bindings.md) / [LISS-0516](../issues/LISS-0516-scientific-typed-bindings.md) | 意味を保持する型付き古典入力とdecode | B01 | WP-0132 | complete |
+| [WP-0134](WP-0134-s02-measured-assay-profile.md) / [LISS-0517](../issues/LISS-0517-s02-measured-assay-profile.md) | S02実測assay取込とcuration | D01 | WP-0132 | complete |
+| [WP-0135](WP-0135-s02-leakage-safe-model.md) / [LISS-0518](../issues/LISS-0518-s02-leakage-safe-model.md) | S02 splitと予測Model検証 | D02 | WP-0134 | complete |
+| [WP-0136](WP-0136-s02-classical-batch-baseline.md) / [LISS-0519](../issues/LISS-0519-s02-classical-batch-baseline.md) | S02古典batch目的とfeasibility oracle | D03 | WP-0135 | complete |
 | [WP-0137](WP-0137-scientific-quantum-projection.md) / [LISS-0520](../issues/LISS-0520-scientific-quantum-projection.md) | 離散問題からQuantum Projectionの変換契約 | Q01 | WP-0133 | complete (bounded Q01 artifact/runtime unit) |
-| [WP-0138](WP-0138-scientific-workflow-lifecycle.md) / [LISS-0521](../issues/LISS-0521-scientific-workflow-lifecycle.md) | 期限・承認・再計画のWorkflow契約 | W01 | WP-0132 | proposed |
+| [WP-0138](WP-0138-scientific-workflow-lifecycle.md) / [LISS-0521](../issues/LISS-0521-scientific-workflow-lifecycle.md) | 期限・承認・再計画のWorkflow契約 | W01 | WP-0132 | done |
 | [WP-0139](WP-0139-s02-assay-batch-cycle.md) / [LISS-0522](../issues/LISS-0522-s02-assay-batch-cycle.md) | S02次回assay batchの閉ループ | D04 | WP-0133, WP-0136, WP-0138, WP-0151 | complete |
-| [WP-0140](WP-0140-geographic-sensor-adapter-profile.md) / [LISS-0523](../issues/LISS-0523-geographic-sensor-adapter-profile.md) | CityGML・graph・SOSA/SensorThings接続 | X01 | WP-0132 | proposed |
+| [WP-0140](WP-0140-geographic-sensor-adapter-profile.md) / [LISS-0523](../issues/LISS-0523-geographic-sensor-adapter-profile.md) | CityGML・graph・SOSA/SensorThings接続 | X01 | WP-0132 | done |
 | [WP-0141](WP-0141-s01-rolling-plan-validation.md) / [LISS-0524](../issues/LISS-0524-s01-rolling-plan-validation.md) | S01安全・公平・資源のrolling検証 | S01 | WP-0138, WP-0140, WP-0151 | proposed |
 | [WP-0142](WP-0142-astronomy-observation-profile.md) / [LISS-0525](../issues/LISS-0525-astronomy-observation-profile.md) | ObsCore/VOTable天文観測縦切り | A01 | WP-0132, WP-0133 | proposed |
 | [WP-0143](WP-0143-continuous-field-semantic-contract.md) / [LISS-0526](../issues/LISS-0526-continuous-field-semantic-contract.md) | 連続場・tensor・偏微分・IC/BCのsource契約 | F01 | WP-0133 | proposed |

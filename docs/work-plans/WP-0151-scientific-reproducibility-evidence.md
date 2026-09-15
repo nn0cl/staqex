@@ -13,7 +13,7 @@
 | Architecture | ADR 0217-A/B/C Proposed; accepted ADRs 0210/0211/0212 remain prior constraints |
 | Acceptance | [Scientific Workflow specification](../specs/staqex-scientific-workflow-acceptance.md), E01 |
 | Implementation permission | no; no Phase 1 approval; Unit A only after typed approval |
-| Current Next Issue | WP-0139 / LISS-0522 Phase 1 Red after D04 dependency review |
+| Current Next Issue | WP-0141 / LISS-0524 Phase 0 acceptance/profile review |
 
 ## Scope
 
