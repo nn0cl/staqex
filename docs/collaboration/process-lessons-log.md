@@ -219,6 +219,19 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-15
+- Class: decomposition-boundary
+- Pattern: a public-facade decomposition can satisfy ownership and dependency
+  contracts while retaining a large legacy implementation bridge; describing
+  that bridge as a complete migration would create false completion evidence.
+- What later design or implementation must do: name every retained bridge
+  explicitly, verify its public compatibility and authority direction, and
+  record body-by-body migration as successor scope with its own snapshots.
+- Source issue or work plan (adopter's own ID, if any): LISS-0549 / WP-0160
+- Status: applied
+
+## Lesson
+
 - Date: 2026-09-07
 - Class: acceptance-boundary
 - Pattern: a fail-closed semantic-family check can overmatch a valid neighboring

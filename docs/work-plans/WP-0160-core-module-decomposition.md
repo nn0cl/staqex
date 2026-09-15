@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | in progress — LISS-0543 through LISS-0547 done |
+| Status | in progress — LISS-0543 through LISS-0549 done |
 | Architecture approval | Adjudicator approved 2026-09-11 |
 | Implementation permission | LISS-0543 Phase 3 granted 2026-09-11 |
 
@@ -28,7 +28,7 @@ units while preserving all externally observable behavior and public imports.
 | LISS-0546 | done | XL | XL | AIP-0546-001 | 0543 | 0550 | `refactor/typechecker-families` |
 | LISS-0547 | done | XL | XL | AIP-0547-001 | 0543 | 0550 | `refactor/parser-families` |
 | LISS-0548 | done | L | L | AIP-0548-001 | 0543 | 0549, 0550 | `refactor/scientific-semantic-ir` |
-| LISS-0549 | proposed | L | L | AIP-0549-001 | 0543, 0548 | 0550 | `refactor/qasm-lowering` |
+| LISS-0549 | done | L | L | AIP-0549-001 | 0543, 0548 | 0550 | `refactor/qasm-lowering` |
 | LISS-0550 | proposed | XL | XL | AIP-0550-001 | 0544–0549 | - | `refactor/core-module-budget` |
 
 ## AI Planning Record
@@ -68,11 +68,11 @@ units while preserving all externally observable behavior and public imports.
 
 ## Current Next Issue
 
-- Issue: LISS-0549
-- Reason it is unblocked: LISS-0548 completed the Scientific Semantic IR
-  facade and projection boundary; QASM lowering is the next dependency-
-  directed slice.
-- Adjudicator approval needed: `LISS-0549 Phase 0 acceptance 承認`.
+- Issue: LISS-0550
+- Reason it is unblocked: LISS-0549 completed the QASM lowering facade and
+  family boundaries; the remaining oversized DTO/IR/orchestration modules are
+  now the final decomposition slice.
+- Adjudicator approval needed: `LISS-0550 Phase 0 acceptance 承認`.
 
 ## Risks
 
@@ -92,6 +92,7 @@ diff checks per issue.
 
 ## Process Review
 
-- Outcome: not yet
-- Lesson written: not applicable yet
+- Outcome: LISS-0543 through LISS-0549 completed; no operating-contract
+  deviation or operational problem found for this completed slice.
+- Lesson written: decomposition-boundary lesson applied
 - Template-feedback path: none
