@@ -193,14 +193,25 @@ class EvalResult:
     evolution_provenance: dict[str, Any] | None = None
     execution_authority: str | None = None
     source_id: str = "<memory>"
+    authority_evidence: "CanonicalExecutionEvidence | None" = None
+
+
+@dataclass(frozen=True, slots=True)
+class CanonicalExecutionEvidence:
+    """Immutable, non-authoritative observation of compile-owned execution input."""
+
+    semantic_ir: "ScientificSemanticIR"
+    execution_authority: str
+    source_id: str
+    source_fingerprint: str
 
 
 class KernelError(Exception):
     pass
 
 
-class KernelDiagnosticError(KernelError):
-    """Runtime failure with a stable diagnostic code (ADR 0079)."""
+class KernelDiagnosticError(KernelError, ValueError):
+    """Runtime failure with a stable code and legacy ValueError compatibility."""
 
     def __init__(
         self,
@@ -328,6 +339,13 @@ class Evaluator:
         self.mixed_state_measured = False
         self.execution_lane: str | None = None
         self.grid_hamiltonians = dict(grid_hamiltonians or {})
+        self._canonical_semantic_ir: ScientificSemanticIR | None = None
+
+    @property
+    def semantic_ir(self) -> ScientificSemanticIR | None:
+        """Read-only compatibility observation; never an authority setter."""
+
+        return self._canonical_semantic_ir
 
     def _execute_unit(self, unit: CompilationUnit, *, stdout: TextIO | None = None) -> EvalResult:
         """Run evaluator mechanics without selecting a public authority lane."""
@@ -347,13 +365,25 @@ class Evaluator:
     ) -> EvalResult:
         """Run one unit after validating its compile-owned semantic authority."""
 
+        # Do not leave a previous successful authority visible after a rejected
+        # invocation; the observation always describes the current request.
+        self._canonical_semantic_ir = None
         _validate_canonical_semantic_ir(semantic_ir)
+        self._canonical_semantic_ir = semantic_ir
         from ..scientific_semantic_ir import build_runtime_execution_plan
 
         plan = build_runtime_execution_plan(semantic_ir)
         result = dispatch_runtime_plan(self, plan, unit, stdout=stdout)
+        from ..scientific_semantic_ir import semantic_fingerprint
+
         result.execution_authority = "scientific_semantic_ir"
         result.source_id = semantic_ir.source_id
+        result.authority_evidence = CanonicalExecutionEvidence(
+            semantic_ir=semantic_ir,
+            execution_authority="scientific_semantic_ir",
+            source_id=semantic_ir.source_id,
+            source_fingerprint=semantic_fingerprint(semantic_ir),
+        )
         return result
 
     def _execute_pure_transformation_plan(

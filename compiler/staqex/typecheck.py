@@ -4069,7 +4069,7 @@ class TypeChecker:
                 self._infer(arg)
             self.diagnostics.append(
                 {
-                    "code": "OBSERVATION_CAPABILITY_UNSUPPORTED",
+                    "code": "OBSERVATION_UNSUPPORTED",
                     "line": expr.span.line,
                     "col": expr.span.col,
                     "message": (

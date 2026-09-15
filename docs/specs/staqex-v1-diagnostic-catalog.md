@@ -311,6 +311,7 @@ integration.
 | Code | Meaning | ADR |
 |---|---|---|
 | `OBSERVATION_REQUEST_ERROR` | Invalid observation request | 0089 |
+| `OBSERVATION_UNSUPPORTED` | Observation capability is unsupported in the selected lane | 0189, 0226 |
 | `OBSERVATION_TARGET_LANE_ERROR` | Wrong execution lane | 0089 |
 | `OBSERVATION_EXECUTION_CONTEXT_ERROR` | Invalid execution context | 0089 |
 | `OBSERVATION_PROGRAM_ID_ERROR` | Invalid program id | 0089 |

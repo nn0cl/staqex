@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | in progress — LISS-0551–0556 done; LISS-0557 is next |
-| Phase | LISS-0556 done / LISS-0557 phase-0-design |
+| Status | done — LISS-0551–0559 completed |
+| Phase | done |
 | Parent trigger | LISS-0543 completion blocker |
 | Canonical specification | [Active-Red remediation](../specs/staqex-active-red-remediation.md) |
 | Architecture approval | Adjudicator approved 2026-09-12 |
@@ -33,9 +33,9 @@ each exclusion through independently approved work.
 | LISS-0554 QASM canonical fail-closed | done — final review approved 2026-09-14 | M / M | AIP-0554-001 | - | - | `codex/liss-0554-qasm-canonical-input` |
 | LISS-0555 interfer node contract | done — final review approved 2026-09-14 | M / M | AIP-0555-001 | - | - | `codex/liss-0555-interfer-contract` |
 | LISS-0556 POVM rejection projection | done — final review approved 2026-09-14 | M / M | AIP-0556-001 | - | - | `codex/liss-0556-povm-rejection` |
-| LISS-0557 evaluator authority evidence | proposed | M / M | AIP-0557-001 | - | - | `codex/liss-0557-evaluator-authority` |
-| LISS-0558 observation diagnostic name | proposed | S / S | - | - | - | `codex/liss-0558-observation-diagnostic` |
-| LISS-0559 S02 assay DTO | proposed | M / M | AIP-0559-001 | - | - | `codex/liss-0559-s02-assay-dto` |
+| LISS-0557 evaluator authority evidence | done — final review approved 2026-09-16 | M / M | AIP-0557-001 | - | - | `codex/liss-0557-evaluator-authority` |
+| LISS-0558 observation diagnostic name | done — final review approved 2026-09-16 | S / S | - | - | - | `codex/liss-0558-observation-diagnostic` |
+| LISS-0559 S02 assay DTO | done — final review approved 2026-09-16 | M / M | AIP-0559-001 | - | - | `codex/liss-0559-s02-assay-dto` |
 
 ## AI Planning Record — AIP-WP-0161-001
 
@@ -63,10 +63,11 @@ each exclusion through independently approved work.
 
 ## Current Next Issue
 
-- Issue: LISS-0557 Phase 0 design.
-- Reason: LISS-0556 is complete and its active-Red exclusion has been removed;
-  the next remaining node is evaluator semantic-authority evidence.
-- Approval needed next: `LISS-0557 Phase 0 acceptance / Architecture review`.
+- Issue: none within WP-0161.
+- Reason: LISS-0551–LISS-0559 are complete and all Active-Red exclusions owned
+  by this work plan have been removed.
+- Approval needed next: none; a new task requires a separate scope/design
+  intake.
 
 ## Risks
 
@@ -85,7 +86,8 @@ every issue. Test changes require explicit replacement evidence in review.
 
 ## Process Review
 
-- Outcome: not yet
+- Outcome: WP-0161 completed after LISS-0559 final review; no operating-contract
+  deviation or operational problem found.
 - Lesson written: existing status-drift, authority-boundary, and
   acceptance-boundary lessons applied
 - Template-feedback path: none

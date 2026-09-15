@@ -27,8 +27,37 @@ class AssayDiagnostic:
     message: str
 
 
-def _immutable_record(record: Mapping[str, Any]) -> Mapping[str, Any]:
-    return MappingProxyType(dict(record))
+@dataclass(frozen=True, slots=True)
+class AssayRecord:
+    """Immutable typed identity and measurement fields for one assay record."""
+
+    compound_id: str
+    target_id: str
+    assay_id: str
+    activity_id: str
+    endpoint: str
+    relation: str
+    value: Any
+    unit: str
+    replicate_id: str
+    source_id: str
+
+    @classmethod
+    def from_mapping(cls, record: Mapping[str, Any]) -> "AssayRecord":
+        """Copy the approved fixture shape into a typed immutable record."""
+
+        return cls(
+            compound_id=str(record["compound_id"]),
+            target_id=str(record["target_id"]),
+            assay_id=str(record["assay_id"]),
+            activity_id=str(record["activity_id"]),
+            endpoint=str(record["endpoint"]),
+            relation=str(record["relation"]),
+            value=record["value"],
+            unit=str(record["unit"]),
+            replicate_id=str(record["replicate_id"]),
+            source_id=str(record["source_id"]),
+        )
 
 
 @dataclass(frozen=True)
@@ -36,17 +65,22 @@ class FrozenAssaySnapshot:
     """Raw source records and provenance, retained without mutation."""
 
     metadata: Mapping[str, Any]
-    records: tuple[Mapping[str, Any], ...]
+    records: tuple[AssayRecord | Mapping[str, Any], ...]
     revision: int = 1
 
-def __post_init__(self) -> None:
+    def __post_init__(self) -> None:
         if isinstance(self.revision, bool) or self.revision < 1:
             raise ValueError("snapshot revision must be positive")
         object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
         object.__setattr__(
             self,
             "records",
-            tuple(_immutable_record(record) for record in self.records),
+            tuple(
+                record
+                if isinstance(record, AssayRecord)
+                else AssayRecord.from_mapping(record)
+                for record in self.records
+            ),
         )
 
 
@@ -56,7 +90,7 @@ class AssayCurationResult:
 
     status: str
     revision: int
-    records: tuple[Mapping[str, Any], ...]
+    records: tuple[AssayRecord, ...]
     raw_snapshot_id: str
     diagnostic: AssayDiagnostic | None = None
 
@@ -82,33 +116,33 @@ def _provenance_is_verified(metadata: Mapping[str, Any]) -> bool:
 
 
 def _identity_collision(
-    records: tuple[Mapping[str, Any], ...],
+    records: tuple[AssayRecord, ...],
 ) -> bool:
     identities: dict[str, set[tuple[Any, ...]]] = {}
     for record in records:
-        activity_id = record.get("activity_id")
+        activity_id = record.activity_id
         identity = (
-            record.get("compound_id"),
-            record.get("target_id"),
-            record.get("assay_id"),
+            record.compound_id,
+            record.target_id,
+            record.assay_id,
         )
         identities.setdefault(str(activity_id), set()).add(identity)
     return any(len(values) > 1 for values in identities.values())
 
 
 def _replicate_collision(
-    records: tuple[Mapping[str, Any], ...],
+    records: tuple[AssayRecord, ...],
 ) -> bool:
     identities: dict[str, set[tuple[Any, ...]]] = {}
     for record in records:
-        replicate_id = record.get("replicate_id")
-        identity = (record.get("compound_id"), record.get("activity_id"))
+        replicate_id = record.replicate_id
+        identity = (record.compound_id, record.activity_id)
         identities.setdefault(str(replicate_id), set()).add(identity)
     return any(len(values) > 1 for values in identities.values())
 
 
 def _record_diagnostic(
-    record: Mapping[str, Any],
+    record: AssayRecord,
     *,
     target_id: str,
 ) -> AssayDiagnostic | None:
@@ -116,22 +150,22 @@ def _record_diagnostic(
 
     checks = (
         (
-            record.get("endpoint") != _PROFILE_ENDPOINT,
+            record.endpoint != _PROFILE_ENDPOINT,
             "ASSAY_ENDPOINT_MISMATCH",
             "record endpoint is outside the approved IC50 profile",
         ),
         (
-            record.get("unit") != _PROFILE_UNIT,
+            record.unit != _PROFILE_UNIT,
             "ASSAY_UNIT_MISMATCH",
             "record unit is not nM",
         ),
         (
-            record.get("relation") not in _RELATIONS,
+            record.relation not in _RELATIONS,
             "ASSAY_RELATION_LOSS",
             "record relation must preserve =, <, or >",
         ),
         (
-            record.get("target_id") != target_id,
+            record.target_id != target_id,
             "ASSAY_ENDPOINT_MISMATCH",
             "record target is outside the selected profile",
         ),
