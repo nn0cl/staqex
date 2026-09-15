@@ -7,6 +7,20 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-16
+- Class: contract-trace
+- Pattern: numerical optimizer behavior can appear equivalent while silently
+  deleting small but nonzero coefficients or admitting non-finite values into
+  an executable projection.
+- What later design or implementation must do: express coefficient-preservation
+  and fail-closed non-finite handling as focused executable Red contracts, then
+  verify the exact nodes before implementation; do not rely on diagnostic
+  degree classification as semantic evidence.
+- Source issue or work plan (adopter's own ID, if any): LISS-0454 / WP-0117
+- Status: applied
+
+## Lesson
+
 - Date: 2026-09-14
 - Class: evaluator-state-ownership
 - Pattern: extracting runtime behavior from a large evaluator can create a

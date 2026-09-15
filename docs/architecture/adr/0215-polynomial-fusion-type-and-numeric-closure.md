@@ -2,7 +2,7 @@
 
 ## Status
 
-**Proposed — Architecture approval required**
+**Accepted — Adjudicator approved `ADR 0215 Architecture 承認` on 2026-09-16.**
 
 ## Context
 
@@ -12,7 +12,7 @@ current evaluator recognizes polynomial AST shapes and stores coefficients as
 validation is authoritative, and finite coefficient representation must not
 silently erase source meaning.
 
-## Decision proposal
+## Decision
 
 1. Polynomial fusion is an optimization after normal parsing, typing, and
    dimension validation. AST shape recognition cannot widen the accepted
@@ -42,3 +42,15 @@ rows, QPU lowering, or finite realization selection.
   non-finite/overflow fallback before changing the evaluator.
 - Any need to change the supported domain or approximation policy requires a
   new architecture decision rather than an optimizer-only patch.
+
+## Architecture approval result
+
+- Polynomial fusion remains an optimization after authoritative type and
+  dimension validation; AST shape alone cannot widen the scalar State domain.
+- Unsupported or unsafe compositions retain the existing sequential/fallback
+  path before any fused executable projection.
+- Every required nonzero finite `f64` coefficient is preserved; near-zero
+  treatment is diagnostic-only until separately specified.
+- Fusion evidence remains diagnostic metadata and never becomes semantic
+  authority.
+- Phase 1 Red and implementation remain separately gated by LISS-0454.

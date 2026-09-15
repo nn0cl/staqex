@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import cmath
+import math
 import random
 from dataclasses import dataclass, field, replace
 from fractions import Fraction
@@ -3435,9 +3436,7 @@ class Evaluator:
                 composed_poly = self._compose_poly_pipe(funs, rets)
                 if composed_poly is not None:
                     coeffs = composed_poly
-                    if len(coeffs) <= 2 or (
-                        len(coeffs) == 3 and abs(coeffs[2]) < 1e-15
-                    ):
+                    if len(coeffs) <= 2:
                         # Preserve affine evidence shape for ADR 0141 tests.
                         scale = coeffs[1] if len(coeffs) > 1 else 0.0
                         bias = coeffs[0] if coeffs else 0.0
@@ -3534,8 +3533,6 @@ class Evaluator:
         """Compose affine maps (ADR 0141); thin wrapper over poly compose."""
         poly = self._compose_poly_pipe(funs, returns)
         if poly is None or len(poly) > 2:
-            if poly is not None and len(poly) == 3 and abs(poly[2]) < 1e-15:
-                return (poly[1], poly[0])
             return None
         if len(poly) == 1:
             return (0.0, poly[0])
@@ -3551,6 +3548,8 @@ class Evaluator:
             if parsed is None:
                 return None
             coeffs = self._compose_poly(parsed, coeffs)
+            if coeffs is None:
+                return None
             if len(coeffs) > 8:
                 return None
         return coeffs
@@ -3564,8 +3563,15 @@ class Evaluator:
         return acc
 
     @staticmethod
-    def _compose_poly(outer: list[float], inner: list[float]) -> list[float]:
+    def _compose_poly(
+        outer: list[float], inner: list[float]
+    ) -> list[float] | None:
         """Return coeffs of outer(inner(x))."""
+        if (
+            not Evaluator._is_finite_poly(outer)
+            or not Evaluator._is_finite_poly(inner)
+        ):
+            return None
         # outer = Σ o_k y^k ; y = inner(x)
         result = [0.0]
         power = [1.0]  # y^0
@@ -3575,11 +3581,13 @@ class Evaluator:
                 if i >= len(result):
                     result.extend([0.0] * (i + 1 - len(result)))
                 result[i] += o * p
+                if not math.isfinite(result[i]):
+                    return None
             # power *= inner
             power = Evaluator._mul_poly(power, inner)
-        while len(result) > 1 and abs(result[-1]) < 1e-15:
-            result.pop()
-        return result
+            if power is None:
+                return None
+        return Evaluator._trim_exact_zero_tail(result)
 
     def _run_unit_body(
         self, unit: CompilationUnit, *, stdout: TextIO | None = None
@@ -3589,24 +3597,47 @@ class Evaluator:
         return self._run_legacy_ast_body(unit, stdout=stdout)
 
     @staticmethod
-    def _mul_poly(a: list[float], b: list[float]) -> list[float]:
+    def _mul_poly(a: list[float], b: list[float]) -> list[float] | None:
+        if not Evaluator._is_finite_poly(a) or not Evaluator._is_finite_poly(b):
+            return None
         out = [0.0] * (len(a) + len(b) - 1)
         for i, x in enumerate(a):
             for j, y in enumerate(b):
                 out[i + j] += x * y
+                if not math.isfinite(out[i + j]):
+                    return None
         return out
 
     @staticmethod
-    def _add_poly(a: list[float], b: list[float], sign: float = 1.0) -> list[float]:
+    def _add_poly(
+        a: list[float], b: list[float], sign: float = 1.0
+    ) -> list[float] | None:
+        if (
+            not Evaluator._is_finite_poly(a)
+            or not Evaluator._is_finite_poly(b)
+            or not math.isfinite(sign)
+        ):
+            return None
         n = max(len(a), len(b))
         out = [0.0] * n
         for i in range(n):
             out[i] = (a[i] if i < len(a) else 0.0) + sign * (
                 b[i] if i < len(b) else 0.0
             )
-        while len(out) > 1 and abs(out[-1]) < 1e-15:
-            out.pop()
-        return out
+            if not math.isfinite(out[i]):
+                return None
+        return Evaluator._trim_exact_zero_tail(out)
+
+    @staticmethod
+    def _is_finite_poly(coeffs: list[float]) -> bool:
+        return all(math.isfinite(coeff) for coeff in coeffs)
+
+    @staticmethod
+    def _trim_exact_zero_tail(coeffs: list[float]) -> list[float]:
+        """Remove only redundant exact-zero high-order coefficients."""
+        while len(coeffs) > 1 and coeffs[-1] == 0.0:
+            coeffs.pop()
+        return coeffs
 
     @classmethod
     def _parse_poly(cls, expr: Expr, param: str) -> list[float] | None:
@@ -3618,7 +3649,8 @@ class Evaluator:
         if isinstance(expr, LitInt):
             return [float(expr.value)]
         if isinstance(expr, LitFloat):
-            return [float(expr.value)]
+            value = float(expr.value)
+            return [value] if math.isfinite(value) else None
         if isinstance(expr, BinOp):
             left = cls._parse_poly(expr.lhs, param)
             right = cls._parse_poly(expr.rhs, param)

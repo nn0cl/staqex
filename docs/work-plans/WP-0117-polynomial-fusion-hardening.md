@@ -2,11 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Status | Design intake — implementation not approved |
+| Status | Done |
 | Issue | LISS-0454 |
 | Parent | WP-0063 / ADR-0157 |
 | Proposed ADR | ADR-0215 |
-| Allowed phase | Design only; Phase 1 requires separate approval |
+| Allowed phase | Complete |
 | Branch | `codex/liss-0454-poly-fusion-hardening-design` |
 
 ## Work units
@@ -42,3 +42,9 @@
 | Tiny but nonzero coefficient | executable coefficient retained; evidence explicit |
 | Degree/resource overflow | fail closed to existing safe path |
 | Diagnostic field inspection | evidence only; no semantic reconstruction |
+
+## Completion review
+
+- `LISS-0454 Phase 3 最終レビュー 承認` received 2026-09-16.
+- Same-context completion process review: no deviation.
+- Final review: `docs/collaboration/reviews/2026-09-16-liss-0454-phase3-final-review.md`.

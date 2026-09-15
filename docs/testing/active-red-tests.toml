@@ -1,5 +1,3 @@
 version = 1
 
-# These node IDs are being reconciled by WP-0161 feature-level Issues. Keeping
-# the exclusions at node granularity returns every passing test in the same
-# files to CI.
+# LISS-0454 Phase 2 Green passed both previously active Red nodes.
