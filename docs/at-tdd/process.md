@@ -137,10 +137,17 @@ Phase 2 exit gate:
 
 - Deterministic verification is run when available.
 - The agent reports whether reviewed tests were changed. They should not be.
+- Apply `docs/collaboration/verification-policy.md`: focused success is distinct
+  from all-blocking Green; completion evidence must identify the tested SHA.
 
 ## Phase 3: Refactor
 
 Purpose: improve design while preserving test behavior.
+
+Apply the consumer inventory, import smoke, adjacent regression and final
+all-blocking evidence rules in `docs/collaboration/verification-policy.md`.
+Use configured structure budgets and effective review routing; a short facade
+over a large legacy implementation is not proof of responsibility separation.
 
 Allowed:
 

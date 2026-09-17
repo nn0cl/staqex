@@ -10,9 +10,8 @@ In the **same context** that is closing the issue or work plan, after
 deterministic verification and issue-status synchronization, before reporting
 completion.
 
-Do not spawn a subagent solely for this review unless
-`docs/collaboration/runtime-routing.toml` already requires `separate_context`
-for agent review. The default is same-context.
+Do not spawn a subagent solely for this process check. It stays same-context;
+any separately required product review follows effective runtime routing.
 
 ## What to inspect
 

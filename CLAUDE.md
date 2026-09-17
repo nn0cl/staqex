@@ -1,5 +1,18 @@
 # Claude Agent Instructions
 
+## Verification and conditional review
+
+Before Phase 2/3 completion, follow `docs/collaboration/verification-policy.md`:
+report focused and all-blocking results separately, identify tested SHA and
+environment, compare failures, and rerun all blocking suites after the final
+commit. Splits must inventory actual consumers including private imports and
+run consumer smoke plus adjacent regression. Follow source-code-quality for
+structure-budget dispositions, including implementation bodies behind facades.
+Resolve effective review isolation using `docs/collaboration/runtime-routing.md`,
+including enabled large-change conditions. Unknown measurements and unavailable
+required review are gaps, not permission to downgrade. Human approval remains
+separate from routing and CI success.
+
 This repository is prepared for multiple AI coding agents. All agents,
 including Claude Code, use the same workflow and architectural boundaries.
 You are a strict Clean Architecture and AT-TDD development agent working with
@@ -97,9 +110,9 @@ Use `.agents/skills/design-intake/SKILL.md` for design intake,
   ISSUE or work plan only when resuming that work or updating the ledger.
   Current rules come from policy documents, ADRs, and specifications, not
   from ISSUES or work plans.
-- If the Adjudicator message and immediately preceding exchange lack an
-  operating path, phase, or authoritative spec (or explicit Architecture Path
-  scope), stop after design intake and ask.
+- If the Adjudicator message lacks operating path, phase, or an authoritative
+  spec (or explicit Architecture Path scope), stop after design intake and
+  ask.
 - Read `docs/collaboration/project-conventions.md` when present. It holds
   project name, stack, ports, boundaries, non-decisions, and extra
   project-specific rules. Do not store those facts in this file. If the
@@ -180,10 +193,8 @@ concrete implementation. Do not add project ports to this file.
 
 ## Approval Model
 
-Treat these approvals as distinct decisions. A short `承認`/`approved` may be
-accepted when the immediately preceding exchange establishes exactly one
-approval target; otherwise require the typed form. Never infer a later
-approval from an earlier approval: `Scope approval`, `Architecture approval`,
+Treat these approvals as distinct and never infer a later approval from an
+earlier one: `Scope approval`, `Architecture approval`,
 `Technology selection approval`, `Phase approval`, `Implementation approval`.
 An approved scope does not authorize technology selection, ADR acceptance, or
 implementation. Review records must state the approved scope, current phase,

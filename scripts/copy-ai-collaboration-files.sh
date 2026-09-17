@@ -84,6 +84,8 @@ target="$(cd "$target" && pwd)"
 
 # shellcheck source=lib/collaboration-template-paths.sh
 source "$script_dir/lib/collaboration-template-paths.sh"
+source "$script_dir/lib/source-clean.sh"
+require_clean_template_source "$repo_root"
 paths=("${collaboration_template_paths[@]}")
 
 copied_files=()
@@ -138,10 +140,6 @@ copy_path() {
   fi
 }
 
-escape_perl_replacement() {
-  printf '%s' "$1" | sed 's/[\/&]/\\&/g'
-}
-
 write_project_conventions() {
   local form="$repo_root/docs/templates/project-conventions.md"
   local dest="$target/docs/collaboration/project-conventions.md"
@@ -165,18 +163,22 @@ write_project_conventions() {
   cp "$form" "$dest"
 
   if [ -n "$project_name" ]; then
-    perl -0pi -e "s/<PROJECT_NAME>/$(escape_perl_replacement "$project_name")/g" "$dest"
+    TEMPLATE_VALUE="$project_name" perl -0pi -e 's/<PROJECT_NAME>/$ENV{TEMPLATE_VALUE}/g' "$dest"
   fi
   if [ -n "$domain_summary" ]; then
-    perl -0pi -e "s/<one-line domain summary>/$(escape_perl_replacement "$domain_summary")/g" "$dest"
+    TEMPLATE_VALUE="$domain_summary" perl -0pi -e 's/<one-line domain summary>/$ENV{TEMPLATE_VALUE}/g' "$dest"
   fi
   if [ -n "$stack" ]; then
-    perl -0pi -e "s/<FILL IN: e\\.g\\. backend language, frontend framework, package manager>/$(escape_perl_replacement "$stack")/g" "$dest"
+    TEMPLATE_VALUE="$stack" perl -0pi -e 's/<FILL IN: e\.g\. backend language, frontend framework, package manager>/$ENV{TEMPLATE_VALUE}/g' "$dest"
   fi
 }
 
 write_version_marker() {
   [ "$dry_run" = true ] && return
+  if [ -f "$target/.collaboration-template-version" ]; then
+    echo "Preserving existing adoption marker; use update for later versions."
+    return
+  fi
 
   local source_ref
   source_ref="$(git -C "$repo_root" rev-parse HEAD 2>/dev/null || echo "unknown")"

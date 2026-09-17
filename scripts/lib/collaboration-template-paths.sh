@@ -31,32 +31,34 @@ collaboration_template_paths=(
   "scripts/check-execution-batch-reviews.py"
   "scripts/check-document-lifecycle.py"
   "scripts/lib/collaboration-template-paths.sh"
+  "scripts/lib/source-clean.sh"
+  "scripts/lib/review_policy.py"
+  "scripts/lib/change_metrics.py"
+  "scripts/review-change.py"
+  "scripts/run-regression-tests.py"
+  "scripts/tests"
 )
 
 # Files that are useful inside this template repository but should not be
 # copied into adopting projects as target-owned planning history.
 collaboration_template_exclude_paths=(
-  "docs/collaboration/traces/*"
+  "docs/collaboration/traces/*.md"
   "docs/collaboration/runtime-routing.toml"
   "docs/collaboration/project-conventions.md"
   "docs/collaboration/process-lessons-log.md"
-  "docs/collaboration/reviews/*"
-  "docs/collaboration/template-feedback/*"
+  "docs/collaboration/reviews/*.md"
+  "docs/collaboration/template-feedback/*.md"
   "docs/issues/LISS-*.md"
   "docs/work-plans/WP-*.md"
   "docs/specs/template-rollout.md"
+  "docs/specs/quality-and-review.md"
+  "*/.DS_Store"
+  "*/__pycache__/*"
 )
 
 is_collaboration_template_excluded() {
   local rel="$1"
   local pattern
-
-  case "$rel" in
-    docs/collaboration/traces/.gitkeep|docs/collaboration/reviews/.gitkeep|docs/collaboration/template-feedback/.gitkeep)
-      return 1
-      ;;
-  esac
-
   for pattern in "${collaboration_template_exclude_paths[@]}"; do
     case "$rel" in
       $pattern) return 0 ;;

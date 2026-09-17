@@ -12,7 +12,31 @@
 isolation = "same_context"
 model = ""
 
+[review.large_change]
+# Opt-in; conditions combine with OR and trigger only when strictly exceeded.
+enabled = false
+source_line_threshold = 300
+changed_line_threshold = 500
+changed_file_threshold = 5
+cross_module_trigger = true
+isolation = "separate_context"
+model = ""
+# Optional positive host review-context token budget; not enforced by this tool.
+# token_budget = 12000
+
 [implementation]
 # host | separate_context | ask
 isolation = "host"
 model = ""
+
+[source_structure]
+source_file_line_threshold = 300
+implementation_file_line_threshold = 300
+changed_line_threshold = 500
+source_globs = ["*.py", "*.sh", "*.js", "*.jsx", "*.ts", "*.tsx", "*.rs", "*.go", "*.c", "*.h", "*.cpp", "*.hpp", "*.java", "*.rb", "*.swift"]
+implementation_globs = ["*.py", "*.sh", "*.js", "*.jsx", "*.ts", "*.tsx", "*.rs", "*.go", "*.c", "*.h", "*.cpp", "*.hpp", "*.java", "*.rb", "*.swift"]
+exclude_globs = []
+
+[source_structure.modules]
+# Logical ownership supplied by the adopter, e.g. runtime = ["runtime/*"].
+# Empty or ambiguous ownership is unknown when cross-module review is enabled.

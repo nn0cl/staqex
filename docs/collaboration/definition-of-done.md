@@ -81,6 +81,9 @@ Done when:
 - deterministic verification is run where available.
 - any unreadable minimal code is either refactored immediately or marked as a
   Phase 3 readability risk.
+- `docs/collaboration/verification-policy.md` evidence distinguishes focused
+  success from all-blocking Green, including current SHA, environment, failures
+  and exclusions. After the final commit, all blocking suites are rerun.
 
 ## Phase 3 Done: Refactor
 
@@ -91,6 +94,11 @@ Done when:
 - readability is improved or preserved.
 - deterministic verification is run where available.
 - reviewer empathy summary is included.
+- Split/refactor work inventories existing consumers (including private
+  imports), runs consumer smoke and adjacent regression, and supplies fresh
+  all-blocking evidence under `docs/collaboration/verification-policy.md`.
+- Structure-budget exceedances and effective conditional review routing are
+  reported; unavailable required review is a gap, never an implicit downgrade.
 
 ## Documentation-Only Done
 

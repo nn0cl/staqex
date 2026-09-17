@@ -259,19 +259,30 @@ select_base_branch() {
     base_branch="$current_branch"
   fi
 
-  if [ "$dry_run" != true ] && [ "$current_branch" != "$base_branch" ]; then
-    git -C "$target" switch "$base_branch"
-  fi
 }
 
-marker="$target/.collaboration-template-version"
-if [ ! -f "$marker" ]; then
-  echo "Missing $marker." >&2
-  echo "Run scripts/copy-ai-collaboration-files.sh once to adopt the template before updating." >&2
-  exit 1
-fi
+# Validate source before selecting or changing any target branch.
+source "$script_dir/lib/collaboration-template-paths.sh"
+source "$script_dir/lib/source-clean.sh"
+require_clean_template_source "$source_repo"
+select_delivery_mode
+select_subagent_mode
+select_base_branch
 
-old_ref="$(sed -n 's/^ref:[[:space:]]*//p' "$marker" | head -n1)"
+marker="$target/.collaboration-template-version"
+if [ "$base_branch" != "$(git -C "$target" branch --show-current)" ]; then
+  old_ref="$(git -C "$target" show "$base_branch:.collaboration-template-version" | sed -n 's/^ref:[[:space:]]*//p' | head -n1)"
+  if [ "$dry_run" = true ]; then
+    echo "For dry-run, first check out the selected base branch." >&2
+    exit 2
+  fi
+else
+  if [ ! -f "$marker" ]; then
+    echo "Missing $marker; adopt the template first." >&2
+    exit 1
+  fi
+  old_ref="$(sed -n 's/^ref:[[:space:]]*//p' "$marker" | head -n1)"
+fi
 if [ -z "$old_ref" ]; then
   echo "Could not read 'ref:' from $marker." >&2
   exit 1
@@ -290,9 +301,15 @@ if [ "$old_ref" = "$new_ref" ]; then
   exit 0
 fi
 
-select_delivery_mode
-select_subagent_mode
-select_base_branch
+branch_name="${branch_prefix}-$(date +%Y%m%d)-${new_ref:0:8}"
+git check-ref-format --branch "$branch_name" >/dev/null
+if git -C "$target" show-ref --verify --quiet "refs/heads/$branch_name"; then
+  echo "Branch $branch_name already exists; select a different --branch-prefix." >&2
+  exit 1
+fi
+if [ "$dry_run" != true ]; then
+  git -C "$target" switch -c "$branch_name" "$base_branch"
+fi
 
 if [ "$delivery_mode" = "local" ]; then
   no_pr=true
@@ -478,18 +495,18 @@ process_file() {
     return
   fi
 
+  if classify_numbered_file "$rel"; then
+    local own_bn collision_bn suggestion
+    own_bn="$(basename "$rel")"
+    if collision_bn="$(find_number_collision "$numbered_class_dir" "$numbered_class_num" "$numbered_class_kind" "$own_bn")"; then
+      suggestion="$(next_free_number "$numbered_class_dir" "$numbered_class_kind")"
+      collisions+=("$rel collides with $numbered_class_dir/$collision_bn; next free number: $suggestion")
+    fi
+  fi
+
   if [ ! -e "$ours_file" ]; then
     if [ "$base_missing" = true ]; then
       added+=("$rel")
-      if classify_numbered_file "$rel"; then
-        local own_bn collision_bn
-        own_bn="$(basename "$rel")"
-        if collision_bn="$(find_number_collision "$numbered_class_dir" "$numbered_class_num" "$numbered_class_kind" "$own_bn")"; then
-          local suggestion
-          suggestion="$(next_free_number "$numbered_class_dir" "$numbered_class_kind")"
-          collisions+=("$rel collides with existing $numbered_class_dir/$collision_bn (same number, different document) -- renumber one of them; next free number in target's sequence: $suggestion")
-        fi
-      fi
       if [ "$dry_run" != true ]; then
         mkdir -p "$(dirname "$ours_file")"
         cp "$theirs_file" "$ours_file"
@@ -600,14 +617,6 @@ if [ "$total_changes" -eq 0 ]; then
   echo "No file changes to apply; only advancing the sync marker."
 fi
 
-branch_name="${branch_prefix}-$(date +%Y%m%d)-${new_ref:0:8}"
-if git -C "$target" show-ref --verify --quiet "refs/heads/$branch_name"; then
-  echo "Branch $branch_name already exists in target; delete it or rerun with a different --branch-prefix." >&2
-  exit 1
-fi
-
-git -C "$target" switch -c "$branch_name"
-
 source_origin="$(git -C "$source_repo" remote get-url origin 2>/dev/null || echo "$source_repo")"
 cat > "$marker" <<MARKER
 # Records which commit of the AI-human collaboration template this project
@@ -628,6 +637,8 @@ echo "Committed sync on branch $branch_name."
 
 if [ "${#collisions[@]}" -gt 0 ]; then
   echo "Manual resolution needed before merging (see NUMBER COLLISIONS above)."
+  echo "Delivery and auto-merge blocked; resolve the local review branch first." >&2
+  exit 1
 fi
 
 if [ "$no_pr" = true ]; then
@@ -673,7 +684,10 @@ COLLISIONS items.
 BODY
 )"
 
-pr_url="$(cd "$target" && gh pr create --title "chore: sync collaboration template to ${new_ref:0:8}" --body "$pr_body")"
+pr_body_file="$(mktemp)"
+trap 'rm -f "$pr_body_file"' EXIT
+printf '%s\n' "$pr_body" >"$pr_body_file"
+pr_url="$(cd "$target" && gh pr create --base "$base_branch" --title "chore: sync collaboration template to ${new_ref:0:8}" --body-file "$pr_body_file")"
 echo "Created pull request: $pr_url"
 
 if [ "$merge_pr" = true ]; then

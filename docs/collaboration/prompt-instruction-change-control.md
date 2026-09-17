@@ -20,6 +20,7 @@ These files are the agent operating contract:
 - `docs/at-tdd/process.md`
 - `docs/collaboration/*.md` (except files under `docs/collaboration/traces/`)
 - `docs/templates/*.md`
+- `docs/templates/runtime-routing.toml` (routing defaults and structure budgets)
 
 Files under `docs/collaboration/traces/` are records produced by following the
 contract, not part of the contract itself.

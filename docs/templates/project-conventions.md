@@ -57,5 +57,11 @@ rather than assumed by an agent.
 
 ## Additional project rules
 
+Record actual source/test locations, blocking suite commands and working
+directories, required runtime/dependency versions, approved exclusions,
+and consumer smoke commands here or in linked target-owned documents.
+Keep these facts out of template-owned project-structure/testing-strategy.
+Configure optional structure budgets/module ownership in runtime-routing.toml.
+
 Add operating rules that apply only to this project. Keep them short. Do not
 repeat template phase, approval, or dependency rules.

@@ -2,9 +2,11 @@
 
 Testing follows AT-TDD phase gates.
 
-Language-axiom AT-TDD (5 meta assertions, Spec Compliance Rate):  
-[`docs/testing/staqex-spec-verification-protocol.md`](../testing/staqex-spec-verification-protocol.md)  
-Runner: `python3 tests/spec_verification/run_all.py`
+This file is template-owned. Actual test locations, selected frameworks,
+blocking commands, required environments and approved exclusions belong in
+target-owned `docs/collaboration/project-conventions.md` or documents linked
+there. Do not store adopter facts in this shared file. Evidence requirements
+are defined in `docs/collaboration/verification-policy.md`.
 
 ## Test Levels
 
@@ -17,23 +19,7 @@ Purpose:
 
 Placement:
 
-- Kernel / use-case acceptance tests live as flat files at the `tests/` root,
-  named `tests/test_<topic>_red.py` for Phase 1 Red (one file per Issue or
-  Slice), with `_green.py` when a Green slice needs its own file.
-- Language-axiom and spec-conformance suites live in
-  `tests/spec_verification/`, driven by
-  `python3 tests/spec_verification/run_all.py`.
-- Shared program fixtures live in `tests/fixtures/` (Kernel PoC inputs under
-  `tests/fixtures/poc/`).
-- Individual suites run as plain scripts, for example
-  `python3 tests/test_modern_oop_and_visibility.py`. CI aggregates root suites
-  with `python3 -m pytest tests/ -q` (LISS-0209 / WP-0080); pytest is installed
-  only in the CI job (and optionally a local `.venv`), not as a Kernel runtime
-  dependency. Spec-verification runs as a separate blocking CI job
-  (`python3 tests/spec_verification/run_all.py`, WP-0086 / LISS-0241) and does
-  **not** commit `reports/latest.*` from CI.
-- No UI acceptance tests: the MVP has no UI (`docs/architecture/README.md`
-  "Selected Technology"). Adding one is an Architecture Path decision.
+- Use the project-conventions locations for application and UI acceptance tests.
 - E2E tests only after a runnable shell/deployment exists.
 
 ### Domain Unit Tests
@@ -91,10 +77,7 @@ Purpose:
 
 Rules:
 
-- Not applicable to the MVP: there is no UI framework
-  (`docs/architecture/README.md` "Selected Technology"). Selecting a UI test
-  framework is a technology-selection decision and requires Architecture Path.
-- The remaining rules in this section apply only once a UI exists:
+- Use the selected UI test framework recorded in project conventions.
 - mock the shared transport/API client boundary.
 - do not mock random request strings inside components.
 
@@ -106,10 +89,7 @@ Purpose:
 
 Rules:
 
-- Not applicable to the MVP: the only runnable shell is the local CLI
-  (`python3 -m compiler.staqex`), and no deployment target exists. Selecting an
-  E2E framework is a technology-selection decision and requires Architecture
-  Path.
+- Use the selected E2E framework after the runnable shell/deployment exists.
 - do not depend on real external providers unless the test is explicitly
   marked as manual or integration.
 
@@ -137,11 +117,6 @@ Mock ports, not concrete providers.
 
 Examples:
 
-- mock `QpuSubmitPort` / `QpuJobPort` (`compiler/staqex/qpu_submit.py`), not a
-  provider SDK client, credentials, or HTTP endpoint.
-- mock `ObservationExecutionPort`
-  (`compiler/staqex/observation_execution.py`), not a concrete simulator or
-  device backend.
-- mock the entropy, program-source, and measurement-sink ports required by
-  `docs/architecture/README.md` "Ports", not the OS RNG, the file system, or
-  stdout directly.
+- mock the external-service port, not the SDK client.
+- mock the search port, not a vector DB client.
+- mock the knowledge-source port, not an HTTP endpoint.

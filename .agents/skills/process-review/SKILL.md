@@ -12,9 +12,8 @@ This skill does not replace typed Adjudicator approval or product review.
 
 In the same context that is closing the issue or work plan, after
 deterministic verification and issue-status synchronization, before reporting
-completion. Do not spawn a subagent solely for this review unless
-`docs/collaboration/runtime-routing.toml` already requires `separate_context`
-for agent review.
+completion. Do not spawn a subagent solely for this process check. Separately
+required product review follows effective runtime routing.
 
 ## Inspect
 

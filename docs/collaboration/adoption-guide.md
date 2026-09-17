@@ -45,6 +45,17 @@ For the benefits and tradeoffs of using the template, see
 
 ## Receiving Later Template Updates
 
+Copy/update require the distributed source files to match a committed source
+revision; commit distributed edits first. Excluded local history is ignored.
+Re-running copy preserves an existing adoption marker; use update to advance
+it. First copy records the source baseline while skipped existing files remain
+local divergence, not proof that every file equals that baseline.
+
+Keep concrete layout, test commands and environments in target-owned project
+conventions or linked project-specific documents. Before updating older
+customized project-structure/testing-strategy files, migrate those facts there.
+The shared architecture documents contain only generic rules.
+
 Adoption via `scripts/copy-ai-collaboration-files.sh` records a
 `.collaboration-template-version` marker at the target repository root. Use
 that marker to pull in later template improvements without losing target
@@ -133,7 +144,7 @@ template content manually rather than running the automated sync.
 The script never commits to the target's trunk branch; it creates a
 dedicated branch and opens a PR, per
 `docs/collaboration/branch-commit-pr-discipline.md` and
-`docs/architecture/decision-themes/dec-0001-governance-and-collaboration.md`. It does not
+`docs/architecture/adr/0008-template-update-propagation.md`. It does not
 clone or register repositories on its own, and this template repository does
 not track which projects have adopted it.
 

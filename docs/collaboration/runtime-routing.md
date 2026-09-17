@@ -65,7 +65,49 @@ the implementer is recommended to reduce shared bias, but is not required.
 The template never invokes a provider. `separate_context` is a launch request
 for the host agent or a human.
 
-## `[implementation]`
+## Conditional review and structure settings
+
+Optional `[review.large_change]` overrides `[review]` only for an already-required
+agent review. Missing section or `enabled = false` preserves normal routing;
+human gates remain required. Invalid settings are errors, not disabled policy.
+
+Run `python3 scripts/review-change.py --root REPO --base BASE --head HEAD`
+(Python 3.11+) and attach its JSON to the review. The default settings path is
+the root's live runtime-routing.toml; `--settings PATH` overrides it explicitly.
+The tool never invokes a provider. Configure writes the extended form; edit
+its target-owned fields to opt in or adjust thresholds. `--force` intentionally
+resets the file from the form, including local customizations.
+
+Conditions combine with OR: implementation lines > `source_line_threshold`,
+added+deleted lines > `changed_line_threshold`, files > `changed_file_threshold`,
+or `cross_module_trigger = true` with more than one logical owner. Defaults in
+the form are 300/500/5, override `separate_context`, empty model. Counts equal
+to a threshold do not trigger. Both base/head implementation sizes count;
+renames use conservative delete/add accounting. Deletions count. Diff metrics
+include non-source files except explicit exclusions.
+
+`[source_structure]` supplies source/implementation globs, exclusion globs and
+structure thresholds. Globs match repository-relative paths using fnmatch
+(`*` can match `/`). `[source_structure.modules]` maps logical owner names to
+arrays of globs; a source must map to exactly one owner for a complete module
+assessment. Empty/ambiguous ownership, dirty trees and binary/undecodable
+content are unknown. Unknown evidence selects `ask` unless an already-known
+condition triggers the configured override. Missing base/ref is a command error.
+Numeric aggregates with unknown entries are lower bounds, not complete totals.
+
+Optional positive `token_budget` in large_change is passed as a host context
+budget instruction, not measured model usage. Narrow excerpts and artifact
+links first. Required isolation that is unavailable, or a budget insufficient
+for its review, remains incomplete and requires a human decision; never silently
+downgrade. A different model is optional. Structure warnings require the
+disposition in source-code-quality; they do not automatically force refactors.
+
+The same-context skill follows this effective route. Size alone does not
+override an explicit disabled policy. Human review for contract/ADR/privacy
+changes still applies. Completion process review remains a same-context process
+check, not a duplicated independent product review.
+
+## Implementation routing
 
 | Isolation | Meaning |
 | --- | --- |

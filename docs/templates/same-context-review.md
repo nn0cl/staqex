@@ -53,7 +53,14 @@ The packet must include:
 Stop and ask the Adjudicator, or request `separate_context`, when:
 
 - the change is a contract-file, ADR, or privacy-policy change;
-- the author and reviewer would be the same model and the work is size `L`
-  or larger;
+- effective routing under `docs/collaboration/runtime-routing.md` requires
+  separate context or a human isolation decision; size alone does not override
+  an explicitly disabled large-change policy;
 - findings conflict with an accepted specification;
 - you cannot honestly separate review from authorship in this session.
+
+Record focused versus all-blocking evidence, tested SHA/environment, new and
+unassessed failures, spec-to-change mapping, changed assertions/exclusions,
+actual consumer compatibility and structure-budget dispositions, following
+`docs/collaboration/verification-policy.md`. A test-only success or facade
+line-count reduction is insufficient evidence for broader claims.

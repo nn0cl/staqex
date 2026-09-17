@@ -2,4 +2,4 @@
 # last synced against. Read by scripts/update-ai-collaboration-files.sh.
 # Do not edit by hand except to correct the source.
 source: git@github.com:nn0cl/llm-project-template.git
-ref: 384f2fed613e0650c020cae0b714c543f97113e7
+ref: 54bb6a2565703bfcaf28fe0304a9d45b70c0d6bc

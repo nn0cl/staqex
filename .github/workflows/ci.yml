@@ -20,11 +20,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-
       - name: Check required project documents
         shell: bash
         run: |
@@ -57,6 +52,7 @@ jobs:
             "docs/collaboration/ai-human-scheme.md"
             "docs/collaboration/source-code-quality.md"
             "docs/collaboration/definition-of-done.md"
+            "docs/collaboration/verification-policy.md"
             "docs/collaboration/document-lifecycle.md"
             "docs/collaboration/adoption-guide.md"
             "docs/collaboration/template-benefits.md"
@@ -75,8 +71,6 @@ jobs:
             "docs/collaboration/process-lessons.md"
             "docs/collaboration/process-review.md"
             "docs/collaboration/project-conventions.md"
-            "docs/testing/active-red-tests.toml"
-            "docs/testing/refactor-baseline.json"
             "docs/collaboration/reviews/.gitkeep"
             "docs/collaboration/template-feedback/.gitkeep"
             "docs/architecture/README.md"
@@ -89,6 +83,7 @@ jobs:
             "docs/architecture/implementation-readiness.md"
             "docs/templates/design-intake.md"
             "docs/templates/agent-handoff.md"
+            "docs/templates/verification-record.md"
             "docs/templates/ai-work-trace.md"
             "docs/templates/local-issue.md"
             "docs/templates/work-plan.md"
@@ -116,8 +111,11 @@ jobs:
             "scripts/init-llm-context.sh"
             "scripts/check-execution-batch-reviews.py"
             "scripts/check-document-lifecycle.py"
-            "scripts/check-test-lifecycle.py"
-            "scripts/capture-refactor-baseline.py"
+            "scripts/review-change.py"
+            "scripts/run-regression-tests.py"
+            "scripts/lib/source-clean.sh"
+            "scripts/lib/review_policy.py"
+            "scripts/lib/change_metrics.py"
             "scripts/lib/collaboration-template-paths.sh"
           )
 
@@ -129,17 +127,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for file in \
-            docs/architecture/decision-themes/dec-0001-governance-and-collaboration.md \
-            docs/architecture/decision-themes/dec-0002-state-first-semantics-and-measurement.md \
-            docs/architecture/decision-themes/dec-0003-language-surface-and-physicist-first-dx.md \
-            docs/architecture/decision-themes/dec-0004-type-first-scientific-model.md \
-            docs/architecture/decision-themes/dec-0005-quantum-operations-and-runtime.md \
-            docs/architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md \
-            docs/architecture/decision-themes/dec-0007-documentation-and-decision-records.md \
-            docs/architecture/adr/0187-documentation-source-record-compaction.md \
-            docs/architecture/adr/0188-decision-theme-canonical-surface.md; do
-            test -f "$file"
+          for n in 0001 0002 0003 0004 0005 0006 0007 0008 0009 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019; do
+            ls "docs/architecture/adr/${n}-"*.md >/dev/null
           done
 
       - name: Check script syntax
@@ -151,7 +140,14 @@ jobs:
             scripts/update-ai-collaboration-files.sh \
             scripts/configure-ai-collaboration.sh \
             scripts/init-llm-context.sh \
-            scripts/lib/collaboration-template-paths.sh
+            scripts/lib/collaboration-template-paths.sh \
+            scripts/lib/source-clean.sh
+
+      - name: Run template regression suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/run-regression-tests.py
 
       - name: Check bounded execution-batch review records
         shell: bash
@@ -165,24 +161,6 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/check-document-lifecycle.py
-
-      - name: Check coverage ledger / Open Topics consistency
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 scripts/check-coverage-ledger-consistency.py
-
-      - name: Check active-Red test lifecycle
-        run: python3 scripts/check-test-lifecycle.py
-
-      - name: Check behavior-preservation baseline
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 scripts/capture-refactor-baseline.py \
-            --cases tests/fixtures/liss_0543/baseline-cases.toml \
-            --output /tmp/refactor-baseline.json
-          cmp docs/testing/refactor-baseline.json /tmp/refactor-baseline.json
 
       - name: Check unresolved conflict markers
         shell: bash
@@ -233,6 +211,21 @@ jobs:
           grep -q 'Smoke App' "$tmp/target/docs/collaboration/project-conventions.md"
           grep -q 'template smoke test' "$tmp/target/docs/collaboration/project-conventions.md"
           grep -q 'test stack' "$tmp/target/docs/collaboration/project-conventions.md"
+          if grep -R -n --exclude-dir=tests -E 'LISS-[0-9]{4}|WP-[0-9]{4}' \
+            "$tmp/target/docs/collaboration" \
+            "$tmp/target/docs/at-tdd" \
+            "$tmp/target/docs/templates" \
+            "$tmp/target/AGENTS.md" \
+            "$tmp/target/CLAUDE.md" \
+            "$tmp/target/.github/copilot-instructions.md" \
+            "$tmp/target/.grok/rules" \
+            "$tmp/target/.cursor/rules" \
+            "$tmp/target/.agents/skills" \
+            "$tmp/target/scripts" \
+            | grep -v -E 'LISS-0000|LISS-\*|LISS-0001-short-title|LISS-0002-short-title|AIP-0000'; then
+            echo "Context files cite ISSUE or work-plan IDs." >&2
+            exit 1
+          fi
           scripts/configure-ai-collaboration.sh \
             --target "$tmp/target" \
             --non-interactive
@@ -288,7 +281,7 @@ jobs:
               docs/collaboration/traces/*.md)
                 trace_added=true
                 ;;
-              AGENTS.md|CLAUDE.md|.github/copilot-instructions.md|.grok/rules/*.md|.cursor/rules/*.mdc|.agents/skills/*/SKILL.md|docs/at-tdd/process.md|docs/collaboration/*.md|docs/templates/*.md)
+              AGENTS.md|CLAUDE.md|.github/copilot-instructions.md|.grok/rules/*.md|.cursor/rules/*.mdc|.agents/skills/*/SKILL.md|docs/at-tdd/process.md|docs/collaboration/*.md|docs/templates/*.md|docs/templates/runtime-routing.toml)
                 contract_changed=true
                 ;;
             esac
@@ -298,45 +291,6 @@ jobs:
             echo "See docs/collaboration/prompt-instruction-change-control.md." >&2
             exit 1
           fi
-
-  kernel-tests:
-    name: Kernel root suites
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Set up Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-
-      - name: Install pytest (CI runner only)
-        run: python3 -m pip install --upgrade pip pytest
-
-      - name: Run root suites
-        shell: bash
-        run: |
-          set -euo pipefail
-          mapfile -t active_red_args < <(
-            python3 scripts/check-test-lifecycle.py --pytest-ignore-args
-          )
-          python3 -m pytest tests/ -q "${active_red_args[@]}"
-
-  spec-verification:
-    name: Spec verification
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Set up Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-
-      - name: Run spec verification
-        run: python3 tests/spec_verification/run_all.py
 
   # Add stack-specific jobs here once the implementation exists, for example:
   #
