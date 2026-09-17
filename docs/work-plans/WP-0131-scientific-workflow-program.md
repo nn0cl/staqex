@@ -43,14 +43,14 @@ Completion claimは二層に分ける。個別のclassical-only Scientific Workf
 
 ## Ordered roadmap
 
-1. **共通core最小承認**: WP-0132。6分野のmetadata記録でS01/S02への過度な限定を防ぐ。
+1. **共通core最小承認**: WP-0132。6分野のmetadata記録でS01/S02への過度な限定を防ぐ。完了済み。
 2. **S02実用古典縦切りを最優先**: 0133/0134 -> 0135 -> 0136、0138 -> 0139。
    0151の証拠契約を0139の最終評価前に統合する。実測dataとcutoffを早期に固定する。
    0137は独立に進められるが、未対応QPUをS02古典利用の待ち条件にしない。
 3. **S02量子比較**: 0137/0151 + 完了した0139の固定problemを使い、同条件baseline、
    encoding/decode/棄却費用込みで検証する。これはWP-0158として別reviewし、
    0139の完了だけで量子比較済みにしない。実機はWP-0126へ別途依頼。
-4. **S01検証縦切り**: 0140 -> 0141、共通0138と0151を利用。公平性/安全閾値は人間決定。
+4. **S01検証縦切り**: 0140 -> 0141、共通0138と0151を利用。0140は完了済みで、現在は0141/LISS-0524のPhase 0が次の着手点。公平性/安全閾値は人間決定。
 5. **天文・物理**: 0142は独立した天文profile。0132/0133と0143 -> 0145から
    0148 -> 0154、0157へ進み、物理実験を天文adapterの完了に依存させない。
 6. **連続計算**: 0143 -> 0144/0145/0146、0144 -> 0147。
@@ -139,17 +139,17 @@ Completion claimは二層に分ける。個別のclassical-only Scientific Workf
 
 | Approval type | 今回の状態 | 次に審査する具体的対象 |
 |---|---|---|
-| Scope | 全科学Workflow設計修正は依頼済み | WP-0131の新規分割・依存・後継判断。着手は一つのchild WPごと |
+| Scope | 全科学Workflow設計修正は依頼済み。完了済みchildの実績を反映済み | WP-0141/LISS-0524のS01 Phase 0受入/profile review。着手は一つのchild WPごと |
 | Architecture | 0217-Aのみ承認済み | Metadata/IR権威、adapter mapping、非実行境界。binding/profile/projection/Workflow/approvalは0217-B/Cまたは各WPで別途審査 |
 | Technology selection | 未承認 | adapter/library/version/dataset profileごと。DB/RDF engine/SDKを暗黙採用しない |
-| Phase | Phase 0設計修正のみ | M0仕様をreview後、LISS-0515 Phase 1 Redを別承認 |
+| Phase | M0〜X01までのbounded child phasesを完了。次はS01 Phase 0 | LISS-0524 Phase 0 acceptance/profile reviewを別承認 |
 | Implementation | 明示的に禁止 | Phase 1 testsのreview後、LISS-0515 Phase 2と実装範囲を別承認 |
 
-**次の最小パッケージ M0:** WP-0132/LISS-0515のG01/G02/G03受入仕様審査。
-Graph記録validationだけ、6小fixture、
-外部reader/SDK/DB/source syntax/実行は含まない。
-ADR 0217-B/C、全roadmapのArchitectureや実装をまとめて承認する依頼ではない。Architectureとacceptanceを審査し、
-その後Phase 1 Redを独立して許可する。Technology選定はM0に不要。
+**次の最小パッケージ S01:** WP-0141/LISS-0524のPhase 0 acceptance/profile review。
+有限な道路・需要・資源fixture、safety/fairness/resource policy、replan/fallback監査の
+fixture/API/diagnosticを確定する。実指令、full災害simulation、QPU、provider SDK、live
+sensorは含まない。S01の公平性・安全閾値は人間の明示決定を必要とし、Phase 0承認後に
+Phase 1 Redを独立して許可する。Technology選定は不要。
 
 実測assay選定をM0の待ち条件にしない。S02で次に必要なdecisionはWP-0134の
 Dataset/target/endpoint/curation profileで、これを未決のままLunaへ実装依頼しない。
