@@ -90,6 +90,16 @@
 - The correction is limited to that contract file; no project facts or
   application source were changed.
 
+## CI Follow-up
+
+- PR validation exposed five template-owned helper scripts referenced by the
+  synchronized CI workflow but absent from the target tree.
+- The exact files from the adopted template were restored:
+  `scripts/review-change.py`, `scripts/run-regression-tests.py`,
+  `scripts/lib/source-clean.sh`, `scripts/lib/review_policy.py`, and
+  `scripts/lib/change_metrics.py`.
+- This is a template synchronization completeness fix, not application logic.
+
 ## Changed Files
 
 - Template-owned collaboration and contract files reported by the sync
