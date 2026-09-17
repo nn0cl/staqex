@@ -81,6 +81,15 @@
 - Result: all checks passed; 20 execution-batch records validated and document
   lifecycle passed.
 
+## Parity Correction
+
+- The post-sync contract comparison found one remaining mismatch in
+  `.grok/rules/01-quickstart.md`.
+- Its approval wording and session-entry condition were aligned with the
+  latest template revision `54bb6a2565703bfcaf28fe0304a9d45b70c0d6bc`.
+- The correction is limited to that contract file; no project facts or
+  application source were changed.
+
 ## Changed Files
 
 - Template-owned collaboration and contract files reported by the sync
