@@ -111,8 +111,8 @@ from .evaluation.orchestration import (
     execute_evolution_plan,
     execute_pure_transformation_plan,
 )
-from .evaluation import dynamic_lane as dynamic_lane_evaluation
-from .evaluation import observation as observation_evaluation
+from .evaluation import dynamic_lane as _dynamic_lane_evaluation
+from .evaluation import observation as _observation_evaluation
 from .evaluation.values import evaluate_value
 from ..static_hilbert import MVP_MAX_LOGICAL_QUBITS
 from ..kernel_literals import SECOND_QUANTIZED_FAMILIES as _SECOND_QUANTIZED_FAMILIES
@@ -6031,35 +6031,35 @@ Evaluator._density_matrix_n_qubits = staticmethod(_density_matrix_n_qubits)
 Evaluator._evaluate_value = Evaluator._legacy_evaluate_value
 
 Evaluator._execute_deferred_state_measure_plan = (
-    observation_evaluation.execute_deferred_state_measure_plan
+    _observation_evaluation.execute_deferred_state_measure_plan
 )
-Evaluator._prepare_first_family_context = observation_evaluation._prepare_first_family_context
+Evaluator._prepare_first_family_context = _observation_evaluation._prepare_first_family_context
 Evaluator._main_deferred_eligible = staticmethod(
-    observation_evaluation._main_deferred_eligible
+    _observation_evaluation._main_deferred_eligible
 )
 Evaluator._is_deferred_state_bind = staticmethod(
-    observation_evaluation._is_deferred_state_bind
+    _observation_evaluation._is_deferred_state_bind
 )
-Evaluator._expr_has_inspect = staticmethod(observation_evaluation._expr_has_inspect)
-Evaluator._expr_free_vars = staticmethod(observation_evaluation._expr_free_vars)
-Evaluator._deferred_bind_cone = staticmethod(observation_evaluation._deferred_bind_cone)
-Evaluator._apply_measure_tracing_out = observation_evaluation._apply_measure_tracing_out
-Evaluator._run_deferred_state_binds = observation_evaluation._run_deferred_state_binds
-Evaluator._mixed_state_for_measure = observation_evaluation._mixed_state_for_measure
-Evaluator._resolve_measurement_kind = observation_evaluation._resolve_measurement_kind
-Evaluator._bind_povm = observation_evaluation._bind_povm
-Evaluator._bind_mixed_state = observation_evaluation._bind_mixed_state
-Evaluator._resolve_lindblad_jumps = observation_evaluation._resolve_lindblad_jumps
-Evaluator._resolve_lindblad_hamiltonian = observation_evaluation._resolve_lindblad_hamiltonian
-Evaluator._compile_lindblad_operator = observation_evaluation._compile_lindblad_operator
-Evaluator._emit_measure_text = observation_evaluation._emit_measure_text
-Evaluator._emit_sink = observation_evaluation._emit_sink
-Evaluator._measure_mixed = observation_evaluation._measure_mixed
-Evaluator._expr_marginal = observation_evaluation._expr_marginal
-Evaluator._measure = observation_evaluation._measure
+Evaluator._expr_has_inspect = staticmethod(_observation_evaluation._expr_has_inspect)
+Evaluator._expr_free_vars = staticmethod(_observation_evaluation._expr_free_vars)
+Evaluator._deferred_bind_cone = staticmethod(_observation_evaluation._deferred_bind_cone)
+Evaluator._apply_measure_tracing_out = _observation_evaluation._apply_measure_tracing_out
+Evaluator._run_deferred_state_binds = _observation_evaluation._run_deferred_state_binds
+Evaluator._mixed_state_for_measure = _observation_evaluation._mixed_state_for_measure
+Evaluator._resolve_measurement_kind = _observation_evaluation._resolve_measurement_kind
+Evaluator._bind_povm = _observation_evaluation._bind_povm
+Evaluator._bind_mixed_state = _observation_evaluation._bind_mixed_state
+Evaluator._resolve_lindblad_jumps = _observation_evaluation._resolve_lindblad_jumps
+Evaluator._resolve_lindblad_hamiltonian = _observation_evaluation._resolve_lindblad_hamiltonian
+Evaluator._compile_lindblad_operator = _observation_evaluation._compile_lindblad_operator
+Evaluator._emit_measure_text = _observation_evaluation._emit_measure_text
+Evaluator._emit_sink = _observation_evaluation._emit_sink
+Evaluator._measure_mixed = _observation_evaluation._measure_mixed
+Evaluator._expr_marginal = _observation_evaluation._expr_marginal
+Evaluator._measure = _observation_evaluation._measure
 
-Evaluator._run_dynamic_qpu_block = dynamic_lane_evaluation._run_dynamic_qpu_block
-Evaluator._reset_dynamic_wire = dynamic_lane_evaluation._reset_dynamic_wire
-Evaluator._run_dynamic_arm_body = dynamic_lane_evaluation._run_dynamic_arm_body
-Evaluator._resolve_dynamic_outcome = dynamic_lane_evaluation._resolve_dynamic_outcome
-Evaluator._collapse_dynamic_wire = dynamic_lane_evaluation._collapse_dynamic_wire
+Evaluator._run_dynamic_qpu_block = _dynamic_lane_evaluation._run_dynamic_qpu_block
+Evaluator._reset_dynamic_wire = _dynamic_lane_evaluation._reset_dynamic_wire
+Evaluator._run_dynamic_arm_body = _dynamic_lane_evaluation._run_dynamic_arm_body
+Evaluator._resolve_dynamic_outcome = _dynamic_lane_evaluation._resolve_dynamic_outcome
+Evaluator._collapse_dynamic_wire = _dynamic_lane_evaluation._collapse_dynamic_wire
