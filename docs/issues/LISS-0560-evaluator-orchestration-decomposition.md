@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0560
-- Status: Phase 2 Green complete — Phase 3 Refactor pending approval
+- Status: Phase 3 Refactor complete — final review pending
 - Type: Architecture successor / Feature Path decomposition
 - Initial planning size: M
 - Current planning size: M
@@ -102,6 +102,32 @@ Verification:
 
 No provider, network, QASM, language-semantic, or scientific-meaning change
 was introduced.
+
+## Phase 3 Refactor evidence
+
+The orchestration module was reviewed as the reviewer, not only as the author.
+The redundant validation proxy was removed so each family calls the explicit
+`EvaluatorContext` contract directly. Long conditions were wrapped without
+changing assertions or control flow. The compatibility import
+`evaluation.plans.dispatch_runtime_plan` remains intact and resolves to the
+same dispatcher exported by `evaluation.orchestration`.
+
+Reviewer disposition:
+
+- Already closed with evidence: mutable runtime state remains in `Evaluator`;
+  the extracted module has no `runtime.evaluator` import.
+- Already closed with evidence: all six plan families and the fallback path
+  remain characterized; private compatibility attributes preserve earlier
+  consumer tests without being dispatch owners.
+- Out of scope: further evaluator family extraction, semantic changes, QASM,
+  provider SDKs, live QPU access, and Rust migration.
+
+Phase 3 verification: focused and adjacent suite `36 passed`; Spec
+Verification `161/161`; consumer import smoke passed; document lifecycle and
+execution-batch checks passed; `git diff --check` passed. The repository-wide
+pytest baseline remains incomplete with the known QASM canonical-provenance
+failures and a long-running sparse-pauli case; this does not establish full
+Green for the repository.
 
 ## AI Planning Record
 

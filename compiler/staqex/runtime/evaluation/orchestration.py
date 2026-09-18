@@ -53,17 +53,6 @@ def dispatch_runtime_plan(
     return context._run_legacy_ast_body(unit, stdout=stdout)
 
 
-def _require_runtime_plan_family(
-    context: EvaluatorContext,
-    plan: Any,
-    family: str,
-    payload_name: str,
-) -> None:
-    """Validate one plan family before entering shared runtime mechanics."""
-
-    context._require_runtime_plan_family(plan, family, payload_name)
-
-
 def execute_pure_transformation_plan(
     context: EvaluatorContext,
     plan: Any,
@@ -73,7 +62,9 @@ def execute_pure_transformation_plan(
 ) -> Any:
     """Execute canonical pure transformations before terminal Measure."""
 
-    _require_runtime_plan_family(context, plan, "pure_transformation", "transformations")
+    context._require_runtime_plan_family(
+        plan, "pure_transformation", "transformations"
+    )
     return context._execute_deferred_state_measure_plan(unit, stdout=stdout)
 
 
@@ -86,7 +77,7 @@ def execute_control_mixture_plan(
 ) -> Any:
     """Execute canonical single-level control mixtures."""
 
-    _require_runtime_plan_family(context, plan, "control_mixture", "controls")
+    context._require_runtime_plan_family(plan, "control_mixture", "controls")
     if not context._main_deferred_eligible(
         unit.main.body.stmts if unit.main else []
     ):
@@ -103,7 +94,7 @@ def execute_evolution_plan(
 ) -> Any:
     """Execute canonical local evolution before terminal Measure."""
 
-    _require_runtime_plan_family(context, plan, "evolution", "evolutions")
+    context._require_runtime_plan_family(plan, "evolution", "evolutions")
     if not context._is_minimal_local_evolution(unit):
         return context._run_legacy_ast_body(unit, stdout=stdout)
     return context._execute_deferred_state_measure_plan(
@@ -120,8 +111,10 @@ def execute_binder_plan(
 ) -> Any:
     """Execute the bounded local State/Measure slice around an operator binder."""
 
-    _require_runtime_plan_family(context, plan, "binder", "binders")
-    if unit.main is None or not context._main_deferred_eligible(unit.main.body.stmts):
+    context._require_runtime_plan_family(plan, "binder", "binders")
+    if unit.main is None or not context._main_deferred_eligible(
+        unit.main.body.stmts
+    ):
         return context._run_legacy_ast_body(unit, stdout=stdout)
     return context._execute_deferred_state_measure_plan(
         context._binder_runtime_unit(unit), stdout=stdout
@@ -137,7 +130,7 @@ def execute_callable_plan(
 ) -> Any:
     """Execute the bounded local callable/object State/Measure slice."""
 
-    _require_runtime_plan_family(context, plan, "callable", "callables")
+    context._require_runtime_plan_family(plan, "callable", "callables")
     if not context._is_deferred_callable_eligible(unit):
         return context._run_legacy_ast_body(unit, stdout=stdout)
     return context._execute_deferred_state_measure_plan(unit, stdout=stdout)
@@ -152,5 +145,5 @@ def execute_dynamic_lane_plan(
 ) -> Any:
     """Execute dynamic lanes through the existing capability-gated path."""
 
-    _require_runtime_plan_family(context, plan, "dynamic_lane", "dynamic_lanes")
+    context._require_runtime_plan_family(plan, "dynamic_lane", "dynamic_lanes")
     return context._run_legacy_ast_body(unit, stdout=stdout)
