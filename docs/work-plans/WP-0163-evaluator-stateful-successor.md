@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | review — Phase 2 Unit A Green complete; Phase 3 review pending |
+| Status | review — Phase 3 Unit A Refactor complete; final review pending |
 | Size | XL |
 | Parent | WP-0162 |
 | Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
@@ -72,8 +72,27 @@ checks also passed.
 
 The active-Red entry was removed after Green. Unit B and Unit C remain gated.
 
+## Phase 3 Refactor — Unit A
+
+Approved on 2026-09-19:
+`Feature Path / Phase 3 Refactor / LISS-0566 Unit A evolution execution
+承認`.
+
+The extracted Unit A functions were renamed from extraction-era legacy names to
+responsibility-oriented names, and each extracted context parameter now carries
+the explicit `EvaluatorContext` contract. `evaluation/compatibility.py` keeps
+the existing evaluator private hooks mapped to those functions; this preserves
+consumer compatibility while removing legacy naming from the implementation
+module. Unit B, Unit C, semantic authority, and mutable-state ownership were
+not changed.
+
+Verification passed: focused/adjacent characterization **12**, full blocking
+**2,129**, public baseline, compileall, active-Red lifecycle,
+document-lifecycle, coverage-ledger consistency, and diff checks. No behavior
+change was introduced.
+
 ## Current next action
 
 Request typed approval for:
-`Feature Path / Phase 3 Refactor / LISS-0566 Unit A evolution execution
+`Feature Path / Phase 3 最終レビュー / LISS-0566 Unit A evolution execution
 承認`.

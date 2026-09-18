@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0566
-- Status: review — Phase 2 Unit A Green complete; Phase 3 review pending
-- Phase: phase-1-red
+- Status: review — Phase 3 Unit A Refactor complete; final review pending
+- Phase: phase-3-refactor
 - Type: Architecture Path successor / structural decomposition
 - Priority: high
 - Initial planning size: XL
@@ -128,13 +128,39 @@ full blocking pytest **2,129 passed**, compileall passed, and lifecycle/diff
 checks passed. The active-Red entry was removed after the accepted contract
 became green.
 
+## Phase 3 Refactor — Unit A
+
+Approved on 2026-09-19:
+`Feature Path / Phase 3 Refactor / LISS-0566 Unit A evolution execution
+承認`.
+
+Refactored the extracted Unit A module without changing runtime behavior:
+
+- renamed the ten internal `*_evolution_legacy_*` implementation functions to
+  responsibility-oriented names such as `bind_evolve`,
+  `hamiltonian_evolve_one_step`, and `evolve_precomputed_grid`;
+- added explicit `EvaluatorContext` annotations to the extracted callbacks;
+- kept the evaluator's established private names in
+  `evaluation/compatibility.py`, so consumers retain the compatibility
+  surface while the module no longer presents legacy names as its primary
+  implementation API;
+- left Unit B, Unit C, the single mutable `Evaluator` state owner, and the
+  semantic/QASM boundaries unchanged.
+
+Verification: focused Unit A and adjacent characterization **12 passed**, full
+blocking pytest **2,129 passed**, public-symbol baseline passed,
+compileall, active-Red lifecycle, document lifecycle, coverage-ledger
+consistency, and `git diff --check` passed. No behavior or public surface
+change was introduced. `evaluator.py` remains **5,164 lines** and the
+extracted `evolution.py` is **861 lines**.
+
 ## Adjudicator Decision Points
 
 - Phase 0 accepted on 2026-09-19:
   `Architecture Path / Phase 0 acceptance / evaluator stateful evolution and
   operator lowering successor 承認`.
-- Next approval required: `Feature Path / Phase 3 Refactor / LISS-0566 Unit A
-  evolution execution 承認`.
+- Next approval required: `Feature Path / Phase 3 最終レビュー / LISS-0566
+  Unit A evolution execution 承認`.
 - Phase 2 Green requires a separate implementation approval for one named unit.
 - Return to Architecture review if callbacks require shared mutable state,
   public DTO changes, semantic-authority movement, or a new dependency.
@@ -166,7 +192,7 @@ test-lifecycle, coverage-ledger, and `git diff --check`.
 
 ## Process Review
 
-- Outcome: not yet; Unit A Phase 3/final review remains open
+- Outcome: not yet; Unit A final review remains open
 - Lesson written: no new lesson; evaluator-state-ownership and private-consumer
   inventory lessons applied
 - Template-feedback path: none

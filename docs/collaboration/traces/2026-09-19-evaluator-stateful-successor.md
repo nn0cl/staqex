@@ -62,3 +62,23 @@
   contract became green.
 - Next approval: `Feature Path / Phase 3 Refactor / LISS-0566 Unit A evolution
   execution 承認`.
+
+## Attempt 5 — Phase 3 Refactor, Unit A
+
+- Date: 2026-09-19
+- Approval: `Feature Path / Phase 3 Refactor / LISS-0566 Unit A evolution
+  execution 承認`
+- Result: renamed the ten extracted Unit A functions from legacy extraction
+  names to responsibility-oriented names and added explicit
+  `EvaluatorContext` annotations.
+- Compatibility: `evaluation/compatibility.py` continues to install the
+  evaluator's established private hooks; no consumer-facing or semantic/QASM
+  boundary changed.
+- Measurement: `evaluator.py` remains 5,164 lines; `evolution.py` is 861
+  lines.
+- Verification: focused/adjacent characterization `12 passed`, full blocking
+  pytest `2,129 passed`, public-symbol baseline, compileall, active-Red and
+  document lifecycle checks, coverage-ledger consistency, and diff checks
+  passed.
+- Next approval: `Feature Path / Phase 3 最終レビュー / LISS-0566 Unit A
+  evolution execution 承認`.

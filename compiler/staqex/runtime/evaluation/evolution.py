@@ -104,8 +104,8 @@ def execute_evolution(
     """Delegate evolution while preserving ordering and mutable state ownership."""
     return context._legacy_hamiltonian_evolve_one_step(joint, names, expr)
 
-def _evolution_legacy_bind_apply_multi(
-    context, joint: Joint, names: list[str], expr: Call
+def bind_apply_multi(
+    context: EvaluatorContext, joint: Joint, names: list[str], expr: Call
 ) -> Joint:
     """apply(U, w…) rebound as ``state (n…) = apply(U, w…)`` (LISS-0228)."""
     from ..unitaries import apply_unitary_on_wires
@@ -149,8 +149,8 @@ def _evolution_legacy_bind_apply_multi(
     return Joint(worlds=_coalesce(out))
 
 
-def _evolution_legacy_bind_cnot_multi(
-    context, joint: Joint, names: list[str], expr: Call
+def bind_cnot_multi(
+    context: EvaluatorContext, joint: Joint, names: list[str], expr: Call
 ) -> Joint:
     """``state (c, t) = cnot(c, t)`` — keep both wires after CNOT (linear)."""
     from ..joint import World, _coalesce
@@ -187,7 +187,9 @@ def _evolution_legacy_bind_cnot_multi(
     return Joint(worlds=_coalesce(out))
 
 
-def _evolution_legacy_bind_evolve(context, joint: Joint, names: list[str], expr: EvolveExpr) -> Joint:
+def bind_evolve(
+    context: EvaluatorContext, joint: Joint, names: list[str], expr: EvolveExpr
+) -> Joint:
     if expr.explicit_transform:
         return context._bind_explicit_evolve(joint, names, expr)
     if len(expr.seeds) != len(names):
@@ -253,8 +255,8 @@ def _evolution_legacy_bind_evolve(context, joint: Joint, names: list[str], expr:
     return context._trace_out_dead_fn_locals(joint, pre_live, names)
 
 
-def _evolution_legacy_bind_explicit_evolve(
-    context, joint: Joint, names: list[str], expr: EvolveExpr
+def bind_explicit_evolve(
+    context: EvaluatorContext, joint: Joint, names: list[str], expr: EvolveExpr
 ) -> Joint:
     """Realize the Phase 2 `Operator * State` application.
 
@@ -370,14 +372,14 @@ def _evolution_legacy_bind_explicit_evolve(
     return joint
 
 
-def _evolution_legacy_eval_max_steps(context, max_steps: Expr | None) -> int:
+def eval_max_steps(context: EvaluatorContext, max_steps: Expr | None) -> int:
     if not isinstance(max_steps, LitInt) or max_steps.value <= 0:
         raise KernelError("evolve until requires a positive compile-time `max` bound")
     return max_steps.value
 
 
-def _evolution_legacy_eval_until_predicate(
-    context, joint: Joint, names: list[str], predicate: Expr,
+def eval_until_predicate(
+    context: EvaluatorContext, joint: Joint, names: list[str], predicate: Expr,
     *, previous: Joint | None = None, allow_single_alias: bool = False,
 ) -> bool:
     """Pure Kernel predicate: no RNG, measure, or outer mutation (ADR 0079)."""
@@ -401,8 +403,8 @@ def _evolution_legacy_eval_until_predicate(
     )
 
 
-def _evolution_legacy_bind_evolve_hamiltonian(
-    context, joint: Joint, names: list[str], expr: EvolveExpr
+def bind_evolve_hamiltonian(
+    context: EvaluatorContext, joint: Joint, names: list[str], expr: EvolveExpr
 ) -> Joint:
     if len(names) != len(expr.seeds):
         raise KernelError("hamiltonian evolve seed/bind arity mismatch")
@@ -435,8 +437,8 @@ def _evolution_legacy_bind_evolve_hamiltonian(
     )
 
 
-def _evolution_legacy_hamiltonian_evolve_one_step(
-    context, joint: Joint, names: list[str], expr: EvolveExpr
+def hamiltonian_evolve_one_step(
+    context: EvaluatorContext, joint: Joint, names: list[str], expr: EvolveExpr
 ) -> Joint:
     from ..hamiltonian import compile_hamiltonian, hop_basis_dim, op_n_qubits
     from ..joint import World, _coalesce
@@ -763,8 +765,8 @@ def _evolution_legacy_hamiltonian_evolve_one_step(
     return Joint(worlds=_coalesce(out_worlds))
 
 
-def _evolution_legacy_hamiltonian_evolve_tuple_coordinate(
-    context,
+def hamiltonian_evolve_tuple_coordinate(
+    context: EvaluatorContext,
     joint: Joint,
     src: str,
     nq: int,
@@ -818,8 +820,8 @@ def _evolution_legacy_hamiltonian_evolve_tuple_coordinate(
     return Joint(worlds=_coalesce(out_worlds))
 
 
-def _evolution_legacy_evolve_precomputed_grid(
-    context,
+def evolve_precomputed_grid(
+    context: EvaluatorContext,
     joint: Joint,
     names: list[str],
     grid: GridHamiltonian,
