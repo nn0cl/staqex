@@ -24,7 +24,9 @@ UNSUPPORTED = "UNSUPPORTED_LOCAL_DIMENSION"
 def _emit(source: str):
     compiled = compile_source(source)
     assert compiled.unit is not None, compiled.diagnostics
-    return QASM3Emitter(route=False).emit_unit(compiled.unit)
+    return QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
 
 
 def test_run_hard_codes_include_unsupported_local_dimension() -> None:

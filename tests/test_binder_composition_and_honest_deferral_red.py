@@ -32,7 +32,9 @@ def _emit(source: str):
     compiled = compile_source(source)
     assert compiled.ok, compiled.diagnostics
     assert compiled.unit is not None
-    return QASM3Emitter(route=False).emit_unit(compiled.unit)
+    return QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
 
 
 _COMPOSED_SUMS = """

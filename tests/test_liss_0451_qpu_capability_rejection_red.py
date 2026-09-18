@@ -72,7 +72,9 @@ def test_liss_0451_unresolved_rotation_uses_exact_code() -> None:
 
     compiled = compile_source(source)
     assert compiled.ok, compiled.diagnostics
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
     assert emitted.circuit is not None
     assert emitted.circuit.reject_code == "QASM_ROTATION_ANGLE_UNRESOLVED"
     assert emitted.circuit.provenance["reason"] == "parameter_unresolved"

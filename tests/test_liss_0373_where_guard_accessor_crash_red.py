@@ -57,12 +57,16 @@ def test_next_accessor_guard_matches_the_equivalent_hand_written_hamiltonian() -
 
     guard_compiled = compile_source(_NEXT_GUARD_SRC)
     assert guard_compiled.ok, guard_compiled.diagnostics
-    guard_emitted = QASM3Emitter(route=False).emit_unit(guard_compiled.unit)
+    guard_emitted = QASM3Emitter(route=False).emit_unit(
+        guard_compiled.unit, semantic_ir=guard_compiled.scientific_semantic_ir
+    )
     assert guard_emitted.ok, guard_emitted.notes
 
     manual_compiled = compile_source(manual_src)
     assert manual_compiled.ok, manual_compiled.diagnostics
-    manual_emitted = QASM3Emitter(route=False).emit_unit(manual_compiled.unit)
+    manual_emitted = QASM3Emitter(route=False).emit_unit(
+        manual_compiled.unit, semantic_ir=manual_compiled.scientific_semantic_ir
+    )
     assert manual_emitted.ok, manual_emitted.notes
 
     assert guard_emitted.qasm.count("rz(") == manual_emitted.qasm.count("rz(")

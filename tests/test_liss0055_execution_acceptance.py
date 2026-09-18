@@ -62,7 +62,9 @@ def test_nested_sum_runs_and_emits_qasm() -> None:
     result = run_source(source, stdout=io.StringIO())
     assert result.status == "succeeded", result.diagnostics
     compiled = compile_source(source)
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
     assert emitted.ok
 
 
@@ -92,7 +94,9 @@ def test_second_quantized_binder_runs_and_emits_qasm() -> None:
     result = run_source(source, stdout=io.StringIO())
     assert result.status == "succeeded", result.diagnostics
     compiled = compile_source(source)
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
     assert emitted.ok
 
 

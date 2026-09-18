@@ -63,7 +63,9 @@ def submit_live_qpu(
             )
         qasm = dynamic_result.qasm
     else:
-        static_result = QASM3Emitter().emit_unit(compiled.unit)
+        static_result = QASM3Emitter().emit_unit(
+            compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+        )
         if not static_result.ok:
             return None, tuple(
                 {"code": "QASM_EMISSION_ERROR", "message": note}

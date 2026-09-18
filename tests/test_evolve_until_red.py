@@ -55,7 +55,9 @@ def test_qpu_emission_rejects_evolve_until_at_the_backend_boundary() -> None:
     )
 
     assert compiled.unit is not None
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
 
     assert not emitted.ok
     assert emitted.circuit is not None

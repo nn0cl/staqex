@@ -267,7 +267,9 @@ def test_rejection_matrix_names_all_artifacts() -> None:
 
 def test_unresolved_evolution_rejects_without_consumer_artifacts() -> None:
     compiled = compile_source(EVOLUTION.read_text(encoding="utf-8"))
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
 
     assert not emitted.ok
     assert emitted.qasm == ""

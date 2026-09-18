@@ -42,7 +42,9 @@ def _compile(source: str = _PARAM_PROGRAM):
 
 def test_openqasm_declares_symbolic_circuit_parameters() -> None:
     compiled = _compile()
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
 
     assert emitted.ok, emitted.notes
     assert "input float theta;" in emitted.qasm
@@ -51,7 +53,9 @@ def test_openqasm_declares_symbolic_circuit_parameters() -> None:
 
 def test_emit_unit_uses_qpu_ir_lane_for_parametric_static_register() -> None:
     compiled = _compile()
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
 
     assert emitted.ok
     assert "rz(theta)" in emitted.qasm
@@ -127,7 +131,9 @@ def test_binding_key_uses_parameter_literal_not_only_local_name() -> None:
     )
     assert compiled.ok, compiled.diagnostics
     assert compiled.qpu_ir["parameters"] == [{"name": "theta", "domain": "Angle"}]
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
     assert "rz(theta)" in emitted.qasm
 
 

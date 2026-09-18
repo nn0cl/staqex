@@ -37,7 +37,9 @@ def _src(order_expr: str) -> str:
 def _rz_count(source: str) -> int:
     compiled = compile_source(source)
     assert compiled.ok, compiled.diagnostics
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
     assert emitted.ok, emitted.notes
     return emitted.qasm.count("rz(")
 
@@ -75,7 +77,9 @@ def test_unresolvable_order_still_falls_back_to_2() -> None:
     compiled = compile_source(source)
     codes = {d.get("code") for d in compiled.diagnostics}
     if compiled.ok:
-        emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+        emitted = QASM3Emitter(route=False).emit_unit(
+            compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+        )
         assert emitted.ok, emitted.notes
         assert emitted.qasm.count("rz(") == 3, emitted.qasm  # S2 fallback
     else:

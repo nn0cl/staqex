@@ -106,5 +106,7 @@ pub fn main() -> Unit {
 """
     compiled = compile_source(source)
     assert compiled.unit is not None
-    result = QASM3Emitter().emit_unit(compiled.unit)
+    result = QASM3Emitter().emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
     assert result.ok is True
