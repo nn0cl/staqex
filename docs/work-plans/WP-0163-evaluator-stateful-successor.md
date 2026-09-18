@@ -1,0 +1,52 @@
+# WP-0163: Evaluator stateful evolution/operator successor
+
+| Field | Value |
+|---|---|
+| Status | ready — Phase 0 accepted; Phase 1 Red pending |
+| Size | XL |
+| Parent | WP-0162 |
+| Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
+| Implementation permission | none |
+| Canonical specification | [Core module decomposition](../specs/staqex-core-module-decomposition.md) |
+
+## Goal
+
+Remove the remaining stateful evolution/operator lowering implementation from
+`runtime/evaluator.py` without changing language meaning, runtime behavior,
+QASM output, diagnostics, or canonical semantic authority.
+
+## Issue graph
+
+| Issue | Scope | Size | Candidate module | Order |
+|---|---|---:|---|---:|
+| LISS-0566-A | evolution execution and Hamiltonian loops | L | `evaluation/evolution.py` | first |
+| LISS-0566-B | unitary/QFT/apply/capply gate mechanics | M | `evaluation/evolution.py` | after A |
+| LISS-0566-C | operator resolution/tree/factory/method lowering | L | `evaluation/operators.py` | after A; may parallel B after boundary review |
+| LISS-0566-D | successor facade and structure audit | M | `evaluator.py`, compatibility | last |
+
+The four units are planned boundaries, not implementation permission. Phase 1
+must confirm the measured manifests and may subdivide A or C if callback fan-out
+is not reviewable.
+
+## Invariants
+
+- one mutable state owner: `Evaluator`;
+- no public facade import from extracted modules;
+- no new external dependency or provider boundary;
+- private compatibility hooks remain available until D;
+- local/QASM/diagnostic baselines remain unchanged;
+- no behavior correction is hidden in structural extraction.
+
+## Gates
+
+1. Phase 0: profile, dependency graph, context contract, and allowed files.
+2. Phase 1 Red: structural and characterization contracts only.
+3. Phase 2 Green: one approved unit at a time.
+4. Phase 3 Refactor: compatibility cleanup, import audit, and evidence.
+5. Final review: process review and status synchronization.
+
+## Current next action
+
+Request typed approval for:
+`Feature Path / Phase 1 Red / LISS-0566 stateful evolution and operator
+lowering successor 承認`.
