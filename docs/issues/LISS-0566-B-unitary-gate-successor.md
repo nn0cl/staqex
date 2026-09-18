@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0566-B
-- Status: review — Phase 1 Red; test review pending
+- Status: review — Phase 1 Red test review approved; Phase 2 Green pending
 - Phase: phase-1-red
 - Type: Feature Path bounded structural decomposition
 - Priority: high
@@ -50,6 +50,20 @@ controlled-gate characterization checks pass.
 
 No production source or reviewed assertion was changed. The active-Red entry
 is recorded in `docs/testing/active-red-tests.toml`.
+
+## Phase 1 Red test review
+
+Approved on 2026-09-19:
+`WP-0163 / LISS-0566-B Phase 1 Red テストレビュー承認`.
+
+The review accepted the four structural Red contracts and three passing
+characterizations. The compatibility assertion was strengthened during review
+to verify exact evaluator-to-extracted-function assignments rather than mere
+name presence. The reviewed suite remains **4 failed, 3 passed** and the
+active-Red entry remains owned by this issue.
+
+Next approval required:
+`WP-0163 / LISS-0566-B Phase 2 Green / Implementation 承認`.
 
 ## Next approval
 

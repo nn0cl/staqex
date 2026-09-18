@@ -141,3 +141,17 @@
 - Scope discipline: no production source or reviewed assertion was changed;
   Unit C and provider/QPU concerns remain excluded.
 - Next approval: `WP-0163 / LISS-0566-B Phase 1 Red テストレビュー承認`.
+
+## Attempt 10 — Unit B Phase 1 Red test review
+
+- Date: 2026-09-19
+- Approval: `WP-0163 / LISS-0566-B Phase 1 Red テストレビュー承認`
+- Review route: `same_context`, weaker than `separate_context`.
+- Findings: the Red scope is bounded to Unit B; QFT and controlled-gate
+  characterization pass; four structural gaps fail for the expected pre-Green
+  reasons. The compatibility assertion was strengthened to require exact
+  evaluator-to-extracted-function assignments.
+- Verification: focused suite `4 failed, 3 passed`, active-Red lifecycle
+  passed with one owned entry, and diff check passed.
+- Disposition: accepted; no production implementation permission is implied.
+- Next approval: `WP-0163 / LISS-0566-B Phase 2 Green / Implementation 承認`.

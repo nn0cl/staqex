@@ -71,14 +71,15 @@ def test_unit_b_compatibility_wiring_uses_extracted_gate_functions() -> None:
     compatibility = inspect.getsource(
         importlib.import_module(f"{PACKAGE}.compatibility")
     )
-    for name in (
-        "resolve_unitary_matrix",
-        "qft_family_matrix",
-        "bind_apply",
-        "split_capply_args",
-        "bind_capply",
-    ):
-        assert name in compatibility
+    expected_assignments = (
+        "evaluator_type._resolve_unitary_matrix = resolve_unitary_matrix",
+        "evaluator_type._qft_family_matrix = qft_family_matrix",
+        "evaluator_type._bind_apply = bind_apply",
+        "evaluator_type._split_capply_args = split_capply_args",
+        "evaluator_type._bind_capply = bind_capply",
+    )
+    for assignment in expected_assignments:
+        assert assignment in compatibility
 
 
 def test_unit_b_extracted_module_has_no_public_facade_dependency() -> None:

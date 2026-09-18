@@ -181,5 +181,15 @@ run intentionally reports **4 failed, 3 passed**:
 The active-Red ownership is recorded for `LISS-0566-B` in
 `docs/testing/active-red-tests.toml`.
 
-Current next action: request
+## Unit B Phase 1 Red test review
+
+Approved on 2026-09-19:
 `WP-0163 / LISS-0566-B Phase 1 Red テストレビュー承認`.
+
+The four structural contracts and three characterization contracts were
+accepted. During review, the compatibility contract was tightened to assert
+exact evaluator-to-extracted-function assignments. The suite remains **4
+failed, 3 passed**, with no production change.
+
+Current next action: request
+`WP-0163 / LISS-0566-B Phase 2 Green / Implementation 承認`.
