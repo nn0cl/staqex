@@ -120,6 +120,20 @@
 Request typed approval for `Feature Path / Phase 2 Green / LISS-0560
 evaluator orchestration decomposition`.
 
+### Attempt 4 — LISS-0562 Phase 1 Red
+
+- Date: 2026-09-19
+- Scope: evolution/operator decomposition test contract only
+- Approval: `Feature Path / Phase 1 Red / LISS-0562 evaluator evolution and
+  operator decomposition 承認`
+- Result: added six structural and characterization tests; no production
+  source or exclusion changes.
+- Verification: focused pytest **1 failed, 5 passed**. The expected Red is
+  the remaining 28 evolution/operator methods on `Evaluator`; QASM and
+  finite-binder characterization tests passed.
+- Next safe action: obtain Phase 1 Red test review, then request typed Phase 2
+  Green implementation approval.
+
 ## Notes
 
 Historical WP-0160 and review records remain unchanged; they describe the
