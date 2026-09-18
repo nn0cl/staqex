@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
+from .evolution import explicit_propagator, joint_l2_distance
+from .operators import build_projector_sum_operator, expr_arg_to_source_expr
+
 
 def install_evolution_compatibility(evaluator_type: type[Any]) -> None:
     """Keep legacy evolution names available without facade method bodies."""
@@ -13,16 +16,12 @@ def install_evolution_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._bind_explicit_evolve = (
         evaluator_type._evolution_legacy_bind_explicit_evolve
     )
-    evaluator_type._explicit_propagator = staticmethod(
-        evaluator_type._evolution_legacy_explicit_propagator
-    )
+    evaluator_type._explicit_propagator = staticmethod(explicit_propagator)
     evaluator_type._eval_max_steps = evaluator_type._evolution_legacy_eval_max_steps
     evaluator_type._eval_until_predicate = (
         evaluator_type._evolution_legacy_eval_until_predicate
     )
-    evaluator_type._joint_l2_distance = staticmethod(
-        evaluator_type._evolution_legacy_joint_l2_distance
-    )
+    evaluator_type._joint_l2_distance = staticmethod(joint_l2_distance)
     evaluator_type._bind_evolve_hamiltonian = (
         evaluator_type._evolution_legacy_bind_evolve_hamiltonian
     )
@@ -55,9 +54,7 @@ def install_operator_compatibility(evaluator_type: type[Any]) -> None:
         evaluator_type._operator_legacy_resolve_operator
     )
     evaluator_type._operator_array_context = evaluator_type._operator_legacy_array_context
-    evaluator_type._op_expr_arg_to_source_expr = (
-        evaluator_type._operator_legacy_expr_arg_to_source_expr
-    )
+    evaluator_type._op_expr_arg_to_source_expr = staticmethod(expr_arg_to_source_expr)
     evaluator_type._resolve_op_call = evaluator_type._operator_legacy_resolve_op_call
     evaluator_type._resolve_operator_tree = (
         evaluator_type._operator_legacy_resolve_operator_tree
@@ -65,8 +62,8 @@ def install_operator_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._lookup_set_comprehension_value = (
         evaluator_type._operator_legacy_lookup_set_comprehension_value
     )
-    evaluator_type._build_projector_sum_operator = (
-        evaluator_type._operator_legacy_build_projector_sum_operator
+    evaluator_type._build_projector_sum_operator = staticmethod(
+        build_projector_sum_operator
     )
     evaluator_type._lower_operator_value = (
         evaluator_type._operator_legacy_lower_operator_value

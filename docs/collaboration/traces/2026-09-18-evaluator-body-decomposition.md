@@ -151,6 +151,27 @@ evaluator orchestration decomposition`.
   implementation names; final physical relocation and line-count reduction
   are not claimed by this slice.
 
+### Attempt 6 — LISS-0562 Phase 3 Refactor
+
+- Date: 2026-09-19
+- Approval: `Feature Path / Phase 3 Refactor / LISS-0562 evaluator evolution
+  and operator decomposition 承認`
+- Result: physically moved explicit propagator recognition and joint L2
+  distance to `runtime/evaluation/evolution.py`; moved nested Operator-call
+  argument conversion and set-domain projector-sum construction to
+  `runtime/evaluation/operators.py`; extracted the shared `KernelError` type
+  to `runtime/evaluation/errors.py`.
+- Compatibility: historical private entrypoints remain available through
+  direct module-function wiring in `compatibility.py`; no second mutable state
+  owner was introduced.
+- Measurement: `evaluator.py` decreased from 6,071 to 5,921 lines; 150 lines
+  were removed from the facade.
+- Verification: focused tests `6 passed`, adjacent regression `29 passed`,
+  full blocking pytest `2,123 passed`, `compileall` passed, and
+  `git diff --check` passed.
+- Remaining scope: stateful evolution/operator lowering bodies remain under
+  explicit legacy names for a later bounded extraction.
+
 ## Notes
 
 Historical WP-0160 and review records remain unchanged; they describe the

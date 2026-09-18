@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0562
-- Status: Phase 2 Green compatibility slice complete — physical body relocation pending
+- Status: Phase 3 Refactor complete — final review pending
 - Type: Feature Path structural decomposition
 - Initial planning size: L
 - Current planning size: L
@@ -108,3 +108,28 @@ either move those bodies into the family modules or record an accepted
 cohesion exception. Current `evaluator.py` size is **6,071 lines** (baseline
 after LISS-0561: 6,065), so this slice improves ownership clarity but does
 not yet claim a line-count reduction.
+
+## Phase 3 Refactor result
+
+Approval received on 2026-09-19:
+`Feature Path / Phase 3 Refactor / LISS-0562 evaluator evolution and operator
+decomposition 承認`.
+
+Completed a bounded physical relocation of low-coupling helpers:
+
+- moved explicit propagator recognition and joint L2 distance into
+  `runtime/evaluation/evolution.py`;
+- moved nested Operator-call argument conversion and set-domain projector-sum
+  construction into `runtime/evaluation/operators.py`;
+- moved the shared `KernelError` definition into
+  `runtime/evaluation/errors.py`, while preserving the public evaluator import;
+- changed compatibility wiring to install the moved functions directly.
+
+`evaluator.py` is now **5,921 lines**, down from **6,071 lines** in Phase 2
+(150 lines removed). Stateful evolution/operator lowering mechanics remain
+explicitly named in `Evaluator` and are reserved for a later bounded
+extraction rather than being hidden in a generic helper module.
+
+Verification: focused tests **6 passed**, adjacent regression **29 passed**,
+full blocking pytest **2,123 passed**, `compileall` passed, and
+`git diff --check` passed.

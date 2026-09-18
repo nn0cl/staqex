@@ -105,7 +105,11 @@ from .evaluation.compatibility import (
     install_evolution_compatibility,
     install_operator_compatibility,
 )
-from .evaluation.evolution import execute_evolution
+from .evaluation.evolution import (
+    ExplicitPropagator,
+    execute_evolution,
+)
+from .evaluation.errors import KernelError
 from .evaluation.operators import resolve_operator
 from .evaluation.orchestration import (
     execute_binder_plan,
@@ -220,10 +224,6 @@ class CanonicalExecutionEvidence:
     source_fingerprint: str
 
 
-class KernelError(Exception):
-    pass
-
-
 class KernelDiagnosticError(KernelError, ValueError):
     """Runtime failure with a stable code and legacy ValueError compatibility."""
 
@@ -270,19 +270,6 @@ def _validate_canonical_semantic_ir(semantic_ir: ScientificSemanticIR | None) ->
             "E_EVALUATOR_CANONICAL_AUTHORITY",
             "semantic source identity does not match the local compiler",
         )
-
-
-@dataclass(frozen=True)
-class ExplicitPropagator:
-    """Runtime provenance for `exp(-i * H * duration / hbar)`.
-
-    The source-level operator remains explicit; this small runtime value only
-    records the already-written generator and duration so the Kernel can
-    realize the expression without reintroducing an implicit Evolve policy.
-    """
-
-    hamiltonian: Expr
-    duration: Expr
 
 
 class Evaluator:
@@ -1552,42 +1539,6 @@ class Evaluator:
             )
         return joint
 
-    @staticmethod
-    def _evolution_legacy_explicit_propagator(expr: Expr) -> ExplicitPropagator | None:
-        """Recognize only the canonical written propagator expression."""
-        if not (
-            isinstance(expr, Call)
-            and isinstance(expr.callee, Var)
-            and expr.callee.name == "exp"
-            and len(expr.args) == 1
-        ):
-            return None
-        exponent = expr.args[0]
-        if not (
-            isinstance(exponent, BinOp)
-            and exponent.op == "/"
-            and isinstance(exponent.rhs, Var)
-            and exponent.rhs.name == "hbar"
-            and isinstance(exponent.lhs, BinOp)
-            and exponent.lhs.op == "*"
-            and isinstance(exponent.lhs.lhs, BinOp)
-            and exponent.lhs.lhs.op == "*"
-        ):
-            return None
-        signed_generator = exponent.lhs.lhs.lhs
-        hamiltonian = exponent.lhs.lhs.rhs
-        duration = exponent.lhs.rhs
-        if not (
-            isinstance(signed_generator, BinOp)
-            and signed_generator.op == "-"
-            and isinstance(signed_generator.rhs, Var)
-            and signed_generator.rhs.name == "i"
-            and isinstance(signed_generator.lhs, (LitInt, LitFloat))
-            and signed_generator.lhs.value == 0
-        ):
-            return None
-        return ExplicitPropagator(hamiltonian=hamiltonian, duration=duration)
-
     def _evolution_legacy_eval_max_steps(self, max_steps: Expr | None) -> int:
         if not isinstance(max_steps, LitInt) or max_steps.value <= 0:
             raise KernelError("evolve until requires a positive compile-time `max` bound")
@@ -1616,20 +1567,6 @@ class Evaluator:
         raise KernelError(
             "evolve until predicates support `converged(state)` or literal booleans only"
         )
-
-    @staticmethod
-    def _evolution_legacy_joint_l2_distance(left: Joint, right: Joint) -> float:
-        def amplitudes(joint: Joint) -> dict[str, complex]:
-            result: dict[str, complex] = {}
-            for world in joint.worlds:
-                key = repr(sorted(world.assign.items(), key=lambda item: item[0]))
-                result[key] = result.get(key, 0j) + world.amp
-            return result
-
-        lhs = amplitudes(left)
-        rhs = amplitudes(right)
-        keys = set(lhs) | set(rhs)
-        return sum(abs(lhs.get(key, 0j) - rhs.get(key, 0j)) ** 2 for key in keys) ** 0.5
 
     def _evolution_legacy_bind_evolve_hamiltonian(
         self, joint: Joint, names: list[str], expr: EvolveExpr
@@ -3192,21 +3129,6 @@ class Evaluator:
         arrays.update(getattr(self, "_resolved_host_arrays", None) or {})
         return arrays
 
-    def _operator_legacy_expr_arg_to_source_expr(self, arg: Any, call_name: str) -> Any:
-        """Convert an OpExpr Call argument (OpVar/OpLit) into the generic
-        Expr shape `_resolve_operator_factory_call` already understands,
-        so a nested Operator-returning call found anywhere inside a
-        larger Operator expression (LISS-0407) can reuse that existing,
-        tested arg-binding logic unchanged."""
-        if isinstance(arg, OpVar):
-            return Var(name=arg.name, span=arg.span)
-        if isinstance(arg, OpLit):
-            return LitFloat(value=arg.value, span=arg.span)
-        raise KernelError(
-            f"unsupported argument shape `{type(arg).__name__}` in "
-            f"nested Operator call `{call_name}`"
-        )
-
     def _operator_legacy_resolve_op_call(self, call: "OpCall") -> Any:
         """Inline a call to a known Operator-returning function found
         anywhere inside an Operator expression tree, not only when it is
@@ -3344,78 +3266,6 @@ class Evaluator:
                 )
                 return elements, width
         return None
-
-    def _operator_legacy_build_projector_sum_operator(
-        self,
-        elements: tuple[Any, ...],
-        bound_variable: str,
-        body: Any,
-        domain_width: int,
-    ) -> Any:
-        """$P_F=\\sum_{x\\in F}\\lvert x\\rangle\\langle x\\rvert$ (LISS-0430)
-        -- `body` must be exactly `|<bound_variable>><<bound_variable>|`
-        (parser-verified shape, matching `KetSumBinder`'s own body
-        restriction), desugared by `_ket_or_outer`/ADR 0169 to
-        `projector(Var(bound_variable))`. For each concrete `x` in
-        `elements`, lowers $\\lvert x\\rangle\\langle x\\rvert$ via the
-        standard Pauli-Z identity
-        $\\bigotimes_i\\frac{I+(-1)^{x_i}Z_i}{2}$ as a literal `OpBin`
-        product tree -- deliberately NOT manually expanded into a flat
-        Pauli-string sum; `hamiltonian.py`'s existing matrix compiler
-        already reduces arbitrary `OpBin(+)/OpBin(*)/OpPauli` trees to a
-        matrix (proven by the already-shipped `objective_hamiltonian`'s
-        own `Z[i] * Z[j]` coupling term), so the tensor-product structure
-        is left for that existing, tested path to resolve, not
-        reimplemented here."""
-        if not (
-            isinstance(body, Call)
-            and isinstance(body.callee, Var)
-            and body.callee.name == "projector"
-            and len(body.args) == 1
-            and isinstance(body.args[0], Var)
-            and body.args[0].name == bound_variable
-        ):
-            raise KernelError(
-                "Sigma (x In F) { ... } over a Set domain requires the "
-                "body to be exactly `|x><x|` (the bound variable's own "
-                "projector)"
-            )
-        if not elements:
-            return OpIdentity(
-                kind="Sigma", acting_space=domain_width, span=body.span
-            )
-        terms: list[Any] = []
-        for pattern in elements:
-            n = len(pattern)
-            factors = []
-            for i in range(n):
-                sign = -1.0 if pattern[i] else 1.0
-                z_term: Any = OpPauli(kind="Z", site=i, span=body.span)
-                if sign < 0:
-                    z_term = OpBin(
-                        op="*", lhs=OpLit(value=-1.0, span=body.span),
-                        rhs=z_term, span=body.span,
-                    )
-                factor = OpBin(
-                    op="*",
-                    lhs=OpLit(value=0.5, span=body.span),
-                    rhs=OpBin(
-                        op="+",
-                        lhs=OpPauli(kind="I", site=i, span=body.span),
-                        rhs=z_term,
-                        span=body.span,
-                    ),
-                    span=body.span,
-                )
-                factors.append(factor)
-            product = factors[0]
-            for factor in factors[1:]:
-                product = OpBin(op="*", lhs=product, rhs=factor, span=body.span)
-            terms.append(product)
-        result = terms[0]
-        for term in terms[1:]:
-            result = OpBin(op="+", lhs=result, rhs=term, span=body.span)
-        return result
 
     def _operator_legacy_lower_operator_value(
         self,
