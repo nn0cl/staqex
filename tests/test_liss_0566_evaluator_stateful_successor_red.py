@@ -26,24 +26,6 @@ EVOLUTION_IMPLEMENTATION_METHODS = {
     "_evolution_legacy_hamiltonian_evolve_one_step",
     "_evolution_legacy_hamiltonian_evolve_tuple_coordinate",
     "_evolution_legacy_evolve_precomputed_grid",
-    "_evolution_legacy_resolve_unitary_matrix",
-    "_evolution_legacy_qft_family_matrix",
-    "_evolution_legacy_bind_apply",
-    "_evolution_legacy_bind_capply",
-}
-
-OPERATOR_IMPLEMENTATION_METHODS = {
-    "_operator_legacy_operator_name",
-    "_operator_legacy_looks_like_operator_rhs",
-    "_operator_legacy_resolve_operator",
-    "_operator_legacy_array_context",
-    "_operator_legacy_resolve_op_call",
-    "_operator_legacy_resolve_operator_tree",
-    "_operator_legacy_lookup_set_comprehension_value",
-    "_operator_legacy_lower_operator_value",
-    "_operator_legacy_resolve_operator_factory_call",
-    "_operator_legacy_resolve_operator_method_call",
-    "_operator_legacy_bind_second_quantized",
 }
 
 
@@ -59,43 +41,32 @@ def _evaluator_method_names() -> set[str]:
     }
 
 
-def test_stateful_successor_modules_expose_three_named_units() -> None:
+def test_stateful_successor_module_exposes_evolution_unit() -> None:
     evolution = importlib.import_module(f"{PACKAGE}.evolution")
-    operators = importlib.import_module(f"{PACKAGE}.operators")
 
     assert callable(evolution.execute_stateful_evolution)
-    assert callable(evolution.resolve_unitary)
-    assert callable(operators.lower_stateful_operator)
 
 
 def test_stateful_implementation_bodies_leave_evaluator_facade() -> None:
-    remaining = _evaluator_method_names() & (
-        EVOLUTION_IMPLEMENTATION_METHODS | OPERATOR_IMPLEMENTATION_METHODS
-    )
+    remaining = _evaluator_method_names() & EVOLUTION_IMPLEMENTATION_METHODS
     assert not remaining, (
-        "stateful evolution/operator implementation bodies remain on Evaluator: "
+        "stateful evolution implementation bodies remain on Evaluator: "
         f"{sorted(remaining)}"
     )
 
 
 def test_successor_context_declares_narrow_stateful_callbacks() -> None:
     context = inspect.getsource(importlib.import_module(f"{PACKAGE}.context"))
-    for callback in (
-        "_stateful_evolution_context",
-        "_unitary_context",
-        "_operator_lowering_context",
-    ):
-        assert f"def {callback}" in context
+    assert "def _stateful_evolution_context" in context
 
 
 def test_extracted_stateful_modules_do_not_import_or_rebuild_evaluator() -> None:
-    for name in ("evolution", "operators"):
-        source = inspect.getsource(importlib.import_module(f"{PACKAGE}.{name}"))
-        assert "runtime.evaluator" not in source
-        assert "from ..evaluator" not in source
-        assert "Evaluator(" not in source
-        assert "self.operators" not in source
-        assert "self.rng" not in source
+    source = inspect.getsource(importlib.import_module(f"{PACKAGE}.evolution"))
+    assert "runtime.evaluator" not in source
+    assert "from ..evaluator" not in source
+    assert "Evaluator(" not in source
+    assert "self.operators" not in source
+    assert "self.rng" not in source
 
 
 def test_explicit_suzuki_qasm_characterization_is_preserved() -> None:

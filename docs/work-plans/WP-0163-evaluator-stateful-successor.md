@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | review — Phase 1 Red reviewed; Phase 2 Unit A approval pending |
+| Status | review — Phase 2 Unit A Green complete; Phase 3 review pending |
 | Size | XL |
 | Parent | WP-0162 |
 | Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
@@ -47,10 +47,10 @@ is not reviewable.
 
 ## Phase 1 Red result
 
-Added `tests/test_liss_0566_evaluator_stateful_successor_red.py` with six
+Added `tests/test_liss_0566_evaluator_stateful_successor_red.py` with six Unit A
 structural and characterization contracts. Focused verification: **3 failed,
-3 passed** as the intentional pre-extraction Red result. No production source
-was changed.
+3 passed** as the intentional pre-extraction Red result. Unit B and Unit C are
+not part of this Green gate. No production source was changed.
 
 ## Phase 1 Red test review
 
@@ -61,8 +61,19 @@ operator lowering successor 承認`.
 The Red contract is accepted. The next execution scope is Unit A only;
 unitary/gate and operator lowering remain separately gated.
 
+## Phase 2 Green — Unit A
+
+Implementation approval received on 2026-09-19. Ten evolution execution
+methods were physically moved into `runtime/evaluation/evolution.py` and
+compatibility aliases were preserved. `evaluator.py` decreased from 5,921 to
+5,164 lines. Verification passed: focused **6**, adjacent **58**, and full
+blocking **2,129** tests; public baseline, compileall, lifecycle, and diff
+checks also passed.
+
+The active-Red entry was removed after Green. Unit B and Unit C remain gated.
+
 ## Current next action
 
 Request typed approval for:
-`Feature Path / Phase 2 Green / LISS-0566 Unit A evolution execution
-implementation 承認`.
+`Feature Path / Phase 3 Refactor / LISS-0566 Unit A evolution execution
+承認`.

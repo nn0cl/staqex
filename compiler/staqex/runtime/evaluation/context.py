@@ -14,6 +14,8 @@ class EvaluatorContext(Protocol):
     evaluator's mutable maps. Concrete state remains owned by ``Evaluator``.
     """
 
+    def _stateful_evolution_context(self) -> Any: ...
+
     def _require_runtime_plan_family(
         self, plan: Any, family: str, payload_name: str
     ) -> None: ...

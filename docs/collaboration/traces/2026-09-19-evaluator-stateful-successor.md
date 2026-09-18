@@ -44,3 +44,21 @@
   Hamiltonian loops. Unit B and Unit C require separate implementation gates.
 - Next approval: `Feature Path / Phase 2 Green / LISS-0566 Unit A evolution
   execution implementation 承認`.
+
+## Attempt 4 — Phase 2 Green, Unit A
+
+- Date: 2026-09-19
+- Approval: `Feature Path / Phase 2 Green / LISS-0566 Unit A evolution
+  execution implementation 承認`
+- Result: physically moved ten evolution execution methods into
+  `runtime/evaluation/evolution.py`; compatibility aliases continue to expose
+  the established private evaluator names.
+- Measurement: `evaluator.py` decreased from 5,921 to 5,164 lines; 757 lines
+  were removed from the facade. Unit B and Unit C were not changed.
+- Verification: focused `6 passed`, adjacent `58 passed`, full blocking
+  pytest `2,129 passed`, public-symbol baseline passed, compileall passed,
+  and lifecycle/diff checks passed.
+- Lifecycle: removed the LISS-0566 active-Red entry after the accepted
+  contract became green.
+- Next approval: `Feature Path / Phase 3 Refactor / LISS-0566 Unit A evolution
+  execution 承認`.

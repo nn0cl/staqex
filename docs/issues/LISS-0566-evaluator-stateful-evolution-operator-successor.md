@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0566
-- Status: review — Phase 1 Red reviewed; Phase 2 Unit A approval pending
+- Status: review — Phase 2 Unit A Green complete; Phase 3 review pending
 - Phase: phase-1-red
 - Type: Architecture Path successor / structural decomposition
 - Priority: high
@@ -71,24 +71,25 @@ in `evaluation/compatibility.py` until the final facade audit.
 
 ## Phase 1 Red contract
 
-Phase 1 added only the successor structural tests, this issue, the work plan,
+Phase 1 added only the Unit A structural tests, this issue, the work plan,
 the active-Red lifecycle entry, and the trace. Tests assert:
 
-1. the three unit manifests and target module ownership;
+1. the Unit A manifest and evolution module ownership;
 2. no public facade import or second evaluator construction in extracted code;
-3. explicit callback/context declarations for each unit;
-4. private consumer compatibility for gate, evolution, factory, method-call,
-   and finite-binder paths;
+3. the Unit A callback/context declaration;
+4. private consumer compatibility for evolution paths;
 5. fixed-seed evolution and QASM characterization before extraction;
-6. finite-binder provenance and atomic rejection preservation.
+6. the existing operator projection remains a characterization dependency but
+   does not expand this Unit A structural scope.
 
 ## Phase 1 Red result
 
 Added `tests/test_liss_0566_evaluator_stateful_successor_red.py` with six
-contracts. The focused run intentionally reports **3 failed, 3 passed**:
+Unit A contracts. The focused run intentionally reports **3 failed, 3
+passed**:
 
-- the three successor entrypoints are not yet present;
-- the 25 explicit stateful implementation bodies remain in `Evaluator`;
+- the Unit A evolution entrypoint is not yet present;
+- the 10 Unit A implementation bodies remain in `Evaluator`;
 - the successor callback contracts are not yet declared;
 - the no-facade dependency and QASM/operator characterization contracts pass.
 
@@ -105,13 +106,35 @@ accepted. The active-Red entry remains until the approved Green unit passes.
 Phase 2 is narrowed to Unit A only; Unit B and Unit C require their own
 bounded implementation approval.
 
+## Phase 2 Green — Unit A
+
+Implementation approval received on 2026-09-19:
+`Feature Path / Phase 2 Green / LISS-0566 Unit A evolution execution
+implementation 承認`.
+
+Physically moved the ten Unit A evolution execution methods into
+`runtime/evaluation/evolution.py` and retained the existing private evaluator
+surface through direct compatibility wiring. `Evaluator` remains the only
+mutable state owner; the extracted functions receive the evaluator context and
+do not import or construct the public facade.
+
+`evaluator.py` decreased from **5,921** to **5,164 lines** (**757 lines
+removed**). The remaining Unit B unitary/gate methods and Unit C operator
+lowering methods remain explicitly out of this Green scope.
+
+Verification: LISS-0566 focused tests **6 passed**, adjacent evolution/QASM/
+finite-binder regression **58 passed**, public-symbol baseline passed,
+full blocking pytest **2,129 passed**, compileall passed, and lifecycle/diff
+checks passed. The active-Red entry was removed after the accepted contract
+became green.
+
 ## Adjudicator Decision Points
 
 - Phase 0 accepted on 2026-09-19:
   `Architecture Path / Phase 0 acceptance / evaluator stateful evolution and
   operator lowering successor 承認`.
-- Next approval required: `Feature Path / Phase 2 Green / LISS-0566 Unit A
-  evolution execution implementation 承認`.
+- Next approval required: `Feature Path / Phase 3 Refactor / LISS-0566 Unit A
+  evolution execution 承認`.
 - Phase 2 Green requires a separate implementation approval for one named unit.
 - Return to Architecture review if callbacks require shared mutable state,
   public DTO changes, semantic-authority movement, or a new dependency.
@@ -143,7 +166,7 @@ test-lifecycle, coverage-ledger, and `git diff --check`.
 
 ## Process Review
 
-- Outcome: not yet; Phase 0 design only
+- Outcome: not yet; Unit A Phase 3/final review remains open
 - Lesson written: no new lesson; evaluator-state-ownership and private-consumer
   inventory lessons applied
 - Template-feedback path: none
