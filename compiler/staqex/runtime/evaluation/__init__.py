@@ -1,5 +1,5 @@
 """Cohesive runtime evaluation services behind the public Evaluator facade."""
 
-from .plans import dispatch_runtime_plan
+from .orchestration import dispatch_runtime_plan, execute_canonical_unit
 
-__all__ = ["dispatch_runtime_plan"]
+__all__ = ["dispatch_runtime_plan", "execute_canonical_unit"]

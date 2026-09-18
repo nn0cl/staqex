@@ -94,7 +94,9 @@ def test_bare_pauli_product_hamiltonian_emits_qasm() -> None:
     assert compiled.ok, compiled.diagnostics
     assert compiled.unit is not None
 
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
     assert emitted.ok, emitted.notes
 
 

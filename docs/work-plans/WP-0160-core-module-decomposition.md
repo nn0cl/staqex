@@ -71,8 +71,32 @@ units while preserving all externally observable behavior and public imports.
 - Issue: none
 - Reason: WP-0160 is complete through LISS-0550. The 6,914-line evaluator
   body migration remains a successor candidate requiring its own Issue and
-  approval; it is not silently reopened here.
+  approval; it is not silently reopened here. The latest repository snapshot
+  is recorded below.
 - Adjudicator approval needed: none.
+
+## Latest source-size snapshot
+
+Measured on 2026-09-18 from the current `main` source tree. These values are
+planning evidence, not an implementation authorization or a reopening of the
+completed LISS-0543–0550 work.
+
+| File | Lines | Methods/functions |
+|---|---:|---:|
+| `compiler/staqex/runtime/evaluator.py` | 6,976 | 166 |
+| `compiler/staqex/typecheck.py` | 4,678 | 92 |
+| `compiler/staqex/parser.py` | 3,679 | 127 |
+| `compiler/staqex/scientific_semantic/legacy.py` | 1,803 | 38 |
+| `compiler/staqex/backend/qasm/lowering/legacy.py` | 1,520 | 35 |
+| `compiler/staqex/quantum_semantic_ir_legacy.py` | 1,372 | 48 |
+| `compiler/staqex/hir_legacy.py` | 1,135 | 40 |
+| `compiler/staqex/pipeline_legacy.py` | 1,096 | 27 |
+| `compiler/staqex/ast_nodes_legacy.py` | 1,064 | 7 |
+| `compiler/staqex/finite_binder_legacy.py` | 1,027 | 40 |
+
+The evaluator body decomposition remains the highest-priority successor
+candidate. Historical review and trace records retain their original
+6,914-line/164-method measurements as time-specific evidence.
 
 ## Risks
 

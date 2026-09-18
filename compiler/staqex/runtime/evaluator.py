@@ -100,10 +100,27 @@ from .joint import EPS, Joint, sample_from_marginal
 from .mixed_state import DensityStateValue, density_from_call, matrix_from_list
 from .lindblad import evolve_lindblad
 from .matrix import Matrix
-from .evaluation.plans import dispatch_runtime_plan
 from .evaluation.calls import bind_call
-from .evaluation.evolution import execute_evolution
+from .evaluation.compatibility import (
+    install_evolution_compatibility as _install_evolution_compatibility,
+    install_operator_compatibility as _install_operator_compatibility,
+)
+from .evaluation.evolution import (
+    ExplicitPropagator,
+    execute_evolution,
+)
+from .evaluation.errors import KernelError
 from .evaluation.operators import resolve_operator
+from .evaluation.orchestration import (
+    execute_binder_plan,
+    execute_callable_plan,
+    execute_control_mixture_plan,
+    execute_dynamic_lane_plan,
+    execute_evolution_plan,
+    execute_pure_transformation_plan,
+)
+from .evaluation import dynamic_lane as _dynamic_lane_evaluation
+from .evaluation import observation as _observation_evaluation
 from .evaluation.values import evaluate_value
 from ..static_hilbert import MVP_MAX_LOGICAL_QUBITS
 from ..kernel_literals import SECOND_QUANTIZED_FAMILIES as _SECOND_QUANTIZED_FAMILIES
@@ -207,10 +224,6 @@ class CanonicalExecutionEvidence:
     source_fingerprint: str
 
 
-class KernelError(Exception):
-    pass
-
-
 class KernelDiagnosticError(KernelError, ValueError):
     """Runtime failure with a stable code and legacy ValueError compatibility."""
 
@@ -259,23 +272,19 @@ def _validate_canonical_semantic_ir(semantic_ir: ScientificSemanticIR | None) ->
         )
 
 
-@dataclass(frozen=True)
-class ExplicitPropagator:
-    """Runtime provenance for `exp(-i * H * duration / hbar)`.
-
-    The source-level operator remains explicit; this small runtime value only
-    records the already-written generator and duration so the Kernel can
-    realize the expression without reintroducing an implicit Evolve policy.
-    """
-
-    hamiltonian: Expr
-    duration: Expr
-
-
 class Evaluator:
     """Discrete PMF Kernel (stance a). Pure stmts are Joint → Joint."""
 
     SOURCE_LINDBLAD_DT = 0.01
+
+    # Private compatibility attributes retained for earlier plan-family
+    # characterization tests. Dispatch itself is owned by orchestration.py.
+    _execute_pure_transformation_plan = execute_pure_transformation_plan
+    _execute_control_mixture_plan = execute_control_mixture_plan
+    _execute_evolution_plan = execute_evolution_plan
+    _execute_binder_plan = execute_binder_plan
+    _execute_callable_plan = execute_callable_plan
+    _execute_dynamic_lane_plan = execute_dynamic_lane_plan
 
     def __init__(
         self,
@@ -371,10 +380,9 @@ class Evaluator:
         self._canonical_semantic_ir = None
         _validate_canonical_semantic_ir(semantic_ir)
         self._canonical_semantic_ir = semantic_ir
-        from ..scientific_semantic_ir import build_runtime_execution_plan
+        from .evaluation.orchestration import execute_canonical_unit
 
-        plan = build_runtime_execution_plan(semantic_ir)
-        result = dispatch_runtime_plan(self, plan, unit, stdout=stdout)
+        result = execute_canonical_unit(self, unit, semantic_ir, stdout=stdout)
         from ..scientific_semantic_ir import semantic_fingerprint
 
         result.execution_authority = "scientific_semantic_ir"
@@ -386,31 +394,6 @@ class Evaluator:
             source_fingerprint=semantic_fingerprint(semantic_ir),
         )
         return result
-
-    def _execute_pure_transformation_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute canonical pure transformations before terminal Measure."""
-        self._require_runtime_plan_family(
-            plan,
-            "pure_transformation",
-            "transformations",
-        )
-        return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
-
-    def _execute_control_mixture_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute canonical single-level control mixtures."""
-        self._require_runtime_plan_family(plan, "control_mixture", "controls")
-        # A diagnostic read is an explicit observation boundary.  The
-        # control-mixture plan may still describe the surrounding mixture,
-        # but it must not route a program containing Inspect through the
-        # deferred State/Measure fast path.  Keep the read non-destructive and
-        # let the established AST path preserve its observation semantics.
-        if not self._main_deferred_eligible(unit.main.body.stmts if unit.main else []):
-            return self._run_legacy_ast_body(unit, stdout=stdout)
-        return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
 
     @staticmethod
     def _require_runtime_plan_family(
@@ -425,44 +408,6 @@ class Evaluator:
             raise KernelError(f"runtime plan family must be {family}")
         if not getattr(plan, payload_name, ()):
             raise KernelError(f"{family} plan has no {payload_name} nodes")
-
-    def _execute_evolution_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute canonical local evolution before terminal Measure."""
-        self._require_runtime_plan_family(plan, "evolution", "evolutions")
-        if not self._is_minimal_local_evolution(unit):
-            return self._run_legacy_ast_body(unit, stdout=stdout)
-        return self._execute_deferred_state_measure_plan(
-            self._evolution_runtime_unit(unit), stdout=stdout
-        )
-
-    def _execute_binder_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute the bounded local State/Measure slice around an operator binder."""
-        self._require_runtime_plan_family(plan, "binder", "binders")
-        if unit.main is None or not self._main_deferred_eligible(unit.main.body.stmts):
-            return self._run_legacy_ast_body(unit, stdout=stdout)
-        return self._execute_deferred_state_measure_plan(
-            self._binder_runtime_unit(unit), stdout=stdout
-        )
-
-    def _execute_callable_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute the bounded local callable/object State/Measure slice."""
-        self._require_runtime_plan_family(plan, "callable", "callables")
-        if not self._is_deferred_callable_eligible(unit):
-            return self._run_legacy_ast_body(unit, stdout=stdout)
-        return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
-
-    def _execute_dynamic_lane_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute dynamic lanes through the existing capability-gated path."""
-        self._require_runtime_plan_family(plan, "dynamic_lane", "dynamic_lanes")
-        return self._run_legacy_ast_body(unit, stdout=stdout)
 
     @staticmethod
     def _is_deferred_callable_eligible(unit: CompilationUnit) -> bool:
@@ -607,103 +552,7 @@ class Evaluator:
         """Execute the first State/Measure family through shared mechanics."""
         return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
 
-    def _execute_deferred_state_measure_plan(
-        self, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Run approved deferred State/Measure mechanics without dispatch.
 
-        The statement list is used only as the syntax payload associated with
-        the already-validated plan family.  Meaning, family eligibility, and
-        authority come from ``RuntimeExecutionPlan`` and its semantic IR.
-        """
-        self._prepare_first_family_context(unit)
-        inspect_stream = self.inspect_sink if self.inspect_sink is not None else stdout
-        inspect_out: MeasureSinkPort | None = (
-            TextIOMeasureSinkAdapter(inspect_stream)
-            if inspect_stream is not None
-            else None
-        )
-        stmts = unit.main.body.stmts
-        logs: list[str] = []
-        joint, measure_result, measurement_kind, deferred_binds_applied = (
-            self._run_deferred_state_binds(
-                Joint.unit(),
-                stmts,
-                logs=logs,
-                inspect_out=inspect_out,
-                stdout=stdout,
-                interproc_trace=self._main_interproc_trace_eligible(stmts),
-            )
-        )
-        return EvalResult(
-            joint=joint,
-            measure=measure_result,
-            rng_calls_before_measure=self._rng_calls_before_measure,
-            logs=logs,
-            mixed_state_measured=self.mixed_state_measured,
-            execution_lane=self.execution_lane,
-            measurement_kind=measurement_kind,
-            deferred_pushforward=True,
-            deferred_binds_applied=deferred_binds_applied,
-            last_algebraic_fusion=self.last_algebraic_fusion,
-            last_poly_fusion=self.last_poly_fusion,
-            data_parallel_workers=self.data_parallel_workers,
-            dynamic_outcomes_confirmed=self._dynamic_outcomes_confirmed,
-            evolution_provenance=self.evolution_provenance,
-        )
-
-    def _prepare_first_family_context(self, unit: CompilationUnit) -> None:
-        """Initialize only the evaluator context needed by State/Measure."""
-        from ..stdlib.prelude import PRELUDE_CONSTANTS
-
-        self.funs = {}
-        self.classes = {}
-        self.enums = {}
-        self.structs = {}
-        self.objects = {}
-        self.mixed_states = {}
-        self.ket_labels = {}
-        self.povms = {}
-        self.static_register_sizes = {}
-        self.operator_spaces = {}
-        self.mixed_state_measured = False
-        self.execution_lane = None
-        self._dynamic_outcomes_confirmed = True
-        self.evolution_provenance = None
-        self._this = None
-        self._unit = unit
-        self.operators = {}
-        self._compiled_operator_cache = {}
-        self.scalars = dict(PRELUDE_CONSTANTS)
-        self.scalar_units = {}
-        self._frame_units = {}
-        self._resolved_host_arrays = {}
-        for statement in unit.main.body.stmts if unit.main is not None else ():
-            if (
-                isinstance(statement, StateBind)
-                and statement.ty is not None
-                and statement.ty.name == "Operator"
-                and len(statement.names) == 1
-            ):
-                if isinstance(statement.expr, OpPauli):
-                    self.operators[statement.names[0]] = statement.expr
-                else:
-                    propagator = self._explicit_propagator(statement.expr)
-                    if propagator is not None:
-                        self.operators[statement.names[0]] = propagator
-        for declaration in unit.decls:
-            if isinstance(declaration, FunDecl) and declaration.name != "main":
-                self.funs[declaration.qualified_name] = declaration
-                self.funs[declaration.name] = declaration
-            elif isinstance(declaration, ClassDecl):
-                self.classes[declaration.qualified_name] = declaration
-                self.classes[declaration.name] = declaration
-            elif isinstance(declaration, EnumDecl):
-                self.enums[declaration.qualified_name] = declaration
-                self.enums[declaration.name] = declaration
-            elif isinstance(declaration, StructDecl):
-                self.structs[declaration.qualified_name] = declaration
-                self.structs[declaration.name] = declaration
 
     def _resolve_host_coefficient_arrays(self, unit: CompilationUnit) -> dict[str, Any]:
         """Wire HostInputPort into the ADR 0119 coefficient-tensor path
@@ -1163,606 +1012,22 @@ class Evaluator:
             evolution_provenance=self.evolution_provenance,
         )
 
-    @staticmethod
-    def _main_deferred_eligible(stmts: list[Any]) -> bool:
-        """ADR 0140: StateBind* + terminal Measure only (no inspect/snapshot/ops)."""
-        if not stmts:
-            return False
-        measure_i: int | None = None
-        for i, stmt in enumerate(stmts):
-            if isinstance(stmt, Measure):
-                if measure_i is not None:
-                    return False
-                measure_i = i
-                continue
-            if not isinstance(stmt, StateBind):
-                return False
-            if not Evaluator._is_deferred_state_bind(stmt):
-                return False
-        return measure_i is not None and measure_i == len(stmts) - 1
 
-    @staticmethod
-    def _is_deferred_state_bind(stmt: StateBind) -> bool:
-        if stmt.ty is not None and stmt.ty.name != "State":
-            return False
-        # ADR 0180: untyped classical/Operator/object binds are not State binds.
-        if stmt.ty is None and not stmt.via_state_keyword:
-            return False
-        # inspect / snapshot force a read boundary (ADR 0030 / 0029).
-        if Evaluator._expr_has_inspect(stmt.expr):
-            return False
-        return True
 
-    @staticmethod
-    def _expr_has_inspect(expr: Expr) -> bool:
-        if isinstance(expr, Inspect):
-            return True
-        if isinstance(expr, BinOp):
-            return Evaluator._expr_has_inspect(expr.lhs) or Evaluator._expr_has_inspect(
-                expr.rhs
-            )
-        if isinstance(expr, Call):
-            return Evaluator._expr_has_inspect(expr.callee) or any(
-                Evaluator._expr_has_inspect(a) for a in expr.args
-            )
-        if isinstance(expr, (WhenExpr, SuperposeExpr)):
-            if Evaluator._expr_has_inspect(expr.ctrl):
-                return True
-            return any(Evaluator._expr_has_inspect(arm.body) for arm in expr.arms)
-        if isinstance(expr, Pipe):
-            return Evaluator._expr_has_inspect(expr.lhs) or Evaluator._expr_has_inspect(
-                expr.rhs
-            )
-        if isinstance(expr, Attr):
-            return Evaluator._expr_has_inspect(expr.obj)
-        if isinstance(expr, (TupleExpr, ListExpr)):
-            return any(Evaluator._expr_has_inspect(i) for i in expr.items)
-        if isinstance(expr, BlockExpr):
-            return any(
-                Evaluator._expr_has_inspect(let.expr) for let in expr.lets
-            ) or Evaluator._expr_has_inspect(expr.result)
-        if isinstance(expr, Dirac):
-            return Evaluator._expr_has_inspect(expr.arg)
-        if isinstance(expr, UnitConvert):
-            return Evaluator._expr_has_inspect(expr.expr)
-        if isinstance(expr, Lambda):
-            return Evaluator._expr_has_inspect(expr.body)
-        return False
 
-    @staticmethod
-    def _expr_free_vars(expr: Expr) -> set[str]:
-        names: set[str] = set()
 
-        def walk(node: Any) -> None:
-            if node is None:
-                return
-            if isinstance(node, Var):
-                names.add(node.name)
-                return
-            if isinstance(node, (LitInt, LitFloat, LitBool, LitString, Coin, Vacuum, Hole)):
-                return
-            if isinstance(node, KetLit):
-                return
-            if isinstance(node, KetSumBinder):
-                domain = node.domain
-                walk(getattr(domain, "width", None))
-                return
-            if isinstance(node, NormExpr):
-                walk(node.state)
-                return
-            if isinstance(node, SetComprehension):
-                domain = node.domain
-                walk(getattr(domain, "start", None))
-                walk(getattr(domain, "end", None))
-                walk(getattr(domain, "width", None))
-                for condition in node.conditions:
-                    walk(condition)
-                names.discard(node.variable)
-                return
-            if isinstance(node, OpBinder):
-                domain = node.domain
-                walk(domain)
-                walk(getattr(domain, "start", None))
-                walk(getattr(domain, "end", None))
-                walk(getattr(domain, "width", None))
-                walk(node.guard)
-                walk(node.body)
-                names.discard(node.variable)
-                return
-            if isinstance(node, OpVar):
-                names.add(node.name)
-                return
-            if isinstance(node, OpIndexed):
-                walk(node.base)
-                walk(node.index)
-                return
-            if isinstance(node, (OpBin, OpPow, OpCall)):
-                if isinstance(node, OpBin):
-                    walk(node.lhs)
-                    walk(node.rhs)
-                elif isinstance(node, OpPow):
-                    walk(node.base)
-                else:
-                    for arg in node.args:
-                        walk(arg)
-                return
-            if isinstance(node, OpAttr):
-                walk(node.obj)
-                return
-            if isinstance(node, (OpLit, OpPauli, OpHop, OpNumber, OpQuadrature, OpGridQuad, OpIdentity)):
-                return
-            if isinstance(node, BinOp):
-                walk(node.lhs)
-                walk(node.rhs)
-                return
-            if isinstance(node, UnaryNot):
-                walk(node.expr)
-                return
-            if isinstance(node, Call):
-                walk(node.callee)
-                for a in node.args:
-                    walk(a)
-                return
-            if isinstance(node, (WhenExpr, SuperposeExpr)):
-                walk(node.ctrl)
-                for arm in node.arms:
-                    walk(arm.body)
-                return
-            if isinstance(node, Pipe):
-                walk(node.lhs)
-                walk(node.rhs)
-                return
-            if isinstance(node, Lambda):
-                walk(node.body)
-                names.discard(node.param)
-                return
-            if isinstance(node, Attr):
-                walk(node.obj)
-                return
-            if isinstance(node, Inspect):
-                walk(node.expr)
-                return
-            if isinstance(node, UnitConvert):
-                walk(node.expr)
-                return
-            if isinstance(node, (TupleExpr, ListExpr)):
-                for item in node.items:
-                    walk(item)
-                return
-            if isinstance(node, BlockExpr):
-                for let in node.lets:
-                    walk(let.expr)
-                walk(node.result)
-                return
-            if isinstance(node, Dirac):
-                walk(node.arg)
-                return
-            if isinstance(node, EvolveExpr):
-                for t in node.seeds:
-                    walk(t)
-                if node.body is not None:
-                    for lb in node.body.lets:
-                        walk(lb.expr)
-                    walk(node.body.result)
-                if isinstance(node.times, Expr):
-                    walk(node.times)
-                if node.duration is not None:
-                    walk(node.duration)
-                if node.hamiltonian is not None:
-                    walk(node.hamiltonian)
-                return
-            if isinstance(node, TensorExpr):
-                walk(node.left)
-                walk(node.right)
-                return
 
-        walk(expr)
-        return names
 
-    @classmethod
-    def _deferred_bind_cone(
-        cls,
-        pending: list[StateBind],
-        measure_expr: Expr,
-        *,
-        extra_needed: set[str] | None = None,
-    ) -> set[str]:
-        needed = cls._expr_free_vars(measure_expr)
-        if extra_needed:
-            needed |= set(extra_needed)
-        changed = True
-        while changed:
-            changed = False
-            for bind in pending:
-                if needed.intersection(bind.names):
-                    fv = cls._expr_free_vars(bind.expr)
-                    if not fv <= needed:
-                        needed |= fv
-                        changed = True
-        return needed
 
-    def _apply_measure_tracing_out(self, joint: Joint, stmt: Measure) -> Joint:
-        """ADR 0173: Born partial-trace leftovers before terminal measure."""
-        for name in stmt.tracing_out:
-            joint = joint.trace_out(name)
-        return joint
 
-    def _run_deferred_state_binds(
-        self,
-        joint: Joint,
-        stmts: list[Any],
-        *,
-        logs: list[str],
-        inspect_out: MeasureSinkPort | None,
-        stdout: TextIO | None,
-        interproc_trace: bool = False,
-    ) -> tuple[Joint, MeasureResult | None, str | None, int]:
-        pending = [s for s in stmts if isinstance(s, StateBind)]
-        measure_stmt = stmts[-1]
-        assert isinstance(measure_stmt, Measure)
-        needed = self._deferred_bind_cone(
-            pending,
-            measure_stmt.expr,
-            extra_needed=(
-                set(measure_stmt.tracing_out)
-                | {
-                    name
-                    for stmt in pending
-                    if stmt.ty is not None and stmt.ty.name == "Operator"
-                    for name in self._expr_free_vars(stmt.expr)
-                }
-            ),
-        )
-        applied = 0
-        for i, stmt in enumerate(pending):
-            if stmt.ty is not None and stmt.ty.name == "Operator":
-                if len(stmt.names) != 1:
-                    raise KernelError("Operator bind expects a single name")
-                name = stmt.names[0]
-                declared_space = operator_declared_space(stmt.ty)
-                if declared_space is not None:
-                    self.operator_spaces[name] = declared_space
-                explicit_propagator = self._explicit_propagator(stmt.expr)
-                op_val = (
-                    explicit_propagator
-                    if explicit_propagator is not None
-                    else resolve_operator(self, stmt.expr)
-                )
-                if (
-                    isinstance(op_val, Call)
-                    and isinstance(op_val.callee, Var)
-                    and op_val.callee.name == "outer"
-                ):
-                    op_val = self._materialize_outer(joint, op_val)
-                self.operators[name] = op_val
-                applied += 1
-                continue
-            if (
-                stmt.ty is not None
-                and stmt.ty.name in {"Float", "Bool"}
-                and len(stmt.ty.args) >= 1
-            ):
-                # Coefficient arrays are compile-time inputs for Operator
-                # lowering and do not become Joint coordinates.
-                continue
-            # POVM and DensityState declarations are execution metadata for
-            # the terminal measurement, not Joint coordinates.  The deferred
-            # callable path must register them before resolving the measure
-            # effect, including when the measured density state is returned
-            # by a zero-argument function rather than named in `mixed_states`.
-            if stmt.ty is not None and stmt.ty.name == "POVM":
-                self._bind_povm(stmt)
-                applied += 1
-                continue
-            if stmt.ty is not None and stmt.ty.name == "DensityState":
-                self._bind_mixed_state(stmt)
-                applied += 1
-                continue
-            if not needed.intersection(stmt.names):
-                continue
-            joint = self._bind_names(
-                joint, stmt.names, stmt.expr, logs=logs, inspect_out=inspect_out
-            )
-            applied += 1
-            # Keep the deferred path's classical environment in sync with
-            # the legacy executor.  Binder domains and classical functions
-            # resolve named Int/Float values through `self.scalars`, while
-            # `_bind_names` stores the value in the Joint coordinate.
-            if (
-                stmt.ty is not None
-                and stmt.ty.name
-                not in {
-                    "State",
-                    "Operator",
-                    "Delta",
-                    "POVM",
-                    "DensityState",
-                    "QubitRegister",
-                }
-                and len(stmt.names) == 1
-            ):
-                self._maybe_capture_classical_scalar(joint, stmt.names[0])
-            if interproc_trace and self._is_library_user_call(stmt.expr):
-                later: list[Any] = [
-                    s for s in pending[i + 1 :] if needed.intersection(s.names)
-                ]
-                later.append(measure_stmt)
-                live = self._stmts_live_vars(later)
-                joint = self._trace_out_dead_caller_coords(
-                    joint, live, stmt.names
-                )
-        self._rng_calls_before_measure = self.rng_calls
-        measurement_kind = self._resolve_measurement_kind(measure_stmt.povm)
-        joint = self._apply_measure_tracing_out(joint, measure_stmt)
-        mixed = self._mixed_state_for_measure(measure_stmt.expr)
-        if mixed is not None:
-            measure_result = self._measure_mixed(
-                mixed,
-                sink=measure_stmt.sink,
-                stdout=stdout,
-            )
-            self.mixed_state_measured = True
-        else:
-            measure_result = self._measure(
-                joint, measure_stmt.expr, sink=measure_stmt.sink, stdout=stdout
-            )
-        return joint, measure_result, measurement_kind, applied
 
-    def _mixed_state_for_measure(self, expr: Expr) -> DensityStateValue | None:
-        """Resolve a measure target to a DensityStateValue when applicable.
 
-        LISS-0377: previously only bare ``Var`` names already present in
-        ``mixed_states`` took the mixed path, so ``measure make()`` fell
-        through to Joint vacuum measurement with an empty marginal.
-        """
-        if isinstance(expr, Var):
-            return self.mixed_states.get(expr.name)
-        if (
-            not isinstance(expr, Call)
-            or not isinstance(expr.callee, Var)
-            or expr.args
-        ):
-            return None
-        fun = self.funs.get(expr.callee.name)
-        if (
-            fun is None
-            or fun.return_type is None
-            or fun.return_type.name != "DensityState"
-        ):
-            return None
-        domain = (
-            fun.return_type.args[0].name if fun.return_type.args else "Unknown"
-        )
-        result_expr: Expr | None = fun.body.result
-        if result_expr is None:
-            for stmt in fun.body.stmts:
-                if isinstance(stmt, ReturnStmt):
-                    result_expr = stmt.expr
-                    break
-        if not isinstance(result_expr, Call):
-            raise KernelError("unsupported DensityState construction")
-        try:
-            return density_from_call(
-                result_expr,
-                domain=domain,
-                scalars=_float_scalars(self.scalars),
-                ket_labels=self.ket_labels,
-            )
-        except ValueError as exc:
-            raise KernelError(str(exc)) from exc
 
-    def _resolve_measurement_kind(self, povm: Expr | None) -> str:
-        if povm is None:
-            return "ComputationalBasis"
-        if isinstance(povm, Var) and povm.name in self.povms:
-            return self.povms[povm.name][1]
-        raise KernelError("INVALID_POVM_EFFECT")
 
-    def _bind_povm(self, stmt: StateBind) -> None:
-        if (
-            isinstance(stmt.expr, Call)
-            and _call_name(stmt.expr) == "ComputationalBasis"
-        ):
-            domain = stmt.ty.args[0].name if stmt.ty and stmt.ty.args else "Unknown"
-            self.povms[stmt.names[0]] = (domain, "ComputationalBasis")
-            return
-        raise KernelError("INVALID_POVM_EFFECT")
 
-    def _bind_mixed_state(self, stmt: StateBind) -> None:
-        if len(stmt.names) != 1 or stmt.ty is None:
-            raise KernelError("DensityState bind expects one name")
-        domain = stmt.ty.args[0].name if stmt.ty.args else "Unknown"
-        expr = stmt.expr
-        if isinstance(expr, Call) and _call_name(expr) == "DensityState":
-            try:
-                self.mixed_states[stmt.names[0]] = density_from_call(
-                    expr,
-                    domain=domain,
-                    scalars=_float_scalars(self.scalars),
-                    ket_labels=self.ket_labels,
-                )
-            except ValueError as exc:
-                raise KernelError(str(exc)) from exc
-            return
-        if isinstance(expr, Call) and _call_name(expr) == "lindblad":
-            if len(expr.args) != 4 or not isinstance(expr.args[0], Var):
-                raise KernelError("lindblad requires a DensityState source")
-            source = self.mixed_states.get(expr.args[0].name)
-            if source is None:
-                raise KernelError("lindblad source must be a DensityState")
-            # A declaration-only source contract may still carry unresolved
-            # placeholders. Keep that path opaque; numerical lowering starts
-            # only when all MVP inputs are explicit.
-            if (
-                isinstance(expr.args[1], Var)
-                and expr.args[1].name not in self.operators
-            ) or (
-                isinstance(expr.args[2], Var)
-            ) or (
-                isinstance(expr.args[3], Var)
-                and expr.args[3].name not in self.scalars
-            ):
-                self.mixed_states[stmt.names[0]] = DensityStateValue(
-                    matrix=[row[:] for row in source.matrix],
-                    domain=domain,
-                    operation="lindblad",
-                )
-                self.execution_lane = "cpu/simulator"
-                return
-            n_qubits = _density_matrix_n_qubits(source.matrix)
-            hamiltonian = self._resolve_lindblad_hamiltonian(expr.args[1], n_qubits)
-            jumps = self._resolve_lindblad_jumps(expr.args[2], n_qubits)
-            try:
-                total_time = float(evaluate_value(self, expr.args[3], {}))
-                evolved = evolve_lindblad(
-                    source.matrix,
-                    hamiltonian,
-                    jumps,
-                    total_time=total_time,
-                    dt=self.SOURCE_LINDBLAD_DT,
-                )
-            except (KernelError, TypeError, ValueError, RuntimeError) as exc:
-                raise KernelError(str(exc)) from exc
-            self.mixed_states[stmt.names[0]] = DensityStateValue(
-                matrix=evolved,
-                domain=domain,
-                operation="lindblad",
-            )
-            self.execution_lane = "cpu/simulator"
-            return
-        if isinstance(expr, Call) and _call_name(expr) == "apply":
-            if len(expr.args) < 2 or not isinstance(expr.args[1], Var):
-                raise KernelError("mixed apply requires a DensityState source")
-            source = self.mixed_states.get(expr.args[1].name)
-            if source is None:
-                raise KernelError("mixed apply source must be a DensityState")
-            self.mixed_states[stmt.names[0]] = source
-            return
-        raise KernelError("unsupported DensityState construction")
 
-    def _resolve_lindblad_jumps(self, expr: Expr, n_qubits: int) -> list[Matrix]:
-        if isinstance(expr, ListExpr):
-            if expr.items:
-                raise KernelError(
-                    "non-empty Lindblad jumps must use JumpSet([RawMatrix(...)])"
-                )
-            return []
-        if not isinstance(expr, Call) or _call_name(expr) != "JumpSet":
-            raise KernelError("Lindblad jump input must be JumpSet or an empty list")
-        if len(expr.args) != 1 or not isinstance(expr.args[0], ListExpr):
-            raise KernelError("JumpSet requires a finite list")
-        jumps: list[Matrix] = []
-        for item in expr.args[0].items:
-            if isinstance(item, Var):
-                if item.name not in self.operators:
-                    raise KernelError(
-                        f"SYMBOLIC_JUMP_LOWERING_REQUIRED: jump `{item.name}` "
-                        "must resolve to an Operator"
-                    )
-                try:
-                    jumps.append(self._compile_lindblad_operator(item.name, n_qubits))
-                except ValueError as exc:
-                    raise KernelError(str(exc)) from exc
-                continue
-            if not isinstance(item, Call) or _call_name(item) != "RawMatrix":
-                raise KernelError("JumpSet entries must be explicit RawMatrix values")
-            if len(item.args) != 1:
-                raise KernelError("RawMatrix requires a finite square numeric matrix")
-            try:
-                matrix = matrix_from_list(item.args[0])
-            except ValueError as exc:
-                raise KernelError(str(exc)) from exc
-            jumps.append(matrix)
-        return jumps
 
-    def _resolve_lindblad_hamiltonian(self, expr: Expr, n_qubits: int) -> Matrix:
-        from .unitaries import named_gate_matrix
 
-        if isinstance(expr, Var) and expr.name in self.operators:
-            try:
-                return self._compile_lindblad_operator(expr.name, n_qubits)
-            except ValueError as exc:
-                raise KernelError(str(exc)) from exc
-        if isinstance(expr, Var):
-            matrix = named_gate_matrix(expr.name)
-            if matrix is not None:
-                return matrix
-        raise KernelError("source Lindblad MVP requires a resolvable Hamiltonian")
-
-    def _compile_lindblad_operator(self, name: str, n_qubits: int) -> Matrix:
-        from .hamiltonian import compile_hamiltonian
-
-        return compile_hamiltonian(
-            self.operators[name],
-            env=self.operators,
-            scalars=self.scalars,
-            n_qubits=n_qubits,
-        )
-
-    def _emit_measure_text(
-        self,
-        sink: str | None,
-        text: str,
-        *,
-        stdout: TextIO | None,
-    ) -> None:
-        """Emit measure/snapshot text via MeasureSinkPort (ADR 0171)."""
-        if self.measure_sink is not None:
-            self.measure_sink.write(text)
-            return
-        port = resolve_measure_sink(sink, stdout=stdout)
-        if port is None:
-            return
-        port.write(text)
-
-    def _emit_sink(
-        self,
-        sink: str | None,
-        text: str,
-        *,
-        stdout: TextIO | None,
-    ) -> None:
-        """Emit snapshot/diagnostic text; preserve write_sink newline policy."""
-        if self.measure_sink is not None:
-            self.measure_sink.write(text)
-            return
-        from ..measure_sink_port import _STDOUT_ALIASES
-
-        if (sink is None or sink in _STDOUT_ALIASES) and text and not text.endswith("\n"):
-            text = text + "\n"
-        port = resolve_measure_sink(sink, stdout=stdout)
-        if port is None:
-            return
-        port.write(text)
-
-    def _measure_mixed(
-        self,
-        state: DensityStateValue,
-        *,
-        sink: str | None,
-        stdout: TextIO | None,
-    ) -> MeasureResult:
-        marginal = {
-            index: max(0.0, float(state.matrix[index][index].real))
-            for index in range(len(state.matrix))
-        }
-        marginal = {key: value for key, value in marginal.items() if value > EPS}
-        if not marginal:
-            return MeasureResult(
-                value=None, vacuum=True, marginal={}, rng_calls=self.rng_calls, sink=sink
-            )
-        self.rng_calls += 1
-        value = sample_from_marginal(marginal, self.rng)
-        text = _format_value(value)
-        self._emit_measure_text(sink, text + "\n", stdout=stdout)
-        return MeasureResult(
-            value=value,
-            vacuum=False,
-            marginal=marginal,
-            rng_calls=self.rng_calls,
-            sink=sink,
-            output=text,
-        )
 
     def _run_foreach(self, joint: Joint, stmt: ForEachStmt) -> Joint:
         """Expand a static register loop into compiler-internal wire names."""
@@ -1816,185 +1081,10 @@ class Evaluator:
                 joint = bind_call(self, joint, wire, expanded)
         return joint
 
-    def _run_dynamic_qpu_block(
-        self,
-        joint: Joint,
-        stmt: DynamicQpuStmt,
-        *,
-        logs: list[str],
-        inspect_out: MeasureSinkPort | None,
-    ) -> Joint:
-        """LISS-0387 (ADR 0200 Decisions 1-3, 6): real dynamic qpu execution.
 
-        Mid-circuit `Controller<T> = measure wire` performs a genuine
-        Lueders projection + renormalize -- the same `project_coord`
-        primitive `project(psi, k)` already uses in the Static Kernel, not a
-        bookkeeping label. The matching `match` arm then runs against the
-        real post-measure joint via the existing Call-statement dispatch.
-        Host has already Fake-gated this run by the time this is reached
-        (unchanged from LISS-0383); `physical_execution_claimed` semantics
-        live entirely in the Host layer and are untouched here.
 
-        LISS-0395: the block body is executed via `_run_dynamic_arm_body`
-        (the top level is "the outermost arm body") instead of a second,
-        hand-maintained copy of the same statement dispatch -- this is what
-        makes a Controller-measure or a wire touched only inside a nested
-        `match` arm reach the same real-collapse / block-end trace-out
-        treatment as a top-level one, at any nesting depth.
-        """
-        controller_values: dict[str, str] = {}
-        dynamically_measured: list[str] = []
 
-        joint = self._run_dynamic_arm_body(
-            joint,
-            stmt.body.stmts,
-            controller_values,
-            dynamically_measured,
-            logs=logs,
-            inspect_out=inspect_out,
-        )
 
-        # LISS-0387 Decision 5: dynamically-measured wires are local to the
-        # block (never referenced by the surrounding Static `main`); trace
-        # them out here via the already-shipped ADR 0173 primitive instead
-        # of relying on Host's LINEAR_IMPLICIT_DISCARD bypass. LISS-0395:
-        # `dynamically_measured` is now populated at any nesting depth
-        # (including wires only ever touched inside a match arm), since
-        # `_run_dynamic_arm_body` mutates this same list by reference.
-        for wire in dynamically_measured:
-            joint = joint.trace_out(wire)
-        return joint
-
-    def _reset_dynamic_wire(self, joint: Joint, wire: str, span: Span) -> Joint:
-        """LISS-0390: trace_out(wire) then re-prepare wire as |0>.
-
-        Reuses the two already-shipped primitives LISS-0387 (KetLit |0>
-        preparation) and ADR 0173 (Joint.trace_out) established -- no new
-        Joint math. Deliberately distinct from the Static Kernel's
-        same-name `state x = |0>` idiom (LISS-0114 F verification).
-        """
-        joint = joint.trace_out(wire)
-        return self._bind_names(
-            joint, [wire], KetLit(label="0", span=span), logs=[], inspect_out=None
-        )
-
-    def _run_dynamic_arm_body(
-        self,
-        joint: Joint,
-        stmts: list[Any],
-        controller_values: dict[str, str] | None = None,
-        dynamically_measured: list[str] | None = None,
-        *,
-        logs: list[str] | None = None,
-        inspect_out: MeasureSinkPort | None = None,
-    ) -> Joint:
-        """LISS-0395: single recursive statement dispatcher for dynamic-lane
-        bodies, used both for the top-level `dynamic qpu` block (via
-        `_run_dynamic_qpu_block`) and for `match` arm bodies (including
-        arms nested inside arms). `controller_values` and
-        `dynamically_measured` are threaded by reference so a
-        Controller-measure or a reset performed at any nesting depth is
-        visible to sibling/descendant statements and to the caller's
-        block-end trace-out accounting, exactly as if it had happened at
-        the top level.
-        """
-        if controller_values is None:
-            controller_values = {}
-        if dynamically_measured is None:
-            dynamically_measured = []
-        for body_stmt in stmts:
-            if (
-                isinstance(body_stmt, StateBind)
-                and body_stmt.ty is not None
-                and body_stmt.ty.name == "Controller"
-                and isinstance(body_stmt.expr, MeasureExpr)
-                and isinstance(body_stmt.expr.expr, Var)
-                and len(body_stmt.names) == 1
-            ):
-                wire = body_stmt.expr.expr.name
-                controller_name = body_stmt.names[0]
-                outcome = self._resolve_dynamic_outcome(controller_name)
-                joint = self._collapse_dynamic_wire(joint, wire, outcome)
-                controller_values[controller_name] = outcome
-                dynamically_measured.append(wire)
-                continue
-            if isinstance(body_stmt, MatchStmt):
-                value = controller_values.get(body_stmt.scrutinee)
-                arm = next(
-                    (a for a in body_stmt.arms if a.pattern == value), None
-                )
-                if arm is not None:
-                    joint = self._run_dynamic_arm_body(
-                        joint,
-                        arm.body.stmts,
-                        controller_values,
-                        dynamically_measured,
-                        logs=logs,
-                        inspect_out=inspect_out,
-                    )
-                continue
-            if isinstance(body_stmt, ResetStmt):
-                # LISS-0390 (ADR 0199 Amendment Decision 7): reuses
-                # trace_out (ADR 0173) + KetLit |0> re-preparation -- no
-                # new Joint primitive. Tracked for block-end disposal like
-                # a measured wire, in case the wire is never touched again.
-                joint = self._reset_dynamic_wire(joint, body_stmt.target, body_stmt.span)
-                dynamically_measured.append(body_stmt.target)
-                continue
-            if isinstance(body_stmt, StateBind):
-                joint = self._bind_names(
-                    joint,
-                    body_stmt.names,
-                    body_stmt.expr,
-                    logs=logs,
-                    inspect_out=inspect_out,
-                )
-                continue
-            if isinstance(body_stmt, ExprStmt) and isinstance(body_stmt.expr, Call):
-                joint = bind_call(self, joint, "__dynamic_expr_stmt", body_stmt.expr)
-                continue
-        return joint
-
-    def _resolve_dynamic_outcome(self, controller_name: str) -> str:
-        """LISS-0387 Decision 2: supplied-outcome only (no RNG sampling yet)."""
-        if self.host_input is not None:
-            supplied = self.host_input.get(f"dynamic:{controller_name}")
-            if supplied is not None:
-                return str(supplied)
-        raise KernelError(
-            "DYN_SUPPLIED_OUTCOME_MISSING: no Host-supplied outcome for "
-            f"controller `{controller_name}` (RNG-sampled dynamic execution "
-            "is out of scope for LISS-0387)"
-        )
-
-    def _collapse_dynamic_wire(self, joint: Joint, wire: str, outcome: str) -> Joint:
-        """LISS-0387 Decision 1: Lueders projection + renormalize on `wire`.
-
-        Identical operation to the Static Kernel's `project(psi, k)` --
-        reuses `Joint.project_coord`, no new Joint math.
-        """
-        label: Any = int(outcome) if outcome in {"0", "1"} else outcome
-        projected = joint.project_coord(wire, lambda v: v == label)
-        if projected.is_vacuum():
-            # LISS-0389: the recorded outcome was physically unreachable.
-            self._dynamic_outcomes_confirmed = False
-            return Joint.empty()
-        from .joint import World, _coalesce
-
-        total = sum(abs(w.amp) ** 2 for w in projected.worlds)
-        if total <= EPS:
-            self._dynamic_outcomes_confirmed = False
-            return Joint.empty()
-        scale = 1.0 / cmath.sqrt(total)
-        out = [
-            World(
-                assign=dict(w.assign),
-                amp=w.amp * scale,
-                coord_phase=dict(w.coord_phase),
-            )
-            for w in projected.worlds
-        ]
-        return Joint(worlds=_coalesce(out))
 
     def _require_uncompute_zero(self, joint: Joint, name: str) -> None:
         """LISS-0114 F: simulator-equivalence check for ≈ computational |0⟩."""
@@ -2125,7 +1215,7 @@ class Evaluator:
         self._verify_static_uncompute_bind(out, names[0], expr)
         return out
 
-    def _bind_apply_multi(
+    def _evolution_legacy_bind_apply_multi(
         self, joint: Joint, names: list[str], expr: Call
     ) -> Joint:
         """apply(U, w…) rebound as ``state (n…) = apply(U, w…)`` (LISS-0228)."""
@@ -2169,7 +1259,7 @@ class Evaluator:
             out.append(World(assign=assign, amp=w.amp, coord_phase=cp))
         return Joint(worlds=_coalesce(out))
 
-    def _bind_cnot_multi(
+    def _evolution_legacy_bind_cnot_multi(
         self, joint: Joint, names: list[str], expr: Call
     ) -> Joint:
         """``state (c, t) = cnot(c, t)`` — keep both wires after CNOT (linear)."""
@@ -2268,7 +1358,7 @@ class Evaluator:
             raise KernelError(f"evolve times must be non-negative, got {n}")
         return n
 
-    def _bind_evolve(self, joint: Joint, names: list[str], expr: EvolveExpr) -> Joint:
+    def _evolution_legacy_bind_evolve(self, joint: Joint, names: list[str], expr: EvolveExpr) -> Joint:
         if expr.explicit_transform:
             return self._bind_explicit_evolve(joint, names, expr)
         if len(expr.seeds) != len(names):
@@ -2333,7 +1423,7 @@ class Evaluator:
         # ADR 0142: drop evolve-local let axes (and other non-live coords).
         return self._trace_out_dead_fn_locals(joint, pre_live, names)
 
-    def _bind_explicit_evolve(
+    def _evolution_legacy_bind_explicit_evolve(
         self, joint: Joint, names: list[str], expr: EvolveExpr
     ) -> Joint:
         """Realize the Phase 2 `Operator * State` application.
@@ -2449,48 +1539,12 @@ class Evaluator:
             )
         return joint
 
-    @staticmethod
-    def _explicit_propagator(expr: Expr) -> ExplicitPropagator | None:
-        """Recognize only the canonical written propagator expression."""
-        if not (
-            isinstance(expr, Call)
-            and isinstance(expr.callee, Var)
-            and expr.callee.name == "exp"
-            and len(expr.args) == 1
-        ):
-            return None
-        exponent = expr.args[0]
-        if not (
-            isinstance(exponent, BinOp)
-            and exponent.op == "/"
-            and isinstance(exponent.rhs, Var)
-            and exponent.rhs.name == "hbar"
-            and isinstance(exponent.lhs, BinOp)
-            and exponent.lhs.op == "*"
-            and isinstance(exponent.lhs.lhs, BinOp)
-            and exponent.lhs.lhs.op == "*"
-        ):
-            return None
-        signed_generator = exponent.lhs.lhs.lhs
-        hamiltonian = exponent.lhs.lhs.rhs
-        duration = exponent.lhs.rhs
-        if not (
-            isinstance(signed_generator, BinOp)
-            and signed_generator.op == "-"
-            and isinstance(signed_generator.rhs, Var)
-            and signed_generator.rhs.name == "i"
-            and isinstance(signed_generator.lhs, (LitInt, LitFloat))
-            and signed_generator.lhs.value == 0
-        ):
-            return None
-        return ExplicitPropagator(hamiltonian=hamiltonian, duration=duration)
-
-    def _eval_max_steps(self, max_steps: Expr | None) -> int:
+    def _evolution_legacy_eval_max_steps(self, max_steps: Expr | None) -> int:
         if not isinstance(max_steps, LitInt) or max_steps.value <= 0:
             raise KernelError("evolve until requires a positive compile-time `max` bound")
         return max_steps.value
 
-    def _eval_until_predicate(
+    def _evolution_legacy_eval_until_predicate(
         self, joint: Joint, names: list[str], predicate: Expr,
         *, previous: Joint | None = None, allow_single_alias: bool = False,
     ) -> bool:
@@ -2514,21 +1568,7 @@ class Evaluator:
             "evolve until predicates support `converged(state)` or literal booleans only"
         )
 
-    @staticmethod
-    def _joint_l2_distance(left: Joint, right: Joint) -> float:
-        def amplitudes(joint: Joint) -> dict[str, complex]:
-            result: dict[str, complex] = {}
-            for world in joint.worlds:
-                key = repr(sorted(world.assign.items(), key=lambda item: item[0]))
-                result[key] = result.get(key, 0j) + world.amp
-            return result
-
-        lhs = amplitudes(left)
-        rhs = amplitudes(right)
-        keys = set(lhs) | set(rhs)
-        return sum(abs(lhs.get(key, 0j) - rhs.get(key, 0j)) ** 2 for key in keys) ** 0.5
-
-    def _bind_evolve_hamiltonian(
+    def _evolution_legacy_bind_evolve_hamiltonian(
         self, joint: Joint, names: list[str], expr: EvolveExpr
     ) -> Joint:
         if len(names) != len(expr.seeds):
@@ -2561,7 +1601,7 @@ class Evaluator:
             col=expr.span.col,
         )
 
-    def _legacy_hamiltonian_evolve_one_step(
+    def _evolution_legacy_hamiltonian_evolve_one_step(
         self, joint: Joint, names: list[str], expr: EvolveExpr
     ) -> Joint:
         from .hamiltonian import compile_hamiltonian, hop_basis_dim, op_n_qubits
@@ -2888,7 +1928,7 @@ class Evaluator:
                 )
         return Joint(worlds=_coalesce(out_worlds))
 
-    def _hamiltonian_evolve_tuple_coordinate(
+    def _evolution_legacy_hamiltonian_evolve_tuple_coordinate(
         self,
         joint: Joint,
         src: str,
@@ -2942,7 +1982,7 @@ class Evaluator:
                 )
         return Joint(worlds=_coalesce(out_worlds))
 
-    def _evolve_precomputed_grid(
+    def _evolution_legacy_evolve_precomputed_grid(
         self,
         joint: Joint,
         names: list[str],
@@ -2975,12 +2015,12 @@ class Evaluator:
         ]
         return Joint(worlds=_coalesce(out_w))
 
-    def _operator_name(self, expr: Expr) -> str:
+    def _operator_legacy_operator_name(self, expr: Expr) -> str:
         if isinstance(expr, Var):
             return expr.name
         raise KernelError("hamiltonian / observable must be a named operator (X,Y,Z,…)")
 
-    def _resolve_unitary_matrix(self, u_expr: Expr, n_wires: int) -> list[list[complex]]:
+    def _evolution_legacy_resolve_unitary_matrix(self, u_expr: Expr, n_wires: int) -> list[list[complex]]:
         """Resolve Operator / Hadamard / Pauli / S|T / rx|ry|rz → dense unitary."""
         from .hamiltonian import compile_hamiltonian, op_n_qubits
         from .unitaries import named_gate_matrix, rotation_gate_matrix
@@ -3045,7 +2085,7 @@ class Evaluator:
             raise KernelError(f"gate `{uname}` is 1-qubit; pass one target wire")
         return u_mat
 
-    def _qft_family_matrix(
+    def _evolution_legacy_qft_family_matrix(
         self, call: Call, n_wires: int
     ) -> list[list[complex]] | None:
         """Dense exact QFT family for Joint apply (LISS-0228)."""
@@ -3088,7 +2128,7 @@ class Evaluator:
             )
         return cqft_matrix(tgt_n, inverse=(name == "ciqft"))
 
-    def _bind_apply(self, joint: Joint, name: str, expr: Call) -> Joint:
+    def _evolution_legacy_bind_apply(self, joint: Joint, name: str, expr: Call) -> Joint:
         """apply(U, w0[, w1, …]) — apply unitary matrix (not e^{-iHt})."""
         from .unitaries import apply_unitary_on_wires
 
@@ -3169,7 +2209,7 @@ class Evaluator:
             raise KernelError("capply wires must be distinct")
         return ctrls, poles, u_expr, tgts
 
-    def _bind_capply(
+    def _evolution_legacy_bind_capply(
         self,
         joint: Joint,
         name: str,
@@ -4016,7 +3056,7 @@ class Evaluator:
             return obj, None
         return self._eval_value_with_unit(arg, assign or {})
 
-    def _looks_like_operator_rhs(self, expr: Expr) -> bool:
+    def _operator_legacy_looks_like_operator_rhs(self, expr: Expr) -> bool:
         """ADR 0180: heuristic for untyped Operator algebra binds."""
         from ..ast_nodes import OpAttr, OpCall, OpIndexed, OpPauli
 
@@ -4035,7 +3075,7 @@ class Evaluator:
                 return False
         return False
 
-    def _legacy_resolve_operator(
+    def _operator_legacy_resolve_operator(
         self,
         expr: Any,
         *,
@@ -4076,7 +3116,7 @@ class Evaluator:
             expr, objects=objects, extra_arrays=extra_arrays
         )
 
-    def _operator_array_context(self) -> dict[str, Any]:
+    def _operator_legacy_array_context(self) -> dict[str, Any]:
         """Merged Float[N]… coefficient arrays (literal + Host-resolved,
         ADR 0119/LISS-0406) visible at `main` level, for binder lowering
         anywhere an Operator AST needs it (LISS-0407)."""
@@ -4089,22 +3129,7 @@ class Evaluator:
         arrays.update(getattr(self, "_resolved_host_arrays", None) or {})
         return arrays
 
-    def _op_expr_arg_to_source_expr(self, arg: Any, call_name: str) -> Any:
-        """Convert an OpExpr Call argument (OpVar/OpLit) into the generic
-        Expr shape `_resolve_operator_factory_call` already understands,
-        so a nested Operator-returning call found anywhere inside a
-        larger Operator expression (LISS-0407) can reuse that existing,
-        tested arg-binding logic unchanged."""
-        if isinstance(arg, OpVar):
-            return Var(name=arg.name, span=arg.span)
-        if isinstance(arg, OpLit):
-            return LitFloat(value=arg.value, span=arg.span)
-        raise KernelError(
-            f"unsupported argument shape `{type(arg).__name__}` in "
-            f"nested Operator call `{call_name}`"
-        )
-
-    def _resolve_op_call(self, call: "OpCall") -> Any:
+    def _operator_legacy_resolve_op_call(self, call: "OpCall") -> Any:
         """Inline a call to a known Operator-returning function found
         anywhere inside an Operator expression tree, not only when it is
         the entire right-hand side (LISS-0407, closes the LISS-0402
@@ -4127,7 +3152,7 @@ class Evaluator:
         )
         return self._resolve_operator_factory_call(synthetic, fun)
 
-    def _resolve_operator_tree(
+    def _operator_legacy_resolve_operator_tree(
         self,
         expr: Any,
         *,
@@ -4206,7 +3231,7 @@ class Evaluator:
                 raise KernelError(f"cannot lower Operator binder: {exc}") from exc
         return expr
 
-    def _lookup_set_comprehension_value(
+    def _operator_legacy_lookup_set_comprehension_value(
         self, name: str
     ) -> tuple[tuple[Any, ...], int] | None:
         """LISS-0430: find `name`'s defining `Set name = { ... }` statement
@@ -4242,79 +3267,7 @@ class Evaluator:
                 return elements, width
         return None
 
-    def _build_projector_sum_operator(
-        self,
-        elements: tuple[Any, ...],
-        bound_variable: str,
-        body: Any,
-        domain_width: int,
-    ) -> Any:
-        """$P_F=\\sum_{x\\in F}\\lvert x\\rangle\\langle x\\rvert$ (LISS-0430)
-        -- `body` must be exactly `|<bound_variable>><<bound_variable>|`
-        (parser-verified shape, matching `KetSumBinder`'s own body
-        restriction), desugared by `_ket_or_outer`/ADR 0169 to
-        `projector(Var(bound_variable))`. For each concrete `x` in
-        `elements`, lowers $\\lvert x\\rangle\\langle x\\rvert$ via the
-        standard Pauli-Z identity
-        $\\bigotimes_i\\frac{I+(-1)^{x_i}Z_i}{2}$ as a literal `OpBin`
-        product tree -- deliberately NOT manually expanded into a flat
-        Pauli-string sum; `hamiltonian.py`'s existing matrix compiler
-        already reduces arbitrary `OpBin(+)/OpBin(*)/OpPauli` trees to a
-        matrix (proven by the already-shipped `objective_hamiltonian`'s
-        own `Z[i] * Z[j]` coupling term), so the tensor-product structure
-        is left for that existing, tested path to resolve, not
-        reimplemented here."""
-        if not (
-            isinstance(body, Call)
-            and isinstance(body.callee, Var)
-            and body.callee.name == "projector"
-            and len(body.args) == 1
-            and isinstance(body.args[0], Var)
-            and body.args[0].name == bound_variable
-        ):
-            raise KernelError(
-                "Sigma (x In F) { ... } over a Set domain requires the "
-                "body to be exactly `|x><x|` (the bound variable's own "
-                "projector)"
-            )
-        if not elements:
-            return OpIdentity(
-                kind="Sigma", acting_space=domain_width, span=body.span
-            )
-        terms: list[Any] = []
-        for pattern in elements:
-            n = len(pattern)
-            factors = []
-            for i in range(n):
-                sign = -1.0 if pattern[i] else 1.0
-                z_term: Any = OpPauli(kind="Z", site=i, span=body.span)
-                if sign < 0:
-                    z_term = OpBin(
-                        op="*", lhs=OpLit(value=-1.0, span=body.span),
-                        rhs=z_term, span=body.span,
-                    )
-                factor = OpBin(
-                    op="*",
-                    lhs=OpLit(value=0.5, span=body.span),
-                    rhs=OpBin(
-                        op="+",
-                        lhs=OpPauli(kind="I", site=i, span=body.span),
-                        rhs=z_term,
-                        span=body.span,
-                    ),
-                    span=body.span,
-                )
-                factors.append(factor)
-            product = factors[0]
-            for factor in factors[1:]:
-                product = OpBin(op="*", lhs=product, rhs=factor, span=body.span)
-            terms.append(product)
-        result = terms[0]
-        for term in terms[1:]:
-            result = OpBin(op="+", lhs=result, rhs=term, span=body.span)
-        return result
-
-    def _lower_operator_value(
+    def _operator_legacy_lower_operator_value(
         self,
         expr: Any,
         *,
@@ -4333,7 +3286,7 @@ class Evaluator:
             arrays.update(extra_arrays)
         return self._resolve_operator_tree(expr, arrays=arrays, objects=objects)
 
-    def _resolve_operator_factory_call(self, expr: Call, fun: FunDecl) -> Any:
+    def _operator_legacy_resolve_operator_factory_call(self, expr: Call, fun: FunDecl) -> Any:
         """Evaluate a `fn … -> Operator` Call into a materialized OpExpr.
 
         LISS-0297: object (struct/class) params bind under **parameter** names so
@@ -4469,7 +3422,7 @@ class Evaluator:
             return _materialize_op(result)
         return expr
 
-    def _resolve_operator_method_call(self, expr: Call) -> Any:
+    def _operator_legacy_resolve_operator_method_call(self, expr: Call) -> Any:
         """Evaluate `recv.method(…)` returning Operator (LISS-0139)."""
         callee = expr.callee
         if not isinstance(callee, Attr):
@@ -4593,7 +3546,7 @@ class Evaluator:
         finally:
             self._this = prev_this
 
-    def _bind_second_quantized(self, name: str, family: str, expr: Any) -> None:
+    def _operator_legacy_bind_second_quantized(self, name: str, family: str, expr: Any) -> None:
         """Bind a typed second-quantized local (LISS-0032, ADR 0093).
 
         `FermionOperator`/`BosonOperator`/`SpinOperator` locals are kept
@@ -6811,63 +5764,7 @@ class Evaluator:
             return self._eval_classical_op_binder(expr, assign)
         raise KernelError(f"cannot evaluate {type(expr).__name__} as value")
 
-    def _expr_marginal(self, joint: Joint, expr: Expr) -> dict[Any, float]:
-        if isinstance(expr, Var):
-            return joint.marginal(expr.name)
-        # general: pushforward values across worlds
-        from collections import defaultdict
 
-        acc: dict[Any, float] = defaultdict(float)
-        if joint.is_vacuum():
-            return {}
-        for w in joint.worlds:
-            try:
-                v = evaluate_value(self, expr, w.assign)
-            except KernelError:
-                continue
-            acc[v] += abs(w.amp) ** 2
-        return {k: v for k, v in acc.items() if v > EPS}
-
-    def _measure(
-        self,
-        joint: Joint,
-        expr: Expr,
-        *,
-        sink: str | None,
-        stdout: TextIO | None,
-    ) -> MeasureResult:
-        marginal = self._expr_marginal(joint, expr)
-        if not marginal:
-            text = ""  # vacuum: no sample
-            # Preserve prior behavior: attempt an empty write on the stdout path.
-            if sink is None or sink in {"stdout", "Stdout", "STDOUT"}:
-                self._emit_measure_text(sink, text, stdout=stdout)
-            return MeasureResult(
-                value=None,
-                vacuum=True,
-                marginal={},
-                rng_calls=self.rng_calls,
-                sink=sink,
-                output=text,
-            )
-
-        self.rng_calls += 1  # terminal measure draws once
-        value = sample_from_marginal(marginal, self.rng)
-        text = "" if value is None else _format_value(value)
-        payload = (text + "\n") if text else ""
-        if sink is None or sink in {"stdout", "Stdout", "STDOUT"}:
-            if text:
-                self._emit_measure_text(sink, payload, stdout=stdout)
-        else:
-            self._emit_measure_text(sink, payload, stdout=None)
-        return MeasureResult(
-            value=value,
-            vacuum=False,
-            marginal=marginal,
-            rng_calls=self.rng_calls,
-            sink=sink,
-            output=text,
-        )
 
 
 # Compatibility aliases preserve existing consumers while each domain-family
@@ -6875,7 +5772,9 @@ class Evaluator:
 # method definitions in the public facade.
 Evaluator._eval_value = Evaluator._legacy_evaluate_value
 Evaluator._bind_call = Evaluator._legacy_bind_call
-Evaluator._resolve_operator_expr = Evaluator._legacy_resolve_operator
+Evaluator._resolve_operator_expr = Evaluator._operator_legacy_resolve_operator
+_install_evolution_compatibility(Evaluator)
+_install_operator_compatibility(Evaluator)
 
 
 def _is_numeric(value: Any) -> bool:
@@ -6974,3 +5873,49 @@ def _pat_match(pat: Any, ctrl: Any) -> bool:
         if isinstance(pat, Var) and pat.name == ctrl.variant:
             return True
     return False
+
+
+# LISS-0561 compatibility wiring: extracted lanes operate on the existing
+# Evaluator instance, which remains the sole owner of mutable runtime state.
+Evaluator._kernel_error = KernelError
+Evaluator._eval_result_type = EvalResult
+Evaluator._measure_result_type = MeasureResult
+Evaluator._format_value = staticmethod(_format_value)
+Evaluator._call_name = staticmethod(_call_name)
+Evaluator._float_scalars = staticmethod(_float_scalars)
+Evaluator._density_matrix_n_qubits = staticmethod(_density_matrix_n_qubits)
+Evaluator._evaluate_value = Evaluator._legacy_evaluate_value
+
+Evaluator._execute_deferred_state_measure_plan = (
+    _observation_evaluation.execute_deferred_state_measure_plan
+)
+Evaluator._prepare_first_family_context = _observation_evaluation._prepare_first_family_context
+Evaluator._main_deferred_eligible = staticmethod(
+    _observation_evaluation._main_deferred_eligible
+)
+Evaluator._is_deferred_state_bind = staticmethod(
+    _observation_evaluation._is_deferred_state_bind
+)
+Evaluator._expr_has_inspect = staticmethod(_observation_evaluation._expr_has_inspect)
+Evaluator._expr_free_vars = staticmethod(_observation_evaluation._expr_free_vars)
+Evaluator._deferred_bind_cone = staticmethod(_observation_evaluation._deferred_bind_cone)
+Evaluator._apply_measure_tracing_out = _observation_evaluation._apply_measure_tracing_out
+Evaluator._run_deferred_state_binds = _observation_evaluation._run_deferred_state_binds
+Evaluator._mixed_state_for_measure = _observation_evaluation._mixed_state_for_measure
+Evaluator._resolve_measurement_kind = _observation_evaluation._resolve_measurement_kind
+Evaluator._bind_povm = _observation_evaluation._bind_povm
+Evaluator._bind_mixed_state = _observation_evaluation._bind_mixed_state
+Evaluator._resolve_lindblad_jumps = _observation_evaluation._resolve_lindblad_jumps
+Evaluator._resolve_lindblad_hamiltonian = _observation_evaluation._resolve_lindblad_hamiltonian
+Evaluator._compile_lindblad_operator = _observation_evaluation._compile_lindblad_operator
+Evaluator._emit_measure_text = _observation_evaluation._emit_measure_text
+Evaluator._emit_sink = _observation_evaluation._emit_sink
+Evaluator._measure_mixed = _observation_evaluation._measure_mixed
+Evaluator._expr_marginal = _observation_evaluation._expr_marginal
+Evaluator._measure = _observation_evaluation._measure
+
+Evaluator._run_dynamic_qpu_block = _dynamic_lane_evaluation._run_dynamic_qpu_block
+Evaluator._reset_dynamic_wire = _dynamic_lane_evaluation._reset_dynamic_wire
+Evaluator._run_dynamic_arm_body = _dynamic_lane_evaluation._run_dynamic_arm_body
+Evaluator._resolve_dynamic_outcome = _dynamic_lane_evaluation._resolve_dynamic_outcome
+Evaluator._collapse_dynamic_wire = _dynamic_lane_evaluation._collapse_dynamic_wire

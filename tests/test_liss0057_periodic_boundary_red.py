@@ -53,8 +53,10 @@ def test_periodic_ring_runs_and_emits_qasm() -> None:
     assert result.status == "succeeded", result.diagnostics
 
     compiled = compile_source(source)
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
-    assert emitted.ok, emitted.diagnostics
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
+    assert emitted.ok, emitted.notes
 
 
 def test_wrap_keeps_the_closing_bond() -> None:

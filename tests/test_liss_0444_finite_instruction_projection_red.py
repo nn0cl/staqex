@@ -111,7 +111,9 @@ def test_invalid_finite_suzuki_does_not_fall_back_to_ast_lowering(monkeypatch) -
         raise AssertionError("invalid finite Suzuki must not use AST fallback")
 
     monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
 
     assert not emitted.ok
     assert emitted.qasm == ""
@@ -171,7 +173,9 @@ def test_unresolved_finite_suzuki_order_is_fail_closed(monkeypatch) -> None:
         raise AssertionError("unresolved finite Suzuki must not use AST fallback")
 
     monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
 
     assert not emitted.ok
     assert emitted.qasm == ""
@@ -186,7 +190,9 @@ def test_finite_suzuki_qasm_does_not_use_compatibility_fallback(monkeypatch) -> 
         raise AssertionError("finite Suzuki must be emitted from canonical instructions")
 
     monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
 
     assert emitted.ok, emitted.notes
     assert not any("COMPAT_LOWERING" in note for note in emitted.notes)
@@ -199,7 +205,9 @@ def test_finite_binder_qasm_does_not_use_compatibility_fallback(monkeypatch) -> 
         raise AssertionError("finite binder must be emitted from canonical instructions")
 
     monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
 
     assert emitted.ok, emitted.notes
     assert not any("COMPAT_LOWERING" in note for note in emitted.notes)

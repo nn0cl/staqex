@@ -36,7 +36,6 @@ collaboration_template_paths=(
   "scripts/lib/change_metrics.py"
   "scripts/review-change.py"
   "scripts/run-regression-tests.py"
-  "scripts/tests"
 )
 
 # Files that are useful inside this template repository but should not be

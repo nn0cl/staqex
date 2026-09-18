@@ -218,7 +218,9 @@ def test_qasm_without_canonical_projection_rejects_atomically() -> None:
         """
     )
     assert compiled.ok, compiled.diagnostics
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
     assert not emitted.ok
     assert emitted.qasm == ""
     assert emitted.circuit is not None
@@ -238,7 +240,9 @@ def test_measure_only_canonical_projection_keeps_projection_diagnostic() -> None
         """
     )
     assert compiled.ok, compiled.diagnostics
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
     assert emitted.ok is False
     assert emitted.circuit is not None
     assert emitted.circuit.reject_code == "E_QPU_CANONICAL_PROJECTION_UNAVAILABLE"

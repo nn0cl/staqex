@@ -7,6 +7,20 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-18
+- Class: private-consumer-inventory
+- Pattern: extracting private evaluator methods can make focused structural
+  tests pass while silently breaking existing characterization consumers that
+  still discover underscore-prefixed attributes.
+- What later design or implementation must do: inventory private imports and
+  test hooks before extraction; if the private surface is retained temporarily,
+  make the compatibility role explicit and keep it out of the new dispatch
+  ownership.
+- Source issue or work plan (adopter's own ID, if any): LISS-0560 / WP-0162
+- Status: applied in Phase 2 and Phase 3
+
+## Lesson
+
 - Date: 2026-09-16
 - Class: boundary-completeness
 - Pattern: external geospatial and sensor standards can carry enough familiar

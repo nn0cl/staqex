@@ -37,13 +37,17 @@ def test_named_variable_angle_emits_the_same_gate_as_the_literal() -> None:
 
     literal_compiled = compile_source(literal_src)
     assert literal_compiled.ok, literal_compiled.diagnostics
-    literal_emitted = QASM3Emitter(route=False).emit_unit(literal_compiled.unit)
+    literal_emitted = QASM3Emitter(route=False).emit_unit(
+        literal_compiled.unit, semantic_ir=literal_compiled.scientific_semantic_ir
+    )
     assert literal_emitted.ok, literal_emitted.notes
     assert "rx(1.57)" in literal_emitted.qasm, literal_emitted.qasm
 
     named_compiled = compile_source(named_src)
     assert named_compiled.ok, named_compiled.diagnostics
-    named_emitted = QASM3Emitter(route=False).emit_unit(named_compiled.unit)
+    named_emitted = QASM3Emitter(route=False).emit_unit(
+        named_compiled.unit, semantic_ir=named_compiled.scientific_semantic_ir
+    )
     assert named_emitted.ok, named_emitted.notes
     assert "rx(1.57)" in named_emitted.qasm, named_emitted.qasm
 
@@ -54,7 +58,9 @@ def test_unresolvable_angle_is_explicitly_rejected_not_silently_dropped() -> Non
     source = _src("unbound_name")
     compiled = compile_source(source)
     assert compiled.ok, compiled.diagnostics
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
     assert not emitted.ok, "an unresolvable rotation angle must not silently emit ok=True"
     assert emitted.circuit is not None
     assert emitted.circuit.reject_code == "QASM_ROTATION_ANGLE_UNRESOLVED", emitted.circuit.reject_code

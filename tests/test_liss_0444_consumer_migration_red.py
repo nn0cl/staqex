@@ -47,7 +47,9 @@ def test_unresolved_explicit_evolution_cannot_enter_qasm_ast_fallback(monkeypatc
         raise AssertionError("unresolved canonical evolution must not enter AST lowering")
 
     monkeypatch.setattr(lower_module, "lower_unit_to_circuit", fail_if_called)
-    emitted = QASM3Emitter(route=False).emit_unit(compiled.unit)
+    emitted = QASM3Emitter(route=False).emit_unit(
+        compiled.unit, semantic_ir=compiled.scientific_semantic_ir
+    )
 
     assert not emitted.ok
     assert emitted.qasm == ""
