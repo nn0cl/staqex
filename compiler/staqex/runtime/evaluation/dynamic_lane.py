@@ -8,7 +8,6 @@ import cmath
 
 from ...ast_nodes import *  # noqa: F403
 from ...measure_sink_port import MeasureSinkPort
-from .context import EvaluatorContext
 from ..joint import EPS, Joint
 from .calls import bind_call
 

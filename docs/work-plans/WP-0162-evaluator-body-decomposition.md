@@ -32,7 +32,7 @@ performance rewrites, and opportunistic bug fixes.
 | Issue | Status | Size | Depends on | Blocks | Candidate internal package |
 |---|---|---:|---|---|---|
 | LISS-0560 | done — Phase 3 final review approved 2026-09-18 | M | none | 0561–0565 | `runtime/evaluation/orchestration.py` |
-| LISS-0561 | Phase 2 Green complete — Phase 3 Refactor pending | L | 0560 | 0565 | `runtime/evaluation/observation.py`, `dynamic_lane.py` |
+| LISS-0561 | Phase 3 Refactor complete — final review pending | L | 0560 | 0565 | `runtime/evaluation/observation.py`, `dynamic_lane.py` |
 | LISS-0562 | proposed | L | 0560 | 0565 | `runtime/evaluation/evolution.py`, `operators.py` |
 | LISS-0563 | proposed | L | 0560 | 0565 | `runtime/evaluation/classical.py`, `values.py` |
 | LISS-0564 | proposed | L | 0560 | 0565 | `runtime/evaluation/scientific.py` |

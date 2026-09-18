@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0561
-- Status: Phase 2 Green complete — Phase 3 Refactor pending approval
+- Status: Phase 3 Refactor complete — Phase 3 final review pending
 - Type: Feature Path structural decomposition
 - Initial planning size: L
 - Current planning size: L
@@ -149,8 +149,10 @@ Verification:
 
 Process review: no operating-contract deviation or operational problem found.
 
-Phase 3 remains a separate review/refactor step; this Green implementation has
-not been marked as final review or merged.
+Phase 3 refactoring is complete. The final review remains a separate approval
+step and the change has not been pushed or merged.
+
+Review packet: `docs/collaboration/reviews/2026-09-18-liss-0561-phase3-review.md`.
 
 ## AI Planning Record
 

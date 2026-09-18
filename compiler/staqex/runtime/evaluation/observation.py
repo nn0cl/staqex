@@ -9,13 +9,10 @@ from ...finite_binder import operator_declared_space
 from ...measure_sink_port import (
     MeasureSinkPort, TextIOMeasureSinkAdapter, resolve_measure_sink
 )
-from .context import EvaluatorContext
 from ..joint import EPS, Joint, sample_from_marginal
 from ..lindblad import evolve_lindblad
 from ..matrix import Matrix
 from ..mixed_state import DensityStateValue, density_from_call, matrix_from_list
-from .operators import resolve_operator
-from .values import evaluate_value
 
 
 def execute_deferred_state_measure_plan(
@@ -374,7 +371,7 @@ def _run_deferred_state_binds(
             op_val = (
                 explicit_propagator
                 if explicit_propagator is not None
-                else context._resolve_operator( stmt.expr)
+                else context._resolve_operator(stmt.expr)
             )
             if (
                 isinstance(op_val, Call)
@@ -561,7 +558,7 @@ def _bind_mixed_state(context, stmt: StateBind) -> None:
         hamiltonian = context._resolve_lindblad_hamiltonian(expr.args[1], n_qubits)
         jumps = context._resolve_lindblad_jumps(expr.args[2], n_qubits)
         try:
-            total_time = float(context._evaluate_value( expr.args[3], {}))
+            total_time = float(context._evaluate_value(expr.args[3], {}))
             evolved = evolve_lindblad(
                 source.matrix,
                 hamiltonian,
@@ -723,7 +720,7 @@ def _expr_marginal(context, joint: Joint, expr: Expr) -> dict[Any, float]:
         return {}
     for w in joint.worlds:
         try:
-            v = context._evaluate_value( expr, w.assign)
+            v = context._evaluate_value(expr, w.assign)
         except context._kernel_error:
             continue
         acc[v] += abs(w.amp) ** 2

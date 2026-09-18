@@ -71,6 +71,21 @@
 - Attempt boundary: ended after Green evidence capture; Phase 3 review remains
   pending
 
+### Attempt 4
+
+- Agent: Codex host agent acting as same-context reviewer
+- Environment: local qpex workspace
+- Scope: LISS-0561 Phase 3 Refactor review
+- Isolation: `same_context`, weaker than `separate_context`
+- Result: removed unused imports and mechanical spacing artifacts; no semantic
+  or assertion changes; no blocker found
+- Verification: `96 passed`; Spec Verification `161/161`, Gate `PASS`;
+  `git diff --check` passed; `scripts/review-change.py` measured 2,003 changed
+  lines and 6 files, with runtime module ownership reported unknown by the
+  current structure map
+- Attempt boundary: ended after review packet; final review approval remains
+  pending
+
 ## Cost / Reasoning Control
 
 - Operating path: Feature Path Phase 2 Green
@@ -87,8 +102,8 @@
 ## Adjudicator Decisions
 
 - LISS-0560 final review approved 2026-09-18.
-- LISS-0561 Phase 0 acceptance approved 2026-09-18; Phase 2 Green approved
-  2026-09-18 and completed. Phase 3 remains pending approval.
+- LISS-0561 Phase 0 acceptance and Phase 2 Green were approved 2026-09-18;
+  Phase 3 Refactor is complete and final review remains pending.
 
 ## Verification
 
@@ -106,8 +121,9 @@
 - `compiler/staqex/runtime/evaluator.py`
 - `compiler/staqex/runtime/evaluation/observation.py`
 - `compiler/staqex/runtime/evaluation/dynamic_lane.py`
+- `docs/collaboration/reviews/2026-09-18-liss-0561-phase3-review.md`
 
 ## Next Safe Action
 
-Request typed approval for `Feature Path / Phase 3 Refactor / LISS-0561
+Request typed approval for `Feature Path / Phase 3 最終レビュー / LISS-0561
 evaluator observation and dynamic-lane decomposition`.
