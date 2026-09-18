@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0561
-- Status: proposed — blocked until LISS-0560 completes
+- Status: Phase 0 profile ready — acceptance pending
 - Type: Feature Path structural decomposition
 - Initial planning size: L
 - Current planning size: L
@@ -29,6 +29,77 @@ changing terminal `measure` semantics or observation diagnostics.
 Candidate internal modules are `runtime/evaluation/observation.py` and
 `runtime/evaluation/dynamic_lane.py`, with explicit evaluator context only.
 No provider SDK or live dynamic-QPU behavior is added.
+
+## Phase 0 acceptance/profile
+
+LISS-0560 is complete. The current `evaluator.py` is 6,928 lines and the
+`Evaluator` class contains 149 methods. The measured first profile is:
+
+| Family | Candidate methods | Measured body lines | Primary state/boundary |
+|---|---:|---:|---|
+| Observation | 22 | 736 | `Joint`, `MeasureResult`, `MeasureSinkPort`, mixed/POVM maps, RNG and observation flags |
+| Dynamic lane | 5 | 175 | `HostInputPort`, `Joint.project_coord`, dynamic outcome confirmation and block-local trace-out |
+
+Observation methods are the deferred State/Measure path, deferred-bind cone
+and free-variable eligibility helpers, terminal measurement and sink emission,
+POVM/DensityState/Lindblad registration and observation projections. The
+dynamic methods are `_run_dynamic_qpu_block`, `_reset_dynamic_wire`,
+`_run_dynamic_arm_body`, `_resolve_dynamic_outcome`, and
+`_collapse_dynamic_wire`.
+
+### Ownership and dependency decisions
+
+- `Evaluator` remains the only owner of `rng`, `rng_calls`, `measure_sink`,
+  `inspect_sink`, `host_input`, `mixed_states`, `ket_labels`, `povms`,
+  `execution_lane`, `_dynamic_outcomes_confirmed`, runtime maps, and mutable
+  `Joint` execution state.
+- `runtime/evaluation/observation.py` receives an explicit context and owns
+  only observation execution mechanics: deferred bind orchestration,
+  terminal measure, mixed-state/POVM/Lindblad observation, and sink formatting.
+- `runtime/evaluation/dynamic_lane.py` receives an explicit context and owns
+  only dynamic block recursion, supplied controller outcomes, reset, collapse,
+  and block-local disposal. It must not call a provider SDK or sample an
+  unapproved live outcome.
+- `Evaluator._run_legacy_ast_body` remains the integration owner until the
+  extracted callbacks are characterized; it delegates through context rather
+  than copying state into either module.
+- The public import manifest remains unchanged. New modules are internal;
+  no new public semantic authority or provider boundary is introduced.
+
+### Private consumer and characterization profile
+
+The private consumer inventory found `Evaluator._deferred_bind_cone` in
+`tests/test_deferred_pushforward_mvp_red.py` and
+`Evaluator._main_deferred_eligible` in the existing evaluator path. Phase 1
+must preserve these compatibility observations or explicitly record a
+replacement test owner before extraction.
+
+The nearest characterization corpus is:
+
+- deferred State/Measure and `Inspect`/terminal collapse: `test_deferred_pushforward_mvp_red.py`, `test_liss_0481_observation_contract_red.py`, `test_liss0236_kernel_measure_sink_port_red.py`, and `test_povm_measurement_contract_red.py`;
+- mixed-state/CPTP/Lindblad: `test_density_cptp_lindblad_runtime_red.py`, `test_density_cptp_lindblad_red.py`, and `test_liss_0485_povm_observation_bridge_red.py`;
+- dynamic feed-forward, reset, nested arms, and outcome confirmation: `test_liss_0382_dynamic_mid_circuit_feed_forward_red.py`, `test_liss_0385_dynamic_reuse_reset_demand_red.py`, `test_liss_0387_dynamic_real_mid_circuit_measure_red.py`, `test_liss_0389_dynamic_outcome_confirmation_red.py`, `test_liss_0390_dynamic_reset_keyword_red.py`, and `test_liss_0395_dynamic_arm_body_unification_red.py`;
+- canonical execution and Spec Verification: `test_liss_0490_evaluator_canonical_execution_boundary_red.py`, `test_liss_0493_evaluator_runtime_plan_red.py`, and `tests/spec_verification/run_all.py`.
+
+### Phase 1 Red contract and allowed files
+
+Phase 1 Red may add only:
+
+- `tests/test_liss_0561_evaluator_observation_dynamic_red.py`;
+- this Issue's Phase 1 evidence and the representative trace;
+- no production source, public API, or test-exclusion edits.
+
+The Red contract must assert the two internal module boundaries, enumerate the
+observation/dynamic method ownership manifest, verify that extracted modules
+do not import the public evaluator facade, and pin the mutable-state owner and
+private consumer manifest. Phase 2 may perform only the minimum extraction
+after a separate typed implementation approval.
+
+### Acceptance decision requested
+
+Accept this Phase 0 profile and authorize Phase 1 Red only. This does not
+authorize production implementation, Phase 2 Green, provider integration, or
+live dynamic-QPU execution.
 
 ## AI Planning Record
 

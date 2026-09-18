@@ -8,7 +8,7 @@
 | Scope approval | Adjudicator approved 2026-09-18 |
 | Implementation permission | none; each Issue and phase requires typed approval |
 | Canonical specification | [Core module decomposition](../specs/staqex-core-module-decomposition.md) |
-| Current source | `compiler/staqex/runtime/evaluator.py` — 6,976 lines / 166 methods |
+| Current source | `compiler/staqex/runtime/evaluator.py` — 6,928 lines / 149 methods |
 
 ## Goal
 
@@ -32,7 +32,7 @@ performance rewrites, and opportunistic bug fixes.
 | Issue | Status | Size | Depends on | Blocks | Candidate internal package |
 |---|---|---:|---|---|---|
 | LISS-0560 | done — Phase 3 final review approved 2026-09-18 | M | none | 0561–0565 | `runtime/evaluation/orchestration.py` |
-| LISS-0561 | proposed | L | 0560 | 0565 | `runtime/evaluation/observation.py`, `dynamic_lane.py` |
+| LISS-0561 | Phase 0 profile ready — acceptance pending | L | 0560 | 0565 | `runtime/evaluation/observation.py`, `dynamic_lane.py` |
 | LISS-0562 | proposed | L | 0560 | 0565 | `runtime/evaluation/evolution.py`, `operators.py` |
 | LISS-0563 | proposed | L | 0560 | 0565 | `runtime/evaluation/classical.py`, `values.py` |
 | LISS-0564 | proposed | L | 0560 | 0565 | `runtime/evaluation/scientific.py` |
@@ -109,8 +109,8 @@ separately approved.
 ## Current Next Issue
 
 - Issue: LISS-0561 Phase 0 acceptance/profile review.
-- Reason: LISS-0560 is complete and the observation/dynamic lane successor is
-  the next dependency-ordered extraction.
+- Reason: LISS-0560 is complete; the observation/dynamic profile is ready for
+  acceptance before Red tests begin.
 - Implementation approval needed: yes, separately for LISS-0561 Phase 1 Red
   and Phase 2 Green.
 
