@@ -1,4 +1,4 @@
-"""Phase 1 Red contract for the finite-binder compatibility facade."""
+"""Compatibility contract for the finite-binder facade."""
 
 from compiler.staqex import finite_binder, finite_binder_legacy
 from compiler.staqex.finite_binder import (
