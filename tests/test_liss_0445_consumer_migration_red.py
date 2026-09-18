@@ -16,7 +16,7 @@ if str(REPO) not in sys.path:
 import compiler.staqex.backend.qasm.emitter as emitter_module
 import compiler.staqex.backend.qasm.lower as lower_module
 import compiler.staqex.finite_binder as finite_binder_module
-import compiler.staqex.scientific_semantic_ir as semantic_ir_module
+import compiler.staqex.scientific_semantic.legacy as semantic_legacy_module
 import compiler.staqex.qpu_ir as qpu_ir_module
 from compiler.staqex.backend.qasm.emitter import QASM3Emitter
 from compiler.staqex.pipeline import compile_path, compile_source
@@ -141,14 +141,14 @@ def test_binder_diagnostics_reuse_compile_owned_canonical_projection(monkeypatch
         return operator_original(*args, **kwargs)
 
     qpu_original = qpu_ir_module.lower_finite_binders
-    semantic_original = semantic_ir_module.lower_finite_binders
-    operator_original = semantic_ir_module.lower_finite_binder_operators
+    semantic_original = semantic_legacy_module.lower_finite_binders
+    operator_original = semantic_legacy_module.lower_finite_binder_operators
     finite_original = finite_binder_module.lower_finite_binders
     finite_operator_original = finite_binder_module.lower_finite_binder_operators
     monkeypatch.setattr(qpu_ir_module, "lower_finite_binders", record_qpu_lowerer)
-    monkeypatch.setattr(semantic_ir_module, "lower_finite_binders", record_semantic_lowerer)
+    monkeypatch.setattr(semantic_legacy_module, "lower_finite_binders", record_semantic_lowerer)
     monkeypatch.setattr(
-        semantic_ir_module, "lower_finite_binder_operators", record_operator_lowerer
+        semantic_legacy_module, "lower_finite_binder_operators", record_operator_lowerer
     )
     monkeypatch.setattr(finite_binder_module, "lower_finite_binders", record_qpu_lowerer)
     monkeypatch.setattr(
@@ -166,8 +166,8 @@ def test_binder_diagnostics_reuse_compile_owned_canonical_projection(monkeypatch
 
 def test_binder_canonical_build_occurs_once_per_compile(monkeypatch) -> None:
     calls = {"binders": 0, "operators": 0}
-    original_binders = semantic_ir_module.lower_finite_binders
-    original_operators = semantic_ir_module.lower_finite_binder_operators
+    original_binders = semantic_legacy_module.lower_finite_binders
+    original_operators = semantic_legacy_module.lower_finite_binder_operators
 
     def count_binders(*args, **kwargs):
         calls["binders"] += 1
@@ -177,9 +177,9 @@ def test_binder_canonical_build_occurs_once_per_compile(monkeypatch) -> None:
         calls["operators"] += 1
         return original_operators(*args, **kwargs)
 
-    monkeypatch.setattr(semantic_ir_module, "lower_finite_binders", count_binders)
+    monkeypatch.setattr(semantic_legacy_module, "lower_finite_binders", count_binders)
     monkeypatch.setattr(
-        semantic_ir_module, "lower_finite_binder_operators", count_operators
+        semantic_legacy_module, "lower_finite_binder_operators", count_operators
     )
     compiled = compile_source(_binder_source())
 
