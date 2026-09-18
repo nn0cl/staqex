@@ -51,6 +51,8 @@ long-running sparse-pauli case.
 
 ## Deterministic Verification
 
+- Tested SHA: `a86658c0`; tree clean at test start; local macOS workspace,
+  Python 3.14.6, project `.venv` dependencies.
 - Focused and adjacent orchestration/plan suites: **36 passed**.
 - Canonical Spec Verification: **161/161**, 100%.
 - Consumer import smoke: passed, including compatibility identity between
@@ -60,7 +62,8 @@ long-running sparse-pauli case.
 - `git diff --check`: passed.
 - Full repository pytest: **837 passed, 26 failed before interruption**;
   failures were the known canonical-provenance/QASM baseline family and the
-  run did not complete.
+  run did not complete; the interrupt occurred in the existing
+  `sparse_pauli.py` long-running case.
 
 ## Isolation and Review Limits
 
