@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0566
-- Status: in_progress — Phase 1 Red active; review pending
+- Status: review — Phase 1 Red reviewed; Phase 2 Unit A approval pending
 - Phase: phase-1-red
 - Type: Architecture Path successor / structural decomposition
 - Priority: high
@@ -94,13 +94,24 @@ contracts. The focused run intentionally reports **3 failed, 3 passed**:
 
 No production source, public API, or test-exclusion rule was changed.
 
+## Phase 1 Red test review
+
+Approved on 2026-09-19:
+`Feature Path / Phase 1 Red テストレビュー / LISS-0566 stateful evolution and
+operator lowering successor 承認`.
+
+The six-test contract and intentional **3 failed, 3 passed** Red evidence are
+accepted. The active-Red entry remains until the approved Green unit passes.
+Phase 2 is narrowed to Unit A only; Unit B and Unit C require their own
+bounded implementation approval.
+
 ## Adjudicator Decision Points
 
 - Phase 0 accepted on 2026-09-19:
   `Architecture Path / Phase 0 acceptance / evaluator stateful evolution and
   operator lowering successor 承認`.
-- Next approval required: `Feature Path / Phase 1 Red テストレビュー / LISS-0566
-  stateful evolution and operator lowering successor 承認`.
+- Next approval required: `Feature Path / Phase 2 Green / LISS-0566 Unit A
+  evolution execution implementation 承認`.
 - Phase 2 Green requires a separate implementation approval for one named unit.
 - Return to Architecture review if callbacks require shared mutable state,
   public DTO changes, semantic-authority movement, or a new dependency.

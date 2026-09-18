@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — Phase 1 Red active; review pending |
+| Status | review — Phase 1 Red reviewed; Phase 2 Unit A approval pending |
 | Size | XL |
 | Parent | WP-0162 |
 | Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
@@ -52,8 +52,17 @@ structural and characterization contracts. Focused verification: **3 failed,
 3 passed** as the intentional pre-extraction Red result. No production source
 was changed.
 
+## Phase 1 Red test review
+
+Approved on 2026-09-19:
+`Feature Path / Phase 1 Red テストレビュー / LISS-0566 stateful evolution and
+operator lowering successor 承認`.
+
+The Red contract is accepted. The next execution scope is Unit A only;
+unitary/gate and operator lowering remain separately gated.
+
 ## Current next action
 
-Request typed approval for the Phase 1 Red test review:
-`Feature Path / Phase 1 Red テストレビュー / LISS-0566 stateful evolution
-and operator lowering successor 承認`.
+Request typed approval for:
+`Feature Path / Phase 2 Green / LISS-0566 Unit A evolution execution
+implementation 承認`.

@@ -32,3 +32,15 @@
   bodies, and undeclared callback contracts. No production source changed.
 - Next action: Phase 1 Red test review, then a separate Phase 2 Green approval
   for one named decomposition unit.
+
+## Attempt 3 — Phase 1 Red test review
+
+- Date: 2026-09-19
+- Approval: `Feature Path / Phase 1 Red テストレビュー / LISS-0566 stateful
+  evolution and operator lowering successor 承認`
+- Result: the six-test Red contract and its intentional `3 failed, 3 passed`
+  evidence were accepted. Active-Red ownership remains registered until Green.
+- Scope decision: Phase 2 is narrowed to Unit A, evolution execution and
+  Hamiltonian loops. Unit B and Unit C require separate implementation gates.
+- Next approval: `Feature Path / Phase 2 Green / LISS-0566 Unit A evolution
+  execution implementation 承認`.
