@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0566
-- Status: ready — Phase 0 design accepted; Phase 1 Red approval pending
-- Phase: phase-0-design
+- Status: in_progress — Phase 1 Red active; review pending
+- Phase: phase-1-red
 - Type: Architecture Path successor / structural decomposition
 - Priority: high
 - Initial planning size: XL
@@ -71,8 +71,8 @@ in `evaluation/compatibility.py` until the final facade audit.
 
 ## Phase 1 Red contract
 
-Phase 1 may add only the successor structural tests, this issue, the work plan,
-and the trace. Tests must assert:
+Phase 1 added only the successor structural tests, this issue, the work plan,
+the active-Red lifecycle entry, and the trace. Tests assert:
 
 1. the three unit manifests and target module ownership;
 2. no public facade import or second evaluator construction in extracted code;
@@ -82,12 +82,25 @@ and the trace. Tests must assert:
 5. fixed-seed evolution and QASM characterization before extraction;
 6. finite-binder provenance and atomic rejection preservation.
 
+## Phase 1 Red result
+
+Added `tests/test_liss_0566_evaluator_stateful_successor_red.py` with six
+contracts. The focused run intentionally reports **3 failed, 3 passed**:
+
+- the three successor entrypoints are not yet present;
+- the 25 explicit stateful implementation bodies remain in `Evaluator`;
+- the successor callback contracts are not yet declared;
+- the no-facade dependency and QASM/operator characterization contracts pass.
+
+No production source, public API, or test-exclusion rule was changed.
+
 ## Adjudicator Decision Points
 
 - Phase 0 accepted on 2026-09-19:
   `Architecture Path / Phase 0 acceptance / evaluator stateful evolution and
   operator lowering successor 承認`.
-- Next approval required: `Feature Path / Phase 1 Red / LISS-0566 ... 承認`.
+- Next approval required: `Feature Path / Phase 1 Red テストレビュー / LISS-0566
+  stateful evolution and operator lowering successor 承認`.
 - Phase 2 Green requires a separate implementation approval for one named unit.
 - Return to Architecture review if callbacks require shared mutable state,
   public DTO changes, semantic-authority movement, or a new dependency.

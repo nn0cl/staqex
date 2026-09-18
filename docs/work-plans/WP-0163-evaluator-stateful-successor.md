@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | ready — Phase 0 accepted; Phase 1 Red pending |
+| Status | in_progress — Phase 1 Red active; review pending |
 | Size | XL |
 | Parent | WP-0162 |
 | Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
@@ -45,8 +45,15 @@ is not reviewable.
 4. Phase 3 Refactor: compatibility cleanup, import audit, and evidence.
 5. Final review: process review and status synchronization.
 
+## Phase 1 Red result
+
+Added `tests/test_liss_0566_evaluator_stateful_successor_red.py` with six
+structural and characterization contracts. Focused verification: **3 failed,
+3 passed** as the intentional pre-extraction Red result. No production source
+was changed.
+
 ## Current next action
 
-Request typed approval for:
-`Feature Path / Phase 1 Red / LISS-0566 stateful evolution and operator
-lowering successor 承認`.
+Request typed approval for the Phase 1 Red test review:
+`Feature Path / Phase 1 Red テストレビュー / LISS-0566 stateful evolution
+and operator lowering successor 承認`.
