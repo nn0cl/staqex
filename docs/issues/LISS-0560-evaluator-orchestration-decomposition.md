@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0560
-- Status: proposed — Phase 0 acceptance pending
+- Status: Phase 0 accepted — Phase 1 Red pending
 - Type: Architecture successor / Feature Path decomposition
 - Initial planning size: M
 - Current planning size: M
@@ -34,6 +34,32 @@ validation, deferred eligibility, and public execution entrypoints.
 Candidate files are `runtime/evaluation/orchestration.py`, focused tests, and
 the public evaluator facade. Exact paths await Phase 0 dependency mapping.
 No language, provider, QASM, or scientific meaning change is allowed.
+
+## Phase 0 acceptance record
+
+Accepted on 2026-09-18. The first extraction boundary is limited to
+`Evaluator.run_canonical_unit`, `_execute_unit`, runtime-plan family selection,
+and the `_execute_*_plan` dispatch methods. The following mutable state remains
+owned by `Evaluator` and must be passed by explicit context or narrow callbacks:
+
+- entropy and deterministic run state: `rng`, `seed`, `rng_calls`, fusion state;
+- injected boundaries: `measure_sink`, `inspect_sink`, `host_input`,
+  `continuous_field`;
+- runtime maps: `operators`, `second_quantized_operators`, `scalars`,
+  `scalar_units`, function/class/enum/struct registries, objects;
+- quantum/runtime observations: `mixed_states`, `ket_labels`, `povms`,
+  `static_register_sizes`, execution lane, and canonical Semantic IR reference.
+
+Phase 1 Red is limited to:
+
+- `tests/test_liss_0560_evaluator_orchestration_red.py`;
+- this Issue's Phase 1 evidence and the representative trace;
+- no production source edits, no public API edits, and no test exclusion edits.
+
+The Red contract must prove the current dispatch boundary and name the exact
+public symbol/import manifest and plan-family characterization cases. Phase 2
+may add only the minimum internal orchestration extraction after separate
+typed approval.
 
 ## AI Planning Record
 

@@ -62,6 +62,7 @@
 ## Adjudicator Decisions
 
 - Architecture Path Phase 0 approved 2026-09-18.
+- LISS-0560 Phase 0 acceptance approved 2026-09-18.
 - Implementation permission remains absent.
 
 ## Verification
@@ -83,7 +84,8 @@
 
 ## Next Safe Action
 
-Review WP-0162/LISS-0560 Phase 0 acceptance and approve its Phase 1 Red scope.
+Review and approve the fixed LISS-0560 Phase 1 Red test scope before adding
+the Red contract.
 
 ## Notes
 
