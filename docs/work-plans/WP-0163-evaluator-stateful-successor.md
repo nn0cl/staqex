@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — LISS-0566-A complete; LISS-0566-B/C/D gated |
+| Status | in_progress — LISS-0566-A complete; Unit B design intake complete |
 | Size | XL |
 | Parent | WP-0162 |
 | Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
@@ -98,3 +98,75 @@ LISS-0566-A was approved through:
 
 Current next action: prepare the separate Unit B acceptance/design intake;
 this approval does not authorize Unit B, Unit C, or the successor facade audit.
+
+## Unit B acceptance/design intake
+
+Acceptance/design intake approved on 2026-09-19:
+`WP-0163のUnit B acceptance/design intake承認`.
+
+### Scope and measured surface
+
+Unit B is the next slice of the large-`evaluator.py` decomposition. The
+measured source is currently `runtime/evaluator.py` at 5,164 lines. The
+implementation surface is four methods, approximately 250 body lines:
+
+| Responsibility | Current method | Measured lines | Planned owner |
+|---|---|---:|---|
+| unitary resolution | `_evolution_legacy_resolve_unitary_matrix` | 65 | `evaluation/evolution.py` |
+| QFT family matrix | `_evolution_legacy_qft_family_matrix` | 43 | `evaluation/evolution.py` |
+| multi-wire `apply` | `_evolution_legacy_bind_apply` | 81 | `evaluation/evolution.py` |
+| controlled `capply` | `_evolution_legacy_bind_capply` | 61 | `evaluation/evolution.py` |
+
+The tightly coupled `_split_capply_args` helper is included in the structural
+Red manifest unless the Phase 1 review demonstrates that a narrower helper
+boundary is more reviewable. `_bind_cnot_multi` remains already extracted by
+Unit A and is a compatibility dependency, not new Unit B implementation.
+
+### Boundary and state contract
+
+- `Evaluator` remains the sole mutable runtime-state owner.
+- The extracted module must not import or construct `runtime.evaluator`.
+- Unit B receives a typed `EvaluatorContext`; it may request operator
+  definitions, scalar values, and static register sizes through narrow
+  read-only callbacks, and may use existing pure gate/matrix helpers.
+- Unitary resolution, QFT register-size validation, wire validation, polarity
+  parsing, and controlled-unitary construction move together; no business
+  policy is added to compatibility wiring.
+- `evaluation/compatibility.py` continues to install `_resolve_unitary_matrix`,
+  `_qft_family_matrix`, `_bind_apply`, `_bind_capply`, and existing private
+  helper names until the later facade audit.
+- Unit C operator resolution/lowering, Semantic IR ownership, provider SDKs,
+  network, credentials, live QPU, and language-semantic changes are excluded.
+
+### Acceptance contract for Phase 1 Red
+
+The future Unit B Red suite must assert:
+
+1. all four implementation bodies and the accepted `capply` helper manifest
+   are owned by `evaluation/evolution.py`, not `Evaluator`;
+2. the extracted module has no public-facade import or second state owner;
+3. the context contract exposes only the required operator/scalar/register
+   reads and state callbacks;
+4. established private evaluator consumers remain resolvable through
+   compatibility wiring;
+5. fixed-seed local characterization preserves `apply`, `capply`, `ocapply`,
+   mixed control polarity, QFT/IQFT/CQFT, identity, and invalid-wire
+   diagnostics;
+6. QASM3 output and rejected-input diagnostics remain unchanged, including
+   atomic rejection and diagnostic ordering.
+
+### Verification and gates
+
+Phase 1 Red is test/design-only and requires its own typed approval. Phase 2
+Green requires a separate Unit B implementation approval. Phase 3 will clean
+up compatibility names and import boundaries after the focused and adjacent
+regressions pass. Every phase must include private-consumer inventory, public
+baseline, focused and nearest QASM/local tests, Spec Verification, full
+blocking pytest, compileall/import-cycle, lifecycle, coverage-ledger, and
+`git diff --check` evidence.
+
+No Phase 1 Red tests, production source, or active-Red lifecycle entry were
+created in this intake.
+
+Current next action: request
+`WP-0163 / LISS-0566-B Phase 1 Red 承認`.

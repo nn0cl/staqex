@@ -109,3 +109,21 @@
   in progress.
 - Process review: no operating-contract deviation or operational problem
   found.
+
+## Attempt 8 — Unit B acceptance/design intake
+
+- Date: 2026-09-19
+- Approval: `WP-0163のUnit B acceptance/design intake承認`
+- Scope: unitary resolution, QFT family matrix generation, multi-wire
+  `apply`, controlled `capply`, and the tightly coupled argument splitter.
+- Measurement: four evaluator methods, approximately 250 body lines; current
+  `runtime/evaluator.py` size is 5,164 lines.
+- Boundary: `Evaluator` remains the single mutable state owner; extracted code
+  receives a typed context and retains no copied maps. Compatibility aliases,
+  Semantic IR authority, QASM/diagnostic behavior, and provider exclusions are
+  explicit acceptance constraints.
+- Phase 1 Red contract: structural ownership, narrow context reads, private
+  consumer compatibility, fixed-seed local behavior, QASM3, QFT, capply
+  polarity, identity, and rejection diagnostics.
+- No tests or production implementation were changed.
+- Next approval: `WP-0163 / LISS-0566-B Phase 1 Red 承認`.
