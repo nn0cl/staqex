@@ -46,3 +46,8 @@ not manufacture human approval. When the current branch matches
 `execution_branch`, CI checks the changed paths from `approval_commit` to the
 current commit against `allowed_paths`. A batch branch must use the
 `batch/<batch-id>` naming convention.
+
+Active execution on that branch rejects expired approval. Completed historical
+records remain readable, but `post_reviewed` still checks allowed paths when
+validating its execution branch. Later commits require fresh verification;
+completion status is not permission for additional out-of-scope work.

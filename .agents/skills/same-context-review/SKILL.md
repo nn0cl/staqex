@@ -17,6 +17,8 @@ Use this skill when an agent review packet is already required and:
   `same_context`, or
 - that file is missing.
 
+Resolve the effective route, including enabled large-change conditions in
+`docs/collaboration/runtime-routing.md`, before choosing this procedure.
 If isolation is `separate_context`, request a host subagent launch instead.
 If isolation is `ask`, stop for the Adjudicator.
 

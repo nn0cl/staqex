@@ -36,6 +36,9 @@ Use this checklist before starting a coding task.
 - Delivery handlers, UI components, and adapters remain thin.
 - Source code remains readable, appropriately split, and reviewable by a human
   Adjudicator.
+- Blocking suites, consumer compatibility checks and evidence fields are
+  declared under `docs/collaboration/verification-policy.md`. Structure budgets
+  and enabled large-change routing are resolved before review.
 
 ## Ready for Phase 3 Refactor
 

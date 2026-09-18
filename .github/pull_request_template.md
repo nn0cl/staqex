@@ -43,6 +43,17 @@
 
 ## Verification
 
+- Tested commit SHA / environment / commands / evidence:
+- Focused result / all-blocking result (separate):
+- Total / failures / errors / skipped / unassessed:
+- Baseline and new/resolved failure IDs; root causes and affected suites:
+- Consumer imports (including private names), adjacent regression:
+- Spec mapping; changed assertions, fixtures or exclusions and disposition:
+- Structure-budget exceedances, disposition and effective review isolation:
+
+Follow `docs/collaboration/verification-policy.md`; after the final commit,
+rerun every blocking suite. Earlier or focused results do not establish full Green.
+
 - [ ] CI passes
 - [ ] Tests added or intentionally not applicable
 - [ ] Reviewer empathy summary included when this is Phase 3

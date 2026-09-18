@@ -86,6 +86,8 @@ def check_register(path: Path, root: Path, errors: list[str]) -> None:
             fail(errors, path, f"Current entry has no source_paths: {key}")
         for source in sources:
             if is_placeholder(source):
+                if status == "Current":
+                    fail(errors, path, f"Current entry has placeholder source_paths: {key}")
                 continue
             if not (root / source).is_file():
                 fail(errors, path, f"{key} source path does not exist: {source}")

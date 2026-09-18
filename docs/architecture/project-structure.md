@@ -5,20 +5,21 @@ directories only when a Phase 1 or Phase 2 task needs them.
 
 ## Target Layout
 
-Replace this with your project's real layout once the stack is chosen. Keep
-the domain/application/ports/adapters split regardless of language or
-framework:
+This document is template-owned. Put the actual layout in target-owned
+`docs/collaboration/project-conventions.md`, or in a project-specific document
+linked there. Do not replace this shared document with target facts.
+The following is an illustrative layout, not unfilled project configuration:
 
 ```text
 .
 ├── docs/
-├── <frontend-dir>/
+├── frontend-example/
 │   └── src/
 │       ├── app/
 │       ├── features/
 │       ├── entities/
 │       └── shared/
-└── <backend-dir>/
+└── backend-example/
     └── src/
         ├── delivery/            # HTTP/RPC handlers, CLI entry points, UI glue
         ├── core/
@@ -28,23 +29,23 @@ framework:
         └── adapters/
             ├── persistence/
             ├── settings/
-            └── <external-service>/
+            └── external-service-example/
 ```
 
 ## Ownership
 
-`<frontend-dir>/` owns UI rendering and presentation state.
+The frontend owns UI rendering and presentation state.
 
-`<backend-dir>/src/core/domain/` owns pure domain types and domain behavior.
+Domain modules own pure domain types and domain behavior.
 
-`<backend-dir>/src/core/application/` owns use cases and application
+Application modules own use cases and application
 orchestration.
 
-`<backend-dir>/src/core/ports/` owns interfaces for external resources.
+Ports own interfaces for external resources.
 
-`<backend-dir>/src/adapters/` owns concrete implementations of ports.
+Adapters own concrete implementations of ports.
 
-`<backend-dir>/src/delivery/` owns request/command handlers and DTO
+Delivery owns request/command handlers and DTO
 conversion.
 
 ## Forbidden Placement

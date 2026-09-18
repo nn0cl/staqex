@@ -55,6 +55,23 @@ Poor reasons to split:
 
 ## Review Checklist
 
+Structure budgets live in target-owned `[source_structure]` in runtime-routing
+TOML. The form suggests 300 source/implementation lines and 500 changed lines.
+Missing settings retain qualitative rules. Exceedance prompts responsibility
+splitting, a rationale for retaining the structure, an owner/deadline follow-up,
+or explicit human exception; it is not an automatic ban. Follow-up planning
+cannot waive failing blocking verification.
+
+Measure implementation bodies including private, legacy and helper files,
+not only public facades. `python3 scripts/review-change.py --base BASE` reports
+both base/head physical lines, changed files/lines and Python syntax counts/
+imports. Unsupported language counts, semantic responsibilities, dynamic
+dependencies and resolved cycles remain explicit review gaps. Document any
+generated/vendor exclusions. Use project dependency tools for resolved graphs.
+
+For splits also follow `docs/collaboration/verification-policy.md` to preserve
+actual consumers, private imports and behavioral boundaries.
+
 Before asking for review, the agent should check:
 
 - Can the reviewer understand the changed behavior in a few minutes?
@@ -64,6 +81,11 @@ Before asking for review, the agent should check:
 - Are names based on domain or capability rather than implementation trivia?
 - Are tests small enough that failures point to one behavior?
 - Did Phase 2 stay minimal without becoming dense or clever?
+- Does each change map directly to an acceptance clause, without special-case
+  behavior added only to satisfy a test?
+- Are assertion/fixture/exclusion changes visible and approved, rather than
+  weakening tests, hiding errors or moving failures into another Issue?
+- Were serialization, diagnostics, ordering and indirect consumers assessed?
 
 ## Refactor Guidance
 

@@ -144,6 +144,9 @@ validate_implementation_isolation() {
 
 validate_model_text() {
   local value="$1" label="$2"
+  case "$value" in
+    *$'\n'*|*$'\r'*) echo "$label must not contain line breaks." >&2; return 1 ;;
+  esac
   if printf '%s' "$value" | grep -q '[[:cntrl:]]'; then
     echo "$label must not contain control characters." >&2
     return 1
@@ -286,9 +289,13 @@ review_mod="$(toml_escape "$review_model")"
 impl_iso="$implementation_isolation"
 impl_mod="$(toml_escape "$implementation_model")"
 
-awk -v review_iso="$review_iso" -v review_mod="$review_mod" \
-    -v impl_iso="$impl_iso" -v impl_mod="$impl_mod" '
-  BEGIN { section = "" }
+REVIEW_ISO="$review_iso" REVIEW_MOD="$review_mod" \
+IMPL_ISO="$impl_iso" IMPL_MOD="$impl_mod" awk '
+  BEGIN {
+    section = ""
+    review_iso = ENVIRON["REVIEW_ISO"]; review_mod = ENVIRON["REVIEW_MOD"]
+    impl_iso = ENVIRON["IMPL_ISO"]; impl_mod = ENVIRON["IMPL_MOD"]
+  }
   /^\[review\]/ { section = "review"; print; next }
   /^\[implementation\]/ { section = "implementation"; print; next }
   /^\[/ { section = ""; print; next }
