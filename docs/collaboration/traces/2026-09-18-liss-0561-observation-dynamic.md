@@ -86,6 +86,18 @@
 - Attempt boundary: ended after review packet; final review approval remains
   pending
 
+### Attempt 5
+
+- Agent: Codex host agent
+- Environment: local qpex workspace
+- Scope: LISS-0561 Phase 3 final review
+- Result: final review approval received; no blocker found; Issue and WP
+  synchronized to `done`
+- Verification: `96 passed`; Spec Verification `161/161`, `100.00%`, Gate
+  `PASS`; final artifact and review packet re-read from disk
+- Final approval: `Feature Path / Phase 3 最終レビュー / LISS-0561 evaluator
+  observation and dynamic-lane decomposition 承認` on 2026-09-18
+
 ## Cost / Reasoning Control
 
 - Operating path: Feature Path Phase 2 Green
@@ -102,8 +114,8 @@
 ## Adjudicator Decisions
 
 - LISS-0560 final review approved 2026-09-18.
-- LISS-0561 Phase 0 acceptance and Phase 2 Green were approved 2026-09-18;
-  Phase 3 Refactor is complete and final review remains pending.
+- LISS-0561 Phase 0 acceptance, Phase 2 Green, and Phase 3 final review were
+  approved 2026-09-18; the issue is complete.
 
 ## Verification
 
@@ -125,5 +137,5 @@
 
 ## Next Safe Action
 
-Request typed approval for `Feature Path / Phase 3 最終レビュー / LISS-0561
-evaluator observation and dynamic-lane decomposition`.
+No further approval is required for LISS-0561. Push/PR/merge remains a
+separate repository-operation request.

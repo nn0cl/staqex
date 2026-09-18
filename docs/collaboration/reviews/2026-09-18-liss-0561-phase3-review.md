@@ -27,8 +27,8 @@
     characterization suite.
   - Out of scope: separate-context review is unavailable for this configured
     route; no provider/live-QPU validation is applicable to this local task.
-- Blockers: none found for Phase 3 Refactor. Human final-review approval is
-  still required before marking the issue complete.
+- Blockers: none found for Phase 3 Refactor. Final-review approval was
+  received on 2026-09-18.
 - Verification: `96 passed`; Spec Verification `161/161`, `100.00%`, Gate
   `PASS`; `git diff --check` passed; syntax compilation passed.
 - Tested SHA/environment: working tree based on `9a298735`, local `.venv`
@@ -41,8 +41,8 @@
   explicit aliases. `review-change.py` reports the configured structural
   ownership map as unknown for these runtime files; this is recorded as a
   measurement limitation, not a semantic blocker.
-- Next approval required: `Feature Path / Phase 3 最終レビュー /
-  LISS-0561 evaluator observation and dynamic-lane decomposition`.
+- Final approval: `Feature Path / Phase 3 最終レビュー / LISS-0561
+  evaluator observation and dynamic-lane decomposition 承認` on 2026-09-18.
 
 ## Evidence links
 

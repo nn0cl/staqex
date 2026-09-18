@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0561
-- Status: Phase 3 Refactor complete — Phase 3 final review pending
+- Status: done — Phase 3 final review approved 2026-09-18
 - Type: Feature Path structural decomposition
 - Initial planning size: L
 - Current planning size: L
@@ -149,10 +149,13 @@ Verification:
 
 Process review: no operating-contract deviation or operational problem found.
 
-Phase 3 refactoring is complete. The final review remains a separate approval
-step and the change has not been pushed or merged.
+Phase 3 refactoring and final review are complete. The change has not been
+pushed or merged.
 
 Review packet: `docs/collaboration/reviews/2026-09-18-liss-0561-phase3-review.md`.
+
+Final review approval: `Feature Path / Phase 3 最終レビュー / LISS-0561
+evaluator observation and dynamic-lane decomposition 承認` on 2026-09-18.
 
 ## AI Planning Record
 
