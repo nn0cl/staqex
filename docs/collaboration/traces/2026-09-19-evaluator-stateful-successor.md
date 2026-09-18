@@ -127,3 +127,17 @@
   polarity, identity, and rejection diagnostics.
 - No tests or production implementation were changed.
 - Next approval: `WP-0163 / LISS-0566-B Phase 1 Red 承認`.
+
+## Attempt 9 — Unit B Phase 1 Red
+
+- Date: 2026-09-19
+- Approval: `WP-0163 / LISS-0566-B Phase 1 Red 承認`
+- Result: added seven Unit B acceptance contracts and registered active-Red
+  ownership under `LISS-0566-B`.
+- Red evidence: focused `tests/test_liss_0566_unit_b_red.py` reports **4
+  failed, 3 passed** with no collection errors. Structural failures cover
+  extracted entrypoints, facade ownership, narrow context callbacks, and
+  compatibility wiring. QFT and controlled-gate characterization passes.
+- Scope discipline: no production source or reviewed assertion was changed;
+  Unit C and provider/QPU concerns remain excluded.
+- Next approval: `WP-0163 / LISS-0566-B Phase 1 Red テストレビュー承認`.

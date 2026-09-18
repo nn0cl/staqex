@@ -168,5 +168,18 @@ blocking pytest, compileall/import-cycle, lifecycle, coverage-ledger, and
 No Phase 1 Red tests, production source, or active-Red lifecycle entry were
 created in this intake.
 
+## Unit B Phase 1 Red
+
+Added `tests/test_liss_0566_unit_b_red.py` with seven contracts. The focused
+run intentionally reports **4 failed, 3 passed**:
+
+- four structural contracts fail because the Unit B implementation remains on
+  `Evaluator` and its extracted entrypoints/context/wiring do not exist yet;
+- QFT and controlled-gate characterization contracts pass;
+- no production source or reviewed assertion was changed.
+
+The active-Red ownership is recorded for `LISS-0566-B` in
+`docs/testing/active-red-tests.toml`.
+
 Current next action: request
-`WP-0163 / LISS-0566-B Phase 1 Red 承認`.
+`WP-0163 / LISS-0566-B Phase 1 Red テストレビュー承認`.

@@ -1,2 +1,10 @@
 version = 1
 # LISS-0523 Phase 2 Green passed all previously active Red nodes.
+
+[[active_red]]
+issue = "LISS-0566-B"
+test = "tests/test_liss_0566_unit_b_red.py"
+phase = "phase-1-red"
+owner = "Codex host agent"
+review_by = "2026-09-22"
+review_condition = "Phase 1 Red test review approval"
