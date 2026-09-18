@@ -1,4 +1,4 @@
-"""AT-TDD Phase 1 Red: offline Google QCS adapter contract."""
+"""Offline Google QCS capability-profile contract."""
 
 from __future__ import annotations
 
@@ -11,7 +11,9 @@ from compiler.staqex.adapters.google_qcs import GoogleQcsAdapter
 class FakeGoogleQcsClient:
     """Deterministic fake; it never imports Cirq or contacts Google Cloud."""
 
-    def capability_snapshot(self, project_id: str, processor_id: str) -> dict[str, Any]:
+    def capability_snapshot(
+        self, project_id: str, processor_id: str
+    ) -> dict[str, Any]:
         return {
             "hardware_provider": "google",
             "provider_device_id": processor_id,

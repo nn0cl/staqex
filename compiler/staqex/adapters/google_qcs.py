@@ -25,10 +25,6 @@ class GoogleQcsClientPort(Protocol):
         """Return a provider capability snapshot without changing semantics."""
 
 
-class GoogleQcsAccessError(RuntimeError):
-    """Raised by a Host client when Google access cannot be established."""
-
-
 @dataclass(frozen=True)
 class GoogleQcsAdapter:
     """Provider-neutral capability boundary for Google QCS.
@@ -79,4 +75,4 @@ class GoogleQcsAdapter:
         )
 
 
-__all__ = ["GoogleQcsAccessError", "GoogleQcsAdapter", "GoogleQcsClientPort"]
+__all__ = ["GoogleQcsAdapter", "GoogleQcsClientPort"]
