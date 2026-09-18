@@ -84,5 +84,9 @@ this context boundary rather than widen orchestration into a second evaluator.
 
 ## Next Approval Required
 
-`Feature Path / Phase 3 最終レビュー / LISS-0560 evaluator orchestration
-decomposition 承認`
+None for LISS-0560.
+
+## Adjudicator Decision
+
+Approved on 2026-09-18:
+`Feature Path / Phase 3 最終レビュー / LISS-0560 evaluator orchestration decomposition 承認`.

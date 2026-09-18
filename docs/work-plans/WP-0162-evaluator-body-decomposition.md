@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | active — LISS-0560 Phase 3 complete, final review pending |
+| Status | active — LISS-0560 complete; successor Issues remain |
 | Size | XL |
 | Parent | WP-0160 |
 | Scope approval | Adjudicator approved 2026-09-18 |
@@ -31,7 +31,7 @@ performance rewrites, and opportunistic bug fixes.
 
 | Issue | Status | Size | Depends on | Blocks | Candidate internal package |
 |---|---|---:|---|---|---|
-| LISS-0560 | Phase 3 complete — final review pending | M | none | 0561–0565 | `runtime/evaluation/orchestration.py` |
+| LISS-0560 | done — Phase 3 final review approved 2026-09-18 | M | none | 0561–0565 | `runtime/evaluation/orchestration.py` |
 | LISS-0561 | proposed | L | 0560 | 0565 | `runtime/evaluation/observation.py`, `dynamic_lane.py` |
 | LISS-0562 | proposed | L | 0560 | 0565 | `runtime/evaluation/evolution.py`, `operators.py` |
 | LISS-0563 | proposed | L | 0560 | 0565 | `runtime/evaluation/classical.py`, `values.py` |
@@ -108,12 +108,11 @@ separately approved.
 
 ## Current Next Issue
 
-- Issue: LISS-0560 Phase 3 final review.
-- Reason: the first orchestration extraction is implemented and refactored;
-  human final review must confirm compatibility and the known repository-wide
-  blocking baseline before LISS-0561 starts.
-- Implementation approval needed: no further LISS-0560 implementation;
-  final review approval is required.
+- Issue: LISS-0561 Phase 0 acceptance/profile review.
+- Reason: LISS-0560 is complete and the observation/dynamic lane successor is
+  the next dependency-ordered extraction.
+- Implementation approval needed: yes, separately for LISS-0561 Phase 1 Red
+  and Phase 2 Green.
 
 ## Verification plan
 
@@ -132,7 +131,7 @@ reveals a behavior defect rather than a structural mismatch.
 
 ## Process Review
 
-- Outcome: pending LISS-0560 final review
+- Outcome: no operating-contract deviation or operational problem found.
 - Lesson written: evaluator-state ownership and private-consumer inventory
   lessons were applied; no new deviation recorded.
 - Template-feedback path: none
