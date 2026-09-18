@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0566
-- Status: review — Phase 3 final review complete; Adjudicator approval pending
-- Phase: phase-3-refactor
+- Status: done
+- Phase: complete
 - Type: Architecture Path successor / structural decomposition
 - Priority: high
 - Initial planning size: XL
@@ -164,7 +164,18 @@ The review used `same_context`, which is weaker than `separate_context`; it
 does not replace Adjudicator approval.
 
 - Next approval required: `LISS-0566 Phase 3 最終レビュー 承認`.
-- Completion process review is pending until the issue is accepted as done.
+
+## Final approval
+
+Approved on 2026-09-19:
+`LISS-0566 Phase 3 最終レビュー 承認`.
+
+The Unit A scope is complete. Unit B, Unit C, and the successor facade audit
+remain separately gated in WP-0163 and are not implied by this approval.
+
+## Completion process review
+
+Process review: no operating-contract deviation or operational problem found.
 
 ## Adjudicator Decision Points
 
@@ -204,7 +215,7 @@ test-lifecycle, coverage-ledger, and `git diff --check`.
 
 ## Process Review
 
-- Outcome: not yet; Unit A final review remains open
+- Outcome: complete; Unit A final review approved
 - Lesson written: no new lesson; evaluator-state-ownership and private-consumer
   inventory lessons applied
 - Template-feedback path: none

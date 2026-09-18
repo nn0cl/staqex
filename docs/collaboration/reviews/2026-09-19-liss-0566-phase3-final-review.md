@@ -66,4 +66,7 @@ this Unit A scope and remain separately gated.
 - Isolation: `same_context`; weaker than `separate_context`.
 - No large-change override was configured in `runtime-routing.toml`.
 - Reviewer recommendation: accept Phase 3 final review.
-- Next requested approval: `LISS-0566 Phase 3 最終レビュー 承認`.
+- Adjudicator approval received on 2026-09-19:
+  `LISS-0566 Phase 3 最終レビュー 承認`.
+- Completion process review: no operating-contract deviation or operational
+  problem found.

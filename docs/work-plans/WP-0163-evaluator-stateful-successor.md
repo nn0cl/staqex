@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | review — Phase 3 final review complete; Adjudicator approval pending |
+| Status | in_progress — LISS-0566-A complete; LISS-0566-B/C/D gated |
 | Size | XL |
 | Parent | WP-0162 |
 | Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
@@ -93,6 +93,8 @@ change was introduced.
 
 ## Current next action
 
-Request typed approval for:
-`Feature Path / Phase 3 最終レビュー / LISS-0566 Unit A evolution execution
-承認`.
+LISS-0566-A was approved through:
+`LISS-0566 Phase 3 最終レビュー 承認`.
+
+Current next action: prepare the separate Unit B acceptance/design intake;
+this approval does not authorize Unit B, Unit C, or the successor facade audit.

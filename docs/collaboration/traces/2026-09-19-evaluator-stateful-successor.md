@@ -100,3 +100,12 @@
   diff checks passed.
 - Disposition: recommend acceptance; no implementation changes requested.
 - Next approval: `LISS-0566 Phase 3 最終レビュー 承認`.
+
+## Attempt 7 — Final approval and status synchronization
+
+- Date: 2026-09-19
+- Approval: `LISS-0566 Phase 3 最終レビュー 承認`
+- Result: LISS-0566 Unit A marked `done`; WP-0163 keeps Units B/C/D gated and
+  in progress.
+- Process review: no operating-contract deviation or operational problem
+  found.
