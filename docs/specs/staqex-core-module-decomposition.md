@@ -20,7 +20,7 @@ extend, or reinterpret behavior.
 
 | Module | Lines | Main concentration |
 |---|---:|---|
-| `runtime/evaluator.py` | 6,926 | orchestration, execution plans, evolution, operators, calls, values, observation |
+| `runtime/evaluator.py` | 5,164 | orchestration, execution plans, remaining unitary/gate and operator families, calls, values, observation |
 | `typecheck.py` | 4,668 | declaration checks, operator algebra, dimensions, inference, effects, evolution |
 | `parser.py` | 3,669 | top-level/scientific declarations, statements, values, operators, recovery |
 | `scientific_semantic_ir.py` | 2,008 | semantic model, runtime plan, QPU projection, realization, fingerprints |

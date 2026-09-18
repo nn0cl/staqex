@@ -82,3 +82,21 @@
   passed.
 - Next approval: `Feature Path / Phase 3 最終レビュー / LISS-0566 Unit A
   evolution execution 承認`.
+
+## Attempt 6 — Phase 3 Final Review, Unit A
+
+- Date: 2026-09-19
+- Review route: `same_context` (weaker than `separate_context`)
+- Scope: Unit A refactor, compatibility wiring, state ownership, verification,
+  and documentation synchronization.
+- Findings: no implementation blocker. The canonical decomposition table had
+  a stale pre-extraction `runtime/evaluator.py` line count; it was synchronized
+  from 6,926 to the measured 5,164 lines and the concentration description was
+  narrowed to the remaining facade families.
+- Verification at SHA `b1806fb3a3a1f0135214c9ab6b25b02ca87b753b`:
+  full blocking pytest `2,129 passed`, focused/adjacent characterization
+  `12 passed`, Spec Verification `161/161`, public baseline, compileall,
+  active-Red lifecycle, document lifecycle, coverage-ledger consistency, and
+  diff checks passed.
+- Disposition: recommend acceptance; no implementation changes requested.
+- Next approval: `LISS-0566 Phase 3 最終レビュー 承認`.

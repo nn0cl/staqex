@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | review — Phase 3 Unit A Refactor complete; final review pending |
+| Status | review — Phase 3 final review complete; Adjudicator approval pending |
 | Size | XL |
 | Parent | WP-0162 |
 | Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
