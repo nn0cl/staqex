@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0560
-- Status: Phase 0 accepted — Phase 1 Red pending
+- Status: Phase 1 Red complete — Phase 2 Green pending approval
 - Type: Architecture successor / Feature Path decomposition
 - Initial planning size: M
 - Current planning size: M
@@ -60,6 +60,21 @@ The Red contract must prove the current dispatch boundary and name the exact
 public symbol/import manifest and plan-family characterization cases. Phase 2
 may add only the minimum internal orchestration extraction after separate
 typed approval.
+
+## Phase 1 Red evidence
+
+Implemented only in `tests/test_liss_0560_evaluator_orchestration_red.py`.
+The focused run intentionally reports `3 failed, 1 passed` on the pre-
+extraction branch:
+
+- `compiler.staqex.runtime.evaluation.orchestration` does not yet exist;
+- all six first-boundary `_execute_*_plan` methods still live on `Evaluator`;
+- `Evaluator.run_canonical_unit` still builds and dispatches the runtime plan
+  directly instead of delegating through the orchestration boundary;
+- the existing family manifest covers `evolution`, `control_mixture`,
+  `pure_transformation`, `binder`, `callable`, and `dynamic_lane`.
+
+No production source, public API, or test-exclusion file was changed.
 
 ## AI Planning Record
 

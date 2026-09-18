@@ -82,10 +82,26 @@
 - `docs/issues/LISS-0565-evaluator-facade-and-budget-audit.md`
 - this trace
 
+### Attempt 2
+
+- Agent: Codex host agent
+- Environment: local qpex workspace
+- Model as displayed: unavailable
+- Reasoning setting as displayed: unavailable
+- Scope: LISS-0560 Phase 1 Red only
+- Result: added the focused orchestration boundary contract; no production
+  source, public API, or test-exclusion edits
+- Verification: focused pytest reported `3 failed, 1 passed` as the intended
+  pre-extraction Red result; `git diff --check` passed
+- Failure interpretation: the missing orchestration module, remaining plan
+  methods on `Evaluator`, and direct canonical plan selection are the three
+  structural gaps targeted by Phase 2 Green
+- Attempt boundary: ended after Red evidence capture
+
 ## Next Safe Action
 
-Review and approve the fixed LISS-0560 Phase 1 Red test scope before adding
-the Red contract.
+Request typed approval for `Feature Path / Phase 2 Green / LISS-0560
+evaluator orchestration decomposition`.
 
 ## Notes
 
