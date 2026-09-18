@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0560
-- Status: Phase 1 Red complete — Phase 2 Green pending approval
+- Status: Phase 2 Green complete — Phase 3 Refactor pending approval
 - Type: Architecture successor / Feature Path decomposition
 - Initial planning size: M
 - Current planning size: M
@@ -75,6 +75,33 @@ extraction branch:
   `pure_transformation`, `binder`, `callable`, and `dynamic_lane`.
 
 No production source, public API, or test-exclusion file was changed.
+
+## Phase 2 Green evidence
+
+Implemented the minimum first extraction in:
+
+- `compiler/staqex/runtime/evaluation/orchestration.py`
+- `compiler/staqex/runtime/evaluation/plans.py`
+- `compiler/staqex/runtime/evaluation/context.py`
+- `compiler/staqex/runtime/evaluation/__init__.py`
+- `compiler/staqex/runtime/evaluator.py`
+
+The new module owns canonical runtime-plan construction, family selection, and
+the six approved plan-family execution callbacks. `Evaluator` remains the
+mutable state owner and retains only the validation/state/evidence surface and
+private compatibility attributes required by existing characterization tests.
+The `plans.dispatch_runtime_plan` import remains available as a compatibility
+facade; no public import was removed.
+
+Verification:
+
+- LISS-0560 and related plan/orchestration tests: `32 passed`;
+- canonical authority/runtime-plan regression tests: `29 passed`;
+- Spec Verification: `161/161`, 100%;
+- `git diff --check`: passed.
+
+No provider, network, QASM, language-semantic, or scientific-meaning change
+was introduced.
 
 ## AI Planning Record
 

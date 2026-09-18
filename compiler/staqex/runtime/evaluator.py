@@ -100,10 +100,17 @@ from .joint import EPS, Joint, sample_from_marginal
 from .mixed_state import DensityStateValue, density_from_call, matrix_from_list
 from .lindblad import evolve_lindblad
 from .matrix import Matrix
-from .evaluation.plans import dispatch_runtime_plan
 from .evaluation.calls import bind_call
 from .evaluation.evolution import execute_evolution
 from .evaluation.operators import resolve_operator
+from .evaluation.orchestration import (
+    execute_binder_plan,
+    execute_callable_plan,
+    execute_control_mixture_plan,
+    execute_dynamic_lane_plan,
+    execute_evolution_plan,
+    execute_pure_transformation_plan,
+)
 from .evaluation.values import evaluate_value
 from ..static_hilbert import MVP_MAX_LOGICAL_QUBITS
 from ..kernel_literals import SECOND_QUANTIZED_FAMILIES as _SECOND_QUANTIZED_FAMILIES
@@ -277,6 +284,15 @@ class Evaluator:
 
     SOURCE_LINDBLAD_DT = 0.01
 
+    # Private compatibility attributes retained for earlier plan-family
+    # characterization tests. Dispatch itself is owned by orchestration.py.
+    _execute_pure_transformation_plan = execute_pure_transformation_plan
+    _execute_control_mixture_plan = execute_control_mixture_plan
+    _execute_evolution_plan = execute_evolution_plan
+    _execute_binder_plan = execute_binder_plan
+    _execute_callable_plan = execute_callable_plan
+    _execute_dynamic_lane_plan = execute_dynamic_lane_plan
+
     def __init__(
         self,
         *,
@@ -371,10 +387,9 @@ class Evaluator:
         self._canonical_semantic_ir = None
         _validate_canonical_semantic_ir(semantic_ir)
         self._canonical_semantic_ir = semantic_ir
-        from ..scientific_semantic_ir import build_runtime_execution_plan
+        from .evaluation.orchestration import execute_canonical_unit
 
-        plan = build_runtime_execution_plan(semantic_ir)
-        result = dispatch_runtime_plan(self, plan, unit, stdout=stdout)
+        result = execute_canonical_unit(self, unit, semantic_ir, stdout=stdout)
         from ..scientific_semantic_ir import semantic_fingerprint
 
         result.execution_authority = "scientific_semantic_ir"
@@ -386,31 +401,6 @@ class Evaluator:
             source_fingerprint=semantic_fingerprint(semantic_ir),
         )
         return result
-
-    def _execute_pure_transformation_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute canonical pure transformations before terminal Measure."""
-        self._require_runtime_plan_family(
-            plan,
-            "pure_transformation",
-            "transformations",
-        )
-        return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
-
-    def _execute_control_mixture_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute canonical single-level control mixtures."""
-        self._require_runtime_plan_family(plan, "control_mixture", "controls")
-        # A diagnostic read is an explicit observation boundary.  The
-        # control-mixture plan may still describe the surrounding mixture,
-        # but it must not route a program containing Inspect through the
-        # deferred State/Measure fast path.  Keep the read non-destructive and
-        # let the established AST path preserve its observation semantics.
-        if not self._main_deferred_eligible(unit.main.body.stmts if unit.main else []):
-            return self._run_legacy_ast_body(unit, stdout=stdout)
-        return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
 
     @staticmethod
     def _require_runtime_plan_family(
@@ -425,44 +415,6 @@ class Evaluator:
             raise KernelError(f"runtime plan family must be {family}")
         if not getattr(plan, payload_name, ()):
             raise KernelError(f"{family} plan has no {payload_name} nodes")
-
-    def _execute_evolution_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute canonical local evolution before terminal Measure."""
-        self._require_runtime_plan_family(plan, "evolution", "evolutions")
-        if not self._is_minimal_local_evolution(unit):
-            return self._run_legacy_ast_body(unit, stdout=stdout)
-        return self._execute_deferred_state_measure_plan(
-            self._evolution_runtime_unit(unit), stdout=stdout
-        )
-
-    def _execute_binder_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute the bounded local State/Measure slice around an operator binder."""
-        self._require_runtime_plan_family(plan, "binder", "binders")
-        if unit.main is None or not self._main_deferred_eligible(unit.main.body.stmts):
-            return self._run_legacy_ast_body(unit, stdout=stdout)
-        return self._execute_deferred_state_measure_plan(
-            self._binder_runtime_unit(unit), stdout=stdout
-        )
-
-    def _execute_callable_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute the bounded local callable/object State/Measure slice."""
-        self._require_runtime_plan_family(plan, "callable", "callables")
-        if not self._is_deferred_callable_eligible(unit):
-            return self._run_legacy_ast_body(unit, stdout=stdout)
-        return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
-
-    def _execute_dynamic_lane_plan(
-        self, plan: Any, unit: CompilationUnit, *, stdout: TextIO | None = None
-    ) -> EvalResult:
-        """Execute dynamic lanes through the existing capability-gated path."""
-        self._require_runtime_plan_family(plan, "dynamic_lane", "dynamic_lanes")
-        return self._run_legacy_ast_body(unit, stdout=stdout)
 
     @staticmethod
     def _is_deferred_callable_eligible(unit: CompilationUnit) -> bool:

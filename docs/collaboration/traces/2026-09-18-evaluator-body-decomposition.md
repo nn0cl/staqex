@@ -98,6 +98,23 @@
   structural gaps targeted by Phase 2 Green
 - Attempt boundary: ended after Red evidence capture
 
+### Attempt 3
+
+- Agent: Codex host agent
+- Environment: local qpex workspace
+- Model as displayed: unavailable
+- Reasoning setting as displayed: unavailable
+- Scope: LISS-0560 Phase 2 Green only
+- Result: extracted canonical runtime-plan orchestration and six plan-family
+  callbacks into `runtime/evaluation/orchestration.py`; retained the existing
+  `plans.dispatch_runtime_plan` compatibility import and private test hooks
+- State ownership check: `Evaluator` still owns runtime maps, ports, semantic
+  authority observation, and execution mechanics callbacks
+- Verification: focused plan/orchestration tests `32 passed`; canonical
+  regression tests `29 passed`; Spec Verification `161/161`; diff check passed
+- Attempt boundary: ended after Green verification; Phase 3 remains separately
+  gated
+
 ## Next Safe Action
 
 Request typed approval for `Feature Path / Phase 2 Green / LISS-0560
