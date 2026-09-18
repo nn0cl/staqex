@@ -101,6 +101,10 @@ from .mixed_state import DensityStateValue, density_from_call, matrix_from_list
 from .lindblad import evolve_lindblad
 from .matrix import Matrix
 from .evaluation.calls import bind_call
+from .evaluation.compatibility import (
+    install_evolution_compatibility,
+    install_operator_compatibility,
+)
 from .evaluation.evolution import execute_evolution
 from .evaluation.operators import resolve_operator
 from .evaluation.orchestration import (
@@ -1224,7 +1228,7 @@ class Evaluator:
         self._verify_static_uncompute_bind(out, names[0], expr)
         return out
 
-    def _bind_apply_multi(
+    def _evolution_legacy_bind_apply_multi(
         self, joint: Joint, names: list[str], expr: Call
     ) -> Joint:
         """apply(U, w…) rebound as ``state (n…) = apply(U, w…)`` (LISS-0228)."""
@@ -1268,7 +1272,7 @@ class Evaluator:
             out.append(World(assign=assign, amp=w.amp, coord_phase=cp))
         return Joint(worlds=_coalesce(out))
 
-    def _bind_cnot_multi(
+    def _evolution_legacy_bind_cnot_multi(
         self, joint: Joint, names: list[str], expr: Call
     ) -> Joint:
         """``state (c, t) = cnot(c, t)`` — keep both wires after CNOT (linear)."""
@@ -1367,7 +1371,7 @@ class Evaluator:
             raise KernelError(f"evolve times must be non-negative, got {n}")
         return n
 
-    def _bind_evolve(self, joint: Joint, names: list[str], expr: EvolveExpr) -> Joint:
+    def _evolution_legacy_bind_evolve(self, joint: Joint, names: list[str], expr: EvolveExpr) -> Joint:
         if expr.explicit_transform:
             return self._bind_explicit_evolve(joint, names, expr)
         if len(expr.seeds) != len(names):
@@ -1432,7 +1436,7 @@ class Evaluator:
         # ADR 0142: drop evolve-local let axes (and other non-live coords).
         return self._trace_out_dead_fn_locals(joint, pre_live, names)
 
-    def _bind_explicit_evolve(
+    def _evolution_legacy_bind_explicit_evolve(
         self, joint: Joint, names: list[str], expr: EvolveExpr
     ) -> Joint:
         """Realize the Phase 2 `Operator * State` application.
@@ -1549,7 +1553,7 @@ class Evaluator:
         return joint
 
     @staticmethod
-    def _explicit_propagator(expr: Expr) -> ExplicitPropagator | None:
+    def _evolution_legacy_explicit_propagator(expr: Expr) -> ExplicitPropagator | None:
         """Recognize only the canonical written propagator expression."""
         if not (
             isinstance(expr, Call)
@@ -1584,12 +1588,12 @@ class Evaluator:
             return None
         return ExplicitPropagator(hamiltonian=hamiltonian, duration=duration)
 
-    def _eval_max_steps(self, max_steps: Expr | None) -> int:
+    def _evolution_legacy_eval_max_steps(self, max_steps: Expr | None) -> int:
         if not isinstance(max_steps, LitInt) or max_steps.value <= 0:
             raise KernelError("evolve until requires a positive compile-time `max` bound")
         return max_steps.value
 
-    def _eval_until_predicate(
+    def _evolution_legacy_eval_until_predicate(
         self, joint: Joint, names: list[str], predicate: Expr,
         *, previous: Joint | None = None, allow_single_alias: bool = False,
     ) -> bool:
@@ -1614,7 +1618,7 @@ class Evaluator:
         )
 
     @staticmethod
-    def _joint_l2_distance(left: Joint, right: Joint) -> float:
+    def _evolution_legacy_joint_l2_distance(left: Joint, right: Joint) -> float:
         def amplitudes(joint: Joint) -> dict[str, complex]:
             result: dict[str, complex] = {}
             for world in joint.worlds:
@@ -1627,7 +1631,7 @@ class Evaluator:
         keys = set(lhs) | set(rhs)
         return sum(abs(lhs.get(key, 0j) - rhs.get(key, 0j)) ** 2 for key in keys) ** 0.5
 
-    def _bind_evolve_hamiltonian(
+    def _evolution_legacy_bind_evolve_hamiltonian(
         self, joint: Joint, names: list[str], expr: EvolveExpr
     ) -> Joint:
         if len(names) != len(expr.seeds):
@@ -1660,7 +1664,7 @@ class Evaluator:
             col=expr.span.col,
         )
 
-    def _legacy_hamiltonian_evolve_one_step(
+    def _evolution_legacy_hamiltonian_evolve_one_step(
         self, joint: Joint, names: list[str], expr: EvolveExpr
     ) -> Joint:
         from .hamiltonian import compile_hamiltonian, hop_basis_dim, op_n_qubits
@@ -1987,7 +1991,7 @@ class Evaluator:
                 )
         return Joint(worlds=_coalesce(out_worlds))
 
-    def _hamiltonian_evolve_tuple_coordinate(
+    def _evolution_legacy_hamiltonian_evolve_tuple_coordinate(
         self,
         joint: Joint,
         src: str,
@@ -2041,7 +2045,7 @@ class Evaluator:
                 )
         return Joint(worlds=_coalesce(out_worlds))
 
-    def _evolve_precomputed_grid(
+    def _evolution_legacy_evolve_precomputed_grid(
         self,
         joint: Joint,
         names: list[str],
@@ -2074,12 +2078,12 @@ class Evaluator:
         ]
         return Joint(worlds=_coalesce(out_w))
 
-    def _operator_name(self, expr: Expr) -> str:
+    def _operator_legacy_operator_name(self, expr: Expr) -> str:
         if isinstance(expr, Var):
             return expr.name
         raise KernelError("hamiltonian / observable must be a named operator (X,Y,Z,…)")
 
-    def _resolve_unitary_matrix(self, u_expr: Expr, n_wires: int) -> list[list[complex]]:
+    def _evolution_legacy_resolve_unitary_matrix(self, u_expr: Expr, n_wires: int) -> list[list[complex]]:
         """Resolve Operator / Hadamard / Pauli / S|T / rx|ry|rz → dense unitary."""
         from .hamiltonian import compile_hamiltonian, op_n_qubits
         from .unitaries import named_gate_matrix, rotation_gate_matrix
@@ -2144,7 +2148,7 @@ class Evaluator:
             raise KernelError(f"gate `{uname}` is 1-qubit; pass one target wire")
         return u_mat
 
-    def _qft_family_matrix(
+    def _evolution_legacy_qft_family_matrix(
         self, call: Call, n_wires: int
     ) -> list[list[complex]] | None:
         """Dense exact QFT family for Joint apply (LISS-0228)."""
@@ -2187,7 +2191,7 @@ class Evaluator:
             )
         return cqft_matrix(tgt_n, inverse=(name == "ciqft"))
 
-    def _bind_apply(self, joint: Joint, name: str, expr: Call) -> Joint:
+    def _evolution_legacy_bind_apply(self, joint: Joint, name: str, expr: Call) -> Joint:
         """apply(U, w0[, w1, …]) — apply unitary matrix (not e^{-iHt})."""
         from .unitaries import apply_unitary_on_wires
 
@@ -2268,7 +2272,7 @@ class Evaluator:
             raise KernelError("capply wires must be distinct")
         return ctrls, poles, u_expr, tgts
 
-    def _bind_capply(
+    def _evolution_legacy_bind_capply(
         self,
         joint: Joint,
         name: str,
@@ -3115,7 +3119,7 @@ class Evaluator:
             return obj, None
         return self._eval_value_with_unit(arg, assign or {})
 
-    def _looks_like_operator_rhs(self, expr: Expr) -> bool:
+    def _operator_legacy_looks_like_operator_rhs(self, expr: Expr) -> bool:
         """ADR 0180: heuristic for untyped Operator algebra binds."""
         from ..ast_nodes import OpAttr, OpCall, OpIndexed, OpPauli
 
@@ -3134,7 +3138,7 @@ class Evaluator:
                 return False
         return False
 
-    def _legacy_resolve_operator(
+    def _operator_legacy_resolve_operator(
         self,
         expr: Any,
         *,
@@ -3175,7 +3179,7 @@ class Evaluator:
             expr, objects=objects, extra_arrays=extra_arrays
         )
 
-    def _operator_array_context(self) -> dict[str, Any]:
+    def _operator_legacy_array_context(self) -> dict[str, Any]:
         """Merged Float[N]… coefficient arrays (literal + Host-resolved,
         ADR 0119/LISS-0406) visible at `main` level, for binder lowering
         anywhere an Operator AST needs it (LISS-0407)."""
@@ -3188,7 +3192,7 @@ class Evaluator:
         arrays.update(getattr(self, "_resolved_host_arrays", None) or {})
         return arrays
 
-    def _op_expr_arg_to_source_expr(self, arg: Any, call_name: str) -> Any:
+    def _operator_legacy_expr_arg_to_source_expr(self, arg: Any, call_name: str) -> Any:
         """Convert an OpExpr Call argument (OpVar/OpLit) into the generic
         Expr shape `_resolve_operator_factory_call` already understands,
         so a nested Operator-returning call found anywhere inside a
@@ -3203,7 +3207,7 @@ class Evaluator:
             f"nested Operator call `{call_name}`"
         )
 
-    def _resolve_op_call(self, call: "OpCall") -> Any:
+    def _operator_legacy_resolve_op_call(self, call: "OpCall") -> Any:
         """Inline a call to a known Operator-returning function found
         anywhere inside an Operator expression tree, not only when it is
         the entire right-hand side (LISS-0407, closes the LISS-0402
@@ -3226,7 +3230,7 @@ class Evaluator:
         )
         return self._resolve_operator_factory_call(synthetic, fun)
 
-    def _resolve_operator_tree(
+    def _operator_legacy_resolve_operator_tree(
         self,
         expr: Any,
         *,
@@ -3305,7 +3309,7 @@ class Evaluator:
                 raise KernelError(f"cannot lower Operator binder: {exc}") from exc
         return expr
 
-    def _lookup_set_comprehension_value(
+    def _operator_legacy_lookup_set_comprehension_value(
         self, name: str
     ) -> tuple[tuple[Any, ...], int] | None:
         """LISS-0430: find `name`'s defining `Set name = { ... }` statement
@@ -3341,7 +3345,7 @@ class Evaluator:
                 return elements, width
         return None
 
-    def _build_projector_sum_operator(
+    def _operator_legacy_build_projector_sum_operator(
         self,
         elements: tuple[Any, ...],
         bound_variable: str,
@@ -3413,7 +3417,7 @@ class Evaluator:
             result = OpBin(op="+", lhs=result, rhs=term, span=body.span)
         return result
 
-    def _lower_operator_value(
+    def _operator_legacy_lower_operator_value(
         self,
         expr: Any,
         *,
@@ -3432,7 +3436,7 @@ class Evaluator:
             arrays.update(extra_arrays)
         return self._resolve_operator_tree(expr, arrays=arrays, objects=objects)
 
-    def _resolve_operator_factory_call(self, expr: Call, fun: FunDecl) -> Any:
+    def _operator_legacy_resolve_operator_factory_call(self, expr: Call, fun: FunDecl) -> Any:
         """Evaluate a `fn … -> Operator` Call into a materialized OpExpr.
 
         LISS-0297: object (struct/class) params bind under **parameter** names so
@@ -3568,7 +3572,7 @@ class Evaluator:
             return _materialize_op(result)
         return expr
 
-    def _resolve_operator_method_call(self, expr: Call) -> Any:
+    def _operator_legacy_resolve_operator_method_call(self, expr: Call) -> Any:
         """Evaluate `recv.method(…)` returning Operator (LISS-0139)."""
         callee = expr.callee
         if not isinstance(callee, Attr):
@@ -3692,7 +3696,7 @@ class Evaluator:
         finally:
             self._this = prev_this
 
-    def _bind_second_quantized(self, name: str, family: str, expr: Any) -> None:
+    def _operator_legacy_bind_second_quantized(self, name: str, family: str, expr: Any) -> None:
         """Bind a typed second-quantized local (LISS-0032, ADR 0093).
 
         `FermionOperator`/`BosonOperator`/`SpinOperator` locals are kept
@@ -5918,7 +5922,9 @@ class Evaluator:
 # method definitions in the public facade.
 Evaluator._eval_value = Evaluator._legacy_evaluate_value
 Evaluator._bind_call = Evaluator._legacy_bind_call
-Evaluator._resolve_operator_expr = Evaluator._legacy_resolve_operator
+Evaluator._resolve_operator_expr = Evaluator._operator_legacy_resolve_operator
+install_evolution_compatibility(Evaluator)
+install_operator_compatibility(Evaluator)
 
 
 def _is_numeric(value: Any) -> bool:

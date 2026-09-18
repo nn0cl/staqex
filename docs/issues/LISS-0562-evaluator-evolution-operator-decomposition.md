@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0562
-- Status: Phase 1 Red complete — test review pending
+- Status: Phase 2 Green compatibility slice complete — physical body relocation pending
 - Type: Feature Path structural decomposition
 - Initial planning size: L
 - Current planning size: L
@@ -78,3 +78,33 @@ and operator decomposition 承認`.
 The six-test contract and the intentional `1 failed, 5 passed` Red evidence
 are accepted. The next gate is typed approval for Phase 2 Green /
 Implementation.
+
+## Phase 2 Green / Implementation result
+
+Implementation approval received on 2026-09-19:
+`Feature Path / Phase 2 Green / LISS-0562 evaluator evolution and operator
+decomposition 実装承認`.
+
+Implemented the first bounded extraction slice:
+
+- separated evolution and operator implementation names from the public
+  `Evaluator` facade;
+- retained `runtime/evaluation/evolution.py` and
+  `runtime/evaluation/operators.py` as family entrypoints;
+- moved compatibility alias installation into
+  `runtime/evaluation/compatibility.py`;
+- preserved the single mutable-state owner and existing private compatibility
+  surface.
+
+Verification: LISS-0562 focused tests **6 passed**, adjacent
+evolution/operator/QASM/finite-binder tests **33 passed**, and the full
+blocking suite at the initial implementation point **2123 passed**.
+`compileall` and `git diff --check` also passed.
+
+This is a compatibility-first Green slice, not the final physical relocation
+of every legacy method body. The legacy mechanics remain under explicitly
+named implementation methods in `evaluator.py`; the next refactor/audit must
+either move those bodies into the family modules or record an accepted
+cohesion exception. Current `evaluator.py` size is **6,071 lines** (baseline
+after LISS-0561: 6,065), so this slice improves ownership clarity but does
+not yet claim a line-count reduction.

@@ -136,6 +136,21 @@ evaluator orchestration decomposition`.
 - Review result: Phase 1 Red test review approved on 2026-09-19; the six-test
   contract is accepted and Phase 2 Green remains separately gated.
 
+### Attempt 5 — LISS-0562 Phase 2 Green
+
+- Date: 2026-09-19
+- Approval: `Feature Path / Phase 2 Green / LISS-0562 evaluator evolution and
+  operator decomposition 実装承認`
+- Result: separated evolution/operator implementation names, retained the
+  family entrypoints, and moved compatibility alias installation into
+  `runtime/evaluation/compatibility.py`.
+- Verification: focused tests `6 passed`, adjacent regression `33 passed`,
+  and the full blocking suite at the initial implementation point `2123
+  passed`.
+- Limitation: legacy method bodies remain in `evaluator.py` under explicit
+  implementation names; final physical relocation and line-count reduction
+  are not claimed by this slice.
+
 ## Notes
 
 Historical WP-0160 and review records remain unchanged; they describe the
