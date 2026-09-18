@@ -16,7 +16,7 @@ if str(REPO) not in sys.path:
 import compiler.staqex.backend.qasm.emitter as emitter_module
 import compiler.staqex.backend.qasm.lower as lower_module
 import compiler.staqex.finite_binder as finite_binder_module
-import compiler.staqex.scientific_semantic_ir as semantic_ir_module
+import compiler.staqex.scientific_semantic.legacy as semantic_ir_module
 import compiler.staqex.qpu_ir as qpu_ir_module
 from compiler.staqex.backend.qasm.emitter import QASM3Emitter
 from compiler.staqex.pipeline import compile_path, compile_source
