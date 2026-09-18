@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — LISS-0566-A complete; Unit B design intake complete |
+| Status | in_progress — LISS-0566-A/B Green complete; Unit B Phase 3 pending |
 | Size | XL |
 | Parent | WP-0162 |
 | Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
@@ -193,3 +193,21 @@ failed, 3 passed**, with no production change.
 
 Current next action: request
 `WP-0163 / LISS-0566-B Phase 2 Green / Implementation 承認`.
+
+## Unit B Phase 2 Green
+
+Implementation approval received on 2026-09-19:
+`WP-0163 / LISS-0566-B Phase 2 Green / Implementation 承認`.
+
+Extracted the Unit B gate mechanics into `evaluation/evolution.py` and added
+typed context callbacks for operator definitions, scalar values, and static
+register sizes. Compatibility wiring preserves the existing evaluator private
+hooks. Unit B focused **7**, adjacent **20**, and full blocking **2,136** tests
+passed; public baseline, Spec Verification, compileall, lifecycle,
+coverage-ledger, and diff checks also passed. `evaluator.py` is now 4,953 lines
+and `evolution.py` is 1,092 lines.
+
+The active-Red entry for LISS-0566-B was removed after Green.
+
+Current next action: request
+`WP-0163 / LISS-0566-B Phase 3 Refactor 承認`.

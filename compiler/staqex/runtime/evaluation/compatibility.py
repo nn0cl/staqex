@@ -6,6 +6,8 @@ from typing import Any
 
 from .evolution import (
     bind_apply_multi,
+    bind_apply,
+    bind_capply,
     bind_cnot_multi,
     bind_evolve,
     bind_evolve_hamiltonian,
@@ -15,6 +17,10 @@ from .evolution import (
     evolve_precomputed_grid,
     hamiltonian_evolve_one_step,
     hamiltonian_evolve_tuple_coordinate,
+    is_unitary_name,
+    qft_family_matrix,
+    resolve_unitary_matrix,
+    split_capply_args,
     explicit_propagator,
     joint_l2_distance,
 )
@@ -35,13 +41,13 @@ def install_evolution_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._legacy_hamiltonian_evolve_one_step = hamiltonian_evolve_one_step
     evaluator_type._hamiltonian_evolve_tuple_coordinate = hamiltonian_evolve_tuple_coordinate
     evaluator_type._evolve_precomputed_grid = evolve_precomputed_grid
-    evaluator_type._resolve_unitary_matrix = (
-        evaluator_type._evolution_legacy_resolve_unitary_matrix
-    )
-    evaluator_type._qft_family_matrix = evaluator_type._evolution_legacy_qft_family_matrix
-    evaluator_type._bind_apply = evaluator_type._evolution_legacy_bind_apply
+    evaluator_type._resolve_unitary_matrix = resolve_unitary_matrix
+    evaluator_type._qft_family_matrix = qft_family_matrix
+    evaluator_type._bind_apply = bind_apply
+    evaluator_type._is_unitary_name = is_unitary_name
+    evaluator_type._split_capply_args = split_capply_args
     evaluator_type._bind_cnot_multi = bind_cnot_multi
-    evaluator_type._bind_capply = evaluator_type._evolution_legacy_bind_capply
+    evaluator_type._bind_capply = bind_capply
 
 
 def install_operator_compatibility(evaluator_type: type[Any]) -> None:

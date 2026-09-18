@@ -155,3 +155,20 @@
   passed with one owned entry, and diff check passed.
 - Disposition: accepted; no production implementation permission is implied.
 - Next approval: `WP-0163 / LISS-0566-B Phase 2 Green / Implementation 承認`.
+
+## Attempt 11 — Unit B Phase 2 Green
+
+- Date: 2026-09-19
+- Approval: `WP-0163 / LISS-0566-B Phase 2 Green / Implementation 承認`
+- Result: extracted Unit B unitary/gate mechanics and narrow read-only context
+  callbacks; compatibility hooks remain installed.
+- Measurement: `evaluator.py` decreased from 5,164 to 4,953 lines; extracted
+  `evolution.py` is 1,092 lines.
+- Verification: Unit B focused `7 passed`, adjacent QFT/apply/capply/QASM/S01
+  regression `20 passed`, full blocking pytest `2,136 passed`, public
+  baseline, Spec Verification, compileall, lifecycle, coverage-ledger, and
+  diff checks passed.
+- Lifecycle: removed the LISS-0566-B active-Red entry after Green.
+- Scope: Unit C, Semantic IR, provider SDK, network, credentials, and live QPU
+  behavior were not changed.
+- Next approval: `WP-0163 / LISS-0566-B Phase 3 Refactor 承認`.

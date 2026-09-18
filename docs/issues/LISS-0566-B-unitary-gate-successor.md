@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0566-B
-- Status: review — Phase 1 Red test review approved; Phase 2 Green pending
-- Phase: phase-1-red
+- Status: review — Phase 2 Green complete; Phase 3 Refactor pending
+- Phase: phase-2-green
 - Type: Feature Path bounded structural decomposition
 - Priority: high
 - Planning size: M
@@ -64,6 +64,37 @@ active-Red entry remains owned by this issue.
 
 Next approval required:
 `WP-0163 / LISS-0566-B Phase 2 Green / Implementation 承認`.
+
+## Phase 2 Green
+
+Implementation approval received on 2026-09-19:
+`WP-0163 / LISS-0566-B Phase 2 Green / Implementation 承認`.
+
+Moved the Unit B gate mechanics into `runtime/evaluation/evolution.py`:
+
+- `resolve_unitary_matrix`
+- `qft_family_matrix`
+- `bind_apply`
+- `is_unitary_name` and `split_capply_args`
+- `bind_capply`
+
+`Evaluator` now exposes only narrow read-only callbacks for operator
+definitions, operator environment, scalar environment, and static register
+sizes. `evaluation/compatibility.py` preserves the established private
+evaluator hooks. Unit C and Semantic IR/provider boundaries were unchanged.
+
+Verification: Unit B focused **7 passed**, nearest QFT/apply/capply/QASM/S01
+regression **20 passed**, full blocking pytest **2,136 passed**, compileall,
+public baseline, Spec Verification, lifecycle, coverage-ledger, and diff
+checks passed. The active-Red entry was removed after the accepted contract
+became Green.
+
+Measured size: `evaluator.py` decreased from **5,164** to **4,953 lines**;
+`evaluation/evolution.py` is **1,092 lines**, below the 1,200-line module
+guardrail.
+
+Next approval required:
+`WP-0163 / LISS-0566-B Phase 3 Refactor 承認`.
 
 ## Next approval
 

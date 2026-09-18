@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Protocol, TextIO
+from typing import Any, Mapping, Protocol, TextIO
 
 from ...ast_nodes import CompilationUnit
 
@@ -15,6 +15,14 @@ class EvaluatorContext(Protocol):
     """
 
     def _stateful_evolution_context(self) -> Any: ...
+
+    def _unitary_operator_definition(self, name: str) -> Any | None: ...
+
+    def _unitary_operator_environment(self) -> Mapping[str, Any]: ...
+
+    def _scalar_environment(self) -> Mapping[str, Any]: ...
+
+    def _static_register_size(self, name: str) -> int | None: ...
 
     def _require_runtime_plan_family(
         self, plan: Any, family: str, payload_name: str
