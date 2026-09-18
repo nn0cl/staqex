@@ -371,7 +371,7 @@ def _run_deferred_state_binds(
             op_val = (
                 explicit_propagator
                 if explicit_propagator is not None
-                else context._resolve_operator(stmt.expr)
+                else context._resolve_operator_expr(stmt.expr)
             )
             if (
                 isinstance(op_val, Call)
