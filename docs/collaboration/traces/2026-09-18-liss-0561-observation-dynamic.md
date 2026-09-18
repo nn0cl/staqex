@@ -56,13 +56,30 @@
 - Verification: expected pre-extraction Red result is `3 failed, 2 passed`
 - Attempt boundary: ended after Red evidence capture
 
+### Attempt 3
+
+- Agent: Codex host agent
+- Environment: local qpex workspace
+- Model as displayed: unavailable
+- Scope: LISS-0561 Phase 2 Green only
+- Result: extracted the observation and dynamic-lane mechanics into internal
+  context-driven modules; preserved `Evaluator` as the mutable state owner and
+  retained private compatibility aliases
+- Verification: LISS-0561 focused contracts `5 passed`; adjacent
+  characterization set `91 passed`; Spec Verification `161/161` and Gate
+  `PASS`; `git diff --check` passed
+- Attempt boundary: ended after Green evidence capture; Phase 3 review remains
+  pending
+
 ## Cost / Reasoning Control
 
-- Operating path: Feature Path Phase 0
+- Operating path: Feature Path Phase 2 Green
 - Files read: LISS-0561, WP-0162, core decomposition spec, collaboration
   policies, evaluator source, runtime evaluation package, and relevant tests
 - Context intentionally omitted: provider/live-QPU and private data
-- Deterministic checks used: AST method inventory, line count, consumer search
+- Deterministic checks used: AST method inventory, line count, consumer search,
+  syntax compilation, focused pytest, characterization pytest, and Spec
+  Verification
 - Escalation reason: none
 - Avoided LLM work: no generated implementation or test scaffolding
 - Rework caused by AI output: none
@@ -70,15 +87,15 @@
 ## Adjudicator Decisions
 
 - LISS-0560 final review approved 2026-09-18.
-- LISS-0561 Phase 0 acceptance approved 2026-09-18; Phase 1 Red is now the
-  current approved phase.
+- LISS-0561 Phase 0 acceptance approved 2026-09-18; Phase 2 Green approved
+  2026-09-18 and completed. Phase 3 remains pending approval.
 
 ## Verification
 
 - Commands/checks: line/method inventory, private consumer search, repository
   characterization search, and document diff inspection
-- Result: profile recorded and Phase 1 Red contract added; implementation not
-  started
+- Result: observation and dynamic lanes extracted with context-driven
+  compatibility wiring; all bounded verification gates passed
 
 ## Changed Files
 
@@ -86,8 +103,11 @@
 - `docs/work-plans/WP-0162-evaluator-body-decomposition.md`
 - `tests/test_liss_0561_evaluator_observation_dynamic_red.py`
 - this trace
+- `compiler/staqex/runtime/evaluator.py`
+- `compiler/staqex/runtime/evaluation/observation.py`
+- `compiler/staqex/runtime/evaluation/dynamic_lane.py`
 
 ## Next Safe Action
 
-Request typed approval for `Feature Path / Phase 2 Green / LISS-0561 evaluator
-observation and dynamic-lane decomposition`.
+Request typed approval for `Feature Path / Phase 3 Refactor / LISS-0561
+evaluator observation and dynamic-lane decomposition`.

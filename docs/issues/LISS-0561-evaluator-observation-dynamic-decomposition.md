@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0561
-- Status: Phase 1 Red complete — Phase 2 Green pending approval
+- Status: Phase 2 Green complete — Phase 3 Refactor pending approval
 - Type: Feature Path structural decomposition
 - Initial planning size: L
 - Current planning size: L
@@ -37,7 +37,7 @@ LISS-0560 is complete. The current `evaluator.py` is 6,928 lines and the
 
 | Family | Candidate methods | Measured body lines | Primary state/boundary |
 |---|---:|---:|---|
-| Observation | 22 | 736 | `Joint`, `MeasureResult`, `MeasureSinkPort`, mixed/POVM maps, RNG and observation flags |
+| Observation | 21 | 736 | `Joint`, `MeasureResult`, `MeasureSinkPort`, mixed/POVM maps, RNG and observation flags |
 | Dynamic lane | 5 | 175 | `HostInputPort`, `Joint.project_coord`, dynamic outcome confirmation and block-local trace-out |
 
 Observation methods are the deferred State/Measure path, deferred-bind cone
@@ -113,9 +113,44 @@ The focused run intentionally reports `3 failed, 2 passed` before extraction:
   do not yet exist;
 - all 26 profiled observation/dynamic methods remain on `Evaluator`;
 - the public evaluator import manifest and private consumer manifest are
-  captured as passing compatibility characterization contracts.
+captured as passing compatibility characterization contracts. Phase 2
+preserves both consumers through explicit compatibility assignments on
+`Evaluator`.
 
 No production source, public API, or test-exclusion file was changed.
+
+## Phase 2 Green evidence
+
+Approved on 2026-09-18:
+`Feature Path / Phase 2 Green / LISS-0561 evaluator observation and dynamic-lane decomposition 承認`.
+
+Implemented the bounded extraction into two internal modules:
+
+- `compiler/staqex/runtime/evaluation/observation.py` — 21 observation
+  functions covering deferred binding, terminal measurement, sink emission,
+  POVM/DensityState/Lindblad handling, and marginal calculation.
+- `compiler/staqex/runtime/evaluation/dynamic_lane.py` — 5 dynamic-lane
+  functions covering block recursion, reset, supplied outcomes, collapse,
+  and block-local disposal.
+- `compiler/staqex/runtime/evaluator.py` — reduced to 6,065 lines and 123
+  class methods; it remains the mutable state owner and exposes compatibility
+  aliases for existing private consumers.
+
+The extracted functions receive the existing evaluator instance as an explicit
+context. No provider SDK, live QPU behavior, new public API, or semantic policy
+was added. The public evaluator import manifest is unchanged.
+
+Verification:
+
+- LISS-0561 focused contracts: `5 passed`.
+- Observation/dynamic/orchestration characterization set: `91 passed`.
+- Spec Verification: `161/161`, `100.00%`, Gate `PASS`.
+- `git diff --check`: passed.
+
+Process review: no operating-contract deviation or operational problem found.
+
+Phase 3 remains a separate review/refactor step; this Green implementation has
+not been marked as final review or merged.
 
 ## AI Planning Record
 
