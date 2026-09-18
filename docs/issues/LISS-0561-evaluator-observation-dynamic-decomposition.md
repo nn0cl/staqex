@@ -3,7 +3,7 @@
 ## Metadata
 
 - Local issue ID: LISS-0561
-- Status: Phase 0 profile ready — acceptance pending
+- Status: Phase 1 Red complete — Phase 2 Green pending approval
 - Type: Feature Path structural decomposition
 - Initial planning size: L
 - Current planning size: L
@@ -95,11 +95,27 @@ do not import the public evaluator facade, and pin the mutable-state owner and
 private consumer manifest. Phase 2 may perform only the minimum extraction
 after a separate typed implementation approval.
 
-### Acceptance decision requested
+### Phase 0 acceptance decision
 
-Accept this Phase 0 profile and authorize Phase 1 Red only. This does not
-authorize production implementation, Phase 2 Green, provider integration, or
-live dynamic-QPU execution.
+Accepted on 2026-09-18:
+`Feature Path / Phase 0 acceptance / LISS-0561 evaluator observation and dynamic-lane decomposition 承認`.
+
+This acceptance authorized Phase 1 Red only. It does not authorize production
+implementation, Phase 2 Green, provider integration, or live dynamic-QPU
+execution.
+
+## Phase 1 Red evidence
+
+Implemented only in `tests/test_liss_0561_evaluator_observation_dynamic_red.py`.
+The focused run intentionally reports `3 failed, 2 passed` before extraction:
+
+- `runtime/evaluation/observation.py` and `runtime/evaluation/dynamic_lane.py`
+  do not yet exist;
+- all 26 profiled observation/dynamic methods remain on `Evaluator`;
+- the public evaluator import manifest and private consumer manifest are
+  captured as passing compatibility characterization contracts.
+
+No production source, public API, or test-exclusion file was changed.
 
 ## AI Planning Record
 

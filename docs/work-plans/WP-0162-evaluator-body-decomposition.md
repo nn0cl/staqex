@@ -32,7 +32,7 @@ performance rewrites, and opportunistic bug fixes.
 | Issue | Status | Size | Depends on | Blocks | Candidate internal package |
 |---|---|---:|---|---|---|
 | LISS-0560 | done — Phase 3 final review approved 2026-09-18 | M | none | 0561–0565 | `runtime/evaluation/orchestration.py` |
-| LISS-0561 | Phase 0 profile ready — acceptance pending | L | 0560 | 0565 | `runtime/evaluation/observation.py`, `dynamic_lane.py` |
+| LISS-0561 | Phase 1 Red complete — Phase 2 Green pending | L | 0560 | 0565 | `runtime/evaluation/observation.py`, `dynamic_lane.py` |
 | LISS-0562 | proposed | L | 0560 | 0565 | `runtime/evaluation/evolution.py`, `operators.py` |
 | LISS-0563 | proposed | L | 0560 | 0565 | `runtime/evaluation/classical.py`, `values.py` |
 | LISS-0564 | proposed | L | 0560 | 0565 | `runtime/evaluation/scientific.py` |
@@ -109,8 +109,8 @@ separately approved.
 ## Current Next Issue
 
 - Issue: LISS-0561 Phase 0 acceptance/profile review.
-- Reason: LISS-0560 is complete; the observation/dynamic profile is ready for
-  acceptance before Red tests begin.
+- Reason: LISS-0560 is complete; LISS-0561 Phase 0 was accepted and its Red
+  boundary is now fixed before implementation.
 - Implementation approval needed: yes, separately for LISS-0561 Phase 1 Red
   and Phase 2 Green.
 

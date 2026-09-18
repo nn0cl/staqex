@@ -44,6 +44,18 @@
 - Attempt boundary: ended after design profile; waiting for typed Phase 0
   acceptance
 
+### Attempt 2
+
+- Agent: Codex host agent
+- Environment: local qpex workspace
+- Model as displayed: unavailable
+- Reasoning setting as displayed: unavailable
+- Scope: LISS-0561 Phase 1 Red only
+- Result: added the focused observation/dynamic ownership and compatibility
+  contracts; no production, public API, or exclusion edits
+- Verification: expected pre-extraction Red result is `3 failed, 2 passed`
+- Attempt boundary: ended after Red evidence capture
+
 ## Cost / Reasoning Control
 
 - Operating path: Feature Path Phase 0
@@ -57,22 +69,25 @@
 
 ## Adjudicator Decisions
 
-- LISS-0560 final review approved 2026-09-18; LISS-0561 Phase 0 acceptance is
-  requested and not yet inferred.
+- LISS-0560 final review approved 2026-09-18.
+- LISS-0561 Phase 0 acceptance approved 2026-09-18; Phase 1 Red is now the
+  current approved phase.
 
 ## Verification
 
 - Commands/checks: line/method inventory, private consumer search, repository
   characterization search, and document diff inspection
-- Result: profile recorded; implementation not started
+- Result: profile recorded and Phase 1 Red contract added; implementation not
+  started
 
 ## Changed Files
 
 - `docs/issues/LISS-0561-evaluator-observation-dynamic-decomposition.md`
 - `docs/work-plans/WP-0162-evaluator-body-decomposition.md`
+- `tests/test_liss_0561_evaluator_observation_dynamic_red.py`
 - this trace
 
 ## Next Safe Action
 
-Request typed approval for `Feature Path / Phase 0 acceptance /
-LISS-0561 evaluator observation and dynamic-lane decomposition`.
+Request typed approval for `Feature Path / Phase 2 Green / LISS-0561 evaluator
+observation and dynamic-lane decomposition`.
