@@ -102,8 +102,8 @@ from .lindblad import evolve_lindblad
 from .matrix import Matrix
 from .evaluation.calls import bind_call
 from .evaluation.compatibility import (
-    install_evolution_compatibility,
-    install_operator_compatibility,
+    install_evolution_compatibility as _install_evolution_compatibility,
+    install_operator_compatibility as _install_operator_compatibility,
 )
 from .evaluation.evolution import (
     ExplicitPropagator,
@@ -5773,8 +5773,8 @@ class Evaluator:
 Evaluator._eval_value = Evaluator._legacy_evaluate_value
 Evaluator._bind_call = Evaluator._legacy_bind_call
 Evaluator._resolve_operator_expr = Evaluator._operator_legacy_resolve_operator
-install_evolution_compatibility(Evaluator)
-install_operator_compatibility(Evaluator)
+_install_evolution_compatibility(Evaluator)
+_install_operator_compatibility(Evaluator)
 
 
 def _is_numeric(value: Any) -> bool:
