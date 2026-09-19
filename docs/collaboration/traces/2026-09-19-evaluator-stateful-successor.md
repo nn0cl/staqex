@@ -110,6 +110,61 @@
 - Process review: no operating-contract deviation or operational problem
   found.
 
+## Attempt 15 — Unit C Phase 1 Red
+
+- Date: 2026-09-19
+- Approval: `WP-0163 / LISS-0566-C Phase 1 Red 承認`
+- Result: added `tests/test_liss_0566_unit_c_red.py` with nine structural and
+  characterization contracts; registered `LISS-0566-C` in
+  `docs/testing/active-red-tests.toml`.
+- Expected Red contract: focused execution should report **4 failed, 5
+  passed**. Structural failures cover missing extracted entrypoints, bodies
+  still present on `Evaluator`, missing narrow operator callbacks, and
+  compatibility hooks not yet wired to `evaluation/operators.py`.
+- Scope discipline: no production source or reviewed assertion changed; the
+  no-facade dependency and four existing operator/factory/binder/method
+  characterization contracts remain passing.
+- Next approval: `WP-0163 / LISS-0566-C Phase 1 Red テストレビュー承認`.
+
+## Attempt 16 — Unit C Phase 1 Red test review
+
+- Date: 2026-09-19
+- Approval: `WP-0163 / LISS-0566-C Phase 1 Red テストレビュー承認`
+- Review route: `same_context`, weaker than `separate_context`.
+- Result: accepted the intentional structural Red contract and added two
+  explicit characterization nodes for set-projector tree lowering and
+  Jordan-Wigner second-quantized binding; the suite now has **4 failed, 7
+  passed**.
+- Verification: focused Red run completed with the expected exit code 1;
+  active-Red lifecycle passed with one entry; `git diff --check` passed.
+- Findings: no Phase 1 test-review blocker. No production source, provider
+  boundary, Semantic IR authority, or reviewed assertion was changed.
+- Next approval: `WP-0163 / LISS-0566-C Phase 2 Green / Implementation 承認`.
+
+## Attempt 14 — Unit C acceptance/design intake
+
+- Date: 2026-09-19
+- Approval: `WP-0163 / LISS-0566-C acceptance/design intake 承認`
+- Scope: operator-name/RHS classification, top-level operator resolution,
+  merged finite-array context, nested Operator calls and recursive tree
+  resolution, set-comprehension lookup, finite-binder/operator lowering,
+  Operator-returning function factories, Operator-returning class methods,
+  and typed second-quantized binding.
+- Measurement: current `runtime/evaluator.py` is **4,957 lines**; the Unit C
+  manifest is **11 methods / 507 physical lines**. Existing pure source-arg
+  conversion and projector-sum helpers remain in `evaluation/operators.py`.
+- Decisions: `Evaluator` remains the sole mutable state owner; factory locals
+  and method receiver state remain call-local; compatibility aliases remain
+  installed until Unit D; recursive tree resolution remains the canonical
+  runtime pass; Semantic IR and provider/QPU boundaries are unchanged.
+- Process lessons applied: private-consumer inventory, exact compatibility
+  ownership checks, explicit single-state-owner callbacks, named compatibility
+  bridge, and positive/negative neighboring-form characterization.
+- Result: added the bounded Unit C issue and detailed work-plan design. No
+  Phase 1 Red tests, production source, or active-Red lifecycle entry were
+  created.
+- Next approval: `WP-0163 / LISS-0566-C Phase 1 Red 承認`.
+
 ## Attempt 8 — Unit B acceptance/design intake
 
 - Date: 2026-09-19
@@ -198,5 +253,59 @@
   Verification `161/161`, public baseline, compileall, lifecycle,
   coverage-ledger, document lifecycle, and diff checks passed.
 - Result: LISS-0566-B marked `done`; WP-0163 keeps Unit C and Unit D gated.
+- Process review: no operating-contract deviation or operational problem
+  found.
+
+## Attempt 17 — Unit C Phase 2 Green
+
+- Date: 2026-09-19
+- Approval: `WP-0163 / LISS-0566-C Phase 2 Green / Implementation 承認`
+- Result: extracted the eleven Unit C operator-resolution/lowering methods into
+  `runtime/evaluation/operators.py`; added explicit context callbacks for live
+  environments, finite-array lookup, receiver/assignment state, and recursive
+  evaluation; retained established compatibility aliases in
+  `evaluation/compatibility.py`.
+- Measurement: `runtime/evaluator.py` is **4,491 lines** and
+  `runtime/evaluation/operators.py` is **617 lines**.
+- Verification: Unit C focused **11 passed**, adjacent operator/binder/
+  second-quantization regressions **29 passed**, combined structural suite
+  **17 passed**, affected S02/benchmark/legacy consumers **20 passed**, and
+  full blocking pytest **2,147 passed**. `git diff --check` passed after
+  whitespace cleanup.
+- Lifecycle: removed the LISS-0566-C active-Red entry after Green.
+- Scope: no Semantic IR, QASM projection, parser/typechecker, provider SDK,
+  network, credential, or live-QPU behavior changed.
+- Next approval: `WP-0163 / LISS-0566-C Phase 3 Refactor 承認`.
+
+## Attempt 18 — Unit C Phase 3 Refactor
+
+- Date: 2026-09-19
+- Approval: `WP-0163 / LISS-0566-C Phase 3 Refactor 承認`
+- Result: behavior-preserving cleanup of `evaluation/operators.py`:
+  normalized extracted-function indentation/signatures, removed a duplicate
+  local import, restored the missing `LitFloat` import, centralized numeric
+  receiver-field extraction, clarified class lookup and host-array merging,
+  and formatted long calls.
+- Verification: Unit C and adjacent suites **46 passed**, full blocking pytest
+  **2,147 passed**, Spec Verification **161/161**, compileall, Active-Red
+  lifecycle, document lifecycle, coverage-ledger consistency, and
+  `git diff --check` passed.
+- Scope: no acceptance assertion, compatibility assignment, Semantic IR,
+  QASM, provider boundary, credential, network, or live-QPU behavior changed.
+- Next approval: `WP-0163 / LISS-0566-C Phase 3 最終レビュー 承認`.
+
+## Attempt 19 — Unit C Phase 3 final review
+
+- Date: 2026-09-19
+- Approval: `WP-0163 / LISS-0566-C Phase 3 最終レビュー 承認`
+- Review route: `same_context`, weaker than `separate_context`.
+- Findings: no blocker. Extracted ownership, single mutable-state ownership,
+  compatibility bridge, behavior preservation, and size guardrail were all
+  confirmed from the repository artifacts and deterministic checks.
+- Verification: Unit C/adjacent **46 passed**, full blocking pytest **2,147
+  passed**, Spec Verification **161/161**, compileall, Active-Red lifecycle,
+  document lifecycle, coverage-ledger consistency, and `git diff --check`
+  passed.
+- Result: LISS-0566-C marked `done`; Unit D remains separately gated.
 - Process review: no operating-contract deviation or operational problem
   found.
