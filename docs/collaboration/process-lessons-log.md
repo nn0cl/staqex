@@ -7,6 +7,21 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-19
+- Class: red-contract-scope
+- Pattern: a decomposition Red suite can legitimately combine expected
+  structural failures with passing characterization cases, but a malformed
+  fixture can be mistaken for a product gap if it is not corrected and rerun
+  before review.
+- What later design or implementation must do: label structural and
+  characterization nodes separately, repair only demonstrably invalid setup,
+  rerun the exact bounded suite, and preserve the intended failure count as
+  evidence for the next implementation gate.
+- Source issue or work plan (adopter's own ID, if any): LISS-0567 / WP-0164
+- Status: applied
+
+## Lesson
+
 - Date: 2026-09-18
 - Class: private-consumer-inventory
 - Pattern: extracting private evaluator methods can make focused structural

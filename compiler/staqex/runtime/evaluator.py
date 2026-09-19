@@ -102,8 +102,10 @@ from .lindblad import evolve_lindblad
 from .matrix import Matrix
 from .evaluation.calls import bind_call
 from .evaluation.compatibility import (
+    install_classical_compatibility as _install_classical_compatibility,
     install_call_compatibility as _install_call_compatibility,
     install_evolution_compatibility as _install_evolution_compatibility,
+    install_frame_compatibility as _install_frame_compatibility,
     install_operator_compatibility as _install_operator_compatibility,
 )
 from .evaluation.evolution import (
@@ -1943,7 +1945,21 @@ class Evaluator:
             return f"{base}.{expr.name}"
         return None
 
-    def _construct_instance(self, class_name: str, expr: Expr) -> ClassInstance:
+    def _frame_environment(self) -> Mapping[str, Any]:
+        """Expose frame state through a narrow callback, without copying it."""
+        return {"receiver": self._this, "units": self._frame_units}
+
+    def _restore_frame(
+        self, receiver: Any, frame_units: dict[str, str]
+    ) -> None:
+        """Restore frame state for extracted invocation services."""
+        self._this = receiver
+        self._frame_units = frame_units
+
+    def _legacy_construct_instance(
+        self, class_name: str, expr: Expr
+    ) -> ClassInstance:
+        """Compatibility body for the extracted classical constructor."""
         cls = self.classes.get(class_name)
         if cls is None:
             raise KernelError(f"unknown class `{class_name}`")
@@ -2048,9 +2064,10 @@ class Evaluator:
             self._in_init = prev_init
             self._frame_units = prev_frame
 
-    def _construct_struct(
+    def _legacy_construct_struct(
         self, struct_name: str, expr: Expr, assign: dict[str, Any] | None = None
     ) -> StructValue:
+        """Compatibility body for the extracted struct constructor."""
         st = self.structs.get(struct_name)
         if st is None:
             raise KernelError(f"unknown struct `{struct_name}`")
@@ -2182,7 +2199,7 @@ class Evaluator:
                 return
         raise KernelError("assignment target is not a mutable object field")
 
-    def _bind_method(
+    def _legacy_bind_method(
         self,
         joint: Joint,
         name: str,
@@ -2195,7 +2212,9 @@ class Evaluator:
     ) -> Joint:
         """Run a measure-free method and bind its result.
 
-        New signatures return the explicit terminal `return` expression.
+        This body remains behind the explicit frame successor boundary until
+        the next bounded extraction. New signatures return the explicit
+        terminal `return` expression.
         """
         if method.name == "init":
             raise KernelError("`init` is a constructor; call `ClassName(…)` instead")
@@ -2617,7 +2636,7 @@ class Evaluator:
             else:
                 self._call_local_units = prev_call_units
 
-    def _bind_user_fun(
+    def _legacy_bind_user_fun(
         self,
         joint: Joint,
         names: list[str],
@@ -2627,7 +2646,7 @@ class Evaluator:
         logs: list[str] | None = None,
         inspect_out: MeasureSinkPort | None = None,
     ) -> Joint:
-        """Execute a measure-free library `fn` and bind results to `names`."""
+        """Compatibility body for the extracted user-function frame."""
         if len(expr.args) != len(fun.params):
             raise KernelError(
                 f"`{fun.name}` expects {len(fun.params)} args, got {len(expr.args)}"
@@ -3859,6 +3878,8 @@ Evaluator._resolve_operator_expr = resolve_operator
 _install_evolution_compatibility(Evaluator)
 _install_call_compatibility(Evaluator)
 _install_operator_compatibility(Evaluator)
+_install_frame_compatibility(Evaluator)
+_install_classical_compatibility(Evaluator)
 
 
 def _is_numeric(value: Any) -> bool:

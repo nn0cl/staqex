@@ -18,11 +18,30 @@ from .operators import (
     resolve_operator_factory_call, resolve_operator_method_call, resolve_operator_tree,
 )
 from .calls import bind_call
+from .classical import (
+    construct_instance,
+    construct_struct,
+    evaluate_classical_value,
+)
+from .frames import bind_method, bind_user_function
 
 
 def install_call_compatibility(evaluator_type: type[Any]) -> None:
     """Keep the private call-binding hook during the facade migration."""
     evaluator_type._bind_call = bind_call
+
+
+def install_frame_compatibility(evaluator_type: type[Any]) -> None:
+    """Install frame entrypoints while retaining private legacy bodies."""
+    evaluator_type._bind_method = bind_method
+    evaluator_type._bind_user_fun = bind_user_function
+
+
+def install_classical_compatibility(evaluator_type: type[Any]) -> None:
+    """Install classical entrypoints behind the public evaluator facade."""
+    evaluator_type._construct_instance = construct_instance
+    evaluator_type._construct_struct = construct_struct
+    evaluator_type._evaluate_classical_value = evaluate_classical_value
 
 
 def install_evolution_compatibility(evaluator_type: type[Any]) -> None:
