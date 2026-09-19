@@ -172,3 +172,16 @@
 - Scope: Unit C, Semantic IR, provider SDK, network, credentials, and live QPU
   behavior were not changed.
 - Next approval: `WP-0163 / LISS-0566-B Phase 3 Refactor 承認`.
+
+## Attempt 12 — Unit B Phase 3 Refactor
+
+- Date: 2026-09-19
+- Approval: `WP-0163 / LISS-0566-B Phase 3 Refactor 承認`
+- Result: clarified Unit B type/doc contracts, callback documentation,
+  duplicate operator lookup, and compatibility formatting without changing
+  behavior or assertions.
+- Measurement: `evaluator.py` is 4,957 lines; `evolution.py` is 1,106 lines.
+- Verification: focused/adjacent `27 passed`, full blocking `2,136 passed`,
+  Spec Verification `161/161`, public baseline, compileall, lifecycle,
+  coverage-ledger, and diff checks passed.
+- Next approval: `WP-0163 / LISS-0566-B Phase 3 最終レビュー 承認`.

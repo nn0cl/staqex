@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — LISS-0566-A/B Green complete; Unit B Phase 3 pending |
+| Status | in_progress — LISS-0566-A/B Phase 3 complete; Unit B final review pending |
 | Size | XL |
 | Parent | WP-0162 |
 | Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
@@ -211,3 +211,17 @@ The active-Red entry for LISS-0566-B was removed after Green.
 
 Current next action: request
 `WP-0163 / LISS-0566-B Phase 3 Refactor 承認`.
+
+## Unit B Phase 3 Refactor
+
+Approved on 2026-09-19:
+`WP-0163 / LISS-0566-B Phase 3 Refactor 承認`.
+
+Cleaned up Unit B names, annotations, callback documentation, duplicate
+operator lookup, and compatibility wiring without changing behavior. Focused
+and nearest regression **27**, full blocking **2,136**, Spec Verification
+**161/161**, baseline, compileall, lifecycle, coverage-ledger, and diff checks
+passed. `evaluator.py` is 4,957 lines and `evolution.py` is 1,106 lines.
+
+Current next action: request
+`WP-0163 / LISS-0566-B Phase 3 最終レビュー 承認`.

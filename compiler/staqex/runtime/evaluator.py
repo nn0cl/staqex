@@ -1259,15 +1259,19 @@ class Evaluator:
         return n
 
     def _unitary_operator_definition(self, name: str) -> Any | None:
+        """Return one operator definition for extracted gate services."""
         return self.operators.get(name)
 
     def _unitary_operator_environment(self) -> Mapping[str, Any]:
+        """Expose the live operator environment without transferring ownership."""
         return self.operators
 
     def _scalar_environment(self) -> Mapping[str, Any]:
+        """Expose scalar lookup values to extracted gate services."""
         return self.scalars
 
     def _static_register_size(self, name: str) -> int | None:
+        """Return a declared register size for QFT-family validation."""
         return self.static_register_sizes.get(name)
 
     def _operator_legacy_operator_name(self, expr: Expr) -> str:

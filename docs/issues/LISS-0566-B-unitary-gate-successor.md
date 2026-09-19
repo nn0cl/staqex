@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0566-B
-- Status: review — Phase 2 Green complete; Phase 3 Refactor pending
-- Phase: phase-2-green
+- Status: review — Phase 3 Refactor complete; final review pending
+- Phase: phase-3-refactor
 - Type: Feature Path bounded structural decomposition
 - Priority: high
 - Planning size: M
@@ -95,6 +95,31 @@ guardrail.
 
 Next approval required:
 `WP-0163 / LISS-0566-B Phase 3 Refactor 承認`.
+
+## Phase 3 Refactor
+
+Approved on 2026-09-19:
+`WP-0163 / LISS-0566-B Phase 3 Refactor 承認`.
+
+Refactored Unit B without changing behavior:
+
+- clarified the extracted gate entrypoint formatting and type contract;
+- added explicit docstrings to the context-owned gate lookups;
+- removed duplicate operator-definition lookup while preserving lookup order;
+- normalized compatibility import and assignment formatting;
+- retained the existing private evaluator aliases and single-state-owner
+  boundary.
+
+Verification: focused and nearest regression **27 passed**, full blocking
+pytest **2,136 passed**, public baseline, Spec Verification **161/161**,
+compileall, lifecycle, coverage-ledger, and diff checks passed. No assertion,
+diagnostic, QASM, semantic-authority, or provider boundary changed.
+
+Measured size: `evaluator.py` is **4,957 lines** and `evolution.py` is
+**1,106 lines**.
+
+Next approval required:
+`WP-0163 / LISS-0566-B Phase 3 最終レビュー 承認`.
 
 ## Next approval
 

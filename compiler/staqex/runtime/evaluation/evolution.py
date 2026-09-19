@@ -213,9 +213,9 @@ def resolve_unitary_matrix(
             "unitary must be an Operator / gate name / rx|ry|rz(theta)"
         )
     uname = u_expr.name
+    op_ast = context._unitary_operator_definition(uname)
     operator_environment = context._unitary_operator_environment()
-    if context._unitary_operator_definition(uname) is not None:
-        op_ast = context._unitary_operator_definition(uname)
+    if op_ast is not None:
         from ..qft_dense import DenseMatrixOp
 
         if isinstance(op_ast, DenseMatrixOp):
@@ -257,6 +257,7 @@ def resolve_unitary_matrix(
         raise KernelError(f"gate `{uname}` is 1-qubit; pass one target wire")
     return u_mat
 
+
 def qft_family_matrix(
     context: EvaluatorContext, call: Call, n_wires: int
 ) -> list[list[complex]] | None:
@@ -287,8 +288,12 @@ def qft_family_matrix(
         raise KernelError(
             "cqft/ciqft requires QubitRegister control and target"
         )
-    ctrl_n = context._static_register_size(call.args[0].name)  # type: ignore[union-attr]
-    tgt_n = context._static_register_size(call.args[1].name)  # type: ignore[union-attr]
+    ctrl_n = context._static_register_size(
+        call.args[0].name  # type: ignore[union-attr]
+    )
+    tgt_n = context._static_register_size(
+        call.args[1].name  # type: ignore[union-attr]
+    )
     if ctrl_n != 1 or tgt_n is None:
         raise KernelError(
             "cqft/ciqft requires QubitRegister<1> control and QubitRegister<N> target"
@@ -300,7 +305,10 @@ def qft_family_matrix(
         )
     return cqft_matrix(tgt_n, inverse=(name == "ciqft"))
 
-def bind_apply(context: EvaluatorContext, joint: Joint, name: str, expr: Call) -> Joint:
+
+def bind_apply(
+    context: EvaluatorContext, joint: Joint, name: str, expr: Call
+) -> Joint:
     """apply(U, w0[, w1, …]) — apply unitary matrix (not e^{-iHt})."""
     from ..unitaries import apply_unitary_on_wires
 
@@ -332,7 +340,10 @@ def bind_apply(context: EvaluatorContext, joint: Joint, name: str, expr: Call) -
     w0 = wires[0]
     return updated.bind_pushforward(name, lambda a, w=w0: a[w])
 
+
 def is_unitary_name(context: EvaluatorContext, name: str) -> bool:
+    """Return whether a value can be selected as a controlled-gate unitary."""
+
     from ..unitaries import named_gate_matrix
 
     return (
@@ -340,8 +351,9 @@ def is_unitary_name(context: EvaluatorContext, name: str) -> bool:
         or named_gate_matrix(name) is not None
     )
 
+
 def split_capply_args(
-    context: EvaluatorContext, args: list
+    context: EvaluatorContext, args: list[Expr]
 ) -> tuple[list[str], list[int], Expr, list[str]]:
     """Parse capply(c0[, !c1…], U, t0[, …]) — polarity 1=filled, 0=open (`!`)."""
     from ...ast_nodes import UnaryNot
@@ -384,6 +396,7 @@ def split_capply_args(
         raise KernelError("capply wires must be distinct")
     return ctrls, poles, u_expr, tgts
 
+
 def bind_capply(
     context: EvaluatorContext,
     joint: Joint,
@@ -417,6 +430,7 @@ def bind_capply(
         return updated
     t0 = tgts[0]
     return updated.bind_pushforward(name, lambda a, w=t0: a[w])
+
 
 def bind_evolve(
     context: EvaluatorContext, joint: Joint, names: list[str], expr: EvolveExpr
