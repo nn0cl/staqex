@@ -22,6 +22,15 @@ from .classical import (
     construct_instance,
     construct_struct,
     evaluate_classical_value,
+    evaluate_value,
+    evaluate_value_with_unit,
+    resolve_attribute,
+)
+from .continuous import (
+    bind_continuous_compose,
+    bind_field_from_host,
+    bind_finiteize,
+    bind_finiteize_continuous,
 )
 from .frames import bind_method, bind_user_function
 
@@ -42,6 +51,21 @@ def install_classical_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._construct_instance = construct_instance
     evaluator_type._construct_struct = construct_struct
     evaluator_type._evaluate_classical_value = evaluate_classical_value
+
+
+def install_value_compatibility(evaluator_type: type[Any]) -> None:
+    """Install the value successor entrypoints behind legacy names."""
+    evaluator_type._evaluate_value_successor = evaluate_value
+    evaluator_type._evaluate_value_with_unit_successor = evaluate_value_with_unit
+    evaluator_type._resolve_classical_attribute = resolve_attribute
+
+
+def install_continuous_compatibility(evaluator_type: type[Any]) -> None:
+    """Install continuous binders while preserving private hook identities."""
+    evaluator_type._bind_finiteize = bind_finiteize
+    evaluator_type._bind_finiteize_continuous = bind_finiteize_continuous
+    evaluator_type._bind_field_from_host = bind_field_from_host
+    evaluator_type._bind_continuous_compose = bind_continuous_compose
 
 
 def install_evolution_compatibility(evaluator_type: type[Any]) -> None:

@@ -14,6 +14,25 @@ def evaluate_classical_value(
     return context._legacy_evaluate_value(expr, assign)
 
 
+def evaluate_value(context: EvaluatorContext, expr: Any, assign: dict[str, Any]) -> Any:
+    """Explicit successor entrypoint for recursive classical evaluation."""
+    return evaluate_classical_value(context, expr, assign)
+
+
+def evaluate_value_with_unit(
+    context: EvaluatorContext, expr: Any, assign: dict[str, Any]
+) -> Any:
+    """Explicit successor entrypoint for unit-aware classical evaluation."""
+    return context._evaluate_value_with_unit(expr, assign)
+
+
+def resolve_attribute(
+    context: EvaluatorContext, expr: Any, assign: dict[str, Any] | None = None
+) -> Any:
+    """Resolve an attribute through the existing classical compatibility path."""
+    return evaluate_classical_value(context, expr, assign or {})
+
+
 def construct_instance(
     context: EvaluatorContext, class_name: str, expr: Any
 ) -> Any:

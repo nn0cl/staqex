@@ -104,9 +104,11 @@ from .evaluation.calls import bind_call
 from .evaluation.compatibility import (
     install_classical_compatibility as _install_classical_compatibility,
     install_call_compatibility as _install_call_compatibility,
+    install_continuous_compatibility as _install_continuous_compatibility,
     install_evolution_compatibility as _install_evolution_compatibility,
     install_frame_compatibility as _install_frame_compatibility,
     install_operator_compatibility as _install_operator_compatibility,
+    install_value_compatibility as _install_value_compatibility,
 )
 from .evaluation.evolution import (
     ExplicitPropagator,
@@ -1955,6 +1957,26 @@ class Evaluator:
         """Restore frame state for extracted invocation services."""
         self._this = receiver
         self._frame_units = frame_units
+
+    def _evaluate_nested_value(self, expr: Any, assign: dict[str, Any]) -> Any:
+        """Evaluate a nested value through the existing value entrypoint."""
+        return evaluate_value(self, expr, assign)
+
+    def _value_environment(self) -> Mapping[str, Any]:
+        """Expose evaluator-owned object bindings to value services."""
+        return self.objects
+
+    def _continuous_field_port(self) -> ContinuousFieldPort | None:
+        """Expose the injected continuous-field port without copying it."""
+        return self.continuous_field
+
+    def _runtime_seed(self) -> int | None:
+        """Expose the evaluator seed to deterministic continuous services."""
+        return self.seed
+
+    def _store_runtime_object(self, name: str, value: Any) -> None:
+        """Store an opaque runtime value in the evaluator-owned object map."""
+        self.objects[name] = value
 
     def _legacy_construct_instance(
         self, class_name: str, expr: Expr
@@ -3880,6 +3902,8 @@ _install_call_compatibility(Evaluator)
 _install_operator_compatibility(Evaluator)
 _install_frame_compatibility(Evaluator)
 _install_classical_compatibility(Evaluator)
+_install_value_compatibility(Evaluator)
+_install_continuous_compatibility(Evaluator)
 
 
 def _is_numeric(value: Any) -> bool:
