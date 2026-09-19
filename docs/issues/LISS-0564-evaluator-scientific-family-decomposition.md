@@ -3,13 +3,13 @@
 ## Metadata
 
 - Local issue ID: LISS-0564
-- Status: proposed — blocked until LISS-0560 completes
+- Status: historical — not started; superseded planning record
 - Type: Feature Path structural decomposition
 - Initial planning size: L
 - Current planning size: L
-- Parent: WP-0162
+- Parent: WP-0162 (historical)
 - Depends on: LISS-0560
-- Blocks: LISS-0565
+- Blocks: none
 
 ## Summary
 
@@ -39,3 +39,13 @@ its canonical IR input and output evidence.
 
 S02 and scientific-family characterization, provenance and realization checks,
 host-port tests, Spec Verification, and blocking pytest.
+
+## Historical disposition
+
+Recorded on 2026-09-19 under
+`WP-0162/LISS-0562〜0565 整合性整理 承認`.
+
+No implementation or Phase 1 contract was started under this issue. It is
+closed as a stale successor candidate and does not authorize scientific-family
+extraction. Any future scientific/continuous decomposition requires a new
+issue, design intake, and explicit approval.

@@ -2,11 +2,11 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — LISS-0566-A/B/C complete; LISS-0566-D gated |
+| Status | done — LISS-0566-A/B/C/D complete |
 | Size | XL |
 | Parent | WP-0162 |
 | Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
-| Implementation permission | none |
+| Implementation permission | completed under recorded phase approvals |
 | Canonical specification | [Core module decomposition](../specs/staqex-core-module-decomposition.md) |
 
 ## Goal
@@ -430,3 +430,120 @@ adjacent **46 passed**, full blocking **2,147 passed**, Spec Verification
 Process review: no operating-contract deviation or operational problem found.
 
 Current next action: prepare the separate Unit D acceptance/design intake.
+
+## Unit D acceptance/design intake
+
+The Unit C final review completed the prior bounded scope. Unit D is now
+defined as an Architecture Path facade/structure audit in
+`docs/issues/LISS-0566-D-facade-structure-audit.md`.
+
+Current measured surface: `runtime/evaluator.py` is **4,491 lines** with
+**110 methods**. The largest remaining methods are `_legacy_bind_call` (491
+lines) and `_run_legacy_ast_body` (414 lines). The intake intentionally does
+not authorize extraction. It must first produce a public/private consumer
+manifest, responsibility map, context/state boundary, dependency-cycle audit,
+and the first bounded successor's Phase 1 Red contract.
+
+Phase 0 design evidence now records **105** static consumer files under
+`compiler/`, `tests/`, `scripts/`, and `examples/`. The first candidate
+successor is a bounded call-binding/frame slice behind `evaluation/calls.py`;
+the entire `_legacy_bind_call` body and the cross-family
+`_run_legacy_ast_body` dispatcher are explicitly excluded from a single first
+implementation.
+
+Requested decision: Architecture Path scope/design approval for Unit D only.
+
+Unit D Phase 0 was accepted on 2026-09-19:
+`WP-0163 / LISS-0566-D Phase 0 acceptance 承認`.
+
+The accepted next scope is Phase 1 Red for the bounded call-binding/frame
+contract. It covers dispatch classification, receiver restoration, local-map
+non-retention, diagnostic ordering, private-hook compatibility, and fixed-seed
+local behavior. Production implementation remains unauthorized.
+
+Current next action: request
+`WP-0163 / LISS-0566-D Phase 1 Red 承認`.
+
+## Unit D Phase 1 Red
+
+Added `tests/test_liss_0566_unit_d_red.py` with eight call-binding/frame
+contracts. The expected pre-Green result is **4 failed, 4 passed**: the
+successor entrypoints, removal of the legacy call-binding body, and exact
+compatibility wiring are intentionally Red; context callbacks, no-facade
+dependency, and existing local call behavior remain characterization evidence.
+The Active-Red lifecycle entry is registered for `LISS-0566-D`.
+
+No production source or reviewed assertion changed. Current next action:
+request `WP-0163 / LISS-0566-D Phase 1 Red テストレビュー承認`.
+
+Unit D Phase 1 Red test review was accepted on 2026-09-19:
+`WP-0163 / LISS-0566-D Phase 1 Red テストレビュー承認`.
+
+The eight contracts remain intentionally **4 failed, 4 passed**. The four
+structural failures are the reviewed implementation gaps; four boundary and
+runtime characterization contracts pass. Active-Red ownership remains under
+`LISS-0566-D` until Phase 2 Green.
+
+Current next action: request
+`WP-0163 / LISS-0566-D Phase 2 Green / Implementation 承認`.
+
+## LISS-0566-D Phase 2 Green
+
+Approved on 2026-09-19:
+`WP-0163 / LISS-0566-D Phase 2 Green / Implementation 承認`.
+
+Implemented the approved call-binding/frame successor slice in
+`runtime/evaluation/calls.py`. The former `Evaluator._legacy_bind_call` body
+is no longer present in the facade. The successor provides explicit call
+target, function-call, and method-call entrypoints while preserving the
+existing private `_bind_call` compatibility identity and the single mutable
+state owner. `_run_legacy_ast_body` remains in the facade as the intentionally
+retained cross-family dispatcher.
+
+Verification: Unit D **8 passed**, adjacent **42 passed**, targeted runtime
+regressions **19 passed**, and full blocking pytest **2,155 passed**. The
+post-extraction surface is `evaluator.py` **4,003 lines** and `calls.py`
+**529 lines**. The issue-linked Active-Red entry was removed after Green.
+
+No Semantic IR, QASM, provider, network, credential, or live-QPU behavior was
+changed. Phase 3 remains responsible for compatibility cleanup, import audit,
+and final structure review.
+
+Next approval:
+`WP-0163 / LISS-0566-D Phase 3 Refactor 承認`.
+
+## LISS-0566-D Phase 3 Refactor
+
+Approved on 2026-09-19:
+`LISS-0566-D Phase 3 Refactor 承認`.
+
+Refactored the successor boundary without changing behavior: call
+compatibility installation is now separate from evolution compatibility, the
+call module uses explicit environment and frame callbacks, and the obsolete
+`_legacy_bind_call` context contract was removed. The private `_bind_call`
+compatibility alias remains as an explicit consumer boundary pending a
+separate retirement decision.
+
+Verification: focused/adjacent **42 passed**, targeted runtime regressions
+**19 passed**, full blocking pytest **2,155 passed**, Spec Verification
+**161/161**, compileall, lifecycle, document, coverage-ledger, and diff checks
+passed. No assertions, fixtures, Semantic IR, QASM, provider boundary, or
+live-QPU behavior changed.
+
+Review packet: [LISS-0566-D Phase 3 review](../collaboration/reviews/2026-09-19-liss-0566-d-phase3-review.md).
+
+Next approval:
+`WP-0163 / LISS-0566-D Phase 3 最終レビュー 承認`.
+
+## LISS-0566-D Phase 3 final review
+
+Approved on 2026-09-19:
+`LISS-0566-D Phase 3 最終レビュー 承認`.
+
+The final review found no blocker. WP-0163 is complete: all four bounded
+successor units are recorded with their phase evidence, consumer compatibility
+inventory, and verification results. The private `_bind_call` alias remains a
+documented compatibility boundary and is not treated as an unfinished WP-0163
+requirement.
+
+Process review: no operating-contract deviation or operational problem found.

@@ -17,6 +17,12 @@ from .operators import (
     operator_array_context, operator_name, resolve_op_call, resolve_operator,
     resolve_operator_factory_call, resolve_operator_method_call, resolve_operator_tree,
 )
+from .calls import bind_call
+
+
+def install_call_compatibility(evaluator_type: type[Any]) -> None:
+    """Keep the private call-binding hook during the facade migration."""
+    evaluator_type._bind_call = bind_call
 
 
 def install_evolution_compatibility(evaluator_type: type[Any]) -> None:

@@ -176,3 +176,15 @@ evaluator orchestration decomposition`.
 
 Historical WP-0160 and review records remain unchanged; they describe the
 completed predecessor scope and its time-specific measurements.
+
+## Closure and successor disposition
+
+- Date: 2026-09-19
+- Approval: `WP-0162/LISS-0562〜0565 整合性整理 承認`
+- Result: WP-0162 was marked Historical and superseded by WP-0163. LISS-0562
+  was retained as historical bounded-slice evidence and superseded by
+  LISS-0566-C. LISS-0563 and LISS-0564 were never started; LISS-0565 was
+  replaced by the completed LISS-0566-D facade audit.
+- Rule: these records are not current next actions. Any future
+  classical/value or scientific-family decomposition requires a new issue and
+  design intake.

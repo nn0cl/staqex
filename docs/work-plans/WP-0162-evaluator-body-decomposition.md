@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | active — LISS-0560 complete; successor Issues remain |
+| Status | historical — superseded by WP-0163; predecessor evidence retained |
 | Size | XL |
 | Parent | WP-0160 |
 | Scope approval | Adjudicator approved 2026-09-18 |
-| Implementation permission | none; each Issue and phase requires typed approval |
+| Implementation permission | historical record only; no new implementation under this WP |
 | Canonical specification | [Core module decomposition](../specs/staqex-core-module-decomposition.md) |
-| Current source | `compiler/staqex/runtime/evaluator.py` — 6,928 lines / 149 methods |
+| Current source at intake | `compiler/staqex/runtime/evaluator.py` — 6,928 lines / 149 methods |
 
 ## Goal
 
@@ -33,10 +33,10 @@ performance rewrites, and opportunistic bug fixes.
 |---|---|---:|---|---|---|
 | LISS-0560 | done — Phase 3 final review approved 2026-09-18 | M | none | 0561–0565 | `runtime/evaluation/orchestration.py` |
 | LISS-0561 | done — Phase 3 final review approved 2026-09-18 | L | 0560 | 0565 | `runtime/evaluation/observation.py`, `dynamic_lane.py` |
-| LISS-0562 | proposed | L | 0560 | 0565 | `runtime/evaluation/evolution.py`, `operators.py` |
-| LISS-0563 | proposed | L | 0560 | 0565 | `runtime/evaluation/classical.py`, `values.py` |
-| LISS-0564 | proposed | L | 0560 | 0565 | `runtime/evaluation/scientific.py` |
-| LISS-0565 | proposed | M | 0561–0564 | - | `runtime/evaluation/__init__.py` and facade |
+| LISS-0562 | superseded by LISS-0566-C | L | 0560 | - | `runtime/evaluation/evolution.py`, `operators.py` |
+| LISS-0563 | historical — not started | L | 0560 | - | no implementation; future work requires a new issue |
+| LISS-0564 | historical — not started | L | 0560 | - | no implementation; future work requires a new issue |
+| LISS-0565 | superseded by LISS-0566-D | M | 0561–0564 | - | facade/structure audit |
 
 The package names are design candidates, not implementation permission. A
 Phase 0/Phase 1 review may rename a package when the measured dependency graph
@@ -56,9 +56,9 @@ compile-owned authority; extracted AST helpers are execution mechanics only.
 
 ## Planning record
 
-### AIP-WP-0162-001
+### AIP-WP-0162-001 (Historical)
 
-- Status: proposed
+- Status: historical — superseded by WP-0163
 - Created by: Codex host agent; displayed model/reasoning identifier unavailable
 - Created at: 2026-09-18
 - Planning size: XL
@@ -106,13 +106,25 @@ separately approved.
 5. LISS-0564 — scientific selection and continuous families.
 6. LISS-0565 — facade, import graph, public symbol, and structure-budget audit.
 
-## Current Next Issue
+## Historical successor disposition
 
-- Issue: LISS-0561 Phase 0 acceptance/profile review.
-- Reason: LISS-0560 is complete; LISS-0561 Phase 0 was accepted and its Red
-  boundary is now fixed before implementation.
-- Implementation approval needed: yes, separately for LISS-0561 Phase 1 Red
-  and Phase 2 Green.
+WP-0162 was the original decomposition plan. Its completed orchestration and
+observation work was carried into the successor plan `WP-0163`, and the
+evolution/operator and facade work was completed through
+`LISS-0566-A`–`LISS-0566-D`. `LISS-0562` remains as historical evidence of its
+bounded predecessor slice. `LISS-0563` and `LISS-0564` were never started, and
+`LISS-0565` was replaced by the approved facade audit in `LISS-0566-D`.
+
+Do not reopen these records as current work. Any future classical/value or
+scientific-family decomposition must receive a new issue and design intake.
+
+## Completion disposition
+
+Recorded on 2026-09-19:
+`WP-0162/LISS-0562〜0565 整合性整理 承認`.
+
+This work plan is Historical and is not a source of current next actions.
+`WP-0163` is the canonical successor for the evaluator decomposition work.
 
 ## Verification plan
 
