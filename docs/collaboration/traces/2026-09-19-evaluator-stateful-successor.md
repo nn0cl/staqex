@@ -185,3 +185,18 @@
   Spec Verification `161/161`, public baseline, compileall, lifecycle,
   coverage-ledger, and diff checks passed.
 - Next approval: `WP-0163 / LISS-0566-B Phase 3 最終レビュー 承認`.
+
+## Attempt 13 — Unit B final review and completion
+
+- Date: 2026-09-19
+- Approval: `WP-0163 / LISS-0566-B Phase 3 最終レビュー 承認`
+- Review route: `same_context`, weaker than `separate_context`.
+- Findings: no implementation blocker. One stale Issue next-approval pointer
+  was corrected to the final-review record.
+- Verification at SHA `c3eb3e26cc2c5bc671aafd3a9192b5c9046e5d24`:
+  full blocking pytest `2,136 passed`, focused/adjacent `27 passed`, Spec
+  Verification `161/161`, public baseline, compileall, lifecycle,
+  coverage-ledger, document lifecycle, and diff checks passed.
+- Result: LISS-0566-B marked `done`; WP-0163 keeps Unit C and Unit D gated.
+- Process review: no operating-contract deviation or operational problem
+  found.

@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0566-B
-- Status: review — Phase 3 Refactor complete; final review pending
-- Phase: phase-3-refactor
+- Status: done
+- Phase: complete
 - Type: Feature Path bounded structural decomposition
 - Priority: high
 - Planning size: M
@@ -121,6 +121,16 @@ Measured size: `evaluator.py` is **4,957 lines** and `evolution.py` is
 Next approval required:
 `WP-0163 / LISS-0566-B Phase 3 最終レビュー 承認`.
 
-## Next approval
+## Final review and approval
 
-`WP-0163 / LISS-0566-B Phase 1 Red テストレビュー承認`
+Review packet: [LISS-0566-B Phase 3 final review](../collaboration/reviews/2026-09-19-liss-0566-b-phase3-final-review.md).
+
+Approved on 2026-09-19:
+`WP-0163 / LISS-0566-B Phase 3 最終レビュー 承認`.
+
+Unit B is complete. Unit C and the successor facade audit remain separately
+gated in WP-0163; this approval does not authorize them.
+
+## Completion process review
+
+Process review: no operating-contract deviation or operational problem found.

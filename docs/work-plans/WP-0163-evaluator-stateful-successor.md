@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — LISS-0566-A/B Phase 3 complete; Unit B final review pending |
+| Status | in_progress — LISS-0566-A/B complete; LISS-0566-C/D gated |
 | Size | XL |
 | Parent | WP-0162 |
 | Scope approval | Architecture Path Phase 0 accepted 2026-09-19 |
@@ -225,3 +225,14 @@ passed. `evaluator.py` is 4,957 lines and `evolution.py` is 1,106 lines.
 
 Current next action: request
 `WP-0163 / LISS-0566-B Phase 3 最終レビュー 承認`.
+
+## Unit B Phase 3 final review
+
+Approved on 2026-09-19:
+`WP-0163 / LISS-0566-B Phase 3 最終レビュー 承認`.
+
+The Unit B bounded scope is complete. Unit C operator resolution/lowering and
+Unit D successor facade/structure audit remain gated and require their own
+acceptance and implementation approvals.
+
+Current next action: prepare the separate Unit C acceptance/design intake.
