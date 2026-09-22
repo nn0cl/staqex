@@ -22,9 +22,15 @@ from .classical import (
     construct_instance,
     construct_struct,
     evaluate_classical_value,
+    evaluate_unit_convert,
     evaluate_value,
     evaluate_value_with_unit,
+    attr_field_unit,
+    attr_host,
+    attr_is_object_field,
     resolve_attribute,
+    resolve_receiver_instance,
+    apply_value_op,
 )
 from .continuous import (
     bind_continuous_compose,
@@ -32,7 +38,41 @@ from .continuous import (
     bind_finiteize,
     bind_finiteize_continuous,
 )
+from .execution import execute_legacy_ast_body
 from .frames import bind_method, bind_user_function
+from .binding import bind, bind_names
+from .constructors import construct_instance, construct_struct
+from .assignments import execute_assignment
+from .pipes import (
+    add_poly,
+    bind_block_expr,
+    compose_affine_pipe,
+    compose_poly,
+    compose_poly_pipe,
+    eval_fused_stage,
+    eval_poly,
+    flatten_pipe,
+    fuse_simple_return,
+    is_finite_poly,
+    mul_poly,
+    parse_affine,
+    parse_poly,
+    piped_call,
+    resolve_fuse_stage,
+    trim_exact_zero_tail,
+    try_bind_fused_unary_pipe,
+)
+from .state_ops import (
+    bind_inner,
+    bind_ket,
+    bind_ket_sum_binder,
+    bind_prepare_selection,
+    bind_scaled_state,
+    bind_state_divided_by_norm,
+    compute_norm,
+    is_state_producing_bind_expr,
+    materialize_outer,
+)
 
 
 def install_call_compatibility(evaluator_type: type[Any]) -> None:
@@ -40,10 +80,76 @@ def install_call_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._bind_call = bind_call
 
 
+def install_binding_compatibility(evaluator_type: type[Any]) -> None:
+    """Install binder dispatchers while retaining the Evaluator state owner."""
+    evaluator_type._bind_names = bind_names
+    evaluator_type._bind = bind
+
+
+def run_unit_body(
+    context: Any, unit: Any, *, stdout: Any = None
+) -> Any:
+    """Retain the historical unit-body hook during execution extraction."""
+    return execute_legacy_ast_body(context, unit, stdout=stdout)
+
+
+def install_execution_compatibility(evaluator_type: type[Any]) -> None:
+    """Install execution successors without retaining facade method bodies."""
+    evaluator_type._run_legacy_ast_body = execute_legacy_ast_body
+    evaluator_type._run_unit_body = run_unit_body
+
+
 def install_frame_compatibility(evaluator_type: type[Any]) -> None:
-    """Install frame entrypoints while retaining private legacy bodies."""
+    """Install frame entrypoints behind the evaluator facade."""
     evaluator_type._bind_method = bind_method
     evaluator_type._bind_user_fun = bind_user_function
+
+
+def install_constructor_compatibility(evaluator_type: type[Any]) -> None:
+    """Install class and struct construction successor entrypoints."""
+    evaluator_type._construct_instance = construct_instance
+    evaluator_type._construct_struct = construct_struct
+
+
+def install_assignment_compatibility(evaluator_type: type[Any]) -> None:
+    """Install the field-assignment successor entrypoint."""
+    evaluator_type._execute_assignment = execute_assignment
+
+
+def install_pipe_compatibility(evaluator_type: type[Any]) -> None:
+    """Install pipe and polynomial successors behind legacy helper names."""
+    evaluator_type._bind_block_expr = bind_block_expr
+    evaluator_type._try_bind_fused_unary_pipe = try_bind_fused_unary_pipe
+    evaluator_type._resolve_fuse_stage = resolve_fuse_stage
+    evaluator_type._eval_fused_stage = eval_fused_stage
+    evaluator_type._compose_affine_pipe = staticmethod(compose_affine_pipe)
+    evaluator_type._compose_poly_pipe = staticmethod(compose_poly_pipe)
+    evaluator_type._eval_poly = staticmethod(eval_poly)
+    evaluator_type._compose_poly = staticmethod(compose_poly)
+    evaluator_type._mul_poly = staticmethod(mul_poly)
+    evaluator_type._add_poly = staticmethod(add_poly)
+    evaluator_type._is_finite_poly = staticmethod(is_finite_poly)
+    evaluator_type._trim_exact_zero_tail = staticmethod(trim_exact_zero_tail)
+    evaluator_type._parse_poly = staticmethod(parse_poly)
+    evaluator_type._parse_affine = staticmethod(parse_affine)
+    evaluator_type._flatten_pipe = staticmethod(flatten_pipe)
+    evaluator_type._fuse_simple_return = staticmethod(fuse_simple_return)
+    evaluator_type._piped_call = staticmethod(piped_call)
+
+
+def install_state_ops_compatibility(evaluator_type: type[Any]) -> None:
+    """Install state construction and algebra successors behind old hooks."""
+    evaluator_type._bind_ket = bind_ket
+    evaluator_type._bind_ket_sum_binder = bind_ket_sum_binder
+    evaluator_type._is_state_producing_bind_expr = staticmethod(
+        is_state_producing_bind_expr
+    )
+    evaluator_type._bind_scaled_state = bind_scaled_state
+    evaluator_type._bind_state_divided_by_norm = bind_state_divided_by_norm
+    evaluator_type._compute_norm = compute_norm
+    evaluator_type._bind_prepare_selection = bind_prepare_selection
+    evaluator_type._bind_inner = bind_inner
+    evaluator_type._materialize_outer = materialize_outer
 
 
 def install_classical_compatibility(evaluator_type: type[Any]) -> None:
@@ -58,6 +164,16 @@ def install_value_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._evaluate_value_successor = evaluate_value
     evaluator_type._evaluate_value_with_unit_successor = evaluate_value_with_unit
     evaluator_type._resolve_classical_attribute = resolve_attribute
+    evaluator_type._eval_value = evaluate_value
+    evaluator_type._evaluate_value = evaluate_value
+    evaluator_type._legacy_evaluate_value = evaluate_value
+    evaluator_type._eval_value_with_unit = evaluate_value_with_unit
+    evaluator_type._eval_unit_convert = evaluate_unit_convert
+    evaluator_type._attr_host = attr_host
+    evaluator_type._attr_is_object_field = attr_is_object_field
+    evaluator_type._attr_field_unit = attr_field_unit
+    evaluator_type._resolve_receiver_instance = resolve_receiver_instance
+    evaluator_type._apply_value_op = staticmethod(apply_value_op)
 
 
 def install_continuous_compatibility(evaluator_type: type[Any]) -> None:
@@ -107,6 +223,7 @@ def install_operator_compatibility(evaluator_type: type[Any]) -> None:
     }.items(): setattr(evaluator_type, legacy, function)
     evaluator_type._operator_name = operator_name
     evaluator_type._looks_like_operator_rhs = looks_like_operator_rhs
+    evaluator_type._resolve_operator = resolve_operator
     evaluator_type._legacy_resolve_operator = resolve_operator
     evaluator_type._operator_array_context = operator_array_context
     evaluator_type._op_expr_arg_to_source_expr = staticmethod(expr_arg_to_source_expr)

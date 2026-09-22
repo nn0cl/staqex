@@ -7,6 +7,33 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-22
+- Class: red-fixture-interface
+- Pattern: a Red characterization can initially fail because its fixture uses
+  a neighboring execution API's result shape rather than the target suite's
+  established contract, obscuring the intended product gap.
+- What later design or implementation must do: reuse the nearest authoritative
+  test API, distinguish fixture failures from product failures, and rerun the
+  exact bounded suite before review.
+- Source issue or work plan: LISS-0573 / WP-0167
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-22
+- Class: decomposition-callback-boundary
+- Pattern: a body migration can pass the main consumer suite while a private
+  consumer still depends on an entrypoint implicit in the original facade,
+  such as frame restoration or operator resolution.
+- What later design or implementation must do: inventory private consumers
+  before body removal and promote each required behavior to an explicit
+  successor entrypoint or narrow context callback; verify structural ownership
+  and consumer smoke after the move.
+- Source issue or work plan: LISS-0572 / WP-0167
+- Status: applied
+
+## Lesson
+
 - Date: 2026-09-19
 - Class: red-contract-scope
 - Pattern: a decomposition Red suite can legitimately combine expected
@@ -272,6 +299,49 @@ Record meta-level patterns only. No session transcripts.
   after. Leftover `review` / `in_progress` after merge is ledger drift, not
   open work.
 - Source issue or work plan (adopter's own ID, if any): LISS-0024
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-21
+- Class: red-contract-scope
+- Pattern: a decomposition Red suite can mix structural migration gaps with
+  passing runtime characterizations; without naming both sets, a reviewer
+  cannot distinguish an intentionally failing contract from a behavior
+  regression.
+- What later design or implementation must do: enumerate every intended
+  structural failure, preserve at least one positive characterization for
+  each retained behavior family, and report the two result sets separately
+  before Green authorization.
+- Source issue or work plan: LISS-0571 / WP-0167
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-22
+- Class: decomposition-boundary
+- Pattern: installing a successor through a compatibility facade can leave a
+  dead duplicate implementation in the original class, making the measured
+  split look complete while preserving two possible authorities.
+- What later design or implementation must do: after successor installation,
+  remove the old body in the refactor phase, assert the facade has no duplicate
+  dispatcher definition, and re-run actual private consumers plus the full
+  blocking suite.
+- Source issue or work plan: LISS-0571 / WP-0167
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-22
+- Class: red-contract-scope
+- Pattern: a multi-family structural extraction needs separate positive
+  characterizations for invocation frames, constructors, and assignments;
+  otherwise one passing class/function example can conceal a broken mutation
+  or receiver-restoration boundary.
+- What later design or implementation must do: name each structural gap,
+  inventory its private consumers, and retain at least one passing
+  characterization for every family before Green authorization.
+- Source issue or work plan: LISS-0572 / WP-0167
 - Status: applied
 
 ## Lesson
