@@ -7,6 +7,20 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-23
+- Class: refactor-branch-preservation
+- Pattern: a broad formatting patch can move a branch-local return while
+  leaving common focused characterization tests green; downstream
+  specification nodes then expose the regression.
+- What later design or implementation must do: keep behavior-sensitive edits
+  scoped to a whole function or helper, inspect the exact resulting branch
+  structure immediately, and run the declared specification suite before
+  accepting the refactor.
+- Source issue or work plan: LISS-0575 / WP-0168
+- Status: applied
+
+## Lesson
+
 - Date: 2026-09-22
 - Class: red-fixture-interface
 - Pattern: a Red characterization can initially fail because its fixture uses
@@ -357,6 +371,20 @@ Record meta-level patterns only. No session transcripts.
   evidence; keep successor scope distinct from completed example migrations.
 - Source issue or work plan: LISS-0514 / WP-0131
 - Status: applied in design; implementation application remains per phase gate
+
+## Lesson
+
+- Date: 2026-09-23
+- Class: decomposition-source-ownership
+- Pattern: a facade test can pass before extraction when it inspects only the
+  facade class, while the original implementation remains in its source module
+  and compatibility wiring still imports that module.
+- What later design or implementation must do: assert symbol ownership in the
+  designated successor and absence from the original module; check compatibility
+  imports structurally, and count independent gaps rather than derivative
+  missing-file assertions.
+- Source issue or work plan: LISS-0575 / WP-0168
+- Status: applied in the corrected Phase 1 Red contract
 
 ## Lesson
 

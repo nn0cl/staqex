@@ -4,12 +4,30 @@ from __future__ import annotations
 
 from typing import Any
 
-from .evolution import (
-    bind_apply, bind_capply, bind_apply_multi, bind_cnot_multi, bind_evolve,
-    bind_evolve_hamiltonian, bind_explicit_evolve, eval_max_steps,
-    eval_until_predicate, evolve_precomputed_grid, hamiltonian_evolve_one_step,
-    hamiltonian_evolve_tuple_coordinate, is_unitary_name, qft_family_matrix,
-    resolve_unitary_matrix, split_capply_args, joint_l2_distance, explicit_propagator,
+from .unitary_ops import (
+    bind_apply,
+    bind_apply_multi,
+    bind_capply,
+    bind_cnot_multi,
+    is_unitary_name,
+    qft_family_matrix,
+    resolve_unitary_matrix,
+    split_capply_args,
+)
+from .evolution_ops import (
+    ExplicitPropagator,
+    bind_evolve,
+    bind_evolve_hamiltonian,
+    bind_explicit_evolve,
+    eval_max_steps,
+    eval_until_predicate,
+    explicit_propagator,
+    joint_l2_distance,
+)
+from .hamiltonian_evolution import (
+    evolve_precomputed_grid,
+    hamiltonian_evolve_one_step,
+    hamiltonian_evolve_tuple_coordinate,
 )
 from .operators import (
     bind_second_quantized, build_projector_sum_operator, expr_arg_to_source_expr,
