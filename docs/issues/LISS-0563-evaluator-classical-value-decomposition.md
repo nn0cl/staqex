@@ -3,13 +3,13 @@
 ## Metadata
 
 - Local issue ID: LISS-0563
-- Status: proposed — blocked until LISS-0560 completes
+- Status: historical — not started; superseded planning record
 - Type: Feature Path structural decomposition
 - Initial planning size: L
 - Current planning size: L
-- Parent: WP-0162
+- Parent: WP-0162 (historical)
 - Depends on: LISS-0560
-- Blocks: LISS-0565
+- Blocks: none
 
 ## Summary
 
@@ -39,3 +39,13 @@ receiver, and local-binding mutation paths.
 
 Class/method/function fixtures, unit conversion tests, partial-value tests,
 public import manifest, Spec Verification, and blocking pytest.
+
+## Historical disposition
+
+Recorded on 2026-09-19 under
+`WP-0162/LISS-0562〜0565 整合性整理 承認`.
+
+No implementation or Phase 1 contract was started under this issue. It is
+closed as a stale successor candidate; the call-binding/frame portion was
+handled by `WP-0163 / LISS-0566-D`. Any broader classical/value decomposition
+must be proposed as a new issue with fresh scope and acceptance evidence.

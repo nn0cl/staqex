@@ -3,12 +3,12 @@
 ## Metadata
 
 - Local issue ID: LISS-0565
-- Status: proposed — blocked until LISS-0561–0564 complete
+- Status: historical — superseded by LISS-0566-D
 - Type: Feature Path completion and compatibility audit
 - Initial planning size: M
 - Current planning size: M
-- Parent: WP-0162
-- Depends on: LISS-0561, LISS-0562, LISS-0563, LISS-0564
+- Parent: WP-0162 (historical)
+- Depends on: historical WP-0162 graph; successor LISS-0566-D
 
 ## Summary
 
@@ -39,3 +39,12 @@ process review, and explicit final approval.
 Public symbol/import manifest, import-cycle audit, structure metrics, fixed-seed
 snapshots, QASM goldens, complete blocking pytest, Spec Verification,
 document lifecycle, and `git diff --check`.
+
+## Historical disposition
+
+Recorded on 2026-09-19 under
+`WP-0162/LISS-0562〜0565 整合性整理 承認`.
+
+This planned facade audit was not started as a separate issue. Its accepted
+scope was replaced and completed by `WP-0163 / LISS-0566-D`, including the
+consumer inventory, compatibility audit, structure review, and final evidence.

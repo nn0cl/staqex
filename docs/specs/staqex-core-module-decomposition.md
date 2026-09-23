@@ -20,7 +20,7 @@ extend, or reinterpret behavior.
 
 | Module | Lines | Main concentration |
 |---|---:|---|
-| `runtime/evaluator.py` | 6,926 | orchestration, execution plans, evolution, operators, calls, values, observation |
+| `runtime/evaluator.py` | 4,003 | facade, orchestration, execution plans, remaining value/observation families |
 | `typecheck.py` | 4,668 | declaration checks, operator algebra, dimensions, inference, effects, evolution |
 | `parser.py` | 3,669 | top-level/scientific declarations, statements, values, operators, recovery |
 | `scientific_semantic_ir.py` | 2,008 | semantic model, runtime plan, QPU projection, realization, fingerprints |
@@ -30,6 +30,20 @@ extend, or reinterpret behavior.
 | `ast_nodes.py` | 1,064 | all source AST DTO families |
 | `finite_binder.py` | 1,027 | finite-domain normalization and verification |
 | `pipeline.py` | 1,022 | compile orchestration and compatibility result surface |
+
+The Unit C operator-resolution/lowering slice now resides in
+`runtime/evaluation/operators.py` (**617 lines**). The module owns the
+extracted operator tree, factory/method lowering, finite-binder materialization,
+and second-quantized binding functions. `Evaluator` remains the single mutable
+state owner; `evaluation/compatibility.py` retains only the established private
+hook bridge until the later facade audit.
+
+The Unit D call-binding/frame slice now resides in
+`runtime/evaluation/calls.py` (**529 lines**). It owns call target resolution,
+function/method binding, and the remaining call operation families. The public
+facade retains the single mutable state owner and cross-family AST dispatcher;
+the private `_bind_call` compatibility identity remains as an explicit
+consumer boundary; its retirement requires a separate consumer decision.
 
 The public import blast radius is material: `runtime.evaluator` is referenced
 from 93 repository files and `pipeline` from 312. Compatibility facades are

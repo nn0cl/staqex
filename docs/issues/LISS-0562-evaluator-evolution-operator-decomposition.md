@@ -3,13 +3,13 @@
 ## Metadata
 
 - Local issue ID: LISS-0562
-- Status: Phase 3 Refactor complete — final review pending
+- Status: historical — bounded slice superseded by LISS-0566-C
 - Type: Feature Path structural decomposition
 - Initial planning size: L
 - Current planning size: L
-- Parent: WP-0162
+- Parent: WP-0162 (historical)
 - Depends on: LISS-0560
-- Blocks: LISS-0565
+- Blocks: none; successor: LISS-0566-C
 
 ## Summary
 
@@ -133,3 +133,13 @@ extraction rather than being hidden in a generic helper module.
 Verification: focused tests **6 passed**, adjacent regression **29 passed**,
 full blocking pytest **2,123 passed**, `compileall` passed, and
 `git diff --check` passed.
+
+## Historical disposition
+
+Recorded on 2026-09-19 under
+`WP-0162/LISS-0562〜0565 整合性整理 承認`.
+
+This bounded predecessor slice is retained as historical evidence and is
+superseded by the completed `WP-0163 / LISS-0566-C` operator-lowering
+successor. Do not request a separate final review or reopen this issue; any
+new evolution/operator extraction requires a new issue and design intake.
