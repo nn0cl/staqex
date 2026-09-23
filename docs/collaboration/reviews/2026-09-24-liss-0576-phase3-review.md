@@ -12,8 +12,9 @@
   the LISS-0576 trace, and this review.
 - Findings:
   1. The canonical decomposition spec still said implementation was not
-     approved after Phase 2. **Disposition: apply** — updated it to record
-     completion and branch-specific post-change measurements.
+     approved after Phase 2. **Disposition: apply, accepted by final review** —
+     updated it to record completion and branch-specific post-change
+     measurements.
   2. The Phase 0 line total was reported as 178. **Disposition: apply** — AST
      source spans total 176; Git reports 181 deleted lines including blank
      separators. The units are now explicit in LISS-0576 and the trace.
@@ -21,8 +22,8 @@
      leaves the installed compatibility callables as the sole active hook
      implementations. **Disposition: no code refactor warranted** within the
      accepted scope.
-- Blockers: final review approval and re-verification after this review-record
-  commit. No implementation blocker identified.
+- Blockers: none after final review approval. Closeout-commit verification is
+  being run before reporting completion. No implementation blocker identified.
 - Verification result: at clean Phase 2 commit
   `05e0bde58339fc5e595535d11431bfb8c1123952`, focused + adjacent **42 passed**;
   all root pytest **2,249 passed**; spec verification **161/161 passed**;
@@ -58,8 +59,8 @@
   gaps: `same_context`, configured model empty; review-change status `normal`,
   no large-change trigger. Same-context review is weaker than a separate
   context. No separate reviewer/model was available or claimed.
-- Next approval required: `LISS-0576 Phase 3 最終レビュー 承認` (human final
-  review). This packet does not grant merge or push approval.
+- Final human review: approved 2026-09-24. This packet does not grant merge or
+  push approval.
 
 ## Evidence links
 

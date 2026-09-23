@@ -18,7 +18,7 @@ of method bodies that are shadowed by compatibility wiring.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| LISS-0576 | ready — Phase 3 review complete; final approval pending | M | M | AIP-0576-001 | - | - | test/liss-0576-phase1-red |
+| LISS-0576 | done — Phase 3 final review approved | M | M | AIP-0576-001 | - | - | test/liss-0576-phase1-red |
 
 ## Recommended Order
 
@@ -33,13 +33,11 @@ of method bodies that are shadowed by compatibility wiring.
 
 ## Current Next Issue
 
-- Issue: LISS-0576
-- Reason it is unblocked: Phase 0, Phase 1 Red/test review, and Phase 2
-  Green/Implementation approvals were granted 2026-09-24; all five accepted
-  definitions are removed and the full current-tree blocking checks passed.
-- Adjudicator approval needed: `LISS-0576 Phase 3 最終レビュー 承認`.
-- Implementation allowed: no further implementation; final review approval is
-  the remaining gate.
+- Issue: none; WP-0169 is complete.
+- Reason: the five accepted definitions were removed, Phase 3 review was
+  completed, and final review approval was recorded on 2026-09-24.
+- Adjudicator approval needed: none for this work plan.
+- Implementation allowed: no further implementation under WP-0169.
 
 ## Risks
 
@@ -66,6 +64,9 @@ of method bodies that are shadowed by compatibility wiring.
 
 ## Process Review
 
-- Outcome: not yet
-- Lesson written: not applicable
+- Outcome: operational status drift found and corrected. The canonical
+  decomposition spec still described implementation approval as pending after
+  Phase 2 Green. The final review approval accepted correction of the spec and
+  recording a reusable `status-drift` lesson.
+- Lesson written: yes (`status-drift`, open)
 - Template-feedback path: none

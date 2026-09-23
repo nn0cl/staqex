@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0576
 - GitHub issue: none
-- Status: ready — Phase 3 review complete; final review approval pending
-- Phase: phase-3-refactor
+- Status: done — Phase 3 final review approved
+- Phase: done
 - Type: Architecture Path structural cleanup
 - Priority: normal
 - Initial planning size: M
@@ -74,7 +74,8 @@ be modified in this issue.
 - Phase 3 Refactor: approved 2026-09-24. Review found no source refactor
   beyond the accepted deletion necessary; the implementation is already
   minimal and behavior-neutral.
-- Next approval: `LISS-0576 Phase 3 最終レビュー 承認`.
+- Phase 3 final review: approved 2026-09-24; accepted the same-context review
+  packet and its dispositions.
 
 ## Context
 
@@ -169,6 +170,9 @@ be modified in this issue.
 
 ## Process Review
 
-- Outcome: not yet
-- Lesson written: not applicable
+- Outcome: operational status drift found and corrected. The canonical
+  decomposition spec still described implementation approval as pending after
+  Phase 2 Green. Under the final review approval, the spec was corrected and a
+  reusable `status-drift` lesson was recorded in the process-lessons log.
+- Lesson written: yes (`status-drift`, open)
 - Template-feedback path: none
