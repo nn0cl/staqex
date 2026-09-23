@@ -18,7 +18,7 @@ of method bodies that are shadowed by compatibility wiring.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| LISS-0576 | ready — Phase 1 Red reviewed | M | M | AIP-0576-001 | - | - | test/liss-0576-phase1-red |
+| LISS-0576 | ready — Phase 2 Green verified | M | M | AIP-0576-001 | - | - | test/liss-0576-phase1-red |
 
 ## Recommended Order
 
@@ -34,10 +34,12 @@ of method bodies that are shadowed by compatibility wiring.
 ## Current Next Issue
 
 - Issue: LISS-0576
-- Reason it is unblocked: Phase 0 acceptance, Phase 1 Red, and test review
-  approvals were granted 2026-09-24.
-- Adjudicator approval needed: `LISS-0576 Phase 2 Green / Implementation 承認`.
-- Implementation allowed: no.
+- Reason it is unblocked: Phase 0, Phase 1 Red/test review, and Phase 2
+  Green/Implementation approvals were granted 2026-09-24; all five accepted
+  definitions are removed and the full current-tree blocking checks passed.
+- Adjudicator approval needed: `LISS-0576 Phase 3 Refactor 承認`.
+- Implementation allowed: no further implementation; only separately
+  approved Phase 3 work may proceed.
 
 ## Risks
 

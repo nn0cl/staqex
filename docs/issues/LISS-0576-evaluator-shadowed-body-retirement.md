@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0576
 - GitHub issue: none
-- Status: ready — Phase 1 Red reviewed; Phase 2 approval pending
-- Phase: phase-1-red
+- Status: ready — Phase 2 Green verified; Phase 3 approval pending
+- Phase: phase-2-green
 - Type: Architecture Path structural cleanup
 - Priority: normal
 - Initial planning size: M
@@ -29,7 +29,8 @@ The accepted candidates are:
 - `_bind_continuous_compose`
 - `_execute_assignment` (the two-line recursive stub)
 
-AST measurement finds 178 source lines across these five definitions. The
+AST spans cover 176 lines across these five definitions; the Git diff removes
+181 lines including blank separators. The
 active implementations remain in `evaluation/continuous.py` and
 `evaluation/assignments.py`. No successor implementation or installer is to
 be modified in this issue.
@@ -67,9 +68,10 @@ be modified in this issue.
 - Phase 1 Red test review: approved 2026-09-24. The five structural Red
   assertions and two passing compatibility identity assertions were accepted;
   no test changes were requested.
-- Next approval: `LISS-0576 Phase 2 Green / Implementation 承認`.
-- Phase 2 requires a separate Implementation approval. Neither Phase 0 nor
-  Phase 1 Red approval grants implementation permission.
+- Phase 2 Green / Implementation: approved 2026-09-24; removed only the five
+  accepted definitions. Reviewed tests and compatibility installers were not
+  changed.
+- Next approval: `LISS-0576 Phase 3 Refactor 承認`.
 
 ## Context
 
@@ -142,7 +144,17 @@ be modified in this issue.
   - No unexpected failures, errors, skips, or exclusions in either focused
     run. The baseline Red is the expected presence of the five definitions;
     compatibility identity already passes.
-- Full blocking suite: not run in Phase 1 Red. Implementation has not started.
+- Phase 2 focused and adjacent regressions: **42 passed** across LISS-0576
+  Red/identity and five declared neighbor suites; Python 3.14.6 / pytest 9.1.1.
+  Cache was disabled because the isolated worktree cannot write to the shared
+  pytest cache path.
+- Spec verification: **161/161 passed** from `/private/tmp`; SV-17 writes a
+  relative output path `sink`, so running from the isolated worktree was
+  denied by sandbox filesystem policy. The initial cwd run had one
+  environment-only suite crash, then passed with a writable temporary cwd.
+- Root blocking pytest: **2,244 passed**, 0 failures, against the implementation
+  tree before evidence synchronization; Python 3.14.6 / pytest 9.1.1. Clean
+  final-commit verification remains required.
 - Commit-specific rerun at `d0c9e690d9a4b685a1f94dc8c400255601ff3be9`, clean
   tree, macOS / Python 3.14.6 / pytest 9.1.1: structural suite again reported
   the same **5 expected failures**; compatibility identity suite reported
