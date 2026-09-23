@@ -8,3 +8,11 @@ version = 1
 # LISS-0573 Phase 2 Green passed all eleven approved Red nodes.
 
 # LISS-0574 Phase 2 Green passed all eleven approved Red nodes.
+
+[[active_red]]
+issue = "LISS-0576"
+test = "tests/test_liss_0576_shadowed_bodies_red.py"
+phase = "phase-1-red"
+owner = "Codex host agent"
+review_by = "2026-09-26"
+review_condition = "Adjudicator reviews and accepts the Phase 1 Red tests before Phase 2."

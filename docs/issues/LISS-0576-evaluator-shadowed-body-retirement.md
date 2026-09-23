@@ -4,15 +4,15 @@
 
 - Local issue ID: LISS-0576
 - GitHub issue: none
-- Status: ready — Phase 0 accepted; Phase 1 Red approval pending
-- Phase: phase-0-design
+- Status: ready — Phase 1 Red reviewed; Phase 2 approval pending
+- Phase: phase-1-red
 - Type: Architecture Path structural cleanup
 - Priority: normal
 - Initial planning size: M
 - Current planning size: M
 - Reclassification reason: not applicable
 - Owner/agent: Codex host agent
-- Related branch: `docs/liss-0576-phase0-design`
+- Related branch: `test/liss-0576-phase1-red`
 
 ## Summary
 
@@ -62,10 +62,14 @@ be modified in this issue.
 
 - Phase 0 acceptance: approved 2026-09-24. Accepted the five-definition,
   behavior-preserving cleanup boundary only.
-- Next approval: `LISS-0576 Phase 1 Red 承認`.
-- Phase 1 Red approval permits tests only. Phase 2 requires a separate
-  Implementation approval. This Phase 0 acceptance grants no implementation
-  permission.
+- Phase 1 Red: approved 2026-09-24. Tests and the issue-owned active-Red
+  entry were added; no production implementation was changed.
+- Phase 1 Red test review: approved 2026-09-24. The five structural Red
+  assertions and two passing compatibility identity assertions were accepted;
+  no test changes were requested.
+- Next approval: `LISS-0576 Phase 2 Green / Implementation 承認`.
+- Phase 2 requires a separate Implementation approval. Neither Phase 0 nor
+  Phase 1 Red approval grants implementation permission.
 
 ## Context
 
@@ -125,7 +129,20 @@ be modified in this issue.
 
 - Phase 0: AST ownership/reassignment inventory, static consumer search, and
   module/working-tree inspection; no tests or source edits were run.
-- Phase 1 and later: not started.
+- Phase 1 Red at base commit `c1f35da2` with a dirty test-only tree, macOS,
+  Python 3.14.6, pytest 9.1.1:
+  - `.venv/bin/python -m pytest -q tests/test_liss_0576_shadowed_bodies_red.py`
+    could not launch because this isolated worktree has no `.venv`.
+  - Re-run using
+    `PYTHONPATH=compiler:. /Users/nn0cl/Documents/git/qpex/.venv/bin/python
+    -m pytest -q tests/test_liss_0576_shadowed_bodies_red.py`: **5 expected
+    failures, 0 passed**, one for each accepted shadowed definition.
+  - Same interpreter and environment for
+    `tests/test_liss_0576_compatibility_identity.py`: **2 passed**.
+  - No unexpected failures, errors, skips, or exclusions in either focused
+    run. The baseline Red is the expected presence of the five definitions;
+    compatibility identity already passes.
+- Full blocking suite: not run in Phase 1 Red. Implementation has not started.
 
 ## Process Review
 
