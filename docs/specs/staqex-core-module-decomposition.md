@@ -54,10 +54,17 @@ initialization by the compatibility installers:
 
 The accepted issue is [LISS-0576](../issues/LISS-0576-evaluator-shadowed-body-retirement.md),
 under [WP-0169](../work-plans/WP-0169-evaluator-residual-body-cleanup.md).
-The work is not implementation-approved: Phase 1 Red requires a separate
-approval, and Phase 2 requires explicit implementation approval. No active
-classical, operator, dynamic, or orchestration body is included in LISS-0576;
-those families need separate consumer/state-boundary design.
+Phase 2 Green / Implementation was approved and completed on 2026-09-24:
+the five superseded class definitions were removed while the installed hooks
+and successor implementations remained unchanged. The accepted Red contracts
+and compatibility identity checks pass. No active classical, operator,
+dynamic, or orchestration body is included in LISS-0576; those families need
+separate consumer/state-boundary design.
+
+At LISS-0576 Phase 2 head `05e0bde58339fc5e595535d11431bfb8c1123952`,
+`runtime/evaluator.py` is 1,867 physical lines and declares 82 methods on
+`Evaluator` (down from 2,048 / 87 at the recorded main baseline). These counts
+describe this task branch, not the then-current `main` branch.
 
 These current measurements supersede the older planning snapshot below for
 size reporting; that snapshot remains historical evidence.
