@@ -152,9 +152,12 @@ be modified in this issue.
   relative output path `sink`, so running from the isolated worktree was
   denied by sandbox filesystem policy. The initial cwd run had one
   environment-only suite crash, then passed with a writable temporary cwd.
-- Root blocking pytest: **2,244 passed**, 0 failures, against the implementation
-  tree before evidence synchronization; Python 3.14.6 / pytest 9.1.1. Clean
-  final-commit verification remains required.
+- Root blocking pytest at clean commit
+  `3c0706f46120eb0bac242c60eb263a38e8df4761`: **2,249 passed**, 0 failures;
+  Python 3.14.6 / pytest 9.1.1. Spec verification at the same SHA: **161/161
+  passed**. Lifecycle, document, coverage, diff, focused/adjacent, and compile
+  checks passed. The spec runner used `/private/tmp` as cwd because SV-17
+  writes the relative `sink` output; no test was excluded.
 - Commit-specific rerun at `d0c9e690d9a4b685a1f94dc8c400255601ff3be9`, clean
   tree, macOS / Python 3.14.6 / pytest 9.1.1: structural suite again reported
   the same **5 expected failures**; compatibility identity suite reported
