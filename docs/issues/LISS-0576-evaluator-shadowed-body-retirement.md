@@ -143,6 +143,10 @@ be modified in this issue.
     run. The baseline Red is the expected presence of the five definitions;
     compatibility identity already passes.
 - Full blocking suite: not run in Phase 1 Red. Implementation has not started.
+- Commit-specific rerun at `d0c9e690d9a4b685a1f94dc8c400255601ff3be9`, clean
+  tree, macOS / Python 3.14.6 / pytest 9.1.1: structural suite again reported
+  the same **5 expected failures**; compatibility identity suite reported
+  **2 passed**. No other failures, errors, skips, or exclusions.
 
 ## Process Review
 
