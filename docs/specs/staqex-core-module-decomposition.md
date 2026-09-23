@@ -18,6 +18,52 @@ extend, or reinterpret behavior.
 
 ## Current evidence
 
+### Runtime evaluator remeasurement — 2026-09-24
+
+Measured on `main` at `66da78c824b5e5ce97fdf35b0ff9c79d7eec9df3` using
+`wc -l`; the method count is from Python AST, counting methods directly
+declared on `Evaluator`.
+
+| Module | Lines | Current responsibility |
+|---|---:|---|
+| `runtime/evaluator.py` | 2,048 | State-owning compatibility facade and residual orchestration/evaluation bodies; 87 methods |
+| `runtime/evaluation/observation.py` | 768 | Observation and measurement family |
+| `runtime/evaluation/operators.py` | 619 | Operator resolution/lowering family |
+| `runtime/evaluation/calls.py` | 532 | State/call binding family |
+| `runtime/evaluation/hamiltonian_evolution.py` | 467 | Hamiltonian, tuple, grid evolution |
+| `runtime/evaluation/execution.py` | 463 | Legacy AST execution and statement routing |
+| `runtime/evaluation/classical.py` | 429 | Classical value and attribute evaluation |
+
+The Evaluator's remaining active method bodies cluster around runtime-plan
+eligibility, statement/tensor dispatch, state-preserving `when`, classical
+function/method evaluation, classical operator expressions/projection, and
+continuous-field handling. Several facade forwarders are intentionally thin
+and should not be moved only to improve a count.
+
+### Accepted residual-body cleanup boundary — LISS-0576
+
+Phase 0 acceptance was granted 2026-09-24 for a behavior-preserving cleanup of
+five `Evaluator` class definitions that are replaced during module
+initialization by the compatibility installers:
+
+- `_bind_finiteize`, `_bind_finiteize_continuous`, `_bind_field_from_host`,
+  `_bind_continuous_compose` (176 source lines; active definitions remain in
+  `runtime/evaluation/continuous.py`).
+- `_execute_assignment` (a two-line recursive stub; active binding remains in
+  `runtime/evaluation/assignments.py`).
+
+The accepted issue is [LISS-0576](../issues/LISS-0576-evaluator-shadowed-body-retirement.md),
+under [WP-0169](../work-plans/WP-0169-evaluator-residual-body-cleanup.md).
+The work is not implementation-approved: Phase 1 Red requires a separate
+approval, and Phase 2 requires explicit implementation approval. No active
+classical, operator, dynamic, or orchestration body is included in LISS-0576;
+those families need separate consumer/state-boundary design.
+
+These current measurements supersede the older planning snapshot below for
+size reporting; that snapshot remains historical evidence.
+
+### Historical planning baseline — 2026-09-11
+
 | Module | Lines | Main concentration |
 |---|---:|---|
 | `runtime/evaluator.py` | 4,003 | facade, orchestration, execution plans, remaining value/observation families |
