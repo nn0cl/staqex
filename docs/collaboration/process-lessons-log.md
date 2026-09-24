@@ -7,6 +7,21 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-24
+- Class: status-drift
+- Pattern: a canonical architecture specification can retain an obsolete
+  phase-approval statement after an Issue records that implementation has
+  completed, leaving the architecture entry point inconsistent with the live
+  work state.
+- What later design or implementation must do: when recording a phase
+  transition, search and update every canonical specification that states the
+  approval or implementation status in the same reviewable unit; do not limit
+  synchronization to the Issue, work plan, and trace.
+- Source issue or work plan: LISS-0576 / WP-0169
+- Status: open
+
+## Lesson
+
 - Date: 2026-09-23
 - Class: refactor-branch-preservation
 - Pattern: a broad formatting patch can move a branch-local return while
