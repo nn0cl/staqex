@@ -56,6 +56,10 @@ from .classical_calls import (
     eval_classical_user_fun,
     eval_classical_user_fun_value,
 )
+from .classical_operator_eval import (
+    eval_classical_op_binder,
+    eval_op_expr_classical,
+)
 from .continuous import (
     bind_continuous_compose,
     bind_field_from_host,
@@ -181,6 +185,8 @@ def install_classical_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._construct_instance = construct_instance
     evaluator_type._construct_struct = construct_struct
     evaluator_type._evaluate_classical_value = evaluate_classical_value
+    evaluator_type._eval_classical_op_binder = eval_classical_op_binder
+    evaluator_type._eval_op_expr_classical = eval_op_expr_classical
 
 
 def install_classical_call_compatibility(evaluator_type: type[Any]) -> None:

@@ -8,6 +8,22 @@ Record meta-level patterns only. No session transcripts.
 ## Lesson
 
 - Date: 2026-09-24
+- Class: compatibility-hook-identity-contract
+- Pattern: a structural compatibility test can assert that import names and
+  evaluator attribute strings occur in a file while never proving that the
+  installer maps the intended successor function to the hook or that runtime
+  class attributes have successor identity.
+- What later design or implementation must do: inspect the actual installer
+  mapping (AST or equivalent), verify the installer is used by evaluator
+  setup, and assert runtime hook identity against the successor function once
+  the successor module exists. A raw substring check is insufficient.
+- Source issue or work plan: LISS-0578 / WP-0171
+- Status: applied in the Phase 1 Red correction and Phase 2 compatibility
+  identity checks.
+
+## Lesson
+
+- Date: 2026-09-24
 - Class: status-drift
 - Pattern: a canonical architecture specification can retain an obsolete
   phase-approval statement after an Issue records that implementation has

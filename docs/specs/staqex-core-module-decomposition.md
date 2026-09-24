@@ -18,6 +18,26 @@ extend, or reinterpret behavior.
 
 ## Current evidence
 
+The residual classical Operator-expression and binder evaluation boundary is
+specified by [Evaluator Classical Operator-expression Evaluation](evaluator-classical-operator-evaluation.md)
+under WP-0171 / LISS-0578. Phase 0 acceptance on 2026-09-24 authorizes only
+the bounded design and consumer contract; Phase 1 Red was separately
+authorized, its bounded contract correction was approved, and the corrected
+Phase 1 Red tests were accepted on 2026-09-24. Phase 2 implementation was
+approved and applied on 2026-09-24: the 146-line evaluator body family was
+moved to `runtime/evaluation/classical_operator_eval.py` (147 lines), and
+`runtime/evaluator.py` is now 1,477 lines on the LISS-0578 worktree. The full
+root test and spec suites pass. The Adjudicator separately approved the
+verification-baseline snapshot update scope on 2026-09-24; the baseline now
+records the pre-existing `MutableMapping` export and fresh-capture comparison
+passes. GitHub-hosted CI and final-commit verification remain outstanding.
+Phase 3 Refactor was approved on 2026-09-24 and reviewed without further
+source changes; the successor, compatibility boundary, and named consumers
+passed same-context review. The Adjudicator accepted the Phase 3 final review
+on 2026-09-24; final-commit verification remains pending.
+The neighboring `_project_onto_operator` responsibility is explicitly
+excluded and requires a separate scope decision.
+
 ### Runtime evaluator remeasurement — 2026-09-24
 
 Measured on `main` at `66da78c824b5e5ce97fdf35b0ff9c79d7eec9df3` using
