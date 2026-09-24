@@ -136,3 +136,43 @@
 - Final review approval received: `WP-0168 / LISS-0575 Phase 3 最終レビュー
   承認` (2026-09-23). The review is accepted; commit and SHA-specific
   blocking rerun remain before issue closure.
+
+## Post-merge closeout — 2026-09-25
+
+- User request: reconcile the stale LISS-0575 / WP-0168 completion ledger and
+  consolidate WP-0167, then commit, push, and merge the documentation update.
+- Current phase: documentation closeout on the already-approved WP-0168 scope;
+  no source implementation or new architecture decision.
+- Evidence: PR #596 is merged at `66da78c824b5e5ce97fdf35b0ff9c79d7eec9df3`;
+  its implementation head is `fbe5e768301f514b99824c4211bb63883076d5b6`.
+  GitHub workflow run `35873796171` for that head completed successfully.
+  PR evidence records 2,242 blocking tests, 63 focused/adjacent tests, and
+  spec verification 161/161 on the implementation SHA.
+- Process finding: issue/work-plan status remained open after merge. The
+  existing `status-drift` lesson and Definition of Done directly apply; this
+  closeout applies them by synchronizing the Issue, both WPs, and current
+  decomposition measurements. No new lesson or template-feedback record is
+  needed.
+- Current `main` remeasurement was checked at
+  `9b2e2e0f8e56399ba8cbd662bbc3bf6d569cb7b7`: evaluator 1,867 lines / 82
+  direct methods; observation 768; operators 619; typecheck 4,678; parser
+  3,679.
+- Included: LISS-0575, WP-0167/WP-0168, decomposition spec, PR #596 merge and
+  CI evidence, and the applicable status-drift lesson.
+- Omitted: unrelated evaluator successor work and unmerged feature branches.
+- Routing: host agent for documentation review; GitHub and local deterministic
+  tools for commit, verification, PR, CI, and merge. No private context or
+  credentials included.
+- Closeout verification on initial commit `bea1fd8f`: full blocking suite
+  **2,249 passed in 320.17s**; spec **161/161**; document lifecycle, coverage
+  consistency, active-Red lifecycle (0 entries), execution-batch records (20),
+  and `git diff --check` passed. Current-main source measurements matched the
+  updated specification.
+- This trace synchronization changes the final closeout commit SHA, so rerun
+  the full blocking suite against that final SHA before push/merge. PR CI on
+  the final head remains the merge gate.
+- Changed files: LISS-0575, WP-0167, WP-0168, decomposition specification,
+  and this representative trace.
+- Next safe action: commit this verification-record update, rerun blocking
+  checks on its final SHA, and open the documentation closeout PR against the
+  current `main`.

@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — Phase 3 approved; commit and SHA-specific verification pending |
+| Status | done — LISS-0575 merged and verified |
 | Size | L |
 | Parent | WP-0167 / evaluator successor decomposition |
 | Scope approval | Unit A scope accepted 2026-09-22 |
 | Implementation permission | approved 2026-09-23; Phase 2 executed |
 | Candidate issue | LISS-0575 |
-| Current Next Issue | LISS-0575 finalization (commit + SHA-specific verification) |
+| Current Next Issue | none — this work plan is complete |
 
 ## [DESIGN CHECK]
 
@@ -109,5 +109,20 @@ must decide whether these are three modules or a smaller evidence-backed split.
   is required.
 - Final review approval received: `WP-0168 / LISS-0575 Phase 3 最終レビュー
   承認` (2026-09-23). No further phase approval is pending.
-- Next action: commit when requested; rerun all blocking tests against that
-  final commit SHA before closing LISS-0575/WP-0168.
+- Historical next action (superseded by final closeout below): commit and
+  rerun blocking tests against the final SHA.
+
+## Final closeout
+
+- Final implementation commit: `fbe5e768301f514b99824c4211bb63883076d5b6`;
+  merged to `main` by PR #596 as
+  `66da78c824b5e5ce97fdf35b0ff9c79d7eec9df3`.
+- Final blocking verification on the implementation SHA: **2,242 passed**;
+  focused + adjacent: **63 passed**; consumer import/hook smoke passed; spec
+  verification **161/161**. PR CI workflow run `35873796171` completed
+  successfully.
+- Process review: stale post-merge status was corrected in this reviewable
+  documentation update. Existing Definition of Done covers this requirement;
+  no template feedback or additional reusable lesson is proposed.
+- WP-0168 is complete. Residual `evaluator.py` responsibilities require a
+  separate successor scope and do not implicitly extend this plan.

@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — Units A1/A2/B/C/D complete; WP consolidation pending |
+| Status | done — Units A1/A2/B/C/D consolidated; WP-0168 successor complete |
 | Size | XL |
 | Parent | WP-0166 / completed LISS-0569 |
 | Scope approval | accepted 2026-09-20 — evaluator-only decomposition |
 | Implementation permission | none |
 | Canonical specification | [Core module decomposition](../specs/staqex-core-module-decomposition.md) |
-| Candidate issues | LISS-0570, LISS-0571, LISS-0572, LISS-0573, LISS-0574 |
+| Candidate issues | LISS-0570–LISS-0574; follow-on WP-0168 / LISS-0575 |
 
 ## [DESIGN CHECK]
 
@@ -775,5 +775,18 @@ are authorized until the next gate:
   compileall, lifecycle, coverage-ledger, and diff checks passed.
 - Process review: no operating-contract deviation or operational problem
   found.
-- LISS-0574 is complete. WP-0167 remains open only for consolidation and
+- LISS-0574 is complete. WP-0167 remained open only for consolidation and
   successor-program accounting.
+
+## Consolidation and closure
+
+- LISS-0570 through LISS-0574 completed the accepted Units A1/A2/B/C/D.
+- Follow-on evolution-family work was planned and completed separately as
+  WP-0168 / LISS-0575; it merged through PR #596 at
+  `66da78c824b5e5ce97fdf35b0ff9c79d7eec9df3`.
+- WP-0167's approved scope is complete. Further reduction of
+  `runtime/evaluator.py` is a new successor decision, not an implicit
+  extension of this work plan.
+- Process review: no additional operating-contract deviation was found in
+  WP-0167. The separate post-merge LISS-0575 status drift is recorded and
+  remediated in LISS-0575 / WP-0168.
