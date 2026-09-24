@@ -30,11 +30,14 @@ moved to `runtime/evaluation/classical_operator_eval.py` (147 lines), and
 root test and spec suites pass. The Adjudicator separately approved the
 verification-baseline snapshot update scope on 2026-09-24; the baseline now
 records the pre-existing `MutableMapping` export and fresh-capture comparison
-passes. GitHub-hosted CI and final-commit verification remain outstanding.
+passes. At that phase boundary, final-commit verification was still pending;
+the later committed-SHA verification is recorded below. GitHub-hosted CI was
+not run.
 Phase 3 Refactor was approved on 2026-09-24 and reviewed without further
 source changes; the successor, compatibility boundary, and named consumers
 passed same-context review. The Adjudicator accepted the Phase 3 final review
-on 2026-09-24; final-commit verification remains pending.
+on 2026-09-24. Commit `8ba8b865705f5703de32aa9f5028810c58a61250` passed
+local blocking tests and spec verification; GitHub-hosted CI was not run.
 The neighboring `_project_onto_operator` responsibility is explicitly
 excluded and requires a separate scope decision.
 

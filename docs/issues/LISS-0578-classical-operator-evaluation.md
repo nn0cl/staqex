@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0578
 - GitHub issue: none
-- Status: in_progress — Phase 3 final review accepted; final commit verification pending
-- Phase: phase-3-refactor
+- Status: done
+- Phase: done
 - Type: Architecture Path structural decomposition
 - Priority: normal
 - Initial planning size: M
@@ -18,9 +18,9 @@
 
 Extract the classical evaluation of Operator-DSL expression ASTs and binders
 from `runtime/evaluator.py`, preserving existing results, errors,
-short-circuiting, and private consumer behavior. The Phase 2 implementation is
-present; repository-wide CI readiness still has a baseline snapshot
-disposition pending.
+short-circuiting, and private consumer behavior. The baseline snapshot is
+synchronized, final review accepted, implementation committed, and local
+post-commit blocking verification passed. GitHub-hosted CI was not run.
 
 ## Acceptance Notes
 
@@ -81,13 +81,14 @@ disposition pending.
   `WP-0171 / LISS-0578 Phase 3 Refactor 承認`. The successor was reviewed and
   retained without extra abstraction; the same-context review packet is
   `docs/collaboration/reviews/2026-09-24-liss-0578-phase3-review.md`. All
-  2,260 root tests, 31 focused tests, and 161 spec checks pass on this dirty
-  worktree. Final-commit verification and GitHub CI remain pending.
+  2,260 root tests, 31 focused tests, and 161 spec checks passed on the dirty
+  pre-commit worktree. Post-commit verification also passed on SHA
+  `8ba8b865705f5703de32aa9f5028810c58a61250`.
 - Adjudicator accepted the Phase 3 final review on 2026-09-24 as
-  `WP-0171 / LISS-0578 Phase 3 最終レビュー 承認`. This records human acceptance
-  of the review result; it does not claim a final commit, GitHub CI, or
-  post-commit blocking-suite run. Issue closure and process review remain
-  pending those completion steps.
+  `WP-0171 / LISS-0578 Phase 3 最終レビュー 承認`. Commit
+  `8ba8b865705f5703de32aa9f5028810c58a61250` contains the implementation and
+  review record; local blocking tests passed on that SHA. GitHub-hosted CI was
+  not run.
 - Operator projection is excluded from this issue. Its distinct `Joint`
   transformation, Hamiltonian compilation, and `calls.py` context boundary
   warrant a separate successor investigation and separate scope approval.
@@ -180,6 +181,7 @@ disposition pending.
 
 ## Process Review
 
-- Outcome: not yet
-- Lesson written: not applicable
+- Outcome: Process review: no operating-contract deviation or operational problem found.
+- Lesson written: no new reusable lesson; existing status-drift and
+  decomposition lessons were applied.
 - Template-feedback path: none

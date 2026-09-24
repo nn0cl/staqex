@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 0 through Phase 3 accepted; final commit verification pending |
+| Status | Complete — final review accepted and local post-commit verification passed |
 | Scope | WP-0171 / LISS-0578 |
 | Source authority | [Core module decomposition](staqex-core-module-decomposition.md) |
 
@@ -160,8 +160,8 @@ review evidence is linked from the LISS-0578 issue. Phase 2 implementation was
 approved and applied. After separate verification-baseline snapshot scope
 approval on 2026-09-24, `docs/testing/refactor-baseline.json` was synchronized
 with the already-public `MutableMapping` export and fresh-capture comparison
-passes. This snapshot-only update does not claim GitHub-hosted CI or final
-commit verification; Phase 3 still requires separate approval.
+passes. This snapshot-only update did not claim GitHub-hosted CI; the final
+review and local post-commit verification are recorded below.
 
 ## Exact phase paths
 
@@ -178,9 +178,10 @@ commit verification; Phase 3 still requires separate approval.
 - Phase 3 Refactor (approved 2026-09-24): the extracted implementation,
   successor ownership, compatibility direction, and consumers were reviewed;
   no further refactor was warranted. Focused and all-root suites passed on the
-  dirty tree. Adjudicator accepted the Phase 3 final review on 2026-09-24;
-  all-blocking verification after the final commit SHA remains required.
-  Duplicate-body removal was completed in Phase 2 Green.
+  dirty tree. Adjudicator accepted the Phase 3 final review on 2026-09-24.
+  Commit `8ba8b865705f5703de32aa9f5028810c58a61250` passed all local
+  blocking verification. GitHub-hosted CI was not run. Duplicate-body removal
+  was completed in Phase 2 Green.
 
 ## Exclusions
 

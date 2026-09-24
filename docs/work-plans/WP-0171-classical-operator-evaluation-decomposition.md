@@ -18,7 +18,7 @@ state owner.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| LISS-0578 | in_progress — Phase 3 final review accepted; final commit verification pending | M | M | AIP-0578-001 | WP-0170 / LISS-0577 (done on parent branch) | - | `codex/liss-0578-classical-op-eval` |
+| LISS-0578 | done — final review accepted; commit and local blocking verification passed | M | M | AIP-0578-001 | WP-0170 / LISS-0577 (done on parent branch) | - | `codex/liss-0578-classical-op-eval` |
 
 ## Recommended Order
 
@@ -39,17 +39,16 @@ state owner.
    meets the readability target without additional abstraction; consumer
    compatibility and all local blocking suites passed. Review evidence is in
    `docs/collaboration/reviews/2026-09-24-liss-0578-phase3-review.md`.
-6. Adjudicator accepted the Phase 3 final review on 2026-09-24. Commit the
-   approved work, rerun all blocking suites on that SHA, then run process
-   review and synchronize completion status before closing.
+6. Adjudicator accepted the Phase 3 final review; commit
+   `8ba8b865705f5703de32aa9f5028810c58a61250` passed all local blocking
+   suites. Same-context process review found no operating-contract deviation.
 
 ## Current Next Issue
 
-- Issue: LISS-0578 final commit and post-commit verification
-- Reason it is next: Phase 3 final review has been accepted; the worktree is
-  still uncommitted and all current test results are provisional.
-- Adjudicator approval needed: none for recording the accepted review; commit
-  and push remain separate user requests.
+- Issue: none remaining within WP-0171.
+- Next action: identify the next unblocked evaluator decomposition scope from
+  the active backlog; a new issue/scope approval is required before starting
+  additional implementation.
 
 ## Risks
 
@@ -78,6 +77,7 @@ state owner.
 
 ## Process Review
 
-- Outcome: not yet
-- Lesson written: not applicable
+- Outcome: Process review: no operating-contract deviation or operational problem found.
+- Lesson written: no new reusable lesson; existing status-drift and
+  decomposition lessons were applied.
 - Template-feedback path: none
