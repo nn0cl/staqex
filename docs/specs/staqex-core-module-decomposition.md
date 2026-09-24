@@ -18,21 +18,20 @@ extend, or reinterpret behavior.
 
 ## Current evidence
 
-### Runtime evaluator remeasurement — 2026-09-24
+### Runtime evaluator remeasurement — 2026-09-25
 
-Measured on `main` at `66da78c824b5e5ce97fdf35b0ff9c79d7eec9df3` using
-`wc -l`; the method count is from Python AST, counting methods directly
+Measured on `main` at
+`9b2e2e0f8e56399ba8cbd662bbc3bf6d569cb7b7` using `git show` plus physical
+line counts; the method count is from Python AST, counting methods directly
 declared on `Evaluator`.
 
 | Module | Lines | Current responsibility |
 |---|---:|---|
-| `runtime/evaluator.py` | 2,048 | State-owning compatibility facade and residual orchestration/evaluation bodies; 87 methods |
+| `runtime/evaluator.py` | 1,867 | State-owning compatibility facade and residual orchestration/evaluation bodies; 82 methods |
 | `runtime/evaluation/observation.py` | 768 | Observation and measurement family |
 | `runtime/evaluation/operators.py` | 619 | Operator resolution/lowering family |
-| `runtime/evaluation/calls.py` | 532 | State/call binding family |
-| `runtime/evaluation/hamiltonian_evolution.py` | 467 | Hamiltonian, tuple, grid evolution |
-| `runtime/evaluation/execution.py` | 463 | Legacy AST execution and statement routing |
-| `runtime/evaluation/classical.py` | 429 | Classical value and attribute evaluation |
+| `typecheck.py` | 4,678 | Separate compiler phase; outside evaluator decomposition |
+| `parser.py` | 3,679 | Separate compiler phase; outside evaluator decomposition |
 
 The Evaluator's remaining active method bodies cluster around runtime-plan
 eligibility, statement/tensor dispatch, state-preserving `when`, classical
@@ -63,8 +62,8 @@ separate consumer/state-boundary design.
 
 At LISS-0576 Phase 2 head `05e0bde58339fc5e595535d11431bfb8c1123952`,
 `runtime/evaluator.py` is 1,867 physical lines and declares 82 methods on
-`Evaluator` (down from 2,048 / 87 at the recorded main baseline). These counts
-describe this task branch, not the then-current `main` branch.
+`Evaluator` (down from 2,048 / 87 at the 2026-09-24 main baseline). The same
+source counts were independently confirmed on the current main commit above.
 
 These current measurements supersede the older planning snapshot below for
 size reporting; that snapshot remains historical evidence.

@@ -3,8 +3,8 @@
 ## Metadata
 
 - Local issue ID: LISS-0575
-- Status: in_progress — Phase 3 final review approved; commit and SHA-specific verification pending
-- Phase: phase-3-final-review-approved
+- Status: done
+- Phase: phase-3-complete
 - Type: Architecture Path structural decomposition
 - Planning size: L
 - Parent: WP-0168
@@ -280,8 +280,17 @@ QASM lowering, parser/typechecker behavior, or a new public language surface.
 - Approval received: `WP-0168 / LISS-0575 Phase 3 最終レビュー 承認`
   (2026-09-23).
 - The Phase 3 review result is accepted. No further phase approval is pending.
-- Finalization remains open because the implementation is uncommitted and the
-  verification policy requires rerunning all blocking suites against the final
-  commit SHA. Process review will be recorded when the issue is closed.
-- Next action: commit the approved changes when requested, then rerun all
-  blocking suites against that SHA before marking this issue done.
+- Final implementation commit: `fbe5e768301f514b99824c4211bb63883076d5b6`.
+- Merged to `main` by PR #596 as
+  `66da78c824b5e5ce97fdf35b0ff9c79d7eec9df3`.
+- Final blocking verification on the implementation commit SHA: **2,242
+  passed** (`.venv/bin/python -m pytest tests/ -q`, with
+  `PYTHONPATH=compiler:.`, macOS / Python 3.14.6). Focused + adjacent:
+  **63 passed**; consumer import/hook smoke passed; spec verification:
+  **161/161**. PR CI workflow run `35873796171` completed successfully.
+  Earlier dirty-tree runs above are historical, not final completion evidence.
+- LISS-0575 is complete; no implementation or review phase remains open.
+- Process review: post-merge issue/WP status synchronization was stale and is
+  corrected in this documentation update. The existing Definition of Done
+  already requires same-unit status synchronization; no template feedback or
+  additional reusable lesson is proposed.
