@@ -18,7 +18,8 @@ Record meta-level patterns only. No session transcripts.
   approval or implementation status in the same reviewable unit; do not limit
   synchronization to the Issue, work plan, and trace.
 - Source issue or work plan: LISS-0576 / WP-0169
-- Status: open
+- Status: applied in LISS-0577 Phase 0 and Phase 3 (canonical spec, Issue, WP,
+  and trace synchronized at approval and review transitions)
 
 ## Lesson
 
@@ -32,7 +33,7 @@ Record meta-level patterns only. No session transcripts.
   structure immediately, and run the declared specification suite before
   accepting the refactor.
 - Source issue or work plan: LISS-0575 / WP-0168
-- Status: applied
+- Status: applied in LISS-0575 and LISS-0577 Phase 3
 
 ## Lesson
 

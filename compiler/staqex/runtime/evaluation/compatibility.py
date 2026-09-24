@@ -50,6 +50,12 @@ from .classical import (
     resolve_receiver_instance,
     apply_value_op,
 )
+from .classical_calls import (
+    eval_classical_call,
+    eval_classical_method_call,
+    eval_classical_user_fun,
+    eval_classical_user_fun_value,
+)
 from .continuous import (
     bind_continuous_compose,
     bind_field_from_host,
@@ -175,6 +181,14 @@ def install_classical_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._construct_instance = construct_instance
     evaluator_type._construct_struct = construct_struct
     evaluator_type._evaluate_classical_value = evaluate_classical_value
+
+
+def install_classical_call_compatibility(evaluator_type: type[Any]) -> None:
+    """Install classical call successors behind the existing private hooks."""
+    evaluator_type._eval_classical_call = eval_classical_call
+    evaluator_type._eval_classical_method_call = eval_classical_method_call
+    evaluator_type._eval_classical_user_fun = eval_classical_user_fun
+    evaluator_type._eval_classical_user_fun_value = eval_classical_user_fun_value
 
 
 def install_value_compatibility(evaluator_type: type[Any]) -> None:
