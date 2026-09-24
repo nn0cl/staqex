@@ -2,13 +2,13 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — final review approved; commit/final-SHA verification pending |
+| Status | done — final review approved; commit-specific blocking verification passed |
 | Size | L |
 | Parent | Evaluator residual-body follow-up to WP-0169 |
 | Canonical proposed specification | [Evaluator classical call evaluation](../specs/evaluator-classical-call-evaluation.md) |
 | Candidate issue | [LISS-0577](../issues/LISS-0577-evaluator-classical-call-evaluation-successor.md) |
 | Implementation permission | Phase 2 accepted; Phase 3 Refactor approved 2026-09-24 and complete |
-| Current Next Issue | LISS-0577 commit and final-SHA blocking verification |
+| Current Next Issue | none — WP-0170 complete |
 
 ## [DESIGN CHECK]
 
@@ -43,7 +43,7 @@
 
 | Issue | Status | Size | Depends on | Branch |
 |---|---|---:|---|---|
-| LISS-0577 | in_progress — final review approved; commit verification pending | L | WP-0169/LISS-0576 complete | `codex/liss-0577-classical-call-evaluation` |
+| LISS-0577 | done — Phase 3 final review accepted; commit `5ca2130b` all-blocking 2,255 passed | L | WP-0169/LISS-0576 complete | `codex/liss-0577-classical-call-evaluation` |
 
 ## Proposed sequence
 
@@ -67,8 +67,16 @@
    Summary](../collaboration/reviews/2026-09-24-liss-0577-phase3-refactor-review.md).
 6. Final Adjudicator review: approved 2026-09-24, including the bounded
    324-line structure disposition; no further module split requested.
-7. Commit and final-SHA blocking verification: pending before the Issue/WP
-   can be marked done.
+7. Commit and final-SHA blocking verification: commit
+   `5ca2130b3889482d70e5f2f9df7bb8603b1ea2d2` passed 2,255 tests, 0 failed
+   in 326.46s. A final closeout commit must be verified separately.
+
+## Process Review
+
+- Process review: no operating-contract deviation or operational problem
+  found.
+- The closeout commit receives a fresh all-blocking run as required by the
+  verification policy.
 
 No later phase is authorized by this proposal. Classical operator expressions,
 operator projection, runtime-plan orchestration, state-preserving `when`, and

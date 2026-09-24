@@ -26,8 +26,9 @@
      splitting helpers into additional modules would add indirection and
      contradict the accepted structural ownership contract. The Adjudicator
      accepted this bounded disposition; no further module split was requested.
-- Remaining blockers: no commit exists, so all blocking suites must be rerun
-  against the final commit SHA. GitHub CI has not been run for this dirty tree.
+- Remaining blockers: none for LISS-0577 approval. The final closeout commit
+  must be rerun through all-blocking tests. GitHub CI has not been run; no PR
+  was requested in this action.
 - Verification result: passed. Focused + consumer + adjacent suites: 54 passed
   in 0.67s. All-blocking suite: 2,255 passed, 0 failed in 325.21s. Lifecycle,
   document lifecycle, coverage-ledger, and `git diff --check` passed.
@@ -75,8 +76,9 @@
 - Adjudicator decision: `別ゲートの最終レビュー承認` received 2026-09-24;
   Phase 3 and the bounded 324-line disposition are accepted, with no further
   module split requested.
-- Next action: commit and rerun all blocking tests against the final SHA before
-  marking LISS-0577/WP-0170 done; this approval grants no broader scope.
+- Commit `5ca2130b3889482d70e5f2f9df7bb8603b1ea2d2` passed all-blocking tests
+  with 2,255 passed and 0 failed. LISS-0577/WP-0170 status synchronized to
+  done; a final closeout commit run remains.
 
 ## Evidence links
 

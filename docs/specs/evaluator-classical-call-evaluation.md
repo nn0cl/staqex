@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | Phase 3 final review approved 2026-09-24 — commit verification pending |
+| Status | complete — Phase 3 final review approved; commit verification passed 2026-09-24 |
 | Scope | LISS-0577 / WP-0170 |
 | Source authority | [Core module decomposition](staqex-core-module-decomposition.md) |
 
@@ -136,7 +136,9 @@ or behavior. Focused, consumer, adjacent, and all-blocking tests pass, and the
 active-Red exclusion was removed. The project's existing `.venv` was reused;
 no environment was created or modified. Final Adjudicator review, including
 acceptance of the bounded 324-line structure disposition, was approved
-2026-09-24. Commit-specific blocking verification remains pending.
+2026-09-24. Commit `5ca2130b3889482d70e5f2f9df7bb8603b1ea2d2` passed the
+all-blocking suite with 2,255 passed and 0 failed; the final closeout commit
+receives a separate required verification run.
 
 ## In scope
 
