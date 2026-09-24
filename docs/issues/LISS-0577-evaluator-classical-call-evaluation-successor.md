@@ -101,8 +101,9 @@ module-local context boundary, and exact phase paths are accepted in Phase 0.
   review whether to accept the bounded exception or authorize further split.
 - Phase 3 is complete and final Adjudicator review is approved. Commit
   `5ca2130b3889482d70e5f2f9df7bb8603b1ea2d2` passed the all-blocking suite
-  (**2,255 passed, 0 failed**); the final closeout commit will receive its own
-  required all-blocking rerun.
+  (**2,255 passed, 0 failed**). Closeout commit
+  `46dce10316e04c356a14ff3c288c249de33432ea` also passed the post-commit
+  all-blocking suite (**2,255 passed, 0 failed**).
 - Final review approved: `別ゲートの最終レビュー承認` (2026-09-24). The
   Phase 3 refactor and bounded 324-line structure disposition are accepted;
   no additional module split was requested.

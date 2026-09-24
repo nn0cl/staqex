@@ -138,7 +138,8 @@ no environment was created or modified. Final Adjudicator review, including
 acceptance of the bounded 324-line structure disposition, was approved
 2026-09-24. Commit `5ca2130b3889482d70e5f2f9df7bb8603b1ea2d2` passed the
 all-blocking suite with 2,255 passed and 0 failed; the final closeout commit
-receives a separate required verification run.
+`46dce10316e04c356a14ff3c288c249de33432ea` also passed its post-commit
+all-blocking run with 2,255 passed and 0 failed.
 
 ## In scope
 

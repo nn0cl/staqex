@@ -26,8 +26,7 @@
      splitting helpers into additional modules would add indirection and
      contradict the accepted structural ownership contract. The Adjudicator
      accepted this bounded disposition; no further module split was requested.
-- Remaining blockers: none for LISS-0577 approval. The final closeout commit
-  must be rerun through all-blocking tests. GitHub CI has not been run; no PR
+- Remaining blockers: none for LISS-0577. GitHub CI has not been run; no PR
   was requested in this action.
 - Verification result: passed. Focused + consumer + adjacent suites: 54 passed
   in 0.67s. All-blocking suite: 2,255 passed, 0 failed in 325.21s. Lifecycle,
@@ -78,7 +77,8 @@
   module split requested.
 - Commit `5ca2130b3889482d70e5f2f9df7bb8603b1ea2d2` passed all-blocking tests
   with 2,255 passed and 0 failed. LISS-0577/WP-0170 status synchronized to
-  done; a final closeout commit run remains.
+  done. Closeout commit `46dce10316e04c356a14ff3c288c249de33432ea` also passed
+  its post-commit all-blocking run with 2,255 passed and 0 failed.
 
 ## Evidence links
 
