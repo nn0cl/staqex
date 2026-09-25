@@ -18,26 +18,51 @@ extend, or reinterpret behavior.
 
 ## Current evidence
 
-### Runtime evaluator remeasurement — 2026-09-25
-
-Measured on `main` at
-`9b2e2e0f8e56399ba8cbd662bbc3bf6d569cb7b7` using `git show` plus physical
-line counts; the method count is from Python AST, counting methods directly
+Evaluator source and structure measurements below distinguish the then-current
+`main` baseline from the completed LISS-0577/0578 integration branch. Counts
+are physical lines; method counts use Python AST and count methods directly
 declared on `Evaluator`.
 
 | Module | Lines | Current responsibility |
 |---|---:|---|
-| `runtime/evaluator.py` | 1,867 | State-owning compatibility facade and residual orchestration/evaluation bodies; 82 methods |
+| `runtime/evaluator.py` on main before LISS-0577/0578 | 1,867 | State-owning compatibility facade and residual orchestration/evaluation bodies; 82 methods |
+| `runtime/evaluator.py` after LISS-0577/0578 | 1,477 | State-owning compatibility facade and residual orchestration/evaluation bodies; 78 methods |
 | `runtime/evaluation/observation.py` | 768 | Observation and measurement family |
 | `runtime/evaluation/operators.py` | 619 | Operator resolution/lowering family |
+| `runtime/evaluation/calls.py` | 532 | State/call binding family |
+| `runtime/evaluation/hamiltonian_evolution.py` | 467 | Hamiltonian, tuple, grid evolution |
+| `runtime/evaluation/execution.py` | 463 | Legacy AST execution and statement routing |
+| `runtime/evaluation/classical.py` | 429 | Classical value and attribute evaluation |
+| `runtime/evaluation/classical_calls.py` | 324 | Classical function and method call evaluation |
+| `runtime/evaluation/classical_operator_eval.py` | 147 | Classical Operator expression and binder evaluation |
 | `typecheck.py` | 4,678 | Separate compiler phase; outside evaluator decomposition |
 | `parser.py` | 3,679 | Separate compiler phase; outside evaluator decomposition |
 
 The Evaluator's remaining active method bodies cluster around runtime-plan
 eligibility, statement/tensor dispatch, state-preserving `when`, classical
-function/method evaluation, classical operator expressions/projection, and
-continuous-field handling. Several facade forwarders are intentionally thin
-and should not be moved only to improve a count.
+operator projection, and continuous-field handling. Classical function/method
+evaluation and classical Operator-expression/binder evaluation are now owned
+by `runtime/evaluation/classical_calls.py` and
+`runtime/evaluation/classical_operator_eval.py` respectively. Several facade
+forwarders are intentionally thin and should not be moved only to improve a
+count.
+
+### Completed classical evaluator successors — LISS-0577 / LISS-0578
+
+LISS-0577 (WP-0170) extracts classical function and method call evaluation to
+`runtime/evaluation/classical_calls.py`; LISS-0578 (WP-0171) extracts classical
+Operator-expression and binder evaluation to
+`runtime/evaluation/classical_operator_eval.py`. Both retain the single
+mutable state owner in `Evaluator`, preserve compatibility hooks, and have
+separate accepted specifications, issue records, and final reviews. LISS-0578
+also carries the separately approved behavior-preservation baseline sync.
+These work units are complete on the integration branch; GitHub CI and merge
+verification remain pending until integration.
+
+The integrated worktree measurement is 1,477 lines / 78 methods. The
+pre-integration main measurement remains 1,867 lines / 82 methods; the merge
+adds main's LISS-0576/0168 documentation and source state before final
+verification.
 
 ### Accepted residual-body cleanup boundary — LISS-0576
 
@@ -61,9 +86,9 @@ dynamic, or orchestration body is included in LISS-0576; those families need
 separate consumer/state-boundary design.
 
 At LISS-0576 Phase 2 head `05e0bde58339fc5e595535d11431bfb8c1123952`,
-`runtime/evaluator.py` is 1,867 physical lines and declares 82 methods on
-`Evaluator` (down from 2,048 / 87 at the 2026-09-24 main baseline). The same
-source counts were independently confirmed on the current main commit above.
+`runtime/evaluator.py` was 1,867 physical lines and declared 82 methods on
+`Evaluator` (down from 2,048 / 87 at the 2026-09-24 main baseline). Those
+measurements describe the main source before LISS-0577/0578.
 
 These current measurements supersede the older planning snapshot below for
 size reporting; that snapshot remains historical evidence.

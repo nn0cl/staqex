@@ -7,7 +7,7 @@ import math
 import random
 from dataclasses import dataclass, field, replace
 from fractions import Fraction
-from typing import TYPE_CHECKING, Any, Callable, Mapping, TextIO
+from typing import TYPE_CHECKING, Any, Callable, Mapping, MutableMapping, TextIO
 
 if TYPE_CHECKING:
     from ..scientific_semantic_ir import ScientificSemanticIR
@@ -58,6 +58,7 @@ from ..ast_nodes import (
     SetComprehension,
     OpBin,
     OpHop,
+    # Public compatibility re-exports retained after evaluator extraction.
     OpLit,
     OpNumber,
     OpQuadrature,
@@ -103,6 +104,7 @@ from .matrix import Matrix
 from .evaluation.calls import bind_call
 from .evaluation.compatibility import (
     install_classical_compatibility as _install_classical_compatibility,
+    install_classical_call_compatibility as _install_classical_call_compatibility,
     install_call_compatibility as _install_call_compatibility,
     install_continuous_compatibility as _install_continuous_compatibility,
     install_evolution_compatibility as _install_evolution_compatibility,
@@ -958,6 +960,20 @@ class Evaluator:
     def _set_frame_units(self, value: dict[str, str]) -> None:
         self._frame_units = value
 
+    def _call_local_units_environment(self) -> MutableMapping[str, str] | None:
+        """Expose the active call-local unit frame without copying it."""
+        return getattr(self, "_call_local_units", None)
+
+    def _set_call_local_units_environment(
+        self, value: MutableMapping[str, str] | None
+    ) -> None:
+        """Replace or clear the active call-local unit frame."""
+        if value is None:
+            if hasattr(self, "_call_local_units"):
+                del self._call_local_units
+            return
+        self._call_local_units = value
+
     def _scalar_units_environment(self) -> MutableMapping[str, str]:
         return self.scalar_units
 
@@ -987,269 +1003,6 @@ class Evaluator:
     def _store_runtime_object(self, name: str, value: Any) -> None:
         """Store an opaque runtime value in the evaluator-owned object map."""
         self.objects[name] = value
-
-    def _eval_classical_call(
-        self, expr: Call, assign: dict[str, Any] | None = None
-    ) -> Any:
-        """Evaluate a pure classical Call as a classical value (ADR 0179).
-
-        Allows ``c.get() * 0.4`` / ``twice(1.5) + 0.5`` without temps.
-        State/Joint-forming Calls remain rejected.
-
-        ``assign`` is the parent classical frame (free-fn locals). Nested free-fn
-        calls such as ``queue_pressure`` → ``recovery_priority(q.a)`` resolve
-        object args from that frame (LISS-0294).
-        """
-        classical_heads = {
-            "Float",
-            "Int",
-            "Bool",
-            "Mass",
-            "Time",
-            "Length",
-            "Current",
-            "Temperature",
-            "Energy",
-            "Frequency",
-            "Stiffness",
-            "Momentum",
-        }
-        if isinstance(expr.callee, Var):
-            # LISS-0338's deferred gap: sin/cos/exp/sqrt/abs/log/tan
-            # (stdlib.math_ops.MATH_OPS) previously only had a State-
-            # pushforward execution path (via joint.map_coord); a classical-
-            # scalar call like `abs(x)` had no evaluator support at all.
-            if math_ops.known_math_op(expr.callee.name):
-                if len(expr.args) != 1:
-                    raise KernelError(
-                        f"`{expr.callee.name}` expects exactly 1 argument, "
-                        f"got {len(expr.args)}"
-                    )
-                arg_val = evaluate_value(self, expr.args[0], assign or {})
-                return math_ops.apply_math(expr.callee.name, arg_val)
-            fun = self.funs.get(expr.callee.name)
-            if fun is None:
-                raise KernelError(
-                    "call cannot be classical value in Phase 2.2 value context"
-                )
-            # LISS-0338's deferred gap: a free fn returning a struct type is
-            # also a pure classical value, not just the fixed scalar/
-            # dimensioned classical_heads set.
-            if fun.return_type is None or (
-                fun.return_type.name not in classical_heads
-                and fun.return_type.name not in self.structs
-            ):
-                raise KernelError(
-                    "call cannot be classical value in Phase 2.2 value context: "
-                    f"`{fun.name}` is not a pure classical-returning fn"
-                )
-            return self._eval_classical_user_fun(fun, expr, assign)
-        if isinstance(expr.callee, Attr):
-            return self._eval_classical_method_call(expr, classical_heads)
-        raise KernelError("call cannot be classical value in Phase 2.2 value context")
-
-    def _eval_classical_method_call(
-        self, expr: Call, classical_heads: set[str]
-    ) -> Any:
-        """Evaluate ``recv.method(…)`` returning a classical head (ADR 0179)."""
-        callee = expr.callee
-        if not isinstance(callee, Attr):
-            raise KernelError("call cannot be classical value in Phase 2.2 value context")
-        method_name = callee.name
-        recv_expr = callee.obj
-        inst = self._resolve_receiver_instance(recv_expr)
-        if inst is None:
-            raise KernelError(
-                f"classical method call requires a bound receiver "
-                f"(got `{type(recv_expr).__name__}`)"
-            )
-        if not isinstance(inst, ClassInstance):
-            raise KernelError(
-                f"classical method `{method_name}` requires a class instance"
-            )
-        cls = self.classes.get(inst.class_name) or self.classes.get(
-            inst.class_name.split(".")[-1]
-        )
-        if cls is None:
-            raise KernelError(f"unknown class `{inst.class_name}`")
-        method = next((m for m in cls.methods if m.name == method_name), None)
-        if method is None:
-            raise KernelError(
-                f"class `{inst.class_name}` has no method `{method_name}`"
-            )
-        if method.return_type is None or method.return_type.name not in classical_heads:
-            raise KernelError(
-                "call cannot be classical value in Phase 2.2 value context: "
-                f"`{method_name}` is not a pure classical-returning method"
-            )
-        if len(expr.args) != len(method.params):
-            raise KernelError(
-                f"`{method_name}` expects {len(method.params)} args, "
-                f"got {len(expr.args)}"
-            )
-        prev_this = self._this
-        self._this = inst
-        try:
-            local: dict[str, Any] = dict(inst.fields)
-            for param, arg in zip(method.params, expr.args):
-                if isinstance(arg, Var) and arg.name in self.objects:
-                    local[param.name] = self.objects[arg.name]
-                elif isinstance(arg, Var) and arg.name in self.scalars:
-                    local[param.name] = self.scalars[arg.name]
-                else:
-                    local[param.name] = evaluate_value(self, arg, {})
-            for stmt in method.body.stmts:
-                if isinstance(stmt, AssignStmt):
-                    self._execute_assignment(stmt, local)
-                    local.update(inst.fields)
-            result = next(
-                (
-                    stmt.expr
-                    for stmt in method.body.stmts
-                    if isinstance(stmt, ReturnStmt)
-                ),
-                method.body.result,
-            )
-            if result is None:
-                raise KernelError(f"method `{method_name}` has no return")
-            return evaluate_value(self, result, local)
-        finally:
-            self._this = prev_this
-
-    def _eval_classical_user_fun(
-        self,
-        fun: FunDecl,
-        expr: Call,
-        assign: dict[str, Any] | None = None,
-    ) -> Any:
-        """Evaluate a classical-returning library fn (LISS-0231); value only."""
-        val, _unit = self._eval_classical_user_fun_value(fun, expr, assign)
-        return val
-
-    def _eval_classical_user_fun_value(
-        self,
-        fun: FunDecl,
-        expr: Call,
-        assign: dict[str, Any] | None = None,
-    ) -> tuple[Any, str | None]:
-        """Classical free-fn with object/scalar args (LISS-0231 / LISS-0292).
-
-        Supports Type-First object parameters without Joint coordinates, and
-        multi-statement bodies with intermediate classical binds.
-
-        Nested free-fn calls receive the caller frame via ``assign`` so params
-        and field projections (``q.a``, ``board.coastal``) resolve without
-        leaking to outer ``self.objects`` names (LISS-0294).
-        """
-        if len(expr.args) != len(fun.params):
-            raise KernelError(
-                f"`{fun.name}` expects {len(fun.params)} args, got {len(expr.args)}"
-            )
-        parent = assign if assign is not None else {}
-        local: dict[str, Any] = {}
-        local_units: dict[str, str] = {}
-        prev_this = self._this
-        prev_frame = self._frame_units
-        prev_call_units = getattr(self, "_call_local_units", None)
-        self._frame_units = {}
-        self._call_local_units = local_units
-        try:
-            for param, arg in zip(fun.params, expr.args):
-                if isinstance(arg, Var) and arg.name in parent:
-                    local[param.name] = parent[arg.name]
-                    if prev_call_units is not None and arg.name in prev_call_units:
-                        local_units[param.name] = prev_call_units[arg.name]
-                    elif arg.name in self.scalar_units:
-                        local_units[param.name] = self.scalar_units[arg.name]
-                elif isinstance(arg, Var) and arg.name in self.objects:
-                    local[param.name] = self.objects[arg.name]
-                elif isinstance(arg, Var) and arg.name in self.scalars:
-                    local[param.name] = self.scalars[arg.name]
-                    if arg.name in self.scalar_units:
-                        local_units[param.name] = self.scalar_units[arg.name]
-                else:
-                    # Attr / nested expr: evaluate in parent frame so free-fn
-                    # locals shadow outer objects of the same name.
-                    v, u = self._eval_value_with_unit(arg, parent)
-                    local[param.name] = v
-                    if u is not None:
-                        local_units[param.name] = u
-            # Interface / method-style: first object arg as `this` when useful.
-            for _pname, pval in local.items():
-                if isinstance(pval, ClassInstance):
-                    self._this = pval
-                    break
-            # Execute intermediate classical binds (Length road = q.road_km to m).
-            for stmt in fun.body.stmts:
-                if isinstance(stmt, ReturnStmt):
-                    continue
-                if isinstance(stmt, AssignStmt):
-                    self._execute_assignment(stmt, local)
-                    continue
-                if isinstance(stmt, StateBind) and len(stmt.names) == 1:
-                    v, u = self._eval_value_with_unit(stmt.expr, local)
-                    local[stmt.names[0]] = v
-                    if u is not None:
-                        local_units[stmt.names[0]] = u
-                        self._frame_units[stmt.names[0]] = u
-                    continue
-                if isinstance(stmt, (Measure, Snapshot)):
-                    raise KernelError(
-                        f"`measure`/`snapshot` forbidden inside classical fn `{fun.name}`"
-                    )
-            result = next(
-                (
-                    stmt.expr
-                    for stmt in fun.body.stmts
-                    if isinstance(stmt, ReturnStmt)
-                ),
-                fun.body.result,
-            )
-            if result is None:
-                raise KernelError(f"`{fun.name}` has no return")
-            # `unit.readiness()` — Attr Call on interface-typed local.
-            if isinstance(result, Call) and isinstance(result.callee, Attr):
-                recv = result.callee.obj
-                if isinstance(recv, Var) and recv.name in local:
-                    self._this = local[recv.name]
-                    method_name = result.callee.name
-                    inst = local[recv.name]
-                    if not isinstance(inst, ClassInstance):
-                        raise KernelError(
-                            f"`{fun.name}` receiver is not a class instance"
-                        )
-                    cls = self.classes.get(inst.class_name) or self.classes.get(
-                        inst.class_name.split(".")[-1]
-                    )
-                    if cls is None:
-                        raise KernelError(f"unknown class `{inst.class_name}`")
-                    method = next(
-                        (m for m in cls.methods if m.name == method_name), None
-                    )
-                    if method is None:
-                        raise KernelError(
-                            f"class `{inst.class_name}` has no method `{method_name}`"
-                        )
-                    ret = next(
-                        (
-                            s.expr
-                            for s in method.body.stmts
-                            if isinstance(s, ReturnStmt)
-                        ),
-                        method.body.result,
-                    )
-                    if ret is None:
-                        raise KernelError(f"method `{method_name}` has no return")
-                    return evaluate_value(self, ret, dict(inst.fields)), None
-            return self._eval_value_with_unit(result, local)
-        finally:
-            self._this = prev_this
-            self._frame_units = prev_frame
-            if prev_call_units is None:
-                if hasattr(self, "_call_local_units"):
-                    del self._call_local_units
-            else:
-                self._call_local_units = prev_call_units
 
     @staticmethod
     def _joint_coord_names(joint: Joint) -> set[str]:
@@ -1364,150 +1117,6 @@ class Evaluator:
             )
         # ADR 0131: stepwise Partial.
         return PartialValue(fun_name=partial.fun_name, slots=new_slots)
-
-    def _eval_classical_op_binder(self, expr: "OpBinder", assign: dict[str, Any]) -> Any:
-        """LISS-0424/0427: classical numeric `Sigma`/`Pi` and the Bool-
-        valued `ForAll` -- alongside the existing Operator-typed
-        (`OpBinder` reached via the separate `Operator H = ...` statement
-        dispatch) and State-typed (`KetSumBinder`) forms. Folds the body
-        with `+` (Sigma), `*` (Pi), or logical AND with early exit
-        (ForAll) over a bare-range `IndexDomain` (LISS-0423), evaluating
-        the body/guard as plain classical expressions -- reuses the
-        Operator-DSL's existing `OpIndexed`/`OpBin`/`OpVar`/`OpLit`
-        grammar (already proven for classical array-indexed coefficients
-        like `activity_w[i] * Z[i]`) rather than requiring new general-
-        expression array-index syntax. Handles multi-binding
-        (`Sigma (i In D1, j In D2) where ... {...}`) by recursing into a
-        nested `OpBinder` body, matching how the parser itself nests
-        multi-binding binders (`parser.py::_op_binder`)."""
-        from ..ast_nodes import IndexDomain, RevDomain
-
-        domain = expr.domain
-        descending = False
-        while isinstance(domain, RevDomain):
-            descending = not descending
-            domain = domain.inner
-        if not isinstance(domain, IndexDomain):
-            raise KernelError(
-                "classical Sigma/Pi/ForAll requires a bare-range binder "
-                "domain (e.g. `0..n-1`), not an Operator/State-shaped domain"
-            )
-        start = int(self._eval_op_expr_classical(domain.start, assign))
-        end = int(self._eval_op_expr_classical(domain.end, assign))
-        indices = list(range(start, end + 1)) if end >= start else []
-        if descending:
-            indices.reverse()
-        if expr.kind == "Sigma":
-            acc: Any = 0
-        elif expr.kind == "Pi":
-            acc = 1
-        elif expr.kind == "ForAll":
-            acc = True
-        else:  # Min
-            # LISS-0428: min over an empty guarded domain is +infinity --
-            # the standard identity element for min-as-a-fold (matching
-            # sum's 0 / product's 1), and it reproduces the original
-            # `_bind_feasible_predicate`/`host/scoring.py::is_feasible`
-            # Python behavior exactly: "if pairs and min(...) < threshold"
-            # skips the diversity check entirely (vacuously satisfied)
-            # when no pair is selected -- `+inf >= theta` is always True,
-            # the same vacuous pass.
-            acc = float("inf")
-        for i in indices:
-            local = dict(assign)
-            local[expr.variable] = i
-            if expr.guard is not None and not bool(
-                self._eval_op_expr_classical(expr.guard, local)
-            ):
-                continue
-            if isinstance(expr.body, OpBinder):
-                term = self._eval_classical_op_binder(expr.body, local)
-            else:
-                term = self._eval_op_expr_classical(expr.body, local)
-            if expr.kind == "Sigma":
-                acc = acc + term
-            elif expr.kind == "Pi":
-                acc = acc * term
-            elif expr.kind == "ForAll":
-                acc = acc and bool(term)
-                if not acc:  # short-circuit on the first False
-                    break
-            else:  # Min
-                acc = term if term < acc else acc
-        return acc
-
-    def _eval_op_expr_classical(self, expr: Any, assign: dict[str, Any]) -> Any:
-        """Evaluate an Operator-DSL `OpExpr` node as a plain classical
-        value (LISS-0424) -- rejects genuine Operator/Pauli atoms with a
-        clear error, since those belong in an Operator-typed Sigma/Pi."""
-        if isinstance(expr, OpBinder):
-            # LISS-0429: a nested Sigma/Pi/ForAll/Min used as part of a
-            # larger classical expression, e.g. `Sigma (...) {...} == 3`
-            # as one condition inside a Set comprehension's list.
-            return self._eval_classical_op_binder(expr, assign)
-        if isinstance(expr, OpLit):
-            return expr.value
-        if isinstance(expr, OpVar):
-            if expr.name in assign:
-                return assign[expr.name]
-            if expr.name in self.scalars:
-                return self.scalars[expr.name]
-            # LISS-0432: a Host-bound `Float[N]…`/`Bool[N]…` coefficient
-            # array (e.g. `C`/`D` in the confirmed S02 step 2 design) used
-            # inside a classical Sigma/ForAll/Min/Set-comprehension body --
-            # the same array store `activity_w`/`selectivity_w` already use
-            # inside an `Operator = Sigma(...) {...}` body, just made
-            # visible from the classical evaluation path too.
-            array_context = self._operator_array_context()
-            if expr.name in array_context:
-                return array_context[expr.name]
-            raise KernelError(
-                f"classical Sigma/Pi: unbound name `{expr.name}`"
-            )
-        if isinstance(expr, OpIndexed):
-            base = self._eval_op_expr_classical(expr.base, assign)
-            index = int(self._eval_op_expr_classical(expr.index, assign))
-            try:
-                return base[index]
-            except (TypeError, IndexError, KeyError) as e:
-                raise KernelError(
-                    f"classical Sigma/Pi: index {index} out of range"
-                ) from e
-        if isinstance(expr, OpPow):
-            base = self._eval_op_expr_classical(expr.base, assign)
-            return base ** expr.exp
-        if isinstance(expr, OpBin):
-            if expr.op in ("&&", "||"):
-                lhs = bool(self._eval_op_expr_classical(expr.lhs, assign))
-                rhs = bool(self._eval_op_expr_classical(expr.rhs, assign))
-                return (lhs and rhs) if expr.op == "&&" else (lhs or rhs)
-            if expr.op == "Implies":
-                lhs = bool(self._eval_op_expr_classical(expr.lhs, assign))
-                rhs = bool(self._eval_op_expr_classical(expr.rhs, assign))
-                return (not lhs) or rhs
-            lhs = self._eval_op_expr_classical(expr.lhs, assign)
-            rhs = self._eval_op_expr_classical(expr.rhs, assign)
-            ops: dict[str, Any] = {
-                "+": lambda a, b: a + b,
-                "-": lambda a, b: a - b,
-                "*": lambda a, b: a * b,
-                "<": lambda a, b: a < b,
-                "<=": lambda a, b: a <= b,
-                ">": lambda a, b: a > b,
-                ">=": lambda a, b: a >= b,
-                "==": lambda a, b: a == b,
-                "!=": lambda a, b: a != b,
-            }
-            if expr.op not in ops:
-                raise KernelError(
-                    f"classical Sigma/Pi: unsupported operator `{expr.op}`"
-                )
-            return ops[expr.op](lhs, rhs)
-        raise KernelError(
-            f"classical Sigma/Pi body contains a non-classical term "
-            f"({type(expr).__name__}) -- Operator/Pauli atoms belong in "
-            "an Operator-typed Sigma/Pi, not a classical one"
-        )
 
     def _project_onto_operator(
         self, joint: Joint, coord_name: str, operator_name: str
@@ -1714,6 +1323,7 @@ _install_call_compatibility(Evaluator)
 _install_operator_compatibility(Evaluator)
 _install_frame_compatibility(Evaluator)
 _install_classical_compatibility(Evaluator)
+_install_classical_call_compatibility(Evaluator)
 _install_value_compatibility(Evaluator)
 _install_continuous_compatibility(Evaluator)
 _install_constructor_compatibility(Evaluator)
