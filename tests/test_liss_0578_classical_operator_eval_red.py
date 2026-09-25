@@ -10,9 +10,13 @@ from __future__ import annotations
 import ast
 import importlib
 from pathlib import Path
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
+COMPILER = ROOT / "compiler"
+if str(COMPILER) not in sys.path:
+    sys.path.insert(0, str(COMPILER))
 EVALUATOR = ROOT / "compiler/staqex/runtime/evaluator.py"
 SUCCESSOR = ROOT / "compiler/staqex/runtime/evaluation/classical_operator_eval.py"
 COMPATIBILITY = ROOT / "compiler/staqex/runtime/evaluation/compatibility.py"
