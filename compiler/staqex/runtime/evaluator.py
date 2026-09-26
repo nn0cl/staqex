@@ -116,6 +116,7 @@ from .evaluation.compatibility import (
     install_state_ops_compatibility as _install_state_ops_compatibility,
     install_frame_compatibility as _install_frame_compatibility,
     install_operator_compatibility as _install_operator_compatibility,
+    install_operator_projection_compatibility as _install_operator_projection_compatibility,
     install_value_compatibility as _install_value_compatibility,
 )
 from .evaluation.evolution import (
@@ -1118,81 +1119,6 @@ class Evaluator:
         # ADR 0131: stepwise Partial.
         return PartialValue(fun_name=partial.fun_name, slots=new_slots)
 
-    def _project_onto_operator(
-        self, joint: Joint, coord_name: str, operator_name: str
-    ) -> Joint:
-        """`project psi onto P` where `P` is a general (multi-term)
-        Operator (LISS-0431) -- compiles `P`'s already-resolved OpExpr
-        (`self.operators[operator_name]`, e.g. LISS-0430's Pauli-Z-
-        decomposed $P_F$) to a matrix and scales each World's amplitude
-        by the square root of `P`'s diagonal entry at that World's own
-        `coord_name` value (big-endian tuple-to-index, matching
-        `hamiltonian.py`'s own convention -- confirmed by direct
-        execution, not assumed). Diagonal-only: the confirmed target
-        design (a projector built from `Sigma (x In F) { |x><x| }`) is
-        always diagonal in the computational basis by construction; a
-        genuinely non-diagonal Operator target is out of scope and
-        rejected with a clear error rather than silently mishandled."""
-        from .hamiltonian import compile_hamiltonian
-        from .joint import World, _coalesce
-
-        op_ast = self.operators.get(operator_name)
-        if op_ast is None:
-            raise KernelError(f"project onto `{operator_name}`: unknown Operator")
-        sample = next(
-            (
-                world.assign.get(coord_name)
-                for world in joint.worlds
-                if isinstance(world.assign.get(coord_name), tuple)
-            ),
-            None,
-        )
-        if sample is None:
-            raise KernelError(
-                "project onto a general Operator requires a tuple-valued "
-                "coordinate"
-            )
-        n = len(sample)
-        cache_key = (operator_name, n)
-        matrix = self._compiled_operator_cache.get(cache_key)
-        if matrix is None:
-            matrix = compile_hamiltonian(op_ast, env={}, n_qubits=n)
-            self._compiled_operator_cache[cache_key] = matrix
-        dim = len(matrix)
-        for i in range(dim):
-            for j in range(dim):
-                if i != j and abs(matrix[i][j]) > EPS:
-                    raise KernelError(
-                        "project onto a general Operator currently supports "
-                        "diagonal projectors only (e.g. Sigma (x In F) "
-                        "{ |x><x| }); the given Operator has a non-zero "
-                        "off-diagonal entry"
-                    )
-
-        def _index(pattern: tuple[int, ...]) -> int:
-            idx = 0
-            for bit in pattern:
-                idx = idx * 2 + int(bit)
-            return idx
-
-        out: list[World] = []
-        for w in joint.worlds:
-            value = w.assign.get(coord_name)
-            if not isinstance(value, tuple):
-                continue
-            diag = matrix[_index(value)][_index(value)].real
-            if diag <= EPS:
-                continue
-            new_amp = w.amp * cmath.sqrt(diag)
-            if abs(new_amp) ** 2 <= EPS:
-                continue
-            out.append(
-                World(assign=dict(w.assign), amp=new_amp, coord_phase=dict(w.coord_phase))
-            )
-        if not out:
-            return Joint.empty()
-        return Joint(worlds=_coalesce(out))
-
     def _eval_set_comprehension(
         self, expr: "SetComprehension", assign: dict[str, Any]
     ) -> tuple[Any, ...]:
@@ -1330,6 +1256,7 @@ _install_constructor_compatibility(Evaluator)
 _install_assignment_compatibility(Evaluator)
 _install_pipe_compatibility(Evaluator)
 _install_state_ops_compatibility(Evaluator)
+_install_operator_projection_compatibility(Evaluator)
 
 
 def _is_numeric(value: Any) -> bool:

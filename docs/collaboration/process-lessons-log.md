@@ -7,6 +7,21 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-27
+- Class: acceptance-inventory-reconciliation
+- Pattern: a passing reviewed suite can still omit cases explicitly listed as
+  minimum evidence in its accepted specification when the review does not map
+  each listed clause to a named test.
+- What later design or implementation must do: maintain a clause-to-test
+  matrix for every explicit minimum test inventory; before accepting Red,
+  identify the exact test for each item or record the approved reason it is
+  unreachable/out of scope. Reconcile again before declaring Green.
+- Source issue or work plan: LISS-0579 / WP-0172
+- Status: applied in the bounded Phase 1 contract correction and accepted test
+  review; carry forward to later acceptance inventories
+
+## Lesson
+
 - Date: 2026-09-24
 - Class: compatibility-hook-identity-contract
 - Pattern: a structural compatibility test can assert that import names and

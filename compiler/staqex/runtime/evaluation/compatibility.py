@@ -60,6 +60,7 @@ from .classical_operator_eval import (
     eval_classical_op_binder,
     eval_op_expr_classical,
 )
+from .operator_projection import project_onto_operator
 from .continuous import (
     bind_continuous_compose,
     bind_field_from_host,
@@ -187,6 +188,11 @@ def install_classical_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._evaluate_classical_value = evaluate_classical_value
     evaluator_type._eval_classical_op_binder = eval_classical_op_binder
     evaluator_type._eval_op_expr_classical = eval_op_expr_classical
+
+
+def install_operator_projection_compatibility(evaluator_type: type[Any]) -> None:
+    """Retain the call-dispatch hook while projection leaves the facade."""
+    evaluator_type._project_onto_operator = project_onto_operator
 
 
 def install_classical_call_compatibility(evaluator_type: type[Any]) -> None:
