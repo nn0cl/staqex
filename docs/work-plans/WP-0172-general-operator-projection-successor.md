@@ -20,7 +20,7 @@ cache lifetime, or single-owner runtime-state boundary.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LISS-0579](../issues/LISS-0579-general-operator-projection-successor.md) | ready — Phase 2 committed and verified; awaiting separate Phase 3 approval | M | M | AIP-0579-001 | WP-0171 / LISS-0578 (done, PR #600) | - | `codex/liss-0579-operator-projection-successor` |
+| [LISS-0579](../issues/LISS-0579-general-operator-projection-successor.md) | done — Phase 3 final review approved; commit not requested | M | M | AIP-0579-001 | WP-0171 / LISS-0578 (done, PR #600) | - | `codex/liss-0579-operator-projection-successor` |
 
 ## Recommended Order
 
@@ -38,13 +38,13 @@ cache lifetime, or single-owner runtime-state boundary.
 5. The Adjudicator approved the bounded Phase 1 correction and its test review.
    Phase 2 commit `9802626` passed focused/adjacent tests (31), root tests
    (2,271), spec verifier (161/161), and repository checks including
-   template-copy smoke. Phase 3 requires separate approval.
+   template-copy smoke. Phase 3 Refactor was separately approved and performed;
+   same-context review has no remaining blocker after status synchronization.
 
 ## Current Next Issue
 
-- Issue: LISS-0579 Phase 3 Refactor.
-- Adjudicator approval needed: explicit Phase 3 Refactor approval. No Phase 3
-  work has started.
+- None within WP-0172; LISS-0579 Phase 3 final review was approved on
+  2026-09-27. Commit/push was not requested.
 
 ## Risks
 
@@ -110,7 +110,10 @@ and canonical status synchronization.
 
 ## Process Review
 
-- Outcome: not yet — contract correction/review and Phase 2 acceptance remain;
-  Phase 3 is unauthorized.
+- Outcome: Phase 3 final review approved and Issue/WP status synchronized.
+  Changes remain uncommitted; final-commit blocking verification is required
+  if the work is committed.
 - Lesson written: not applicable.
-- Template-feedback path: none.
+- Template-feedback path: none; existing `status-drift` lesson reapplied.
+- Process review: stale Phase 3 status text was found and corrected before
+  final approval; no additional reusable lesson or template feedback identified.

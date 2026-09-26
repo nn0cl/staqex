@@ -6,7 +6,7 @@
 | Scope | WP-0172 / LISS-0579 |
 | Source authority | `docs/issues/LISS-0431-project-explicit-renorm.md`; current runtime behavior |
 | Architecture approval | User `承認`, 2026-09-27 |
-| Implementation permission | Phase 2 Green/Implementation approved 2026-09-27; Phase 2 acceptance withheld pending Phase 1 test-contract correction; Phase 3 unapproved |
+| Implementation permission | Phase 2 accepted after corrected-contract verification on commit `9802626`; Phase 3 Refactor and final review approved 2026-09-27; behavior-preserving refactor completed in uncommitted worktree |
 
 ## Purpose
 
@@ -129,12 +129,19 @@ Green/Implementation was approved on 2026-09-27 and implemented without
 changing the reviewed tests. A subsequent reconciliation identified missing
 explicit characterization for unknown Operator, empty output, copied phase
 metadata, coalescing, and cache reuse. Thus prior passing results do not close
-Phase 2 acceptance. Phase 1 contract correction and test review are required
-before Phase 2 is re-verified; Phase 3 remains unapproved. The Adjudicator
+Phase 2 acceptance. Phase 1 contract correction and test review were required
+before Phase 2 was re-verified. The Adjudicator
 approved the bounded test-only correction on 2026-09-27. Four added runtime
 tests now cover those five details (phase-copy and coalescing share a test).
 The corrected suite passed review (`LISS-0579 Phase 1 Red contract correction
 テストレビュー承認`, 2026-09-27). Phase 2 commit
 `98026263419b86982e8c9e28dc0675b01a9ee465` passed focused/adjacent tests
 (31), root pytest (2,271), spec verification (161/161), and repository checks
-including template-copy smoke. Phase 3 remains unapproved.
+including template-copy smoke. The Adjudicator approved Phase 3 Refactor on
+2026-09-27. The refactor extracts tuple-width discovery, matrix compilation/
+cache access, diagonal validation, and world projection into focused helpers
+within the existing successor module. It preserves accepted semantics and
+tests. Phase 3 verification and same-context review found no behavioral
+blocker; stale status text was corrected. The Adjudicator approved the Phase 3
+final review on 2026-09-27. Any later commit still requires final-commit
+blocking verification.

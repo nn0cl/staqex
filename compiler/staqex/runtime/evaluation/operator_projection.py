@@ -18,21 +18,14 @@ class OperatorProjectionContext(Protocol):
     _compiled_operator_cache: MutableMapping[tuple[str, int], Any]
 
 
-def project_onto_operator(
-    context: OperatorProjectionContext,
-    joint: Joint,
-    coord_name: str,
-    operator_name: str,
-) -> Joint:
-    """Apply the existing diagonal general-Operator projection semantics.
-
-    Operator bindings and the compiled matrix cache remain owned by the live
-    Evaluator context. Projection scales amplitudes without renormalizing.
-    """
+def _operator_ast(context: OperatorProjectionContext, operator_name: str) -> Any:
     op_ast = context.operators.get(operator_name)
     if op_ast is None:
         raise KernelError(f"project onto `{operator_name}`: unknown Operator")
+    return op_ast
 
+
+def _tuple_width(joint: Joint, coord_name: str) -> int:
     sample = next(
         (
             world.assign.get(coord_name)
@@ -46,14 +39,24 @@ def project_onto_operator(
             "project onto a general Operator requires a tuple-valued "
             "coordinate"
         )
+    return len(sample)
 
-    width = len(sample)
+
+def _compiled_operator_matrix(
+    context: OperatorProjectionContext,
+    op_ast: Any,
+    operator_name: str,
+    width: int,
+) -> Any:
     cache_key = (operator_name, width)
     matrix = context._compiled_operator_cache.get(cache_key)
     if matrix is None:
         matrix = compile_hamiltonian(op_ast, env={}, n_qubits=width)
         context._compiled_operator_cache[cache_key] = matrix
+    return matrix
 
+
+def _require_diagonal(matrix: Any) -> None:
     dimension = len(matrix)
     for row in range(dimension):
         for column in range(dimension):
@@ -65,6 +68,8 @@ def project_onto_operator(
                     "off-diagonal entry"
                 )
 
+
+def _project_worlds(joint: Joint, coord_name: str, matrix: Any) -> Joint:
     out: list[World] = []
     for world in joint.worlds:
         pattern = world.assign.get(coord_name)
@@ -92,3 +97,21 @@ def project_onto_operator(
     if not out:
         return Joint.empty()
     return Joint(worlds=_coalesce(out))
+
+
+def project_onto_operator(
+    context: OperatorProjectionContext,
+    joint: Joint,
+    coord_name: str,
+    operator_name: str,
+) -> Joint:
+    """Apply diagonal Operator projection without implicit normalization.
+
+    This function coordinates lookup, cache access, eligibility checking, and
+    the Joint transformation; mutable maps remain owned by the live Evaluator.
+    """
+    op_ast = _operator_ast(context, operator_name)
+    width = _tuple_width(joint, coord_name)
+    matrix = _compiled_operator_matrix(context, op_ast, operator_name, width)
+    _require_diagonal(matrix)
+    return _project_worlds(joint, coord_name, matrix)

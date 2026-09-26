@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0579
 - GitHub issue: none
-- Status: ready
+- Status: done — Phase 3 final review approved
 - Phase: phase-3-refactor
 - Type: Architecture Path structural decomposition
 - Priority: normal
@@ -16,32 +16,29 @@
 
 ## Summary
 
-Investigate and specify a behavior-preserving successor boundary for
-`Evaluator._project_onto_operator`, which compiles a named Operator and
-transforms a `Joint` for the `project ψ onto P` call path. This Phase 0 design
-does not authorize semantic changes; implementation remains separately gated.
+Separate general-Operator projection from the Evaluator facade while
+preserving behavior, diagnostics, cache ownership, and the `project ψ onto P`
+call path. Semantic changes remain separately gated.
 
 ## Design Note
 
 - Target behavior: Preserve the current general-Operator projection behavior
   and diagnostics while moving the cohesive compile/eligibility/Joint
   transformation responsibility out of the oversized Evaluator facade.
-- Requested phase: Phase 2 Green/Implementation verification after accepted
-  Phase 1 correction.
-- Proposed next phase: complete commit-level blocking verification, then seek
-  separate Phase 3 Refactor approval.
-- Adjudicator decision needed: Phase 3 approval remains separate and is not
-  requested until commit-level verification is complete.
+- Requested phase: complete; Phase 3 final review approved 2026-09-27.
+- Proposed next phase: none for this bounded Issue. Commit-level verification
+  remains required if these changes are committed.
+- Adjudicator decision needed: none for this Issue's approved Phase 3 scope.
   Any semantic expansion remains a separate issue/spec and decision.
-- Requested approval type: Phase 2 verification. Existing Phase 2
-  implementation approval and corrected Phase 1 test-review approval do not
-  authorize Phase 3.
+- Requested approval type: Phase 3 final review; approved by the Adjudicator
+  on 2026-09-27 after same-context review.
 - Approved scope: `Architecture Path / Phase 0 scope approval / general
   Operator projection successor investigation` (2026-09-27).
-- Implementation allowed: missing tests only after explicit correction
-  approval; no production changes in that correction. Phase 2 permission was
-  received 2026-09-27.
-- Post-review required: yes, after Phase 3 and before closing the Issue.
+- Implementation allowed: Phase 2 Green/Implementation and Phase 3 Refactor
+  permissions were received 2026-09-27. Phase 3 changed only the successor
+  implementation structure; no semantic changes or test assertion edits.
+- Post-review required: completed; same-context reviewer pass and separate
+  Adjudicator final-review approval recorded below.
 
 ## Scope and Candidate Boundary
 
@@ -272,6 +269,35 @@ QPU/provider behavior, new DTO, or new semantic authority is proposed.
   spec verification passed **161/161**, and repository checks including the
   template-copy smoke passed. This is Phase 2 evidence only; Phase 3 remains
   separately gated.
+- `LISS-0579 Phase 3 Refactor 承認` received 2026-09-27. Extracted focused
+  helpers for Operator lookup, tuple width, compiled matrix/cache access,
+  diagonal validation, and world projection. No behavior or test assertions
+  changed. Focused/adjacent tests passed **31**, root pytest **2,271**, spec
+  verification **161/161**, and refactor baseline comparison passed. Same-
+  context review found and corrected stale Phase 3 status statements in the
+  specification and test header; final human approval remains outstanding.
+  Results are on the dirty worktree based on `3f3faf7`.
+- Final review approval: `LISS-0579 Phase 3 最終レビュー 承認`, received
+  2026-09-27 after the status synchronization; no commit or push was requested.
+
+## Phase 3 Review Summary
+
+- Canonical documents and files re-read: accepted spec, this Issue, WP-0172,
+  Phase 3 source diff, LISS-0579 tests, verification output, runtime routing,
+  verification policy, and source-quality policy.
+- Finding: spec and test header still described Phase 3 as unapproved and
+  structural Reds as expected. Disposition: corrected in this reviewable
+  worktree; no assertions changed.
+- Blockers: none for Phase 3 acceptance.
+- Reviewer empathy: projection flow is now readable as lookup → width → cached
+  matrix → diagonal eligibility → world transformation, while Evaluator retains
+  mutable-state ownership. The successor module grew from 94 to 117 lines;
+  no numeric structure budget is configured, so this is reported as a size
+  measurement, not a budget pass.
+- Review isolation: `same_context`, weaker than separate-context review, per
+  runtime routing. Human final-review approval is separately recorded above.
+- Next approval: none for this bounded Issue. If committed, rerun all blocking
+  suites against the final commit SHA before reporting that commit verified.
 
 ## Verification and Routing
 
@@ -321,4 +347,13 @@ QPU/provider behavior, new DTO, or new semantic authority is proposed.
   tests only.
 - `LISS-0579 Phase 1 Red contract correction テストレビュー承認` received
   2026-09-27. Commit `98026263419b86982e8c9e28dc0675b01a9ee465` passed the
-  root suite and declared repository checks. Phase 3 is not yet authorized.
+  root suite and declared repository checks.
+- `LISS-0579 Phase 3 Refactor 承認` received 2026-09-27. Final review approval
+  was followed by `LISS-0579 Phase 3 最終レビュー 承認` on 2026-09-27.
+
+## Process Review
+
+- Process review: stale Phase 3 status text was found during review and
+  corrected before final approval. The existing `status-drift` process lesson
+  was reapplied; no additional reusable lesson or template feedback was
+  identified.

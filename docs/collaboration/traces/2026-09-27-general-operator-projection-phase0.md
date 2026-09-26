@@ -5,8 +5,8 @@
 - Date: 2026-09-27
 - User request: Investigate/design the successor boundary for general Operator
   projection under Architecture Path Phase 0 scope approval.
-- Current phase: Phase 2 committed and verified; separate Phase 3 approval is
-  the next gate
+- Current phase: Phase 3 final review approved; Issue/WP status synchronized;
+  changes remain uncommitted
 - Canonical issue or work plan: LISS-0579 / WP-0172
 - AI planning record: AIP-0579-001 (proposed)
 
@@ -146,6 +146,45 @@
   commit. A subsequent documentation-only commit records this outcome; its
   final blocking verification is reported in the handoff.
 
+### Attempt 6 — Phase 3 Refactor and same-context review
+
+- Approval: `LISS-0579 Phase 3 Refactor 承認`, 2026-09-27.
+- Tested base SHA: `3f3faf77554b5db7a6da6c241e6d25dacf86f202`; changes are
+  uncommitted in the worktree.
+- Environment: macOS arm64; Python 3.14.6; pytest 9.1.1; `.venv`.
+- Change: extracted focused helpers for Operator lookup, tuple-width discovery,
+  matrix compilation/cache access, diagonal validation, and world projection.
+  No semantic or test assertion changes. `operator_projection.py` is 117 lines
+  (94 before); no `[source_structure]` budget is configured, so this is a
+  measurement only.
+- Focused plus adjacent suites: **31 passed**; root pytest **2,271 passed**;
+  spec verification **161/161**; refactor baseline byte comparison passed.
+- Review: same-context per runtime routing, weaker than independent context.
+  It identified stale Phase 3 status in spec/test documentation; those texts
+  were synchronized without altering assertions.
+- Adjudicator approval: `LISS-0579 Phase 3 最終レビュー 承認`, 2026-09-27.
+  No commit or push was requested.
+
+#### Review Summary
+
+- Canonical sources re-read: accepted specification, Issue, WP, source diff,
+  focused tests, verification policy, source-quality policy, and routing.
+- Finding and disposition: stale Phase 3/test lifecycle wording was corrected
+  in the specification and test header before approval; no assertions changed.
+- Blockers: none for the approved Phase 3 scope.
+- Verification: focused/adjacent 31 passed; full root suite 2,271 passed;
+  spec verification 161/161; baseline comparison and required document/lifecycle
+  checks passed. Root verification preceded documentation-only synchronization.
+- Mapping: helper extraction preserves lookup/error, cache, diagonal rejection,
+  and world projection semantics in the accepted spec. Existing dispatch and
+  compatibility consumers are unchanged.
+- Structure: successor module 94→117 LOC; quantitative source budget is not
+  configured. This is not a configured-budget compliance claim.
+- Isolation: same-context, weaker than separate-context; human final review
+  approved separately.
+- Next gate: none before closing this Issue. If committed, rerun all blocking
+  suites against that final commit SHA.
+
 ## Cost / Reasoning Control
 
 - Operating path: Architecture Path / Phase 0
@@ -176,7 +215,8 @@
   テストレビュー承認`, 2026-09-27.
 - Phase 1 Red contract correction test review: `LISS-0579 Phase 1 Red contract
   correction テストレビュー承認`, 2026-09-27.
-- Phase 3 Refactor: not granted.
+- Phase 3 Refactor: `LISS-0579 Phase 3 Refactor 承認`, 2026-09-27; bounded,
+  behavior-preserving refactor approved.
 
 ## Verification
 
@@ -216,7 +256,8 @@
 
 ## Next Safe Action
 
-- Request separate Phase 3 Refactor approval before starting Phase 3.
+- No further Phase 3 approval is outstanding. If asked to commit, rerun all
+  blocking suites against the final commit SHA before reporting verification.
 
 ## Notes
 

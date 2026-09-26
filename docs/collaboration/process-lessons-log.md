@@ -49,8 +49,9 @@ Record meta-level patterns only. No session transcripts.
   approval or implementation status in the same reviewable unit; do not limit
   synchronization to the Issue, work plan, and trace.
 - Source issue or work plan: LISS-0576 / WP-0169
-- Status: applied in LISS-0577 Phase 0 and Phase 3 (canonical spec, Issue, WP,
-  and trace synchronized at approval and review transitions)
+- Status: applied in LISS-0577 Phase 0 and Phase 3, and reapplied in LISS-0579
+  Phase 3 final review (canonical spec, Issue, WP, test lifecycle wording, and
+  trace synchronized at approval and review transitions)
 
 ## Lesson
 

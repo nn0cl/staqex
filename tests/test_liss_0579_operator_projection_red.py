@@ -1,8 +1,8 @@
-"""Phase 1 Red contracts for WP-0172 / LISS-0579.
+"""Structural and runtime contracts for WP-0172 / LISS-0579.
 
-Structural ownership checks are intentionally expected to fail until the
-projection successor is implemented. Runtime cases characterize current
-projection behavior and are reported separately from those structural Reds.
+The original Phase 1 structural Reds are now implemented and these assertions
+guard successor ownership, compatibility wiring, and preserved runtime
+behavior. Runtime characterizations remain distinct from structural checks.
 """
 
 from __future__ import annotations
