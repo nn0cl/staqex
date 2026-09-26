@@ -20,7 +20,7 @@ cache lifetime, or single-owner runtime-state boundary.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LISS-0579](../issues/LISS-0579-general-operator-projection-successor.md) | review — Phase 2 verified on dirty worktree; commit-level template-copy smoke pending | M | M | AIP-0579-001 | WP-0171 / LISS-0578 (done, PR #600) | - | `codex/liss-0579-operator-projection-successor` |
+| [LISS-0579](../issues/LISS-0579-general-operator-projection-successor.md) | ready — Phase 2 committed and verified; awaiting separate Phase 3 approval | M | M | AIP-0579-001 | WP-0171 / LISS-0578 (done, PR #600) | - | `codex/liss-0579-operator-projection-successor` |
 
 ## Recommended Order
 
@@ -36,16 +36,15 @@ cache lifetime, or single-owner runtime-state boundary.
    unknown Operator, empty output, copied phase metadata, coalescing, and cache
    reuse. Phase 2 code is present but uncommitted; Green acceptance is withheld.
 5. The Adjudicator approved the bounded Phase 1 correction and its test review.
-   Phase 2 focused/adjacent tests (31), root tests (2,271), and spec verifier
-   (161/161) pass. Template-copy smoke is unavailable on the uncommitted tree;
-   run all blocking checks after commit before closing Phase 2 or requesting
-   Phase 3.
+   Phase 2 commit `9802626` passed focused/adjacent tests (31), root tests
+   (2,271), spec verifier (161/161), and repository checks including
+   template-copy smoke. Phase 3 requires separate approval.
 
 ## Current Next Issue
 
-- Issue: LISS-0579 commit-level Phase 2 verification.
-- Adjudicator approval needed: separate Phase 3 approval only after the
-  committed tree passes all blocking checks. No Phase 3 work has started.
+- Issue: LISS-0579 Phase 3 Refactor.
+- Adjudicator approval needed: explicit Phase 3 Refactor approval. No Phase 3
+  work has started.
 
 ## Risks
 

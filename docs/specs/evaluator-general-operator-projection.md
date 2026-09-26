@@ -134,8 +134,7 @@ before Phase 2 is re-verified; Phase 3 remains unapproved. The Adjudicator
 approved the bounded test-only correction on 2026-09-27. Four added runtime
 tests now cover those five details (phase-copy and coalescing share a test).
 The corrected suite passed review (`LISS-0579 Phase 1 Red contract correction
-テストレビュー承認`, 2026-09-27). Phase 2 focused/adjacent and root pytest
-suites pass on the current dirty worktree; spec verification is 161/161. The
-template-copy CI smoke requires a committed source/spec tree and has not run.
-Therefore worktree Green is verified, while final committed Green and Phase 3
-remain pending.
+テストレビュー承認`, 2026-09-27). Phase 2 commit
+`98026263419b86982e8c9e28dc0675b01a9ee465` passed focused/adjacent tests
+(31), root pytest (2,271), spec verification (161/161), and repository checks
+including template-copy smoke. Phase 3 remains unapproved.

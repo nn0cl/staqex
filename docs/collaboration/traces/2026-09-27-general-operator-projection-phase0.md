@@ -5,8 +5,8 @@
 - Date: 2026-09-27
 - User request: Investigate/design the successor boundary for general Operator
   projection under Architecture Path Phase 0 scope approval.
-- Current phase: Phase 2 verified on dirty worktree; final commit-level
-  template-copy smoke and blocking checks remain pending
+- Current phase: Phase 2 committed and verified; separate Phase 3 approval is
+  the next gate
 - Canonical issue or work plan: LISS-0579 / WP-0172
 - AI planning record: AIP-0579-001 (proposed)
 
@@ -130,7 +130,9 @@
 
 - Approval: corrected Phase 1 suite accepted by the Adjudicator on 2026-09-27;
   earlier Phase 2 implementation approval remains the implementation authority.
-- Tested HEAD/tree: `d3b3225109cfe5471d8811854baf6d92d5ca6a8e`, dirty worktree.
+- Tested implementation commit/tree:
+  `98026263419b86982e8c9e28dc0675b01a9ee465`, clean tree before the final
+  evidence-documentation commit.
 - Environment: macOS arm64; Python 3.14.6; pytest 9.1.1; `.venv`.
 - Focused and adjacent: LISS-0579 + LISS-0431 + LISS-0430 + LISS-0566-C,
   **31 passed**.
@@ -140,9 +142,9 @@
 - Other checks: specification verification **161/161**; document lifecycle,
   coverage-ledger, active-Red lifecycle (0 entries), execution-batch (20),
   shell syntax, baseline comparison, `py_compile`, and `git diff --check` pass.
-- Gap: CI template-copy smoke was not rerun because its documented distributor
-  refuses an uncommitted spec. Thus this is Green evidence for the dirty
-  worktree, not final committed/all-blocking completion evidence.
+- Repository CI checks including template-copy smoke passed on the implementation
+  commit. A subsequent documentation-only commit records this outcome; its
+  final blocking verification is reported in the handoff.
 
 ## Cost / Reasoning Control
 
@@ -214,9 +216,7 @@
 
 ## Next Safe Action
 
-- Commit the approved Phase 2 work, rerun every blocking check including
-  template-copy smoke on that final commit, then request separate Phase 3
-  approval. Do not start Phase 3 before it.
+- Request separate Phase 3 Refactor approval before starting Phase 3.
 
 ## Notes
 

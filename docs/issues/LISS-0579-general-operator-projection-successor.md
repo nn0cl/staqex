@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0579
 - GitHub issue: none
-- Status: review
-- Phase: phase-2-green-verified-worktree
+- Status: ready
+- Phase: phase-3-refactor
 - Type: Architecture Path structural decomposition
 - Priority: normal
 - Initial planning size: M
@@ -41,8 +41,7 @@ does not authorize semantic changes; implementation remains separately gated.
 - Implementation allowed: missing tests only after explicit correction
   approval; no production changes in that correction. Phase 2 permission was
   received 2026-09-27.
-- Post-review required: yes; template-copy CI smoke and all blocking checks
-  must pass on the committed tree before Phase 2 is closed.
+- Post-review required: yes, after Phase 3 and before closing the Issue.
 
 ## Scope and Candidate Boundary
 
@@ -267,11 +266,12 @@ QPU/provider behavior, new DTO, or new semantic authority is proposed.
   phase metadata, coalescing, and cache reuse. The passing results above do not
   close Phase 2 until the contract correction is reviewed and verification is
   rerun.
-- After corrected test-review approval, Phase 2 focused, adjacent, and full
-  root pytest suites passed on the dirty worktree; spec verification passed
-  161/161. CI template-copy smoke remains unrun because the accepted spec is
-  uncommitted. Thus worktree Green is verified, but final committed Green is
-  pending the template-copy smoke and blocking checks on the final commit.
+- After corrected test-review approval, Phase 2 was committed as
+  `98026263419b86982e8c9e28dc0675b01a9ee465`. On that clean commit, focused and
+  adjacent suites passed (**31 passed**), root pytest passed (**2,271 passed**),
+  spec verification passed **161/161**, and repository checks including the
+  template-copy smoke passed. This is Phase 2 evidence only; Phase 3 remains
+  separately gated.
 
 ## Verification and Routing
 
@@ -320,5 +320,5 @@ QPU/provider behavior, new DTO, or new semantic authority is proposed.
 - `LISS-0579 Phase 1 Red contract correction 承認` received 2026-09-27 for
   tests only.
 - `LISS-0579 Phase 1 Red contract correction テストレビュー承認` received
-  2026-09-27. Phase 2 root pytest and declared checks pass on the dirty
-  worktree; final commit-level CI remains pending. Phase 3 is unauthorized.
+  2026-09-27. Commit `98026263419b86982e8c9e28dc0675b01a9ee465` passed the
+  root suite and declared repository checks. Phase 3 is not yet authorized.
