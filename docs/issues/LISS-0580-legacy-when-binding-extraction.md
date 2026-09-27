@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0580
 - GitHub issue: none
-- Status: in-progress — final review approved; commit and final-SHA verification pending
-- Phase: final-verification
+- Status: done
+- Phase: completed
 - Type: Architecture Path structural decomposition
 - Priority: normal
 - Initial planning size: M
@@ -28,15 +28,14 @@ is not included.
   `runtime/evaluation/legacy_control_binding.py`; runtime behavior remains
   unchanged.
 - Requested phase: Phase 3 Refactor (executed); final review approved.
-- Proposed next phase: commit and final-SHA verification.
+- Proposed next phase: none for this Issue.
 - Adjudicator decision: Phase 3 Refactor approved 2026-09-27.
 - Requested approval type: phase.
 - Approved scope: Architecture Path investigation and design for legacy
   `when` consumer/fallback disposition.
 - Architecture approval: ADR 0227 boundary approved 2026-09-27.
-- Implementation allowed: no further Phase 3 edits without renewed direction;
-  final review and tested-final-commit verification remain.
-- Post-review required: yes; commit and tested-final-commit verification.
+- Implementation allowed: no further implementation in this Issue.
+- Post-review required: no; final review approved and final commit verified.
 
 ## Acceptance Notes
 
@@ -65,8 +64,7 @@ verification results are recorded below. See the
 
 ## Adjudicator Decision Points
 
-1. Commit the reviewed changes when authorized.
-2. Rerun all blocking suites against that commit before closure.
+1. None; follow-up decomposition remains under a separate issue/scope.
 
 ## Context
 
@@ -151,10 +149,10 @@ was subsequently granted and its result is recorded below.
   `EvaluatorContext` callback, compatibility installation, and approved tests.
 - Focused/adjacent consumers: 15 passed. Full blocking pytest suite: 2,275
   passed in 314.44s. Lifecycle, coverage ledger, and whitespace checks passed.
-- Tested base SHA `98d71df0f553bc3c0b8173d7aeb2310fa40c7184`; worktree dirty;
-  macOS 27.0.0 arm64, Python 3.14.6, pytest 9.1.1. Final committed-SHA rerun
-  is still required; Ruff unavailable.
-- Same-context review found no blocker; final Adjudicator review was approved
-  on 2026-09-27.
-- Adjudicator approved the Phase 3 final review on 2026-09-27. Commit and
-  tested-final-commit evidence remain outstanding.
+- Commit `f50f116b7db287ad942d99bc9f4f38e5cb27cfb8` was verified with a clean
+  worktree. Focused/adjacent consumers: 15 passed; full blocking suite: 2,275
+  passed in 315.85s. Lifecycle and coverage-ledger checks passed. macOS 27.0.0
+  arm64, Python 3.14.6, pytest 9.1.1. Ruff unavailable.
+- Adjudicator approved the Phase 3 final review on 2026-09-27.
+
+Process review: no operating-contract deviation or operational problem found.

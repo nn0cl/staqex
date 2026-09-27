@@ -18,7 +18,7 @@ mixture binder without changing canonical routing or runtime behavior.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [LISS-0580](../issues/LISS-0580-legacy-when-binding-extraction.md) | in-progress — final review approved; commit and final-SHA verification pending | M | M | AIP-0580-001 | ADR 0227 accepted | - | `test/liss-0580-legacy-when-binding-red` |
+| [LISS-0580](../issues/LISS-0580-legacy-when-binding-extraction.md) | done | M | M | AIP-0580-001 | ADR 0227 accepted | - | `test/liss-0580-legacy-when-binding-red` |
 
 ## Recommended Order
 
@@ -43,11 +43,10 @@ mixture binder without changing canonical routing or runtime behavior.
 
 ## Current Next Issue
 
-- Issue: LISS-0580 final review.
-- Reason it is unblocked: Phase 3 review and current dirty-tree verification
-  are recorded in the spec, Issue, and review summary.
-- Adjudicator approval: final review approved 2026-09-27; commit and final
-  committed-SHA suite rerun are still required.
+- Issue: none in WP-0173.
+- Reason: the scoped extraction reached final Adjudicator approval and its
+  final commit passed the blocking suite.
+- Adjudicator approval: Phase 3 final review approved 2026-09-27.
 
 ## Risks
 
@@ -120,5 +119,7 @@ mixture binder without changing canonical routing or runtime behavior.
   quantitative source-structure budget is configured.
 - Evidence SHA `98d71df0f553bc3c0b8173d7aeb2310fa40c7184`, dirty tree;
   macOS 27.0.0 arm64, Python 3.14.6, pytest 9.1.1.
-- Phase 3 final review approved 2026-09-27; WP remains open pending commit and
-  tested-final-commit evidence.
+- Phase 3 final review approved 2026-09-27. Commit
+  `f50f116b7db287ad942d99bc9f4f38e5cb27cfb8` passed all 2,275 blocking tests.
+
+Process review: no operating-contract deviation or operational problem found.

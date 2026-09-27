@@ -258,7 +258,11 @@ specification acceptance.
   workspace inventory is 13 changed files (4 tracked-modified, 9 untracked).
 - Same-context reviewer disposition: no blocking readability or compatibility
   finding; this is weaker than separate-context review. Final Adjudicator
-  approval is recorded below; tested-final-commit evidence remains required.
+  approval and tested-final-commit evidence are recorded below.
 - Final review approval: `LISS-0580 Phase 3 最終レビュー 承認`, Adjudicator,
-  2026-09-27. Commit and full blocking-suite rerun on that commit remain before
-  closure.
+  2026-09-27. The approved final review required a commit and full
+  blocking-suite rerun; completion evidence follows.
+- Final commit verification: `f50f116b7db287ad942d99bc9f4f38e5cb27cfb8`, clean
+  worktree; focused/adjacent **15 passed**, full blocking suite **2,275 passed
+  in 315.85s**, lifecycle and coverage-ledger checks passed. Environment:
+  macOS 27.0.0 arm64, Python 3.14.6, pytest 9.1.1. Ruff unavailable.
