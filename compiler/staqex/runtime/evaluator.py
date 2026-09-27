@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import cmath
 import math
 import random
 from dataclasses import dataclass, field, replace
@@ -83,7 +82,6 @@ from ..ast_nodes import (
     UnitConvert,
     Vacuum,
     Var,
-    WhenExpr,
     SuperposeExpr,
     UnaryNot,
 )
@@ -97,7 +95,7 @@ from .op_attr_elaboration import (
     materialize_op_attrs,
     materialize_op_scalar_vars,
 )
-from .joint import EPS, Joint, sample_from_marginal
+from .joint import Joint, sample_from_marginal
 from .mixed_state import DensityStateValue, density_from_call, matrix_from_list
 from .lindblad import evolve_lindblad
 from .matrix import Matrix
@@ -117,6 +115,7 @@ from .evaluation.compatibility import (
     install_frame_compatibility as _install_frame_compatibility,
     install_operator_compatibility as _install_operator_compatibility,
     install_operator_projection_compatibility as _install_operator_projection_compatibility,
+    install_legacy_control_binding_compatibility as _install_legacy_control_binding_compatibility,
     install_value_compatibility as _install_value_compatibility,
 )
 from .evaluation.evolution import (
@@ -836,91 +835,6 @@ class Evaluator:
     def _compilation_unit(self) -> Any:
         return getattr(self, "_unit", None)
 
-    def _bind_when(self, joint: Joint, name: str, expr: WhenExpr) -> Joint:
-        if joint.is_vacuum():
-            return Joint.empty()
-        out_worlds = []
-        from .joint import World, _coalesce
-
-        for w in joint.worlds:
-            for ctrl, cp in self._ctrl_masses(expr.ctrl, w.assign).items():
-                if cp <= EPS:
-                    continue
-                arm_body = None
-                for arm in expr.arms:
-                    if arm.is_else:
-                        continue
-                    if _pat_match(arm.pat, ctrl):
-                        arm_body = arm.body
-                        break
-                if arm_body is None:
-                    for arm in expr.arms:
-                        if arm.is_else:
-                            arm_body = arm.body
-                            break
-                if arm_body is None:
-                    continue
-                amp = w.amp * cmath.sqrt(cp)
-                if isinstance(arm_body, Coin):
-                    for val, p in ((0, 0.5), (1, 0.5)):
-                        out_worlds.append(
-                            World(
-                                assign={**w.assign, name: val},
-                                amp=amp * cmath.sqrt(p),
-                                coord_phase=dict(w.coord_phase),
-                            )
-                        )
-                elif isinstance(arm_body, KetLit):
-                    # LISS-0138: prepare branching with ket arms (Never Leave
-                    # the State — mixture of computational / ± supports).
-                    from .quantum_ops import ket_support
-
-                    try:
-                        pairs = ket_support(arm_body.label)
-                    except ValueError as e:
-                        raise KernelError(str(e)) from e
-                    for val, kamp in pairs:
-                        na = amp * kamp
-                        if abs(na) ** 2 > EPS:
-                            out_worlds.append(
-                                World(
-                                    assign={**w.assign, name: val},
-                                    amp=na,
-                                    coord_phase=dict(w.coord_phase),
-                                )
-                            )
-                else:
-                    val = evaluate_value(self, arm_body, w.assign)
-                    out_worlds.append(
-                        World(
-                            assign={**w.assign, name: val},
-                            amp=amp,
-                            coord_phase=dict(w.coord_phase),
-                        )
-                    )
-        if not out_worlds:
-            return Joint.empty()
-        return Joint(worlds=_coalesce(out_worlds))
-
-    def _ctrl_masses(self, ctrl: Expr, assign: dict[str, Any]) -> dict[Any, float]:
-        if isinstance(ctrl, Coin):
-            return {0: 0.5, 1: 0.5}
-        if isinstance(ctrl, Var):
-            if ctrl.name in assign:
-                return {assign[ctrl.name]: 1.0}
-            # LISS-0225: classical enum / object binds live in self.objects.
-            if ctrl.name in self.objects:
-                return {self.objects[ctrl.name]: 1.0}
-            if ctrl.name in self.scalars:
-                return {self.scalars[ctrl.name]: 1.0}
-            raise KernelError(
-                f"when control `{ctrl.name}` is not bound in this world"
-            )
-        if isinstance(ctrl, (LitInt, LitFloat, LitBool)):
-            return {self._lit(ctrl): 1.0}
-        v = evaluate_value(self, ctrl, assign)
-        return {v: 1.0}
-
     def _expr_qualname(self, expr: Expr) -> str | None:
         """`Topology.ChainLattice` path from Var/Attr chain."""
         if isinstance(expr, Var):
@@ -1257,6 +1171,7 @@ _install_assignment_compatibility(Evaluator)
 _install_pipe_compatibility(Evaluator)
 _install_state_ops_compatibility(Evaluator)
 _install_operator_projection_compatibility(Evaluator)
+_install_legacy_control_binding_compatibility(Evaluator)
 
 
 def _is_numeric(value: Any) -> bool:
@@ -1341,20 +1256,6 @@ def _density_matrix_n_qubits(matrix: Matrix) -> int:
     and never encodes a qubit count -- the constructed matrix is the only
     source of truth."""
     return max(len(matrix), 2).bit_length() - 1
-
-
-def _pat_match(pat: Any, ctrl: Any) -> bool:
-    if pat == ctrl:
-        return True
-    if isinstance(pat, (int, float)) and isinstance(ctrl, (int, float)):
-        return float(pat) == float(ctrl)
-    # LISS-0225: when arms use bare variant idents (`Open`); controls are EnumValue.
-    if isinstance(ctrl, EnumValue):
-        if isinstance(pat, str) and pat == ctrl.variant:
-            return True
-        if isinstance(pat, Var) and pat.name == ctrl.variant:
-            return True
-    return False
 
 
 # LISS-0561 compatibility wiring: extracted lanes operate on the existing

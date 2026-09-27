@@ -68,6 +68,7 @@ from .continuous import (
     bind_finiteize_continuous,
 )
 from .execution import execute_legacy_ast_body
+from .legacy_control_binding import bind_when
 from .frames import bind_method, bind_user_function
 from .binding import bind, bind_names
 from .constructors import construct_instance, construct_struct
@@ -126,6 +127,13 @@ def install_execution_compatibility(evaluator_type: type[Any]) -> None:
     """Install execution successors without retaining facade method bodies."""
     evaluator_type._run_legacy_ast_body = execute_legacy_ast_body
     evaluator_type._run_unit_body = run_unit_body
+
+
+def install_legacy_control_binding_compatibility(
+    evaluator_type: type[Any],
+) -> None:
+    """Keep the legacy ``when`` callback on the live Evaluator context."""
+    evaluator_type._bind_when = bind_when
 
 
 def install_frame_compatibility(evaluator_type: type[Any]) -> None:

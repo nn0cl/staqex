@@ -8,6 +8,19 @@ Record meta-level patterns only. No session transcripts.
 ## Lesson
 
 - Date: 2026-09-27
+- Class: status-drift
+- Pattern: active-Red lifecycle validation detects terminal wording by
+  substring, so an active Issue status containing `complete` can be rejected
+  as terminal even when its leading state is in-progress.
+- What later design or implementation must do: avoid terminal-state words in
+  active-Red status text until the validator uses structured states or exact
+  token matching; rerun lifecycle validation after status synchronization.
+- Source issue or work plan: LISS-0580 / WP-0173
+- Status: applied
+
+## Lesson
+
+- Date: 2026-09-27
 - Class: acceptance-inventory-reconciliation
 - Pattern: a passing reviewed suite can still omit cases explicitly listed as
   minimum evidence in its accepted specification when the review does not map
