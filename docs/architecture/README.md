@@ -92,6 +92,10 @@ See `docs/collaboration/project-conventions.md`.
 - `adr/0018-agent-skills-for-on-demand-procedures.md`
 - `adr/0019-verification-structure-and-review.md`
 
+## Accepted Staqex Runtime Decisions
+
+- [`adr/0228-evaluator-coordinate-liveness-boundary.md`](adr/0228-evaluator-coordinate-liveness-boundary.md)
+
 ## Remaining Technology Evaluation
 
 See Current non-decisions in `docs/collaboration/project-conventions.md`.
