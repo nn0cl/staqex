@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import cmath
 import math
 import random
 from dataclasses import dataclass, field, replace
@@ -82,6 +83,7 @@ from ..ast_nodes import (
     UnitConvert,
     Vacuum,
     Var,
+    WhenExpr,
     SuperposeExpr,
     UnaryNot,
 )
@@ -95,7 +97,7 @@ from .op_attr_elaboration import (
     materialize_op_attrs,
     materialize_op_scalar_vars,
 )
-from .joint import Joint, sample_from_marginal
+from .joint import EPS, Joint, sample_from_marginal
 from .mixed_state import DensityStateValue, density_from_call, matrix_from_list
 from .lindblad import evolve_lindblad
 from .matrix import Matrix
