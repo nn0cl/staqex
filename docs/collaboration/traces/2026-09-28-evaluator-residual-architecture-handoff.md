@@ -2,13 +2,15 @@
 
 ## Current State
 
-- Current phase: Phase 3 Refactor and human final review approved on dirty
-  worktree. Commit and post-commit verification remain outstanding.
+- Current phase: Phase 3 approved; implementation commit verified; PR delivery
+  (push, browser-created PR, CI, merge) in progress.
 - User request: investigate and decompose remaining Evaluator responsibilities;
   current tracked slice is LISS-0581 coordinate liveness.
 - Scope: Phase 0 architecture/design, reviewed Phase 1 Red tests, and Phases 2
   and 3 implementation within their recorded allowlists.
-- Out of scope: commit, push, PR, merge, and issue closure.
+- Scope: approved implementation, closeout record, commit, push, browser PR,
+  CI gate, and merge.
+- Out of scope: unrelated evaluator residual candidates.
 
 ## Completed
 
@@ -27,9 +29,9 @@
   ledger, CI shell syntax, refactor baseline, and `git diff --check` passed.
   Phase 2 details are in [its verification record](../reviews/2026-09-28-liss-0581-phase2-verification.md);
   Phase 3 details/review are in [its packet](../reviews/2026-09-28-liss-0581-phase3-refactor-review.md).
-  Python 3.14.6 on macOS 27.0, tested HEAD
-  `83c93a524c7c90710ed965d231ffe85b20dc3163`, dirty worktree; final-commit
-  rerun still required.
+  Implementation commit `7e067d5a136385e85cf497b6bac5d5338c8aff8b` passed
+  all blocking tests: 2,280 passed in 317.38s, Python 3.14.6/macOS 27.0.
+  Final closeout commit is awaiting push and GitHub CI on its exact SHA.
 
 ## Changed Files
 
@@ -76,13 +78,13 @@
 
 ## Next Safe Action
 
-Phase 3 refactoring and human final-review approval have passed. No commit has
-been made; this approval was not a commit request. After an authorized commit,
-rerun all blocking suites against that SHA. Phase 3 review packet:
+Phase 3 refactoring and human final-review approval have passed. The
+implementation commit is `7e067d5a136385e85cf497b6bac5d5338c8aff8b` and its
+all-blocking suite passed. Next: push the closeout commit, create the PR in the
+browser, inspect CI, and merge only when green. Phase 3 review packet:
 `docs/collaboration/reviews/2026-09-28-liss-0581-phase3-refactor-review.md`.
 
 ## Blockers
 
-- Commit and post-commit verification pending. The working tree is uncommitted on
-  `feature/liss-0581-red`; Phase 0 and Phase 1 artifacts as well as Phase 2
-  implementation remain in this same uncommitted change set.
+- Closeout commit push and final-SHA CI are pending. Branch:
+  `feature/liss-0581-red`.

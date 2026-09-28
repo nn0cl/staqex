@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status | active — LISS-0581 Phase 3 final review approved; commit/verification pending |
+| Status | active — LISS-0581 complete; next residual candidate requires separate intake |
 | Size | M |
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
-| Current candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0581 commit and post-commit all-blocking verification |
+| Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
+| Current Next Issue | none approved; rank-2 runtime-plan candidate needs separate design intake and approval |
 
 ## Goal
 
@@ -20,7 +20,7 @@ Evaluator's unique mutable-state ownership.
 
 | Rank | Residual responsibility | Evidence | Disposition |
 |---:|---|---|---|
-| 1 | Coordinate liveness and Trace-Out: five Evaluator helpers and duplicate frame helpers | Shared consumers in frames, pipes, evolution, execution, observation; tied to existing ADR 0138/0142/0153/0158 behavior | Phase 3 final review approved; commit and post-commit all-blocking verification remain pending |
+| 1 | Coordinate liveness and Trace-Out: five Evaluator helpers and duplicate frame helpers | Shared consumers in frames, pipes, evolution, execution, observation; tied to existing ADR 0138/0142/0153/0158 behavior | LISS-0581 done; implementation commit passed 2,280 tests; PR delivery pending GitHub CI and merge |
 | 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Partly routed by `evaluation/orchestration.py`; close to semantic-plan eligibility and existing canonical/legacy boundaries | Defer until separate consumer and authority review; do not combine with liveness |
 | 3 | Static `forEach` expansion | 51-line evaluator body, calls binding dispatch for each expanded wire | Separate execution/loop boundary study; avoid enlarging `execution.py` without line/body budget review |
 | 4 | Tensor binding | 45-line evaluator body; owns `Joint` transformation and dispatch dependency | Separate binding/algebra slice; not an external-resource adapter and not automatically part of `binding.py` |

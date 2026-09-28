@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | Architecture boundary accepted by [ADR 0228](../architecture/adr/0228-evaluator-coordinate-liveness-boundary.md); Phase 0, Phase 1 review, Phase 2 implementation, Phase 3 refactor/same-context review, and human Phase 3 final review approved; commit and post-commit verification pending |
+| Status | Architecture boundary accepted by [ADR 0228](../architecture/adr/0228-evaluator-coordinate-liveness-boundary.md); all phases and human final review approved; implementation commit passed all 2,280 tests; final closeout SHA awaits GitHub CI before merge |
 | Scope candidate | WP-0174 / LISS-0581 |
 | Source authority | [ADR 0228](../architecture/adr/0228-evaluator-coordinate-liveness-boundary.md); [Core module decomposition](staqex-core-module-decomposition.md); accepted runtime decisions ADR 0138/0142/0153/0158 as recovered in [DEC-0005](../architecture/decision-themes/dec-0005-quantum-operations-and-runtime.md) and [WP-0064 trace](../collaboration/traces/2026-07-31-wp-0064-interprocedural-trace-out.md) |
 
@@ -111,8 +111,9 @@ for exact commands, tested SHA, environment, and limitations. Phase 3 then
 split the 131-line `expr_free_vars` traversal into named binder, operator, and
 ordinary-expression helpers without changing tests. The [Phase 3 review
 packet](../collaboration/reviews/2026-09-28-liss-0581-phase3-refactor-review.md)
-records the refactor verification and human final-review approval. Commit and
-post-commit verification remain outstanding.
+records the refactor verification and human final-review approval. Implementation
+commit `7e067d5a136385e85cf497b6bac5d5338c8aff8b` passed all 2,280 tests; the
+documentation closeout commit must pass final-SHA GitHub CI before merge.
 
 ## Phase 0 acceptance closure
 

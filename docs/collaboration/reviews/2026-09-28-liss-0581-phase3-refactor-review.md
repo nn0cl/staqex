@@ -64,6 +64,13 @@ semantic, dependency, or consumer boundary changed.
   (313.53s). It ran after the refactor and before a whitespace-only line wrap;
   focused tests, spec verification, compilation, and diff checks were rerun
   after that formatting-only edit.
+- Post-commit all-blocking verification:
+  `.venv/bin/pytest tests/ -q` on commit
+  `7e067d5a136385e85cf497b6bac5d5338c8aff8b` — 2,280 passed, 0
+  failures/errors (317.38s); clean worktree at run start, local macOS 27.0
+  build 26A428, Python 3.14.6. This verifies the implementation commit. A
+  later documentation-only closeout commit will rely on GitHub CI tied to its
+  final branch SHA as the delivery gate.
 - Specification verification: `python3 tests/spec_verification/run_all.py` —
   161/161 passed (100%), after final source formatting.
 - Also passed after the refactor: document lifecycle (1 register), Active Red
@@ -108,6 +115,9 @@ unavailable.
   was requested by this phase approval.
 - Human final-review decision: approved —
   `WP-0174 / LISS-0581 Phase 3 最終レビュー 承認`, 2026-09-28.
-- Next action: after commit authorization, commit the reviewed change set and
-  rerun every blocking suite against that exact commit SHA.
-- Final-commit verification: still required after an eventual commit.
+- Implementation commit: `7e067d5a136385e85cf497b6bac5d5338c8aff8b`.
+- Process review: no operating-contract deviation or operational problem
+  found; recorded in the Issue. The separate status-sync closeout commit must
+  pass its final-SHA GitHub CI before merge.
+- Next action: push the branch, open the PR in the browser, inspect all checks,
+  and merge only after required CI is green.

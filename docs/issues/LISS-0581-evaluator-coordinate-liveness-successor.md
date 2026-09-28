@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0581
 - GitHub issue: none
-- Status: active — Phase 3 final review approved; commit and post-commit verification pending
-- Phase: phase-3-final-review-approved
+- Status: done — Phase 3 final review approved; implementation commit verified; PR delivery pending
+- Phase: done
 - Type: behavior-preserving evaluator decomposition
 - Priority: normal
 - Initial planning size: M
@@ -69,9 +69,10 @@ and status synchronization. Detailed dispositions are in the spec.
 
 Phase 2 implementation and verification are recorded in the
 [Phase 2 verification record](../collaboration/reviews/2026-09-28-liss-0581-phase2-verification.md).
-Phase 3 changes and the same-context review are recorded in the
-[Phase 3 review packet](../collaboration/reviews/2026-09-28-liss-0581-phase3-refactor-review.md).
 Human Phase 3 final-review approval is recorded in the
 [Phase 3 review packet](../collaboration/reviews/2026-09-28-liss-0581-phase3-refactor-review.md).
-The working tree remains uncommitted; after an authorized commit, rerun all
-blocking suites against its exact SHA before considering issue closure.
+Implementation commit `7e067d5a136385e85cf497b6bac5d5338c8aff8b` passed the
+all-blocking suite (2,280 tests). PR/merge delivery remains in progress and is
+gated on GitHub CI for the final branch SHA.
+
+Process review: no operating-contract deviation or operational problem found.
