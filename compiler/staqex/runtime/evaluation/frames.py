@@ -9,25 +9,7 @@ from ...ast_nodes import AssignStmt, Call, Measure, OpVar, ReturnStmt, Snapshot,
 from ..joint import Joint
 from .context import EvaluatorContext
 from .errors import KernelError
-
-
-def _joint_coord_names(context: EvaluatorContext, joint: Joint) -> set[str]:
-    names: set[str] = set()
-    for world in joint.worlds:
-        names.update(world.assign)
-    return names
-
-
-def _trace_out_dead_fn_locals(
-    context: EvaluatorContext,
-    joint: Joint,
-    pre_live: set[str],
-    result_names: list[str],
-) -> Joint:
-    keep = pre_live | set(result_names)
-    for coord in sorted(_joint_coord_names(context, joint) - keep):
-        joint = joint.trace_out(coord)
-    return joint
+from .liveness import joint_coord_names, trace_out_dead_fn_locals
 
 
 def _restore_operators(context: EvaluatorContext, saved: dict[str, Any]) -> None:
@@ -233,7 +215,7 @@ def bind_user_function(
             raise KernelError(
                 f"`{fun.name}` expects {len(fun.params)} args, got {len(expr.args)}"
             )
-        pre_live = _joint_coord_names(context, joint)
+        pre_live = joint_coord_names(joint)
         saved_operators = dict(context._operator_environment())
         # Bind arguments onto parameter coordinates
         for param, arg in zip(fun.params, expr.args):
@@ -304,7 +286,7 @@ def bind_user_function(
             if len(names) == 0:
                 # A result with no destination is still evaluated for its
                 # state-preserving transform, but has no visible coordinate.
-                result_joint = _trace_out_dead_fn_locals(context, joint, pre_live, names)
+                result_joint = trace_out_dead_fn_locals(joint, pre_live, names)
                 _restore_operators(context, saved_operators)
                 return result_joint
             # Operator-returning functions bind their result in the operator
@@ -334,14 +316,14 @@ def bind_user_function(
             if "Uncompute" in fun.effects:
                 for n in names:
                     context._require_uncompute_zero(result_joint, n)
-            result_joint = _trace_out_dead_fn_locals(context, result_joint, pre_live, names)
+            result_joint = trace_out_dead_fn_locals(result_joint, pre_live, names)
             _restore_operators(context, saved_operators)
             return result_joint
 
         # Legacy state-transformer path: project parameter coordinates into
         # the caller's bind names when no explicit result expression exists.
         if len(names) == 0:
-            result_joint = _trace_out_dead_fn_locals(context, joint, pre_live, names)
+            result_joint = trace_out_dead_fn_locals(joint, pre_live, names)
             _restore_operators(context, saved_operators)
             return result_joint
         if len(names) == len(fun.params):
@@ -350,13 +332,13 @@ def bind_user_function(
                 for n, p in zip(names, fun.params)
             }
             result_joint = joint.bind_multi(updates)
-            result_joint = _trace_out_dead_fn_locals(context, result_joint, pre_live, names)
+            result_joint = trace_out_dead_fn_locals(result_joint, pre_live, names)
             _restore_operators(context, saved_operators)
             return result_joint
         if len(names) == 1 and len(fun.params) == 1:
             p = fun.params[0].name
             result_joint = joint.bind_pushforward(names[0], lambda a, pn=p: a[pn])
-            result_joint = _trace_out_dead_fn_locals(context, result_joint, pre_live, names)
+            result_joint = trace_out_dead_fn_locals(result_joint, pre_live, names)
             _restore_operators(context, saved_operators)
             return result_joint
         raise KernelError(

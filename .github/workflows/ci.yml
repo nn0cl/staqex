@@ -138,7 +138,8 @@ jobs:
             docs/architecture/decision-themes/dec-0006-host-qpu-and-external-ports.md \
             docs/architecture/decision-themes/dec-0007-documentation-and-decision-records.md \
             docs/architecture/adr/0187-documentation-source-record-compaction.md \
-            docs/architecture/adr/0188-decision-theme-canonical-surface.md; do
+            docs/architecture/adr/0188-decision-theme-canonical-surface.md \
+            docs/architecture/adr/0228-evaluator-coordinate-liveness-boundary.md; do
             test -f "$file"
           done
 

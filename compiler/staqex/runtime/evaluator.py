@@ -135,6 +135,7 @@ from .evaluation.orchestration import (
     execute_pure_transformation_plan,
 )
 from .evaluation import dynamic_lane as _dynamic_lane_evaluation
+from .evaluation import liveness as _liveness_evaluation
 from .evaluation import observation as _observation_evaluation
 from .evaluation.values import evaluate_value
 from ..static_hilbert import MVP_MAX_LOGICAL_QUBITS
@@ -923,19 +924,15 @@ class Evaluator:
 
     @staticmethod
     def _joint_coord_names(joint: Joint) -> set[str]:
-        names: set[str] = set()
-        for w in joint.worlds:
-            names.update(w.assign)
-        return names
+        return _liveness_evaluation.joint_coord_names(joint)
 
     def _trace_out_dead_fn_locals(
         self, joint: Joint, pre_live: set[str], result_names: list[str]
     ) -> Joint:
         """ADR 0138: drop fn-local axes not live before the Call and not results."""
-        keep = pre_live | set(result_names)
-        for coord in sorted(self._joint_coord_names(joint) - keep):
-            joint = joint.trace_out(coord)
-        return joint
+        return _liveness_evaluation.trace_out_dead_fn_locals(
+            joint, pre_live, result_names
+        )
 
     def _set_fusion_evidence(
         self,
@@ -963,32 +960,12 @@ class Evaluator:
     @classmethod
     def _main_interproc_trace_eligible(cls, stmts: list[Any]) -> bool:
         """ADR 0158: skip mains with inspect / snapshot (same family as ADR 0140)."""
-        for stmt in stmts:
-            if isinstance(stmt, Snapshot):
-                return False
-            if isinstance(stmt, StateBind) and cls._expr_has_inspect(stmt.expr):
-                return False
-            if isinstance(stmt, Measure) and cls._expr_has_inspect(stmt.expr):
-                return False
-            if isinstance(stmt, ExprStmt) and cls._expr_has_inspect(stmt.expr):
-                return False
-        return True
+        return _liveness_evaluation.main_interproc_trace_eligible(stmts)
 
     @classmethod
     def _stmts_live_vars(cls, stmts: list[Any]) -> set[str]:
         """Free-var union of subsequent main stmts (thin live-out, ADR 0158)."""
-        live: set[str] = set()
-        for stmt in stmts:
-            if isinstance(stmt, StateBind):
-                live |= cls._expr_free_vars(stmt.expr)
-            elif isinstance(stmt, Measure):
-                live |= cls._expr_free_vars(stmt.expr)
-                live |= set(stmt.tracing_out)
-            elif isinstance(stmt, Snapshot):
-                live |= cls._expr_free_vars(stmt.expr)
-            elif isinstance(stmt, ExprStmt):
-                live |= cls._expr_free_vars(stmt.expr)
-        return live
+        return _liveness_evaluation.stmts_live_vars(stmts)
 
     def _trace_out_dead_caller_coords(
         self,
@@ -997,10 +974,9 @@ class Evaluator:
         result_names: list[str],
     ) -> Joint:
         """ADR 0158: drop caller axes absent from post-Call free-var live-out."""
-        keep = live_out | set(result_names)
-        for coord in sorted(self._joint_coord_names(joint) - keep):
-            joint = joint.trace_out(coord)
-        return joint
+        return _liveness_evaluation.trace_out_dead_caller_coords(
+            joint, live_out, result_names
+        )
 
     @staticmethod
     def _fill_partial(

@@ -18,34 +18,48 @@ extend, or reinterpret behavior.
 
 ## Current evidence
 
-Evaluator source and structure measurements below distinguish the then-current
-`main` baseline from the completed LISS-0577/0578 integration branch. Counts
-are physical lines; method counts use Python AST and count methods directly
-declared on `Evaluator`.
+Measurements below are from integrated `main` at
+`83c93a524c7c90710ed965d231ffe85b20dc3163` on 2026-09-28. Counts are physical
+lines; Evaluator method counts are Python AST methods directly declared on
+`Evaluator`.
 
 | Module | Lines | Current responsibility |
 |---|---:|---|
-| `runtime/evaluator.py` on main before LISS-0577/0578 | 1,867 | State-owning compatibility facade and residual orchestration/evaluation bodies; 82 methods |
-| `runtime/evaluator.py` after LISS-0577/0578 | 1,477 | State-owning compatibility facade and residual orchestration/evaluation bodies; 78 methods |
-| `runtime/evaluation/observation.py` | 768 | Observation and measurement family |
-| `runtime/evaluation/operators.py` | 619 | Operator resolution/lowering family |
-| `runtime/evaluation/calls.py` | 532 | State/call binding family |
-| `runtime/evaluation/hamiltonian_evolution.py` | 467 | Hamiltonian, tuple, grid evolution |
+| `runtime/evaluator.py` | 1,307 / 75 methods | Mutable runtime-state owner, public compatibility surface, residual orchestration and dispatch |
+| `runtime/evaluation/observation.py` | 768 | Observation, measurement, deferred execution, and shared AST inspection/free-variable helpers |
+| `runtime/evaluation/operators.py` | 619 | Operator resolution and lowering |
+| `runtime/evaluation/calls.py` | 532 | Call dispatch and binding |
+| `runtime/evaluation/hamiltonian_evolution.py` | 467 | Hamiltonian, tuple, and grid evolution |
 | `runtime/evaluation/execution.py` | 463 | Legacy AST execution and statement routing |
 | `runtime/evaluation/classical.py` | 429 | Classical value and attribute evaluation |
-| `runtime/evaluation/classical_calls.py` | 324 | Classical function and method call evaluation |
-| `runtime/evaluation/classical_operator_eval.py` | 147 | Classical Operator expression and binder evaluation |
+| `runtime/evaluation/frames.py` | 364 | Function/method invocation frames; contains duplicate coordinate Trace-Out helpers |
+| `runtime/evaluation/pipes.py` | 346 | Pipes, blocks, polynomial and fusion helpers |
+| `runtime/evaluation/evolution_ops.py` | 345 | Evolution dispatch and operations |
+| `runtime/evaluation/binding.py` | 244 | Binding dispatch |
+| `runtime/evaluation/orchestration.py` | 149 | Runtime-plan family routing |
+| `runtime/evaluation/classical_operator_eval.py` | 147 | Classical Operator-expression and binder evaluation |
+| `runtime/evaluation/legacy_control_binding.py` | 141 | Extracted legacy `when` binding |
+| `runtime/evaluation/operator_projection.py` | 117 | General-Operator projection |
 | `typecheck.py` | 4,678 | Separate compiler phase; outside evaluator decomposition |
 | `parser.py` | 3,679 | Separate compiler phase; outside evaluator decomposition |
 
-The Evaluator's remaining active method bodies cluster around runtime-plan
-eligibility, statement/tensor dispatch, state-preserving `when`, classical
-operator projection, and continuous-field handling. Classical function/method
-evaluation and classical Operator-expression/binder evaluation are now owned
-by `runtime/evaluation/classical_calls.py` and
-`runtime/evaluation/classical_operator_eval.py` respectively. Several facade
-forwarders are intentionally thin and should not be moved only to improve a
-count.
+The latest extractions are integrated: LISS-0577/LISS-0578 own classical call
+and classical Operator-expression evaluation; LISS-0579 owns general-Operator
+projection; LISS-0580 owns legacy `when` binding. They retain Evaluator as the
+single mutable-state owner. Earlier integrated-branch/pending-merge
+measurements below are historical and do not describe current `main`.
+
+The remaining implementation bodies are not one cohesive family. Static
+inspection identifies coordinate liveness/Trace-Out reuse, runtime-plan
+eligibility, static `forEach`, tensor binding, host coefficient-array
+resolution, partial-call filling, and small classical state helpers as
+distinct candidates. The proposed next candidate is coordinate
+liveness/Trace-Out because Evaluator and `frames.py` duplicate coordinate
+helpers and the family has consumers in execution, observation, pipes, and
+evolution. The boundary is accepted by ADR 0228; LISS-0581 Phase 0 acceptance
+and implementation remain pending. The explicitly retained
+`_eval_set_comprehension` boundary in the accepted classical Operator
+specification remains unchanged.
 
 ### Completed classical evaluator successors — LISS-0577 / LISS-0578
 
@@ -56,13 +70,8 @@ Operator-expression and binder evaluation to
 mutable state owner in `Evaluator`, preserve compatibility hooks, and have
 separate accepted specifications, issue records, and final reviews. LISS-0578
 also carries the separately approved behavior-preservation baseline sync.
-These work units are complete on the integration branch; GitHub CI and merge
-verification remain pending until integration.
-
-The integrated worktree measurement is 1,477 lines / 78 methods. The
-pre-integration main measurement remains 1,867 lines / 82 methods; the merge
-adds main's LISS-0576/0168 documentation and source state before final
-verification.
+These work units are complete on integrated `main`; LISS-0579 and LISS-0580
+are also complete there.
 
 ### Accepted residual-body cleanup boundary — LISS-0576
 

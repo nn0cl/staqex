@@ -7,6 +7,22 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-28
+- Class: recursive-ast-walker-refactor
+- Pattern: a monolithic recursive AST walker can conflate binder scope,
+  operator traversal, and ordinary expression traversal; extracting helpers
+  can accidentally change visitation order or the point where shared
+  accumulator state is adjusted.
+- What later design or implementation must do: group node variants by semantic
+  responsibility, preserve child visitation and accumulator mutation order,
+  and compare private consumer/hook behavior plus the full suite before
+  accepting a behavior-preserving refactor.
+- Source issue or work plan: LISS-0581 / WP-0174
+- Status: applied in LISS-0581 Phase 3; carry forward to future AST walker
+  decomposition work.
+
+## Lesson
+
 - Date: 2026-09-27
 - Class: status-drift
 - Pattern: active-Red lifecycle validation detects terminal wording by
@@ -31,7 +47,8 @@ Record meta-level patterns only. No session transcripts.
   unreachable/out of scope. Reconcile again before declaring Green.
 - Source issue or work plan: LISS-0579 / WP-0172
 - Status: applied in the bounded Phase 1 contract correction and accepted test
-  review; carry forward to later acceptance inventories
+  review; reapplied in LISS-0581 Phase 0 acceptance, Phase 1 Red design, and
+  accepted Phase 1 test review; carry forward to later acceptance inventories
 
 ## Lesson
 
@@ -90,8 +107,9 @@ Record meta-level patterns only. No session transcripts.
 - What later design or implementation must do: reuse the nearest authoritative
   test API, distinguish fixture failures from product failures, and rerun the
   exact bounded suite before review.
-- Source issue or work plan: LISS-0573 / WP-0167
-- Status: applied
+- Source issue or work plan: LISS-0573 / WP-0167; LISS-0581 / WP-0174
+- Status: applied in LISS-0573 and reapplied in LISS-0581 by repairing the
+  initial import/linear-state fixture issues before classifying product Red.
 
 ## Lesson
 
