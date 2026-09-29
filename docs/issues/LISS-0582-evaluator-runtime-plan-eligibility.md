@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0582
 - GitHub issue: none
-- Status: in progress — Phase 2 Green implemented; Phase 3 review pending
+- Status: in progress — Phase 3 review passed; final verification pending
 - Phase: phase-1-red
 - Type: behavior-preserving evaluator decomposition
 - Priority: normal
@@ -102,10 +102,9 @@ production source was changed.
 Implementation approval was received in the thread on 2026-09-29:
 `Phase 2 Green／実装承認`. The minimum successor boundary is implemented and
 verified with focused, consumer/adjacent, lifecycle, and all-blocking suites.
-Phase 3 refactor/review remains separate.
+Phase 3 refactor/review is recorded in the Phase 3 review packet.
 
 ## Next gate
 
-Request separate **Phase 3 Refactor/review approval**, if needed. Do not mark
-the issue complete until final-commit verification and process review are
-recorded.
+The Phase 3 review passed. Do not mark the issue complete until final-commit
+verification and process review are recorded.

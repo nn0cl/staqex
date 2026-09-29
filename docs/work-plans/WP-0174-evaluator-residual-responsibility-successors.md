@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) — Phase 2 Green implemented; Phase 3 review pending |
+| Current Next Issue | [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) — Phase 3 review passed; final verification pending |
 
 ## Goal
 
@@ -37,7 +37,7 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---|---|---|---|---|---|
 | [LISS-0581](../issues/LISS-0581-evaluator-coordinate-liveness-successor.md) | done — PR #603 merged and CI passed | M | M | AIP-0581-001 | ADR 0228 accepted | - | `feature/liss-0581-red` (deleted after merge) |
-| [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | in progress — Phase 2 Green implemented; Phase 3 review pending | M | M | AIP-0582-001 | none | - | `feature/liss-0582-runtime-plan-eligibility` |
+| [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | in progress — Phase 3 review passed; final verification pending | M | M | AIP-0582-001 | none | - | `feature/liss-0582-runtime-plan-eligibility` |
 
 ## Verification and approval gates
 

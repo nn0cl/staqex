@@ -143,6 +143,6 @@ Verification is recorded in [the Phase 2 Green review packet](../collaboration/r
 
 ## Next decision gate
 
-Adjudicator approval for **Phase 3 Refactor/review**, if any readability or
-body-budget restructuring is requested. Otherwise the normal completion gate
-still requires final commit verification, process review, and status sync.
+Phase 3 review passed for the bounded import-hygiene refactor. The normal
+completion gate still requires final commit verification, process review, and
+status sync.

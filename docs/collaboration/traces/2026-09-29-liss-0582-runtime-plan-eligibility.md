@@ -4,7 +4,7 @@
 
 - Date: 2026-09-29
 - User request: Proceed with WP-0174 rank 2, Runtime-plan eligibility/projection; approved.
-- Current phase: Phase 2 Green implemented; Phase 3 review pending
+- Current phase: Phase 3 review passed; final verification pending
 - Canonical issue or work plan: LISS-0582 / WP-0174 / WP-0160
 - AI planning record: AIP-0582-001
 
@@ -75,7 +75,8 @@
   the human Adjudicator on 2026-09-29.
 - Phase 2 Green / implementation: approved by the human Adjudicator on
   2026-09-29 with `Phase 2 Green／実装承認`.
-- Phase 3 refactor/review: not requested and not granted.
+- Phase 3 Refactor/review: approved by the human Adjudicator on 2026-09-29
+  with `Phase 3 Refactor／review approval`.
 
 ## Verification
 
@@ -88,6 +89,9 @@
   passed`; all-blocking suite `2285 passed` in the local macOS worktree with
   Python 3.14.6 and `.venv` on commit `cc139c24`. A record-only amendment is
   followed by the required final-commit rerun.
+- Phase 3 result: removed imports left behind by the body extraction; focused
+  and adjacent suites `52 passed`, syntax compilation and `git diff --check`
+  passed. Final-commit blocking verification remains pending.
 
 ## Changed Files
 
@@ -104,9 +108,9 @@
 - `compiler/staqex/runtime/evaluation/orchestration.py`
 - `compiler/staqex/runtime/evaluator.py`
 - `docs/collaboration/reviews/2026-09-29-liss-0582-phase2-green-review.md`
+- `docs/collaboration/reviews/2026-09-29-liss-0582-phase3-review.md`
 
 ## Next Safe Action
 
-Commit the Phase 2 Green implementation, rerun all blocking suites against the
-final commit, then request Phase 3 review or perform the separately required
-completion process review.
+Commit the bounded Phase 3 refactor, rerun all blocking suites against the
+final commit, then perform the separately required completion process review.

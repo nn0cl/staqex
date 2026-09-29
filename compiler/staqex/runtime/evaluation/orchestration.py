@@ -10,8 +10,8 @@ from __future__ import annotations
 from typing import Any, TextIO
 
 from ...ast_nodes import CompilationUnit
-from .context import EvaluatorContext
 from . import plan_eligibility
+from .context import EvaluatorContext
 
 
 def execute_canonical_unit(
