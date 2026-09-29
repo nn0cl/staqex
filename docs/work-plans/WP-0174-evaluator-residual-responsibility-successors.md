@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | none approved; rank-2 runtime-plan candidate needs separate design intake and approval |
+| Current Next Issue | [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) — Phase 2 Green implemented; Phase 3 review pending |
 
 ## Goal
 
@@ -21,7 +21,7 @@ Evaluator's unique mutable-state ownership.
 | Rank | Residual responsibility | Evidence | Disposition |
 |---:|---|---|---|
 | 1 | Coordinate liveness and Trace-Out: five Evaluator helpers and duplicate frame helpers | Shared consumers in frames, pipes, evolution, execution, observation; tied to existing ADR 0138/0142/0153/0158 behavior | LISS-0581 done; implementation commit passed 2,280 tests; PR delivery pending GitHub CI and merge |
-| 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Partly routed by `evaluation/orchestration.py`; close to semantic-plan eligibility and existing canonical/legacy boundaries | Defer until separate consumer and authority review; do not combine with liveness |
+| 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Partly routed by `evaluation/orchestration.py`; close to semantic-plan eligibility and existing canonical/legacy boundaries | LISS-0582 Phase 1 Red accepted; Phase 2 Green approval pending; do not combine with liveness |
 | 3 | Static `forEach` expansion | 51-line evaluator body, calls binding dispatch for each expanded wire | Separate execution/loop boundary study; avoid enlarging `execution.py` without line/body budget review |
 | 4 | Tensor binding | 45-line evaluator body; owns `Joint` transformation and dispatch dependency | Separate binding/algebra slice; not an external-resource adapter and not automatically part of `binding.py` |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | Treat as resource/input-boundary design, not generic evaluator helper extraction |
@@ -36,7 +36,8 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---|---|---|---|---|---|
-| [LISS-0581](../issues/LISS-0581-evaluator-coordinate-liveness-successor.md) | active — Phase 3 final review approved; commit/verification pending | M | M | AIP-0581-001 | ADR 0228 accepted | - | `feature/liss-0581-red` |
+| [LISS-0581](../issues/LISS-0581-evaluator-coordinate-liveness-successor.md) | done — PR #603 merged and CI passed | M | M | AIP-0581-001 | ADR 0228 accepted | - | `feature/liss-0581-red` (deleted after merge) |
+| [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | in progress — Phase 2 Green implemented; Phase 3 review pending | M | M | AIP-0582-001 | none | - | `feature/liss-0582-runtime-plan-eligibility` |
 
 ## Verification and approval gates
 
