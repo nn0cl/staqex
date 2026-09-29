@@ -4,7 +4,7 @@
 
 - Date: 2026-09-29
 - User request: Proceed with WP-0174 rank 2, Runtime-plan eligibility/projection; approved.
-- Current phase: Phase 3 review passed; final verification pending
+- Current phase: done — Phase 3 review and final verification passed
 - Canonical issue or work plan: LISS-0582 / WP-0174 / WP-0160
 - AI planning record: AIP-0582-001
 
@@ -91,7 +91,13 @@
   followed by the required final-commit rerun.
 - Phase 3 result: removed imports left behind by the body extraction; focused
   and adjacent suites `52 passed`, syntax compilation and `git diff --check`
-  passed. Final-commit blocking verification remains pending.
+  passed.
+- Final verification: approved by the human Adjudicator on 2026-09-29 with
+  `Phase 3 review passed; final verification承認`; final commit
+  `7620eb8c7b6843de4d821f4100c1d029e0a8b572` all-blocking suite `2285 passed`,
+  lifecycle validation passed, and the tree was clean.
+- Process review: no operating-contract deviation or operational problem
+  found.
 
 ## Changed Files
 
@@ -110,7 +116,7 @@
 - `docs/collaboration/reviews/2026-09-29-liss-0582-phase2-green-review.md`
 - `docs/collaboration/reviews/2026-09-29-liss-0582-phase3-review.md`
 
-## Next Safe Action
+## Completion
 
-Commit the bounded Phase 3 refactor, rerun all blocking suites against the
-final commit, then perform the separately required completion process review.
+LISS-0582 is done. Lower-ranked WP-0174 candidates require separate design
+intake and approval.

@@ -15,10 +15,4 @@ version = 1
 
 # LISS-0581 Phase 2 Green passed both approved structural Red nodes.
 
-[[active_red]]
-issue = "LISS-0582"
-test = "tests/test_liss_0582_runtime_plan_eligibility_red.py"
-phase = "phase-1-red"
-owner = "Codex host agent"
-review_by = "2026-10-02"
-review_condition = "Adjudicator reviews and accepts the Phase 1 Red tests before Phase 2."
+# LISS-0582 Phase 3 review and final verification passed; Active-Red retired.

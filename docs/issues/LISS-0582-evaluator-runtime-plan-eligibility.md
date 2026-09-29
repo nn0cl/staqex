@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0582
 - GitHub issue: none
-- Status: in progress — Phase 3 review passed; final verification pending
-- Phase: phase-1-red
+- Status: done — Phase 3 review and final verification passed
+- Phase: phase-3-refactor
 - Type: behavior-preserving evaluator decomposition
 - Priority: normal
 - Initial planning size: M
@@ -104,7 +104,16 @@ Implementation approval was received in the thread on 2026-09-29:
 verified with focused, consumer/adjacent, lifecycle, and all-blocking suites.
 Phase 3 refactor/review is recorded in the Phase 3 review packet.
 
-## Next gate
+## Final verification
 
-The Phase 3 review passed. Do not mark the issue complete until final-commit
-verification and process review are recorded.
+The human Adjudicator approved final verification on 2026-09-29 with
+`Phase 3 review passed; final verification承認`. On final commit
+`7620eb8c7b6843de4d821f4100c1d029e0a8b572`, the all-blocking suite passed
+with 2,285 tests; lifecycle validation passed and the tree was clean.
+
+Process review: no operating-contract deviation or operational problem found.
+
+## Completion
+
+LISS-0582 is done. The Phase 1 Active-Red registration is retired. Lower-ranked
+WP-0174 candidates require separate design intake and approval.

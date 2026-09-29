@@ -141,8 +141,11 @@ provided to the successor as an explicit callback, preserving its ownership.
 
 Verification is recorded in [the Phase 2 Green review packet](../collaboration/reviews/2026-09-29-liss-0582-phase2-green-review.md).
 
-## Next decision gate
+## Final verification and completion
 
-Phase 3 review passed for the bounded import-hygiene refactor. The normal
-completion gate still requires final commit verification, process review, and
-status sync.
+Phase 3 review passed for the bounded import-hygiene refactor. Final
+verification was approved on 2026-09-29 and passed on final commit
+`7620eb8c7b6843de4d821f4100c1d029e0a8b572`: all-blocking suite 2,285 passed,
+lifecycle validation passed, and the tree was clean. Process review found no
+operating-contract deviation. LISS-0582 is done; further residual candidates
+require separate design intake.
