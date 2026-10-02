@@ -7,6 +7,20 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-09-29
+- Class: extraction-import-hygiene
+- Pattern: moving a cohesive evaluator body can leave imports that were only
+  needed by the old facade implementation, obscuring the new responsibility
+  boundary and increasing review noise.
+- What later design or implementation must do: after body removal, re-scan
+  every retained facade import and run the focused consumer suite before
+  accepting the refactor; treat unused imports as a Phase 3 readability item,
+  not as evidence to widen the successor scope.
+- Source issue or work plan: LISS-0582 / WP-0174
+- Status: applied in LISS-0582 Phase 3 review
+
+## Lesson
+
 - Date: 2026-09-28
 - Class: recursive-ast-walker-refactor
 - Pattern: a monolithic recursive AST walker can conflate binder scope,

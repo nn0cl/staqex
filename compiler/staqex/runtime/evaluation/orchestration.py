@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Any, TextIO
 
 from ...ast_nodes import CompilationUnit
+from . import plan_eligibility
 from .context import EvaluatorContext
 
 
@@ -48,7 +49,9 @@ def dispatch_runtime_plan(
     handler = family_handlers.get(getattr(plan, "family", None))
     if handler is not None:
         return handler(context, plan, unit, stdout=stdout)
-    if context._is_first_runtime_family(unit, plan):
+    if plan_eligibility.is_first_runtime_family(
+        unit, plan, deferred_eligible=context._main_deferred_eligible
+    ):
         return context._execute_first_runtime_family(unit, stdout=stdout)
     return context._run_legacy_ast_body(unit, stdout=stdout)
 
@@ -95,10 +98,12 @@ def execute_evolution_plan(
     """Execute canonical local evolution before terminal Measure."""
 
     context._require_runtime_plan_family(plan, "evolution", "evolutions")
-    if not context._is_minimal_local_evolution(unit):
+    if not plan_eligibility.is_minimal_local_evolution(unit):
         return context._run_legacy_ast_body(unit, stdout=stdout)
     return context._execute_deferred_state_measure_plan(
-        context._evolution_runtime_unit(unit), stdout=stdout
+        plan_eligibility.project_runtime_unit(
+            unit, drop_operator_declarations=True
+        ), stdout=stdout
     )
 
 
@@ -117,7 +122,7 @@ def execute_binder_plan(
     ):
         return context._run_legacy_ast_body(unit, stdout=stdout)
     return context._execute_deferred_state_measure_plan(
-        context._binder_runtime_unit(unit), stdout=stdout
+        plan_eligibility.binder_runtime_unit(unit), stdout=stdout
     )
 
 
@@ -131,7 +136,7 @@ def execute_callable_plan(
     """Execute the bounded local callable/object State/Measure slice."""
 
     context._require_runtime_plan_family(plan, "callable", "callables")
-    if not context._is_deferred_callable_eligible(unit):
+    if not plan_eligibility.is_deferred_callable_eligible(unit):
         return context._run_legacy_ast_body(unit, stdout=stdout)
     return context._execute_deferred_state_measure_plan(unit, stdout=stdout)
 
