@@ -9,8 +9,9 @@ on 2026-10-05, reviewed tests unchanged.
 Phase 2 Green execution/implementation approved by `Phase 2 Green／implementation`
 2026-10-05; import-only repair passed all local blocking checks at93c1c86a.
 Phase 3 approved by `Phase 3 Refactor／review` 2026-10-05; code review passed,
-no source/test refactor required. Review-record post-commit checks pending;
-final verification and delivery not approved.
+no source/test refactor required; all local blocking checks passed atc2112a4f.
+Final local verification/review approved by `final verification／最終レビュー`
+2026-10-05; final status-commit checks required. Delivery not approved.
 Planning owner: [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md),
 AIP-0582-002 / [WP-0174](../work-plans/WP-0174-evaluator-residual-responsibility-successors.md).
 This supplements the accepted [eligibility boundary](evaluator-runtime-plan-eligibility.md).
@@ -99,8 +100,10 @@ passed; these are provisional dirty-tree results.
 Phase 2 post-commit local root2322/spec161/sanity11 and all scoped checks passed
 at93c1c86a; evidence independently read during approved Phase 3. The
 [Phase 3 review](../collaboration/reviews/2026-10-05-liss-0582-repair-phase3-review.md)
-passed with source/tests unchanged. Review-record final-SHA checks still required.
-Next gate: final verification / final human review approval. Implementation
-remains restricted to this accepted import-only repair; R06/R07 remote CI and
-delivery evidence not yet satisfied. No final or delivery approval inferred.
+passed with source/tests unchanged; post-commit local checks passed atc2112a4f.
+Human final local verification/review approved 2026-10-05; see the
+[final record](../collaboration/reviews/2026-10-05-liss-0582-repair-final-verification.md).
+Final status-commit local checks required. Next gate: separate delivery
+authorization. R06/R07 remote CI and delivery evidence not yet satisfied;
+no delivery or later implementation approval inferred. Issue not done.
 Delivery approval does not waive these gates or authorize baseline weakening.

@@ -1,6 +1,45 @@
 # AI work trace: LISS-0582 runtime-plan eligibility
 
-## Current handoff — public-import repair Phase 3 review, 2026-10-05
+## Current handoff — public-import repair final local verification, 2026-10-05
+
+Human `final verification／最終レビュー` received for the unique final
+local gate. Feature Path / final-verification, LISS-0582 / WP-0174 /
+AIP-0582-002 (M). [Final record](../reviews/2026-10-05-liss-0582-repair-final-verification.md)
+maps prior evidence, unchanged contracts and remaining delivery gates. No
+additional source/test implementation or push/merge authorized. Issue review,
+WP active; do not mark done before R06/R07 delivery and completion process review.
+
+Attempt: first approved repair final verification; host / same_context weaker
+than separate_context, empty model IDs. Model/reasoning/token estimate/actual
+usage/source/metric/variance N/A unavailable; attribution issue-only. Environment
+macOS27.0.1 arm64 / Python3.12.6 / pytest9.0.3, cwd /Users/nn0cl/Documents/git/qpex.
+Included canonical spec, actual37-case test and production diff, Phase 3 packet,
+final-SHA XML/spec/sanity/capture and policy/lessons; unrelated branches,
+Rust/providers/secrets/global dynamic audit omitted. No VO/DTO/port/ADR/new AI
+runtime contract. Public compatibility/private consumers/ownership/guard-lifecycle
+and status-drift lessons applied; no new process-rule or assertion change.
+
+Entry SHA c2112a4f6007e4880f4dc877b1b35e48ba43d2b6 clean. Independently read
+root2322, focused37, consumer8, adjacent52 XML, spec161/sanity11/capturecmp
+passing after Phase 3 commit; /private/tmp/liss0582-repair-phase3-committed-final-handoff.md.
+Production only imports/comments against base423c003b; no body/state/test/JSON
+change. Structure rationale retained under R05; dynamic/module/cycle metrics
+remain explicit gaps. Same-context normal route, absent optional large-change
+and numeric budget settings, no exclusions; rerun routing after final commit.
+
+Changed this phase: final review record, this trace, Issue, both spec status
+notes and WP. Normative R01–R07 unchanged. Commit locally then rerun every
+blocking suite, evidence /private/tmp/liss0582-repair-final-{root,focused,consumers,adjacent}.xml,
+spec.log, baseline.json, routing.json and final-handoff.md; unique sanity directory.
+No all-blocking claim for a new SHA before those checks finish. No later evidence
+commit without rerun. Comparable pre-repair full-root failure comparison unavailable.
+
+Next safe action after checks pass: obtain separate delivery authorization,
+resolve exact PR/remote target read-only, then verify repaired-head CI and merge
+result under that authorization. Downstream guard/new-SHA evidence remains
+separate. Post-review yes, batch N/A; no false done or process-review pass.
+
+## Historical handoff — public-import repair Phase 3 review, 2026-10-05
 
 Human `Phase 3 Refactor／review` approves only the named Phase 3. Feature Path,
 LISS-0582 / WP-0174 / AIP-0582-002 (M), accepted R01–R07. No issue completion,

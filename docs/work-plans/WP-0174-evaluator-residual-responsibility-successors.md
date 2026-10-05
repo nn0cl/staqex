@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status | active — LISS-0582 compatibility repair Phase 3 review; final/delivery gated |
+| Status | active — LISS-0582 final local review approved; CI/delivery gated |
 | Size | M |
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0582 Phase 3 code review passed; post-commit checks and final approval pending |
+| Current Next Issue | LISS-0582 final local review approved; final-SHA checks and CI/delivery pending |
 
 ## Goal
 
@@ -21,7 +21,7 @@ Evaluator's unique mutable-state ownership.
 | Rank | Residual responsibility | Evidence | Disposition |
 |---:|---|---|---|
 | 1 | Coordinate liveness and Trace-Out: five Evaluator helpers and duplicate frame helpers | Shared consumers in frames, pipes, evolution, execution, observation; tied to existing ADR 0138/0142/0153/0158 behavior | LISS-0581 done; implementation commit passed 2,280 tests; PR delivery pending GitHub CI and merge |
-| 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports restored locally | LISS-0582 Phase 3 code review passed; final/PR #604 delivery gated, no retirement waiver |
+| 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports restored locally | LISS-0582 final local review approved; final-SHA checks and PR #604 CI/delivery gated, no retirement waiver |
 | 3 | Static `forEach` expansion | 51-line evaluator body, calls binding dispatch for each expanded wire | Separate execution/loop boundary study; avoid enlarging `execution.py` without line/body budget review |
 | 4 | Tensor binding | 45-line evaluator body; owns `Joint` transformation and dispatch dependency | Separate binding/algebra slice; not an external-resource adapter and not automatically part of `binding.py` |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | Treat as resource/input-boundary design, not generic evaluator helper extraction |
@@ -37,7 +37,7 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---|---|---|---|---|---|
 | [LISS-0581](../issues/LISS-0581-evaluator-coordinate-liveness-successor.md) | done — PR #603 merged and CI passed | M | M | AIP-0581-001 | ADR 0228 accepted | - | `feature/liss-0581-red` (deleted after merge) |
-| [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | review — Phase 3 code review passed; post-commit checks and final approval pending | M | M | AIP-0582-002 | extraction retained; no later dependency | PR #604 and dependency delivery | `codex/liss-0582-public-import-repair-design` |
+| [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | review — final local review approved; final-SHA checks and CI/delivery pending | M | M | AIP-0582-002 | extraction retained; no later dependency | PR #604 and dependency delivery | `codex/liss-0582-public-import-repair-design` |
 
 ## Current repair gate — 2026-10-05
 
@@ -53,8 +53,10 @@ repair passes focused37 / consumer8 / adjacent52 and spec161; capture/cmp
 byte-equal. Full root2322 passed provisionally, no exclusions. Next: Phase 3
 Refactor/review separately approved 2026-10-05; code review passed, no source
 or test refactor required. Phase 2 final-SHA checks passed at93c1c86a; review
-record commit requires rerun. Next: final verification approval after those
-checks; final/CI/delivery gated. See the
+record commit checks passed atc2112a4f. Human final local verification/review
+approved 2026-10-05; no source/test change, final status-commit checks required.
+Next: separate delivery authorization, then repaired-head CI; no Issue/WP done
+before R06/R07 and completion process review. See the
 [review packet](../collaboration/reviews/2026-10-05-liss-0582-repair-phase3-review.md).
 Red execution/review/implementation remain separately gated. Prior completion
 is historical; delivery approval is not a CI waiver.

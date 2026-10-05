@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0582
 - GitHub issue: none
-- Status: review — Phase 3 code review passed; post-commit checks and final approval pending
-- Phase: phase-3-refactor
+- Status: review — final local review approved; final-SHA checks and CI/delivery pending
+- Phase: final-verification
 - Type: behavior-preserving evaluator decomposition
 - Priority: normal
 - Initial planning size: M
@@ -17,7 +17,7 @@
 
 ## Summary
 
-Current action 2026-10-05: Phase 3 code review passed; post-commit checks and final approval pending. Original completion
+Current action 2026-10-05: final local review approved; final-SHA checks and CI/delivery pending. Original completion
 below is historical, not current CI clearance. Canonical supplement:
 [R01–R07 accepted repair specification](../specs/evaluator-public-import-compatibility-repair.md).
 
@@ -203,7 +203,7 @@ evidence is provisional until rerun at the implementation commit.
 - Post-review required: yes; batch N/A; no push/merge or issue completion.
 - R06/R07 final approval, remote CI and downstream delivery still gated.
 
-## Current repair Phase 3 Refactor/review
+## Historical repair Phase 3 Refactor/review
 
 Human `Phase 3 Refactor／review` received 2026-10-05. Same-context reviewer
 re-read specification, production diff, successor/installer/orchestration bodies,
@@ -218,3 +218,16 @@ results preserved externally before reporting Phase 3 completion.
 - Next approval: final verification / final human review (phase), after post-commit checks.
 - Post-review required: yes; batch N/A. No done, push/merge or downstream approval.
 - Remote CI/delivery and later-head guard disposition remain R06/R07 gates.
+
+## Current repair final verification
+
+Human `final verification／最終レビュー` received 2026-10-05. Phase 3
+final-SHA local root2322/spec161/sanity11 and scoped37/8/52/capturecmp passed
+atc2112a4f; actual evidence re-read during final review. No additional source
+or accepted-test change. See the
+[final verification record](../collaboration/reviews/2026-10-05-liss-0582-repair-final-verification.md).
+This status commit requires all-blocking rerun; final results recorded externally.
+No push/merge authorization inferred. Issue remains review, not done, because
+R06 remote CI and R07 delivery/downstream evidence remain unsatisfied.
+Completion process review deferred until actual closure; no false process pass.
+Next safe action after local checks: obtain separate delivery authorization.
