@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0582
 - GitHub issue: none
-- Status: in_progress — repair provisionally verified; post-commit checks and Phase 3 approval pending
-- Phase: phase-2-green
+- Status: review — Phase 3 code review passed; post-commit checks and final approval pending
+- Phase: phase-3-refactor
 - Type: behavior-preserving evaluator decomposition
 - Priority: normal
 - Initial planning size: M
@@ -17,7 +17,7 @@
 
 ## Summary
 
-Current action 2026-10-05: repair provisionally verified; post-commit checks and Phase 3 approval pending. Original completion
+Current action 2026-10-05: Phase 3 code review passed; post-commit checks and final approval pending. Original completion
 below is historical, not current CI clearance. Canonical supplement:
 [R01–R07 accepted repair specification](../specs/evaluator-public-import-compatibility-repair.md).
 
@@ -184,7 +184,7 @@ test acceptance. New test SHA256 remains
 No source/test/baseline/lifecycle edits or commit/push/merge in acceptance sync;
 earlier scoped test results are historical, not rerun in this step.
 
-## Current repair Phase 2 Green
+## Historical repair Phase 2 Green
 
 Human `Phase 2 Green／implementation` received 2026-10-05 as approval of
 the uniquely requested phase and implementation target. Red acceptance
@@ -202,3 +202,19 @@ evidence is provisional until rerun at the implementation commit.
 - Next approval: Phase 3 Refactor/review (phase), after blocking verification.
 - Post-review required: yes; batch N/A; no push/merge or issue completion.
 - R06/R07 final approval, remote CI and downstream delivery still gated.
+
+## Current repair Phase 3 Refactor/review
+
+Human `Phase 3 Refactor／review` received 2026-10-05. Same-context reviewer
+re-read specification, production diff, successor/installer/orchestration bodies,
+accepted tests and actual Phase 2 final-SHA evidence at93c1c86a. Code review
+passed with no source refactor required; behavior/assertions/baseline unchanged.
+Fresh focused37 / consumer8 / adjacent52 pass. See the
+[Phase 3 packet](../collaboration/reviews/2026-10-05-liss-0582-repair-phase3-review.md).
+Review-record commit requires every blocking suite rerun afterward; final-SHA
+results preserved externally before reporting Phase 3 completion.
+
+- Current phase: Phase 3; implementation restricted to accepted repair, no broader changes authorized.
+- Next approval: final verification / final human review (phase), after post-commit checks.
+- Post-review required: yes; batch N/A. No done, push/merge or downstream approval.
+- Remote CI/delivery and later-head guard disposition remain R06/R07 gates.

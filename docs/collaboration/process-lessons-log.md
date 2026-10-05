@@ -18,7 +18,8 @@ Record meta-level patterns only. No session transcripts.
   the next changed owner boundary. Never silently update hashes, weaken
   assertions or bypass failures to deliver a dependency branch.
 - Source issue or work plan: LISS-0582 / WP-0174, R05/R07
-- Status: applied in Red review; downstream guard disposition remains pending
+- Status: applied in Red and Phase 3 review; unchanged guard scope rechecked,
+  no hash/assertion relaxation. Downstream guard disposition remains pending
   in each later feature scope, not authorized by this lesson.
 
 ## Lesson

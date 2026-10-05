@@ -1,6 +1,58 @@
 # AI work trace: LISS-0582 runtime-plan eligibility
 
-## Current handoff — public-import repair Phase 2 verification, 2026-10-05
+## Current handoff — public-import repair Phase 3 review, 2026-10-05
+
+Human `Phase 3 Refactor／review` approves only the named Phase 3. Feature Path,
+LISS-0582 / WP-0174 / AIP-0582-002 (M), accepted R01–R07. No issue completion,
+final verification approval, delivery or downstream source work inferred.
+Same-context reviewer switched role and re-read disk artifacts; no source or
+test refactor necessary. [Review packet](../reviews/2026-10-05-liss-0582-repair-phase3-review.md)
+records named failure scenarios, findings/dispositions and clause mapping.
+
+Attempt: first approved repair Phase 3 review, distinct from historical
+extraction review. Host/current model, review isolation same_context weaker
+than separate_context, model IDs empty. Reliable displayed model/reasoning,
+token estimate/actual usage/metric/source/variance N/A: unavailable on host;
+attribution issue-only. macOS27.0.1 arm64 / Python3.12.6 / pytest9.0.3,
+cwd /Users/nn0cl/Documents/git/qpex, branch codex/liss-0582-public-import-repair-design.
+
+Included: canonical spec/readiness/process/quality/verification/routing/lessons,
+production diff and imports, complete successor/installer/orchestration bodies,
+accepted tests, real capture generator/cases, actual public/private consumer
+imports and Phase 2 XML/spec/sanity logs. Omitted: unrelated later branches,
+Rust/providers/secrets/global dynamic audit. No VO/DTO/port/dependency/ADR or
+new AI runtime evidence contract. Compatibility-baseline, private-consumer,
+ownership, acceptance-reconciliation, status-drift and repair-guard lifecycle
+lessons applied; unrelated recursive-walker/provider changes out of scope.
+
+Reviewed SHA93c1c86a56a80a14ff13e2cfd51700b95e789f24 clean; base423c003b.
+Phase 2 final-SHA root2322/spec161/sanity11/capturecmp and scoped37/8/52 passed;
+actual external evidence read, not prior author reasoning. Fresh reviewer
+focused37/consumer8/adjacent52 passed exit0 without skips/exclusions, evidence
+/private/tmp/liss0582-repair-phase3-{focused,consumers,adjacent}.xml. Exact
+executable evaluator AST comparison against actual base passed; protected
+owner/test/baseline hashes enforced. No source/test changes since93c1c86a.
+
+Routing JSON /private/tmp/liss0582-repair-phase3-routing.json reports normal
+same_context, large-change section absent, no numeric structure settings.
+1111 changed lines/12 files across design/tests/repair; production12 changed,
+evaluator1149, successor181, installer317, orchestration154. Retain underlying
+body structure within import-only R05, not a global decomposition claim.
+Missing logical module metrics and unresolved dynamic graph/cycles remain gaps.
+
+Findings: current status drift corrected in Issue/WP/both specs; compatibility
+imports already correct. No blocking code finding. Future guard disposition
+and full external graph out of scope; remote CI/downstream delivery still gates.
+Changed this phase: new review packet, this trace, Issue, both spec statuses,
+WP and existing lesson application status. No normative requirements altered.
+
+Next safe action: commit this review/status unit locally, rerun every declared
+blocking suite after that commit, preserve results outside working tree at
+/private/tmp/liss0582-repair-phase3-committed-* and final-handoff.md, then ask
+for final verification / human final review approval (phase). Any later commit
+requires rerun. Post-review yes, batch N/A; no push/merge or done/process-review.
+
+## Historical handoff — public-import repair Phase 2 verification, 2026-10-05
 
 Human `Phase 2 Green／implementation` authorizes the uniquely requested Phase 2
 and implementation target after accepted Red. Feature Path / phase-2-green,
