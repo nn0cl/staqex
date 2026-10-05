@@ -2,8 +2,12 @@
 
 ## Status
 
-Phase 1 Red accepted 2026-09-29 — the structural boundary contract is accepted;
-Phase 2 Green, implementation, and refactor remain separately gated.
+Original extraction accepted/implemented; public-import repair reopened
+2026-10-05; repair R01–R07 and Phase 0 accepted, Red accepted;
+Phase 2 implementation approval pending. See the canonical
+[repair supplement](evaluator-public-import-compatibility-repair.md).
+Earlier phase/completion entries below are historical; extraction ownership
+remains accepted, but current failed CI baseline is not waived.
 
 ## [DESIGN CHECK]
 
@@ -141,7 +145,7 @@ provided to the successor as an explicit callback, preserving its ownership.
 
 Verification is recorded in [the Phase 2 Green review packet](../collaboration/reviews/2026-09-29-liss-0582-phase2-green-review.md).
 
-## Final verification and completion
+## Historical final verification and completion
 
 Phase 3 review passed for the bounded import-hygiene refactor. Final
 verification was approved on 2026-09-29 and passed on final commit

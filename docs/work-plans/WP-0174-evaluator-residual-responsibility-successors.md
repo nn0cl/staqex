@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status | active — LISS-0581 complete; next residual candidate requires separate intake |
+| Status | active — LISS-0582 compatibility repair Red accepted; delivery blocked |
 | Size | M |
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | No next issue selected; rank 3 requires separate design intake |
+| Current Next Issue | LISS-0582 public-import repair Red accepted; implementation approval pending |
 
 ## Goal
 
@@ -21,7 +21,7 @@ Evaluator's unique mutable-state ownership.
 | Rank | Residual responsibility | Evidence | Disposition |
 |---:|---|---|---|
 | 1 | Coordinate liveness and Trace-Out: five Evaluator helpers and duplicate frame helpers | Shared consumers in frames, pipes, evolution, execution, observation; tied to existing ADR 0138/0142/0153/0158 behavior | LISS-0581 done; implementation commit passed 2,280 tests; PR delivery pending GitHub CI and merge |
-| 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Partly routed by `evaluation/orchestration.py`; close to semantic-plan eligibility and existing canonical/legacy boundaries | LISS-0582 Phase 1 Red accepted; Phase 2 Green approval pending; do not combine with liveness |
+| 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports removed during cleanup | LISS-0582 repair Red accepted; PR #604 blocked, no retirement waiver |
 | 3 | Static `forEach` expansion | 51-line evaluator body, calls binding dispatch for each expanded wire | Separate execution/loop boundary study; avoid enlarging `execution.py` without line/body budget review |
 | 4 | Tensor binding | 45-line evaluator body; owns `Joint` transformation and dispatch dependency | Separate binding/algebra slice; not an external-resource adapter and not automatically part of `binding.py` |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | Treat as resource/input-boundary design, not generic evaluator helper extraction |
@@ -37,7 +37,20 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---|---|---|---|---|---|
 | [LISS-0581](../issues/LISS-0581-evaluator-coordinate-liveness-successor.md) | done — PR #603 merged and CI passed | M | M | AIP-0581-001 | ADR 0228 accepted | - | `feature/liss-0581-red` (deleted after merge) |
-| [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | done — Phase 3 review and final verification passed | M | M | AIP-0582-001 | none | - | `feature/liss-0582-runtime-plan-eligibility` |
+| [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | ready — repair Red accepted; implementation approval pending | M | M | AIP-0582-002 | extraction retained; no later dependency | PR #604 and dependency delivery | `codex/liss-0582-public-import-repair-design` |
+
+## Current repair gate — 2026-10-05
+
+Scope/Phase 0 start and unchanged [R01–R07 specification](../specs/evaluator-public-import-compatibility-repair.md)
+accepted 2026-10-05; human `修復仕様 R01–R07 と Phase 0 acceptance` received.
+Restore original-object re-exports, not old bodies or a weakened baseline.
+Phase 1 execution separately approved; new repair tests: 14 expected failures /
+23 passes. Consumer regression 8 pass; adjacent 52 pass. No production or frozen
+baseline edits, commit/push/merge. Same-context review passed on unchanged tests;
+human `Phase 1 Red acceptance を承認` received 2026-10-05.
+Next: separate Phase 2 Green execution / implementation approval.
+Red execution/review/implementation remain separately gated. Prior completion
+is historical; delivery approval is not a CI waiver.
 
 ## Verification and approval gates
 

@@ -1,5 +1,10 @@
 # LISS-0582 Phase 3 Refactor / review
 
+Historical review: import-hygiene/completion dispositions missed ten public
+re-exports, exposed by PR #604 CI on 2026-10-03. Current repair Scope/Phase 0
+start approved 2026-10-05; see the [repair proposal](../../specs/evaluator-public-import-compatibility-repair.md).
+Original evidence below is preserved, not a current compatibility pass.
+
 ## Review target
 
 - Issue: [LISS-0582](../../issues/LISS-0582-evaluator-runtime-plan-eligibility.md)

@@ -4,18 +4,22 @@
 
 - Local issue ID: LISS-0582
 - GitHub issue: none
-- Status: done — Phase 3 review and final verification passed
-- Phase: phase-3-refactor
+- Status: ready — public-import repair Red accepted; implementation approval pending
+- Phase: phase-1-red
 - Type: behavior-preserving evaluator decomposition
 - Priority: normal
 - Initial planning size: M
 - Current planning size: M
 - Owner/agent: Codex host agent
-- Related branch: `feature/liss-0582-runtime-plan-eligibility`
+- Related branch: `codex/liss-0582-public-import-repair-design` (design); PR #604 on original feature branch
 - Parent: WP-0174
 - Depends on: none; rank-2 scope approved 2026-09-29
 
 ## Summary
+
+Current action 2026-10-05: compatibility repair Red accepted; implementation approval pending. Original completion
+below is historical, not current CI clearance. Canonical supplement:
+[R01–R07 accepted repair specification](../specs/evaluator-public-import-compatibility-repair.md).
 
 Investigate and, after separate phase approvals, extract the cohesive runtime
 execution eligibility/projection policy that remains on `Evaluator`. The slice
@@ -104,7 +108,7 @@ Implementation approval was received in the thread on 2026-09-29:
 verified with focused, consumer/adjacent, lifecycle, and all-blocking suites.
 Phase 3 refactor/review is recorded in the Phase 3 review packet.
 
-## Final verification
+## Historical final verification
 
 The human Adjudicator approved final verification on 2026-09-29 with
 `Phase 3 review passed; final verification承認`. On final commit
@@ -113,7 +117,69 @@ with 2,285 tests; lifecycle validation passed and the tree was clean.
 
 Process review: no operating-contract deviation or operational problem found.
 
-## Completion
+## Historical completion
 
 LISS-0582 is done. The Phase 1 Active-Red registration is retired. Lower-ranked
 WP-0174 candidates require separate design intake and approval.
+
+## Repair planning — AIP-0582-002
+
+- Status: accepted with R01–R07 and Phase 0 on 2026-10-05
+- Author: Codex desktop host; macOS 27.0.1 arm64
+- Initial/current issue size: M unchanged; multiple evidence/test/import files
+  and review phases despite small production correction
+- Model/reasoning displayed: N/A, reliable display unavailable
+- Estimated token range/midpoint/metric: N/A, reliable estimate unavailable
+- Intended route: Architecture Path Phase 0 host; later host/same_context, empty IDs
+- Basis: ten frozen public names, identity, failed CI, bounded area/propagation
+- Assumptions/confidence: high on ten-name cause; later branch compatibility unverified
+- Revises: AIP-0582-001 for reopened scope; original estimate retained as historical
+
+## Historical Phase 0 repair / review target
+
+Human `互換性修復の Scope／Phase 0 設計開始` authorizes investigation/design only.
+PR #604 head 423c003b fails public baseline; root/spec CI successes do not waive it.
+Fresh capture: ten removed evaluator names; other manifests/cases identical;
+adjacent 52 pass. Earlier review missed public re-exports; no retirement waiver.
+Use existing Issue, not a competing bug owner. Accepted extraction retained;
+no later task dependency. Blocks PR #604 and dependency delivery through LISS-0602.
+
+- Artifact: R01–R07 repair spec / trace / WP-0174
+- Current phase: Architecture Path / Phase 0 design
+- Requested approval: Phase 1 Red execution (phase), accepted R01–R07 only
+- Approved scope: ten original-object re-exports, frozen baseline/ownership
+- Implementation allowed: no; tests/source and baseline unchanged
+- Post-review required: yes; separate Red, review, implementation and final gates
+- Execution batch: N/A
+- No commit/push/merge this design phase; PR still blocked by failed CI
+
+Human `修復仕様 R01–R07 と Phase 0 acceptance` received 2026-10-05.
+Repair requirements, boundary and planning record accepted without changes.
+No Phase 1 execution, test review, implementation or later-phase permission
+inferred. Earlier 52-case/capture evidence is historical, not a fresh run.
+Next: request Phase 1 Red; implementation permission remains no, post-review yes.
+
+## Current repair Phase 1 Red / review target
+
+Human `Phase 1 Red（受入テスト作成）承認` received 2026-10-05.
+Feature Path readiness satisfied by accepted R01–R07 and observable import,
+identity and frozen-baseline outcomes. Added only new repair tests and scoped
+active-Red metadata, with documentation/status synchronization.
+
+- Result: 37 focused cases, 14 expected failures / 23 passes, no errors/skips.
+- Consumer/baseline-generator regression: 8 pass; adjacent/ownership: 52 pass.
+- Requested approval: Phase 2 Green execution / implementation (phase and implementation); Red accepted.
+- Implementation allowed: no; Phase 2 requires separate explicit approval.
+- Post-review required: yes; batch N/A; no commit/push/merge.
+- Evidence and R01–R07 matrix: [Red acceptance request](../collaboration/reviews/2026-10-05-liss-0582-repair-red-acceptance.md).
+
+User `Phase 1 Red テストレビュー／acceptance` received as review request.
+Fresh same-context review reproduces exactly14 expected failures/23 passes,
+consumer8 and adjacent52 pass; no acceptance blocker. Test/production/baseline
+unchanged. Human `Phase 1 Red acceptance を承認` received 2026-10-05 accepts
+the reviewed tests without changes. Separate Phase 2 Green execution and
+implementation approval remain pending; no later permission inferred from
+test acceptance. New test SHA256 remains
+`88c949852d81846a5ff28b90a7fd226f25017f0aba69bd0a94a3381e48036a8f`.
+No source/test/baseline/lifecycle edits or commit/push/merge in acceptance sync;
+earlier scoped test results are historical, not rerun in this step.
