@@ -4,10 +4,12 @@
 
 Original extraction accepted/implemented; public-import repair reopened
 2026-10-05; repair R01–R07 and Phase 0 accepted, Red accepted;
-Phase 3 checks passed; final local review approved, final status-commit checks and CI/delivery pending. See the canonical
+Phase 3 and final checks passed; PR #604 merged at 458fcbe6 with repaired-head
+and main CI success plus actual merge-result local verification. LISS-0582 is
+done; WP-0174 remains active. See the canonical
 [repair supplement](evaluator-public-import-compatibility-repair.md).
 Earlier phase/completion entries below are historical; extraction ownership
-remains accepted, but current failed CI baseline is not waived.
+remains accepted; the historical failed baseline was repaired, not waived.
 
 ## [DESIGN CHECK]
 

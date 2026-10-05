@@ -11,7 +11,10 @@ Phase 2 Green execution/implementation approved by `Phase 2 Green／implementati
 Phase 3 approved by `Phase 3 Refactor／review` 2026-10-05; code review passed,
 no source/test refactor required; all local blocking checks passed atc2112a4f.
 Final local verification/review approved by `final verification／最終レビュー`
-2026-10-05; final status-commit checks required. Delivery not approved.
+2026-10-05; final status-commit checks passed at d6f7e917. Separate delivery
+approval received; PR #604 merged at 458fcbe6 with all PR/main CI checks and
+actual merge-result local checks passed. Documentation-only closeout approved
+by subsequent `続けて`; no downstream implementation authorization inferred.
 Planning owner: [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md),
 AIP-0582-002 / [WP-0174](../work-plans/WP-0174-evaluator-residual-responsibility-successors.md).
 This supplements the accepted [eligibility boundary](evaluator-runtime-plan-eligibility.md).
@@ -74,7 +77,7 @@ Do not regenerate this expected contract or modify its generator/case TOML to
 make CI pass. Numeric structure/large-change settings absent; qualitative
 ownership review remains required. Routing host/same_context, empty model IDs.
 
-## Phase 0 verification and gate
+## Historical phase verification and gates
 
 Fresh existing focused/consumer/adjacent 52 passed, 0 failures/errors/skips,
 exit 0, 0.543s; 2026-10-05 10:31:27.839192–10:31:28.382192 JST.
@@ -107,3 +110,12 @@ Final status-commit local checks required. Next gate: separate delivery
 authorization. R06/R07 remote CI and delivery evidence not yet satisfied;
 no delivery or later implementation approval inferred. Issue not done.
 Delivery approval does not waive these gates or authorize baseline weakening.
+
+## Current delivery status — 2026-10-05
+
+The historical final gate above has been satisfied for PR #604, not waived.
+LISS-0582 is done; WP-0174 remains active. See the representative trace's
+current closeout section for exact head/merge SHAs, focused versus all-blocking
+results, environments and PR/main CI links. R01–R07 remain unchanged.
+R07 downstream propagation and R05 guard disposition require separately
+approved later feature work; this repair does not claim those branches cleared.

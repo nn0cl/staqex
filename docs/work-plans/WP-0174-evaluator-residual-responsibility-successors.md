@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status | active — LISS-0582 final local review approved; CI/delivery gated |
+| Status | active — LISS-0582 done; residual candidates require separate intake |
 | Size | M |
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0582 final local review approved; final-SHA checks and CI/delivery pending |
+| Current Next Issue | Rank 3 static `forEach` boundary intake candidate; separate scope approval required |
 
 ## Goal
 
@@ -21,7 +21,7 @@ Evaluator's unique mutable-state ownership.
 | Rank | Residual responsibility | Evidence | Disposition |
 |---:|---|---|---|
 | 1 | Coordinate liveness and Trace-Out: five Evaluator helpers and duplicate frame helpers | Shared consumers in frames, pipes, evolution, execution, observation; tied to existing ADR 0138/0142/0153/0158 behavior | LISS-0581 done; implementation commit passed 2,280 tests; PR delivery pending GitHub CI and merge |
-| 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports restored locally | LISS-0582 final local review approved; final-SHA checks and PR #604 CI/delivery gated, no retirement waiver |
+| 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports restored | LISS-0582 done; PR #604 merged at 458fcbe6, PR/main CI and merge-result local checks passed; no retirement waiver |
 | 3 | Static `forEach` expansion | 51-line evaluator body, calls binding dispatch for each expanded wire | Separate execution/loop boundary study; avoid enlarging `execution.py` without line/body budget review |
 | 4 | Tensor binding | 45-line evaluator body; owns `Joint` transformation and dispatch dependency | Separate binding/algebra slice; not an external-resource adapter and not automatically part of `binding.py` |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | Treat as resource/input-boundary design, not generic evaluator helper extraction |
@@ -37,9 +37,20 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | Issue | Status | Initial size | Current size | Planning record | Depends on | Blocks | Branch |
 |---|---|---|---|---|---|---|---|
 | [LISS-0581](../issues/LISS-0581-evaluator-coordinate-liveness-successor.md) | done — PR #603 merged and CI passed | M | M | AIP-0581-001 | ADR 0228 accepted | - | `feature/liss-0581-red` (deleted after merge) |
-| [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | review — final local review approved; final-SHA checks and CI/delivery pending | M | M | AIP-0582-002 | extraction retained; no later dependency | PR #604 and dependency delivery | `codex/liss-0582-public-import-repair-design` |
+| [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | done — PR #604 merged; repaired-head and main CI passed | M | M | AIP-0582-002 | extraction retained; no later dependency | later dependency delivery still separately gated | `codex/liss-0582-repair-closeout` (documentation only) |
 
-## Current repair gate — 2026-10-05
+## Current repair closeout — 2026-10-05
+
+Separate human delivery approval executed: PR #604 merged at
+`458fcbe69b9161be21c2b8f92c8cd2838539e6f9` after all repaired-head PR CI
+checks passed. All actual merge-result local blocking checks and main CI also
+passed. Subsequent `続けて` authorizes documentation-only synchronization,
+not rank 3–6 implementation or later dependency propagation. LISS-0582's
+completion process review is recorded in its Issue; WP-0174 remains active.
+See the [current trace](../collaboration/traces/2026-09-29-liss-0582-runtime-plan-eligibility.md)
+for exact SHAs, environments, CI links and verification boundaries.
+
+## Historical repair gates — 2026-10-05
 
 Scope/Phase 0 start and unchanged [R01–R07 specification](../specs/evaluator-public-import-compatibility-repair.md)
 accepted 2026-10-05; human `修復仕様 R01–R07 と Phase 0 acceptance` received.

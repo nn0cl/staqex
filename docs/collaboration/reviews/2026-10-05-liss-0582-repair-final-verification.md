@@ -1,5 +1,10 @@
 # LISS-0582 repair — final local verification
 
+Historical local-gate record. Subsequent delivery approval, PR #604 merge,
+PR/main CI and actual merge-result verification are recorded in the
+[representative trace's current closeout](../traces/2026-09-29-liss-0582-runtime-plan-eligibility.md).
+Earlier remaining-gate statements below describe that stage, not current work.
+
 ## Authorization / scope
 
 Human `final verification／最終レビュー` received 2026-10-05 after the
