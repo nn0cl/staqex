@@ -7,6 +7,39 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-10-05
+- Class: bounded-repair-guard-lifecycle
+- Pattern: whole-file or executable-AST snapshots can correctly constrain an
+  import-only compatibility repair but reject later legitimate refactors if
+  carried forward as an unexplained permanent behavior contract.
+- What later design or implementation must do: distinguish persistent export /
+  identity / behavior contracts from repair-base preservation guards; record
+  the latter's base and scope, and require explicit reviewed disposition at
+  the next changed owner boundary. Never silently update hashes, weaken
+  assertions or bypass failures to deliver a dependency branch.
+- Source issue or work plan: LISS-0582 / WP-0174, R05/R07
+- Status: applied in Red and Phase 3 review; unchanged guard scope rechecked,
+  no hash/assertion relaxation. Downstream guard disposition remains pending
+  in each later feature scope, not authorized by this lesson.
+
+## Lesson
+
+- Date: 2026-09-29
+- Class: extraction-import-hygiene
+- Pattern: moving a cohesive evaluator body can leave imports that were only
+  needed by the old facade implementation, obscuring the new responsibility
+  boundary and increasing review noise.
+- What later design or implementation must do: after body removal, re-scan
+  every retained facade import and run the focused consumer suite before
+  accepting the refactor; treat unused imports as a Phase 3 readability item,
+  not as evidence to widen the successor scope.
+- Source issue or work plan: LISS-0582 / WP-0174
+- Status: historical application missed public import reachability. Repair
+  Phase 0 applies compatibility-baseline: an internally unused public re-export
+  is not removable; compare actual export/identity and frozen baseline first.
+
+## Lesson
+
 - Date: 2026-09-28
 - Class: recursive-ast-walker-refactor
 - Pattern: a monolithic recursive AST walker can conflate binder scope,

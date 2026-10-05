@@ -103,6 +103,15 @@ from .state_ops import (
     is_state_producing_bind_expr,
     materialize_outer,
 )
+from .plan_eligibility import (
+    binder_runtime_unit,
+    evolution_runtime_unit,
+    is_deferred_callable_eligible,
+    is_first_runtime_family,
+    is_minimal_local_evolution,
+    operator_expr_contains_attr,
+    unit_without_operator_declarations,
+)
 
 
 def install_call_compatibility(evaluator_type: type[Any]) -> None:
@@ -134,6 +143,25 @@ def install_legacy_control_binding_compatibility(
 ) -> None:
     """Keep the legacy ``when`` callback on the live Evaluator context."""
     evaluator_type._bind_when = bind_when
+
+
+def install_plan_eligibility_compatibility(evaluator_type: type[Any]) -> None:
+    """Keep private eligibility hooks as aliases during facade extraction."""
+    evaluator_type._is_deferred_callable_eligible = staticmethod(
+        is_deferred_callable_eligible
+    )
+    evaluator_type._operator_expr_contains_attr = staticmethod(
+        operator_expr_contains_attr
+    )
+    evaluator_type._is_minimal_local_evolution = staticmethod(
+        is_minimal_local_evolution
+    )
+    evaluator_type._is_first_runtime_family = staticmethod(is_first_runtime_family)
+    evaluator_type._unit_without_operator_declarations = staticmethod(
+        unit_without_operator_declarations
+    )
+    evaluator_type._evolution_runtime_unit = staticmethod(evolution_runtime_unit)
+    evaluator_type._binder_runtime_unit = staticmethod(binder_runtime_unit)
 
 
 def install_frame_compatibility(evaluator_type: type[Any]) -> None:

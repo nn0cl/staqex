@@ -5,6 +5,7 @@ from __future__ import annotations
 import cmath
 import math
 import random
+# Public compatibility re-export: callers historically import replace here.
 from dataclasses import dataclass, field, replace
 from fractions import Fraction
 from typing import TYPE_CHECKING, Any, Callable, Mapping, MutableMapping, TextIO
@@ -56,21 +57,21 @@ from ..ast_nodes import (
     MeasureExpr,
     NormExpr,
     SetComprehension,
-    OpBin,
     OpHop,
     # Public compatibility re-exports retained after evaluator extraction.
+    OpAttr,
+    OpBin,
+    OpBinder,
+    OpCall,
+    OpIndexed,
+    OpPauli,
+    OpPow,
     OpLit,
     OpNumber,
     OpQuadrature,
     OpGridQuad,
-    OpPauli,
-    OpPow,
     OpVar,
-    OpAttr,
-    OpIndexed,
-    OpBinder,
     OpIdentity,
-    OpCall,
     Pipe,
     ResetStmt,
     ReturnStmt,
@@ -118,6 +119,7 @@ from .evaluation.compatibility import (
     install_operator_compatibility as _install_operator_compatibility,
     install_operator_projection_compatibility as _install_operator_projection_compatibility,
     install_legacy_control_binding_compatibility as _install_legacy_control_binding_compatibility,
+    install_plan_eligibility_compatibility as _install_plan_eligibility_compatibility,
     install_value_compatibility as _install_value_compatibility,
 )
 from .evaluation.evolution import (
@@ -405,143 +407,6 @@ class Evaluator:
             raise KernelError(f"runtime plan family must be {family}")
         if not getattr(plan, payload_name, ()):
             raise KernelError(f"{family} plan has no {payload_name} nodes")
-
-    @staticmethod
-    def _is_deferred_callable_eligible(unit: CompilationUnit) -> bool:
-        """Keep callable deferral inside the currently closed scope boundary.
-
-        A library function may refer to a module-level struct while building a
-        local Operator (for example ``weights.a * X``).  The eager path owns
-        that caller frame today; deferring it would resolve the attribute with
-        no object frame and fail closed.  Route this narrow shape through the
-        established executor until callable global-object capture is modeled.
-        """
-        class_names = {
-            declaration.qualified_name
-            for declaration in unit.decls
-            if isinstance(declaration, ClassDecl)
-        }
-        class_short_names = {name.rsplit(".", 1)[-1] for name in class_names}
-        if unit.main is None:
-            return False
-        for declaration in unit.decls:
-            if not isinstance(declaration, FunDecl) or declaration.name == "main":
-                continue
-            if any(
-                statement.ty is not None
-                and statement.ty.name == "Operator"
-                and Evaluator._operator_expr_contains_attr(statement.expr)
-                for statement in declaration.body.stmts
-                if isinstance(statement, StateBind)
-            ):
-                return False
-        for statement in unit.main.body.stmts:
-            if not isinstance(statement, StateBind):
-                continue
-            expression = statement.expr
-            if not isinstance(expression, Call):
-                continue
-            callee = expression.callee
-            if isinstance(callee, Var) and callee.name in class_short_names:
-                return False
-            if isinstance(callee, Attr) and callee.name in class_short_names:
-                return False
-        return True
-
-    @staticmethod
-    def _operator_expr_contains_attr(expr: Any) -> bool:
-        if isinstance(expr, OpAttr):
-            return True
-        if isinstance(expr, OpBin):
-            return Evaluator._operator_expr_contains_attr(expr.lhs) or Evaluator._operator_expr_contains_attr(expr.rhs)
-        if isinstance(expr, OpPow):
-            return Evaluator._operator_expr_contains_attr(expr.base)
-        if isinstance(expr, OpBinder):
-            return (
-                Evaluator._operator_expr_contains_attr(expr.domain)
-                or Evaluator._operator_expr_contains_attr(expr.guard)
-                or Evaluator._operator_expr_contains_attr(expr.body)
-            )
-        if isinstance(expr, OpIndexed):
-            return Evaluator._operator_expr_contains_attr(expr.base) or Evaluator._operator_expr_contains_attr(expr.index)
-        if isinstance(expr, OpCall):
-            return any(Evaluator._operator_expr_contains_attr(arg) for arg in expr.args)
-        return False
-
-    @staticmethod
-    def _binder_runtime_unit(unit: CompilationUnit) -> CompilationUnit:
-        """Keep the source operator declarations for deferred materialization.
-
-        Binder plans still need named operators that are consumed by a later
-        ``project`` or by a factory result.  The deferred executor handles
-        those declarations as compile-time metadata; removing them here
-        loses the source-level dependency chain before it can be resolved.
-        """
-        return unit
-
-    @staticmethod
-    def _unit_without_operator_declarations(unit: CompilationUnit) -> CompilationUnit:
-        """Build the runtime payload without compile-time Operator declarations."""
-        assert unit.main is not None
-        return replace(
-            unit,
-            main=replace(
-                unit.main,
-                body=replace(
-                    unit.main.body,
-                    stmts=[
-                        statement
-                        for statement in unit.main.body.stmts
-                        if not (
-                            isinstance(statement, StateBind)
-                            and statement.ty is not None
-                            and statement.ty.name == "Operator"
-                        )
-                    ],
-                ),
-            ),
-        )
-
-    @staticmethod
-    def _evolution_runtime_unit(unit: CompilationUnit) -> CompilationUnit:
-        """Keep compile-time Operator declarations out of runtime bind steps."""
-        return Evaluator._unit_without_operator_declarations(unit)
-
-    @staticmethod
-    def _is_minimal_local_evolution(unit: CompilationUnit) -> bool:
-        """Keep Operator/Hamiltonian setup migration bounded to the first slice."""
-        if unit.main is None:
-            return False
-        evolution_count = 0
-        for statement in unit.main.body.stmts:
-            if isinstance(statement, Measure):
-                continue
-            if not isinstance(statement, StateBind):
-                return False
-            if statement.ty is not None and statement.ty.name == "Operator":
-                if not isinstance(statement.expr, OpPauli) and not Evaluator._explicit_propagator(statement.expr):
-                    return False
-                continue
-            if isinstance(statement.expr, EvolveExpr):
-                evolution_count += 1
-                continue
-            return False
-        return evolution_count == 1
-
-    @staticmethod
-    def _is_first_runtime_family(unit: CompilationUnit, plan: Any) -> bool:
-        """Return whether ``unit`` is fully covered by the first plan family."""
-        from ..scientific_semantic_ir import RuntimeExecutionPlan
-
-        if not isinstance(plan, RuntimeExecutionPlan):
-            return False
-        if unit.main is None:
-            return False
-        statements = unit.main.body.stmts
-        if not Evaluator._main_deferred_eligible(statements):
-            return False
-        plan_kinds = {node.kind for node in plan.nodes}
-        return "StateBind" in plan_kinds and "Measure" in plan_kinds
 
     def _execute_first_runtime_family(
         self, unit: CompilationUnit, *, stdout: TextIO | None = None
@@ -1150,6 +1015,7 @@ _install_pipe_compatibility(Evaluator)
 _install_state_ops_compatibility(Evaluator)
 _install_operator_projection_compatibility(Evaluator)
 _install_legacy_control_binding_compatibility(Evaluator)
+_install_plan_eligibility_compatibility(Evaluator)
 
 
 def _is_numeric(value: Any) -> bool:
