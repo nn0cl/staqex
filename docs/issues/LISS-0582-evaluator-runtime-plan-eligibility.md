@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0582
 - GitHub issue: none
-- Status: ready — public-import repair Red accepted; implementation approval pending
-- Phase: phase-1-red
+- Status: in_progress — repair provisionally verified; post-commit checks and Phase 3 approval pending
+- Phase: phase-2-green
 - Type: behavior-preserving evaluator decomposition
 - Priority: normal
 - Initial planning size: M
@@ -17,7 +17,7 @@
 
 ## Summary
 
-Current action 2026-10-05: compatibility repair Red accepted; implementation approval pending. Original completion
+Current action 2026-10-05: repair provisionally verified; post-commit checks and Phase 3 approval pending. Original completion
 below is historical, not current CI clearance. Canonical supplement:
 [R01–R07 accepted repair specification](../specs/evaluator-public-import-compatibility-repair.md).
 
@@ -159,7 +159,7 @@ No Phase 1 execution, test review, implementation or later-phase permission
 inferred. Earlier 52-case/capture evidence is historical, not a fresh run.
 Next: request Phase 1 Red; implementation permission remains no, post-review yes.
 
-## Current repair Phase 1 Red / review target
+## Historical repair Phase 1 Red / review target
 
 Human `Phase 1 Red（受入テスト作成）承認` received 2026-10-05.
 Feature Path readiness satisfied by accepted R01–R07 and observable import,
@@ -183,3 +183,22 @@ test acceptance. New test SHA256 remains
 `88c949852d81846a5ff28b90a7fd226f25017f0aba69bd0a94a3381e48036a8f`.
 No source/test/baseline/lifecycle edits or commit/push/merge in acceptance sync;
 earlier scoped test results are historical, not rerun in this step.
+
+## Current repair Phase 2 Green
+
+Human `Phase 2 Green／implementation` received 2026-10-05 as approval of
+the uniquely requested phase and implementation target. Red acceptance
+already recorded; no later approval inferred. Accepted design/tests committed
+separately as c7c726978de8d8e1228b49982c2caf8987ec4603.
+
+Production changes only: nine AST facade imports and dataclasses.replace,
+with compatibility comments. Executable evaluator AST, successor,
+orchestration/installer, tests and baseline artifacts unchanged. Fresh
+focused37 / consumer8 / adjacent52 pass; spec161 pass; capture/cmp byte-equal.
+All five active-Red entries retired; no exclusions. Full root2322 passed;
+evidence is provisional until rerun at the implementation commit.
+
+- Current phase: Phase 2 Green; implementation allowed yes within R01–R05 only.
+- Next approval: Phase 3 Refactor/review (phase), after blocking verification.
+- Post-review required: yes; batch N/A; no push/merge or issue completion.
+- R06/R07 final approval, remote CI and downstream delivery still gated.

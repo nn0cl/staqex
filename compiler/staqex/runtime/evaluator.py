@@ -5,7 +5,8 @@ from __future__ import annotations
 import cmath
 import math
 import random
-from dataclasses import dataclass, field
+# Public compatibility re-export: callers historically import replace here.
+from dataclasses import dataclass, field, replace
 from fractions import Fraction
 from typing import TYPE_CHECKING, Any, Callable, Mapping, MutableMapping, TextIO
 
@@ -36,6 +37,7 @@ from ..ast_nodes import (
     Dirac,
     DynamicQpuStmt,
     EnumDecl,
+    EvolveExpr,
     Expr,
     ExprStmt,
     FunDecl,
@@ -51,11 +53,19 @@ from ..ast_nodes import (
     LitString,
     ListExpr,
     MatchStmt,
+    Measure,
     MeasureExpr,
     NormExpr,
     SetComprehension,
     OpHop,
     # Public compatibility re-exports retained after evaluator extraction.
+    OpAttr,
+    OpBin,
+    OpBinder,
+    OpCall,
+    OpIndexed,
+    OpPauli,
+    OpPow,
     OpLit,
     OpNumber,
     OpQuadrature,

@@ -6,7 +6,9 @@ approved by `互換性修復の Scope／Phase 0 設計開始`. Phase 1 Red execu
 approved by `Phase 1 Red（受入テスト作成）承認`; same-context Red review
 passed; human test acceptance approved by `Phase 1 Red acceptance を承認`
 on 2026-10-05, reviewed tests unchanged.
-Phase 2 implementation and later phases not approved.
+Phase 2 Green execution/implementation approved by `Phase 2 Green／implementation`
+2026-10-05; import-only repair provisionally verified; post-commit checks and Phase 3 approval pending.
+Phase 3 and final verification not approved.
 Planning owner: [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md),
 AIP-0582-002 / [WP-0174](../work-plans/WP-0174-evaluator-residual-responsibility-successors.md).
 This supplements the accepted [eligibility boundary](evaluator-runtime-plan-eligibility.md).
@@ -87,8 +89,13 @@ Fresh same-context review reproduces14 expected failures/23 passes, consumer8
 and adjacent52 pass; tests unchanged. Human review request
 `Phase 1 Red テストレビュー／acceptance` is not an implementation decision.
 Human `Phase 1 Red acceptance を承認` accepts this unchanged reviewed test set.
-Next gate: Phase 2 Green execution / implementation (phase and implementation).
-Implementation allowed: no until separate approval. Phase 3 and final
-verification also remain separately gated; no test or production edits during
-acceptance synchronization, and no fresh Green evidence claimed.
+Separate `Phase 2 Green／implementation` approval received; restored nine AST
+facade exports and dataclasses.replace without altering execution bodies.
+Fresh focused37, consumer8, adjacent52 and spec161 pass; frozen capture/cmp
+matches. Active-Red entries retired, accepted tests unchanged. Full root2322
+passed; these are provisional dirty-tree results.
+Next gate: Phase 3 Refactor/review after blocking verification.
+Implementation allowed only for the approved import-only Phase 2 repair;
+Phase 3 and final verification remain separately gated. R06/R07 final-SHA/CI
+and delivery evidence not yet satisfied.
 Delivery approval does not waive these gates or authorize baseline weakening.

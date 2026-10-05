@@ -17,44 +17,5 @@ version = 1
 
 # LISS-0582 Phase 3 review and final verification passed; Active-Red retired.
 
-# Reopened public-import repair: only the 14 observed failing nodes are active.
-# Passing consumer/ownership characterizations remain blocking.
-[[active_red]]
-issue = "LISS-0582"
-test = "tests/test_liss_0582_public_import_repair_red.py::test_direct_import_preserves_original_identity"
-phase = "phase-1-red"
-owner = "Codex host / human Adjudicator"
-review_by = "2026-10-12"
-review_condition = "Red test acceptance and separate Phase 2 implementation approval; retire when Green"
-
-[[active_red]]
-issue = "LISS-0582"
-test = "tests/test_liss_0582_public_import_repair_red.py::test_wildcard_preserves_exact_manifest_and_identity"
-phase = "phase-1-red"
-owner = "Codex host / human Adjudicator"
-review_by = "2026-10-12"
-review_condition = "Red test acceptance and separate Phase 2 implementation approval; retire when Green"
-
-[[active_red]]
-issue = "LISS-0582"
-test = "tests/test_liss_0582_public_import_repair_red.py::test_capture_equals_frozen_baseline_bytes"
-phase = "phase-1-red"
-owner = "Codex host / human Adjudicator"
-review_by = "2026-10-12"
-review_condition = "Red test acceptance and separate Phase 2 implementation approval; retire when Green"
-
-[[active_red]]
-issue = "LISS-0582"
-test = "tests/test_liss_0582_public_import_repair_red.py::test_capture_preserves_each_public_manifest[compiler.staqex.runtime.evaluator]"
-phase = "phase-1-red"
-owner = "Codex host / human Adjudicator"
-review_by = "2026-10-12"
-review_condition = "Red test acceptance and separate Phase 2 implementation approval; retire when Green"
-
-[[active_red]]
-issue = "LISS-0582"
-test = "tests/test_liss_0582_public_import_repair_red.py::test_only_original_facade_imports_are_restored"
-phase = "phase-1-red"
-owner = "Codex host / human Adjudicator"
-review_by = "2026-10-12"
-review_condition = "Red test acceptance and separate Phase 2 implementation approval; retire when Green"
+# Reopened LISS-0582 public-import repair: all 37 accepted cases pass in
+# Phase 2; all five Active-Red entries retired. No exclusions remain.

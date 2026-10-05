@@ -4,7 +4,7 @@
 
 Original extraction accepted/implemented; public-import repair reopened
 2026-10-05; repair R01–R07 and Phase 0 accepted, Red accepted;
-Phase 2 implementation approval pending. See the canonical
+Phase 2 import-only repair provisionally verified; post-commit checks and Phase 3 approval pending. See the canonical
 [repair supplement](evaluator-public-import-compatibility-repair.md).
 Earlier phase/completion entries below are historical; extraction ownership
 remains accepted, but current failed CI baseline is not waived.

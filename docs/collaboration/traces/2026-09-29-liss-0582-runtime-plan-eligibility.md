@@ -1,6 +1,75 @@
 # AI work trace: LISS-0582 runtime-plan eligibility
 
-## Current handoff — public-import repair Red accepted, 2026-10-05
+## Current handoff — public-import repair Phase 2 verification, 2026-10-05
+
+Human `Phase 2 Green／implementation` authorizes the uniquely requested Phase 2
+and implementation target after accepted Red. Feature Path / phase-2-green,
+LISS-0582 / WP-0174 / AIP-0582-002 (M). Ten original-object exports restored
+by explicit imports/comments only; no test/body/baseline change. Focused37,
+consumer8, adjacent52, spec161 and capture/cmp pass provisionally. Five Red
+entries retired; no exclusions remain. Full root2322 passes provisionally, post-commit all
+blocking rerun required; no all-blocking/final delivery Green claim yet.
+
+### Repair implementation attempt 1
+
+Accepted test/design records committed separately as
+c7c726978de8d8e1228b49982c2caf8987ec4603 from base423c003b. Existing feature-unit
+branch codex/liss-0582-public-import-repair-design; no push/merge/force rewrite.
+Environment macOS27.0.1 arm64 / Python3.12.6 / pytest9.0.3,
+cwd /Users/nn0cl/Documents/git/qpex. Host implementation/same_context review,
+empty model IDs, no large-change override/numeric structure budget. No review
+pass claimed this phase. Reliable model/reasoning/token estimate/actual usage,
+source/metric/variance N/A: host values unavailable; attribution issue-only.
+Attempt boundary: first approved production repair, not prior historical
+extraction execution. No second production fix or plan replacement.
+
+Included accepted R01–R07/Red review and SHA-frozen tests, consumer inventory,
+evaluator imports, Feature Path/readiness/process/routing/quality/verification/
+structure/DoD, lessons, trace/handoff/approval templates and inspected CI.
+Omitted unrelated later branches/implementations, Rust/providers, secrets,
+private data and global dependency audit. No VO/DTO, port/dependency/ADR,
+runtime AI input/output feature or new business policy.
+Applied compatibility-baseline (not internally-used-only exports), original
+identity/facade routes, ownership, private consumers, immutable approved tests,
+clause reconciliation, lifecycle and status drift. Bounded guard lifecycle
+retained; future guard disposition not preauthorized. Recursive-walker/provider
+implementation lessons out of scope: no logic/refactor performed.
+
+Production only evaluator: nine AST names through ast_nodes facade, replace
+from dataclasses; 12 added/1 deleted physical lines. Executable AST comparison
+against base exact; successor181/orchestration154/installer317 unchanged.
+Evaluator1139 -> 1149 reflects imports/comments, not duplicate bodies/state.
+Accepted test SHA88c949852d81846a5ff28b90a7fd226f25017f0aba69bd0a94a3381e48036a8f
+unchanged; original test/expected JSON/generator/cases protected. Fourteen
+known focused failures resolved, passing23 remain green; original consumer/
+adjacent remain passing. No local full-baseline failure comparison available;
+CI Ubuntu prior success is not same-environment local comparison.
+
+Evidence: [Phase 2 verification](../reviews/2026-10-05-liss-0582-repair-phase2-verification.md)
+has exact scoped commands/timing/artifacts and declared blocking commands.
+Focused `/private/tmp/liss0582-repair-green-focused.xml` 37 pass/1.061s,
+consumer `/private/tmp/liss0582-repair-green-consumers.xml` 8 pass/0.776s,
+adjacent `/private/tmp/liss0582-repair-green-adjacent.xml` 52 pass/0.534s;
+all exit0, failures/errors/skips/exclusions0. Spec runner161/161 exit0;
+capture `/private/tmp/liss0582-repair-green-baseline.json` + cmp exit0/0.
+Root `/private/tmp/liss0582-repair-green-root.xml` 2322 pass, exit0,
+failures/errors/skips0; start JST11:24:01.698734, duration320.795s.
+All11 local CI sanity run blocks pass, logs/results
+/private/tmp/liss0582-sanity-sn2gyjzi/results.json. External helper created
+using apply_patch; preserves unique temp copies/logs, no cleanup/delete.
+Initial harness mktemp path rewrite defect caused exit1 in smoke only,
+corrected externally and all11 rerun; not product failure, no assertions waived.
+
+Changed this phase: evaluator imports, Red lifecycle retirement, Issue, both
+spec status, WP, this trace and new Phase 2 verification record; old accepted
+tests unchanged. Safe next action: commit implementation/status separately,
+rerun every local blocking
+command at that SHA, then request Phase 3 Refactor/review approval (phase).
+Implementation allowed only within Phase 2 scope; post-review yes, batch N/A.
+Phase 3/final verification/remote CI/PR/downstream delivery pending. No issue
+marked done; no completion process-review pass claimed.
+
+## Historical handoff — public-import repair Red accepted, 2026-10-05
 
 Human `Phase 1 Red acceptance を承認` received 2026-10-05. Accepted unchanged
 reviewed 37-case test set, SHA256
