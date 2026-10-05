@@ -1,6 +1,60 @@
 # AI work trace: LISS-0582 runtime-plan eligibility
 
-## Current handoff — public-import repair final local verification, 2026-10-05
+## Current closeout — repaired PR #604 delivered, 2026-10-05
+
+Human `プッシュ／PR更新・CI確認・成功後のマージ` authorized PR #604 delivery;
+subsequent `続けて` authorizes only documentation closeout. Fast Path / terminal
+record synchronization, LISS-0582 / AIP-0582-002 (M). No new source phase,
+provider, ADR, policy, test or baseline change. Host / same_context, empty model
+IDs, optional large-change settings absent. Actual model/reasoning/tokens/
+source/variance N/A unavailable from host; attribution issue-only.
+
+Approved head `d6f7e91744791d0c21764f94dc4b1938dc283740` pushed normally to
+the original PR feature ref. [PR CI run 37275274175](https://github.com/nn0cl/staqex/actions/runs/37275274175)
+passed all three jobs before merge: sanity (11 blocks and frozen capture/cmp),
+spec161/161, root2,322 (845.13s). Remote environment Ubuntu24.04.5 x64 /
+Python3.12.14 / pytest9.1.1. Actual CI synthetic merge
+`bb266271c1f528763fac9957c8ff7ee7d74d3e72`, d6f7e917 into ada98a05.
+
+[PR #604](https://github.com/nn0cl/staqex/pull/604) merged at
+2026-10-05T07:15:39Z using exact-head guarded merge, actual SHA
+`458fcbe69b9161be21c2b8f92c8cd2838539e6f9`; tree
+`4b35e14d70d699c5c612547668ca9ec0c625b2d5` equals approved head tree.
+[Main CI run 37276748820](https://github.com/nn0cl/staqex/actions/runs/37276748820)
+completed SUCCESS at actual458fcbe6; sanity, root and spec each SUCCESS.
+No force, main push, branch deletion or later dependency propagation.
+
+Actual merge-result local verification at458fcbe6 in isolated detached
+checkout: macOS27.0.1 arm64 / Python3.12.6 / pytest9.0.3. Focused37, consumer8,
+adjacent52 passed, failures/errors/skips0, exit0. All blocking: root2,322 passed
+(16:16:32.404175–16:21:52.660175JST, 320.256s), spec161/161 gatePASS, all11
+sanity blocks pass, fresh3-case baseline byte-equal. No exclusions.
+Evidence `/private/tmp/liss0582-merge-{root,focused,consumers,adjacent}.xml`,
+`/private/tmp/liss0582-merge-spec.log`, `/private/tmp/liss0582-merge-baseline.json`,
+`/private/tmp/liss0582-sanity-_zifysjp/results.json`; exact selectors in earlier
+final verification. Durable [delivery result](https://github.com/nn0cl/staqex/pull/604#issuecomment-5989991286).
+Clean temporary checkout removed via normal worktree removal; original main
+and later branches retained, external evidence retained.
+
+Lessons applied: synchronize current Issue/WP/both specs; preserve historical
+migration evidence; never weaken compatibility manifests or repair-base guards.
+Historical import-hygiene omission and accepted repair remain visible. No new
+reusable pattern beyond existing lessons. Included policies, canonical specs,
+trace/handoff, actual GitHub and verification evidence; unrelated features,
+Rust/providers/secrets omitted. Dynamic/out-of-tree/module/cycle gaps and
+unavailable comparable pre-repair local root baseline remain explicit.
+
+Closeout changes only Issue, WP, both spec status notes, this trace and a final
+record navigation note. Same-context completion process review after verified
+delivery/status synchronization found no new deviation; canonical record in
+Issue. LISS-0582 done; WP-0174 active. Commit this documentation unit, rerun
+scoped37/8/52 and all root/spec/sanity/capturecmp/routing at final SHA;
+external evidence `/private/tmp/liss0582-closeout-*`. Deliver by dedicated PR
+only after green CI under bounded approval. Do not claim a new SHA verified
+before these checks finish. R05 guard disposition/R07 downstream new-SHA and
+merge-result evidence, rank3–6 source work remain separately gated.
+
+## Historical handoff — public-import repair final local verification, 2026-10-05
 
 Human `final verification／最終レビュー` received for the unique final
 local gate. Feature Path / final-verification, LISS-0582 / WP-0174 /

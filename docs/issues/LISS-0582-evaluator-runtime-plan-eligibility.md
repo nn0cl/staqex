@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0582
 - GitHub issue: none
-- Status: review — final local review approved; final-SHA checks and CI/delivery pending
-- Phase: final-verification
+- Status: done — PR #604 merged; repaired-head and main CI passed
+- Phase: completed
 - Type: behavior-preserving evaluator decomposition
 - Priority: normal
 - Initial planning size: M
@@ -17,8 +17,10 @@
 
 ## Summary
 
-Current action 2026-10-05: final local review approved; final-SHA checks and CI/delivery pending. Original completion
-below is historical, not current CI clearance. Canonical supplement:
+Current state 2026-10-05: extraction and public-import repair delivered by
+PR #604; final local, PR CI, actual merge-result local and main CI checks passed.
+Completion evidence is in the representative trace's current closeout section.
+Earlier phase entries below are historical. Canonical supplement:
 [R01–R07 accepted repair specification](../specs/evaluator-public-import-compatibility-repair.md).
 
 Investigate and, after separate phase approvals, extract the cohesive runtime
@@ -219,7 +221,7 @@ results preserved externally before reporting Phase 3 completion.
 - Post-review required: yes; batch N/A. No done, push/merge or downstream approval.
 - Remote CI/delivery and later-head guard disposition remain R06/R07 gates.
 
-## Current repair final verification
+## Historical repair final verification
 
 Human `final verification／最終レビュー` received 2026-10-05. Phase 3
 final-SHA local root2322/spec161/sanity11 and scoped37/8/52/capturecmp passed
@@ -231,3 +233,24 @@ No push/merge authorization inferred. Issue remains review, not done, because
 R06 remote CI and R07 delivery/downstream evidence remain unsatisfied.
 Completion process review deferred until actual closure; no false process pass.
 Next safe action after local checks: obtain separate delivery authorization.
+
+## Current repair delivery / closeout — 2026-10-05
+
+Human `プッシュ／PR更新・CI確認・成功後のマージ` authorized delivery;
+subsequent `続けて` authorized documentation-only terminal synchronization.
+[PR #604](https://github.com/nn0cl/staqex/pull/604) merged approved head
+`d6f7e91744791d0c21764f94dc4b1938dc283740` at actual merge
+`458fcbe69b9161be21c2b8f92c8cd2838539e6f9`. All three PR and main CI jobs
+passed; exact evidence, environments and known limitations are recorded in
+the [current trace](../collaboration/traces/2026-09-29-liss-0582-runtime-plan-eligibility.md).
+No source, tests, assertions, baseline or accepted R01–R07 changed in closeout.
+Final documentation-commit verification remains required before delivery of
+this synchronization unit; evidence is recorded externally without another
+unverified evidence commit. WP-0174 remains active, not done.
+
+Process review: no operating-contract deviation or operational problem found.
+
+This review applies to the accepted repair and current bounded closeout. The
+historical public-import omission and its accepted repair/lesson remain
+recorded, not erased by this result. Pending downstream guard disposition and
+each later feature's new-SHA/merge-result evidence remain separately gated.
