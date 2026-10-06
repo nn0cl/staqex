@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | Rank 3 static `forEach` boundary intake candidate; separate scope approval required |
+| Current Next Issue | LISS-0584 local A/B/C approved; committed-head checks pending; LISS-0583 feature acceptance separate |
 
 ## Goal
 
@@ -22,7 +22,7 @@ Evaluator's unique mutable-state ownership.
 |---:|---|---|---|
 | 1 | Coordinate liveness and Trace-Out: five Evaluator helpers and duplicate frame helpers | Shared consumers in frames, pipes, evolution, execution, observation; tied to existing ADR 0138/0142/0153/0158 behavior | LISS-0581 done; implementation commit passed 2,280 tests; PR delivery pending GitHub CI and merge |
 | 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports restored | LISS-0582 done; PR #604 merged at 458fcbe6, PR/main CI and merge-result local checks passed; no retirement waiver |
-| 3 | Static `forEach` expansion | 51-line evaluator body, calls binding dispatch for each expanded wire | Separate execution/loop boundary study; avoid enlarging `execution.py` without line/body budget review |
+| 3 | Static `forEach` expansion | 51-line evaluator body, actual execution dispatch and live binding callbacks; historical local implementation predates repair | LISS-0583 test acceptance pending; LISS-0584 minimal guard implemented, all-blocking sanity gap; no old-branch wholesale integration |
 | 4 | Tensor binding | 45-line evaluator body; owns `Joint` transformation and dispatch dependency | Separate binding/algebra slice; not an external-resource adapter and not automatically part of `binding.py` |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | Treat as resource/input-boundary design, not generic evaluator helper extraction |
 | 6 | Partial-call filling and small classical-state helpers | `_fill_partial` 31 lines; `_is_closed` 28; `_maybe_capture_classical_scalar` 23 | Keep separate until actual consumers, state writes, and feature ownership show a cohesive unit |
@@ -38,6 +38,49 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 |---|---|---|---|---|---|---|---|
 | [LISS-0581](../issues/LISS-0581-evaluator-coordinate-liveness-successor.md) | done — PR #603 merged and CI passed | M | M | AIP-0581-001 | ADR 0228 accepted | - | `feature/liss-0581-red` (deleted after merge) |
 | [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | done — PR #604 merged; repaired-head and main CI passed | M | M | AIP-0582-002 | extraction retained; no later dependency | later dependency delivery still separately gated | `codex/liss-0582-repair-closeout` (documentation only) |
+| [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md) | review — Phase 1 test acceptance pending; separate repair design started | M | M | AIP-0583-002 | LISS-0582 done; LISS-0584 before Green/delivery | static foreach/later dependent delivery | `codex/liss-0583-static-foreach-phase0` |
+| [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | in_progress — focused Green; sanity/dependency-commit gap | M | M | AIP-0584-001 | LISS-0582 done; LISS-0583 is discovery only | LISS-0583 Green/delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
+
+## Current rank-3 design gate — 2026-10-05
+
+Human `Scope／Phase 0設計開始承認` approves design/inventory only. Existing
+local LISS-0583 tipb09e3e06 and its historical approvals are retained, not
+treated as current repaired-main delivery or new phase authorization. The
+[current accepted specification](../specs/evaluator-static-foreach-elaboration.md)
+records F01–F08, twelve public imports missing from the old tip, complete
+behavior-test requirements and bounded repair-guard disposition. Scoped65 and
+adjacent41 baseline tests passed at a287be51; historical scoped evidence, not a
+fresh run during acceptance sync. Human `Phase 0 acceptance」の承認` accepts
+the dedicated Issue/spec F01–F08 and bounded guard disposition unchanged.
+Phase 1 Red execution / limited guard migration separately approved. New tests:
+89 passed / 5 failed (four structural, one F05 arithmetic contract mismatch);
+consumer/adjacent77 passed on a287be51 + dirty tests/docs. Compiler unchanged.
+Next: [test review / F05 disposition](../collaboration/reviews/2026-10-05-liss-0583-phase1-review.md);
+implementation allowed no. No automatic deferral or test waiver.
+
+Human `修復の設計開始承認` selects separate repair design on2026-10-05.
+LISS-0584 accepted R01–R07 covers inferred-Wire numeric binary validation,
+alias/nesting detection and positive neighbors. Existing failing F05 test is
+retained, not weakened/excluded. Fresh repair design baseline:1expected failure,
+adjacent21passed / numeric12passed; scoped only, no full Green. Human
+`専用Issue/spec R01–R07 と Phase 0 acceptance` accepts the dedicated target
+unchanged on2026-10-05. Subsequent explicit Phase 1 execution prepares48 cases:
+24 expected Red/24 passed; consumer/adjacent74 passed, no source changes.
+Human `LISS-0584 Phase 1 Red テストレビュー／acceptance` accepts the
+[0584 packet](../collaboration/reviews/2026-10-05-liss-0584-phase1-review.md)
+unchanged2026-10-06. Subsequent explicit Phase 2 implementation approval executes
+the12-line numeric guard: focused48, consumer/adjacent74 and spec161 pass.
+Sanity copy smoke rejects the pre-existing uncommitted0583 spec; full Green
+not established. [Current584 verification/handoff](../collaboration/reviews/2026-10-06-liss-0584-phase2-verification.md)
+requests reviewed dependency/document separation and commit permission, not
+Phase 3 or delivery approval.
+Human `はい。整理して` authorizes scope organization2026-10-06;
+[A/B/C proposal](../collaboration/reviews/2026-10-06-liss-0584-commit-scope.md)
+is prepared (11/4/8 files), not executed. Carrier guard disposition/local
+commit permission remain pending; all-blocking sanity gap is not waived.
+Phase 2 root2419 pass (4 approved0583 deselections); spec161 pass; sanity fails
+copy smoke. Committed test dependency separation remains open.0583 Phase 1
+test acceptance remains separate.0583 implementation and a new ADR are not authorized.
 
 ## Current repair closeout — 2026-10-05
 

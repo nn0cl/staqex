@@ -3625,6 +3625,18 @@ class TypeChecker:
                 )
         left = self._infer(expr.lhs)
         right = self._infer(expr.rhs)
+        if expr.op in {"+", "-", "*", "/", "^"} and (
+            left.kind == "Wire" or right.kind == "Wire"
+        ):
+            self.diagnostics.append(
+                {
+                    "code": "QPU_CLASSICAL_CONTROL_ERROR",
+                    "line": expr.span.line,
+                    "col": expr.span.col,
+                    "message": "an opaque `forEach` element handle cannot be used in numeric arithmetic",
+                }
+            )
+            return left if left.kind == "Wire" else right
         # A bare numeric literal defaults to State-typed sugar (`pi / 2.0`),
         # but combined with an otherwise-Classical operand it is classical
         # arithmetic, not a genuine State mix. Reinterpret the literal side

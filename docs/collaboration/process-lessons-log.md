@@ -21,6 +21,8 @@ Record meta-level patterns only. No session transcripts.
 - Status: applied in Red and Phase 3 review; unchanged guard scope rechecked,
   no hash/assertion relaxation. Downstream guard disposition remains pending
   in each later feature scope, not authorized by this lesson.
+  Reapplied in0584 dependency organization:0583 guard-carrier disposition is
+  requested separately, not inferred from584 test acceptance or commit planning.
 
 ## Lesson
 
@@ -296,7 +298,11 @@ Record meta-level patterns only. No session transcripts.
   exact node when its assertion is still authoritative, then limit Green to the
   setup or implementation gap identified by that node.
 - Source issue or work plan (adopter's own ID, if any): LISS-0551 / WP-0161
-- Status: applied
+- Status: applied; reapplied in LISS-0584 Phase 1 by adopting the exact existing
+  F05 node read-only, pinning its test dependencies and adding only missing
+  numeric/alias/positive coverage; Phase 2 keeps the accepted hashes/assertions
+  unchanged and resolves all24 focused failures, including original F05.
+  No duplicate assertion or lifecycle waiver.
 
 ## Lesson
 
@@ -440,7 +446,10 @@ Record meta-level patterns only. No session transcripts.
   each retained behavior family, and report the two result sets separately
   before Green authorization.
 - Source issue or work plan: LISS-0571 / WP-0167
-- Status: applied
+- Status: applied; reapplied in LISS-0583 Phase 1 by distinguishing four
+  structural gaps from a newly exposed compile mismatch, keeping the latter
+  blocking pending human scope disposition rather than calling all failures
+  expected extraction Red.
 
 ## Lesson
 
