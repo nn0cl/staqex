@@ -103,6 +103,7 @@ from .mixed_state import DensityStateValue, density_from_call, matrix_from_list
 from .lindblad import evolve_lindblad
 from .matrix import Matrix
 from .evaluation.calls import bind_call
+from .evaluation.compatibility import install_static_foreach_compatibility as _install_static_foreach_compatibility
 from .evaluation.compatibility import (
     install_classical_compatibility as _install_classical_compatibility,
     install_classical_call_compatibility as _install_classical_call_compatibility,
@@ -475,58 +476,6 @@ class Evaluator:
 
 
 
-
-    def _run_foreach(self, joint: Joint, stmt: ForEachStmt) -> Joint:
-        """Expand a static register loop into compiler-internal wire names."""
-        collection = stmt.collection
-        if isinstance(collection, Var):
-            count = self.static_register_sizes.get(collection.name)
-        elif (
-            isinstance(collection, Call)
-            and isinstance(collection.callee, Var)
-            and collection.callee.name == "register"
-            and len(collection.args) == 1
-            and isinstance(collection.args[0], LitInt)
-            and collection.args[0].value > 0
-        ):
-            count = collection.args[0].value
-        else:
-            count = None
-        if count is None or count <= 0:
-            raise KernelError("FOR_EACH_DYNAMIC_BOUND_ERROR: static register required")
-        if count > MVP_MAX_LOGICAL_QUBITS:
-            raise KernelError(
-                "STATIC_HILBERT_RESOURCE_ERROR: static Hilbert expansion exceeds "
-                f"the MVP budget ({MVP_MAX_LOGICAL_QUBITS})"
-            )
-        for index in range(count):
-            wire = f"__foreach_{stmt.element}_{index}"
-            joint = self._bind_names(
-                joint,
-                [wire],
-                KetLit(label="0", span=stmt.span),
-                logs=[],
-                inspect_out=None,
-            )
-            for body_stmt in stmt.body.stmts:
-                if not isinstance(body_stmt, ExprStmt) or not isinstance(body_stmt.expr, Call):
-                    raise KernelError("forEach body supports Kernel operation calls only")
-                call = body_stmt.expr
-                if (
-                    not isinstance(call.callee, Var)
-                    or call.callee.name != "apply"
-                    or len(call.args) != 2
-                    or not isinstance(call.args[1], Var)
-                    or call.args[1].name != stmt.element
-                ):
-                    raise KernelError("forEach body must apply an operator to its element")
-                expanded = Call(
-                    callee=call.callee,
-                    args=[call.args[0], Var(name=wire, span=stmt.span)],
-                    span=call.span,
-                )
-                joint = bind_call(self, joint, wire, expanded)
-        return joint
 
 
 
@@ -1016,6 +965,7 @@ _install_state_ops_compatibility(Evaluator)
 _install_operator_projection_compatibility(Evaluator)
 _install_legacy_control_binding_compatibility(Evaluator)
 _install_plan_eligibility_compatibility(Evaluator)
+_install_static_foreach_compatibility(Evaluator)
 
 
 def _is_numeric(value: Any) -> bool:

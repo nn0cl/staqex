@@ -1,5 +1,267 @@
 # AI work trace: LISS-0583 static `forEach` elaboration
 
+## Current State / handoff — guard Phase 2, 2026-10-06
+
+- Human `LISS-0583 ローカルコミット／実SHAで全blocking再検証承認`
+  authorizes bounded local17-file unit and actual-SHA all-blocking rerun2026-10-06.
+  This record is saved before commit/verification. Recover final actual-SHA results
+  from `/private/tmp/liss0583-committed-verification.json` and referenced XML/logs;
+  confirm SHA matches HEAD and clean state, do not infer success from approval.
+  No later evidence-only commit planned. Phase 3/push/PR/merge remain unapproved;
+  next safe action only if all_passed is human Phase 3 Refactor/review approval.
+  Change this step: approval sync in existing Issue/WP/packet/trace, no source/test
+  edits. Host deterministic checks; same_context routing/empty models unchanged.
+  Included bounded unit and checks; omitted other ranks/providers/secrets.
+  Model/reasoning/token actual N/A, host unavailable;0583-only attribution.
+  Source-clean/final-SHA lesson applied. Prior commit-pending wording historical.
+
+- User request: `LISS-0583 guard移行 Phase 2 Green／implementation承認`;
+  Feature Path / phase-2-green, AIP-0583-003 M, accepted G01–G07 and new27 tests.
+  Implementation allowed exact guard dispatch only, post-review yes, batch N/A.
+- Completed: existing0584 test imports existing F08 helpers and delegates only
+  three exact source paths; other five bytes, identity/base/owner/F05 assertions,
+  original fixture/TypeChecker guards retained. No new algorithm/hash/exclusion.
+  Runtime/accepted migration tests/F08 helper unchanged. Guard69→86 physical lines.
+- Fresh verification: focused165pass, reviewer33pass, consumer/adjacent77pass,
+  spec161pass; root2450pass without exclusions, sanity9pass/1source-clean failure. Evidence,
+  exact commands and counts: [guard Phase 2 packet](../reviews/2026-10-06-liss-0583-guard-phase2-verification.md).
+  Four Phase 1 failures resolved; actual positives now pass with negatives,
+  closing provisional rejection-only evidence. No full Green/Phase 2 completion.
+- HEAD/base6d1b851bff292ae496145b71e7a15a9be757cfd1 plus dirty source/tests/docs,
+  branch codex/liss-0583-phase1-rereview, repository cwd;
+  macOS27.0.1arm64/Python3.12.6/pytest9.0.3. First approved guard implementation;
+  model/reasoning/token estimate/actual/metric/source/variance N/A, host unavailable,
+  issue-only attribution. No external/private data. No commit/push/merge.
+- Included: accepted supplement/test review, guard/helper/actual consumers,
+  readiness/verification/structure/routing policies and bounded-guard lesson.
+  Omitted: other ranks, Rust/providers/secrets/global dynamic graph. Assumption:
+  accepted byte-to-AST limit unchanged; final commit evidence still required.
+- Routing: host implementation, same_context review (weaker), empty models,
+  no enabled large-change override; dirty metrics unknown, no downgrade assumed.
+  Reviewer reread current guard/source diff/helpers and reran33 without author edits.
+- Changed this phase: tests/test_liss_0584_repair_boundary_red.py plus new guard
+  Phase 2 packet, Issue, original/supplement specs, WP, Phase 2 handoff and this
+  trace. Four parked source hashes and immutable fixture digest match earlier
+  evidence; original helper/numeric tests/F08 test diffs empty. Lifecycle0entries.
+- Next safe action / blocker: request bounded local commit of reviewed0583
+  source/tests/records and rerun root/spec/all10 sanity at actual SHA. Source-clean
+  copy smoke fails on uncommitted distributed spec; do not bypass. Phase 3/final/
+  delivery remain separate; no issue done/process-completion claim. Recover from
+  packet/spec/trace, current branch and changed files, not chat history.
+
+## Historical guard Phase 1 Red handoff, 2026-10-06
+
+- Human `LISS-0583 guard移行 Phase 1 Red テストレビュー／acceptance承認`
+  accepts the linked review/new27 cases unchanged2026-10-06. Guard Phase 1 exit
+  accepted; next gate explicit guard Phase 2 Green/implementation approval,
+  implementation permission still no. Original Feature Phase 2 remains parked.
+- Acceptance sync: mechanical documentation-only Fast Path, no contract,
+  architecture, test or source change. Existing bounded-guard lesson applied:
+  separate human acceptance from implementation and preserve provisional
+  negative-evidence limitation. No fresh pytest/root/spec/sanity run claimed.
+  Changed records: Issue, original/supplement specs, WP, guard Phase 1 packet,
+  Phase 2 handoff and this representative trace; prior test evidence retained.
+  Verification: diff check, document lifecycle and test lifecycle checks;
+  no commit/push/merge. Current branch/HEAD/environment/routing/context ledger
+  below unchanged. Model/reasoning/usage N/A, unavailable;0583-only attribution.
+  Prior pending test-acceptance next actions below are historical.
+
+- User request: `ISS-0583 guard移行 Phase 1 Red実行承認`, uniquely existing
+  LISS-0583; Feature Path / phase-1-red, AIP-0583-003 M, G01–G07 accepted.
+  Scope test creation only; guard implementation no, post-review yes, batch N/A.
+- Completed: new27 real-entrypoint acceptance/mutation cases,196 lines;
+  [same-context agent review passed](../reviews/2026-10-06-liss-0583-guard-phase1-review.md)
+  for human Red acceptance. Focused161pass/4fail (new24pass/3Red +old guard1Red),
+  reviewer rerun identical, consumer/adjacent77pass. Exact selectors, times,
+  failure IDs and external XML paths in packet. Root/spec/sanity not_run here;
+  historical all-blocking readonly/source-clean gaps remain. No full Green.
+- Tested HEAD6d1b851bff292ae496145b71e7a15a9be757cfd1 +dirty parked source/docs
+  and new tests, `codex/liss-0583-phase1-rereview`, repository cwd,
+  macOS27.0.1arm64/Python3.12.6/pytest9.0.3. First supplemental Red execution;
+  model/reasoning/token estimates/actual attribution N/A, unavailable from host.
+- Changed this phase: new tests/test_liss_0583_repair_boundary_migration_red.py,
+  new review packet, Issue, original/supplement specs, WP, trace, Phase 2 handoff
+  and lesson application. Existing guard/numeric tests/fixtures/F08 support/tests
+  unchanged; four parked source digests unchanged; lifecycle0entries unchanged.
+  git diff --check passed; no commit/push/merge.
+- Context ledger: included accepted spec, guard/projections, provenance, readiness,
+  policies/lessons and bounded actual consumers. Omitted other ranks, Rust,
+  providers/secrets/global dynamic graph. Assumption: baseline temporary shape
+  proves AST, not historical bytes. Negative passes are provisional while
+  legitimate positives Red; Phase 2 must pass both. No new architecture decision.
+- Routing: host execution, same_context review (weaker), empty model IDs,
+  no enabled large-change override; dirty metrics unknown, no downgrade inferred.
+- Next safe action / blocker: human **guard Phase 1 Red test review/acceptance**,
+  then separate guard Phase 2 implementation approval. Old guard unchanged/failing;
+  cannot resolve without implementation gate. Later approved commit/all-blocking
+  actual-SHA rerun, Phase 3/final/delivery still required. Recover from this
+  trace, linked packet/spec, branch and changed files, not chat memory.
+
+## Historical guard supplement Phase 0 handoff, 2026-10-06
+
+- Subsequent human `LISS-0583 guard移行仕様 G01–G07 と Phase 0 acceptance承認`
+  accepts the supplement and explicit three-file byte-to-AST boundary unchanged.
+  AIP-0583-003 accepted, Issue ready; next separate gate Phase 1 Red execution.
+  Acceptance sync changes records only; previous tests are not rerun evidence.
+- User request: `LISS-0583：LISS-0584修復境界guard移行のScope／Phase 0設計開始承認`.
+- Scope: Architecture Path / Phase 0 only, AIP-0583-003 M; original Feature
+  Phase 2 source parked unchanged. Implementation permission no for supplement,
+  post-review yes, batch N/A; no test/assertion/hash/lifecycle/code edits.
+- Completed artifact: [accepted G01–G07 supplement](../../specs/evaluator-static-foreach-repair-guard-migration.md).
+  Original immutable fixture preserved; exactly three source paths proposed for
+  existing F08 AST protection, five byte guards retained. Comment/formatting
+  byte equivalence explicitly not claimed; persistent F05/TypeChecker/numeric
+  behavior/actual consumers remain blocking. No new port/provider/ADR proposed.
+- Actual provenance: six original source/tool/data hashes match a287be51;
+  two later tests match approved a14ab3af carrier. Fixture first committed
+ 14973d84. Initial audit mistakenly probed those tests at a287be51 and failed
+ on absent files; corrected per-path provenance proves all8 original hashes,
+ no fixture regeneration. Five current byte guards match, three source bytes
+ differ; current reviewed F08 projections accept the bounded shape unchanged.
+- Fresh Phase 0 baseline:60pass/1fail,61nodes, exit1/errors/skips/exclusions0,
+  sole0584 readonly failure; XML `/private/tmp/liss0583-guard-phase0-baseline.xml`.
+  Exact command/environment is in the supplement. Root/spec/sanity not rerun
+  this design; prior Phase 2 blockers remain, no Green/completion claim.
+- HEAD6d1b851b plus pre-existing dirty implementation/docs; branch unchanged,
+  cwd repository, macOS27.0.1arm64/Python3.12.6/pytest9.0.3. Codex desktop;
+  supplemental design attempt after scope approval, not second implementation.
+  Model/reasoning/token range/midpoint/actual usage/metric/source/variance N/A,
+  unavailable from host;0583-only attribution, no external/private data.
+- Included:0583/0584 specs and guards, actual origins, current failure evidence,
+  applicable policies and recorded lessons. Omitted:other ranks, Rust/providers,
+  secrets and global dynamic consumer graph. Assumption: existing semantics and
+  state ownership remain unchanged; byte→AST boundary requires human acceptance.
+- Routing:host design/deterministic probes, same_context review configuration
+  (weaker), empty models/no enabled large-change override; no review-pass claim.
+- Changed this design: new supplement, existing0583 Issue/spec/WP/trace,
+  Phase 2 handoff link and existing lesson application note; documentation only.
+  Pre-existing source/tests/lifecycle state preserved. No commit/push/merge.
+- Next safe action/blocker: **guard supplement Phase 1 Red execution**,
+  new acceptance/mutation tests only, then real-guard test review/acceptance and
+  bounded guard implementation approval. Source-clean commit/rerun follows
+  only after guard resolution; Phase 3/final/delivery remain separate.
+
+## Historical Feature Phase 2 handoff
+
+## Current State / handoff — Phase 2, 2026-10-06
+
+- User request: `LISS-0583 Phase 2 Green／implementation承認`; Feature Path /
+  phase-2-green, AIP-0583-002 M. Phase 1 tests accepted; minimum implementation
+  permitted only for F01–F08. Post-review yes; batch N/A. Phase 3 not approved.
+- Completed: source body migrated to69-line static_foreach successor; original
+  class body removed; private hook identity preserved; only two context
+  declarations added. State stays in Evaluator, all public imports retained.
+  AST comparison proves original algorithm after self→context substitution.
+- Evidence: [Phase 2 verification packet](../reviews/2026-10-06-liss-0583-phase2-verification.md).
+  Focused94 and consumer/adjacent77 pass, spec161 pass, lifecycle0entries pass.
+  Root2422pass/1fail without exclusions; sanity9pass/1copy-smoke failure. Source-clean
+  rejects uncommitted distributed spec; no bypass/full Green/completion claim.
+- Tested HEAD/base6d1b851b plus dirty source/docs, current dedicated branch
+  codex/liss-0583-phase1-rereview. macOS27.0.1arm64/Python3.12.6/pytest9.0.3.
+  Commands/XML/logs under `/private/tmp/liss0583-phase2-*`, cwd repository.
+- Attempt: first approved current-base Phase 2 implementation, not old-branch
+  integration. Codex desktop; model/reasoning/token range/midpoint/actual usage/
+  metric/source/variance N/A, not available from host; issue-only attribution.
+- Included: accepted specs/review/consumer inventory, source/tests/guards,
+  readiness/verification/quality/routing and applicable recorded lessons.
+  Omitted: rank4–6, Rust/providers/secrets and out-of-tree dynamic graph.
+  Assumption: preserve existing ordering/errors, not add rollback/prevalidation.
+- Routing: host implementation, same_context review (weaker), empty models;
+  no configured large-change override or numeric budgets. Dirty metrics unknown.
+- Changed files: new static_foreach.py, evaluator.py, context.py, compatibility.py;
+  active-red-tests.toml only retires four passing exclusions; existing0583
+  Issue/spec/WP/trace/review, current verification packet and lessons application.
+  Reviewed test/fixture/guard bytes unchanged. No commit/push/merge performed.
+- New root blocker:0584's readonly repair guard freezes evaluator.py,
+  compatibility.py/context.py; all three approved extraction deltas mismatch.
+  Its fixture and every test stay unchanged/unexcluded. This prerequisite guard
+  was missed in the initial current-base inventory; accepted F08 only migrates
+  the0582 guards. All other readonly dependencies match. Root evidence and old
+  clean main XML confirm one new guard failure, four structural failures resolved.
+- Next safe action/blocker: request Scope/Phase 0 design for the0584 guard's
+  bounded migration within0583. Reviewed revised spec/test approval is required
+  before editing guards; no silent rehash. Local commit/all-blocking rerun only
+  after resolution. Phase 3/final/delivery separate.
+- Final root XML:2423nodes,2422pass/1fail, exit1/errors/skips/exclusions0,
+ 16:14:49.500104–16:20:11.331104JST,321.831s. Actual failed node:
+ `tests/test_liss_0584_repair_boundary_red.py::test_existing_f05_owner_and_readonly_dependencies_are_preserved`.
+  Post-record spec/sanity rerun under external phase2-record prefix gives same
+  spec161pass/sanity9pass1fail; links/diff/lifecycle checks pass. Tests unchanged.
+
+## Historical Phase 1 handoff
+
+## Current State / resumable handoff — Phase 1 re-review, 2026-10-06
+
+- Subsequent human `LISS-0583 Phase 1 Red テストレビュー／acceptance承認`
+  accepts the existing F01–F08 tests, immutable fixture and bounded three-guard
+  mapping unchanged. Phase 1 exit gate accepted, Issue ready; no implementation
+  permission or later phase approval inferred. Acceptance sync changes records
+  only; previous tested SHA/results below are not reruns for this sync.
+- User request: `LISS-0583 Phase 1 Red テストレビュー再実施承認`.
+- Feature Path / phase-1-red, AIP-0583-002 size M; review only, implementation
+  permission no, post-review yes, batch N/A. Remaining request: continue the
+  behavior-preserving split after separate human acceptance/implementation gates.
+- Completed: same-context agent review passed for human acceptance; F01–F08
+  reconciled against actual assertions and original body. F05 arithmetic now
+  passes unchanged on merged0584 main. Four structural Red nodes remain.
+- Evidence: [updated representative review](../reviews/2026-10-05-liss-0583-phase1-review.md)
+  gives counts, timestamps, comparison, limitations and guard equivalence.
+- Tested clean SHA6d1b851bff292ae496145b71e7a15a9be757cfd1; review branch
+  `codex/liss-0583-phase1-rereview` starts there. macOS27.0.1arm64 /
+  Python3.12.6 / pytest9.0.3, cwd `/Users/nn0cl/Documents/git/qpex`.
+- Execution attempt: current-main reviewer revalidation after prerequisite
+  delivery, not an implementation/fix attempt. Codex desktop; model/reasoning,
+  estimated range/midpoint/actual tokens/metric/source/variance N/A, unavailable
+  from host. Attribution0583-only; dependency changes inspected as evidence.
+- Included: accepted spec/Static Hilbert/E-05, current records, original runtime
+  body/consumer routes, tests/support/fixture, current policies and lessons.
+  Omitted: rank4–6, Rust/providers, secrets, dynamic/out-of-tree graph and full
+  blocking suites. Assumption: preserve accepted F01–F08 unchanged.
+- Review isolation same_context (weaker), implementation host, model IDs empty;
+  no configured large-change override/numeric budgets. Routing JSON external
+  `/private/tmp/liss0583-phase1-rereview-routing.json`; unknown ownership/cycles
+  explicitly retained. No source reduction or all-blocking Green claimed.
+- Changed files: representative review and this trace,0583 Issue/spec,
+  WP-0174 and existing lessons application note; documentation only.
+- Next safe action/blocker: obtain separate **Phase 2 Green/implementation
+  approval** and recheck readiness. No accepted
+  test change, old-branch integration, commit, push or merge authorized here.
+
+Exact commands (`/usr/local/bin/python3.12`, cwd repository, no exclusions):
+
+```text
+-m pytest tests/test_liss_0583_static_foreach_behavior_red.py
+tests/test_liss_0583_static_foreach_successor_red.py
+tests/test_liss_0583_guard_migration_red.py
+tests/test_liss_0582_public_import_repair_red.py -q
+--junitxml=/private/tmp/liss0583-phase1-rereview-focused.xml
+```
+
+90passed/4failed,94nodes, exit1; structural failure IDs unchanged, original F05
+resolved versus historical XML at the same test/runtime versions. Start
+15:39:06.092701JST, end15:39:07.516701, duration1.424s, errors/skips/exclusions0.
+
+```text
+-m pytest tests/test_kernel_classical_boundary_red.py
+tests/test_static_hilbert_migration_red.py tests/test_qpu_ir_lowering_red.py
+tests/test_parametric_circuit_runtime_red.py tests/test_liss_0416_dedicated_in_keyword_red.py
+tests/test_liss_0582_runtime_plan_eligibility_red.py tests/test_scientific_semantic_core_red.py
+tests/test_conformance_slice_c_red.py tests/test_linear_hardening_slice_e_red.py
+tests/test_classical_rational_red.py tests/test_liss_0543_refactor_baseline_red.py -q
+--junitxml=/private/tmp/liss0583-phase1-rereview-consumer-adjacent.xml
+```
+
+77passed, exit0, start15:39:06.899900JST, end15:39:32.051900, duration25.152s,
+failures/errors/skips/exclusions0. Lifecycle as-of2026-10-06:4entries passed.
+Guard provenance independently matches actual Git bases a287be51/423c003b;
+tests/fixture/support/lifecycle unchanged versus approved carrier a14ab3af.
+Root/spec/sanity not_run this phase. Evidence predates uncommitted review records,
+not final-commit completion evidence. Earlier pending F05 repair statements
+below are historical; same Issue/trace/approval identity retained.
+Post-record checks: git diff --check, relative links for all six changed
+Markdown records and lifecycle4entries passed; compiler/tests/scripts/lifecycle
+diff remains empty. No commit or delivery performed.
+
 Current carrier update2026-10-06: human `はい。` accepts the named11-file carrier
 and three F08 guard transitions for0584 dependency/local commits. See
 [approved A/B/C record](../reviews/2026-10-06-liss-0584-commit-scope.md).
