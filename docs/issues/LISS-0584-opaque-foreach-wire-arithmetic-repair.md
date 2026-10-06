@@ -5,14 +5,21 @@ C passes focused48, consumer74, root2419 (4 approved0583 deselections), spec161
 and all10 local sanity checks. Test/fixture hashes preserved; source-clean gap
 resolved. Earlier pending/failing records below are historical. Record-head
 all-blocking rerun evidence is external under `/private/tmp/liss0584-final-*`.
-Next: separate Phase3 Refactor/review approval. No push/PR/merge authority.
+Phase3 explicitly authorized2026-10-06; code review passed without source/test
+changes. Fresh focused48/consumer74/spec161 and all10 sanity pass at909bb9b6;
+root2419/four approved deselections is prior909 evidence, not a Phase3 rerun.
+Human final-verification approval received2026-10-06. Execute bounded record
+commit and all-blocking reruns; actual final-SHA evidence outside tree under
+`/private/tmp/liss0584-closeout-*`, linked from the
+[current packet](../collaboration/reviews/2026-10-06-liss-0584-phase3-review.md).
+No future pass, push/PR/merge or Issue completion is inferred.
 
 ## Metadata
 
 - Local issue ID: LISS-0584
 - GitHub issue: none
-- Status: review — Phase 2 implementation Green; Phase 3 approval pending
-- Phase: phase-2-green
+- Status: review — Phase 3 code review passed; final verification authorized
+- Phase: phase-3-refactor-review
 - Type: compiler validation bug repair, not runtime decomposition
 - Priority: high — prerequisite to LISS-0583 Green/delivery
 - Initial planning size: M
@@ -41,6 +48,12 @@ accepts the uniquely preceding Phase 1 test packet unchanged. Implementation
 was separately authorized by human
 `LISS-0584 Phase 2 Green／implementation approval（実装承認）` on2026-10-06.
 No test-carrier commit, Phase 3 or delivery permission is inferred.
+Separate human `LISS-0584 Phase 3 Refactor／review承認` on2026-10-06 authorizes
+Phase3 only. Review requires no implementation changes; local record commit,
+final verification and delivery remain separate from this approval.
+Human `final verification／最終レビュー承認` on2026-10-06 separately approves
+six-file record commit and all-blocking final verification, not delivery or
+Issue completion. Source/test scope unchanged.
 
 ## AI planning record — AIP-0584-001
 

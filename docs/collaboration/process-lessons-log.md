@@ -23,6 +23,12 @@ Record meta-level patterns only. No session transcripts.
   in each later feature scope, not authorized by this lesson.
   Reapplied in0584 dependency organization:0583 guard-carrier disposition is
   requested separately, not inferred from584 test acceptance or commit planning.
+  Reapplied in LISS-0584 Phase3 review: frozen guards/tests preserved, no
+  refactor introduced solely to shorten the visible facade; final-record
+  verification remains a separate gate from a passing focused review.
+  Final verification applies the final-commit rule: preserve unchanged
+  assertions/exclusions and keep actual-SHA evidence outside the tree so an
+  evidence-only commit cannot silently invalidate the reported result.
 
 ## Lesson
 

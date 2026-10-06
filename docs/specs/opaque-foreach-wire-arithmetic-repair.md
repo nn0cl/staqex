@@ -3,8 +3,13 @@
 Current update2026-10-06: approved A=a14ab3af, B=14973d84, C=6517c208 committed;
 C focused48/consumer74/root2419 (4 approved0583 exclusions)/spec161 and all10
 local sanity checks pass. R01–R07 unchanged. Earlier pending/gap statements are
-historical. Next approval: Phase3 Refactor/review, not yet authorized. Record-head
-rerun evidence lives outside tree under `/private/tmp/liss0584-final-*`.
+historical. Phase3 explicitly authorized2026-10-06; code review passed without
+source/test changes. [Phase3 packet](../collaboration/reviews/2026-10-06-liss-0584-phase3-review.md)
+separates fresh focused48/consumer74/spec161/sanity10 from prior909 root evidence.
+Final verification / six-file record commit separately approved2026-10-06.
+Actual final-SHA results live outside tree under `/private/tmp/liss0584-closeout-*`;
+completion conditional on all checks passing, no future pass or delivery inferred.
+Previous record-head evidence under `/private/tmp/liss0584-final-*` is historical.
 
 Status: accepted — dedicated Issue/spec R01–R07 / Phase 0, 2026-10-05.
 Owner: [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md).

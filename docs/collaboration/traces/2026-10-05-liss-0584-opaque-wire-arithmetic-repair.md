@@ -1,5 +1,64 @@
 # AI work trace / handoff: LISS-0584 opaque Wire arithmetic repair
 
+## Current Final Verification / Delivery Handoff — 2026-10-06
+
+Human `final verification／最終レビュー承認` authorizes six-file local record
+commit and final-SHA all-blocking execution. Feature Path Phase3 / final
+verification, M/AIP-0584-001. Earlier pending approval statements historical.
+No source/test/fixture/exclusion changes or new product fix attempt. Included
+accepted R01–R07, current packet/policies and exact record diff; omitted583
+implementation, wider opacity/type rewrite and external delivery. Existing Wire
+kind remains authority; review same_context (weaker), implementation host,
+models empty, no large-change override. Model/reasoning/tokens N/A host unavailable.
+
+Commit the same six paths listed below. Execute focused, consumer/adjacent,
+root with unchanged four583 exclusions, spec and ten non-PR sanity checks.
+Evidence external `/private/tmp/liss0584-closeout-records.jsonl`, root-record
+JSONL, environment/structure JSON and XML/logs, actual SHA/start/end/exit.
+This pre-run record does not assert future success. No further tree edits after
+successful final verification; final evidence and chat handoff determine results.
+Applied immutable guards, exact staging, status sync and final-commit rerun
+lessons. After all pass, Phase3 verification complete; next safe action awaits
+delivery authority. No push/PR/merge, Issue/WP done or583 feature acceptance.
+
+## Current Phase 3 Review / Handoff — 2026-10-06
+
+Human `LISS-0584 Phase 3 Refactor／review承認` authorizes Feature Path Phase3.
+Code review passed; phase completion pending final verification, not Issue done.
+[Current packet](../reviews/2026-10-06-liss-0584-phase3-review.md) is the review
+entry point; earlier pending approval/verification statements below historical.
+Planning size M / AIP-0584-001 unchanged. No source/test/fixture/exclusion edits.
+
+Same-context reviewer, weaker than separate context; host implementation,
+empty models, no configured large-change override. Re-read accepted spec,
+source/tests/diff, dependencies and policy; no author reasoning as evidence.
+Current SHA909bb9b6656c7f27663ee7af0428aa94063fcf06 was clean at verification.
+Fresh focused48,consumer74,spec161 and all10 non-PR sanity pass; prior root2419
+with four approved583 deselections is separately labeled, not rerun this phase.
+Evidence `/private/tmp/liss0584-phase3-records.jsonl`, XML/logs; reviewer
+AST-equivalence and order/identity probe passed. Initial probe import typo
+corrected without repository edits. No new product fix attempt.
+
+Included: accepted numeric repair, actual consumer search, unchanged F05,
+structure/routing measurements and current rules. Omitted: global type redesign,
+comparison/call opacity and583 implementation. Assumption: existing Wire kind
+remains authority. Open decision: final-record commit / final verification.
+Applied guard lifecycle, acceptance inventory, positive neighbors and status
+sync lessons. No new rule. Model/reasoning/tokens N/A: not exposed by host.
+
+Changed files (uncommitted, documentation only):
+- `docs/collaboration/reviews/2026-10-06-liss-0584-phase3-review.md`
+- `docs/issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md`
+- `docs/specs/opaque-foreach-wire-arithmetic-repair.md`
+- `docs/work-plans/WP-0174-evaluator-residual-responsibility-successors.md`
+- `docs/collaboration/process-lessons-log.md`
+- this representative trace.
+
+Next safe action: obtain final-verification approval including one bounded
+local record commit, then rerun focused/consumer/root/spec/non-PR sanity on
+final SHA. No push/PR/merge,583 feature acceptance or issue/WP completion.
+Do not report final all-blocking Green for the now-dirty record tree.
+
 ## Current Local Commit Execution — 2026-10-06
 
 Final update: A=a14ab3af, B=14973d84, C=6517c208 committed; C clean-tree focused48,
