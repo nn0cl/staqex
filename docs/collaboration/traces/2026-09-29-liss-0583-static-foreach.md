@@ -1,6 +1,62 @@
 # AI work trace: LISS-0583 static `forEach` elaboration
 
-## Current State / handoff — guard Phase 2, 2026-10-06
+## Current State / handoff — final verification, 2026-10-06
+
+- User request: `LISS-0583 final verification／最終レビュー承認`; Feature Path /
+  final verification, AIP-0583-002/003 M. Human Phase 3 final review accepted;
+  bounded record commit and actual-final-SHA all-blocking rerun permitted.
+  No source/test/fixture/lifecycle edits, batch N/A; no push/PR/merge approval.
+- [Final gate](../reviews/2026-10-06-liss-0583-final-verification.md) records scope,
+  declared suites and external `/private/tmp/liss0583-final-verification.json`.
+  This trace is committed before run; require external all_passed/clean/SHA==HEAD
+  for success. Do not infer results from approval or reuse9165d6d1 as finalSHA.
+- Changed records: final packet, Phase 3 packet, Issue, specs/WP/this trace plus
+  preceding Phase 3 lesson sync; source/tests unchanged. No subsequent evidence
+  commit planned. Same-context process check after verification/status sync;
+  earlier inventory gap human-dispositioned byG01–G07 and lesson, not hidden.
+- Host/same_context (weaker), empty models/no large_change/numeric settings;
+  macOS27.0.1arm64/Python3.12.6/pytest9.0.3, repository cwd/dedicated branch.
+  Included reviewed boundary/evidence/policies; omitted other ranks/Rust/provider/
+  secrets/global dynamic graph. Model/reasoning/token estimates/actual N/A, host
+  unavailable;0583-only attribution. Assumption: unchanged source reviewed;
+  final records still require actualSHA rerun. Issue review/delivery pending.
+- Next safe action after final pass/process check: human delivery approval for
+  push/PR/CI/successful merge. No automatic next-rank or external write authority.
+  Recover from final gate/spec/trace/external evidence/branch, not chat history.
+
+## Historical Phase 3 review handoff, 2026-10-06
+
+- User request: `LISS-0583 Phase 3 Refactor／review承認`; Feature Path /
+  phase-3-refactor, existing AIP-0583-002/003 M, F01–F08/G01–G07 unchanged.
+  Behavior-preserving refactor permission only, post-review yes, batch N/A.
+- Completed: [same-context review passed](../reviews/2026-10-06-liss-0583-phase3-review.md),
+  no further source/test/fixture edits needed. Reread actual source/diff and
+  contracts/tests/consumers, executable algorithm AST matches original after
+  receiver substitution; unique body/state ownership, hook/import identities,
+  ordering and all guard protections retained.69-line successor not a hidden body.
+- Fresh tested SHA9165d6d1502c3dada0ec1f96317af9c96fd50349 clean at run start/end,
+  base6d1b851b; focused165, consumer77, root2450, spec161, sanity10 all pass;
+  no failures/errors/skips/exclusions. External `/private/tmp/liss0583-phase3-verification.json`
+  holds environment/commands/times/exit/counts/XML/logs. Same counts as preceding
+  committed verification, no new failures. No remote CI/merge evidence claimed.
+- Changed this phase: new Phase 3 packet plus existing Issue, two specs, WP,
+  this trace and lesson application only. These records now dirty; tested source
+  still unchanged. No commit/push/merge or final-record Green/issue done claim.
+- Context: target contracts/actual code/consumers, readiness/policies/lessons;
+  omitted other ranks, Rust/providers/secrets and global dynamic graph. Assumption:
+  accepted byte→AST boundary and non-atomic body error timing unchanged.
+- Routing: host, same_context (weaker), empty models/no enabled large_change or
+  numeric structure settings. Committed17files/1500changed lines,1149max base/head;
+  module mapping/cycle resolution unknown. macOS27.0.1arm64/Python3.12.6/pytest9.0.3,
+  repository cwd/codex branch unchanged. First Phase 3 review this current chain;
+  model/reasoning/token estimates/actuals N/A, host unavailable,0583-only attribution.
+- Next safe action/blocker: **final verification／最終レビュー承認**, explicitly
+  including bounded local record commit and all-blocking rerun at actual finalSHA.
+  No silent source-clean bypass/evidence-only latercommit. Human final acceptance,
+  process completion review and later delivery remain separate. Recover from
+  packet/spec/trace/external evidence/current branch, not chat history.
+
+## Historical guard Phase 2 handoff, 2026-10-06
 
 - Human `LISS-0583 ローカルコミット／実SHAで全blocking再検証承認`
   authorizes bounded local17-file unit and actual-SHA all-blocking rerun2026-10-06.

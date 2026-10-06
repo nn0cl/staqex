@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0583 local commit/actual-SHA all-blocking verification authorized; on passing evidence request Phase 3 approval |
+| Current Next Issue | LISS-0583 final review accepted; actual-final-SHA verification gate; delivery requires separate approval |
 
 ## Goal
 
@@ -38,10 +38,15 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 |---|---|---|---|---|---|---|---|
 | [LISS-0581](../issues/LISS-0581-evaluator-coordinate-liveness-successor.md) | done — PR #603 merged and CI passed | M | M | AIP-0581-001 | ADR 0228 accepted | - | `feature/liss-0581-red` (deleted after merge) |
 | [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | done — PR #604 merged; repaired-head and main CI passed | M | M | AIP-0582-002 | extraction retained; no later dependency | later dependency delivery still separately gated | `codex/liss-0582-repair-closeout` (documentation only) |
-| [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md) | review — guard Phase 2 implemented; committed all-blocking verification pending | M | M | AIP-0583-002 / accepted003 | LISS-0582 and LISS-0584 delivered | static foreach/later dependent delivery | `codex/liss-0583-phase1-rereview` |
+| [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md) | review — final review accepted; actual-final-SHA verification gate and delivery pending | M | M | AIP-0583-002 / accepted003 | LISS-0582 and LISS-0584 delivered | static foreach/later dependent delivery | `codex/liss-0583-phase1-rereview` |
 | [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | done — reviewed repair/final verification passed; PR #606 tracks delivery | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery until successful606 delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
 
 ## Current rank-3 design gate — 2026-10-05
+
+Current Phase 3 explicitly approved2026-10-06; [agent review passed](../collaboration/reviews/2026-10-06-liss-0583-phase3-review.md).
+No source/test refactor needed; clean9165d6d1 fresh root2450/focused165/consumer77/
+spec161/sanity10 all pass. Final record commit and actual-SHA rerun approval pending;
+no issue done/delivery claim. Earlier Phase 2/pending Phase 3 statements historical.
 
 Current guard Phase 2 explicitly approved2026-10-06 and implemented; focused165,
 reviewer33, consumer77/spec161 pass. Local sanity9pass/1source-clean failure;

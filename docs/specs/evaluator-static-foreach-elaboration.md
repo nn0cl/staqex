@@ -1,6 +1,13 @@
 # Evaluator static `forEach` elaboration successor
 
 Status: accepted — current-main Phase 0 acceptance, 2026-10-05.
+Final review/verification explicitly approved2026-10-06; [final record gate](../collaboration/reviews/2026-10-06-liss-0583-final-verification.md)
+requires actual finalSHA all-blocking evidence. F01–F08 unchanged; delivery still
+separate. Older pending final-approval wording below historical.
+Current Phase 3 explicitly approved2026-10-06; [review passed](../collaboration/reviews/2026-10-06-liss-0583-phase3-review.md),
+F01–F08 unchanged, no source/test edits. Fresh clean9165d6d1 all-blocking passes;
+review-record commit/actual-final-SHA rerun and human final review still pending.
+Older pending Phase 3 wording below historical; no delivery permission.
 Local commit/actual-SHA all-blocking rerun explicitly authorized2026-10-06;
 current gate and external evidence location in the linked guard Phase 2 packet.
 Prior uncommitted results below historical; no Phase 3/delivery permission.

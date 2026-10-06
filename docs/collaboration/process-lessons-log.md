@@ -55,6 +55,10 @@ Record meta-level patterns only. No session transcripts.
   real authorized positives and all mutations pass together, closing Red's
   provisional rejection evidence. Immutable provenance remains untouched;
   focused Green does not waive source-clean or actual-final-SHA verification.
+  Applied in0583 Phase 3: review the removed body and actual installed private
+  hook, retain public re-exports even if locally unused, and retain readable
+  cohesive code when no refactor is needed. Fresh clean-SHA evidence remains
+  distinct from subsequently written review records and their final commit gate.
 
 ## Lesson
 

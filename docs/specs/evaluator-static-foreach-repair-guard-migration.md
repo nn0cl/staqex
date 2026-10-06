@@ -1,6 +1,13 @@
 # Static foreach: bounded migration of the LISS-0584 repair-base guard
 
 Status: **accepted — G01–G07 / Phase 0 acceptance, 2026-10-06**.
+Final review/verification explicitly approved2026-10-06; [final record gate](../collaboration/reviews/2026-10-06-liss-0583-final-verification.md)
+requires actual finalSHA all-blocking evidence. G01–G07 unchanged; delivery still
+separate. Older pending final-approval wording below historical.
+Current Phase 3 explicitly approved2026-10-06; [review passed](../collaboration/reviews/2026-10-06-liss-0583-phase3-review.md).
+G01–G07/tests/fixture/guard dispatch unchanged. Fresh clean9165d6d1 all-blocking
+passes; final review-record commit/actual-SHA verification approval pending.
+Earlier Phase 2 gaps/pending Phase 3 statements below historical.
 Owner: [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md),
 WP-0174 rank3; supplement to accepted [F01–F08](evaluator-static-foreach-elaboration.md).
 Human `LISS-0583：LISS-0584修復境界guard移行のScope／Phase 0設計開始承認`

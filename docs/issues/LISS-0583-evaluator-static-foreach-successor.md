@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0583 (existing historical ID, not a new allocation)
 - GitHub issue: none
-- Status: review — guard Phase 2 implemented; committed all-blocking verification pending
-- Phase: phase-2-green
+- Status: review — final review accepted; actual-final-SHA verification gate and delivery pending
+- Phase: phase-3-refactor
 - Type: behavior-preserving evaluator decomposition / current-base revalidation
 - Priority: normal
 - Initial planning size: M
@@ -17,6 +17,24 @@
 - Blocks: static `forEach` delivery and later dependent source work
 
 ## Current authority
+
+Human `LISS-0583 final verification／最終レビュー承認` on2026-10-06 accepts
+Phase 3 review and authorizes final-record local commit/actual-SHA all-blocking
+rerun. [Final gate and external evidence](../collaboration/reviews/2026-10-06-liss-0583-final-verification.md).
+No source/test/fixture edits, no later evidence-only commit. Fresh final evidence
+must pass before local completion report; Issue remains review/delivery pending,
+not done yet. Post-review acceptance received, batch N/A. Push/PR/merge separate.
+Earlier pending final approval statements below historical.
+
+Human `LISS-0583 Phase 3 Refactor／review承認` on2026-10-06 authorizes bounded
+refactor/review. No source/assertion/fixture change needed; same-context agent
+[Phase 3 review passed](../collaboration/reviews/2026-10-06-liss-0583-phase3-review.md).
+Fresh clean9165d6d1 focused165/consumer77/root2450/spec161/sanity10 all pass,
+no exclusions, original algorithm/ownership/guard protections rechecked.
+Current review records are dirty and not included in that tested SHA. Next
+approval: final verification/最終レビュー, including bounded record commit and
+all-blocking actual-final-SHA rerun; not push/PR/merge. Post-review yes, batch N/A.
+No issue done claim; prior Phase 2/pending Phase 3 wording below historical.
 
 Human `LISS-0583 ローカルコミット／実SHAで全blocking再検証承認`
 authorizes the bounded local17-file unit and committed-SHA verification2026-10-06.
