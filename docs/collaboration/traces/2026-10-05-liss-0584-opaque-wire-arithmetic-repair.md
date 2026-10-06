@@ -1,5 +1,37 @@
 # AI work trace / handoff: LISS-0584 opaque Wire arithmetic repair
 
+## Current Delivery / Completion Synchronization — 2026-10-06
+
+Human `プッシュ／PR作成・更新・CI確認・成功後のマージ` separately authorizes
+delivery. Clean db897ca7224367ef7403335f4f6f34a81e190fc8 final verification passed:
+focused48,consumer74,root2419/four approved583 exclusions,spec161,sanity10.
+Evidence `/private/tmp/liss0584-closeout-*`. Phase3/final review complete.
+Created and attached [PR #606](https://github.com/nn0cl/staqex/pull/606) to main;
+that link tracks actual current delivery/merge state. No future pass asserted.
+main baseline a287be51 unchanged when PR opened. No direct main push.
+
+Issue now done for accepted repair/final review, WP active and next583 full
+test acceptance separate. Same-context process review recorded in Issue after
+state sync; no unresolved process deviation or new reusable rule. Existing
+guard/status-sync/final-commit lessons applied. The record commit modifies six
+documentation files only:584 Issue/spec/Phase3 packet/this trace, WP0174 and
+lesson application. No source/test/fixture/lifecycle changes. SizeM/AIP0584-001.
+Included exact accepted repair and current verification/delivery; omitted
+583 extraction, broad type rewrite/external data. Host, same_context review
+(weaker), models empty, no configured conditional override. Model/reasoning/
+token measurements N/A host unavailable; no new implementation attempt.
+
+Fresh synchronized-head evidence: `/private/tmp/liss0584-delivery-records.jsonl`,
+root-record JSONL, XML/logs and structure JSON with that prefix. Actual SHA,
+start/end/command/exit captured there; all blocking must pass before merge.
+PR CI logs supply PR-only traceability; retain actual checks/SHA externally.
+After successful checks, merge606 matching tested head without admin bypass,
+fetch actual merge SHA and run all blocking separately, evidence under
+`/private/tmp/liss0584-merge-*`; main CI also checked. No tree changes after
+final merge-result verification, no inferred583 implementation permission.
+Earlier pending authority/status statements below historical. If delivery or
+verification fails, report failure instead of claiming merged/full Green.
+
 ## Current Final Verification / Delivery Handoff — 2026-10-06
 
 Human `final verification／最終レビュー承認` authorizes six-file local record

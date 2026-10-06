@@ -2,12 +2,12 @@
 
 | Field | Value |
 |---|---|
-| Status | active — LISS-0582 done; residual candidates require separate intake |
+| Status | active — LISS-0582 and LISS-0584 repair done; residual candidates require separate gates |
 | Size | M |
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0584 final verification authorized; bounded record commit/all-blocking rerun, then separate delivery scope; LISS-0583 feature acceptance separate |
+| Current Next Issue | LISS-0584 delivery via PR #606; after successful delivery, LISS-0583 Phase 1 full test review/acceptance (no implementation authority) |
 
 ## Goal
 
@@ -22,7 +22,7 @@ Evaluator's unique mutable-state ownership.
 |---:|---|---|---|
 | 1 | Coordinate liveness and Trace-Out: five Evaluator helpers and duplicate frame helpers | Shared consumers in frames, pipes, evolution, execution, observation; tied to existing ADR 0138/0142/0153/0158 behavior | LISS-0581 done; implementation commit passed 2,280 tests; PR delivery pending GitHub CI and merge |
 | 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports restored | LISS-0582 done; PR #604 merged at 458fcbe6, PR/main CI and merge-result local checks passed; no retirement waiver |
-| 3 | Static `forEach` expansion | 51-line evaluator body, actual execution dispatch and live binding callbacks; historical local implementation predates repair | LISS-0583 test acceptance pending; LISS-0584 Phase 3 code review passed, final verification pending; no old-branch wholesale integration |
+| 3 | Static `forEach` expansion | 51-line evaluator body, actual execution dispatch and live binding callbacks; historical local implementation predates repair | LISS-0583 test acceptance pending; LISS-0584 repair/final review done, delivery tracked in PR #606; no old-branch wholesale integration |
 | 4 | Tensor binding | 45-line evaluator body; owns `Joint` transformation and dispatch dependency | Separate binding/algebra slice; not an external-resource adapter and not automatically part of `binding.py` |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | Treat as resource/input-boundary design, not generic evaluator helper extraction |
 | 6 | Partial-call filling and small classical-state helpers | `_fill_partial` 31 lines; `_is_closed` 28; `_maybe_capture_classical_scalar` 23 | Keep separate until actual consumers, state writes, and feature ownership show a cohesive unit |
@@ -39,9 +39,17 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0581](../issues/LISS-0581-evaluator-coordinate-liveness-successor.md) | done — PR #603 merged and CI passed | M | M | AIP-0581-001 | ADR 0228 accepted | - | `feature/liss-0581-red` (deleted after merge) |
 | [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | done — PR #604 merged; repaired-head and main CI passed | M | M | AIP-0582-002 | extraction retained; no later dependency | later dependency delivery still separately gated | `codex/liss-0582-repair-closeout` (documentation only) |
 | [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md) | review — Phase 1 test acceptance pending; separate repair design started | M | M | AIP-0583-002 | LISS-0582 done; LISS-0584 before Green/delivery | static foreach/later dependent delivery | `codex/liss-0583-static-foreach-phase0` |
-| [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | review — Phase 3 code review passed; final verification authorized | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
+| [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | done — reviewed repair/final verification passed; PR #606 tracks delivery | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery until successful606 delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
 
 ## Current rank-3 design gate — 2026-10-05
+
+Current closeout2026-10-06:584 final clean db897ca7 passed every local blocking
+suite and final human review; separate delivery approval creates
+[PR #606](https://github.com/nn0cl/staqex/pull/606). Issue/spec/trace synchronized,
+same-context completion process review recorded. Record-head and merge-result
+evidence external `/private/tmp/liss0584-delivery-*` / `liss0584-merge-*`; no
+future CI/merge pass inferred. Next583 full Red test acceptance remains separate.
+WP remains active. All pending584 phase statements below historical.
 
 Current final gate2026-10-06: human final verification approved six-file record
 commit and all-blocking rerun. Results `/private/tmp/liss0584-closeout-*` must

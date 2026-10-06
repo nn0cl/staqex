@@ -1,5 +1,18 @@
 # LISS-0584 Phase 3 review / final-verification handoff
 
+## Current Approved Delivery — 2026-10-06
+
+Final clean db897ca7 all-blocking run passed: focused48,consumer74,root2419
+(four approved583 structural exclusions),spec161,sanity10. Final human review
+accepted. Separate human push/PR/CI/merge-after-success approval creates
+[PR #606](https://github.com/nn0cl/staqex/pull/606). Phase3/final review done;
+Issue/WP/spec/trace synchronized and same-context completion process review
+recorded. Source/tests unchanged. CI and merge state are tracked by the PR,
+not predeclared in this pre-run record. All-blocking reruns after this status
+commit and actual merge required: `/private/tmp/liss0584-delivery-*` and
+`/private/tmp/liss0584-merge-*`. No583 feature acceptance/implementation.
+Earlier pending-approval/Issue-review wording below historical.
+
 ## Current Final Verification Execution — 2026-10-06
 
 Human `final verification／最終レビュー承認` accepts this packet and authorizes

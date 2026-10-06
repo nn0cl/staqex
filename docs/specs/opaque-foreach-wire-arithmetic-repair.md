@@ -1,5 +1,15 @@
 # Opaque foreach Wire numeric-arithmetic repair
 
+Current closeout2026-10-06: R01–R07 implemented and final review accepted;
+clean db897ca7 passed focused48/consumer74/root2419 (four approved583 structural
+deselections)/spec161/all10 non-PR sanity checks. Human separately approved
+push/PR/CI/merge-after-success. [PR #606](https://github.com/nn0cl/staqex/pull/606)
+tracks delivery; synchronized head and actual merge result require fresh
+all-blocking runs, evidence `/private/tmp/liss0584-delivery-*` and
+`/private/tmp/liss0584-merge-*`. No future CI/merge result asserted. Requirements
+and source/test boundaries unchanged; no583 implementation approval. Earlier
+pending phase statements below historical. Issue status/phase synchronized.
+
 Current update2026-10-06: approved A=a14ab3af, B=14973d84, C=6517c208 committed;
 C focused48/consumer74/root2419 (4 approved0583 exclusions)/spec161 and all10
 local sanity checks pass. R01–R07 unchanged. Earlier pending/gap statements are

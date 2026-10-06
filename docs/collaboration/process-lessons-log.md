@@ -29,6 +29,9 @@ Record meta-level patterns only. No session transcripts.
   Final verification applies the final-commit rule: preserve unchanged
   assertions/exclusions and keep actual-SHA evidence outside the tree so an
   evidence-only commit cannot silently invalidate the reported result.
+  Delivery closeout reapplies status synchronization before merge: update
+  Issue/spec/WP/trace together, retain actual-SHA head versus merge evidence,
+  and never turn a prerequisite repair into dependent implementation approval.
 
 ## Lesson
 
