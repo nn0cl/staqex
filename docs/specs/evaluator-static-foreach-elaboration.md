@@ -1,6 +1,10 @@
 # Evaluator static `forEach` elaboration successor
 
 Status: accepted — current-main Phase 0 acceptance, 2026-10-05.
+Current implementation/review locally complete; actual79d038b2 all-blocking and
+human final acceptance passed. [PR #607 delivery](../collaboration/reviews/2026-10-06-liss-0583-delivery.md)
+authorized, gated on actual final-head local/CI success; merge not claimed here.
+F01–F08 unchanged. Earlier final/delivery pending wording below historical.
 Final review/verification explicitly approved2026-10-06; [final record gate](../collaboration/reviews/2026-10-06-liss-0583-final-verification.md)
 requires actual finalSHA all-blocking evidence. F01–F08 unchanged; delivery still
 separate. Older pending final-approval wording below historical.

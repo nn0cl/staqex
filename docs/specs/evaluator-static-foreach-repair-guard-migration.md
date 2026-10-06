@@ -1,6 +1,10 @@
 # Static foreach: bounded migration of the LISS-0584 repair-base guard
 
 Status: **accepted — G01–G07 / Phase 0 acceptance, 2026-10-06**.
+Current bounded implementation/review locally complete; actual79d038b2
+all-blocking and human final acceptance passed. [PR #607 delivery](../collaboration/reviews/2026-10-06-liss-0583-delivery.md)
+authorized, gated on final-head local/CI success; merge not claimed here.
+G01–G07 unchanged. Earlier pending final/delivery wording below historical.
 Final review/verification explicitly approved2026-10-06; [final record gate](../collaboration/reviews/2026-10-06-liss-0583-final-verification.md)
 requires actual finalSHA all-blocking evidence. G01–G07 unchanged; delivery still
 separate. Older pending final-approval wording below historical.

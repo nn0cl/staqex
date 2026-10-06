@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0583 (existing historical ID, not a new allocation)
 - GitHub issue: none
-- Status: review — final review accepted; actual-final-SHA verification gate and delivery pending
+- Status: done — local implementation/review/final verification passed; PR #607 delivery gated by final-head checks
 - Phase: phase-3-refactor
 - Type: behavior-preserving evaluator decomposition / current-base revalidation
 - Priority: normal
@@ -17,6 +17,19 @@
 - Blocks: static `forEach` delivery and later dependent source work
 
 ## Current authority
+
+Current delivery: human `push／PR作成・更新・CI確認・成功後のマージ承認`
+on2026-10-06 permits [PR #607](https://github.com/nn0cl/staqex/pull/607).
+Actual clean79d038b2 final focused165/consumer77/root2450/spec161/sanity10 pass;
+human final review accepted. Local issue done; PR merge not claimed yet.
+[Delivery gate](../collaboration/reviews/2026-10-06-liss-0583-delivery.md) requires
+fresh actual delivery-record SHA local all-blocking and GitHub CI before merge.
+No source/test/fixture change, no automatic next-rank scope. Earlier pending
+final/delivery approvals below historical.
+
+Process review: no operating-contract deviation or operational problem found.
+Earlier snapshot-inventory gap already human-dispositioned by G01–G07/lesson;
+no new or unresolved deviation at this closeout, no template feedback requested.
 
 Human `LISS-0583 final verification／最終レビュー承認` on2026-10-06 accepts
 Phase 3 review and authorizes final-record local commit/actual-SHA all-blocking
