@@ -156,4 +156,7 @@ The earlier pending statements above are proposal-time history. Execute only
 the listed paths, preserve assertions/hashes, rerun all checks after commits.
 
 Execution: A=a14ab3af on dedicated carrier branch, fast-forwarded into584;
-B=14973d84. C/checks pending; no independent Red-snapshot delivery.
+B=14973d84, C=6517c208. All C checks pass; no independent Red-snapshot delivery.
+Record synchronization is a local documentation-only commit, followed by all
+blocking reruns at its resulting SHA, as approved in execution step6. No push,
+PR/merge or Phase3 execution. See current Phase2 verification packet.

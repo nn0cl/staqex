@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0584 local A/B/C approved; committed-head checks pending; LISS-0583 feature acceptance separate |
+| Current Next Issue | LISS-0584 Phase 2 C verification passed; record-head final rerun, then Phase 3 approval; LISS-0583 feature acceptance separate |
 
 ## Goal
 
@@ -39,9 +39,14 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0581](../issues/LISS-0581-evaluator-coordinate-liveness-successor.md) | done — PR #603 merged and CI passed | M | M | AIP-0581-001 | ADR 0228 accepted | - | `feature/liss-0581-red` (deleted after merge) |
 | [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | done — PR #604 merged; repaired-head and main CI passed | M | M | AIP-0582-002 | extraction retained; no later dependency | later dependency delivery still separately gated | `codex/liss-0582-repair-closeout` (documentation only) |
 | [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md) | review — Phase 1 test acceptance pending; separate repair design started | M | M | AIP-0583-002 | LISS-0582 done; LISS-0584 before Green/delivery | static foreach/later dependent delivery | `codex/liss-0583-static-foreach-phase0` |
-| [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | in_progress — focused Green; sanity/dependency-commit gap | M | M | AIP-0584-001 | LISS-0582 done; LISS-0583 is discovery only | LISS-0583 Green/delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
+| [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | review — Phase 2 C all checks passed; record-head rerun and Phase 3 approval | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
 
 ## Current rank-3 design gate — 2026-10-05
+
+Current2026-10-06: approved A/B/C locally committed, C=6517c208 all checks pass,
+including formerly failing copy smoke. Synchronization-head rerun evidence is
+external under `/private/tmp/liss0584-final-*`; then request separate Phase3.
+Earlier pending scopes/sanity failures below are historical, no delivery claimed.
 
 Human `Scope／Phase 0設計開始承認` approves design/inventory only. Existing
 local LISS-0583 tipb09e3e06 and its historical approvals are retained, not

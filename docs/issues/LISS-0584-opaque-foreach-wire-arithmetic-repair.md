@@ -1,14 +1,17 @@
 # LISS-0584: Reject numeric arithmetic on opaque foreach element handles
 
-Current update2026-10-06: human `はい。` approves A/B/C,0583 guard-carrier
-handoff and local commits. A=a14ab3af, B=14973d84; C/head checks pending.
-Earlier pending scope/sanity statements below are historical. No Phase3/push/merge.
+Current update2026-10-06: approved A=a14ab3af, B=14973d84, C=6517c208 committed.
+C passes focused48, consumer74, root2419 (4 approved0583 deselections), spec161
+and all10 local sanity checks. Test/fixture hashes preserved; source-clean gap
+resolved. Earlier pending/failing records below are historical. Record-head
+all-blocking rerun evidence is external under `/private/tmp/liss0584-final-*`.
+Next: separate Phase3 Refactor/review approval. No push/PR/merge authority.
 
 ## Metadata
 
 - Local issue ID: LISS-0584
 - GitHub issue: none
-- Status: in_progress — local commits approved; committed-head checks pending
+- Status: review — Phase 2 implementation Green; Phase 3 approval pending
 - Phase: phase-2-green
 - Type: compiler validation bug repair, not runtime decomposition
 - Priority: high — prerequisite to LISS-0583 Green/delivery

@@ -1,10 +1,56 @@
 # LISS-0584 Phase 2 verification / unresolved delivery boundary
 
-Current update2026-10-06: human `はい。` approves local A/B/C and0583 carrier.
-A=a14ab3af, B=14973d84; C/head checks pending. Dirty evidence/failed sanity
-below are historical. Final SHA evidence under `/private/tmp/liss0584-committed-*`.
+Current update2026-10-06: A=a14ab3af, B=14973d84, C=6517c208 committed under
+human approval; all declared C checks pass. Current phase: Feature Path Phase2
+Green, next requested approval Phase3 Refactor/review (phase). No Phase3/push/
+PR/merge execution permitted. Dirty-tree/failed sanity below are historical.
+Post-review yes, batch N/A; minimal implementation permission already used.
 
-## Review Target
+## Committed Implementation Verification / Current Handoff
+
+Tested SHA `6517c208f27fdc2d7128bc09cc5a1a04b8e1b311`, clean tree; same macOS27.0.1
+arm64/Python3.12.6/pytest9.0.3/cwd as historical runs. Baseline a287be51 plus
+accepted dirty tests; baseline comparison known for focused24 resolved, but
+whole-root pre-guard delta unavailable. Compared with prior dirty repaired run,
+same focused48/consumer74/root2419/spec161 pass; sanity copy smoke now passes
+after BOTH specs became tracked. No failures moved/excluded to achieve this.
+
+- Focused48 pass,0 errors/skips,exit0,0.352s,13:10:40.089691JST.
+- Consumer/adjacent74 pass,0 errors/skips,exit0,26.475s,13:10:40.655443JST.
+- Root2419 pass,4 approved0583 deselections,0 failures/errors/skips,exit0.
+- Spec161/161 pass,exit0.
+- All10 non-PR repository sanity checks pass, including actual copy smoke,
+  capture/cmp, lifecycle, registers, copy/configure behaviors and conflicts.
+  PR-only traceability not_run: no PR, no remote CI success claim.
+
+Full commands/start/end/SHA are preserved in
+`/private/tmp/liss0584-committed-records.jsonl`, XML/log paths use the same
+prefix; root XML preserves start/duration. Full focused/root status remains
+distinct from excluded0583 implementation work. Source12-line change only;
+accepted B bytes and frozen readonly dependencies match, no assertion/hash/
+fixture/exclusion change during committing. Working tree clean after C.
+
+Same-context reviewer reread accepted spec, exact committed source diff,
+original test dependency/source-clean checks and all current outputs; weaker
+than separate-context, host/empty model IDs, large-change section absent.
+`review-change.py --base a287be51 --head 6517c208` records23 changed files,
+2517 changed lines, max implementation4690. Owner-map gaps remain explicit
+(TOML has no owner map); enabled override absent, effective route same_context.
+Existing `_infer_binop`293→305/source4678→4690 retained for accepted guard-only
+scope; broad TypeChecker decomposition outside this repair. No facade masking.
+Findings: F05 defect closed, source-clean blocker closed, committed dependency
+gap closed; global escape/graph auditing out of scope. No Phase3 review claimed.
+
+This synchronization changes HEAD, so ALL checks must rerun at the new record
+commit. Final evidence is outside tree: `/private/tmp/liss0584-final-records.jsonl`,
+`/private/tmp/liss0584-final-root-record.jsonl`, focused/adjacent/root XML and
+spec/sanity logs under the same prefix. Those records name actual tested HEAD,
+UTC start/end (display in JST), environment above and clean-tree state.
+Do not infer final record-head success from C evidence; consult final results.
+No further source/test/docs edits after that final run. Next safe action after
+all final checks pass: explicit Phase3 approval, not automatic execution.
+
+## Historical Dirty-Tree Review Target
 
 - Canonical: [R01–R07](../../specs/opaque-foreach-wire-arithmetic-repair.md),
   [Issue/AIP-0584-001](../../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md),

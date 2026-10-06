@@ -1,8 +1,10 @@
 # Opaque foreach Wire numeric-arithmetic repair
 
-Current update2026-10-06: human `はい。` approves A/B/C and0583 guard-carrier
-handoff/local commits. A=a14ab3af, B=14973d84; C/checks pending. Earlier pending
-scope/sanity text is history. R01–R07 unchanged, no Phase3/push/merge authority.
+Current update2026-10-06: approved A=a14ab3af, B=14973d84, C=6517c208 committed;
+C focused48/consumer74/root2419 (4 approved0583 exclusions)/spec161 and all10
+local sanity checks pass. R01–R07 unchanged. Earlier pending/gap statements are
+historical. Next approval: Phase3 Refactor/review, not yet authorized. Record-head
+rerun evidence lives outside tree under `/private/tmp/liss0584-final-*`.
 
 Status: accepted — dedicated Issue/spec R01–R07 / Phase 0, 2026-10-05.
 Owner: [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md).
@@ -142,7 +144,7 @@ distinguishes focused Green from the unresolved all-blocking sanity gap.
 Next decision: test-carrier/document dependency separation and commit permission;
 Phase 3 and final verification remain distinct. No ADR/technology selection proposed.
 
-## Adjudicator Review Target
+## Historical Pre-Commit Adjudicator Review Target
 
 - Artifact: Phase 2 verification/handoff under this accepted R01–R07 specification.
 - Current phase: Feature Path / phase-2-green, all-blocking gap.

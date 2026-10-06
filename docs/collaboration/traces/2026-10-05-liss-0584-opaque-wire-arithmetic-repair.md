@@ -2,6 +2,29 @@
 
 ## Current Local Commit Execution — 2026-10-06
 
+Final update: A=a14ab3af, B=14973d84, C=6517c208 committed; C clean-tree focused48,
+consumer74,root2419 (4 approved583 deselections),spec161 and all10 non-PR sanity
+checks pass. Commands/SHA/times in `/private/tmp/liss0584-committed-records.jsonl`
+and root XML. Source-clean gap resolved by both specs tracked, not waived.
+Same-context reviewer reread spec/committed source diff/tests/dependencies and
+outputs; original guards/B bytes preserved.23files/2517lines/maximplementation4690
+measured, owner-map unknown recorded, large-change override absent. No Phase3
+review or new implementation. Minimal12-line source only, no test changes.
+
+Current phase: Feature Path Phase2 Green at C; record-head ALL checks rerun
+required after this documentation sync. Final paths outside tree:
+`/private/tmp/liss0584-final-records.jsonl`, root-record JSONL, XML/spec/sanity
+logs under `/private/tmp/liss0584-final-*`. Actual HEAD/start/end/exit codes
+recorded there; do not infer final-SHA success from C. Keep working tree clean
+after final verification, no further edits. Same environment as packet.
+
+Changed this final synchronization:584 Issue/spec/Phase2 packet/this trace,
+scope execution record and WP status only (subset of approved records).
+Local commit permission includes evidence-sync followed by required reruns.
+Next safe action after final pass: human Phase3 Refactor/review approval.
+No push/PR/merge or583 feature acceptance, neither Issue/WP done. This trace
+and current packet are handoff; earlier pending statements below historical.
+
 Human `はい。` approves A/B/C and three0583 guard-carrier transitions/local
 commits; not all0583 tests, Phase3 or push/PR/merge. A=a14ab3af, B=14973d84.
 C/head checks pending. Earlier pending statements are historical. Phase2,
