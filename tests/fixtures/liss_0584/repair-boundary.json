@@ -1,0 +1,16 @@
+{
+  "base_sha": "a287be51da358eed195f836afa21b07286128940",
+  "adopted_node": "tests/test_liss_0583_static_foreach_successor_red.py::test_compile_opaque_arithmetic_and_observation_remain_rejected[Int i = q + 1]",
+  "adopted_owner": "LISS-0584",
+  "unaffected_typecheck_ast": "2a50b46a77f3ebfa0d7bff225ab79ea1d9ca3e9bde0ceb0df3f04598b84dd568",
+  "readonly_sha256": {
+    "compiler/staqex/runtime/evaluator.py": "7e91c417178f0c49abcef36aaa618b8b6946a4dc0d9325974225e89b0a22c8a5",
+    "compiler/staqex/runtime/evaluation/compatibility.py": "f3792eb9c7c8636e1395e74a9faf0d539a7b170549a22ad70a1dc2a944cc2c4a",
+    "compiler/staqex/runtime/evaluation/context.py": "34adb5a1304caf3cf4fb6f5f80032745f8ad9e1ad162619f48ff793a4f91ddc5",
+    "compiler/staqex/pipeline_legacy.py": "58c1cc721d0f0fbc625d2930a70571cf5fbc6c81026cd91dc559ca88cfb07405",
+    "docs/testing/refactor-baseline.json": "1dcc3848030fdf48f3c44ebbe8951853b1698cce2ffd75c713d213e22dc99692",
+    "scripts/capture-refactor-baseline.py": "dbb97e527bb885ef45f140c65067f75d8ee31639f3ef4410156ed6c151a80d5a",
+    "tests/test_liss_0583_static_foreach_successor_red.py": "822ed3e4de92f274c36219c90527011550c7cb424cf6b6d0042e65549cb010d6",
+    "tests/test_liss_0583_static_foreach_behavior_red.py": "75e608606dcbd75cef8c19afdffac89756159d365d8bfe5fc56df2e78cae65d2"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "liss0583.guard.v1",
+  "base_sha": "a287be51da358eed195f836afa21b07286128940",
+  "repair_base_sha": "423c003b0b39c292731f6a8c7456a0b40cbd03f2",
+  "old_repair_import_digest": "1fbcee4ff01ad715a09074c5d1f3232e083e89cd23f212df6e5147cb33b6d959",
+  "old_repair_executable_digest": "a745686bf2fb7930b56e950aa2bbc3bc485db08cca494bdb2351a0ca80a2a25d",
+  "old_foreach_ast": "547fbc41d1edeef743e3e52d3558f520ad034a35a94ae31c9856698a6891cb85",
+  "evaluator_source_sha256": "7e91c417178f0c49abcef36aaa618b8b6946a4dc0d9325974225e89b0a22c8a5",
+  "evaluator_imports": "1ccdb4a6870fab637be84fd8fb07f963a1cac21f22adbea4f6d67eb46d727e70",
+  "evaluator_unaffected_ast": "57b9f0df901bca66af2e13c37188a6783967e8c7bca94dab9b34293be8c20bb4",
+  "compatibility_source_sha256": "f3792eb9c7c8636e1395e74a9faf0d539a7b170549a22ad70a1dc2a944cc2c4a",
+  "compatibility_unaffected_ast": "911c61c49d8c70904c1b55573b6d7f3affc8794c89606732cb82ec5c723c5772",
+  "context_ast": "b7b981ee662bbb202bc80755c7d02c0d1a708460927d31b8c37e768eb9ec43bb",
+  "adjacent_sha256": {
+    "execution.py": "1e109cebe54a0d79e0004121b650a2df29956e40f89f123e675f05ae1589a43e",
+    "calls.py": "2048810f4bbd5d6dc6bdc871cd64db294a9980cc28660b2ce7141b35ae57e284",
+    "pipes.py": "48eb6c2ed2822a3218c3671e72a954a64ff3339e4b0525e68aa5d02e9237a477"
+  }
+}
