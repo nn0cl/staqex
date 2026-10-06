@@ -6,7 +6,6 @@ to pytest temporary storage, using the real script in a fresh interpreter.
 
 from __future__ import annotations
 
-import ast
 import hashlib
 import importlib
 import json
@@ -19,6 +18,10 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+from tests.liss_0583_guard_support import (
+    assert_compatibility_preserved, assert_evaluator_preserved,
+)
 
 EVALUATOR = "compiler.staqex.runtime.evaluator"
 FROZEN = ROOT / "docs/testing/refactor-baseline.json"
@@ -156,45 +159,27 @@ def test_private_rational_consumer_remains_usable() -> None:
 
 
 def test_only_original_facade_imports_are_restored() -> None:
-    """R05: freeze old imports while requiring the approved original routes."""
-    tree = ast.parse((ROOT / "compiler/staqex/runtime/evaluator.py").read_text())
-    retained: list[ast.stmt] = []
-    restored: list[str] = []
-    for node in tree.body:
-        if not isinstance(node, (ast.Import, ast.ImportFrom)):
-            continue
-        if isinstance(node, ast.ImportFrom):
-            kept = []
-            for alias in node.names:
-                if alias.name not in RESTORED_NAMES:
-                    kept.append(alias)
-                    continue
-                expected_route = ("dataclasses", 0) if alias.name == "replace" else ("ast_nodes", 2)
-                assert (node.module, node.level) == expected_route
-                assert alias.asname is None
-                restored.append(alias.name)
-            node.names = kept
-            if not kept:
-                continue
-        retained.append(node)
-    assert sorted(restored) == sorted(RESTORED_NAMES)
-    tree.body = retained
-    digest = hashlib.sha256(ast.dump(tree, include_attributes=False).encode()).hexdigest()
-    assert digest == "1fbcee4ff01ad715a09074c5d1f3232e083e89cd23f212df6e5147cb33b6d959"
+    """R05/F08: preserve all import routes; allow only private foreach wiring."""
+    assert_evaluator_preserved(
+        (ROOT / "compiler/staqex/runtime/evaluator.py").read_text(), imports_only=True,
+    )
 
 
 def test_evaluator_executable_ast_is_unchanged() -> None:
-    """R05: only top-level imports/comments may change against repair base."""
-    tree = ast.parse((ROOT / "compiler/staqex/runtime/evaluator.py").read_text())
-    tree.body = [node for node in tree.body if not isinstance(node, (ast.Import, ast.ImportFrom))]
-    digest = hashlib.sha256(ast.dump(tree, include_attributes=False).encode()).hexdigest()
-    assert digest == "a745686bf2fb7930b56e950aa2bbc3bc485db08cca494bdb2351a0ca80a2a25d"
+    """R05/F08: unaffected AST fixed; retained foreach body also stays exact."""
+    assert_evaluator_preserved((ROOT / "compiler/staqex/runtime/evaluator.py").read_text())
+
+
+def test_compatibility_ast_preserves_existing_wiring() -> None:
+    """R05/F08: only the exact foreach import/installer addition is permitted."""
+    assert_compatibility_preserved(
+        (ROOT / "compiler/staqex/runtime/evaluation/compatibility.py").read_text(),
+    )
 
 
 @pytest.mark.parametrize("path,digest", (
     ("compiler/staqex/runtime/evaluation/plan_eligibility.py", "b80dc37a8ec7e7b4cd3fa1dc3571e6fc88a3165984c392a270e8068e43f1ec68"),
     ("compiler/staqex/runtime/evaluation/orchestration.py", "beb2fea6c8a21017c552945ea7cafd538912f8c9946951eafc64b9cc71ad029a"),
-    ("compiler/staqex/runtime/evaluation/compatibility.py", "f3792eb9c7c8636e1395e74a9faf0d539a7b170549a22ad70a1dc2a944cc2c4a"),
     ("tests/test_liss_0582_runtime_plan_eligibility_red.py", "a9be2ddbe1984414c1e5c0244e15735ba2aa6481036e4c7cc07a2b2482058953"),
     ("docs/testing/refactor-baseline.json", "1dcc3848030fdf48f3c44ebbe8951853b1698cce2ffd75c713d213e22dc99692"),
     ("scripts/capture-refactor-baseline.py", "dbb97e527bb885ef45f140c65067f75d8ee31639f3ef4410156ed6c151a80d5a"),

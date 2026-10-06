@@ -19,3 +19,37 @@ version = 1
 
 # Reopened LISS-0582 public-import repair: all 37 accepted cases pass in
 # Phase 2; all five Active-Red entries retired. No exclusions remain.
+
+# LISS-0583 structural Red only. The discovered F05 arithmetic mismatch is
+# deliberately NOT excluded: its disposition needs separate human review.
+[[active_red]]
+issue = "LISS-0583"
+test = "tests/test_liss_0583_static_foreach_successor_red.py::test_successor_has_one_expansion_owner_and_no_state_copy"
+phase = "phase-1-red"
+owner = "Codex host"
+review_by = "2026-10-12"
+review_condition = "Human test acceptance and guard migration review; retire after approved implementation passes."
+
+[[active_red]]
+issue = "LISS-0583"
+test = "tests/test_liss_0583_static_foreach_successor_red.py::test_foreach_body_is_absent_from_evaluator_class"
+phase = "phase-1-red"
+owner = "Codex host"
+review_by = "2026-10-12"
+review_condition = "Human test acceptance and guard migration review; retire after approved implementation passes."
+
+[[active_red]]
+issue = "LISS-0583"
+test = "tests/test_liss_0583_static_foreach_successor_red.py::test_real_installer_mapping_setup_and_runtime_hook_identity"
+phase = "phase-1-red"
+owner = "Codex host"
+review_by = "2026-10-12"
+review_condition = "Human test acceptance and guard migration review; retire after approved implementation passes."
+
+[[active_red]]
+issue = "LISS-0583"
+test = "tests/test_liss_0583_static_foreach_successor_red.py::test_successor_uses_live_context_and_threads_joint"
+phase = "phase-1-red"
+owner = "Codex host"
+review_by = "2026-10-12"
+review_condition = "Human test acceptance and guard migration review; retire after approved implementation passes."
