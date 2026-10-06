@@ -4,19 +4,123 @@
 
 - Local issue ID: LISS-0583 (existing historical ID, not a new allocation)
 - GitHub issue: none
-- Status: review — Phase 1 test acceptance pending; separate F05 repair design started
-- Phase: phase-1-red
+- Status: done — local implementation/review/final verification passed; PR #607 delivery gated by final-head checks
+- Phase: phase-3-refactor
 - Type: behavior-preserving evaluator decomposition / current-base revalidation
 - Priority: normal
 - Initial planning size: M
 - Current planning size: M
 - Owner/agent: Codex host
-- Related branch: `codex/liss-0583-static-foreach-phase0`
+- Related branch: `codex/liss-0583-phase1-rereview`
 - Parent: WP-0174 rank 3
-- Depends on: LISS-0582 repair/closeout, done in PR #604/#605; LISS-0584 before Green/delivery
+- Depends on: LISS-0582 done in PR #604/#605; LISS-0584 delivered in merged PR #606
 - Blocks: static `forEach` delivery and later dependent source work
 
 ## Current authority
+
+Current delivery: human `push／PR作成・更新・CI確認・成功後のマージ承認`
+on2026-10-06 permits [PR #607](https://github.com/nn0cl/staqex/pull/607).
+Actual clean79d038b2 final focused165/consumer77/root2450/spec161/sanity10 pass;
+human final review accepted. Local issue done; PR merge not claimed yet.
+[Delivery gate](../collaboration/reviews/2026-10-06-liss-0583-delivery.md) requires
+fresh actual delivery-record SHA local all-blocking and GitHub CI before merge.
+No source/test/fixture change, no automatic next-rank scope. Earlier pending
+final/delivery approvals below historical.
+
+Process review: no operating-contract deviation or operational problem found.
+Earlier snapshot-inventory gap already human-dispositioned by G01–G07/lesson;
+no new or unresolved deviation at this closeout, no template feedback requested.
+
+Human `LISS-0583 final verification／最終レビュー承認` on2026-10-06 accepts
+Phase 3 review and authorizes final-record local commit/actual-SHA all-blocking
+rerun. [Final gate and external evidence](../collaboration/reviews/2026-10-06-liss-0583-final-verification.md).
+No source/test/fixture edits, no later evidence-only commit. Fresh final evidence
+must pass before local completion report; Issue remains review/delivery pending,
+not done yet. Post-review acceptance received, batch N/A. Push/PR/merge separate.
+Earlier pending final approval statements below historical.
+
+Human `LISS-0583 Phase 3 Refactor／review承認` on2026-10-06 authorizes bounded
+refactor/review. No source/assertion/fixture change needed; same-context agent
+[Phase 3 review passed](../collaboration/reviews/2026-10-06-liss-0583-phase3-review.md).
+Fresh clean9165d6d1 focused165/consumer77/root2450/spec161/sanity10 all pass,
+no exclusions, original algorithm/ownership/guard protections rechecked.
+Current review records are dirty and not included in that tested SHA. Next
+approval: final verification/最終レビュー, including bounded record commit and
+all-blocking actual-final-SHA rerun; not push/PR/merge. Post-review yes, batch N/A.
+No issue done claim; prior Phase 2/pending Phase 3 wording below historical.
+
+Human `LISS-0583 ローカルコミット／実SHAで全blocking再検証承認`
+authorizes the bounded local17-file unit and committed-SHA verification2026-10-06.
+Current gate: all-blocking rerun; external actual-SHA evidence in the linked
+guard Phase 2 packet. No push/PR/merge/Phase 3 approval; prior commit-pending
+statements below historical. Remains review; next safe action after passing
+all-blocking evidence is separate Phase 3 approval, not automatic execution.
+
+Human `LISS-0583 guard移行 Phase 2 Green／implementation承認` on2026-10-06
+authorizes G01–G07 exact guard dispatch. Implemented only the existing0584
+readonly guard's three AST/five byte mapping and helper imports; metadata,
+fixture, accepted tests/helper, runtime and lifecycle unchanged this phase.
+Focused165, reviewer33, consumer77 and spec161 pass. Local sanity9pass/1source-clean
+copy-smoke failure; root2450pass without exclusions. Full Green/Phase 2 completion
+not claimed. [Guard Phase 2 evidence and commit gate](../collaboration/reviews/2026-10-06-liss-0583-guard-phase2-verification.md).
+Next approval: bounded local commit/all-blocking actual-SHA rerun; post-review
+yes, batch N/A. Phase 3/final/delivery remain separately unapproved.
+Prior pending implementation statements below are historical.
+
+Human `LISS-0583 guard移行 Phase 1 Red テストレビュー／acceptance承認`
+on2026-10-06 accepts the uniquely preceding guard Phase 1 review and new27
+cases unchanged. G01–G07 and explicit byte-to-AST boundary unchanged; expected
+Red and provisional mutation-evidence limit accepted, not claimed Green.
+Guard Phase 1 exit gate accepted; next separate gate guard Phase 2
+Green/implementation approval. Implementation permission no for supplement;
+post-review yes, batch N/A. This acceptance sync changes records only, not
+tests, existing guard, immutable fixture, parked source or lifecycle.
+Prior pending test-acceptance statements below are historical.
+
+Human `ISS-0583 guard移行 Phase 1 Red実行承認` on2026-10-06 authorizes
+the uniquely preceding LISS-0583 G01–G07 test-only phase (ISS spelling normalized
+to existing LISS-0583; no new issue). New27 cases:24pass/3expected Red;
+focused161pass/4fail including the unchanged old guard, consumer/adjacent77pass.
+Same-context agent test review passed; [guard Phase 1 packet](../collaboration/reviews/2026-10-06-liss-0583-guard-phase1-review.md).
+Next gate: human guard Phase 1 test review/acceptance. Guard implementation
+permission no; original fixture/guard and parked source unchanged this phase.
+Prior pending execution statements below are historical.
+
+Current guard supplement: human
+`LISS-0583：LISS-0584修復境界guard移行のScope／Phase 0設計開始承認`
+permits Architecture Path / Phase 0 design only. [Accepted G01–G07](../specs/evaluator-static-foreach-repair-guard-migration.md)
+keeps the original0584 fixture and five byte guards, proposes exact AST
+protection for three migrated owners, and explicitly declares that their
+comment/formatting bytes are no longer frozen. No test/hash/source/lifecycle
+change in this design. Subsequent human
+`LISS-0583 guard移行仕様 G01–G07 と Phase 0 acceptance承認` accepts the supplement
+unchanged, including the explicit byte-to-AST boundary. Phase 2 source remains
+parked unchanged; Red execution/test review and guard implementation gates pending.
+Implementation permission for this supplement: no; post-review yes, batch N/A.
+
+Current Phase 2: human `LISS-0583 Phase 2 Green／implementation承認` permits the
+accepted minimal split. Source body moved with original AST/order/diagnostics;
+focused94 and consumer/adjacent77 pass, spec161 passes. Four structural exclusions
+retired after passing; tests/fixtures/guards unchanged. Root2422passed/1failed
+without exclusions:0584 readonly guard freezes evaluator/compatibility/context
+against their repair base. Copy smoke also rejects the uncommitted spec. Full Green and
+Phase 2 completion not claimed. [Verification/commit gate](../collaboration/reviews/2026-10-06-liss-0583-phase2-verification.md).
+Next: Scope/Phase 0 design approval for the0584 guard disposition within0583;
+no hash update/test exclusion authorized. Then reviewed spec/test gates and
+local commit/all-blocking rerun; Phase 3 remains separate.
+Older pending implementation statements below are historical.
+
+Current2026-10-06: human authorizes Phase 1 test re-review only. Agent review
+passes for human acceptance at clean main6d1b851b:90passed/4expected structural
+failures, consumer/adjacent77passed. Original F05 arithmetic is resolved by
+merged0584 without test change/exclusion. Full blocking suites not_run in this
+review; no Green/completion claim. [Current review and next acceptance gate](../collaboration/reviews/2026-10-05-liss-0583-phase1-review.md).
+Human `LISS-0583 Phase 1 Red テストレビュー／acceptance承認` on2026-10-06
+accepts the uniquely preceding F01–F08 review, existing tests, immutable fixture
+and bounded three-guard mapping unchanged. Phase 1 exit gate accepted;
+Phase 2 Green/implementation approval remains separate and pending.
+Implementation allowed: no; post-review required: yes; batch: N/A.
+Older repair-start/F05-open results below are historical.
 
 [Accepted current-base specification](../specs/evaluator-static-foreach-elaboration.md)
 defines F01–F08, actual consumers and repair-guard disposition. Scope / Phase 0
@@ -38,6 +142,22 @@ Existing AIP-0583-001 references are historical; their complete planning
 details were not found in inspected artifacts, not invented here.
 
 ## AI planning record — AIP-0583-002
+
+### Supplemental plan AIP-0583-003
+
+- Status: accepted — bounded0584 guard migration, Phase 0 acceptance2026-10-06.
+- Size M; existing Issue/branch reused, no duplicate repair or issue allocation.
+- Route: host design, same_context review configuration, empty model IDs.
+- Scope: G01–G07 only; old Phase 2 implementation parked, R01–R06 unchanged.
+- Basis: one existing guard over eight dependencies; three exact AST exceptions,
+  five unchanged byte checks, original immutable fixture and real-entrypoint
+  positive/mutation-negative acceptance inventory.
+- Assumptions: AST protects executable meaning, not identical comment/formatting
+  bytes; human acceptance of this explicit boundary received2026-10-06.
+- Estimate range/midpoint/actual usage/model/reasoning: N/A, not available from
+  host; issue-only attribution. Confidence medium until concrete test review.
+- Replans AIP-0583-002 only for the newly found prerequisite guard, not runtime
+  behavior, broader source splitting or previously accepted test weakening.
 
 - Status: accepted with current-main Phase 0 on2026-10-05
 - Author/environment: Codex desktop host / macOS27.0.1 arm64

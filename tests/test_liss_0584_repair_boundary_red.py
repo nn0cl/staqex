@@ -7,6 +7,14 @@ from pathlib import Path
 
 import pytest
 
+from tests.liss_0583_guard_support import (
+    assert_compatibility_preserved,
+    assert_evaluator_preserved,
+    baseline,
+    context_projection,
+    digest,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "tests/fixtures/liss_0584/repair-boundary.json"
 
@@ -27,7 +35,16 @@ def test_existing_f05_owner_and_readonly_dependencies_are_preserved():
         "test_compile_opaque_arithmetic_and_observation_remain_rejected[Int i = q + 1]"
     )
     for path, expected in evidence["readonly_sha256"].items():
-        assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == expected, path
+        if path == "compiler/staqex/runtime/evaluator.py":
+            source = (ROOT / path).read_text()
+            assert_evaluator_preserved(source, imports_only=True)
+            assert_evaluator_preserved(source)
+        elif path == "compiler/staqex/runtime/evaluation/compatibility.py":
+            assert_compatibility_preserved((ROOT / path).read_text())
+        elif path == "compiler/staqex/runtime/evaluation/context.py":
+            assert digest(context_projection((ROOT / path).read_text())) == baseline()["context_ast"]
+        else:
+            assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == expected, path
 
 
 def unaffected_digest(tree):

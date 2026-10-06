@@ -32,6 +32,33 @@ Record meta-level patterns only. No session transcripts.
   Delivery closeout reapplies status synchronization before merge: update
   Issue/spec/WP/trace together, retain actual-SHA head versus merge evidence,
   and never turn a prerequisite repair into dependent implementation approval.
+  Applied in0583 Phase 1 re-review: compare guard provenance with actual Git
+  bases, preserve the approved carrier byte-for-byte, distinguish resolved F05
+  from four structural Red failures and keep human test acceptance separate.
+  Applied in0583 Phase 2: preserve accepted test/guard bytes, retire only passing
+  structural exclusions, compare actual moved algorithm AST and report the
+  source-clean copy-smoke failure instead of claiming full Green.
+  Root subsequently exposed a prerequisite repair's additional readonly guard
+  missed by the current inventory. At resume, inventory every prerequisite's
+  source snapshots as well as original feature guards; retain immutable evidence
+  and seek bounded reviewed disposition before changing any assertion/hash.
+  Applied in0583 supplemental Phase 0: keep the original fixture and distinguish
+  source-base from later test-carrier provenance; explicitly map each byte/AST
+  successor protection, declare formatting-equivalence limits and require real
+  guard positive/negative tests before any approved implementation.
+  Applied in0583 guard Phase 1: call the unchanged real guard against temporary
+  dependency copies, reconstruct baseline executable AST rather than inventing
+  byte provenance, and report that mutation rejection is not yet effective
+  protection evidence while authorized positive shapes remain Red. Phase 2
+  must pass both positive and negative cases; no rejection-only success claim.
+  Applied in0583 guard Phase 2: exact dispatch reuses reviewed protections;
+  real authorized positives and all mutations pass together, closing Red's
+  provisional rejection evidence. Immutable provenance remains untouched;
+  focused Green does not waive source-clean or actual-final-SHA verification.
+  Applied in0583 Phase 3: review the removed body and actual installed private
+  hook, retain public re-exports even if locally unused, and retain readable
+  cohesive code when no refactor is needed. Fresh clean-SHA evidence remains
+  distinct from subsequently written review records and their final commit gate.
 
 ## Lesson
 

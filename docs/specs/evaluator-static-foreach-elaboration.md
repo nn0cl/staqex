@@ -1,12 +1,55 @@
 # Evaluator static `forEach` elaboration successor
 
 Status: accepted — current-main Phase 0 acceptance, 2026-10-05.
+Current implementation/review locally complete; actual79d038b2 all-blocking and
+human final acceptance passed. [PR #607 delivery](../collaboration/reviews/2026-10-06-liss-0583-delivery.md)
+authorized, gated on actual final-head local/CI success; merge not claimed here.
+F01–F08 unchanged. Earlier final/delivery pending wording below historical.
+Final review/verification explicitly approved2026-10-06; [final record gate](../collaboration/reviews/2026-10-06-liss-0583-final-verification.md)
+requires actual finalSHA all-blocking evidence. F01–F08 unchanged; delivery still
+separate. Older pending final-approval wording below historical.
+Current Phase 3 explicitly approved2026-10-06; [review passed](../collaboration/reviews/2026-10-06-liss-0583-phase3-review.md),
+F01–F08 unchanged, no source/test edits. Fresh clean9165d6d1 all-blocking passes;
+review-record commit/actual-final-SHA rerun and human final review still pending.
+Older pending Phase 3 wording below historical; no delivery permission.
+Local commit/actual-SHA all-blocking rerun explicitly authorized2026-10-06;
+current gate and external evidence location in the linked guard Phase 2 packet.
+Prior uncommitted results below historical; no Phase 3/delivery permission.
+Current supplementary design: Scope / Phase 0 start approved2026-10-06 for
+the0584 readonly guard disposition. [G01–G07 supplement](evaluator-static-foreach-repair-guard-migration.md)
+is accepted via human `LISS-0583 guard移行仕様 G01–G07 と Phase 0 acceptance承認`;
+original F01–F08 unchanged. Supplement Phase 1 tests accepted by human2026-10-06;
+guard Phase 2 explicitly approved and implemented, committed all-blocking
+verification pending ([evidence](../collaboration/reviews/2026-10-06-liss-0583-guard-phase2-verification.md)). Existing Phase 2
+source is parked unchanged. No test/hash/source/lifecycle edit authorized by
+this supplementary design approval. Implementation permission for it is no.
+
+Current Phase 2 approved2026-10-06 by human
+`LISS-0583 Phase 2 Green／implementation承認`. Minimal split implemented;
+focused94/consumer77/spec161 pass with accepted tests unchanged. Four structural
+Red exclusions retired. Root2422pass/1fail:0584 readonly source guard is outside
+the accepted F08 migration scope and needs separate reviewed disposition.
+Copy smoke rejects the uncommitted spec,
+so no all-blocking Green/completion claim. [Current verification](../collaboration/reviews/2026-10-06-liss-0583-phase2-verification.md).
+F01–F08 unchanged; Phase 3/final review/delivery remain separate.
+All previous implementation-pending wording below is historical.
+
+Current review2026-10-06: Phase 1 agent re-review passed at clean main6d1b851b,
+90passed/4expected structural Red; consumer/adjacent77passed. Merged0584 resolves
+the original F05 arithmetic node unchanged. [Current review](../collaboration/reviews/2026-10-05-liss-0583-phase1-review.md)
+has human acceptance on2026-10-06 via
+`LISS-0583 Phase 1 Red テストレビュー／acceptance承認`.
+The existing F01–F08 tests, immutable fixture and bounded three-guard mapping
+are accepted unchanged; Phase 2 implementation permission remains no.
+F01–F08 and guard disposition unchanged. Earlier pending-repair statements below
+are historical; no full blocking Green or new phase approval inferred.
+
 Owner: [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md),
 WP-0174 rank 3. Scope/design start and Phase 0 acceptance are approved in this
 attempt. Human `Phase 0 acceptance」の承認` accepts the immediately preceding
 dedicated Issue/spec F01–F08 and bounded guard-disposition target without
 changes. Phase 1 test execution / bounded guard migration approved on2026-10-05;
-test acceptance and implementation are not approved.
+test acceptance received2026-10-06 as recorded above; implementation is not approved.
 Historical design/implementation exists at local branch
 `feature/liss-0583-static-foreach-successor`, tip `b09e3e06`; it is not merged
 into current main and is not delivery clearance for this specification.

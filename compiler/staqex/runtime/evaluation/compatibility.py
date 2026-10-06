@@ -36,6 +36,7 @@ from .operators import (
     resolve_operator_factory_call, resolve_operator_method_call, resolve_operator_tree,
 )
 from .calls import bind_call
+from .static_foreach import execute_static_foreach
 from .classical import (
     construct_instance,
     construct_struct,
@@ -284,6 +285,11 @@ def install_evolution_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._split_capply_args = split_capply_args
     evaluator_type._bind_cnot_multi = bind_cnot_multi
     evaluator_type._bind_capply = bind_capply
+
+
+def install_static_foreach_compatibility(evaluator_type: type[Any]) -> None:
+    """Preserve the private foreach hook with a single expansion owner."""
+    evaluator_type._run_foreach = execute_static_foreach
 
 
 def install_operator_compatibility(evaluator_type: type[Any]) -> None:

@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0584 delivery via PR #606; after successful delivery, LISS-0583 Phase 1 full test review/acceptance (no implementation authority) |
+| Current Next Issue | LISS-0583 locally done; PR #607 CI/successful merge authorized; ranks4–6 still require separate scope gates |
 
 ## Goal
 
@@ -22,7 +22,7 @@ Evaluator's unique mutable-state ownership.
 |---:|---|---|---|
 | 1 | Coordinate liveness and Trace-Out: five Evaluator helpers and duplicate frame helpers | Shared consumers in frames, pipes, evolution, execution, observation; tied to existing ADR 0138/0142/0153/0158 behavior | LISS-0581 done; implementation commit passed 2,280 tests; PR delivery pending GitHub CI and merge |
 | 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports restored | LISS-0582 done; PR #604 merged at 458fcbe6, PR/main CI and merge-result local checks passed; no retirement waiver |
-| 3 | Static `forEach` expansion | 51-line evaluator body, actual execution dispatch and live binding callbacks; historical local implementation predates repair | LISS-0583 test acceptance pending; LISS-0584 repair/final review done, delivery tracked in PR #606; no old-branch wholesale integration |
+| 3 | Static `forEach` expansion | Actual body migrated to dedicated successor, live binding callbacks and hook preserved | LISS-0583 locally done, final root2450/spec161/sanity10 passed; PR #607 delivery gated by final-head CI |
 | 4 | Tensor binding | 45-line evaluator body; owns `Joint` transformation and dispatch dependency | Separate binding/algebra slice; not an external-resource adapter and not automatically part of `binding.py` |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | Treat as resource/input-boundary design, not generic evaluator helper extraction |
 | 6 | Partial-call filling and small classical-state helpers | `_fill_partial` 31 lines; `_is_closed` 28; `_maybe_capture_classical_scalar` 23 | Keep separate until actual consumers, state writes, and feature ownership show a cohesive unit |
@@ -38,10 +38,51 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 |---|---|---|---|---|---|---|---|
 | [LISS-0581](../issues/LISS-0581-evaluator-coordinate-liveness-successor.md) | done — PR #603 merged and CI passed | M | M | AIP-0581-001 | ADR 0228 accepted | - | `feature/liss-0581-red` (deleted after merge) |
 | [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | done — PR #604 merged; repaired-head and main CI passed | M | M | AIP-0582-002 | extraction retained; no later dependency | later dependency delivery still separately gated | `codex/liss-0582-repair-closeout` (documentation only) |
-| [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md) | review — Phase 1 test acceptance pending; separate repair design started | M | M | AIP-0583-002 | LISS-0582 done; LISS-0584 before Green/delivery | static foreach/later dependent delivery | `codex/liss-0583-static-foreach-phase0` |
+| [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md) | done — locally verified; PR #607 CI/successful merge authorized | M | M | AIP-0583-002 / accepted003 | LISS-0582 and LISS-0584 delivered | later dependent delivery until607 merges | `codex/liss-0583-phase1-rereview` |
 | [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | done — reviewed repair/final verification passed; PR #606 tracks delivery | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery until successful606 delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
 
 ## Current rank-3 design gate — 2026-10-05
+
+Current Phase 3 explicitly approved2026-10-06; [agent review passed](../collaboration/reviews/2026-10-06-liss-0583-phase3-review.md).
+No source/test refactor needed; clean9165d6d1 fresh root2450/focused165/consumer77/
+spec161/sanity10 all pass. Final record commit and actual-SHA rerun approval pending;
+no issue done/delivery claim. Earlier Phase 2/pending Phase 3 statements historical.
+
+Current guard Phase 2 explicitly approved2026-10-06 and implemented; focused165,
+reviewer33, consumer77/spec161 pass. Local sanity9pass/1source-clean failure;
+root2450pass without exclusions, committed all-blocking gate pending. [Current evidence](../collaboration/reviews/2026-10-06-liss-0583-guard-phase2-verification.md).
+Prior pending guard implementation/test gates below are historical.
+
+Current supplemental Scope / Phase 0 design and
+[G01–G07](../specs/evaluator-static-foreach-repair-guard-migration.md) accepted
+unchanged2026-10-06. Supplement Phase 1 execution explicitly approved; new27
+cases prepared (24pass/3expected Red). Focused161pass/4fail, consumer77pass;
+[agent test review](../collaboration/reviews/2026-10-06-liss-0583-guard-phase1-review.md)
+passed; human `LISS-0583 guard移行 Phase 1 Red テストレビュー／acceptance承認`
+accepts new27 tests/review unchanged2026-10-06. Guard Phase 2 implementation
+approval pending. Acceptance sync documentation only; no fresh test-run claim.
+Three exact path byte→AST protections accepted, five byte guards
+and immutable fixture retained; semantics and tests unchanged. Feature Phase 2
+is parked unchanged, no new guard edit or phase permission inferred.
+
+Current Phase 2 approved and implemented2026-10-06. Focused94, consumer77 and
+spec161 pass; root2422pass/1fail without exclusions after retiring four passing Red
+entries.0584 readonly repair-base guard freezes three moved owners and is not
+part of the accepted F08 migration; request bounded design/spec disposition.
+Copy smoke rejects uncommitted distributed spec; no full Green or done
+claim. [Current packet](../collaboration/reviews/2026-10-06-liss-0583-phase2-verification.md)
+requests guard Scope/Phase 0 first, then local commit/all-blocking rerun before Phase 3. Earlier
+pending Phase 1/2 statements below are historical.
+
+Current re-review2026-10-06: explicit human Phase 1 re-review execution approval;
+agent review passes on main6d1b851b,90pass/4structural Red, consumer/adjacent77pass.
+Original F05 arithmetic now passes unchanged; no new failure IDs in compared
+focused set. Subsequent human Phase 1 Red test review/acceptance approval accepts
+the full packet unchanged. Phase 2 implementation approval remains pending;
+implementation permission no.
+Root/spec/sanity not_run this review. [Representative packet](../collaboration/reviews/2026-10-05-liss-0583-phase1-review.md)
+and trace contain current evidence. Older delivery-pending wording below is
+historical; merged0584 is a prerequisite, not dependent0583 approval.
 
 Current closeout2026-10-06:584 final clean db897ca7 passed every local blocking
 suite and final human review; separate delivery approval creates

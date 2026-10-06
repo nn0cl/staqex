@@ -23,6 +23,9 @@ class EvaluatorContext(Protocol):
     operator_spaces: MutableMapping[str, int]
     grid_hamiltonians: Mapping[str, Any]
     evolution_provenance: dict[str, Any] | None
+    static_register_sizes: Mapping[str, int]
+
+    def _run_foreach(self, joint: Any, stmt: Any) -> Any: ...
 
     def _stateful_evolution_context(self) -> Any: ...
 
