@@ -1,0 +1,45 @@
+def _bind_tensor(self, joint: Joint, names: list[str], expr: TensorExpr) -> Joint:
+    """Independent reduced-state tensor: (a, b) = left *|* right."""
+    from .joint import World, _coalesce
+
+    if len(names) != 2:
+        raise KernelError("`*|*` / tensor bind expects two names `(a, b) = …`")
+
+    # Both sides already on the joint → relabel product wires (preserve amps)
+    if isinstance(expr.left, Var) and isinstance(expr.right, Var):
+        ln, rn = expr.left.name, expr.right.name
+        out: list[World] = []
+        for w in joint.worlds:
+            if ln not in w.assign or rn not in w.assign:
+                raise KernelError(
+                    f"`*|*` needs coordinates `{ln}` and `{rn}` on the joint"
+                )
+            assign = {k: v for k, v in w.assign.items() if k not in {ln, rn}}
+            assign[names[0]] = w.assign[ln]
+            assign[names[1]] = w.assign[rn]
+            cp = {
+                k: v
+                for k, v in w.coord_phase.items()
+                if k not in {ln, rn}
+            }
+            if ln in w.coord_phase:
+                cp[names[0]] = w.coord_phase[ln]
+            if rn in w.coord_phase:
+                cp[names[1]] = w.coord_phase[rn]
+            out.append(World(assign=assign, amp=w.amp, coord_phase=cp))
+        return Joint(worlds=_coalesce(out))
+
+    def _amps_indep(side: Expr) -> list[tuple[Any, complex]]:
+        jl = self._bind(Joint.unit(), "_T", side)
+        return [(w.assign["_T"], w.amp) for w in jl.worlds]
+
+    left = _amps_indep(expr.left)
+    right = _amps_indep(expr.right)
+    if not left or not right:
+        return Joint.empty()
+    out = [
+        World(assign={names[0]: vl, names[1]: vr}, amp=al * ar)
+        for vl, al in left
+        for vr, ar in right
+    ]
+    return Joint(worlds=_coalesce(out))

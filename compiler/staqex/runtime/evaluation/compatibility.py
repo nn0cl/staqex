@@ -37,6 +37,7 @@ from .operators import (
 )
 from .calls import bind_call
 from .static_foreach import execute_static_foreach
+from .tensor_binding import bind_tensor
 from .classical import (
     construct_instance,
     construct_struct,
@@ -285,6 +286,11 @@ def install_evolution_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._split_capply_args = split_capply_args
     evaluator_type._bind_cnot_multi = bind_cnot_multi
     evaluator_type._bind_capply = bind_capply
+
+
+def install_tensor_binding_compatibility(evaluator_type: type[Any]) -> None:
+    """Preserve the private Tensor hook with one binding owner."""
+    evaluator_type._bind_tensor = bind_tensor
 
 
 def install_static_foreach_compatibility(evaluator_type: type[Any]) -> None:
