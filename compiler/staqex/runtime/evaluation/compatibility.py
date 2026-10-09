@@ -38,6 +38,7 @@ from .operators import (
 from .calls import bind_call
 from .static_foreach import execute_static_foreach
 from .tensor_binding import bind_tensor
+from .host_coefficients import resolve_host_coefficient_arrays
 from .classical import (
     construct_instance,
     construct_struct,
@@ -286,6 +287,11 @@ def install_evolution_compatibility(evaluator_type: type[Any]) -> None:
     evaluator_type._split_capply_args = split_capply_args
     evaluator_type._bind_cnot_multi = bind_cnot_multi
     evaluator_type._bind_capply = bind_capply
+
+
+def install_host_coefficient_compatibility(evaluator_type: type[Any]) -> None:
+    """Preserve the private Host hook with one resolution owner."""
+    evaluator_type._resolve_host_coefficient_arrays = resolve_host_coefficient_arrays
 
 
 def install_tensor_binding_compatibility(evaluator_type: type[Any]) -> None:

@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0585 accepted local feature done; delivery approved, new-head checks/CI/merge pending; rank5 needs separate scope |
+| Current Next Issue | LISS-0586 local commit / actual-SHA all-blocking authorized; results external, then Phase3 gate |
 
 ## Goal
 
@@ -23,8 +23,8 @@ Evaluator's unique mutable-state ownership.
 | 1 | Coordinate liveness and Trace-Out: five Evaluator helpers and duplicate frame helpers | Shared consumers in frames, pipes, evolution, execution, observation; tied to existing ADR 0138/0142/0153/0158 behavior | LISS-0581 done; implementation commit passed 2,280 tests; PR delivery pending GitHub CI and merge |
 | 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports restored | LISS-0582 done; PR #604 merged at 458fcbe6, PR/main CI and merge-result local checks passed; no retirement waiver |
 | 3 | Static `forEach` expansion | Actual body migrated to dedicated successor, live binding callbacks and hook preserved | LISS-0583 done; PR #607 merged a349a5b7, merge-result CI passed (confirmed2026-10-08) |
-| 4 | Tensor binding | Original algorithm moved to stateless61-line successor; exact private hook retained | LISS-0585 local done and delivery approved; new-head verification/CI/merge tracked externally |
-| 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | Treat as resource/input-boundary design, not generic evaluator helper extraction |
+| 4 | Tensor binding | Original algorithm moved to stateless61-line successor; exact private hook retained | LISS-0585 done; PR608 merged a661fb17, PR/main CI success |
+| 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | LISS-0586 Phase2 implemented; source-clean verification blocks full Green |
 | 6 | Partial-call filling and small classical-state helpers | `_fill_partial` 31 lines; `_is_closed` 28; `_maybe_capture_classical_scalar` 23 | Keep separate until actual consumers, state writes, and feature ownership show a cohesive unit |
 | Excluded | `_eval_set_comprehension` | Explicitly retained as dispatch/consumer in accepted classical Operator-evaluation spec | Do not reopen in this WP absent a new scope decision |
 
@@ -40,9 +40,93 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | done — PR #604 merged; repaired-head and main CI passed | M | M | AIP-0582-002 | extraction retained; no later dependency | later dependency delivery still separately gated | `codex/liss-0582-repair-closeout` (documentation only) |
 | [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md) | done — PR #607 merged; main CI passed | M | M | AIP-0583-002 / accepted003 | LISS-0582 and LISS-0584 delivered | - | `codex/liss-0583-phase1-rereview` |
 | [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | done — reviewed repair/final verification passed; PR #606 tracks delivery | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery until successful606 delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
-| [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | done — accepted local feature; delivery checks/CI/merge pending at record commit | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
+| [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | done — PR608 merged; PR/main CI passed | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
+| [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | review — Phase2 provisional verification; commit gate pending | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0` |
 
-## Current rank-4 design gate — 2026-10-09
+## Current rank-5 design gate — 2026-10-09
+
+Human `LISS-0586 ローカルコミット／実SHAで全blocking再検証承認` separately
+approves bounded commits and actual-head all-blocking rerun. Result pending at
+this record commit; resume from `/private/tmp/liss-0586-sha-verification.JBY9g4/result.md`
+for actual SHA and outcome. After success request separate Phase3 review;
+no source/test change or delivery authority. Older commit-pending notes historical.
+
+Human Phase2 Green/implementation separately approved. Original Host body moved
+to55-line successor, evaluator1055→1014lines, exact private hook retained.
+Accepted test bytes unchanged; focused154/consumer37/adjacent20/spec161pass,
+root2573pass, sanity9pass/1fail (uncommitted distributed spec).
+[Current packet](../collaboration/reviews/2026-10-09-liss-0586-phase2-verification.md)
+requests local commit / actual-SHA all-blocking rerun before Phase3. No full
+Green, Phase2 completion, commit or delivery claim. Earlier gate notes historical.
+
+Human `Phase 1 Red テストレビュー／acceptance承認（H04の扱いを含む）`
+accepts the unchanged reviewed tests and unreachable-name disposition.
+Phase1 accepted; next gate is separate Phase2 Green/implementation approval.
+No source/test changes, commit or delivery authorized. Earlier pending notes
+below describe prior gates, not current acceptance status.
+
+[Phase1 same-context review](../collaboration/reviews/2026-10-09-liss-0586-phase1-review.md)
+passed unchanged: fresh focused56pass/4structural Red, regression94pass and
+independent original-AST/future-setup probes pass. Human test acceptance/H04
+disposition pending; no Green/implementation authority.
+
+Phase1 Red execution separately approved; [execution/test-review entry](../collaboration/reviews/2026-10-09-liss-0586-phase1-execution.md)
+records new56pass/4expected structural Red, inherited63pass and consumer /
+adjacent31pass. Runtime unchanged; bounded test-only integration only. Human
+test acceptance / H04 unreachable-name disposition pending, no implementation
+or delivery approval. Earlier execution-pending notes below are historical.
+
+Human rank5 Scope/Phase0 start approved. [H01–H09 dedicated specification](../specs/evaluator-host-coefficient-resolution-successor.md)
+accepts stateless input orchestration, existing typed validation, exact private
+hook and bounded inherited-guard transition. Existing selected10 suites90pass
+at a661fb17; root/spec/all-sanity not_run. Human
+`LISS-0586 専用Issue/spec H01–H09・限定guard移行方針とPhase 0 acceptance`
+accepts the dedicated design unchanged2026-10-09. Phase1 execution approval
+pending; no new tests, implementation, commit or delivery authorized.
+[Representative trace](../collaboration/traces/2026-10-09-liss-0586-host-coefficients.md).
+
+Prerequisite0585 delivered: [PR608](https://github.com/nn0cl/staqex/pull/608)
+merged a661fb1778e97eda3d35fd1615fd8928c031f062 after all3PRchecks passed.
+[Main CI37896296489](https://github.com/nn0cl/staqex/actions/runs/37896296489)
+completed success at that merge SHA. Local main synced clean before new scope.
+Actual delivery-head e61f5c27 all-blocking evidence and merge-tree equivalence:
+`/private/tmp/liss-0585-delivery.ruClfG/result.md`. Earlier pending-delivery
+statements below describe their record commits, not current open work.
+
+## Follow-up backlog: Host validation responsibility and diagnostic precedence
+
+- Recorded2026-10-09 at the Adjudicator's request; status:proposed,
+  phase:phase-0-design (not started), planning size:TBD.
+- Canonical planning record: this section. Related:LISS-0586 / H04;
+  execution dependency:LISS-0586 completion. Does not block the current
+  behavior-preserving extraction or authorize implementation.
+- Evidence: `compiler/staqex/runtime/evaluator.py::_resolve_host_coefficient_arrays`
+  passes the same Host key as tensor `name` and provenance `input_id`.
+  For a blank key with a non-None value, argument construction rejects the
+  provenance ID before the tensor name validator executes. Missing values
+  instead reach the existing missing-coefficient diagnostic. The tensor name
+  validator remains reachable through direct construction with valid provenance;
+  it is not established as dead code or eligible for deletion.
+- Question to resolve: should coefficient identity and input provenance identity
+  remain coupled, who owns each validation, and which diagnostic takes precedence?
+  Current fail-closed behavior is established; a functional defect is not
+  established merely by overlapping validation.
+- Future scope: inventory all constructor/resolver consumers and accepted
+  diagnostic contracts; propose explicit identity/validation responsibilities
+  and precedence before any behavior change. Do not preselect new types or
+  remove checks as part of this backlog entry.
+- Acceptance planning: preserve rejection of invalid input, missing-input
+  behavior, exception codes/messages/causes, valid Float/Bool behavior and
+  direct-constructor coverage unless a separately reviewed specification
+  explicitly approves a compatibility change. Add boundary and precedence
+  tests under the normal Phase0/Red/Green/Refactor gates.
+- Decision points: separate Scope/Phase0 approval, reviewed specification,
+  compatibility disposition and subsequent phase/implementation approvals.
+  Issue ID and branch will be allocated when this follow-up is selected.
+- Current priority: finish LISS-0586's behavior-preserving split first; this
+  follow-up must not silently expand H01–H09 or alter the reviewed Red tests.
+
+## Historical rank-4 design gates — 2026-10-09
 
 Delivery approved via human `受入れ記録コミット・再検証・push／PR作成・CI成功後のマージ`.
 Accepted local feature done, process review recorded in Issue; final delivery
