@@ -6,6 +6,11 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.liss_0585_guard_support import (
+    restore_tensor_compatibility,
+    restore_tensor_evaluator,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "tests/fixtures/liss_0583/guard-baseline.json"
 INSTALLER = "install_static_foreach_compatibility"
@@ -40,7 +45,7 @@ def _remove_import(tree: ast.Module, module: str, level: int, name: str, alias: 
 
 
 def evaluator_projection(source: str, *, imports_only: bool = False) -> ast.Module:
-    tree = ast.parse(source)
+    tree = restore_tensor_evaluator(ast.parse(source))
     _remove_import(tree, "evaluation.compatibility", 1, INSTALLER, PRIVATE_INSTALLER)
     if imports_only:
         tree.body = [n for n in tree.body if isinstance(n, (ast.Import, ast.ImportFrom))]
@@ -62,7 +67,7 @@ def evaluator_projection(source: str, *, imports_only: bool = False) -> ast.Modu
 
 
 def compatibility_projection(source: str) -> ast.Module:
-    tree = ast.parse(source)
+    tree = restore_tensor_compatibility(ast.parse(source))
     _remove_import(tree, "static_foreach", 1, "execute_static_foreach", None)
     installers = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == INSTALLER]
     assert len(installers) <= 1

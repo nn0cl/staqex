@@ -7,6 +7,25 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-10-09
+- Class: migration-test-shape-invariance
+- Pattern: refactor characterization can pass before extraction yet fail after
+  correct implementation because mutation setup assumes the old body remains,
+  or a copied dependency tree omits the newly introduced successor.
+- What later design or implementation must do: exercise test setup itself
+  against pre- and post-migration shapes before Red acceptance. Reconstruct
+  historical bodies from immutable evidence for mutation checks, and copy
+  current successor dependencies explicitly without rewriting old manifests.
+  Preserve missing/changed-successor negatives; never retain dead production
+  code or relax an assertion to satisfy a stale fixture.
+- Source issue or work plan: LISS-0585 / WP-0174
+- Status: applied — human-authorized bounded test-only correction reconstructs
+  historical mutation setup and copies actual successor dependencies. Both
+  pre/post-root fixture regressions pass; re-review closes R1/R2. Human corrected
+  test acceptance remains a separate gate, not granted by this lesson.
+
+## Lesson
+
 - Date: 2026-10-05
 - Class: bounded-repair-guard-lifecycle
 - Pattern: whole-file or executable-AST snapshots can correctly constrain an
