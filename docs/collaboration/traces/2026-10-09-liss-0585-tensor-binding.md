@@ -3,8 +3,8 @@
 ## Request and current state
 
 - Date: 2026-10-09
-- User request: `LISS-0585 ローカルコミット／実SHAで全blocking再検証`
-- Phase: Feature Path / Phase2 implemented; actual-SHA all-blocking pending
+- User request: `LISS-0585 final verification／ローカルコミット・実SHAで全blocking再検証`
+- Phase: Feature Path / Phase3 accepted review, authorized final verification pending outcome
 - Issue/planning record: LISS-0585 / AIP-0585-001
 - Branch: codex/liss-0585-tensor-binding-phase0, from refreshed origin/main
   a349a5b720c59f3a0e288c4751dd012c25514843; old delivered branch preserved
@@ -18,7 +18,7 @@
   and verification/structure policies, live process lessons
 - Omitted: rank5/6, Rust implementation, external provider/SDK, private data
 - Assumptions: extraction preserves existing algorithm; private hooks kept
-- Open decision: separate Phase3 approval after successful actual-SHA rerun
+- Open decision: human final acceptance after all-blocking success, then delivery
 - Review isolation: same_context; implementation isolation: host; model IDs empty
 - Tools: local rg/Git/AST-oriented source inspection/pytest; no external AI
 
@@ -294,3 +294,143 @@ if all blocking pass. On failure report it without test/assertion relaxation.
 Issue remains in_progress/phase-2-green, not done; no completion-process review
 or delivery claimed. No push/PR/merge authority. This section and the external
 result form the resumable handoff; changed files/context/omissions listed above.
+
+## Phase3 review / current handoff — 2026-10-09
+
+Human `LISS-0585 Phase 3 Refactor／review` selects only this phase. Readiness
+recovered from clean e5688f8071fbf7986f512cb0e96b4fcc4d8c62f0 actual-SHA
+Phase2 evidence: focused172, consumer37, adjacent22, root2513, spec161,
+sanity10 all pass, no exclusions. Issue/planning M/M AIP-0585-001 unchanged.
+Role switched to reviewer; same_context (weaker isolation) / empty model,
+host execution. Runtime config lacks large-change override/numeric budgets;
+committed measurements17files/1784lines, owner-mapping/cycles remain unknown.
+No source/test implementation while reviewing, no gratuitous code split.
+
+Fresh clean-SHA focused172pass3.92s, consumer37pass1.03s, adjacent22pass0.31s,
+all exit0; UTC01:57:00.624639→01:57:06.813536, same macOS27.0.1/Python3.12.6/
+pytest9.0.3 environment. Logs `/private/tmp/liss-0585-phase3-review.r3gK3S`.
+Root/spec/sanity evidence re-read for unchanged source/test SHA, not rerun
+this turn; documentation edits are provisional, final commit gate remains.
+
+Review changes requested: R3 actual-fixture probe reports old_body=false and
+successor=true for both `unextracted` and `tensor-extracted` root-copy inputs.
+Probe exit1 confirms duplicate-shape coverage, not product regression;
+old-body reconstruction/mutation rejection remains effective. No runtime
+blocker identified in inspected algorithm, hook identity, consumer/AST/bytes.
+[Review packet and narrow correction](../reviews/2026-10-09-liss-0585-phase3-review.md).
+
+Changed this turn: Phase3 packet, Issue/spec/WP/this trace and process lesson.
+No source/test/assertion/fixture/exclusion edits, commits, push, PR or merge.
+Included: canonical spec, implementation/guards, actual consumer search,
+verification/source-quality policies and executable logs. Omitted: other
+candidate families/Rust/providers/secrets. Assumption: preserve existing
+behavior; external/dynamic consumer graph unassessed. Actual token/usage N/A,
+no new architectural or technology decision. Lesson application: preserve
+accepted guards and assert actual named shape before copying, not labels.
+
+Next safe action: obtain `LISS-0585 R3 テスト設定限定修正／再レビュー` approval.
+Then change only the migration-test setup/explicit shape assertions and
+matched records, preserve all negatives/hashes, rerun focused and re-review
+for human corrected-test acceptance. Final-SHA all-blocking and delivery
+remain separate gates. Stop required by same-context-review/adjudicator-review
+at accepted-test change boundary. Phase3 not passed; Issue not done, no process
+completion review claimed. Recover from this packet/trace/spec/branch/diff.
+
+## Attempt 3 — authorized R3 test-setup correction / re-review
+
+Date2026-10-09, human `LISS-0585 R3 テスト設定限定修正／再レビュー`.
+Boundary: resume after review found R3, bounded changed setup plan, not a
+production repair or new architecture. Feature Path / Phase3; size M/M remains
+appropriate, AIP-0585-001 unchanged. Host correction then same_context reviewer
+role; empty models, no large-change override. Actual tokens/cost/variance N/A,
+not available from task telemetry; no inferred usage. Existing planning estimate
+remains historical, no new measured-cost claim. Context narrowed to R3 test,
+immutable projection helpers, accepted T09 and the review/verification records.
+
+Design/readiness and migration-test-shape lesson applied before edit. Exactly
+23lines added to one existing regression: restore old temporary evaluator/
+compatibility, remove only its copied temporary successor, assert old-body /
+setup counts / successor presence for both labels and check each source shape
+before actual fixture copy. All prior assertions unchanged; no runtime,
+support algorithm, original fixture/hash, exclusion or instruction changes.
+The only changed test SHA256 is
+ee4d3cd1c91324ac62e90cfdc005abe2ae25e2a49df5c0948b220855f5f76daf;
+other five accepted hashes unchanged. Original accepted test value retained in
+historical Phase2 evidence; authorized strengthening recorded, not hidden.
+
+Guard30+inherited50 pass80 in2.39s, exit0 (task output; exact times unavailable).
+Unmodified reviewer probe now observes oldbody=true/successor=false for oldroot,
+false/true for extracted root; exit0, UTC03:58:38.527537→03:58:38.889725.
+Switched to reviewer, re-read corrected function/diff/spec/procedure, independently
+reran full12focused:172pass3.77s, exit0, errors/failures/skips/exclusions0,
+UTC03:59:07→03:59:11. Probe false→true resolved, focused pass inventory unchanged.
+Dirty HEAD/base e5688f8071fbf7986f512cb0e96b4fcc4d8c62f0, macOS27.0.1 arm64,
+Python3.12.6 pytest9.0.3; evidence directory
+`/private/tmp/liss-0585-phase3-review.r3gK3S`, logs r3-shape-probe-fixed.log and
+r3-focused.log. Fresh clean-main root comparison unavailable; root/spec/sanity
+not_run on changed tree. Prior committed all-blocking result not current final
+evidence after this accepted-test change; final-SHA rerun remains required.
+
+R3 closed in agent re-review; no remaining finding in that bounded correction.
+Test module225lines, qualitative single setup responsibility, numeric budgets
+absent. Semantic graph/external consumers remain explicit broader review gaps.
+Changed since e5688f80: one migration test and six matched review/status/lesson
+documents from preceding/current review, all uncommitted. No new source edit,
+commit, push, PR or merge. Updated packet:
+[Phase3/R3 re-review](../reviews/2026-10-09-liss-0585-phase3-review.md).
+
+Current handoff: human corrected R3 test/review acceptance required, then separate
+final verification / record commit / actual-SHA all-blocking approval. No Phase3
+completion, issue done or delivery claim. Production permission no additional
+change; only the approved test correction performed. Included canonical spec,
+reviewed artifacts and logs; omitted lower-ranked families/Rust/providers/secrets;
+assumption preserve existing semantics. Review same_context (weaker isolation),
+implementation host. Agent-handoff/adjudicator-review stop at corrected-test
+acceptance, not infer it from permission to correct. Recover from packet/trace,
+spec, branch and changed files; no separate completion process review yet.
+
+## R3 corrected-test acceptance synchronization — 2026-10-09
+
+Human `LISS-0585 R3修正済みテスト／再レビュー結果の受入れ` accepts corrected
+test/re-review unchanged. Documentation synchronization only, no additional
+execution attempt or test-run claim. Corrected test SHA256 ee4d3cd1… retained;
+production and all other accepted test/support/fixture bytes unchanged.
+Issue/spec/WP/review/lesson/trace synchronized; current tree remains uncommitted,
+HEAD e5688f8071fbf7986f512cb0e96b4fcc4d8c62f0. Earlier acceptance-pending
+statements in attempt3 are historical. No commit/push/PR/merge performed.
+
+Handoff: bounded R3 review accepted, final verification not authorized. Next
+obtain approval for local commit of the one corrected migration test plus six
+matched records, actual-SHA focused/consumer/adjacent/root/spec/sanity10 and
+shape-probe rerun. Save evidence outside tree; preserve accepted test bytes and
+keep human final acceptance/delivery separate. Proposed scope in Phase3 packet.
+Included context: accepted R3 packet/test and canonical status records;
+omitted other families/Rust/providers/private data. Assumptions/routing unchanged:
+same_context review (weaker isolation), host, empty models; M/M AIP-0585-001,
+actual usage N/A. Issue stays in_progress/phase-3-refactor, not done. Agent-handoff
+and adjudicator-review stop at the distinct final-verification approval gate.
+
+## Authorized final-verification continuation — 2026-10-09
+
+Human `LISS-0585 final verification／ローカルコミット・実SHAで全blocking再検証`
+explicitly authorizes the named process gate. Commit only accepted R3 migration
+test plus six matched documents (Issue/spec/WP/trace/review/lesson). No new
+source/test/fixture/exclusion/contract change. Corrected test SHA256ee4d3cd1…
+unchanged. Host deterministic execution, same_context review retained, empty
+models, M/M AIP-0585-001, measured usage N/A. This continues attempt3's accepted
+correction/verification, no new implementation plan.
+
+Final outcome/logs outside tree:
+`/private/tmp/liss-0585-final-verification.A0bkuv/result.md`. Outcome pending
+at this record's commit. Rerun focused/consumer/adjacent/root/spec/all10 applicable
+sanity and unchanged shape probe against final SHA, verify clean tree/HEAD,
+preserve command/time/environment/exit/failure comparison evidence. Prior
+e5688f80 results remain comparable baseline, not final corrected-test evidence.
+Included accepted T01–T09/review/test and verification/commit policy; omitted
+other families/Rust/providers/secrets. Dynamic external consumers/resolved cycles
+remain unassessed, no completeness claim.
+
+Next safe action: finish committed-SHA rerun and report final outcome for human
+final acceptance. No push/PR/merge, no issue done before required closeout/process
+review, no extra implementation authorized. This trace/packet and external
+outcome form the resumable handoff without an evidence-only repository commit.

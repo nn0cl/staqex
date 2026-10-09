@@ -16,6 +16,8 @@ Record meta-level patterns only. No session transcripts.
   against pre- and post-migration shapes before Red acceptance. Reconstruct
   historical bodies from immutable evidence for mutation checks, and copy
   current successor dependencies explicitly without rewriting old manifests.
+  Shape labels are not shape evidence: construct each named shape explicitly
+  and assert body/setup/successor presence before the fixture copies its root.
   Preserve missing/changed-successor negatives; never retain dead production
   code or relax an assertion to satisfy a stale fixture.
 - Source issue or work plan: LISS-0585 / WP-0174
@@ -23,6 +25,14 @@ Record meta-level patterns only. No session transcripts.
   historical mutation setup and copies actual successor dependencies. Both
   pre/post-root fixture regressions pass; re-review closes R1/R2. Human corrected
   test acceptance remains a separate gate, not granted by this lesson.
+  Phase3 reapplication found that, after Green, the `unextracted` label simply
+  inherits an extracted root. Persistent distinct-root setup coverage remains
+  identified as R3; human-authorized bounded correction explicitly constructs
+  each root and asserts its body/setup/successor before copying. Unchanged
+  reviewer probe now observes distinct shapes; focused172 and guard/inherited80
+  pass, closing R3 in agent re-review. Human corrected-test acceptance subsequently
+  approved; final verification remains separate. Historical mutation protection stays intact.
+  Do not treat two passing labels as two exercised shapes.
 
 ## Lesson
 

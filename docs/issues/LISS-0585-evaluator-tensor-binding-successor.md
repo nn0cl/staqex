@@ -5,7 +5,7 @@
 - Local issue ID: LISS-0585
 - GitHub issue: none
 - Status: in_progress
-- Phase: phase-2-green
+- Phase: phase-3-refactor
 - Type: behavior-preserving responsibility extraction
 - Priority: WP-0174 rank 4; next approved investigation
 - Initial planning size: M
@@ -15,6 +15,20 @@
 - Related branch: `codex/liss-0585-tensor-binding-phase0`
 
 ## Summary and acceptance notes
+
+Current2026-10-09: human `LISS-0585 Phase 3 Refactor／review` selected review;
+[Phase3 R3 re-review passed](../collaboration/reviews/2026-10-09-liss-0585-phase3-review.md).
+Human `LISS-0585 R3 テスト設定限定修正／再レビュー` authorizes the bounded
+test setup correction, now performed. Probe confirms distinct old/new fixture
+roots; focused172 and guard/inherited80 pass. Human
+`LISS-0585 R3修正済みテスト／再レビュー結果の受入れ` accepts correction/re-review
+unchanged. Final verification/local commit/actual-SHA rerun explicitly approved
+via `LISS-0585 final verification／ローカルコミット・実SHAで全blocking再検証`;
+execution result pending at this record's commit. Outcome entry point:
+`/private/tmp/liss-0585-final-verification.A0bkuv/result.md`. Production unchanged, one test has
+additional setup/assertions. Phase2 clean e5688f80 all blocking passed,
+external result remains authoritative for that SHA. Earlier pending notes below
+are historical provisional evidence, not current Phase3 acceptance.
 
 Separate the 45-line tensor-binding algorithm from Evaluator without changing
 world correlation, amplitudes, phase handling, evaluation order or diagnostics.
@@ -43,6 +57,9 @@ the exact private hook through compatibility wiring; accepted test bytes unchang
 
 ## Adjudicator decision points
 
+- Current: bounded R3 re-review passed and corrected-test acceptance approved;
+  final verification/local commit/rerun approved, outcome pending. No production change; authorized setup
+  strengthening in one accepted test, original assertions retained.
 - Dedicated Issue/spec T01–T09 and bounded tensor guard disposition accepted;
   requirements unchanged.
 - Phase1 corrected tests and exact clause/protection mapping accepted;

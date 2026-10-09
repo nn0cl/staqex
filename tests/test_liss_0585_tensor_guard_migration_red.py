@@ -166,6 +166,29 @@ def test_t09_changed_original_method_is_not_an_allowed_projection(guarded):
 def test_t09_guard_fixture_and_old_body_mutation_work_before_and_after_extraction(guarded, monkeypatch, root_shape):
     if root_shape == "tensor-extracted":
         extracted_shape(guarded)
+    else:
+        evaluator = guarded / EVALUATOR
+        evaluator.write_text(ast.unparse(tensor.restore_tensor_evaluator(
+            ast.parse(evaluator.read_text())
+        )))
+        compatibility = guarded / COMPATIBILITY
+        compatibility.write_text(ast.unparse(tensor.restore_tensor_compatibility(
+            ast.parse(compatibility.read_text())
+        )))
+        successor = guarded / SUCCESSOR
+        if successor.is_file():
+            # Remove only this copied file in the temporary synthetic root.
+            successor.unlink()
+    tree = ast.parse((guarded / EVALUATOR).read_text())
+    owner = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "Evaluator")
+    methods = [n for n in owner.body if isinstance(n, ast.FunctionDef) and n.name == "_bind_tensor"]
+    setups = [n for n in tree.body if isinstance(n, ast.Expr) and isinstance(n.value, ast.Call)
+              and isinstance(n.value.func, ast.Name) and n.value.func.id == tensor.PRIVATE]
+    extracted = root_shape == "tensor-extracted"
+    assert len(methods) == (0 if extracted else 1)
+    assert len(setups) == (1 if extracted else 0)
+    assert (guarded / SUCCESSOR).is_file() == extracted
+    check(guarded)  # Each named source shape is authorized before fixture copy.
     copied = guarded / "fixture-copy"
     # Invoke the real pytest fixture against both possible checkout shapes.
     monkeypatch.setitem(globals(), "ROOT", guarded)

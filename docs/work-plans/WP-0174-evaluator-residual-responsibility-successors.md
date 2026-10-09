@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0585 Phase2 implementation approved and performed; actual-SHA all-blocking gate pending |
+| Current Next Issue | LISS-0585 R3 accepted; final verification/local commit/rerun approved, outcome pending |
 
 ## Goal
 
@@ -23,7 +23,7 @@ Evaluator's unique mutable-state ownership.
 | 1 | Coordinate liveness and Trace-Out: five Evaluator helpers and duplicate frame helpers | Shared consumers in frames, pipes, evolution, execution, observation; tied to existing ADR 0138/0142/0153/0158 behavior | LISS-0581 done; implementation commit passed 2,280 tests; PR delivery pending GitHub CI and merge |
 | 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports restored | LISS-0582 done; PR #604 merged at 458fcbe6, PR/main CI and merge-result local checks passed; no retirement waiver |
 | 3 | Static `forEach` expansion | Actual body migrated to dedicated successor, live binding callbacks and hook preserved | LISS-0583 done; PR #607 merged a349a5b7, merge-result CI passed (confirmed2026-10-08) |
-| 4 | Tensor binding | Original algorithm moved to stateless61-line successor; exact private hook retained | LISS-0585 Phase2 implemented; focused172pass, spec161pass; committed all-blocking gate pending |
+| 4 | Tensor binding | Original algorithm moved to stateless61-line successor; exact private hook retained | LISS-0585 bounded R3 accepted, focused172; final-SHA gate pending |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | Treat as resource/input-boundary design, not generic evaluator helper extraction |
 | 6 | Partial-call filling and small classical-state helpers | `_fill_partial` 31 lines; `_is_closed` 28; `_maybe_capture_classical_scalar` 23 | Keep separate until actual consumers, state writes, and feature ownership show a cohesive unit |
 | Excluded | `_eval_set_comprehension` | Explicitly retained as dispatch/consumer in accepted classical Operator-evaluation spec | Do not reopen in this WP absent a new scope decision |
@@ -40,9 +40,23 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0582](../issues/LISS-0582-evaluator-runtime-plan-eligibility.md) | done — PR #604 merged; repaired-head and main CI passed | M | M | AIP-0582-002 | extraction retained; no later dependency | later dependency delivery still separately gated | `codex/liss-0582-repair-closeout` (documentation only) |
 | [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md) | done — PR #607 merged; main CI passed | M | M | AIP-0583-002 / accepted003 | LISS-0582 and LISS-0584 delivered | - | `codex/liss-0583-phase1-rereview` |
 | [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | done — reviewed repair/final verification passed; PR #606 tracks delivery | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery until successful606 delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
-| [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | in_progress — Phase2 implemented; actual-SHA all-blocking pending | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
+| [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | in_progress — R3 accepted, final gate pending | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
 
 ## Current rank-4 design gate — 2026-10-09
+
+Current: Phase2 actual-SHA e5688f80 focused172/consumer37/adjacent22/root2513/
+spec161/sanity10 pass. Human separately selects Phase3 Refactor/review;
+[R3 re-review passed](../collaboration/reviews/2026-10-09-liss-0585-phase3-review.md):
+the pre-extraction fixture parameter inherits the extracted checkout, so both
+cases copied the same root shape after Green. Human authorized the test-only
+correction/re-review: explicit shape construction/assertions now close R3;
+guard/inherited80 and focused172 pass, original assertions retained. Human
+`LISS-0585 R3修正済みテスト／再レビュー結果の受入れ` accepts it unchanged.
+Final verification/local commit/rerun separately approved via
+`LISS-0585 final verification／ローカルコミット・実SHAで全blocking再検証`;
+outcome pending at record commit, entry point
+`/private/tmp/liss-0585-final-verification.A0bkuv/result.md`. No production change,
+Phase3 completion or delivery claim. Earlier gate notes below historical.
 
 Human `LISS-0585 Phase 2 Green／implementation承認` separately authorizes
 the minimal accepted move; implemented without changing accepted tests.
