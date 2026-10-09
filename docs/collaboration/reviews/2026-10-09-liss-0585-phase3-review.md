@@ -1,4 +1,38 @@
-# LISS-0585 Phase3 review — R3 accepted; final verification pending
+# LISS-0585 Phase3 review — final accepted, delivery authorized
+
+## Current delivery authority — 2026-10-09
+
+Human `受入れ記録コミット・再検証・push／PR作成・CI成功後のマージ` approves
+the named delivery process. No source/test changes allowed. Accepted local
+feature done; process closeout check recorded in Issue. Commit only current
+acceptance/status records, rerun every blocking suite on that actual SHA,
+push/create PR, inspect all required CI and merge only on success. Latest
+origin/main a349a5b7 matches design base; existing branch PR absent.
+Outcome pending at record commit:
+`/private/tmp/liss-0585-delivery.ruClfG/result.md` (head/PR/merge evidence separate).
+No delivery success implied by authorization; no new phase/product approval
+needed solely for these already approved actions. Prior pending approval wording
+below historical. No batch, new implementation or weakened check.
+
+## Current final acceptance — 2026-10-09
+
+Human `LISS-0585 最終レビュー結果の受入れ` accepts tested clean
+b5aad39359bf078a1976f131407f83091d83d7f9. Focused172/consumer37/adjacent22/
+root2513/spec161/sanity10 and distinct-root probe all passed, no exclusions;
+environment, command/time/exit details:
+`/private/tmp/liss-0585-final-verification.A0bkuv/result.md`.
+No production/test change during acceptance synchronization; no fresh test-run
+claim. This record update is uncommitted, not clean-b5aad393 evidence for a
+future documentation commit. Earlier pending-gate wording below historical.
+
+Next approval requested: delivery process (phase/process): bounded acceptance
+record commit, actual-new-SHA all-blocking rerun, push/PR creation or update,
+CI review and merge only after every required check succeeds. No new
+implementation permitted; separate approval required before any of those
+operations. Issue review/not done; closeout process review required at done.
+Approved scope T01–T09/R3 unchanged, same_context limitations/graph gaps retained,
+no batch. Post-review required: committed acceptance/closeout verification,
+PR/main CI and merge-result evidence. Agent-handoff/adjudicator-review stop here.
 
 ## Current bounded R3 re-review — 2026-10-09
 

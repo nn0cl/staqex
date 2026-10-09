@@ -1,5 +1,15 @@
 # Evaluator Tensor binding successor
 
+Delivery approved2026-10-09 via `受入れ記録コミット・再検証・push／PR作成・CI成功後のマージ`.
+Local accepted feature done; delivery/new-head verification/CI/merge outcome
+pending at record commit: `/private/tmp/liss-0585-delivery.ruClfG/result.md`.
+No requirement/source/test change or CI waiver; earlier pending notes historical.
+
+Final outcome b5aad39359bf078a1976f131407f83091d83d7f9 accepted via human
+`LISS-0585 最終レビュー結果の受入れ`2026-10-09. All declared blocking and shape
+probe pass; no requirement changes. Delivery/closeout pending. The following
+pending-outcome notes retain their pre-rerun record context.
+
 Current2026-10-09: Phase2 all blocking passed on clean e5688f80; separately
 authorized Phase3 review detected R3 fixture-root shape coverage. Human
 `LISS-0585 R3 テスト設定限定修正／再レビュー` authorizes the bounded test

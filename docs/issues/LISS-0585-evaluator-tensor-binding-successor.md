@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0585
 - GitHub issue: none
-- Status: in_progress
+- Status: done
 - Phase: phase-3-refactor
 - Type: behavior-preserving responsibility extraction
 - Priority: WP-0174 rank 4; next approved investigation
@@ -15,6 +15,22 @@
 - Related branch: `codex/liss-0585-tensor-binding-phase0`
 
 ## Summary and acceptance notes
+
+Local feature closeout2026-10-09: final b5aad393 outcome explicitly accepted;
+human `受入れ記録コミット・再検証・push／PR作成・CI成功後のマージ` authorizes
+delivery. Status done denotes accepted local feature, not successful merge.
+Accepted source/tests unchanged. Delivery-head all-blocking/PR/CI/merge results
+pending at this record commit, entry point
+`/private/tmp/liss-0585-delivery.ruClfG/result.md`. No failing CI waiver.
+Historical review/delivery-pending notes below preserve their prior context.
+
+Final acceptance2026-10-09: human `LISS-0585 最終レビュー結果の受入れ`
+accepts clean tested b5aad39359bf078a1976f131407f83091d83d7f9 and its result:
+focused172/consumer37/adjacent22/root2513/spec161/sanity10 and shape probe pass.
+Delivery approval pending; this acceptance synchronization is uncommitted.
+No new source/test changes, push or PR. Issue remains review, not done; closeout
+requires status synchronization/process review and committed-head verification.
+The following execution-pending notes describe the earlier record commit.
 
 Current2026-10-09: human `LISS-0585 Phase 3 Refactor／review` selected review;
 [Phase3 R3 re-review passed](../collaboration/reviews/2026-10-09-liss-0585-phase3-review.md).
@@ -57,6 +73,10 @@ the exact private hook through compatibility wiring; accepted test bytes unchang
 
 ## Adjudicator decision points
 
+- Delivery approved: acceptance/closeout record commit, actual-SHA rerun,
+  push/PR and merge only after required CI succeeds. No new implementation.
+- Final tested b5aad393 outcome explicitly accepted; next separate delivery
+  approval including acceptance-record commit and actual-new-SHA rerun before push.
 - Current: bounded R3 re-review passed and corrected-test acceptance approved;
   final verification/local commit/rerun approved, outcome pending. No production change; authorized setup
   strengthening in one accepted test, original assertions retained.
@@ -117,4 +137,10 @@ the tested SHA. No push or PR. Phase3 remains separately gated.
 
 ## Process review
 
-Not yet: issue is not done; completion process review required at closeout.
+Process review: no operating-contract deviation or operational problem found.
+Same-context closeout check2026-10-09 after b5aad393 verification/final acceptance
+and Issue/spec/WP synchronization. Phase approvals were distinct, isolation
+matched configuration, no hidden assertion/hash/exclusion or runtime change.
+R3 test-shape finding was explicitly approved, corrected and accepted; its
+reusable lesson is recorded, not an unresolved process deviation. Final record
+commit changes HEAD: fresh all-blocking and CI remain required before delivery.

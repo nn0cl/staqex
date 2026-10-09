@@ -3,8 +3,8 @@
 ## Request and current state
 
 - Date: 2026-10-09
-- User request: `LISS-0585 final verification／ローカルコミット・実SHAで全blocking再検証`
-- Phase: Feature Path / Phase3 accepted review, authorized final verification pending outcome
+- User request: `受入れ記録コミット・再検証・push／PR作成・CI成功後のマージ`
+- Phase: accepted local feature closeout / authorized delivery, outcomes pending
 - Issue/planning record: LISS-0585 / AIP-0585-001
 - Branch: codex/liss-0585-tensor-binding-phase0, from refreshed origin/main
   a349a5b720c59f3a0e288c4751dd012c25514843; old delivered branch preserved
@@ -18,7 +18,7 @@
   and verification/structure policies, live process lessons
 - Omitted: rank5/6, Rust implementation, external provider/SDK, private data
 - Assumptions: extraction preserves existing algorithm; private hooks kept
-- Open decision: human final acceptance after all-blocking success, then delivery
+- Open decision: no further delivery approval needed; merge conditional on all required CI success
 - Review isolation: same_context; implementation isolation: host; model IDs empty
 - Tools: local rg/Git/AST-oriented source inspection/pytest; no external AI
 
@@ -434,3 +434,56 @@ Next safe action: finish committed-SHA rerun and report final outcome for human
 final acceptance. No push/PR/merge, no issue done before required closeout/process
 review, no extra implementation authorized. This trace/packet and external
 outcome form the resumable handoff without an evidence-only repository commit.
+
+## Final acceptance / current handoff — 2026-10-09
+
+Human `LISS-0585 最終レビュー結果の受入れ` accepts clean tested
+b5aad39359bf078a1976f131407f83091d83d7f9. Final focused172/consumer37/adjacent22/
+root2513/spec161/sanity10 and distinct-root diagnostic pass, exits0, no exclusions.
+Full timestamps/environment/failure comparison outside tree:
+`/private/tmp/liss-0585-final-verification.A0bkuv/result.md`.
+Baseline comparable e5688f80; original clean-main comparison unavailable.
+No fresh run claimed for this acceptance-only synchronization.
+
+Current request fulfilled by recording acceptance; changed documents this turn:
+Issue/spec/WP/Phase3 review/this trace plus external acceptance packet.
+No source/test changes or commit/push/PR/merge. Issue status review, not done;
+local acceptance sync uncommitted. Same_context/host/empty models, M/M accepted
+AIP-0585-001, actual usage N/A. Included current canonical acceptance/evidence;
+omitted other candidates/Rust/providers/secrets. Assumption preserve semantics;
+external consumers/resolved cycles remain recorded gaps.
+
+Next safe action: obtain delivery-process approval including bounded acceptance
+record commit/actual-new-SHA all-blocking rerun before push, PR and CI-success
+merge. Required closeout process review/status sync at done, final branch and
+merge-result evidence; no automatic delivery from final acceptance. Approval
+type phase/process; no new implementation permitted. Agent-handoff and
+adjudicator-review stop at this delivery gate. Recover from artifacts and diff.
+
+## Authorized delivery / local closeout — 2026-10-09
+
+Human `受入れ記録コミット・再検証・push／PR作成・CI成功後のマージ` explicitly
+authorizes delivery pipeline. gh lookup confirms no existing branch PR; fetch
+confirms origin/main a349a5b7 unchanged. Initial sandbox network failure resolved
+through authorized escalation, no persistent blocker or workaround mutation.
+Current local accepted feature done, delivery not yet successful at record commit.
+Issue/spec/WP/review/trace synchronized; same-context process-review check after
+actual b5aad393 verification/final acceptance found no operating-contract
+deviation or unresolved operational problem. Previously identified R3 had agreed
+bounded correction/test acceptance, lesson already applied. No new source/test
+or instruction changes, no phase skipped; M/M AIP-0585-001 retained, usage N/A.
+
+Delivery evidence outside tree:
+`/private/tmp/liss-0585-delivery.ruClfG/result.md`. Commit only these five current
+acceptance/closeout documents, rerun focused/consumer/adjacent/root/spec/sanity10
+and shape probe on actual head; then push/create PR, attach PR to chat, inspect
+all required CI. Merge only if green and actual PR head matches tested head.
+Record merge SHA and main CI separately, preserving actual-head vs merge evidence.
+No evidence-only repository commit after tested delivery SHA.
+
+Included accepted artifacts and deterministic evidence/CI policies; omitted
+other candidates/Rust/providers/private data. Host execution / same_context
+review, empty models; graph/dynamic external-consumer limitations unchanged.
+On any blocking failure report it without asserting delivery success or weakening
+tests. Next safe action is this authorized pipeline, not a new feature scope.
+This trace and external outcome are resumable handoff if CI needs attention.
