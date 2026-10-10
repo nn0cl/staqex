@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0586
 - GitHub issue: none
-- Status: review
-- Phase: final-verification
+- Status: done
+- Phase: completed — final result accepted; delivery pending
 - Type: behavior-preserving input-boundary responsibility extraction
 - Priority: WP-0174 rank 5
 - Initial planning size: M
@@ -15,6 +15,37 @@
 - Related branch: `codex/liss-0586-host-coefficient-phase0`
 
 ## Summary and acceptance notes
+
+Current gate2026-10-11: human `受入れ記録コミット・実SHAで全blocking再検証承認`
+authorizes these five acceptance/status records' local commit and complete
+blocking rerun at the resulting clean SHA. Prior final result acceptance and
+process-review outcome stand unchanged. Source/tests unchanged; no delivery
+permission. Result pending at this record commit; actual SHA/results:
+`/private/tmp/liss-0586-accepted-sha.Ot8xED/result.md`.
+After success, next gate is push/PR/CI/merge approval, not another acceptance
+of the unchanged product. Earlier uncommitted/commit-pending notes historical.
+
+Current2026-10-11: human `LISS-0586 最終レビュー結果の受入れ` accepts the
+Phase3 review and final verification at clean
+`acfedf280633c72c6782ae0d59c715d84471a768`. H01–H09 local work is done;
+delivery is not done. Acceptance/status records are uncommitted. No source/test
+change, additional commit, push/PR/merge or rank6 execution authorized.
+Earlier pending-result/approval statements below are historical.
+
+Accepted final evidence: focused154, consumer37, adjacent20, root2573,
+spec161/161 and non-PR sanity10/10 pass; all exits0. Pytest failures/errors/
+skips0, exclusions none; totals overlap. Original executable AST, scoped lazy
+import closure, both cold import orders, hook identity and compileall pass.
+Environment: macOS27.0.1 arm64, Python3.12.6 / pytest9.0.3; base a661fb17.
+Exact commands/UTC timestamps: `/private/tmp/liss-0586-final.A6F6q8/*.json`;
+outputs and result: `/private/tmp/liss-0586-final.A6F6q8/result.md`.
+Prior c334766f pass totals match; provisional source-clean failure resolved.
+Whole-root base rerun and full dynamic graph remain unassessed; ten ownership
+mappings unknown, not zero owners. No compatibility-retirement permission.
+
+Next gate: acceptance-record commit / actual-SHA all-blocking rerun, then
+separately authorized push/PR/CI/merge. The accepted clean-SHA results do not
+claim verification of the subsequently dirty documentation tree or future HEAD.
 
 Current2026-10-11: human `LISS-0586 final verification／レビュー記録コミット・実SHAで全blocking再検証承認`
 authorizes only the six review/approval records' local commit and all declared
@@ -137,8 +168,18 @@ placeholder/merger implementations and is out of this slice.
 
 ## Verification / process state
 
+Current final verification is the accepted acfedf28 evidence summarized above.
+The baseline-only paragraph below is historical Phase0 evidence.
+
 Clean baseline a661fb17:10selected existing suites90pass3.02s, exit0.
 Root/spec/all-sanity not_run this phase. No new failure in these selected
 cases; comparable older aggregate baseline not rerun. No full Green claim.
 [Trace / resume](../collaboration/traces/2026-10-09-liss-0586-host-coefficients.md).
-Process review: not yet; required at terminal closeout, not Phase0.
+Acceptance-record checks2026-10-11: document lifecycle, coverage ledger and
+active-Red lifecycle (entries0) pass; diff whitespace check pass. Documentation
+tree dirty; no all-blocking claim for this tree. Source/tests unchanged.
+
+Process review: no operating-contract deviation or operational problem found.
+Same-context closeout checked phase/typed approvals, scope/ports/context,
+branch discipline, review routing, trace and status synchronization. Existing
+lessons applied; no new reusable lesson or template-feedback request.

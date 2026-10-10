@@ -2,6 +2,30 @@
 
 ## Outcome / approval boundary
 
+Current gate2026-10-11: human `受入れ記録コミット・実SHAで全blocking再検証承認`
+approves the five acceptance/status records' commit and resulting-SHA complete
+blocking rerun. Final acceptance unchanged; no new product/test edits or
+push/PR/merge authority. Result pending at this record commit; actual evidence
+`/private/tmp/liss-0586-accepted-sha.Ot8xED/result.md`.
+After success request remote delivery approval; earlier commit-pending notes
+are historical. Scope H01–H09, implementation allowed:no, batch:none.
+
+Accepted2026-10-11: human `LISS-0586 最終レビュー結果の受入れ` accepts this
+review and clean acfedf280633c72c6782ae0d59c715d84471a768 final verification.
+Focused154/consumer37/adjacent20/root2573/spec161/sanity10 and independent
+AST/import/compileall pass; exact evidence `/private/tmp/liss-0586-final.A6F6q8`.
+Local Issue done; same-context completion process review passed; delivery
+pending. Acceptance records uncommitted. No subsequent source/test change,
+record commit or push/PR/merge authorized. Future HEAD needs all-blocking rerun.
+Earlier review/verification requests below are historical, not open gates.
+
+Next review target: these five acceptance/status records. Requested approval
+type: phase/process (record commit / actual-SHA all-blocking rerun), with
+remote delivery separately explicit. Approved scope:H01–H09 only; current
+phase:local completion/delivery pending; implementation allowed:no;
+post-review required:yes (new SHA verification and remote CI/merge evidence
+if delivery approved); batch:none. No additional technology/architecture choice.
+
 Update2026-10-11: human `LISS-0586 final verification／レビュー記録コミット・実SHAで全blocking再検証承認`
 grants the requested bounded review-record commit and actual-SHA all-blocking
 rerun. No source/test change authorized. Outcome pending at this record commit;

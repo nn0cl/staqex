@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0586 final verification / record commit approved; actual-SHA rerun pending |
+| Current Next Issue | LISS-0586 locally accepted; acceptance-record commit / rerun approved; remote delivery approval pending |
 
 ## Goal
 
@@ -24,7 +24,7 @@ Evaluator's unique mutable-state ownership.
 | 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports restored | LISS-0582 done; PR #604 merged at 458fcbe6, PR/main CI and merge-result local checks passed; no retirement waiver |
 | 3 | Static `forEach` expansion | Actual body migrated to dedicated successor, live binding callbacks and hook preserved | LISS-0583 done; PR #607 merged a349a5b7, merge-result CI passed (confirmed2026-10-08) |
 | 4 | Tensor binding | Original algorithm moved to stateless61-line successor; exact private hook retained | LISS-0585 done; PR608 merged a661fb17, PR/main CI success |
-| 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | LISS-0586 Phase3 review passed; clean c334766f all-blocking pass, final gate pending |
+| 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | LISS-0586 local work done; final acfedf28 results accepted; delivery pending |
 | 6 | Partial-call filling and small classical-state helpers | `_fill_partial` 31 lines; `_is_closed` 28; `_maybe_capture_classical_scalar` 23 | Keep separate until actual consumers, state writes, and feature ownership show a cohesive unit |
 | Excluded | `_eval_set_comprehension` | Explicitly retained as dispatch/consumer in accepted classical Operator-evaluation spec | Do not reopen in this WP absent a new scope decision |
 
@@ -41,9 +41,23 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md) | done — PR #607 merged; main CI passed | M | M | AIP-0583-002 / accepted003 | LISS-0582 and LISS-0584 delivered | - | `codex/liss-0583-phase1-rereview` |
 | [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | done — reviewed repair/final verification passed; PR #606 tracks delivery | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery until successful606 delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
 | [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | done — PR608 merged; PR/main CI passed | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
-| [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | review — Phase3 passed; final verification approved, outcome pending | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0` |
+| [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | done — final acfedf28 results accepted; uncommitted closeout records, delivery pending | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0` |
 
 ## Current rank-5 design gate — 2026-10-09
+
+Current gate2026-10-11: acceptance-record commit / actual-SHA all-blocking
+rerun approved. Local acceptance unchanged, WP active, no delivery or rank6
+execution permission. Result pending at this record commit; actual SHA and
+outcome `/private/tmp/liss-0586-accepted-sha.Ot8xED/result.md`.
+Earlier uncommitted/commit-pending notes below historical.
+
+Latest2026-10-11: human `LISS-0586 最終レビュー結果の受入れ` accepts
+clean acfedf28 final verification: focused154/consumer37/adjacent20/root2573/
+spec161/sanity10 and independent AST/import/compileall pass. Local Issue done;
+WP stays active. Acceptance records remain uncommitted; future commit requires
+all-blocking rerun. No commit/remote-delivery/rank6 authority inferred. Rank6
+and H04 validation-responsibility follow-up remain separately scoped proposals.
+Earlier pending-result/acceptance notes below are historical.
 
 Latest2026-10-11: final verification / six-record local commit / actual-SHA
 all-blocking rerun explicitly approved. Source/tests unchanged. Outcome pending
