@@ -5,7 +5,7 @@
 - Local issue ID: LISS-0586
 - GitHub issue: none
 - Status: review
-- Phase: phase-2-green
+- Phase: final-verification
 - Type: behavior-preserving input-boundary responsibility extraction
 - Priority: WP-0174 rank 5
 - Initial planning size: M
@@ -15,6 +15,23 @@
 - Related branch: `codex/liss-0586-host-coefficient-phase0`
 
 ## Summary and acceptance notes
+
+Current2026-10-11: human `LISS-0586 final verification／レビュー記録コミット・実SHAで全blocking再検証承認`
+authorizes only the six review/approval records' local commit and all declared
+blocking reruns at the resulting clean SHA. Source/tests and H01–H09 unchanged.
+Result pending at this record commit; actual SHA, environment and outcomes:
+`/private/tmp/liss-0586-final.A6F6q8/result.md`.
+Issue remains review. Final result acceptance and push/PR/merge are separate,
+unapproved gates. Earlier final-verification-pending notes are historical.
+
+Current2026-10-10: human `LISS-0586 Phase 3 Refactor／review承認` authorizes
+bounded review. [Phase3 agent review passed](../collaboration/reviews/2026-10-10-liss-0586-phase3-review.md),
+no blocking finding or source/test refactor required. Fresh clean c334766f:
+focused154/consumer37/adjacent20/root2573/spec161/sanity10pass. Original Git
+AST, scoped lazy-import closure, cold import orders and compileall pass.
+Issue remains review, not done; final verification / record commit / actual-SHA
+all-blocking rerun approval pending. No delivery authority. Earlier gate notes
+below are historical; provisional source-clean failure resolved at committed HEAD.
 
 Human `LISS-0586 ローカルコミット／実SHAで全blocking再検証承認` approves
 bounded local commits and committed-head rerun. Outcome pending at this record

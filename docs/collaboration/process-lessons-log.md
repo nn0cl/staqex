@@ -40,6 +40,10 @@ Record meta-level patterns only. No session transcripts.
   verify restored whole AST against original Git evidence, not only executable
   statements or a hash of the newly written dedented fixture. Literal restoration
   is evidence reconstruction, never permission to change runtime semantics.
+  Reapplied in LISS-0586 Phase3: compare moved executable AST directly with
+  original Git evidence and invoke real pre/post fixture checks after extraction.
+  Resolve the changed owner's lazy-import closure and exercise cold package
+  import orders; scoped cycle evidence is not proof of the entire dynamic graph.
 
 ## Lesson
 

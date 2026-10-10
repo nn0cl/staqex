@@ -5,7 +5,7 @@
 | Status | accepted — dedicated H01–H09 / bounded guard transition / Phase 0 accepted 2026-10-09 |
 | Owner | LISS-0586 / WP-0174 rank 5 |
 | Path | Architecture Path Phase 0; later Feature Path phases separately gated |
-| Implementation permission | yes — Phase2 minimal H01–H09 extraction approved; no Phase3/commit/delivery |
+| Implementation permission | Phase2 move implemented; Phase3 reviewed; final record commit / actual-SHA verification approved; no source/test edits or delivery |
 | Baseline | a661fb1778e97eda3d35fd1615fd8928c031f062 |
 
 Human `LISS-0586 専用Issue/spec H01–H09・限定guard移行方針とPhase 0 acceptance`
@@ -22,6 +22,21 @@ subsequently passed on unchanged tests. Human test acceptance / H04 disposition
 still pending; an agent pass does not grant Green/implementation permission.
 
 ## Goal and boundary
+
+Current2026-10-11: final verification / review-record commit / actual-SHA
+all-blocking rerun explicitly approved. H01–H09 and accepted test bytes remain
+unchanged. Outcome pending at this record commit; evidence entry:
+`/private/tmp/liss-0586-final.A6F6q8/result.md`.
+Final result acceptance and delivery remain separately gated. Earlier pending
+final-verification statements below are historical.
+
+Current2026-10-10: human Phase3 Refactor/review approval separately granted.
+[Phase3 review](../collaboration/reviews/2026-10-10-liss-0586-phase3-review.md)
+passed without source/test changes. Clean c334766f all declared blocking pass,
+including prior source-clean failure; scoped lazy-import/compileall audits pass.
+H01–H09 unchanged. Final verification / review-record commit and resulting-SHA
+rerun remain separately gated, as does delivery. Earlier gate statements are
+historical, not current permission.
 
 Human local-commit / actual-SHA all-blocking verification approval separately
 granted via `LISS-0586 ローカルコミット／実SHAで全blocking再検証承認`.
