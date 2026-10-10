@@ -33,6 +33,17 @@ Record meta-level patterns only. No session transcripts.
   pass, closing R3 in agent re-review. Human corrected-test acceptance subsequently
   approved; final verification remains separate. Historical mutation protection stays intact.
   Do not treat two passing labels as two exercised shapes.
+  Applied in LISS-0586 Red review: test-only projections distinguish Host
+  pre/post shapes and copy actual successor dependencies. An independent probe
+  invokes inherited fixture/old-body-mutation tests on the future source shape.
+  When snapshot source is dedented, multiline string literals can also change:
+  verify restored whole AST against original Git evidence, not only executable
+  statements or a hash of the newly written dedented fixture. Literal restoration
+  is evidence reconstruction, never permission to change runtime semantics.
+  Reapplied in LISS-0586 Phase3: compare moved executable AST directly with
+  original Git evidence and invoke real pre/post fixture checks after extraction.
+  Resolve the changed owner's lazy-import closure and exercise cold package
+  import orders; scoped cycle evidence is not proof of the entire dynamic graph.
 
 ## Lesson
 

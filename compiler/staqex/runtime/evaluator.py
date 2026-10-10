@@ -105,6 +105,7 @@ from .matrix import Matrix
 from .evaluation.calls import bind_call
 from .evaluation.compatibility import install_static_foreach_compatibility as _install_static_foreach_compatibility
 from .evaluation.compatibility import install_tensor_binding_compatibility as _install_tensor_binding_compatibility
+from .evaluation.compatibility import install_host_coefficient_compatibility as _install_host_coefficient_compatibility
 from .evaluation.compatibility import (
     install_classical_compatibility as _install_classical_compatibility,
     install_classical_call_compatibility as _install_classical_call_compatibility,
@@ -417,49 +418,6 @@ class Evaluator:
         return self._execute_deferred_state_measure_plan(unit, stdout=stdout)
 
 
-
-    def _resolve_host_coefficient_arrays(self, unit: CompilationUnit) -> dict[str, Any]:
-        """Wire HostInputPort into the ADR 0119 coefficient-tensor path
-        (LISS-0406): resolve every `Float[N]...`/`Bool[N]... = host("key")`
-        placeholder the source itself declares against `self.host_input`,
-        fail closed on anything missing or malformed. LISS-0432: dtype now
-        threads through to `CoefficientTensor` so a `Bool[N]…` array (e.g.
-        the confirmed S02 step 2 design's `pairwise_compatible`) round-trips
-        as `bool`, not silently coerced to `float`."""
-        from ..finite_binder import _host_placeholder_keys, merge_host_coefficient_arrays
-        from ..scientific_input import (
-            CoefficientTensor,
-            InputProvenance,
-            ScientificInputValidationError,
-        )
-
-        placeholders = _host_placeholder_keys(unit)
-        if not placeholders:
-            return {}
-        host_tensors: dict[str, Any] = {}
-        for _local_name, (host_key, shape, dtype) in placeholders.items():
-            if host_key in host_tensors:
-                continue
-            raw = self.host_input.get(host_key) if self.host_input is not None else None
-            if raw is None:
-                continue  # merge_host_coefficient_arrays reports HOST_COEFFICIENT_MISSING
-            try:
-                host_tensors[host_key] = CoefficientTensor(
-                    name=host_key,
-                    shape=shape,
-                    values=raw,
-                    provenance=InputProvenance(
-                        source_formula="HostInputPort", input_id=host_key
-                    ),
-                    dtype=dtype,
-                )
-            except ScientificInputValidationError as error:
-                raise KernelDiagnosticError(error.code, str(error)) from error
-        arrays, diagnostics = merge_host_coefficient_arrays(unit, host_tensors)
-        if diagnostics:
-            first = diagnostics[0]
-            raise KernelDiagnosticError(first["code"], first["message"])
-        return arrays
 
 
 
@@ -922,6 +880,7 @@ _install_legacy_control_binding_compatibility(Evaluator)
 _install_plan_eligibility_compatibility(Evaluator)
 _install_static_foreach_compatibility(Evaluator)
 _install_tensor_binding_compatibility(Evaluator)
+_install_host_coefficient_compatibility(Evaluator)
 
 
 def _is_numeric(value: Any) -> bool:
