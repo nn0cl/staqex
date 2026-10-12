@@ -4,7 +4,9 @@
 
 - Date:2026-10-12; user:`続けて` after unique rank6 Scope/Phase0 request.
 - Feature Path / phase-3-refactor separately approved2026-10-12; agent review
-  passed, source/tests unchanged. Final-record verification explicitly approved2026-10-12.
+  passed, source/tests unchanged. Final-record verification passed4812c29a;
+  human final-result acceptance received2026-10-12. Lesson-only process disposition
+  agreed2026-10-13; acceptance-record commit/revalidation explicitly approved.
 - Issue:LISS-0587 review; WP-0174 rank6 first accepted slice; AIP-0587-001 accepted.
 - Human2026-10-12 explicitly approved dedicated Issue/spec P01–P09,
   bounded guard transition and Phase0 acceptance; clauses unchanged.
@@ -258,7 +260,7 @@ trace/spec/Issue and actual dirty branch, not from chat memory.
   actual-SHA all-blocking revalidation approval**. Then execute only that gate.
   Human final acceptance and remote delivery remain separate; no push/PR/merge.
 
-## Final verification attempt 1 / current handoff
+## Final verification attempt 1 / historical verification-time handoff
 
 - Request:human explicitly approved LISS-0587 final verification / review-record
   commit and actual-SHA all-blocking rerun,2026-10-12. Feature Path final verification.
@@ -292,3 +294,90 @@ trace/spec/Issue and actual dirty branch, not from chat memory.
 - Next safe action:if all blocking pass, request human final-result acceptance;
   otherwise preserve failure evidence and seek bounded disposition. Issue/WP
   stay review; no product blocker identified yet, remote delivery remains separate.
+
+## Final-result acceptance / historical acceptance-time handoff
+
+- Request:human `LISS-0587 最終レビュー結果の受入れ`,2026-10-12.
+  Result accepted; no inferred commit/push/PR/merge authorization.
+- Fast Path metadata synchronization, no accepted clause/source/test changes.
+  HEAD4812c29a6bb6e951f6b0a808af71052ef4ae59cc clean at intake.
+- Verified evidence:focused48/inherited143/adjacent16/root2621/spec161/sanity10
+  and consumer smoke passed at clean4812c29a. Eleven accepted fingerprints
+  retained. External result/per-scope JSON/logs above preserve actual-SHA evidence.
+- Same-context completion process check:approvals/path/routing/branch/trace
+  observed. Resolved external smoke launch import-path omission is an operational
+  problem; initial exit1 and explicit PYTHONPATH retry exit0 retained. Product
+  results remain accepted; no claim of no operational problem or done status.
+- Proposed disposition:lesson only for explicit external verification import
+  path and retained failed-launch evidence. Human agreement pending; no template
+  feedback or source repair. process-review skill requires stopping before closure.
+- Changed files:this Issue, accepted spec status, WP navigation and this trace
+  (four docs). All uncommitted, no new all-blocking dirty-tree claim.
+- Context:accepted result/current owners/verification and process policies;
+  omitted Rust/providers/secrets/unrelated features. Spec assumptions/gaps unchanged.
+- Routing:host metadata/check execution; existing review same_context, empty
+  model IDs. Environment CPython3.12.6/pytest9.0.3/macOS27.0.1 arm64.
+  Model/reasoning/tokens N/A, not exposed; estimate N/A, no calibrated estimator.
+  Attribution:0587 acceptance sync only. Existing final-SHA/status-drift and
+  compatibility lessons applied; no new lesson written before disposition.
+- Next safe action:human agrees process disposition, then separately approves
+  acceptance-record commit and actual-SHA all-blocking revalidation. Push/PR/CI/
+  merge remain separate. No product blocker; process agreement is the stop gate.
+
+## Process-disposition continuation / historical handoff
+
+- Request:human `続けて`,2026-10-13, following the unique lesson-only proposal;
+  taken as agreement to that disposition only, not commit/delivery authority.
+- Completed:resolved external smoke import-path launch problem disposition
+  agreed and reusable lesson recorded. Same-context process review concluded;
+  no no-problem finding, no template feedback, no product repair or test edits.
+- Accepted result remains clean4812c29a:focused48/inherited143/adjacent16,
+  root2621/spec161/sanity10 and consumer smoke. Initial smoke exit1 and explicit
+  PYTHONPATH retry exit0 remain external evidence. No runtime rerun for metadata.
+- Changed files:Issue/spec/WP/trace plus process-lessons-log.md (five docs),
+  uncommitted. Status review until acceptance records commit and revalidation;
+  WP active, remaining state-helper scopes not authorized.
+- Applied lessons:explicit external import environment, final-SHA evidence,
+  exact accepted artifacts and synchronized current state. Included:current
+  accepted result and process records; omitted:Rust/providers/unrelated features/
+  secrets. No accepted behavior/architecture/technology decision changed.
+- Routing:host checks/metadata, existing review same_context, empty model IDs.
+  Environment unchanged macOS27.0.1 arm64/CPython3.12.6/pytest9.0.3;
+  model/reasoning/token usage N/A, not exposed; estimate N/A, no estimator.
+  Attribution:0587 process-disposition sync only.
+- Next requested approval:acceptance-record local commit and actual-SHA
+  all-blocking revalidation. Implementation allowed:no new source/test edits.
+  Post-commit verification required:yes. Delivery push/PR/CI/merge separate.
+  No remaining product/process-disposition blocker; approval is the stop gate.
+
+## Acceptance-record commit / current handoff
+
+- Request:human explicitly approved acceptance-record commit and actual-SHA
+  all-blocking revalidation,2026-10-13. No source/test or delivery authority.
+- Scope:five documentation records; local accepted slice status synchronized
+  to done subject to final record checks. WP stays active. Process-review finding
+  disposition agreed and lesson retained; same-context process check reapplied.
+- Prior evidence clean4812c29a accepted, not reused as new final-commit evidence.
+  Result pending at record commit; actual new SHA/clean state/commands/runtime/
+  UTC/exit/counts/failures in `/private/tmp/liss-0587-acceptance-verification.dYd4JN/`
+  per-scope JSON/logs and result.md. No follow-up result-only repository commit.
+- Plan:focused48/inherited143/adjacent16, actual consumer/cold-order/pickle smoke
+  with explicit PYTHONPATH, root tests/, spec161 and applicable sanity10; no
+  exclusions. PR-only traceability not applicable before PR creation.
+- Changed files:Issue/spec/WP/trace/process-lessons-log.md, exact five-file unit.
+  Eleven reviewed tests/fixtures and product hashes retained; no behavior change.
+- Included:accepted result/spec/trace/status/process policies and existing
+  deterministic harnesses. Omitted:Rust/providers/secrets/unrelated features.
+  Full dynamic graph and pristine base root comparison remain unproved.
+- Lessons applied:explicit import environment, failed evidence preservation,
+  exact accepted artifacts, final-SHA evidence and status synchronization.
+- Routing:host deterministic checks; existing review same_context, empty model
+  IDs, no enabled override/numeric budgets. No new isolated review claim.
+- Environment macOS27.0.1 arm64/CPython3.12.6/pytest9.0.3; displayed stable
+  model/reasoning/tokens N/A, not exposed; estimate N/A, no calibrated estimator.
+  Attribution:0587 acceptance-record commit/revalidation only.
+- Next safe action:if every blocking check passes, request separate push/PR/CI/
+  successful-CI merge approval. If failed, preserve evidence and seek bounded
+  disposition; do not claim local closeout verified or weaken tests.
+- Post-commit revalidation is required, not a new human result-acceptance loop
+  if unchanged accepted behavior remains Green. Remote delivery not performed.

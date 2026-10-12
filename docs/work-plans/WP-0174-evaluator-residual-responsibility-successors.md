@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0587 rank6 partial-filling slice — Phase3 passed; final record-commit/actual-SHA verification approved, outcome pending externally; then human final-result acceptance |
+| Current Next Issue | LISS-0587 locally accepted; acceptance-record commit/actual-SHA rerun approved, outcome pending externally; then separate delivery approval. Other state helpers require new scope |
 
 ## Goal
 
@@ -42,7 +42,7 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | done — reviewed repair/final verification passed; PR #606 tracks delivery | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery until successful606 delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
 | [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | done — PR608 merged; PR/main CI passed | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
 | [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | done — PR609 merged61703e3e; PR/main CI passed; local documentation closeout separately authorized | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0`; closeout `codex/liss-0586-delivery-closeout` |
-| [LISS-0587](../issues/LISS-0587-evaluator-partial-filling-successor.md) | review — Phase3 passed; final verification approved, result pending externally; human acceptance separate | M | M | AIP-0587-001 accepted | LISS-0586 / PR610 delivered | - | `codex/liss-0587-partial-filling-phase0` |
+| [LISS-0587](../issues/LISS-0587-evaluator-partial-filling-successor.md) | done — local result accepted/process reviewed; acceptance-record actual-SHA outcome pending externally, delivery separate | M | M | AIP-0587-001 accepted | LISS-0586 / PR610 delivered | - | `codex/liss-0587-partial-filling-phase0` |
 
 ## Current rank-5 delivery record — 2026-10-12
 
@@ -64,7 +64,14 @@ Committed951e5426 all-blocking passed(root2621/spec161/sanity10); Phase3
 separately approved and agent review passed2026-10-12 with unchanged source/tests.
 Final verification / review-record commit and actual-SHA rerun approved2026-10-12;
 result pending at record commit: `/private/tmp/liss-0587-final-verification.rTeCvx/result.md`.
-After success request human final-result acceptance; no delivery authority.
+Final clean4812c29a passed focused48/inherited143/adjacent16/root2621/spec161/
+sanity10 and consumer smoke; human final-result acceptance received2026-10-12.
+Completion process review identified resolved external smoke import-path setup:
+lesson-only disposition agreed2026-10-13 and recorded in the lesson log.
+Acceptance-record commit/revalidation explicitly approved2026-10-13; local slice
+recorded done subject to post-commit checks, outcome pending at this record commit:
+`/private/tmp/liss-0587-acceptance-verification.dYd4JN/result.md`.
+Remote delivery still requires separate authority; WP stays active.
 State helpers remain
 distinct candidates. Earlier local-only closeout permissions below are historical.
 

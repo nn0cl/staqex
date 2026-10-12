@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0587
 - GitHub issue: none
-- Status: review
+- Status: done — locally accepted; acceptance-record post-commit verification required, delivery pending
 - Phase: phase-3-refactor
 - Type: behavior-preserving responsibility extraction
 - Priority: WP-0174 rank 6, first cohesive slice
@@ -76,8 +76,35 @@ Agent review passed with no source/test changes:
 Human final verification / review-record commit and actual-SHA all-blocking rerun
 explicitly approved2026-10-12. Result pending at record commit; actual final SHA,
 clean status and outcome: `/private/tmp/liss-0587-final-verification.rTeCvx/result.md`.
-After passing, next gate:human final-result acceptance. Remote delivery remains
-unapproved; Issue stays review. Earlier dirty-run failure is historical.
+Final verification passed at clean4812c29a6bb6e951f6b0a808af71052ef4ae59cc:
+focused48/inherited143/adjacent16/root2621/spec161/sanity10 and consumer smoke.
+Human `LISS-0587 最終レビュー結果の受入れ` received2026-10-12.
+Result accepted; human acceptance-record commit / actual-SHA all-blocking
+revalidation approval received2026-10-13. Remote delivery remains unapproved.
+Local accepted work recorded done; this record commit's verification outcome
+is pending at commit, not assumed from4812c29a. Actual SHA and result:
+`/private/tmp/liss-0587-acceptance-verification.dYd4JN/result.md`.
+Earlier dirty-run failure is historical.
+
+## Completion process review / disposition agreed
+
+Same-context process review2026-10-12 checked phase/path approval records,
+dedicated branch, accepted artifacts, trace, routing and synchronized status.
+No phase skipping, inferred implementation/delivery authority or test weakening found.
+Operational problem:external verification launch omitted repository import path;
+initial smoke failed before collection. Explicit PYTHONPATH rerun passed at the
+same clean SHA; both outputs retained in final evidence. Not a product defect.
+Human `続けて` received2026-10-13 following the unique lesson-only proposal.
+Disposition agreed:lesson only, declaring import-path setup in external
+verification commands and preserving failed invocation evidence. Recorded in
+process-lessons-log.md as external-verification-import-environment. No template
+feedback or code change. Process review concluded with the resolved operational
+problem explicitly recorded, not a no-problem finding. Final result acceptance
+remains effective. Acceptance-record local commit and actual-SHA all-blocking
+rerun separately approved2026-10-13. This closes the local accepted slice subject
+to that final record's verification; no whole-WP or delivery completion claim.
+Same-context process review reapplied after status synchronization; previously
+identified operational issue disposition remains agreed and documented.
 
 ## Phase2 implementation and verification
 

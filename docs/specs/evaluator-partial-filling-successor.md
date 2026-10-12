@@ -12,7 +12,15 @@ no product/test changes required. [Current review](../collaboration/reviews/2026
 Final review-record commit/actual-SHA verification explicitly approved2026-10-12.
 Result pending at record commit; actual final SHA and all-blocking result:
 `/private/tmp/liss-0587-final-verification.rTeCvx/result.md`.
-Human final-result acceptance and remote delivery remain separate; not final completion.
+Final verification passed at clean4812c29a (root2621/spec161/sanity10,
+focused48/inherited143/adjacent16 and consumer smoke).
+Human final-result acceptance received2026-10-12. Lesson-only process-review
+disposition for the resolved external smoke launch issue agreed2026-10-13;
+acceptance-record commit/revalidation explicitly approved2026-10-13.
+Outcome pending at record commit; final SHA/result:
+`/private/tmp/liss-0587-acceptance-verification.dYd4JN/result.md`.
+Local accepted slice recorded done subject to that check; remote delivery not authorized.
+Accepted P01–P09 unchanged; not a delivered-completion claim.
 Agent Phase1 review passed2026-10-12; human accepted the unchanged reviewed artifacts:
 [review packet](../collaboration/reviews/2026-10-12-liss-0587-phase1-red-review.md).
 Historical Red execution evidence:focused44 pass/4 intended Red; root2617 pass/same4 Red;

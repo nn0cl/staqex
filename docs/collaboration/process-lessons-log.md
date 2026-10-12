@@ -7,6 +7,22 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-10-13
+- Class: external-verification-import-environment
+- Pattern: running a verification script outside the repository can omit the
+  repository from Python's import search path even when cwd is the repository,
+  causing setup failure before actual consumer checks execute.
+- What later design or implementation must do: declare the repository import
+  path explicitly in external verification commands; record that command and
+  its environment, retain failed-launch evidence and distinguish setup failure
+  from product regression. Do not modify tests or product code to compensate.
+- Source issue or work plan: LISS-0587 / WP-0174
+- Status: lesson-only disposition agreed2026-10-13. Explicit PYTHONPATH retry
+  passed at the same clean tested SHA; initial failure and retry evidence retained.
+  No product fix or upstream template feedback authorized.
+
+## Lesson
+
 - Date: 2026-10-09
 - Class: migration-test-shape-invariance
 - Pattern: refactor characterization can pass before extraction yet fail after
