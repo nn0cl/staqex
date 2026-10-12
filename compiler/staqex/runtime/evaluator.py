@@ -131,6 +131,7 @@ from .evaluation.evolution import (
 )
 from .evaluation.errors import KernelDiagnosticError, KernelError
 from .evaluation.operators import resolve_operator
+from .evaluation.partial_calls import PartialValue, fill_partial as _fill_partial_successor
 from .evaluation.orchestration import (
     execute_binder_plan,
     execute_callable_plan,
@@ -188,14 +189,6 @@ class ClassInstance:
     mutable: set[str] = field(default_factory=set)
     # ADR 0174: optional unit suffix per dimful field.
     field_units: dict[str, str] = field(default_factory=dict)
-
-
-@dataclass
-class PartialValue:
-    """Immutable partial application (ADR 0123); ``None`` slots are holes."""
-
-    fun_name: str
-    slots: list[Expr | None]
 
 
 @dataclass
@@ -705,38 +698,7 @@ class Evaluator:
             joint, live_out, result_names
         )
 
-    @staticmethod
-    def _fill_partial(
-        partial: PartialValue, fill_args: list[Expr]
-    ) -> Call | PartialValue:
-        """Fill holes left-to-right; exact fill → Call, partial fill → PartialValue."""
-        need = sum(1 for s in partial.slots if s is None)
-        if not fill_args or len(fill_args) > need:
-            raise KernelError(
-                f"Partial `{partial.fun_name}` expects 1..{need} remaining args, "
-                f"got {len(fill_args)}"
-            )
-        new_slots: list[Expr | None] = []
-        fi = 0
-        for slot in partial.slots:
-            if slot is None:
-                if fi < len(fill_args):
-                    new_slots.append(fill_args[fi])
-                    fi += 1
-                else:
-                    new_slots.append(None)
-            else:
-                new_slots.append(slot)
-        remaining = sum(1 for s in new_slots if s is None)
-        if remaining == 0:
-            assert all(s is not None for s in new_slots)
-            filled = [s for s in new_slots if s is not None]
-            sp = fill_args[0].span
-            return Call(
-                callee=Var(name=partial.fun_name, span=sp), args=filled, span=sp
-            )
-        # ADR 0131: stepwise Partial.
-        return PartialValue(fun_name=partial.fun_name, slots=new_slots)
+    _fill_partial = staticmethod(_fill_partial_successor)
 
     def _eval_set_comprehension(
         self, expr: "SetComprehension", assign: dict[str, Any]

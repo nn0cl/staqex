@@ -35,11 +35,14 @@ def guarded_tree(tmp_path, monkeypatch):
         target = tmp_path / name
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((ROOT / name).read_bytes())
-    successor = "compiler/staqex/runtime/evaluation/host_coefficients.py"
-    if (ROOT / successor).is_file():
-        target = tmp_path / successor
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes((ROOT / successor).read_bytes())
+    for successor in (
+        "compiler/staqex/runtime/evaluation/host_coefficients.py",
+        "compiler/staqex/runtime/evaluation/partial_calls.py",
+    ):
+        if (ROOT / successor).is_file():
+            target = tmp_path / successor
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((ROOT / successor).read_bytes())
     monkeypatch.setattr(repair, "ROOT", tmp_path)
     return tmp_path
 

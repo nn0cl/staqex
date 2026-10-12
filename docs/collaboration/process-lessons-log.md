@@ -44,6 +44,10 @@ Record meta-level patterns only. No session transcripts.
   original Git evidence and invoke real pre/post fixture checks after extraction.
   Resolve the changed owner's lazy-import closure and exercise cold package
   import orders; scoped cycle evidence is not proof of the entire dynamic graph.
+  Reapplied in LISS-0587 Red review to representation-and-method moves: compare
+  class decorators/annotations and complete method AST with immutable Git,
+  then forward-run unchanged guard/copy consumers on a genuinely extracted root.
+  AST acceptance does not establish cold-import or serialization behavior.
 
 ## Lesson
 
