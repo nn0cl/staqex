@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0586 locally accepted; acceptance-record commit / rerun approved; remote delivery approval pending |
+| Current Next Issue | LISS-0586 delivered; local delivery-record organization/commit approved; rank6 Scope/Phase0 separate |
 
 ## Goal
 
@@ -24,7 +24,7 @@ Evaluator's unique mutable-state ownership.
 | 2 | Runtime-plan eligibility/projection: callable eligibility, Operator-attribute walk, unit projection, first-family checks | Extracted policy retained; ten public imports restored | LISS-0582 done; PR #604 merged at 458fcbe6, PR/main CI and merge-result local checks passed; no retirement waiver |
 | 3 | Static `forEach` expansion | Actual body migrated to dedicated successor, live binding callbacks and hook preserved | LISS-0583 done; PR #607 merged a349a5b7, merge-result CI passed (confirmed2026-10-08) |
 | 4 | Tensor binding | Original algorithm moved to stateless61-line successor; exact private hook retained | LISS-0585 done; PR608 merged a661fb17, PR/main CI success |
-| 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | LISS-0586 local work done; final acfedf28 results accepted; delivery pending |
+| 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | LISS-0586 done; PR609 merged61703e3e, PR/main CI passed |
 | 6 | Partial-call filling and small classical-state helpers | `_fill_partial` 31 lines; `_is_closed` 28; `_maybe_capture_classical_scalar` 23 | Keep separate until actual consumers, state writes, and feature ownership show a cohesive unit |
 | Excluded | `_eval_set_comprehension` | Explicitly retained as dispatch/consumer in accepted classical Operator-evaluation spec | Do not reopen in this WP absent a new scope decision |
 
@@ -41,9 +41,39 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0583](../issues/LISS-0583-evaluator-static-foreach-successor.md) | done — PR #607 merged; main CI passed | M | M | AIP-0583-002 / accepted003 | LISS-0582 and LISS-0584 delivered | - | `codex/liss-0583-phase1-rereview` |
 | [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | done — reviewed repair/final verification passed; PR #606 tracks delivery | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery until successful606 delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
 | [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | done — PR608 merged; PR/main CI passed | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
-| [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | done — final acfedf28 results accepted; uncommitted closeout records, delivery pending | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0` |
+| [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | done — PR609 merged61703e3e; PR/main CI passed; local documentation closeout separately authorized | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0`; closeout `codex/liss-0586-delivery-closeout` |
 
-## Current rank-5 design gate — 2026-10-09
+## Current rank-5 delivery record — 2026-10-12
+
+LISS-0586 delivered by [PR609](https://github.com/nn0cl/staqex/pull/609),
+merge61703e3e; [main CI38195784577](https://github.com/nn0cl/staqex/actions/runs/38195784577)
+all successful (root2573/spec161/sanity), as was PR CI38069884392. WP stays
+active. Human approves organization/local commit of five closeout documents,
+not push/PR or rank6 execution. Post-commit verification entry:
+`/private/tmp/liss-0586-closeout.V0QQK0/result.md`, pending at record commit.
+
+## Historical rank-5 phase / delivery gates
+
+Earlier pending permissions/results/record states below are historical evidence,
+not current next actions. Accepted scope and H04 follow-up remain unchanged.
+
+Final delivery verification2026-10-12: merged61703e3e main CI38195784577
+all SUCCESS, root2573/spec161/sanity passed. LISS-0586 delivered; WP active.
+Five local closeout records uncommitted; next safe action their persistence/
+organization approval, not new implementation. Rank6 Scope/Phase0 separate.
+Previous pending/blocked entries historical.
+
+Current2026-10-12: PR609 merged61703e3e at11:26JST. PR-head CI successful;
+main CI38195784577 sanity/spec success, root pending at this entry. No new
+scope or implementation permission. Five local delivery records uncommitted;
+prior authorization blockage historical. Finish merge-result verification first.
+
+Delivery2026-10-11: human approved push/PR/CI/successful merge; ef970b3a
+pushed, PR609 all CI SUCCESS. Host auto-review rejected exact-HEAD merge before
+execution because trusted current authorization for main mutation was not
+established. No bypass; renewed exact-target confirmation needed. Local Issue
+done, WP active, no rank6 authority. Delivery records uncommitted; evidence
+`/private/tmp/liss-0586-delivery.uipcEJ/result.md`. Earlier pending notes historical.
 
 Current gate2026-10-11: acceptance-record commit / actual-SHA all-blocking
 rerun approved. Local acceptance unchanged, WP active, no delivery or rank6

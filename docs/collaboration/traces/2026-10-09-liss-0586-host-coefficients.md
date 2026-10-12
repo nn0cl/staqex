@@ -1,6 +1,89 @@
 # LISS-0586 Host coefficient resolution — design / resume trace
 
-## Request and current state
+## Current state / documentation closeout — 2026-10-12
+
+- Request: `配送記録の整理・コミット`, Fast Path documentation-only closeout.
+- LISS-0586 H01–H09 done/delivered. Canonical current status:
+  [Issue delivery record](../../issues/LISS-0586-evaluator-host-coefficient-resolution.md#summary-and-acceptance-notes).
+  PR609 merged11:26:21JST at61703e3e; PR/main CI all SUCCESS. No claim this
+  agent performed the merge; prior rejected merge attempts are historical.
+- Branch:`codex/liss-0586-delivery-closeout`, base61703e3e. Approved scope:
+  five existing documents only (Issue/spec/WP/Phase3 review/this trace), local
+  organization/commit and deterministic checks. No source/test or remote write.
+- Organization: separate current navigation from historical gates without
+  deleting acceptance clauses, evidence, test hashes or prior approval context.
+  No new architecture/process decision or new planning record; AIP-0586-001
+  unchanged. Applied existing status-drift/migration-boundary/final-SHA lessons;
+  no new lesson class. Model/reasoning/usage unavailable, host route unchanged.
+- Verification: delivered merge CI evidence above; this new local commit's
+  actual SHA/all-blocking results are external:
+  `/private/tmp/liss-0586-closeout.V0QQK0/result.md` (pending at record commit).
+  No reuse of prior SHA success as new-commit evidence. No repository edits
+  after tested commit; future commit/remote delivery invalidates applicability.
+- Included: five records, lifecycle/verification rules, accepted CI evidence.
+  Omitted: rank6/Rust/providers/secrets. Assumption: preserve H01–H09 exactly.
+- Next safe action after success: report local commit; any push/PR for these
+  records or rank6 Scope/Phase0 needs separate authority. WP remains active.
+
+## Historical request / execution states
+
+All state/HEAD/permissions/next-action statements below retain their original
+phase context. They are evidence, not the current entry point above.
+
+- Final delivery verification2026-10-12: main CI38195784577 completed SUCCESS
+  at exact merge SHA61703e3e9128d1bf46cb645d2431755fac2d6df2. All3jobs success:
+  sanity8s, root13m9s, spec5s. Root2573passed777.51s, spec161/161 GatePASS;
+  GitHub Linux / CPython3.12.15 / pytest9.1.1, distinct from local macOS
+  CPython3.12.6/pytest9.0.3 evidence. No pytest failures/errors/skips reported;
+  no active-Red exclusions. PR-only traceability is not applicable to push CI,
+  was separately passed in PR CI. PR609 and merge-result delivery now verified.
+  Host authorization problem was resolved by externally observed merge; no
+  bypass by this agent. Five delivery records remain uncommitted, local HEAD
+  ef970b3a unchanged; no clean local merge-SHA run or future-doc-commit claim.
+  Next safe action:approve persistence/organization of these five closeout
+  records; rank6 Scope/Phase0 remains separate. WP stays active.
+
+- Current2026-10-12: read-only continuation confirms PR609 MERGED at
+  2026-10-12T02:26:21Z (11:26:21 Asia/Tokyo), merge SHA
+  61703e3e9128d1bf46cb645d2431755fac2d6df2. No claim this agent executed merge.
+  Prior authorization rejection is historical, not a current delivery blocker.
+  [Main CI38195784577](https://github.com/nn0cl/staqex/actions/runs/38195784577)
+  is bound to this merge SHA; sanity/spec passed, root pending at this entry.
+  Fast Path read-only verification plus mechanical status sync; source/tests
+  unchanged. Included PR/CI/current records; rank6/Rust/providers omitted.
+  Host route / existing same_context review unchanged, model/usage unavailable.
+  Changed:five existing delivery records (Issue/spec/WP/review/this trace),
+  uncommitted; no additional remote mutation or commit. Local branch remains
+  ef970b3a with dirty documentation, not a clean merge-SHA local test claim.
+  Next safe action:finish main CI verification and summarize delivery; any
+  persistent record commit or next-scope execution requires its own authority.
+
+- Renewed exact-target approval2026-10-11: human explicitly authorized
+  `PR #609（HEAD ef970b3a）を nn0cl/staqex のmainへマージ承認`.
+  Fresh read confirms OPEN/CLEAN/MERGEABLE, HEAD ef970b3a, base a661fb17,
+  all3CI SUCCESS, no reviews. The same expected-HEAD merge was again rejected
+  before execution by host auto-review: approval in transcript not recognized
+  as trusted authorization. No workaround or alternate API attempted. Further
+  repeated approval wording is not a demonstrated remedy. Safe next action:
+  human-managed GitHub merge / host authorization resolution, then read-only
+  merge SHA and main CI verification. PR not merged; no merge-result claim.
+
+- Delivery2026-10-11: human `push／PR作成・更新／CI確認・成功後のマージ`
+  approved. Verified origin public nn0cl/staqex, authenticated owner nn0cl ADMIN.
+  ef970b3a pushed; [PR609](https://github.com/nn0cl/staqex/pull/609) created/attached.
+  [PR CI](https://github.com/nn0cl/staqex/actions/runs/38069884392) all SUCCESS:
+  sanity12s/root14m24s/spec7s. Exact HEAD ef970b3a, base a661fb17,
+  CLEAN/MERGEABLE, no review submissions/threads immediately before merge.
+  Exact-HEAD `gh pr merge` rejected before execution by host auto-review because
+  current trusted authorization for default-main mutation was not established.
+  No workaround attempted; merge SHA/main-result CI not_run. Local Issue done,
+  delivery blocked on renewed exact-target confirmation, not product/test failure.
+  Evidence/handoff `/private/tmp/liss-0586-delivery.uipcEJ/result.md`.
+  Included scoped records/CI; rank6/Rust/provider/secrets omitted; same_context
+  review/host route unchanged. Five local delivery record updates uncommitted:
+  this trace, Issue/spec/WP and Phase3 review. Next safe action: confirm PR609
+  ef970b3a into main, recheck HEAD/base/CI/reviews, retry only if risk review permits.
+  Earlier delivery-pending/permission statements below are historical.
 
 - Date:started2026-10-09; current verification2026-10-11 Asia/Tokyo (client date).
 - User request: `ank 5 Host係数配列解決分離のScope／Phase 0設計開始`.

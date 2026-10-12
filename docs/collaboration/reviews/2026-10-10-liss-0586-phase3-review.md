@@ -1,6 +1,42 @@
 # LISS-0586 Phase3 same-context review
 
-## Outcome / approval boundary
+## Current delivery navigation
+
+Phase3 review passed and final result accepted; PR609 delivered at61703e3e.
+PR/main CI all successful. See
+[current Issue delivery record](../../issues/LISS-0586-evaluator-host-coefficient-resolution.md#summary-and-acceptance-notes)
+for actual SHA/environment and next-action authority. This review's findings,
+accepted-test evidence and limitations are unchanged. Human approves only the
+five-document organization/local commit; no new implementation, push or PR.
+Post-commit actual-SHA results: `/private/tmp/liss-0586-closeout.V0QQK0/result.md`
+(pending at record commit).
+
+## Historical outcome / approval boundary
+
+Earlier pending gates and provisional states below preserve their original
+context; they are not current permissions or unresolved product findings.
+
+Final delivery verification2026-10-12: PR609 merged61703e3e, main
+CI38195784577 all3jobs SUCCESS, root2573/spec161/sanity passed. CI Linux /
+CPython3.12.15 / pytest9.1.1; branch-head local evidence remains separate.
+No new product/test edits; final acceptance unchanged. Five local closeout
+records uncommitted. Prior root-pending/blocked notes historical. Delivery
+verification complete; next authority is record persistence / separate next scope.
+
+Current2026-10-12: read-only verification confirms PR609 merged61703e3e,
+11:26JST. PR-head CI all passed. Merge-result main CI38195784577 at exact
+merge SHA sanity/spec passed, root pending at entry. Prior host rejection
+historical. No source/test change or new product review; local five delivery
+record changes uncommitted. Delivery fully verified only after main CI success.
+
+Delivery2026-10-11: human explicitly approved push/PR/CI/successful merge.
+PR609 HEAD ef970b3a all CI SUCCESS; unchanged base a661fb17, CLEAN/MERGEABLE,
+no blocking reviews/threads. Exact-HEAD merge rejected before execution by
+host auto-review (trusted authorization for main mutation unestablished).
+No workaround. Requested next approval: renewed exact-target merge confirmation
+PR609 ef970b3a into nn0cl/staqex main (phase/process delivery), implementation
+allowed:no, post-review required:yes (merge-result CI), batch:none. Product
+acceptance stands unchanged; local delivery records uncommitted.
 
 Current gate2026-10-11: human `受入れ記録コミット・実SHAで全blocking再検証承認`
 approves the five acceptance/status records' commit and resulting-SHA complete
