@@ -4,9 +4,15 @@ Status: P01–P09 and bounded guard transition accepted2026-10-12;
 Phase0 accepted. Phase1 Red execution and test review/acceptance approved2026-10-12.
 Phase2 Green/implementation separately approved2026-10-12; minimal extraction
 implemented without changing accepted test bytes. Local commit / actual-SHA
-all-blocking revalidation separately approved2026-10-12; Phase3 remains unapproved.
-Committed rerun pending at this record commit; current actual-SHA result:
+all-blocking revalidation separately approved2026-10-12. Clean951e5426 passed
+root2621/spec161/sanity10; actual-SHA result:
 `/private/tmp/liss-0587-sha-verification.fYIOBG/result.md`.
+Phase3 Refactor/review separately approved2026-10-12; agent review passed,
+no product/test changes required. [Current review](../collaboration/reviews/2026-10-12-liss-0587-phase3-review.md).
+Final review-record commit/actual-SHA verification explicitly approved2026-10-12.
+Result pending at record commit; actual final SHA and all-blocking result:
+`/private/tmp/liss-0587-final-verification.rTeCvx/result.md`.
+Human final-result acceptance and remote delivery remain separate; not final completion.
 Agent Phase1 review passed2026-10-12; human accepted the unchanged reviewed artifacts:
 [review packet](../collaboration/reviews/2026-10-12-liss-0587-phase1-red-review.md).
 Historical Red execution evidence:focused44 pass/4 intended Red; root2617 pass/same4 Red;

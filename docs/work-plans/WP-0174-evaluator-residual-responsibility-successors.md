@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0587 rank6 partial-filling slice — local commit/actual-SHA all-blocking rerun approved; external result below determines Green; Phase3 approval separate |
+| Current Next Issue | LISS-0587 rank6 partial-filling slice — Phase3 passed; final record-commit/actual-SHA verification approved, outcome pending externally; then human final-result acceptance |
 
 ## Goal
 
@@ -42,7 +42,7 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | done — reviewed repair/final verification passed; PR #606 tracks delivery | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery until successful606 delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
 | [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | done — PR608 merged; PR/main CI passed | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
 | [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | done — PR609 merged61703e3e; PR/main CI passed; local documentation closeout separately authorized | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0`; closeout `codex/liss-0586-delivery-closeout` |
-| [LISS-0587](../issues/LISS-0587-evaluator-partial-filling-successor.md) | in_progress — committed all-blocking rerun approved; see external result | M | M | AIP-0587-001 accepted | LISS-0586 / PR610 delivered | - | `codex/liss-0587-partial-filling-phase0` |
+| [LISS-0587](../issues/LISS-0587-evaluator-partial-filling-successor.md) | review — Phase3 passed; final verification approved, result pending externally; human acceptance separate | M | M | AIP-0587-001 accepted | LISS-0586 / PR610 delivered | - | `codex/liss-0587-partial-filling-phase0` |
 
 ## Current rank-5 delivery record — 2026-10-12
 
@@ -60,7 +60,11 @@ Root2621 pass; source-clean copy-smoke fails on uncommitted spec.
 These dirty-run results are historical. Local commit/actual-SHA verification
 separately approved2026-10-12. Result pending at record commit; actual SHA,
 all-blocking status and next gate in `/private/tmp/liss-0587-sha-verification.fYIOBG/result.md`.
-After all blocking pass, request Phase3 separately; no delivery authority.
+Committed951e5426 all-blocking passed(root2621/spec161/sanity10); Phase3
+separately approved and agent review passed2026-10-12 with unchanged source/tests.
+Final verification / review-record commit and actual-SHA rerun approved2026-10-12;
+result pending at record commit: `/private/tmp/liss-0587-final-verification.rTeCvx/result.md`.
+After success request human final-result acceptance; no delivery authority.
 State helpers remain
 distinct candidates. Earlier local-only closeout permissions below are historical.
 

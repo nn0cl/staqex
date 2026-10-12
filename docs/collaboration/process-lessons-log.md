@@ -48,6 +48,11 @@ Record meta-level patterns only. No session transcripts.
   class decorators/annotations and complete method AST with immutable Git,
   then forward-run unchanged guard/copy consumers on a genuinely extracted root.
   AST acceptance does not establish cold-import or serialization behavior.
+  Reapplied in LISS-0587 Phase3: compare the installed class/algorithm directly
+  with original Git, pin retained consumer bytes independently, and resolve
+  the pure owner's AST/error import closure. Cold import requests still execute
+  parent package initialization; do not claim package-free loading or whole-graph
+  independence from two successful requested import orders.
 
 ## Lesson
 

@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0587
 - GitHub issue: none
-- Status: in_progress
-- Phase: phase-2-green
+- Status: review
+- Phase: phase-3-refactor
 - Type: behavior-preserving responsibility extraction
 - Priority: WP-0174 rank 6, first cohesive slice
 - Initial planning size: M
@@ -26,7 +26,8 @@ approved2026-10-12: acceptance tests and bounded guard migration only.
 Human Phase1 Red test review/acceptance approved2026-10-12.
 Human `LISS-0587 Phase 2 Green／implementation承認` received2026-10-12.
 Implementation allowed for the accepted slice only. Local commit / actual-SHA
-all-blocking revalidation separately approved2026-10-12; delivery and Phase3 remain separate.
+all-blocking revalidation separately approved2026-10-12; Phase3 Refactor/review
+separately approved and agent review passed2026-10-12. Final verification/delivery remain separate.
 
 Accepted design extracts only `_fill_partial` with its `PartialValue` representation.
 Do not group `_is_closed` and `_maybe_capture_classical_scalar` with it:
@@ -67,10 +68,16 @@ approved2026-10-12; Phase1 execution and test acceptance separately approved.
 Phase2 implementation separately approved2026-10-12. Minimal production move
 implemented. Human `LISS-0587 ローカルコミット／実SHAで全blocking再検証承認`
 received2026-10-12. Commit/revalidation execute only this unchanged unit.
-Result pending at record commit; actual SHA and current result entry:
+Committed951e5426 all-blocking passed (root2621/spec161/sanity10). Result entry:
 `/private/tmp/liss-0587-sha-verification.fYIOBG/result.md`.
-After all blocking pass, next gate:Phase3 Refactor/review approval.
-Phase3 and remote delivery remain unapproved. Earlier dirty-run failure is historical.
+Human `LISS-0587 Phase 3 Refactor／review承認` received2026-10-12.
+Agent review passed with no source/test changes:
+[Phase3 packet](../collaboration/reviews/2026-10-12-liss-0587-phase3-review.md).
+Human final verification / review-record commit and actual-SHA all-blocking rerun
+explicitly approved2026-10-12. Result pending at record commit; actual final SHA,
+clean status and outcome: `/private/tmp/liss-0587-final-verification.rTeCvx/result.md`.
+After passing, next gate:human final-result acceptance. Remote delivery remains
+unapproved; Issue stays review. Earlier dirty-run failure is historical.
 
 ## Phase2 implementation and verification
 

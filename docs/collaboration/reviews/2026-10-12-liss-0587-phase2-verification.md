@@ -7,6 +7,13 @@ tested SHA/status/commands/UTC boundaries are saved externally in
 No result or Phase3 approval inferred. All dirty-run results below are historical,
 not current completion evidence. No production or accepted test changes in this continuation.
 
+Subsequent result:clean951e5426 all-blocking passed(root2621/spec161/sanity10).
+Human separately approved Phase3, whose [agent review passed](2026-10-12-liss-0587-phase3-review.md).
+Final review-record commit and actual-SHA verification separately approved2026-10-12.
+Result pending at that record commit; current final evidence:
+`/private/tmp/liss-0587-final-verification.rTeCvx/result.md`.
+Human final acceptance and delivery remain separate.
+
 ## Scope and authority
 
 Feature Path / phase-2-green. Human separately approved P01–P09/Phase0,

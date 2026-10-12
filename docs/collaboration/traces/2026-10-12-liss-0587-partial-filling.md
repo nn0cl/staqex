@@ -3,10 +3,9 @@
 ## Request / current state
 
 - Date:2026-10-12; user:`続けて` after unique rank6 Scope/Phase0 request.
-- Feature Path / phase-2-green implementation approved2026-10-12; implemented,
-  local commit/actual-SHA all-blocking rerun separately approved; current
-  result entry below. Earlier uncommitted results are historical.
-- Issue:LISS-0587 in_progress; WP-0174 rank6 first accepted slice; AIP-0587-001 accepted.
+- Feature Path / phase-3-refactor separately approved2026-10-12; agent review
+  passed, source/tests unchanged. Final-record verification explicitly approved2026-10-12.
+- Issue:LISS-0587 review; WP-0174 rank6 first accepted slice; AIP-0587-001 accepted.
 - Human2026-10-12 explicitly approved dedicated Issue/spec P01–P09,
   bounded guard transition and Phase0 acceptance; clauses unchanged.
 - Branch:codex/liss-0587-partial-filling-phase0, base b5ad7402c184a3a79440271e02dd423c53d8bc36.
@@ -14,7 +13,8 @@
 - Human explicitly approved Phase1 Red acceptance tests/bounded guard migration.
   Human subsequently explicitly approved Phase1 Red test review/acceptance.
   Human separately approved Phase2 Green/implementation, then local commit /
-  actual-SHA all-blocking rerun. No push or Phase3 approval inferred.
+  actual-SHA all-blocking rerun, then Phase3 Refactor/review, then final verification.
+  No final-result acceptance or push approval inferred.
 
 ## Context and routing
 
@@ -28,8 +28,9 @@
 - Assumption:state-free filling and its representation form one cohesive slice;
   no frozen-type conversion or new language meaning.
 - Accepted:P01–P09/type relocation/module metadata and bounded projection.
-  Current action:approved local commit / actual-SHA all-blocking rerun.
-  Next gate after all blocking pass:Phase3 Refactor/review approval.
+  Committed951e5426 all-blocking passed, followed by approved Phase3 agent review.
+  Final verification / review-record commit and actual-SHA rerun approved;
+  outcome pending externally, then human final-result acceptance.
   Dynamic/external consumer completeness remains unproved.
 - Host design, future implementation host; review same_context, empty model IDs,
   no enabled conditional override. Human gates separate.
@@ -181,7 +182,7 @@ trace/spec/Issue and actual dirty branch, not from chat memory.
   fixed throughout runtime runs and record updates; two source hashes in the
   Phase2 record. No final commit or final-SHA verification performed.
 
-## Phase2 committed verification attempt 1 / current handoff
+## Phase2 committed verification attempt 1 / historical commit-time handoff
 
 - Request:`LISS-0587 ローカルコミット／実SHAで全blocking再検証承認`,2026-10-12.
 - Scope:commit the already accepted tests/fixtures and minimum implementation
@@ -214,3 +215,80 @@ trace/spec/Issue and actual dirty branch, not from chat memory.
   otherwise preserve failure evidence and seek bounded disposition, no test weakening.
 - Blockers:no unresolved dependency. Phase3 and delivery remain human gates;
   current all-blocking outcome must be read from the external result, not assumed.
+
+## Phase3 attempt 1 / historical review-time handoff
+
+- Request:`LISS-0587 Phase 3 Refactor／review承認`,2026-10-12.
+- Ready:read committed951e5426 all-blocking result/logs(root2621/spec161/sanity10)
+  before Phase3. Same source/test/env/base/HEAD at review start.
+- Refactor disposition:already cohesive52-line owner and direct static hook;
+  no code/test refactor needed. No body/import cleanup, assertion/fixture/exclusion changes.
+- Same_context reviewer role switch; re-read actual spec, source, consumers,
+  carrier diffs, tests, routing and deterministic output. Weaker than separate_context.
+- Reviewer reruns:focused48 passed2.69s; inherited/adjacent159 passed7.24s;
+  independent full class/method AST directly against Git and readonly22-file
+  provenance pass, as do resolved owner dependency closure and actual cold/import/
+  pickle/type-hint smoke. Commands/UTC/exit/environment/SHA in external JSON/logs:
+  `/private/tmp/liss-0587-phase3-review.WafYFN/`. All reruns clean951e5426.
+- Whole blocking evidence reread, not rerun in review. Source/tests unchanged.
+  Review records are dirty after this review; final-record commit/all-blocking
+  rerun remains required, not waived by clean951e5426 success.
+- Findings/dispositions, clause mapping and gaps:
+  [Phase3 packet](../reviews/2026-10-12-liss-0587-phase3-review.md).
+  No unresolved product correctness blocker. Dynamic/external graph and pristine
+  base full-root comparison gaps retained; package-init import limitation explicit.
+- Routing normal same_context / host, empty identifiers; no enabled conditional
+  override or numeric budget. Clean committed metrics1320 changed lines/20 files,
+  module mappings unknown. Reviewer measured evaluator976/successor52/unchanged
+  compatibility335 and guard123; WP-0174 owns retained responsibilities.
+- Agent/environment:local Codex/macOS27.0.1 arm64, CPython3.12.6/pytest9.0.3.
+  Model/reasoning/per-attempt token usage N/A, stable labels not exposed;
+  estimate/variance N/A, no calibrated estimator. Attribution:0587 Phase3 review only.
+- Included:accepted artifacts and actual source/consumer/guard evidence.
+  Omitted:Rust/provider/unrelated features/secrets. Assumptions/spec unchanged;
+  no new policy/architecture choice. Deterministic probes avoided speculative refactor.
+- Applied lessons:whole AST provenance, exact hook/public class/consumer compatibility,
+  real pre/post roots, scoped dependency/import limits, final SHA and ledger sync.
+  Existing migration lesson updated, no new lesson class.
+- Changed this attempt:Issue/spec/WP/trace/Phase2 navigation/lesson log and new
+  Phase3 packet only; no production/test files or Git commits. Issue not done.
+- Verification closeout:doc/test lifecycle, coverage ledger, diff check and11
+  accepted artifact hashes checked. New final-unit all-blocking not claimed.
+- Next safe action:request **final verification / review-record commit and
+  actual-SHA all-blocking revalidation approval**. Then execute only that gate.
+  Human final acceptance and remote delivery remain separate; no push/PR/merge.
+
+## Final verification attempt 1 / current handoff
+
+- Request:human explicitly approved LISS-0587 final verification / review-record
+  commit and actual-SHA all-blocking rerun,2026-10-12. Feature Path final verification.
+- Scope:commit seven Phase3 documentation records with synchronized authority,
+  then revalidate accepted P01–P09 at actual new SHA. No source/test/dependency,
+  fixture/assertion/exclusion changes, no push/PR/merge or issue closure.
+- Ready:Phase3 passed; predecessor951e5426 all blocking passed. Eleven accepted
+  artifact fingerprints and unchanged compiler/tests diff verified at intake.
+- Result pending at record commit. Actual SHA/clean state/commands/cwd/runtime/
+  UTC boundaries/exit codes/counts/failures and next gate are external:
+  `/private/tmp/liss-0587-final-verification.rTeCvx/result.md` and per-run JSON/logs.
+  No subsequent result-only repository commit; do not invalidate tested HEAD.
+- Plan:focused48, actual consumer/cold-order/serialization smoke, inherited143,
+  adjacent16; root tests/, spec run_all.py, all applicable repository-sanity
+  ci.yml steps. No exclusions; PR traceability not applicable before PR creation.
+- Comparison:prior same-environment intended Red4 and clean951e5426 Green;
+  pristine base whole-root not rerun, comparison unavailable. Dynamic/external
+  graph, package-init independence and routing owner mapping gaps retained.
+- Lessons applied:final-SHA external evidence, unchanged accepted test/guard
+  provenance, actual consumer smoke, status synchronization. No new lesson class.
+- Routing:host execution; existing review same_context, empty model IDs,
+  no enabled override/numeric budget. No new review isolation claim.
+- Environment:local macOS27.0.1 arm64, CPython3.12.6 / pytest9.0.3;
+  model/reasoning/actual token usage N/A, stable labels/usage not exposed;
+  estimate/variance N/A, no calibrated estimator. Attribution:0587 final verification only.
+- Included:accepted spec/Issue/Phase3/trace and declared verification policies
+  and existing harnesses. Omitted:Rust/providers/unrelated features/secrets.
+  Assumptions unchanged; no architecture/technology or runtime AI contract change.
+- Changed files:Issue/spec/WP/trace/Phase2 navigation/lesson log/Phase3 packet,
+  the seven documentation files visible in the final-record commit diff.
+- Next safe action:if all blocking pass, request human final-result acceptance;
+  otherwise preserve failure evidence and seek bounded disposition. Issue/WP
+  stay review; no product blocker identified yet, remote delivery remains separate.
