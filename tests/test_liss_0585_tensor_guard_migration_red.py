@@ -29,6 +29,11 @@ def copy_guarded_dependencies(origin, destination):
         target = destination / SUCCESSOR
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(successor.read_bytes())
+    host_path = "compiler/staqex/runtime/evaluation/host_coefficients.py"
+    if (origin / host_path).is_file():
+        target = destination / host_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((origin / host_path).read_bytes())
 
 
 @pytest.fixture(name="guarded")
