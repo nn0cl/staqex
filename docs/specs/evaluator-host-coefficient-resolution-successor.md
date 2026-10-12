@@ -5,8 +5,21 @@
 | Status | accepted — dedicated H01–H09 / bounded guard transition / Phase 0 accepted 2026-10-09 |
 | Owner | LISS-0586 / WP-0174 rank 5 |
 | Path | Architecture Path Phase 0; later Feature Path phases separately gated |
-| Implementation permission | H01–H09 implemented/reviewed; final result accepted 2026-10-11; no new implementation or delivery permission |
+| Implementation permission | H01–H09 accepted, implemented/reviewed and delivered via PR609; no new implementation permission |
 | Baseline | a661fb1778e97eda3d35fd1615fd8928c031f062 |
+
+## Current delivery navigation
+
+Implementation delivered via PR609, merge61703e3e; PR/main CI passed.
+[Current issue delivery record](../issues/LISS-0586-evaluator-host-coefficient-resolution.md#summary-and-acceptance-notes)
+owns execution status and SHA/environment evidence. H01–H09 below remain the
+accepted behavioral agreement. Only local documentation organization/commit
+approved2026-10-12; no source/test/architecture change or new remote delivery.
+
+## Historical phase approvals and execution notes
+
+Earlier pending gate/results statements in this section are preserved evidence,
+not current permission or next actions. The accepted goal begins below them.
 
 Human `LISS-0586 専用Issue/spec H01–H09・限定guard移行方針とPhase 0 acceptance`
 accepts this specification unchanged. Phase 1 execution remains separately
@@ -21,7 +34,26 @@ and H04 unreachable-name disposition pending; implementation still prohibited.
 subsequently passed on unchanged tests. Human test acceptance / H04 disposition
 still pending; an agent pass does not grant Green/implementation permission.
 
-## Goal and boundary
+### Historical delivery / final-verification notes
+
+Final delivery verification2026-10-12: PR609 merged61703e3e, main
+CI38195784577 all3jobs SUCCESS; root2573/spec161/sanity passed. Accepted
+H01–H09 unchanged, delivery verified. Local five closeout records uncommitted;
+future documentation commit needs its own SHA evidence. Previous pending
+and blocked statements below historical, not open product work.
+
+Current2026-10-12: accepted H01–H09 implementation delivered via merged PR609,
+SHA61703e3e9128d1bf46cb645d2431755fac2d6df2. PR-head CI successful; main
+merge-result CI38195784577 sanity/spec passed, root pending at entry. No
+contract/source/test change; five local delivery records uncommitted. Previous
+delivery-blocked notes below historical, not authority for next-scope work.
+
+Delivery2026-10-11: human-approved push/PR/CI/successful merge; PR609 at
+ef970b3a has all CI SUCCESS. Host auto-review rejected main merge for missing
+trusted current authorization, before execution; no bypass. Local H01–H09
+work accepted/done; delivery not done. No spec/source/test changes; renewed
+exact-target confirmation required. Local delivery records uncommitted.
+Earlier delivery-permission pending statements below are historical.
 
 Current gate2026-10-11: acceptance-record commit / actual-SHA all-blocking
 rerun explicitly approved. H01–H09 and final acceptance unchanged; no source/
@@ -73,6 +105,8 @@ before tensor name validation. The name-only error is unreachable through this
 unchanged path, not permission to delete the direct-constructor validator.
 H01–H09 remain unchanged. Earlier pending-acceptance statements are historical;
 Phase2 Green/implementation approval remains separate and pending.
+
+## Goal and boundary — accepted, unchanged
 
 Move only `Evaluator._resolve_host_coefficient_arrays` into
 `runtime/evaluation/host_coefficients.py`. This is input-boundary orchestration,

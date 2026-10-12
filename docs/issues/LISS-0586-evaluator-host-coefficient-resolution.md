@@ -5,16 +5,66 @@
 - Local issue ID: LISS-0586
 - GitHub issue: none
 - Status: done
-- Phase: completed — final result accepted; delivery pending
+- Phase: completed — PR609 merged; merge-result CI passed
 - Type: behavior-preserving input-boundary responsibility extraction
 - Priority: WP-0174 rank 5
 - Initial planning size: M
 - Current planning size: M
 - Reclassification reason: none
 - Owner/agent: Codex desktop host
-- Related branch: `codex/liss-0586-host-coefficient-phase0`
+- Related branch: `codex/liss-0586-host-coefficient-phase0` (delivered);
+  local record closeout: `codex/liss-0586-delivery-closeout`
 
 ## Summary and acceptance notes
+
+Current delivery record — 2026-10-12: LISS-0586 is done and delivered by
+[PR609](https://github.com/nn0cl/staqex/pull/609), merged11:26:21JST at
+`61703e3e9128d1bf46cb645d2431755fac2d6df2`. Both
+[PR CI](https://github.com/nn0cl/staqex/actions/runs/38069884392) and
+[merge-result main CI](https://github.com/nn0cl/staqex/actions/runs/38195784577)
+passed all three jobs. Main root2573passed777.51s, spec161/161; sanity passed.
+CI environment: Linux / CPython3.12.15 / pytest9.1.1. Accepted H01–H09,
+reviewed tests and source unchanged. No claim this agent performed the merge.
+
+Human `配送記録の整理・コミット` authorizes these five documentation records'
+organization/local commit only. Closeout branch starts at the verified merge
+SHA; post-commit all-blocking results live outside the tree at
+`/private/tmp/liss-0586-closeout.V0QQK0/result.md` (pending at record commit).
+No push/PR/new feature authority. WP remains active; rank6 needs separate
+Scope/Phase0. Prior process-review result remains applicable; host merge-gate
+problem was resolved by the externally observed merge without agent bypass.
+
+### Historical approval and delivery evidence
+
+The following chronological notes preserve earlier gates and provisional states.
+They do not describe current permissions, HEAD, dirty status or next actions.
+
+Final delivery verification2026-10-12: PR609 merged61703e3e and
+[main CI38195784577](https://github.com/nn0cl/staqex/actions/runs/38195784577)
+all3jobs SUCCESS. Root2573passed777.51s, spec161/161, sanity success; CI Linux,
+CPython3.12.15/pytest9.1.1. No source/test edit. Local work and delivery verified;
+five closeout records uncommitted, not a newly verified documentation commit.
+Earlier root-pending/delivery-blocked entries below historical. Local branch
+ef970b3a retained; no claim of local merge-SHA validation. Next gate:record
+persistence/organization, then separately scoped rank6 design if approved.
+
+Current2026-10-12: PR609 confirmed MERGED at11:26JST, SHA
+61703e3e9128d1bf46cb645d2431755fac2d6df2. Prior merge rejection is historical.
+[Main CI38195784577](https://github.com/nn0cl/staqex/actions/runs/38195784577)
+at this SHA: sanity/spec success, root pending at entry. PR-head CI already
+all successful. No new implementation/test changes or local merge-SHA claim;
+five local delivery record updates remain uncommitted. Finish merge-result
+verification before calling delivery fully verified; WP remains active.
+
+Delivery2026-10-11: explicitly human-approved push/PR/CI/successful merge.
+Verified ef970b3a pushed; [PR609](https://github.com/nn0cl/staqex/pull/609)
+all three CI jobs passed ([run38069884392](https://github.com/nn0cl/staqex/actions/runs/38069884392)).
+Exact HEAD/base and CLEAN/MERGEABLE/no reviews confirmed. Host auto-review
+rejected merge before execution for unestablished trusted authorization for
+default-main mutation. No bypass; delivery blocked, local Issue still done.
+Next gate:renewed exact-target confirmation; no new product acceptance required.
+Delivery records uncommitted; evidence `/private/tmp/liss-0586-delivery.uipcEJ/result.md`.
+Earlier delivery-permission pending statements below are historical.
 
 Current gate2026-10-11: human `受入れ記録コミット・実SHAで全blocking再検証承認`
 authorizes these five acceptance/status records' local commit and complete
