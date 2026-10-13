@@ -1,0 +1,27 @@
+{
+  "base": "b5ad7402c184a3a79440271e02dd423c53d8bc36",
+  "readonly_sha256": {
+    "compiler/staqex/parser.py": "53d80d0476b53c6b4966e5eea13bcfcc135d85bf6bf55a4dfc04239346e50199",
+    "compiler/staqex/typecheck.py": "917279f48ecb0ff4be1cdce6728b2046d1931bb5b3fc71aa76bb05f1ce58b0ca",
+    "compiler/staqex/scientific_input.py": "7acba86e9b4a8f30665c9e96a99bb3a5dadef18ec698bf9953a3d4b76cda4d4c",
+    "compiler/staqex/finite_binder.py": "08d57cab36fe199adedd2ea2ec850be1a454c168a742df68b7c66dfc9015b688",
+    "compiler/staqex/runtime/evaluation/context.py": "0f11c9a59026dff24d29666c7597380aa82a82a73aa116f8c66ccdbc97a33f77",
+    "compiler/staqex/runtime/evaluation/calls.py": "2048810f4bbd5d6dc6bdc871cd64db294a9980cc28660b2ce7141b35ae57e284",
+    "compiler/staqex/runtime/evaluation/binding.py": "c00bdd49bcf326a40b733042b74275c7f4fbfc50ba9a585385f6ba9a77d8dcc5",
+    "compiler/staqex/runtime/evaluation/pipes.py": "48eb6c2ed2822a3218c3671e72a954a64ff3339e4b0525e68aa5d02e9237a477",
+    "compiler/staqex/runtime/evaluation/execution.py": "1e109cebe54a0d79e0004121b650a2df29956e40f89f123e675f05ae1589a43e",
+    "compiler/staqex/runtime/evaluation/observation.py": "6b70d56a12680937943f43eb5ca9e5c898c3acccb8d265832074bb3d17afe4e0",
+    "compiler/staqex/runtime/evaluation/operators.py": "6f8db74580ac0eacc3491fa62c7c157e7c5b078ced1da839785c60b7c2259d35",
+    "compiler/staqex/runtime/evaluation/host_coefficients.py": "93dacd5c6848af8e96d8b0db8802ce267dd685b3d5161cc7ad4628a091551196",
+    "compiler/staqex/runtime/evaluation/tensor_binding.py": "d0d4a6bca1a75e3a1bbef3cb4f409ff842e6f66bcb91a142c2aa3f1dc90658df",
+    "compiler/staqex/runtime/evaluation/static_foreach.py": "821240f5ca50107a249a725ce03e690b582a65583e80aef23920bc730f6b2085",
+    "compiler/staqex/runtime/evaluation/compatibility.py": "801d2faa9d9f07f35c610c726003b7b1023136c95a1c5482d13650177515de53",
+    "tests/test_function_partial_holes_red.py": "0a90da704e698a9555c1b01ea0b69492cb008e1f0b9f32353fff2a2440c761a6",
+    "tests/test_stepwise_partial_fill_red.py": "eb0a7258a5e39a426f6f41cc2f954c1111c66608f9f80e622e145bbc0dc70514",
+    "tests/test_multi_hole_partial_pipe_red.py": "aa81b87872164c287c52ae5ee7d51289c18b0ab7c6e2e7b541db28cf52e89fbc",
+    "tests/test_liss0238_multi_hole_partial_pipe_lhs_move_red.py": "19689dc3f83aa6ad8235be4ab0d3058365e56e07234a8c55aa38dc89f4f5fe50",
+    "tests/test_call_partial_fusion_red.py": "e289d00c5776b0fdfbaf58aa600c7ef5c309a06ddbb856f3246eea0c9ff9bcf4",
+    "tests/test_partial_float_indexing_red.py": "2517d8e821bf9b9f9e43231797cbab963509fb9cedd1a4ab4131d84c79f3e812",
+    "tests/test_liss_0201_partial_hole_keyerror_red.py": "8e7195519d1332569ba277dcbd8d8591fd893f2682f948a48ac56cee123f8aa5"
+  }
+}
