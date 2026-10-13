@@ -4,16 +4,15 @@
 
 - Date:2026-10-13.
 - Initial user request:`閉じた古典式判定（_is_closed）分離のScope／Phase 0設計開始`.
-- Current approval:`LISS-0588 受入れ記録コミット・実SHAで全blocking再検証承認`.
-- Phase:accepted local closeout / actual-SHA verification; result pending at commit.
+- Current approval:`LISS-0588 配送記録コミット・実SHAで全blocking再検証`.
+- Phase:delivery-record local commit / actual-SHA verification; outcome pending at commit.
 - Canonical Issue:LISS-0588; WP-0174; planning record AIP-0588-001 accepted.
 - Approved scope:accepted C01–C09 behavior-preserving move and bounded carriers.
-- Implementation allowed:no new source/test work in acceptance synchronization.
-  Final human acceptance and acceptance-record commit/revalidation granted;
-  remote delivery not authorized.
+- Implementation allowed:no new source/test work. Final human acceptance,
+  acceptance-record verification and remote delivery granted; no next-slice scope.
 - Base:a19cc974a4e0200d74ae012c9b76d2a8f4d18b0a;
-  HEAD:bc92d145df21aa21be031a6e058181a8a4aefad3, now dirty records only.
-- Branch:codex/liss-0588-closed-expression-phase0, created from fetched main.
+  HEAD:87d83fcab4711b5f723869e94042c841355637ff, dirty delivery records only.
+- Branch:codex/liss-0588-delivery-closeout, created from fetched main87d83fca.
 
 ## Context ledger / assumptions / decisions
 
@@ -26,8 +25,8 @@ Assumption:ordinary method mapping retains subclass/instance recursion override;
 later deterministic evidence must establish it, not source strings alone.
 Dedicated Issue/spec C01–C09, narrow context, bounded guard transition policy
 and Phase0 acceptance approved2026-10-13. Phase1 execution approved subsequently.
-Current action:authorized acceptance-record commit/actual-SHA all-blocking
-rerun. Next gate after success:remote delivery approval. Earlier gates historical.
+Current action:authorized delivery; PR613 merged87d83fca after PR CI SUCCESS.
+Main CI all3 SUCCESS; delivery-record commit/revalidation now authorized. Earlier gates historical.
 No new architecture premise or technology proposed.
 Scope approval does not imply those acceptances or any subsequent phase.
 
@@ -527,3 +526,71 @@ Post-review requirement:remote PR/main checks under separately granted delivery.
 If failed,retain blocker,do not weaken tests or claim local completion.
 No push/PR/merge/new successor work authorized. Resume from committed
 spec/packet/Issue/trace,branch and actual-SHA external evidence.
+
+## Authorized remote delivery / current handoff —2026-10-13
+
+Explicit human push/PR creation or update/CI/successful-CI merge approval.
+Fast Path delivery within M/AIP-0588-001; accepted C01–C09/source/tests
+unchanged. Clean782724060e3670ba3f8cd6b97ee7b2c492b5a5dc local
+root2698/spec161/sanity10; focused77/inherited341/adjacent26/consumer7 PASS.
+Local environment macOS27.0.1 arm64/CPython3.12.6/pytest9.0.3;
+evidence:/private/tmp/liss-0588-acceptance-verification.n0GRQZ/result.md.
+Focused counts overlap; no exclusions or pristine-base full-root comparison.
+
+Remote main remained immutable basea19cc974, no rebase/no existing branch PR.
+Normal push succeeded; [PR613](https://github.com/nn0cl/staqex/pull/613)
+created and attached to this chat. [PR CI38368606868](https://github.com/nn0cl/staqex/actions/runs/38368606868)
+all3 SUCCESS:root2698 passed852.80s,job14m25s;spec9s;sanity11s.
+Root CI CPython3.12.15 x64 hosted runner; separate from local environment.
+Fresh premerge state OPEN/not draft/CLEAN/MERGEABLE, no requested changes,
+exact approved head78272406 and basea19cc974. Normal merge with exact HEAD
+match succeeded, no force/admin bypass/branch deletion.
+MERGED2026-10-13T08:36:44Z at87d83fcab4711b5f723869e94042c841355637ff.
+[Main CI38370439859](https://github.com/nn0cl/staqex/actions/runs/38370439859)
+targets this exact merge SHA;all3 SUCCESS completed2026-10-13T08:49:07Z.
+Spec7s/sanity8s/rootjob12m18s;root2698 passed726.37s,CPython3.12.15 x64.
+No local merge-SHA test claim. External delivery evidence:
+/private/tmp/liss-0588-delivery.lUMxWr/result.md.
+
+Four status records only:Issue/spec/WP/this trace, uncommitted. Document/test
+lifecycle,coverage consistency,diff whitespace and accepted11 fingerprints
+PASS. No full runtime rerun/new tested-SHA claim for dirty delivery metadata.
+Process review reconfirmed after verification and status sync: no operating-
+contract deviation or operational problem found. No new reusable lesson or
+template feedback. WP active; no scalar-capture scope/implementation approval.
+
+Context:canonical accepted spec/packet/current rules,exact local/remote evidence;
+omitted Rust/scalar-capture/providers/unrelated features/secrets. Applied status
+sync,final-SHA evidence,hash/private-consumer and import-environment lessons.
+Host deterministic Git/gh checks; existing product review same_context remains
+weaker isolation,empty model IDs/no enabled override. Model/reasoning/usage/
+estimate N/A,stable labels/usage unavailable; attribution:delivery only.
+Next safe action:request delivery-record commit/
+actual-SHA all-blocking verification approval. No new source/test work or
+record commit/push inferred. Earlier pending-approval snapshots historical.
+
+## Delivery-record local commit / actual-SHA verification —2026-10-13
+
+Explicit human delivery-record commit/actual-SHA all-blocking revalidation
+received after repeated push/PR/CI/successful-CI merge approval for four docs.
+Fast Path metadata unit,M/AIP-0588-001 retained; accepted C01–C09 unchanged.
+Four paths:Issue/spec/WP/this trace. No source/tests/fixtures/lessons/routing/
+policy/dependency changes. From fetched main87d83fca, dedicated branch
+codex/liss-0588-delivery-closeout;no rebase or implementation changes.
+Included canonical accepted artifacts/current policy/local and PR613 evidence;
+omitted Rust/scalar-capture/providers/unrelated work/secrets. Existing lessons
+applied:status sync,final-SHA evidence,unchanged hashes,explicit external
+PYTHONPATH. Product review remains same_context(weaker isolation); host
+deterministic checks only,empty model identifiers/no new override. Model/
+reasoning/token usage/estimates N/A,stable labels unavailable; this attempt only.
+
+After final scoped commit:root tests/,spec,all applicable actual CI sanity;
+focused77,inherited341,adjacent26,consumer7,Git provenance/29 readonly,11 hashes,
+import closure and routing. No exclusions. Every result includes actual SHA,
+clean before/after,cwd,environment,command,UTC,exit and elapsed outside tree:
+/private/tmp/liss-0588-delivery-closeout.rcVh5I/result.md. Outcome pending at commit.
+Compare predecessor pass evidence; pristine-base full-root comparison remains
+unavailable. Main87d83fca checks do not establish the new doc-SHA result.
+Next safe action:complete declared local checks,then previously approved remote
+delivery; do not edit source/tests or waive failures. WP active,next scope
+unapproved. No later evidence-only commit without another full revalidation.

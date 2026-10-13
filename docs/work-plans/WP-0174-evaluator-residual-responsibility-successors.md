@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0588 acceptance-record commit/actual-SHA verification approved2026-10-13; outcome pending at commit, entry /private/tmp/liss-0588-acceptance-verification.n0GRQZ/result.md. Local accepted slice done, not delivered; after success request remote delivery approval |
+| Current Next Issue | LISS-0588 PR613 merged87d83fca; PR/main CI all3 SUCCESS. Delivery record commit/revalidation remains separate; scalar capture requires new Scope/Phase0 approval |
 
 ## Goal
 
@@ -25,7 +25,7 @@ Evaluator's unique mutable-state ownership.
 | 3 | Static `forEach` expansion | Actual body migrated to dedicated successor, live binding callbacks and hook preserved | LISS-0583 done; PR #607 merged a349a5b7, merge-result CI passed (confirmed2026-10-08) |
 | 4 | Tensor binding | Original algorithm moved to stateless61-line successor; exact private hook retained | LISS-0585 done; PR608 merged a661fb17, PR/main CI success |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | LISS-0586 done; PR609 merged61703e3e, PR/main CI passed |
-| 6 | Partial-call filling and small classical-state helpers | `_fill_partial` extracted; `_is_closed` moved to54-line owner; `_maybe_capture_classical_scalar` 23 | LISS-0587 delivered; LISS-0588 local accepted slice done, acceptance-record verification approved/outcome pending at commit, not delivered. Scalar capture remains separate |
+| 6 | Partial-call filling and small classical-state helpers | `_fill_partial` extracted; `_is_closed` moved to54-line owner; `_maybe_capture_classical_scalar` 23 | LISS-0587 delivered; LISS-0588 PR613 merged87d83fca; PR/main CI all3 SUCCESS. Scalar capture remains separate |
 | Excluded | `_eval_set_comprehension` | Explicitly retained as dispatch/consumer in accepted classical Operator-evaluation spec | Do not reopen in this WP absent a new scope decision |
 
 Ranks express investigation priority, not a committed roadmap. LISS-0585 now
@@ -43,9 +43,27 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | done — PR608 merged; PR/main CI passed | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
 | [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | done — PR609 merged61703e3e; PR/main CI passed; local documentation closeout separately authorized | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0`; closeout `codex/liss-0586-delivery-closeout` |
 | [LISS-0587](../issues/LISS-0587-evaluator-partial-filling-successor.md) | done — PR611 merged11a1125d; PR/main CI all3jobs SUCCESS | M | M | AIP-0587-001 accepted | LISS-0586 / PR610 delivered | - | `codex/liss-0587-partial-filling-phase0` |
-| [LISS-0588](../issues/LISS-0588-evaluator-closed-expression-successor.md) | done — local result accepted; acceptance-record verification pending at commit; remote delivery pending | M | M | AIP-0588-001 accepted | LISS-0587 / PR612 delivered | - | `codex/liss-0588-closed-expression-phase0` |
+| [LISS-0588](../issues/LISS-0588-evaluator-closed-expression-successor.md) | done — PR613 merged87d83fca; PR/main CI all3 SUCCESS | M | M | AIP-0588-001 accepted | LISS-0587 / PR612 delivered | - | `codex/liss-0588-closed-expression-phase0` |
 
 ## Current rank-6 design — 2026-10-13
+
+Delivery-record commit/actual-SHA all-blocking revalidation explicitly approved.
+Four docs only on codex/liss-0588-delivery-closeout from merged87d83fca;
+result pending at commit:/private/tmp/liss-0588-delivery-closeout.rcVh5I/result.md.
+Earlier record-commit gate pending notes historical. Repeated push/PR/CI/
+successful-CI merge approval received for this documentation unit; remote
+delivery follows successful new-SHA checks,not inferred from PR613 CI.
+
+Latest delivery:human push/PR/CI/successful-CI merge approval executed.
+Clean78272406 local root2698/spec161/sanity10 plus focused77/inherited341/
+adjacent26/consumer7 PASS. [PR613](https://github.com/nn0cl/staqex/pull/613)
+merged87d83fcab4711b5f723869e94042c841355637ff2026-10-13T08:36:44Z
+after [PR CI38368606868](https://github.com/nn0cl/staqex/actions/runs/38368606868)
+all3 SUCCESS; [main CI38370439859](https://github.com/nn0cl/staqex/actions/runs/38370439859)
+all3 SUCCESS at exact merge SHA;root2698 passed726.37s. No local merge-SHA execution claim.
+Four delivery records uncommitted; record commit/actual-SHA all-blocking rerun
+requires separate approval. WP active; scalar-capture scope unapproved.
+Earlier pending acceptance/verification/delivery notes below historical.
 
 Latest authorization:0588 acceptance-record commit/revalidation approved;
 local accepted slice done with same-context process review,no deviation found.

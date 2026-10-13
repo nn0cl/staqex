@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0588
 - GitHub issue: none
-- Status: done — local result accepted; acceptance-record verification pending at commit; remote delivery pending
+- Status: done — PR #613 merged87d83fca; PR/main CI all3 SUCCESS
 - Phase: phase-3-refactor
 - Type: behavior-preserving responsibility extraction
 - Priority: WP-0174 rank6, next cohesive slice
@@ -33,7 +33,29 @@ verification approved2026-10-13 and passed atbc92d145. Human final-result
 acceptance explicitly received2026-10-13. Acceptance-record commit/revalidation
 explicitly approved2026-10-13, result pending at commit. Remote delivery separate.
 
-Base: a19cc974a4e0200d74ae012c9b76d2a8f4d18b0a, latest fetched main.
+## Current delivery — 2026-10-13
+
+Explicit push/PR/CI/successful-CI merge approval received. Clean approved HEAD
+782724060e3670ba3f8cd6b97ee7b2c492b5a5dc passed local all-blocking:
+root2698/spec161/sanity10; focused77/inherited341/adjacent26/consumer7 PASS.
+Evidence:/private/tmp/liss-0588-acceptance-verification.n0GRQZ/result.md.
+[PR613](https://github.com/nn0cl/staqex/pull/613) pushed without force and
+merged2026-10-13T08:36:44Z at87d83fcab4711b5f723869e94042c841355637ff
+after [PR CI](https://github.com/nn0cl/staqex/actions/runs/38368606868)
+all3 jobs SUCCESS and fresh exact-HEAD/CLEAN/MERGEABLE checks.
+[Main merge-result CI](https://github.com/nn0cl/staqex/actions/runs/38370439859)
+all3 SUCCESS,root2698 passed726.37s (CPython3.12.15 x64 hosted runner).
+Exact merge SHA verified; no local merge-SHA execution claimed.
+Delivery evidence:/private/tmp/liss-0588-delivery.lUMxWr/result.md.
+Four delivery records uncommitted; their commit/revalidation is a separate gate.
+Delivery-record commit/actual-SHA all-blocking revalidation explicitly approved;
+branch codex/liss-0588-delivery-closeout from87d83fca. Outcome pending at commit:
+/private/tmp/liss-0588-delivery-closeout.rcVh5I/result.md. Earlier uncommitted gate historical.
+Earlier pending verification/delivery statements are historical snapshots.
+No new source/test work or scalar-capture successor authorized; WP stays active.
+Process review: no operating-contract deviation or operational problem found.
+
+Base: a19cc974a4e0200d74ae012c9b76d2a8f4d18b0a, immutable implementation base.
 ID assigned after inspecting existing issue filenames and metadata claims;
 0588 unclaimed. A historical reference to0602 is not a metadata ID claim and
 does not justify reusing any existing/skipped ID.
