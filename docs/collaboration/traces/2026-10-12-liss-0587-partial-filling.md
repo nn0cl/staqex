@@ -6,7 +6,8 @@
 - Feature Path / phase-3-refactor separately approved2026-10-12; agent review
   passed, source/tests unchanged. Final-record verification passed4812c29a;
   human final-result acceptance received2026-10-12. Lesson-only process disposition
-  agreed2026-10-13; acceptance-record commit/revalidation explicitly approved.
+  agreed2026-10-13; acceptance-record d393e4d9 revalidation passed;
+  delivery approved and PR611 merged11a1125d, PR/main CI all3jobs SUCCESS.
 - Issue:LISS-0587 review; WP-0174 rank6 first accepted slice; AIP-0587-001 accepted.
 - Human2026-10-12 explicitly approved dedicated Issue/spec P01–P09,
   bounded guard transition and Phase0 acceptance; clauses unchanged.
@@ -350,7 +351,7 @@ trace/spec/Issue and actual dirty branch, not from chat memory.
   Post-commit verification required:yes. Delivery push/PR/CI/merge separate.
   No remaining product/process-disposition blocker; approval is the stop gate.
 
-## Acceptance-record commit / current handoff
+## Acceptance-record commit / historical commit-time handoff
 
 - Request:human explicitly approved acceptance-record commit and actual-SHA
   all-blocking revalidation,2026-10-13. No source/test or delivery authority.
@@ -381,3 +382,76 @@ trace/spec/Issue and actual dirty branch, not from chat memory.
   disposition; do not claim local closeout verified or weaken tests.
 - Post-commit revalidation is required, not a new human result-acceptance loop
   if unchanged accepted behavior remains Green. Remote delivery not performed.
+
+## Delivery / historical delivery-time handoff
+
+- Request:explicit push/PR creation-update/CI/successful-CI merge approval,
+  2026-10-13. Only accepted P01–P09; no new source/test scope or branch deletion.
+- Delivered:unchanged clean d393e4d9 pushed; PR611 created and attached to chat.
+  Base main b5ad7402 unchanged; no conflict/changes-requested review.
+  CI38326857237 all3jobs SUCCESS, root job14m12s. Required PR traceability passed.
+  HEAD identity rechecked; merge with match-head-commit, no admin bypass.
+- Result:PR611 MERGED2026-10-13T00:37:12Z, mergeSHA
+  11a1125db1cdcaa504ed6762482c01fc222063bf, remote main independently confirmed.
+  Main CI38328143198 queued at result read, not passed or waived.
+  Local checkout remains accepted feature HEAD d393e4d9, no reset/rebase/fetch needed.
+- Process:live main protection disabled, but explicit CI-before-merge contract
+  enforced by agent; no protection settings changed. Existing review same_context;
+  no fabricated external approval. No new unresolved execution failure.
+- Changed files:delivery-status Issue/spec/WP/trace (four docs), uncommitted;
+  source/tests unchanged. These edits are not part of delivered HEAD or a new
+  final-SHA Green claim. Record commit/revalidation remains separate.
+- Context:accepted result/spec/branch discipline and PR/main observations;
+  omitted Rust/providers/secrets/unrelated features. Dynamic consumer/full graph
+  gaps retained, no whole-WP or next-helper implementation authorization.
+- Routing:host Git/gh deterministic delivery, prior same_context review unchanged.
+  Model/reasoning/tokens N/A, not exposed; estimator N/A. Attribution:0587 delivery.
+  Lessons applied:final SHA preserved, explicit CI/head verification, status sync.
+- Evidence:PR611 and CI38326857237 URLs in Issue/WP, main CI38328143198;
+  local final evidence /private/tmp/liss-0587-acceptance-verification.dYd4JN/.
+- Merge-result continuation2026-10-13:human `続けて` after merge-status report;
+  read main CI38328143198 and PR metadata. Workflow completed SUCCESS at
+  exact11a1125db1cdcaa504ed6762482c01fc222063bf; all3jobs SUCCESS.
+  Kernel root suites completed2026-10-13T00:52:13Z; sanity00:37:28Z and
+  spec00:37:22Z. Remote merge-result evidence, no local merge-SHA rerun claimed.
+  Earlier queued/pending descriptions are historical observations.
+- Fast Path status-only sync:Issue/spec/WP/trace four records, no source/test
+  or specification-clause edits. Deterministic doc/test lifecycle, coverage
+  ledger and diff checks; runtime suite rerun not applicable to this metadata-only
+  uncommitted synchronization. No clean-SHA claim for these dirty records.
+- Next safe action:request delivery-record local commit and actual-SHA
+  all-blocking revalidation approval, then separately deliver documentation via
+  reviewed PR if authorized. No repeat product merge or new state-helper scope.
+  Product delivery and merge-result CI done; four dirty records remain open.
+
+## Delivery-record commit / current handoff
+
+- Request:explicit delivery-record commit and actual-SHA all-blocking revalidation
+  approval2026-10-13. No new source/test changes or documentation remote delivery.
+- Fast Path record closeout:Issue/spec/WP/trace exactly four documentation files.
+  Product PR611/merge11a1125d and PR/main CI both all3jobs SUCCESS already confirmed.
+- Branch:codex/liss-0587-delivery-closeout from fetched main11a1125db1cdcaa504ed6762482c01fc222063bf.
+  Before switch, compiler/tests and touched committed records equal accepted
+  d393e4d9; dirty four-record changes preserved without reset/rebase.
+- Result pending at record commit. Actual SHA/clean state/commands/cwd/runtime/
+  UTC/exit/counts/failures externally:
+  `/private/tmp/liss-0587-delivery-record-verification.dh3y4f/result.md` and per-run
+  JSON/logs. No later result-only repository commit to invalidate evidence.
+- Plan:all blocking root tests/, spec verification and applicable sanity steps,
+  plus focused48/inherited143/adjacent16 and actual consumer/cold-order/pickle
+  smoke with explicit PYTHONPATH. No exclusions. PR-only traceability not applicable
+  until documentation PR creation. Compare accepted prior clean and merged CI;
+  pristine original-base full-root rerun unavailable, limits retained.
+- Lessons applied:final-SHA external evidence, unchanged artifacts, explicit
+  external import environment and status sync. Existing process disposition
+  agreed, no new lesson/policy. Issue done/product delivery unchanged; WP active.
+- Context:accepted P01–P09/result/delivery records and verification/branch policy;
+  omitted Rust/providers/secrets/unrelated features. No new ambiguity/technology.
+- Routing:host deterministic checks, previous product review same_context,
+  empty IDs, no enabled override or numeric budgets. Dynamic/full-graph gaps retained.
+- Environment macOS27.0.1 arm64/CPython3.12.6/pytest9.0.3; model/reasoning/
+  token usage N/A, not exposed; estimator N/A. Attribution:0587 record closeout only.
+- Changed files:four docs above, no source/tests/fixtures/dependency changes.
+- Next safe action:if every blocking check passes, request documentation
+  push/PR/CI/successful-CI merge approval. Otherwise preserve evidence and seek
+  bounded disposition. No repeat product merge or next-helper work.

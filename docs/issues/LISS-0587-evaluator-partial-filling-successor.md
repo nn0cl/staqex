@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0587
 - GitHub issue: none
-- Status: done — locally accepted; acceptance-record post-commit verification required, delivery pending
+- Status: done — PR611 merged11a1125d; PR and merge-result main CI all3jobs SUCCESS
 - Phase: phase-3-refactor
 - Type: behavior-preserving responsibility extraction
 - Priority: WP-0174 rank 6, first cohesive slice
@@ -87,6 +87,25 @@ is pending at commit, not assumed from4812c29a. Actual SHA and result:
 Earlier dirty-run failure is historical.
 
 ## Completion process review / disposition agreed
+
+Delivery2026-10-13:human explicitly approved push/PR/CI/successful-CI merge.
+Acceptance-record SHA d393e4d9 passed all local blocking(root2621/spec161/sanity10)
+and focused48/inherited143/adjacent16/consumer smoke; result above.
+[PR611](https://github.com/nn0cl/staqex/pull/611) created and merged after
+[PR CI38326857237](https://github.com/nn0cl/staqex/actions/runs/38326857237)
+all3jobs SUCCESS. HEAD d393e4d9544142a3f48d88e269f95542c1ae19a6,
+merge11a1125db1cdcaa504ed6762482c01fc222063bf,2026-10-13T00:37:12Z.
+[Merge-result main CI38328143198](https://github.com/nn0cl/staqex/actions/runs/38328143198)
+completed SUCCESS at11a1125db1cdcaa504ed6762482c01fc222063bf, all3jobs SUCCESS,
+confirmed2026-10-13. This is remote merge-result evidence, not a local merge-SHA
+suite run. Earlier delivery
+approval-pending statements are historical. Four delivery records are uncommitted,
+their separate commit/revalidation not performed in that delivery. No new implementation.
+Human delivery-record commit / actual-SHA all-blocking revalidation approved2026-10-13.
+Four documentation files only, branch codex/liss-0587-delivery-closeout from
+main11a1125d. Result pending at record commit; actual SHA/clean state/results:
+`/private/tmp/liss-0587-delivery-record-verification.dh3y4f/result.md`.
+Documentation push/PR/merge not yet authorized; product delivery remains done.
 
 Same-context process review2026-10-12 checked phase/path approval records,
 dedicated branch, accepted artifacts, trace, routing and synchronized status.
