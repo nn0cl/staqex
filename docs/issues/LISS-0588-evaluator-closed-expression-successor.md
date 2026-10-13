@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0588
 - GitHub issue: none
-- Status: review
+- Status: done — local result accepted; acceptance-record verification pending at commit; remote delivery pending
 - Phase: phase-3-refactor
 - Type: behavior-preserving responsibility extraction
 - Priority: WP-0174 rank6, next cohesive slice
@@ -29,7 +29,9 @@ approved2026-10-13. Phase2 Green / implementation explicitly approved2026-10-13;
 implementation allowed:yes, C01–C09 only. Local commit d6f70a3f all blocking
 passed; Phase3 Refactor/review explicitly approved2026-10-13 and agent review
 passed. Source/tests unchanged. Final review-record commit/actual-SHA
-verification approved2026-10-13; final acceptance and delivery not authorized.
+verification approved2026-10-13 and passed atbc92d145. Human final-result
+acceptance explicitly received2026-10-13. Acceptance-record commit/revalidation
+explicitly approved2026-10-13, result pending at commit. Remote delivery separate.
 
 Base: a19cc974a4e0200d74ae012c9b76d2a8f4d18b0a, latest fetched main.
 ID assigned after inspecting existing issue filenames and metadata claims;
@@ -76,16 +78,16 @@ in prior delivery evidence. No dependency waiver or repeat delivery is needed.
 
 - Artifact:C01–C09 minimal two-file source move, unchanged accepted11 test
   artifacts and [Phase3 review](../collaboration/reviews/2026-10-13-liss-0588-phase3-review.md).
-- Current phase:phase-3-refactor; agent review passed, all blocking rerun at
-  clean d6f70a3f. Final record commit/revalidation approved, results pending at
-  record commit; live entry /private/tmp/liss-0588-final-verification.5ZlUe9/result.md.
-- Requested approval:after successful final committed checks, human final-result acceptance.
-- Approval type:phase; final verification approved2026-10-13, acceptance pending.
+- Current phase:phase-3-refactor; final verification passed at cleanbc92d145,
+  human final-result acceptance received. Local accepted work recorded done;
+  acceptance-record commit/revalidation approved, result pending at commit.
+- Requested approval:after successful accepted-record verification, remote
+  push/PR/CI/successful-CI merge.
+- Approval type:delivery phase, not granted; record commit/revalidation granted.
 - Approved scope:existing `_is_closed` relocation exactly as C01–C09.
-- Implementation allowed:yes within approved behavior-preserving Phase3;
-  no additional source/test changes proposed.
-- Post-review required:yes; separately authorized final
-  verification/delivery gates. No approval inferred from tests.
+- Implementation allowed:no new source/test work in this acceptance action.
+- Post-review required:yes; separately authorized acceptance-record verification
+  and delivery gates. No approval inferred from tests.
 - Execution batch ID:not applicable.
 - What changed:seven new test/helper/fixture files and exactly four allowed
   guard carriers in Phase1; Phase2 adds closed_expressions.py and replaces only
@@ -102,7 +104,9 @@ in prior delivery evidence. No dependency waiver or repeat delivery is needed.
   Local commit / actual-SHA all-blocking revalidation subsequently explicitly
   approved2026-10-13. Phase3 Refactor/review explicitly approved2026-10-13;
   agent review passed. Final record commit/actual-SHA verification explicitly
-  approved2026-10-13. No new ADR, final acceptance or delivery inferred.
+  approved2026-10-13 and passedbc92d145. Human final-result acceptance explicitly
+  received2026-10-13. Acceptance-record commit/revalidation explicitly approved
+ 2026-10-13. No new ADR or delivery inferred.
 
 ## Context / verification / handoff
 
@@ -113,7 +117,9 @@ Design-only evidence and next-safe-action record:
 [trace/handoff](../collaboration/traces/2026-10-13-liss-0588-closed-expression.md).
 No runtime tests or baseline root run in Phase0. Phase1 evidence recorded
 there; uncommitted design is not final-SHA Green evidence.
-Process review:not yet; issue is phase-3-refactor/review, not done.
+Process review:closure-time check after local status synchronization recorded
+below. Local accepted slice done subject to accepted-record verification;
+remote delivery and WP completion not claimed.
 
 ## Phase1 clause-to-test inventory / execution evidence
 
@@ -244,3 +250,49 @@ Current result pending at record commit; live entry:
 After all blocking pass,next human gate:final-result acceptance, then separately
 delivery. Prior pending-final-verification notes are historical. Status remains
 review/phase-3-refactor, not done; no completion process review or remote write.
+
+## Human final-result acceptance / current gate —2026-10-13
+
+Explicit `LISS-0588 最終レビュー結果の受入れ` accepts the Phase3 packet and
+final actual-SHA result unchanged. Testedbc92d145df21aa21be031a6e058181a8a4aefad3
+passed root2698/spec161/sanity10 plus focused77/inherited341/adjacent26/
+consumer7,Git provenance and reviewed hashes. Evidence:
+/private/tmp/liss-0588-final-verification.5ZlUe9/result.md.
+No assertion/fixture/exclusion/source/acceptance-clause change. Same-context
+review limitations/dynamic external/baseline gaps remain as accepted in packet.
+
+Acceptance-time same-context process check inspected named approval gates,
+dedicated branch, bounded test changes, trace, effective routing, final commit
+evidence and synchronized Issue/spec/WP records. No new reusable lesson or
+upstream feedback indicated; existing lessons applied.
+Process review: no operating-contract deviation or operational problem found.
+This is not a done/remote-delivery claim; reapply process review after final
+status synchronization and committed acceptance-record verification.
+
+Current action changes five related records only:Issue,spec,WP,Phase3 packet,
+trace. They are uncommitted; no fresh runtime run or new-SHA Green inferred.
+Next request:acceptance-record commit / actual-SHA all-blocking revalidation.
+Remote delivery remains separate; no push/PR/merge or additional implementation.
+
+## Authorized acceptance-record commit / local closeout —2026-10-13
+
+Explicit acceptance-record commit / actual-SHA all-blocking revalidation
+approved. Persist exact five records:Issue,spec,WP,Phase3 packet,trace;
+no source/test/fixture/assertion/exclusion/lesson/routing changes.
+Local accepted slice recorded done, not delivered; current commit's result
+pending at record commit. Actual SHA/clean-state/outcome entry:
+/private/tmp/liss-0588-acceptance-verification.n0GRQZ/result.md.
+Previous verifiedbc92d145 remains valid predecessor evidence, not new-SHA proof.
+After this commit,every blocking suite and focused/inherited/adjacent/consumer/
+immutable Git/accepted hash checks rerun. Failure remains blocking,never waived.
+
+Same-context completion process review after status synchronization rechecked
+phase/path/typed approvals,dedicated branch,bounded accepted artifacts,trace,
+effective review isolation,final-SHA policy and local-versus-delivery status.
+Process review: no operating-contract deviation or operational problem found.
+No new reusable lesson/template feedback indicated; existing final-commit,
+hash/private-consumer and status-drift lessons remain applied. Reconfirm this
+process outcome against post-commit verification externally before reporting
+local completion; do not create a later unverified evidence-only commit.
+After successful verification,next gate:separate push/PR/CI/successful-CI merge
+authorization. No main merge,remote CI success or whole-WP completion claimed.

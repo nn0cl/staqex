@@ -9,8 +9,10 @@ approved2026-10-13 for C01–C09 only; implementation written, provisional root2
 and focused77 pass. Local commit d6f70a3f all blocking passed, including
 unchanged sanity copy-smoke. Phase3 Refactor/review explicitly approved
 2026-10-13; agent review passed, source/tests unchanged. Final review-record
-commit/actual-SHA verification approved2026-10-13; result pending at record
-commit. Human final acceptance and delivery remain separately gated.
+commit/actual-SHA verification approved2026-10-13 and passedbc92d145.
+Human final-result acceptance received2026-10-13. Acceptance-record commit/
+actual-SHA revalidation approved2026-10-13; outcome pending at record commit.
+Local accepted slice recorded done subject to verification; delivery separate.
 Owner: [LISS-0588](../issues/LISS-0588-evaluator-closed-expression-successor.md).
 Immutable source base: a19cc974a4e0200d74ae012c9b76d2a8f4d18b0a.
 
@@ -205,3 +207,15 @@ approved2026-10-13. No accepted-clause/test/source changes. Live outcome pending
 at record commit:/private/tmp/liss-0588-final-verification.5ZlUe9/result.md.
 After successful committed checks,next gate:human final-result acceptance,
 then separate delivery. No acceptance/closure inferred from verification.
+
+Human final-result acceptance explicitly received2026-10-13 for unchanged
+C01–C09/Phase3 review andbc92d145 final verification. Root2698/spec161/sanity10
+PASS; accepted test hashes/source unchanged. Current acceptance records are
+uncommitted; no later-record-SHA verification or delivery claim. Next gate:
+acceptance-record commit / actual-SHA all-blocking revalidation approval.
+
+Acceptance-record commit/actual-SHA verification explicitly approved2026-10-13.
+Local accepted work recorded done,not delivered. Current result pending at
+record commit:/private/tmp/liss-0588-acceptance-verification.n0GRQZ/result.md.
+Accepted clauses/source/tests unchanged. Next after successful checks:separate
+remote delivery approval. Earlier approval-pending notes are historical.

@@ -4,15 +4,15 @@
 
 - Date:2026-10-13.
 - Initial user request:`閉じた古典式判定（_is_closed）分離のScope／Phase 0設計開始`.
-- Current approval:`LISS-0588 final verification／レビュー記録コミット・実SHAで全blocking再検証承認`.
-- Phase:final verification; Phase3 agent review passed, result pending at commit.
+- Current approval:`LISS-0588 受入れ記録コミット・実SHAで全blocking再検証承認`.
+- Phase:accepted local closeout / actual-SHA verification; result pending at commit.
 - Canonical Issue:LISS-0588; WP-0174; planning record AIP-0588-001 accepted.
 - Approved scope:accepted C01–C09 behavior-preserving move and bounded carriers.
-- Implementation allowed:approved Phase3 only; no further source/test edits
-  proposed. Final review-record commit/verification now authorized;
-  final human acceptance and remote delivery not authorized.
+- Implementation allowed:no new source/test work in acceptance synchronization.
+  Final human acceptance and acceptance-record commit/revalidation granted;
+  remote delivery not authorized.
 - Base:a19cc974a4e0200d74ae012c9b76d2a8f4d18b0a;
-  HEAD:d6f70a3f3e9b90ab9b43f76fe79dae79df9f33c5, now dirty records only.
+  HEAD:bc92d145df21aa21be031a6e058181a8a4aefad3, now dirty records only.
 - Branch:codex/liss-0588-closed-expression-phase0, created from fetched main.
 
 ## Context ledger / assumptions / decisions
@@ -26,8 +26,8 @@ Assumption:ordinary method mapping retains subclass/instance recursion override;
 later deterministic evidence must establish it, not source strings alone.
 Dedicated Issue/spec C01–C09, narrow context, bounded guard transition policy
 and Phase0 acceptance approved2026-10-13. Phase1 execution approved subsequently.
-Current action:authorized final review-record commit/actual-SHA all-blocking
-rerun; next human gate:final-result acceptance. Earlier gates are historical.
+Current action:authorized acceptance-record commit/actual-SHA all-blocking
+rerun. Next gate after success:remote delivery approval. Earlier gates historical.
 No new architecture premise or technology proposed.
 Scope approval does not imply those acceptances or any subsequent phase.
 
@@ -446,3 +446,84 @@ no new source/test work. Post-review required:yes, acceptance and delivery
 separate. If failure,retain blocker and stop for scoped disposition,no weakening.
 No push,PR,merge,Issue closure or new feature authorized. Resume from committed
 spec/packet/trace,branch,SHA and external live result rather than chat history.
+
+## Human final-result acceptance / current handoff —2026-10-13
+
+Explicit final-result acceptance received for Phase3 packet and cleanbc92d145
+verification:focused77,inherited341,adjacent26,consumer7,root2698,spec161,
+sanity10 plus immutable Git/accepted hashes/closure/routing PASS. All13 runs
+exit0,same clean SHA. Environment macOS27.0.1 arm64/CPython3.12.6/pytest9.0.3.
+Detailed evidence:/private/tmp/liss-0588-final-verification.5ZlUe9/result.md.
+No new runtime run for this metadata-only approval synchronization.
+
+Fast Path; M/AIP-0588-001 retained. Scope:C01–C09 unchanged, five acceptance
+records only:Issue,spec,WP,Phase3 packet,this trace. No production/test/fixture/
+assertion/exclusion/routing/lesson/policy/ADR change,commit or remote write.
+Included:canonical spec/packet/final logs/current rules and accepted artifacts;
+omitted Rust/scalar capture/providers/other features/secrets. Applied status
+synchronization,exact hash/private consumer preservation and final-commit
+evidence lessons. Previous same_context product review remains weaker isolation;
+host deterministic metadata checks,empty model IDs,no enabled override.
+Model/reasoning/token usage/estimate N/A,stable labels/usage unavailable.
+Attribution:this acceptance-sync action only; no new process lesson needed.
+
+Acceptance-time same-context process review checked approvals,path,branch,
+review isolation,trace,unchanged artifacts and final-SHA evidence/status sync.
+No operating-contract deviation or operational problem found. Closure review
+will be reapplied after acceptance-record verification and done-status sync;
+Issue remains review,WP active,not done or delivered. Current five records
+uncommitted; previous tested SHA is not a future-record-SHA result.
+
+Next safe action:request `LISS-0588 受入れ記録コミット・実SHAで全blocking再検証承認`.
+Approval type:phase(commit/verification). Human final acceptance already granted;
+implementation permission:no new source/test work. Post-review requirement:
+record verification and separately authorized delivery/CI/merge. No inferred
+authority to commit,push,create PR,merge or start scalar-capture successor.
+Resume from canonical accepted spec/packet/trace,actual branch/dirty records and
+final external evidence; earlier pending acceptance notes are historical.
+
+Acceptance-sync deterministic checks:document lifecycle(1 register),active-Red
+lifecycle(0 entries),coverage consistency,diff whitespace and all11 accepted
+fingerprints PASS. Source/tests remain unchanged; no full runtime rerun or
+new actual-SHA Green claim for these uncommitted documentation edits.
+
+## Accepted-record commit / completion process review / handoff —2026-10-13
+
+Human explicitly approved accepted-record local commit/actual-SHA all-blocking
+revalidation. Fast Path deterministic metadata/Git checks only within M /
+AIP-0588-001. Exact five files:Phase3 packet,Issue,spec,WP,this trace. Source/
+tests/fixtures/assertions/exclusions/lesson/routing/technology unchanged.
+Approved C01–C09 and human final acceptance remain unchanged. Current update
+records authorization,local accepted-done versus not-delivered status and
+external result entry before scoped commit. No new implementation permission.
+
+Same-context completion process review after status sync checked all phase/
+scope/implementation approvals,dedicated branch,review isolation,trace,
+accepted hashes,consumer/full blocking evidence and final-commit policy.
+Process review: no operating-contract deviation or operational problem found.
+Existing status/hash/private-consumer/import-environment lessons applied;
+no new reusable finding,lesson rule or template feedback. Reconfirm after
+post-commit verification before reporting completion. Issue local accepted
+slice done subject to current verification,not remote-delivered; WP active.
+
+Evidence:/private/tmp/liss-0588-acceptance-verification.n0GRQZ/result.md;
+outcome pending at this record's commit. After commit:root tests/,spec,every
+applicable actual CI sanity step,focused77,inherited17 suites341,adjacent26,
+consumer/cold/identity7,immutable Git/readonly29,accepted11 hashes,routing.
+Explicit repository PYTHONPATH; record actual clean SHA/commands/cwd/environment/
+UTC/exit/elapsed/failure counts. No exclusions. Final post-commit results live
+outside tree; no later evidence-only commit without another full verification.
+
+Context:accepted spec/packet/final logs/live rules and exact changed records;
+omitted Rust/scalar capture/providers/unrelated work/secrets. Deterministic host,
+previous product review same_context(weaker isolation),empty model IDs and no
+enabled override. Model/reasoning/usage/estimate N/A,stable labels/usage
+unavailable; attribution:this accepted-record verification attempt only.
+
+Next safe action:finish declared checks and externally reconfirm process review.
+If pass,request delivery-phase `push／PR作成・更新／CI確認・成功後のマージ承認`.
+Human final acceptance already granted; additional implementation allowed:no.
+Post-review requirement:remote PR/main checks under separately granted delivery.
+If failed,retain blocker,do not weaken tests or claim local completion.
+No push/PR/merge/new successor work authorized. Resume from committed
+spec/packet/Issue/trace,branch and actual-SHA external evidence.

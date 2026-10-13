@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0588 final record commit/actual-SHA verification approved2026-10-13; outcome pending at commit, entry /private/tmp/liss-0588-final-verification.5ZlUe9/result.md. After successful checks:human final-result acceptance |
+| Current Next Issue | LISS-0588 acceptance-record commit/actual-SHA verification approved2026-10-13; outcome pending at commit, entry /private/tmp/liss-0588-acceptance-verification.n0GRQZ/result.md. Local accepted slice done, not delivered; after success request remote delivery approval |
 
 ## Goal
 
@@ -25,7 +25,7 @@ Evaluator's unique mutable-state ownership.
 | 3 | Static `forEach` expansion | Actual body migrated to dedicated successor, live binding callbacks and hook preserved | LISS-0583 done; PR #607 merged a349a5b7, merge-result CI passed (confirmed2026-10-08) |
 | 4 | Tensor binding | Original algorithm moved to stateless61-line successor; exact private hook retained | LISS-0585 done; PR608 merged a661fb17, PR/main CI success |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | LISS-0586 done; PR609 merged61703e3e, PR/main CI passed |
-| 6 | Partial-call filling and small classical-state helpers | `_fill_partial` extracted; `_is_closed` moved to54-line owner; `_maybe_capture_classical_scalar` 23 | LISS-0587 delivered; LISS-0588 Phase3 reviewed, fresh d6f70a3f all blocking passed; final record verification pending. Scalar capture remains separate |
+| 6 | Partial-call filling and small classical-state helpers | `_fill_partial` extracted; `_is_closed` moved to54-line owner; `_maybe_capture_classical_scalar` 23 | LISS-0587 delivered; LISS-0588 local accepted slice done, acceptance-record verification approved/outcome pending at commit, not delivered. Scalar capture remains separate |
 | Excluded | `_eval_set_comprehension` | Explicitly retained as dispatch/consumer in accepted classical Operator-evaluation spec | Do not reopen in this WP absent a new scope decision |
 
 Ranks express investigation priority, not a committed roadmap. LISS-0585 now
@@ -43,9 +43,23 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | done — PR608 merged; PR/main CI passed | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
 | [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | done — PR609 merged61703e3e; PR/main CI passed; local documentation closeout separately authorized | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0`; closeout `codex/liss-0586-delivery-closeout` |
 | [LISS-0587](../issues/LISS-0587-evaluator-partial-filling-successor.md) | done — PR611 merged11a1125d; PR/main CI all3jobs SUCCESS | M | M | AIP-0587-001 accepted | LISS-0586 / PR610 delivered | - | `codex/liss-0587-partial-filling-phase0` |
-| [LISS-0588](../issues/LISS-0588-evaluator-closed-expression-successor.md) | review — Phase3 passed; final record commit/actual-SHA revalidation approved, outcome pending at commit | M | M | AIP-0588-001 accepted | LISS-0587 / PR612 delivered | - | `codex/liss-0588-closed-expression-phase0` |
+| [LISS-0588](../issues/LISS-0588-evaluator-closed-expression-successor.md) | done — local result accepted; acceptance-record verification pending at commit; remote delivery pending | M | M | AIP-0588-001 accepted | LISS-0587 / PR612 delivered | - | `codex/liss-0588-closed-expression-phase0` |
 
 ## Current rank-6 design — 2026-10-13
+
+Latest authorization:0588 acceptance-record commit/revalidation approved;
+local accepted slice done with same-context process review,no deviation found.
+Actual new-SHA outcome pending at commit in
+/private/tmp/liss-0588-acceptance-verification.n0GRQZ/result.md.
+After checks pass:separate remote delivery approval. WP remains active;
+scalar-capture scope unapproved. Prior pending-record-gate notes historical.
+
+Latest0588:human final-result acceptance received2026-10-13. Finalbc92d145
+root2698/spec161/sanity10 and focused77/inherited341/adjacent26/consumer7 PASS.
+Acceptance-time process check found no deviation; no source/test changes.
+Five acceptance records uncommitted. Next:record commit/actual-SHA revalidation
+approval, then separately delivery. Issue remains review/not done; older pending
+acceptance/verification paragraphs below are historical snapshots.
 
 Current0588:human Phase3 Refactor/review approved; [agent review passed](../collaboration/reviews/2026-10-13-liss-0588-phase3-review.md),
 no source/test edits. Fresh clean d6f70a3f root2698/spec161/sanity10 PASS;
