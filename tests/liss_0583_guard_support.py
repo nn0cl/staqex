@@ -6,6 +6,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from tests.liss_0588_guard_support import restore_closed_evaluator
+
 from tests.liss_0587_guard_support import restore_partial_evaluator
 
 from tests.liss_0586_guard_support import (
@@ -52,7 +54,7 @@ def _remove_import(tree: ast.Module, module: str, level: int, name: str, alias: 
 
 
 def evaluator_projection(source: str, *, imports_only: bool = False) -> ast.Module:
-    tree = restore_tensor_evaluator(restore_host_evaluator(restore_partial_evaluator(ast.parse(source))))
+    tree = restore_tensor_evaluator(restore_host_evaluator(restore_partial_evaluator(restore_closed_evaluator(ast.parse(source)))))
     _remove_import(tree, "evaluation.compatibility", 1, INSTALLER, PRIVATE_INSTALLER)
     if imports_only:
         tree.body = [n for n in tree.body if isinstance(n, (ast.Import, ast.ImportFrom))]
