@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0587 locally accepted; acceptance-record commit/actual-SHA rerun approved, outcome pending externally; then separate delivery approval. Other state helpers require new scope |
+| Current Next Issue | LISS-0587 PR611 merged11a1125d, PR/main CI all3jobs SUCCESS; delivery-record commit/revalidation approved, outcome pending externally; documentation remote delivery separate. Other state helpers require new scope |
 
 ## Goal
 
@@ -42,9 +42,22 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0584](../issues/LISS-0584-opaque-foreach-wire-arithmetic-repair.md) | done — reviewed repair/final verification passed; PR #606 tracks delivery | M | M | AIP-0584-001 | LISS-0582 done; A carrier a14ab3af | LISS-0583 Green/delivery until successful606 delivery | `codex/liss-0584-opaque-wire-arithmetic-phase0` |
 | [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | done — PR608 merged; PR/main CI passed | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
 | [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | done — PR609 merged61703e3e; PR/main CI passed; local documentation closeout separately authorized | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0`; closeout `codex/liss-0586-delivery-closeout` |
-| [LISS-0587](../issues/LISS-0587-evaluator-partial-filling-successor.md) | done — local result accepted/process reviewed; acceptance-record actual-SHA outcome pending externally, delivery separate | M | M | AIP-0587-001 accepted | LISS-0586 / PR610 delivered | - | `codex/liss-0587-partial-filling-phase0` |
+| [LISS-0587](../issues/LISS-0587-evaluator-partial-filling-successor.md) | done — PR611 merged11a1125d; PR/main CI all3jobs SUCCESS | M | M | AIP-0587-001 accepted | LISS-0586 / PR610 delivered | - | `codex/liss-0587-partial-filling-phase0` |
 
 ## Current rank-5 delivery record — 2026-10-12
+
+Latest rank6 delivery2026-10-13:human explicitly approved push/PR/CI/merge.
+Clean d393e4d9 all local blocking and consumer checks passed;
+[PR611](https://github.com/nn0cl/staqex/pull/611) merged11a1125d after all3
+[PR CI38326857237](https://github.com/nn0cl/staqex/actions/runs/38326857237) jobs SUCCESS.
+[Main CI38328143198](https://github.com/nn0cl/staqex/actions/runs/38328143198)
+all3jobs SUCCESS at11a1125d confirmed2026-10-13. Delivery records uncommitted,
+WP stays active; other rank6
+state helpers not approved. Earlier pending-delivery notes below are historical.
+Human delivery-record commit/revalidation approved2026-10-13; four-doc closeout
+branch codex/liss-0587-delivery-closeout from11a1125d. Result pending at record
+commit: `/private/tmp/liss-0587-delivery-record-verification.dh3y4f/result.md`.
+Remote documentation delivery still requires separate approval.
 
 Latest continuation2026-10-12: delivery-record PR610 merged b5ad7402;
 [merge-result main CI38201719780](https://github.com/nn0cl/staqex/actions/runs/38201719780)

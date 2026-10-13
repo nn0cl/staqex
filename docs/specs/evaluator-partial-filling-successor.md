@@ -21,6 +21,16 @@ Outcome pending at record commit; final SHA/result:
 `/private/tmp/liss-0587-acceptance-verification.dYd4JN/result.md`.
 Local accepted slice recorded done subject to that check; remote delivery not authorized.
 Accepted P01–P09 unchanged; not a delivered-completion claim.
+Subsequent delivery2026-10-13 explicitly approved and completed via
+[PR611](https://github.com/nn0cl/staqex/pull/611), HEAD d393e4d9,
+merge11a1125db1cdcaa504ed6762482c01fc222063bf; PR CI38326857237 all3jobs SUCCESS.
+Merge-result main CI38328143198 all3jobs SUCCESS at11a1125d,
+confirmed2026-10-13; remote CI evidence, no local merge-SHA suite rerun claimed.
+Earlier pending-delivery statements above are historical; clauses unchanged.
+Delivery-record local commit / actual-SHA revalidation approved2026-10-13;
+result pending at record commit, evidence:
+`/private/tmp/liss-0587-delivery-record-verification.dh3y4f/result.md`.
+No new clause/implementation change; documentation remote delivery separate.
 Agent Phase1 review passed2026-10-12; human accepted the unchanged reviewed artifacts:
 [review packet](../collaboration/reviews/2026-10-12-liss-0587-phase1-red-review.md).
 Historical Red execution evidence:focused44 pass/4 intended Red; root2617 pass/same4 Red;
