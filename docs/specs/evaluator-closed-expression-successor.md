@@ -6,9 +6,11 @@ Phase1 Red acceptance-test creation / bounded guard migration execution
 approved2026-10-13. Phase1 agent test review passed2026-10-13;
 human Red test acceptance approved2026-10-13. Phase2 Green / implementation
 approved2026-10-13 for C01–C09 only; implementation written, provisional root2698
-and focused77 pass. Sanity copy-smoke fails on uncommitted spec. No final-SHA
-Green claim yet. Local commit / actual-SHA all-blocking revalidation approved
-2026-10-13; result pending at record commit. No Phase3 or delivery approval.
+and focused77 pass. Local commit d6f70a3f all blocking passed, including
+unchanged sanity copy-smoke. Phase3 Refactor/review explicitly approved
+2026-10-13; agent review passed, source/tests unchanged. Final review-record
+commit/actual-SHA verification approved2026-10-13; result pending at record
+commit. Human final acceptance and delivery remain separately gated.
 Owner: [LISS-0588](../issues/LISS-0588-evaluator-closed-expression-successor.md).
 Immutable source base: a19cc974a4e0200d74ae012c9b76d2a8f4d18b0a.
 
@@ -186,3 +188,20 @@ Actual result entry:`/private/tmp/liss-0588-sha-verification.xfHtgc/result.md`,
 pending at record commit; no pass inferred. After successful committed checks,
 next gate:separate Phase3 Refactor / review approval.
 Phase3 review, local final-SHA verification and remote delivery remain distinct.
+
+## Current Phase3 review —2026-10-13
+
+Above provisional and pending-at-commit statements are historical snapshots.
+Human Phase3 approved; [agent review passed](../collaboration/reviews/2026-10-13-liss-0588-phase3-review.md)
+without source/test changes or acceptance-clause amendment. Fresh clean
+d6f70a3f:focused77/inherited341/adjacent26/consumer7/root2698/spec161/sanity10
+PASS. Records now uncommitted; later final record commit requires every
+blocking suite at its new actual SHA. No final acceptance or remote delivery
+authority inferred. Remaining dynamic/serialization/whole-graph limitations
+are explicit in the packet, not broadened guarantees.
+
+Final review-record commit / actual-SHA all-blocking revalidation explicitly
+approved2026-10-13. No accepted-clause/test/source changes. Live outcome pending
+at record commit:/private/tmp/liss-0588-final-verification.5ZlUe9/result.md.
+After successful committed checks,next gate:human final-result acceptance,
+then separate delivery. No acceptance/closure inferred from verification.

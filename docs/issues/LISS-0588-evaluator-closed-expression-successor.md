@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0588
 - GitHub issue: none
-- Status: in_progress
-- Phase: phase-2-green
+- Status: review
+- Phase: phase-3-refactor
 - Type: behavior-preserving responsibility extraction
 - Priority: WP-0174 rank6, next cohesive slice
 - Initial planning size: M
@@ -26,7 +26,10 @@ explicitly approved2026-10-13. Phase1 Red acceptance-test creation / bounded
 guard migration execution explicitly approved2026-10-13.
 Phase1 agent test review passed and human exact-test acceptance explicitly
 approved2026-10-13. Phase2 Green / implementation explicitly approved2026-10-13;
-implementation allowed:yes, C01–C09 only. No commit, Phase3 or delivery approval.
+implementation allowed:yes, C01–C09 only. Local commit d6f70a3f all blocking
+passed; Phase3 Refactor/review explicitly approved2026-10-13 and agent review
+passed. Source/tests unchanged. Final review-record commit/actual-SHA
+verification approved2026-10-13; final acceptance and delivery not authorized.
 
 Base: a19cc974a4e0200d74ae012c9b76d2a8f4d18b0a, latest fetched main.
 ID assigned after inspecting existing issue filenames and metadata claims;
@@ -72,15 +75,16 @@ in prior delivery evidence. No dependency waiver or repeat delivery is needed.
 ## Adjudicator review target
 
 - Artifact:C01–C09 minimal two-file source move, unchanged accepted11 test
-  artifacts and provisional verification; fingerprints in external logs.
-- Current phase:phase-2-green, implementation written; provisional tests pass,
-  copy-smoke and committed-SHA verification pending.
-- Requested approval:next separate Phase3 Refactor / review after committed checks pass.
-- Approval type:phase; local commit / actual-SHA revalidation approved2026-10-13,
-  Phase3 not yet granted.
+  artifacts and [Phase3 review](../collaboration/reviews/2026-10-13-liss-0588-phase3-review.md).
+- Current phase:phase-3-refactor; agent review passed, all blocking rerun at
+  clean d6f70a3f. Final record commit/revalidation approved, results pending at
+  record commit; live entry /private/tmp/liss-0588-final-verification.5ZlUe9/result.md.
+- Requested approval:after successful final committed checks, human final-result acceptance.
+- Approval type:phase; final verification approved2026-10-13, acceptance pending.
 - Approved scope:existing `_is_closed` relocation exactly as C01–C09.
-- Implementation allowed:yes within the granted Phase2 only.
-- Post-review required:yes; separately authorized Phase3 review and final
+- Implementation allowed:yes within approved behavior-preserving Phase3;
+  no additional source/test changes proposed.
+- Post-review required:yes; separately authorized final
   verification/delivery gates. No approval inferred from tests.
 - Execution batch ID:not applicable.
 - What changed:seven new test/helper/fixture files and exactly four allowed
@@ -96,7 +100,9 @@ in prior delivery evidence. No dependency waiver or repeat delivery is needed.
   Agent Red test review passed; human Red test acceptance approved2026-10-13;
   Phase2 Green / implementation subsequently explicitly approved2026-10-13.
   Local commit / actual-SHA all-blocking revalidation subsequently explicitly
-  approved2026-10-13. No new ADR, Phase3 or delivery approval inferred.
+  approved2026-10-13. Phase3 Refactor/review explicitly approved2026-10-13;
+  agent review passed. Final record commit/actual-SHA verification explicitly
+  approved2026-10-13. No new ADR, final acceptance or delivery inferred.
 
 ## Context / verification / handoff
 
@@ -107,7 +113,7 @@ Design-only evidence and next-safe-action record:
 [trace/handoff](../collaboration/traces/2026-10-13-liss-0588-closed-expression.md).
 No runtime tests or baseline root run in Phase0. Phase1 evidence recorded
 there; uncommitted design is not final-SHA Green evidence.
-Process review:not yet; issue is phase-2-green, not done.
+Process review:not yet; issue is phase-3-refactor/review, not done.
 
 ## Phase1 clause-to-test inventory / execution evidence
 
@@ -213,3 +219,28 @@ clean-state evidence. Previous provisional failure/results above are historical.
 Issue remains phase-2-green/in_progress, not done. If all declared blocking
 suites pass at that SHA, next gate is separate Phase3 Refactor / review approval;
 otherwise retain the actual failure as blocking. No push/PR/merge authority.
+
+## Current Phase3 review / next gate —2026-10-13
+
+Human Phase3 Refactor/review approval received. Agent same_context review
+passed with no blockers; weaker isolation than separate_context. Actual source
+and accepted11 artifact hashes unchanged. No extra refactor warranted.
+Fresh clean d6f70a3f verification:focused77, inherited341, adjacent26,
+consumer/cold/identity7, root2698(341.32s), spec161 and sanity10 all passed.
+Immutable Git algorithm/full unaffected facade AST and29 readonly paths PASS.
+No exclusions; pristine-base full-root comparison/dynamic external closure
+unavailable, not a universal compatibility proof. See linked Phase3 packet and
+external phase3-*.json/log. Previous pending-Phase3 statements are historical.
+Current records are uncommitted; they do not change the tested source. Next:
+separate final verification / record commit / actual-SHA all-blocking approval,
+then final human acceptance and remote delivery. Issue remains open, not done.
+
+## Authorized final record commit / verification —2026-10-13
+
+Final verification / six review-record commit / actual-SHA all-blocking rerun
+explicitly approved. No source/test changes; accepted11 artifacts unchanged.
+Current result pending at record commit; live entry:
+/private/tmp/liss-0588-final-verification.5ZlUe9/result.md.
+After all blocking pass,next human gate:final-result acceptance, then separately
+delivery. Prior pending-final-verification notes are historical. Status remains
+review/phase-3-refactor, not done; no completion process review or remote write.

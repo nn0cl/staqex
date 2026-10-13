@@ -74,6 +74,11 @@ Record meta-level patterns only. No session transcripts.
   distinguish those setup results from runtime import success, and pin exact
   reviewed artifact bytes before human acceptance. Passing shape probes do not
   constitute implementation permission.
+  Reapplied in LISS-0588 Phase3:compare the installed sole classifier and
+  unaffected facade directly to immutable Git, run actual pre/post copied
+  guard roots after extraction and preserve reviewed hashes. Keep scoped
+  dependency/cold-import evidence distinct from full dynamic-graph proof,
+  and clean code-SHA verification distinct from later review-record commits.
 
 ## Lesson
 
