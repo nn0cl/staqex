@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0587 PR611 merged11a1125d, PR/main CI all3jobs SUCCESS; delivery-record commit/revalidation approved, outcome pending externally; documentation remote delivery separate. Other state helpers require new scope |
+| Current Next Issue | LISS-0588 local commit / actual-SHA all-blocking revalidation approved2026-10-13; result pending at record commit, entry /private/tmp/liss-0588-sha-verification.xfHtgc/result.md. Exact11 accepted tests unchanged. If committed checks pass, next:separate Phase3 Refactor / review approval |
 
 ## Goal
 
@@ -25,7 +25,7 @@ Evaluator's unique mutable-state ownership.
 | 3 | Static `forEach` expansion | Actual body migrated to dedicated successor, live binding callbacks and hook preserved | LISS-0583 done; PR #607 merged a349a5b7, merge-result CI passed (confirmed2026-10-08) |
 | 4 | Tensor binding | Original algorithm moved to stateless61-line successor; exact private hook retained | LISS-0585 done; PR608 merged a661fb17, PR/main CI success |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | LISS-0586 done; PR609 merged61703e3e, PR/main CI passed |
-| 6 | Partial-call filling and small classical-state helpers | `_fill_partial` 31 lines; `_is_closed` 28; `_maybe_capture_classical_scalar` 23 | LISS-0587 Phase0 accepted for pure partial filling with PartialValue; closed-expression and scalar-capture helpers remain separate, not approved for implementation |
+| 6 | Partial-call filling and small classical-state helpers | `_fill_partial` extracted; `_is_closed` moved to54-line owner; `_maybe_capture_classical_scalar` 23 | LISS-0587 delivered; LISS-0588 local commit/actual-SHA verification approved, outcome pending at record commit; scalar capture separate. No Phase3 approval |
 | Excluded | `_eval_set_comprehension` | Explicitly retained as dispatch/consumer in accepted classical Operator-evaluation spec | Do not reopen in this WP absent a new scope decision |
 
 Ranks express investigation priority, not a committed roadmap. LISS-0585 now
@@ -43,6 +43,39 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0585](../issues/LISS-0585-evaluator-tensor-binding-successor.md) | done — PR608 merged; PR/main CI passed | M | M | AIP-0585-001 accepted | LISS-0583/0584 delivered | - | `codex/liss-0585-tensor-binding-phase0` |
 | [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | done — PR609 merged61703e3e; PR/main CI passed; local documentation closeout separately authorized | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0`; closeout `codex/liss-0586-delivery-closeout` |
 | [LISS-0587](../issues/LISS-0587-evaluator-partial-filling-successor.md) | done — PR611 merged11a1125d; PR/main CI all3jobs SUCCESS | M | M | AIP-0587-001 accepted | LISS-0586 / PR610 delivered | - | `codex/liss-0587-partial-filling-phase0` |
+| [LISS-0588](../issues/LISS-0588-evaluator-closed-expression-successor.md) | in_progress — Phase2 written; provisional tests pass, committed all-blocking gate pending | M | M | AIP-0588-001 accepted | LISS-0587 / PR612 delivered | - | `codex/liss-0588-closed-expression-phase0` |
+
+## Current rank-6 design — 2026-10-13
+
+Scope / Phase0 design-start approved for `_is_closed` only. Accepted
+[C01–C09](../specs/evaluator-closed-expression-successor.md) retains live state,
+private recursive hook and classification behavior, with bounded inherited
+guard restoration and actual copied-successor checks. Dedicated Issue/spec
+C01–C09, guard transition policy and Phase0 accepted2026-10-13;
+Phase1 test-only execution approved2026-10-13. Phase2 Green / implementation
+subsequently approved2026-10-13 and minimal move written; focused77/root2698,
+inherited341/adjacent26/spec161 pass, sanity9 pass/copy-smoke FAIL. No committed
+all-blocking Green at that provisional step. Local commit / actual-SHA
+revalidation approved2026-10-13; live result pending at record commit:
+`/private/tmp/liss-0588-sha-verification.xfHtgc/result.md`.
+If committed checks pass, next:separate Phase3 Refactor / review approval.
+Provisional evidence:`/private/tmp/liss-0588-red.2OSDVf/green-result.md`;
+following Phase1-only results are historical, not current pending gates.
+Execution:focused73 pass/4 C07 Red; root2694 pass/same4 Red; inherited341,
+adjacent26 and spec161 pass. Sanity9 pass/copy-smoke fails on uncommitted spec.
+No exclusions, clean-SHA or full Green claim. Exact11 test artifacts reviewed;
+human acceptance approved2026-10-13, unchanged11 artifact hashes confirmed.
+No fresh runtime run in acceptance synchronization. Reviewer focused73 pass/same4 Red, adjacent26 pass,
+independent future-shape inherited setup15 pass; no source/test changes.
+[Review packet](../collaboration/reviews/2026-10-13-liss-0588-phase1-red-review.md);
+evidence:`/private/tmp/liss-0588-red.2OSDVf/result.md`.
+Resume via [0588 trace](../collaboration/traces/2026-10-13-liss-0588-closed-expression.md).
+Base a19cc974a4e0200d74ae012c9b76d2a8f4d18b0a is documentation
+[PR612](https://github.com/nn0cl/staqex/pull/612) merge;
+[merge-result CI38331665613](https://github.com/nn0cl/staqex/actions/runs/38331665613)
+all3jobs SUCCESS confirmed in prior delivery evidence. 0587 delivery-record
+outcome is no longer pending; pending wording below is historical. Remaining
+scalar-capture extraction requires separate scope, not this design approval.
 
 ## Current rank-5 delivery record — 2026-10-12
 

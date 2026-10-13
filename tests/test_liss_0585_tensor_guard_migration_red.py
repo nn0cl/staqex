@@ -39,6 +39,11 @@ def copy_guarded_dependencies(origin, destination):
         target = destination / partial_path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((origin / partial_path).read_bytes())
+    closed_path = "compiler/staqex/runtime/evaluation/closed_expressions.py"
+    if (origin / closed_path).is_file():
+        target = destination / closed_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((origin / closed_path).read_bytes())
 
 
 @pytest.fixture(name="guarded")

@@ -38,6 +38,7 @@ def guarded_tree(tmp_path, monkeypatch):
     for successor in (
         "compiler/staqex/runtime/evaluation/host_coefficients.py",
         "compiler/staqex/runtime/evaluation/partial_calls.py",
+        "compiler/staqex/runtime/evaluation/closed_expressions.py",
     ):
         if (ROOT / successor).is_file():
             target = tmp_path / successor

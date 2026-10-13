@@ -103,6 +103,7 @@ from .mixed_state import DensityStateValue, density_from_call, matrix_from_list
 from .lindblad import evolve_lindblad
 from .matrix import Matrix
 from .evaluation.calls import bind_call
+from .evaluation.closed_expressions import is_closed as _is_closed_successor
 from .evaluation.compatibility import install_static_foreach_compatibility as _install_static_foreach_compatibility
 from .evaluation.compatibility import install_tensor_binding_compatibility as _install_tensor_binding_compatibility
 from .evaluation.compatibility import install_host_coefficient_compatibility as _install_host_coefficient_compatibility
@@ -779,34 +780,7 @@ class Evaluator:
         except (TypeError, ValueError):
             pass
 
-    def _is_closed(self, expr: Expr) -> bool:
-        if isinstance(expr, (LitInt, LitFloat, LitBool, LitString)):
-            return True
-        if isinstance(expr, Var):
-            # Prelude / already-bound classical scalars (ADR 0062)
-            return expr.name in self.scalars
-        if isinstance(expr, Attr):
-            if (
-                isinstance(expr.obj, Var)
-                and expr.obj.name == "Math"
-                and expr.name in {"pi", "sqrt2", "inv_sqrt2"}
-            ):
-                return True
-            # Struct / class field projections are classical once the object exists
-            # (LISS-0137: Float J = c.J → Operator coeffs).
-            if isinstance(expr.obj, Var) and expr.obj.name in self.objects:
-                return True
-            # Unit-suffixed literals are closed classical magnitudes.
-            if isinstance(expr.obj, (LitInt, LitFloat)):
-                from ..dimensions import UNIT_TABLE
-
-                return expr.name in UNIT_TABLE
-            return False
-        if isinstance(expr, UnitConvert):
-            return self._is_closed(expr.expr)
-        if isinstance(expr, BinOp):
-            return self._is_closed(expr.lhs) and self._is_closed(expr.rhs)
-        return False
+    _is_closed = _is_closed_successor
 
     def _lit(self, expr: Expr) -> Any:
         if isinstance(expr, LitInt):

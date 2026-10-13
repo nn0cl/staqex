@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from tests.liss_0587_guard_support import assert_live_successor
+from tests.liss_0588_guard_support import assert_live_successor as assert_closed_successor
 
 from tests.liss_0583_guard_support import (
     assert_compatibility_preserved,
@@ -29,6 +30,7 @@ def boundary():
 
 
 def test_existing_f05_owner_and_readonly_dependencies_are_preserved():
+    assert_closed_successor(ROOT)
     assert_live_successor(ROOT)
     evidence = boundary()
     assert evidence["base_sha"] == "a287be51da358eed195f836afa21b07286128940"
