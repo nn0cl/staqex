@@ -79,6 +79,10 @@ Record meta-level patterns only. No session transcripts.
   guard roots after extraction and preserve reviewed hashes. Keep scoped
   dependency/cold-import evidence distinct from full dynamic-graph proof,
   and clean code-SHA verification distinct from later review-record commits.
+  Reapplied in LISS-0589 Red review: independently derive the whole method
+  from Git,construct distinct pre/post copied roots and validate their real
+  guards before accepting setup evidence. Compiling an AST-only proposal is
+  not executing it or proving later cold-import/serialization compatibility.
 
 ## Lesson
 
@@ -256,6 +260,11 @@ Record meta-level patterns only. No session transcripts.
 - Source issue or work plan: LISS-0573 / WP-0167; LISS-0581 / WP-0174
 - Status: applied in LISS-0573 and reapplied in LISS-0581 by repairing the
   initial import/linear-state fixture issues before classifying product Red.
+  Reapplied in LISS-0589 Red review: distinguish the target consumer's explicit
+  preconditions from earlier scalar shortcuts and keep unit-local scalar
+  values separate from unit metadata. Scoped mechanics fixtures and unchanged
+  source regressions provide different evidence; neither implies every source
+  plan reaches a private hook.
 
 ## Lesson
 

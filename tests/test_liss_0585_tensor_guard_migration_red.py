@@ -44,6 +44,11 @@ def copy_guarded_dependencies(origin, destination):
         target = destination / closed_path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((origin / closed_path).read_bytes())
+    capture_path = "compiler/staqex/runtime/evaluation/classical_scalars.py"
+    if (origin / capture_path).is_file():
+        target = destination / capture_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((origin / capture_path).read_bytes())
 
 
 @pytest.fixture(name="guarded")
