@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0589
 - GitHub issue: none
-- Status: review — final verification/record commit authorized; outcome pending at record commit
+- Status: done — final results accepted; receipt commit/revalidation authorized,delivery pending
 - Phase: phase-3-refactor
 - Type: behavior-preserving responsibility extraction
 - Priority: WP-0174 rank6 remaining classical-state helper
@@ -15,6 +15,21 @@
 - Related branch: `codex/liss-0589-classical-scalar-capture-phase0`
 
 ## Scope / dependencies
+
+Latest2026-10-15:receipt-record commit/actual-SHA all-blocking revalidation
+explicitly approved (user's `ISS-0589` resolves to this immediately preceding
+LISS-0589 gate). Five docs only,no source/test/accepted-clause change. Outcome
+pending at record commit:/private/tmp/liss-0589-acceptance-verification.TD3hgf/result.md.
+Next on success:separate push/PR/CI/merge approval. Local implementation accepted;
+no further final-acceptance loop or new implementation gate proposed.
+
+Current2026-10-15:human explicitly accepted `LISS-0589 最終レビュー結果の受入れ`
+for clean05442c40299c001d72e883345c5fe023086b7ebe. All declared blocking
+passed:root2821/spec161/sanity10;focused123/inherited418/adjacent30/consumer10/
+cold2 and provenance/hash audit passed. Source and11 accepted artifacts unchanged.
+Local implementation accepted,not delivered. Receipt docs are uncommitted;
+next:approval to commit acceptance records and rerun all blocking at actual SHA.
+No commit/push/PR/merge authorization inferred. Older pending gates historical.
 
 Current final gate2026-10-15:human explicitly approved final verification,
 review-record commit and actual-SHA all-blocking revalidation. Accepted S01–S09,
@@ -226,3 +241,28 @@ blocking/focused/consumer/adjacent/provenance/hash/routing checks at actual HEAD
 No source/test edit. Actual tested SHA,clean state and full outcome live outside
 tree in final result/JSON/logs;later evidence-only commit would require rerun.
 Issue remains review,not done;final result acceptance and delivery separate.
+
+## Human final acceptance / local closeout —2026-10-15
+
+Explicit final-results acceptance received. Accepted tested SHA:
+05442c40299c001d72e883345c5fe023086b7ebe,clean at verification;
+macOS27.0.1 arm64/CPython3.12.6/pytest9.0.3. Root2821 PASS345.64s,
+focused123/spec161/sanity10 and declared inherited/consumer/adjacent checks PASS.
+Detailed evidence:/private/tmp/liss-0589-final-verification.uUwcHJ/result.md.
+Final result records/log summaries/accepted11 hashes re-audited at receipt;
+no new runtime-suite run claimed. No code/test/assertion/fixture change.
+Previous dynamic/private-serialization/semantic-owner/pristine-base limits and
+cosmetic EOF disposition retained;acceptance does not expand this extraction.
+Issue done for reviewed local implementation only;delivery not performed.
+Current receipt metadata is dirty/uncommitted,not covered by final-SHA Green;
+after an approved receipt commit all blocking/routing must rerun. WP stays active.
+
+Process review: no operating-contract deviation or operational problem found.
+
+Same-context completion process check2026-10-15 followed evidence/hash audit,
+human acceptance and status synchronization. Path/phase/typed gates,review
+isolation,branch/permission/payload boundaries and record-SHA separation checked.
+Previously disclosed cosmetic/dynamic limits retained;no new unresolved process
+finding or reusable lesson beyond the already applied log. No template feedback
+or second product-code review. Document/test lifecycle,coverage consistency and
+incremental whitespace PASS;receipt metadata remains uncommitted.

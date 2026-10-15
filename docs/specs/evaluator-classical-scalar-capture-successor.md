@@ -11,7 +11,9 @@ Scoped local commit/actual-SHA all-blocking revalidation explicitly approved
 2026-10-15 and passed at clean28530388. Phase3 Refactor/review explicitly
 approved2026-10-15;agent review passed,no source/test changes needed. Final
 verification/review-record commit/actual-SHA rerun explicitly approved2026-10-15;
-outcome pending at this record commit. Final result acceptance/delivery separate.
+all blocking passed at clean05442c40. Human final results explicitly accepted
+2026-10-15. Receipt-record commit/revalidation explicitly approved2026-10-15;
+outcome pending at record commit. Delivery remains separately gated.
 Owner: [LISS-0589](../issues/LISS-0589-evaluator-classical-scalar-capture-successor.md).
 Immutable source base: f14a332c8f8e6aa9e6bc7b01403f5f89da6b6044.
 
@@ -234,3 +236,18 @@ rerun. No accepted clause/test/source change. Pending-at-record-commit outcome:
 `/private/tmp/liss-0589-final-verification.uUwcHJ/result.md` and per-run JSON/logs.
 Next on success:human final result acceptance,not inferred from CI/tests.
 Earlier final-approval-pending notes historical. No delivery authorization.
+
+## Final results accepted —2026-10-15
+
+Human accepted the final results for05442c40299c001d72e883345c5fe023086b7ebe.
+Root2821/spec161/sanity10 and focused123/inherited418/adjacent30/consumer10/
+cold2 PASS;accepted S01–S09 and11 artifacts unchanged. Evidence:
+/private/tmp/liss-0589-final-verification.uUwcHJ/result.md.
+Local implementation accepted,not delivered. Older final-pending statements
+are historical. Receipt records remain uncommitted;next approval:acceptance
+record commit and actual-SHA all-blocking rerun. No new semantics or delivery.
+
+Receipt commit/revalidation approval received2026-10-15;S01–S09/code/tests
+unchanged. Actual receipt SHA and outcome:
+/private/tmp/liss-0589-acceptance-verification.TD3hgf/result.md (pending at commit).
+Earlier receipt-permission-pending notes historical;no delivery permission.

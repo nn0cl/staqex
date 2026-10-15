@@ -7,6 +7,14 @@ That scoped approval explicitly received2026-10-15;outcome pending at record
 commit in `/private/tmp/liss-0589-final-verification.uUwcHJ/result.md`.
 Review-time clean28530388 evidence below retained;final results acceptance and
 delivery remain separate. No accepted test/code change.
+Final results subsequently accepted explicitly2026-10-15 for clean05442c40,
+whose fresh root2821/spec161/sanity10 and scoped checks passed. Review-time
+pending language below historical;receipt commit/revalidation and delivery
+still separately gated. Source/accepted test bytes unchanged.
+Receipt commit/actual-SHA rerun subsequently explicitly approved2026-10-15;
+outcome pending at commit in
+/private/tmp/liss-0589-acceptance-verification.TD3hgf/result.md.
+Final results remain accepted;delivery separate. Earlier receipt-gate notes historical.
 
 ## Review packet
 
@@ -119,3 +127,14 @@ revalidation only. Prior gate-pending language is review-time history. Commit
 scoped six docs and rerun every blocking;record actual new SHA/clean state and
 outcome in the final external result above. Human final acceptance pending.
 No new semantic implementation,accepted-test change or delivery authorization.
+
+## Final human acceptance —2026-10-15
+
+Explicit `LISS-0589 最終レビュー結果の受入れ` received for tested
+05442c40299c001d72e883345c5fe023086b7ebe. Final evidence:
+/private/tmp/liss-0589-final-verification.uUwcHJ/result.md.
+All declared blocking PASS;no code/test changes or remaining product blocker.
+Earlier human-final-acceptance-pending notes historical. Local implementation
+accepted,not delivered. Receipt records uncommitted;no current dirty-record
+full Green claim. Next:separate acceptance-record commit/actual-SHA rerun
+approval,then separate delivery. No commit/push/PR/merge in this action.

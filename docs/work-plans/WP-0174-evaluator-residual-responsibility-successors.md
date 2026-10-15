@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | LISS-0589 final verification/review-record commit/actual-SHA all-blocking explicitly approved2026-10-15; outcome pending at record commit. Next on success:human final result acceptance; no delivery permission |
+| Current Next Issue | LISS-0589 receipt commit/actual-SHA all-blocking revalidation approved2026-10-15; outcome pending at record commit. Local implementation accepted; next on success:separate delivery approval |
 
 ## Goal
 
@@ -25,7 +25,7 @@ Evaluator's unique mutable-state ownership.
 | 3 | Static `forEach` expansion | Actual body migrated to dedicated successor, live binding callbacks and hook preserved | LISS-0583 done; PR #607 merged a349a5b7, merge-result CI passed (confirmed2026-10-08) |
 | 4 | Tensor binding | Original algorithm moved to stateless61-line successor; exact private hook retained | LISS-0585 done; PR608 merged a661fb17, PR/main CI success |
 | 5 | Host coefficient-array resolution | 42-line body crosses HostInputPort, finite binder and scientific input validation/provenance | LISS-0586 done; PR609 merged61703e3e, PR/main CI passed |
-| 6 | Partial-call filling and small classical-state helpers | `_fill_partial` and `_is_closed` extracted; scalar capture moved to41-line owner,facade929 | LISS-0587/0588 delivered; LISS-0589 clean codeSHA Green/Phase3 agent review passed; final records verification pending,not delivered |
+| 6 | Partial-call filling and small classical-state helpers | `_fill_partial` and `_is_closed` extracted; scalar capture moved to41-line owner,facade929 | LISS-0587/0588 delivered; LISS-0589 final05442c40 Green/results accepted,local implementation done; receipt verification/delivery pending |
 | Excluded | `_eval_set_comprehension` | Explicitly retained as dispatch/consumer in accepted classical Operator-evaluation spec | Do not reopen in this WP absent a new scope decision |
 
 Ranks express investigation priority, not a committed roadmap. LISS-0585 now
@@ -44,11 +44,24 @@ consumer/architecture intake and do not become authorized by this Work Plan.
 | [LISS-0586](../issues/LISS-0586-evaluator-host-coefficient-resolution.md) | done — PR609 merged61703e3e; PR/main CI passed; local documentation closeout separately authorized | M | M | AIP-0586-001 accepted | LISS-0585 delivered | - | `codex/liss-0586-host-coefficient-phase0`; closeout `codex/liss-0586-delivery-closeout` |
 | [LISS-0587](../issues/LISS-0587-evaluator-partial-filling-successor.md) | done — PR611 merged11a1125d; PR/main CI all3jobs SUCCESS | M | M | AIP-0587-001 accepted | LISS-0586 / PR610 delivered | - | `codex/liss-0587-partial-filling-phase0` |
 | [LISS-0588](../issues/LISS-0588-evaluator-closed-expression-successor.md) | done — PR613 merged87d83fca; PR/main CI all3 SUCCESS | M | M | AIP-0588-001 accepted | LISS-0587 / PR612 delivered | - | `codex/liss-0588-closed-expression-phase0` |
-| [LISS-0589](../issues/LISS-0589-evaluator-classical-scalar-capture-successor.md) | review — final verification/record commit authorized; outcome pending at record commit | M | M | AIP-0589-001 accepted | LISS-0588 / PR614 delivered | - | `codex/liss-0589-classical-scalar-capture-phase0` |
+| [LISS-0589](../issues/LISS-0589-evaluator-classical-scalar-capture-successor.md) | done — final results accepted at05442c40; receipt verification/delivery pending | M | M | AIP-0589-001 accepted | LISS-0588 / PR614 delivered | - | `codex/liss-0589-classical-scalar-capture-phase0` |
 
 ## Current rank-6 design — 2026-10-13
 
-Latest0589 final verification/review-record commit/actual-SHA all-blocking
+Latest0589 receipt-record commit/actual-SHA all-blocking revalidation explicitly
+approved2026-10-15. Outcome pending at record commit:
+/private/tmp/liss-0589-acceptance-verification.TD3hgf/result.md.
+Five docs only;no source/test changes. Next on success:separate delivery approval;
+local implementation already accepted,WP active/not done. No network authority.
+
+Earlier0589 final results explicitly accepted2026-10-15 at clean05442c40.
+Root2821/spec161/sanity10/focused123 and consumer/inherited/adjacent checks PASS;
+accepted11 hashes unchanged. Issue done for local implementation,not delivered.
+Receipt metadata uncommitted;next:acceptance-record commit/actual-SHA all-blocking
+approval. No new candidate scope or delivery authority;WP active/not done.
+Evidence:/private/tmp/liss-0589-final-verification.uUwcHJ/result.md.
+
+Earlier0589 final verification/review-record commit/actual-SHA all-blocking
 explicitly approved2026-10-15. Outcome pending at record commit:
 /private/tmp/liss-0589-final-verification.uUwcHJ/result.md.
 Source/accepted tests unchanged;next on success:human final result acceptance.

@@ -3,14 +3,14 @@
 ## Request / current state
 
 - Date:2026-10-15 (trace opened2026-10-14)
-- User request:LISS-0589 final verification／レビュー記録コミット・実SHAで全blocking再検証承認
-- Phase:final verification/record commit authorized;outcome pending at record commit
+- User request:LISS-0589 受入れ記録コミット・実SHAで全blocking再検証承認
+- Phase:receipt commit/actual-SHA verification authorized;delivery pending
 - Canonical Issue:LISS-0589;WP0174;AIP-0589-001 accepted,M
 - Scope:only23-line `_maybe_capture_classical_scalar` responsibility
-- Implementation allowed:no new code/test work;scoped six-doc record commit authorized,no delivery permission
+- Implementation allowed:no new code/test work;five-doc receipt commit authorized,no delivery permission
 - Branch:codex/liss-0589-classical-scalar-capture-phase0
-- Base:f14a332c8f8e6aa9e6bc7b01403f5f89da6b6044;HEAD28530388fd69f892fca062b08312a249c9b180ab.
-  Current dirty unit:six review/status/lesson docs only;production/tests unchanged.
+- Base:f14a332c8f8e6aa9e6bc7b01403f5f89da6b6044;HEAD05442c40299c001d72e883345c5fe023086b7ebe.
+  Current dirty unit:five acceptance/status docs only;production/tests unchanged.
 
 ## Design check / decisions
 
@@ -568,3 +568,95 @@ or exclusions inferred. Blockers at commit:verification outcome pending;human
 final acceptance/delivery separate. No push/PR/merge authorization or execution.
 Recover from trace/spec/Issue/branch/diff and final external evidence,not chat
 memory. No Issue/WP done or process-review closure at this gate.
+
+## Human final acceptance / receipt handoff —2026-10-15
+
+Explicit human `LISS-0589 最終レビュー結果の受入れ` received for clean final
+SHA05442c40299c001d72e883345c5fe023086b7ebe. Recovered actual clean HEAD,
+final result/per-run audit,Phase3 packet and canonical status docs before action.
+Accepted evidence:root2821 PASS345.64s,spec161/sanity10/focused123/inherited418/
+adjacent30/consumer10/cold2 PASS;all12 result records/summaries and11 accepted
+hashes match. Receipt audit rerun before edits,not another root execution.
+Compiler/tests byte diff versus reviewed28530388 empty. No new implementation,
+assertions/fixtures/exclusions/clauses/architecture/provider changes.
+
+Acceptance/status synchronization only:Issue,spec,WP0174,Phase3 packet,this
+trace. Implementation locally accepted,not delivered;WP active/not done.
+Same-context process review follows status/document checks,not a second product
+review. Product-review isolation remains same_context/weaker,host execution,
+empty model IDs;no new agent review or routing change. Process lessons applied:
+status-sync,immutable accepted artifacts/final-SHA evidence and approval
+separation. Existing lessons already cover these patterns;no new rule proposed.
+Included current spec/packet/trace/Git/evidence/process policies;omitted Rust,
+next candidates,providers,secrets. Usage/reasoning/token estimates unavailable,N/A;
+attribution:0589 acceptance receipt. Known cosmetic/dynamic/pristine-base limits
+accepted as disclosed;not converted into stronger verification claims.
+
+Next Safe Action:request `LISS-0589 受入れ記録コミット・実SHAで全blocking再検証承認`.
+Implementation allowed:no additional source/test work. Approval type:local
+commit/verification phase;post-review required:yes,actual-SHA checks then
+separate push/PR/CI/merge authorization. No new commit/network authority inferred
+from final acceptance. Receipt docs remain dirty/uncommitted;new record SHA
+needs all blocking/routing rerun. Current05442c40 Green refers to accepted
+clean final snapshot,not dirty receipt metadata. No push/PR/merge performed.
+Recover from current canonical docs,branch/SHA/diff and final external result;
+older pending-acceptance notes historical. No next implementation started.
+
+Completion process review performed in the same context after evidence audit,
+status sync and document/test lifecycle/coverage/whitespace checks. Canonical
+no-deviation record written in LISS-0589. Gates,branch,ports/payload,placeholders,
+trace applicability and configured isolation checked;no new unresolved process
+deviation. Existing lesson applications adequate,no new lesson/template feedback.
+This is not a second product review or permission to deliver. Local Issue done
+as accepted implementation only;WP active,receipt commit/verification pending.
+
+### Receipt review target / handoff
+
+- Artifact:accepted final05442c40 evidence and five dirty receipt/status docs.
+- Current phase:human final acceptance recorded/local implementation done.
+- Requested approval:`LISS-0589 受入れ記録コミット・実SHAで全blocking再検証承認`.
+- Approval type:phase/local record commit and verification.
+- Approved scope:these0589 receipt records and unchanged accepted code/tests.
+- Implementation allowed:no new semantic/test work.
+- Post-review required:yes,actual-SHA rerun then separate delivery;batch:N/A.
+- Decision:pending. No additional commit or network authority.
+
+Completed:receipt/hash/result audit,status sync,same-context process review.
+Changed Files:Issue,spec,WP0174,Phase3 packet,this trace (five docs only).
+Context Ledger:included scoped contract/evidence/process policies;omitted
+unrelated candidates/Rust/providers/secrets. No new assumptions;review isolation
+same_context/weaker,implementation host,model identifiers empty. Next safe action
+is the typed receipt-commit/verification gate above. No product blocker;current
+dirty metadata not runtime reverified,full final05442c40 evidence retained.
+
+## Receipt commit / actual-SHA revalidation —2026-10-15
+
+Explicit approval received;user `ISS-0589` unambiguously refers to the preceding
+LISS-0589 receipt gate,not a new Issue. Recovered branch05442c40,five dirty docs,
+accepted final result and completed process-review record from disk. Feature
+Path verification only;no new code/test/clauses/architecture or review decision.
+Commit exact five receipt paths (Issue,spec,WP0174,Phase3 packet,this trace),
+then rerun all declared root/spec/actual applicable CI sanity plus focused/
+inherited/adjacent/consumer/cold identity/provenance/hashes/routing and audit.
+Outcome pending at record commit in
+`/private/tmp/liss-0589-acceptance-verification.TD3hgf/result.md` and per-run
+JSON/logs identifying new SHA,clean before/after,cwd,commands,environment,UTC/exits.
+Results outside tree;no later evidence-only commit planned. New source/test
+diff empty,accepted11 hashes retained. Original final acceptance not reopened.
+
+Applied existing state/consumer/guard/immutable-evidence/PYTHONPATH/status-sync/
+final-SHA/typed-approval lessons;live log unchanged,no new process signal or
+rule. Existing process-review closure retained,no new product review. Review
+setting same_context/weaker,implementation host,IDs empty,no enabled override;
+reroute on actual final committed diff,unknown semantic owners remain gaps.
+Included scoped contract/receipt/verification evidence;omitted next splits,
+Rust/providers/secrets. Usage/reasoning/estimate metrics unavailable,N/A;
+attribution:0589 acceptance-record verification. Known cosmetic/dynamic/
+serialization/pristine-base limits preserved,not numerical passes.
+
+Next Safe Action:on success request separate push/PR/CI/successful-merge
+approval,without another receipt-acceptance loop. Human final results already
+accepted. Local Issue done,WP active,not delivered. Failure requires bounded
+disposition,no test edits/exclusions inferred. No network authorization.
+Recover from this trace,spec/Issue/packet,branch/SHA/diff and external result;
+older receipt-permission-pending notes historical. Changed Files:five docs only.
