@@ -14,7 +14,15 @@ verification/review-record commit/actual-SHA rerun explicitly approved2026-10-15
 all blocking passed at clean05442c40. Human final results explicitly accepted
 2026-10-15. Receipt-record commit/revalidation explicitly approved2026-10-15;
 outcome pending at record commit. Delivery remains separately gated.
+Subsequently authorized delivery2026-10-15:PR615 merged4ff3e8e5 after all3 PR
+CI jobs passed;actual merge-result main CI38698691368 all3 SUCCESS. No clause/code/
+test change. Older delivery-approval-pending notes are historical.
 Owner: [LISS-0589](../issues/LISS-0589-evaluator-classical-scalar-capture-successor.md).
+Delivery-record commit/actual-SHA all-blocking verification approved2026-10-15;
+five docs only on codex/liss-0589-delivery-closeout from merged main4ff3e8e5.
+Outcome pending at record commit in
+/private/tmp/liss-0589-delivery-closeout.VwjoyV/result.md. Clauses unchanged;
+no record push/PR/merge authorization inferred.
 Immutable source base: f14a332c8f8e6aa9e6bc7b01403f5f89da6b6044.
 
 ## Design boundary
@@ -251,3 +259,12 @@ Receipt commit/revalidation approval received2026-10-15;S01–S09/code/tests
 unchanged. Actual receipt SHA and outcome:
 /private/tmp/liss-0589-acceptance-verification.TD3hgf/result.md (pending at commit).
 Earlier receipt-permission-pending notes historical;no delivery permission.
+
+## Delivery state —2026-10-15
+
+Authorized PR615 merged4ff3e8e5d4c596a58142375675c3c843c0433367 after PR
+CI38696907811 all3 SUCCESS(root2821/spec161). Verified head5830e46c and
+actual merge tree match exactly. Main merge-result CI38698691368 all3 SUCCESS,
+root2821 PASS694.22s,spec161/161 and repository sanity PASS.
+No new semantics/test edits or whole-decomposition claim. External evidence:
+/private/tmp/liss-0589-delivery.9zAGR7/result.md. Local delivery records uncommitted.

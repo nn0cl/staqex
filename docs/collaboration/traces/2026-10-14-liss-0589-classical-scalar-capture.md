@@ -3,14 +3,17 @@
 ## Request / current state
 
 - Date:2026-10-15 (trace opened2026-10-14)
-- User request:LISS-0589 受入れ記録コミット・実SHAで全blocking再検証承認
-- Phase:receipt commit/actual-SHA verification authorized;delivery pending
+- User request:LISS-0589 配送記録コミット・実SHAで全blocking再検証承認
+- Phase:delivered;authorized local delivery-record commit and actual-SHA verification
 - Canonical Issue:LISS-0589;WP0174;AIP-0589-001 accepted,M
 - Scope:only23-line `_maybe_capture_classical_scalar` responsibility
-- Implementation allowed:no new code/test work;five-doc receipt commit authorized,no delivery permission
-- Branch:codex/liss-0589-classical-scalar-capture-phase0
-- Base:f14a332c8f8e6aa9e6bc7b01403f5f89da6b6044;HEAD05442c40299c001d72e883345c5fe023086b7ebe.
-  Current dirty unit:five acceptance/status docs only;production/tests unchanged.
+- Implementation allowed:no new code/test work;verified branch delivery authorized,performed
+- Branch:codex/liss-0589-delivery-closeout
+- Delivery-record base:4ff3e8e5d4c596a58142375675c3c843c0433367 (merged main).
+  Original extraction base:f14a332c8f8e6aa9e6bc7b01403f5f89da6b6044.
+  Five delivery docs only;production/tests unchanged. Actual new commit SHA,
+  clean-state verification and outcomes recorded externally after commit:
+  /private/tmp/liss-0589-delivery-closeout.VwjoyV/result.md.
 
 ## Design check / decisions
 
@@ -660,3 +663,98 @@ accepted. Local Issue done,WP active,not delivered. Failure requires bounded
 disposition,no test edits/exclusions inferred. No network authorization.
 Recover from this trace,spec/Issue/packet,branch/SHA/diff and external result;
 older receipt-permission-pending notes historical. Changed Files:five docs only.
+
+## Authorized delivery —2026-10-15
+
+Explicit push/PR/update/actual-CI/successful-CI-merge approval received.
+Recovered clean verified5830e46c,receipt evidence,repo rules and remote state.
+No existing exact-branch PR;remote mainf14a332c unchanged,feature ref absent.
+Pushed only named feature branch,no force/main push. Created PR615 and attached
+it via app artifact tool. PR body identifies S01–S09,typed approvals,reviewed
+tests,AI context,same_context weaker review,local versus remote evidence and
+remaining limits. No rebase/source/test changes or product re-review.
+
+PR CI38696907811 all3 SUCCESS:root2821 PASS891.04s,spec161/161 PASS,repository
+sanity including PR-only traceability PASS. Captured actual head5830e46c/basef14,
+all check buckets pass,CLEAN/MERGEABLE with no blocking review decision before
+normal merge. Used --match-head-commit5830e46c,no admin/protection bypass.
+PR615 MERGED2026-10-15T07:25:49Z at4ff3e8e5d4c596a58142375675c3c843c0433367.
+Fetched main;parentsf14a332c+5830e46c and entire merge tree equals5830e46c(exit0).
+PR temporary test-mergee739b0b8 is not actual merge4ff3e8e5.
+
+Actual merge-result main CI38698691368 (push/head4ff3e8e5) all3 SUCCESS;
+root2821 PASS694.22s,spec161/161 PASS,repository sanity PASS. Evidence/log/snapshot scripts under
+/private/tmp/liss-0589-delivery.9zAGR7/. No local runtime run at mergeSHA claimed.
+Delivery status synchronized in five local docs (Issue,spec,WP,packet,this trace)
+without new commit. These dirty records are not CI-tested merge content.
+Current local checkout stays5830e46c;remote merge proof via fetch and actual CI.
+No post-merge force push,branch deletion or extra PR. Next:finish merge CI,
+record exact outcome,then separately gate delivery-record commit/verification.
+Main CI result now complete;earlier CI-pending observations historical.
+
+Existing final-SHA/status-sync/consumer/guard/typed-approval lessons applied;
+no new rule/lesson/provider decision. Host deterministic delivery,existing
+review.same_context/weaker,IDs empty;no new agent product review. Included
+scoped specs/records/Git/GitHub evidence,omitted unrelated code/Rust/secrets.
+Usage/reasoning/estimates unavailable,N/A;attribution:0589 delivery.
+
+### Delivery completion / handoff
+
+Verified actual merged PR615/head5830e46c/merge4ff3e8e5 identity and saved PR/main
+CI successful snapshots/full logs. Both remote runs all3 jobs SUCCESS;PR root
+2821 PASS891.04s,main root2821 PASS694.22s,spec161/161 both PASS. CI Ubuntu24/
+CPython3.12.15/pytest9.1.1 distinct from earlier local macOS runtime;not an
+identical-environment baseline comparison. Main PR-only traceability step N/A
+for push event;PR actual traceability passed. No failed/skipped CI job waived.
+PR task artifact attached. Merge tree equal to validated head;no source/test
+changes,force push,protection bypass,extra PR or branch cleanup performed.
+
+Current State:LISS-0589 delivered;WP active,not full decomposition done.
+Changed Files:five local delivery docs (Issue,spec,WP,Phase3 packet,this trace).
+Delivery records remain uncommitted,not part of tested remote4ff3e8e5 content.
+Next Safe Action:separate approval for delivery-record commit/actual-SHA full
+blocking verification. No additional commit/push/PR performed for records.
+Existing final/code acceptance remains accepted;do not reopen implementation.
+Recover from current canonical status docs,PR615/actual run URLs,local branch/
+remote merge SHA and /private/tmp/liss-0589-delivery.9zAGR7/result.md.
+
+Same-context delivery completion process review followed actual PR/main CI,
+status synchronization,tree/hash audit and document/test-lifecycle/coverage/
+whitespace checks. No phase/permission/routing/PR-discipline deviation or new
+unresolved operational problem;canonical process-review record in Issue updated.
+No new reusable lesson/template feedback,not a duplicate product review.
+
+Delivery-record approval target:five local status docs only,current phase
+delivered/records uncommitted. Requested approval:
+`LISS-0589 配送記録コミット・実SHAで全blocking再検証承認` (phase/local record
+commit and verification). Implementation allowed:no new source/test work.
+Post-review required:yes,actual-SHA rerun then separate record delivery gate;
+batch:N/A. Human decision subsequently approved below. No push/PR inferred.
+
+## Delivery-record commit / verification approval —2026-10-15
+
+Explicit local five-record commit and actual-SHA all-blocking rerun approval
+received. Created codex/liss-0589-delivery-closeout from actual merged main4ff3e8e5,
+preserving the five dirty records;committed trees5830e46c/4ff3e8e5 equal.
+No implementation/spec-clause/accepted-test edits. Existing final acceptance
+and successful PR615/main CI evidence retained;no new product-review loop.
+
+Verification pending at this record commit. Save exact new SHA/environment/
+commands/clean-before-after/results externally at
+/private/tmp/liss-0589-delivery-closeout.VwjoyV/result.md;do not assert Green
+before completion. Rerun root,spec,all applicable sanity steps and separately
+focused/inherited/adjacent/consumer/cold/provenance/fingerprints/routing/audit.
+Compare final record diff with4ff3e8e5 to prove five-doc-only scope. Original
+extraction provenance still uses immutable f14a332c. Accepted EOF whitespace
+and dynamic/serialization/semantic-owner measurement limits remain disclosed.
+
+Included scoped delivery/approval/spec/verification artifacts;omitted next
+splits,Rust,providers,secrets. Existing final-SHA/immutable-test/status-sync/
+typed-authority lessons applied;no new rule. Review same_context/weaker,
+implementation host,model IDs empty;no isolation change. Usage metrics N/A.
+Current State:delivered/local records verification;Issue done,WP active.
+Changed Files:Issue,spec,WP,Phase3 packet,this trace only.
+Next Safe Action:after successful actual-SHA verification,request separate
+delivery-record push/PR/CI/successful-merge approval. No remote write currently
+authorized. Failure requires scoped disposition,no test weakening. Recover
+from this trace,branch/actual SHA,external result and PR615 evidence.

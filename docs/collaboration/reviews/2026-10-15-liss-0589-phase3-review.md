@@ -15,8 +15,18 @@ Receipt commit/actual-SHA rerun subsequently explicitly approved2026-10-15;
 outcome pending at commit in
 /private/tmp/liss-0589-acceptance-verification.TD3hgf/result.md.
 Final results remain accepted;delivery separate. Earlier receipt-gate notes historical.
+Delivery subsequently explicitly authorized2026-10-15:PR615 merged4ff3e8e5
+after all3 PR CI jobs passed. Actual main merge-result CI38698691368 all3 SUCCESS
+(root2821 PASS694.22s/spec161/repository sanity);
+review-time evidence remains unchanged. No new product review/code/test edits.
 
 ## Review packet
+
+Delivery-record commit/actual-SHA all-blocking rerun explicitly approved2026-10-15.
+Five docs only on codex/liss-0589-delivery-closeout,base merged main4ff3e8e5.
+Outcome pending at record commit;exact SHA/clean state/results saved externally
+in /private/tmp/liss-0589-delivery-closeout.VwjoyV/result.md. No new code/test
+review or remote-write approval;original review evidence below retained.
 
 - Approved scope:S01–S09 scalar-capture extraction;Phase3 explicitly approved2026-10-15.
 - Current phase:phase-3-refactor;reviewer role,not continuing implementation.
