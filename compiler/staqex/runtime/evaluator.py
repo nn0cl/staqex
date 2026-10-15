@@ -103,6 +103,7 @@ from .mixed_state import DensityStateValue, density_from_call, matrix_from_list
 from .lindblad import evolve_lindblad
 from .matrix import Matrix
 from .evaluation.calls import bind_call
+from .evaluation.classical_scalars import maybe_capture_classical_scalar as _capture_classical_scalar_successor
 from .evaluation.closed_expressions import is_closed as _is_closed_successor
 from .evaluation.compatibility import install_static_foreach_compatibility as _install_static_foreach_compatibility
 from .evaluation.compatibility import install_tensor_binding_compatibility as _install_tensor_binding_compatibility
@@ -756,29 +757,7 @@ class Evaluator:
 
         return p
 
-    def _maybe_capture_classical_scalar(self, joint: Joint, name: str) -> None:
-        """Promote a deterministic classical Joint coordinate into scalars.
-
-        Used when Type-First `Float x = …` was bound via a method Call (not
-        `_is_closed`), so `evolve … for x` and Operator OpVars can resolve it
-        (LISS-0137).
-        """
-        if name in self.scalars:
-            return
-        try:
-            marg = joint.marginal(name)
-        except Exception:
-            return
-        if len(marg) != 1:
-            return
-        raw = next(iter(marg))
-        try:
-            if isinstance(raw, Fraction):
-                self.scalars[name] = raw
-            else:
-                self.scalars[name] = float(raw)
-        except (TypeError, ValueError):
-            pass
+    _maybe_capture_classical_scalar = _capture_classical_scalar_successor
 
     _is_closed = _is_closed_successor
 
