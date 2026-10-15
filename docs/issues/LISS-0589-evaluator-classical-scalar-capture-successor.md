@@ -4,8 +4,8 @@
 
 - Local issue ID: LISS-0589
 - GitHub issue: none
-- Status: in_progress — Phase2 local commit/revalidation authorized; outcome pending at record commit
-- Phase: phase-2-green
+- Status: review — final verification/record commit authorized; outcome pending at record commit
+- Phase: phase-3-refactor
 - Type: behavior-preserving responsibility extraction
 - Priority: WP-0174 rank6 remaining classical-state helper
 - Initial planning size: M
@@ -15,6 +15,21 @@
 - Related branch: `codex/liss-0589-classical-scalar-capture-phase0`
 
 ## Scope / dependencies
+
+Current final gate2026-10-15:human explicitly approved final verification,
+review-record commit and actual-SHA all-blocking revalidation. Accepted S01–S09,
+11 test artifacts and production unchanged. Outcome pending at this record
+commit in `/private/tmp/liss-0589-final-verification.uUwcHJ/result.md`.
+Next upon success:human final results acceptance. No push/PR/merge permission.
+Earlier final-verification-approval-pending notes below historical.
+
+Current2026-10-15:Phase3 Refactor/review explicitly approved and agent review
+passed at clean28530388;no source/test refactor needed. Fresh root2821,
+focused123,inherited418,adjacent30,consumer10,cold-identity2,spec161 and sanity10
+PASS. Accepted11 artifacts unchanged. [Phase3 packet](../collaboration/reviews/2026-10-15-liss-0589-phase3-review.md).
+Next:separate final verification/review-record commit/actual-SHA all-blocking
+approval. No final acceptance or delivery. Older permission/status notes below
+are historical;current review records remain uncommitted and not a final-SHA claim.
 
 Scope / Phase0 design-start explicitly approved2026-10-14 for
 `_maybe_capture_classical_scalar` only. Accepted authoritative contract:
@@ -189,3 +204,25 @@ environment and results in `/private/tmp/liss-0589-sha-verification.nxLVoK/resul
 No Phase3/final/push/PR/merge permission. Next upon passing committed checks:
 request separate `LISS-0589 Phase3 Refactor／review承認`.
 Prior approval-pending notes are historical;Issue not done,WP remains active.
+
+## Phase3 current handoff —2026-10-15
+
+Same-context reviewer re-read accepted contract,code/tests,Git provenance and
+actual consumers. Installed whole method/restored facade/39 readonly paths,
+original four-carrier assertions and11 accepted hashes PASS. No blocking product
+finding;cosmetic EOF/docstring dispositions and dynamic/structure limits in
+packet. No source/test change. External fresh review evidence:
+`/private/tmp/liss-0589-phase3-review.V0fZDx/result.md`,clean SHA
+28530388fd69f892fca062b08312a249c9b180ab,macOS27.0.1/CPython3.12.6.
+Root2821 PASS346.51s;focused123/inherited418/adjacent30/consumer10/cold2/
+spec161/sanity10 PASS,no root exclusions. Later record commit requires new
+all-blocking/routing checks. Request `LISS-0589 final verification／レビュー記録
+コミット・実SHAで全blocking再検証承認`. No commit or delivery in this phase.
+
+## Final verification / record handoff —2026-10-15
+
+Commit scoped six review/status/lesson docs only,then rerun all declared
+blocking/focused/consumer/adjacent/provenance/hash/routing checks at actual HEAD.
+No source/test edit. Actual tested SHA,clean state and full outcome live outside
+tree in final result/JSON/logs;later evidence-only commit would require rerun.
+Issue remains review,not done;final result acceptance and delivery separate.

@@ -2,15 +2,15 @@
 
 ## Request / current state
 
-- Date:2026-10-14
-- User request:LISS-0589 Phase2 Green／implementation承認
-- Phase:phase-2-green minimal move written;committed all-blocking gate pending
+- Date:2026-10-15 (trace opened2026-10-14)
+- User request:LISS-0589 final verification／レビュー記録コミット・実SHAで全blocking再検証承認
+- Phase:final verification/record commit authorized;outcome pending at record commit
 - Canonical Issue:LISS-0589;WP0174;AIP-0589-001 accepted,M
 - Scope:only23-line `_maybe_capture_classical_scalar` responsibility
-- Implementation allowed:yes,S01–S09 only;tests frozen,no commit/delivery permission
+- Implementation allowed:no new code/test work;scoped six-doc record commit authorized,no delivery permission
 - Branch:codex/liss-0589-classical-scalar-capture-phase0
-- Base/HEAD:f14a332c8f8e6aa9e6bc7b01403f5f89da6b6044,now dirty docs only
-  Current dirty unit:docs and test/helper/fixtures only;production unchanged.
+- Base:f14a332c8f8e6aa9e6bc7b01403f5f89da6b6044;HEAD28530388fd69f892fca062b08312a249c9b180ab.
+  Current dirty unit:six review/status/lesson docs only;production/tests unchanged.
 
 ## Design check / decisions
 
@@ -461,3 +461,110 @@ tests/test_liss_0589_capture_consumers_red.py:194 (exit2). Prior unstaged check
 did not cover untracked files. Preserve exact accepted bytes;no test edit or
 false whitespace-pass claim. Cosmetic finding retained for Phase3 review,
 not a failure of declared runtime/spec/CI-sanity blocking suites.
+
+## Phase3 Refactor / reviewer handoff —2026-10-15
+
+Explicit typed Phase3 approval received. Feature Path/readiness checked from
+accepted S01–S09 and clean28530388 actual-SHA evidence. Current rules/spec,
+installed source,all0589 suites/helper,actual callers,Git originals and prior
+packet/output re-read. Switched to reviewer;author reasoning not evidence.
+Effective route normal same_context,weaker isolation;implementation host,
+model IDs empty,no enabled large-change override or numeric budgets.
+Same-context-review skill applied;no independent subagent review claimed.
+
+No source refactor justified:successor41/function25 owns scalar promotion with
+declaration-only context,live unique Evaluator map,exact original try boundaries
+and ordinary private bound alias. All other facade AST/imports and39 readonly
+paths match original Git after exact restoration. Fraction/Joint remain used;
+public exports not removed. Execution437/observation267 actual consumers and
+instance/subclass overrides preserved. Guard pre/post roots/four copies and
+missing/changed negatives verified;four original carrier assertion ASTs and
+11 accepted hashes unchanged. AST-only fixture proposals not runtime evidence.
+
+Fresh clean28530388 reviewer runs:focused123 PASS3.95s,inherited418 PASS15.14s,
+adjacent30 PASS5.93s,consumer10 PASS0.18s(19 subset deselections only),cold2
+PASS0.48s,root2821 PASS346.51s,spec161/161 PASS,sanity10 PASS(no PR applicability).
+Per-run JSON/logs retain SHA,clean before/after,commands,cwd,explicit PYTHONPATH,
+macOS27.0.1/CPython3.12.6/pytest9.0.3/PyYAML6.0.3,UTC and exits. All exit0;
+audit12 result records/logs and accepted11 hashes PASS. Compared prior clean
+Phase2 sameSHA all suites remain passing,no new/residual failures there;
+fresh pristine-base whole-root comparison unavailable. No assertions/exclusions/
+fixtures changed. Detailed evidence:/private/tmp/liss-0589-phase3-review.V0fZDx/.
+
+Phase3 agent review passed,no blocking product finding;packet:
+docs/collaboration/reviews/2026-10-15-liss-0589-phase3-review.md.
+Cosmetic accepted-test EOF blank retained(whole diff whitespace exit2),original
+docstring literal indentation retained for Git AST fidelity;neither silently
+fixed or waived as a failing declared suite. Structure candidate19files/2010
+changed lines,facade950→929,compat335,helper124;retained facade under WP0174.
+Semantic owner count/full dynamic graph/arbitrary bound-method serialization
+remain unassessed;not numeric passes or implicit review downgrades.
+
+Live process lessons reapplied:immutable method/fixture provenance,actual
+successor ownership/state/identity,real distinct copied guards,consumer setup/
+units,public-import preservation,PYTHONPATH and final-SHA/status synchronization.
+Matching lesson application appended,not a new contract/policy. Included scoped
+spec/code/tests/current rules;omitted Rust,other splits,providers,secrets.
+Model/reasoning/token/estimate metrics unavailable,N/A;attribution:0589 Phase3.
+
+### Review Target / human gate
+
+- Artifact:Phase3 packet,current Issue/spec/WP/trace and clean codeSHA28530388.
+- Current phase:Phase3 agent review passed;human final gate remains.
+- Requested approval:`LISS-0589 final verification／レビュー記録コミット・実SHAで全blocking再検証承認`.
+- Approval type:phase/local record commit/verification.
+- Approved scope:0589 record synchronization and unchanged reviewed implementation/tests.
+- Implementation allowed:no new semantic/test work proposed;bounded Phase3 needed no code edit.
+- Post-review required:yes,final result acceptance then separate delivery;batch:N/A.
+- Decision:pending. Test/agent pass is not human acceptance.
+
+### Agent Handoff
+
+Current State:requested Phase3 review performed,Issue review/phase-3-refactor;
+WP active/not done. Completed:review packet and six-doc status/lesson sync.
+Changed Files:Issue,spec,WP0174,this trace,process-lessons-log,new Phase3 packet.
+No production/test changes,commits or remote writes. Context Ledger/isolation/
+assumptions and remaining limits above;no new architecture decision.
+Next Safe Action:obtain final verification/record commit approval,commit scoped
+six docs then rerun all blocking/routing at actual new SHA. Current dirty docs
+are not covered by final-HEAD evidence;clean28530388 Green remains code-only.
+Blockers:no product finding;human final/commit/delivery authority absent.
+Recover from this trace,canonical spec/Issue,branch/diff and external results,
+not chat memory. No process-review closure because Issue/WP not done.
+
+## Final verification / record commit handoff —2026-10-15
+
+Explicit human final verification/review-record commit/actual-SHA all-blocking
+approval received. Feature Path,accepted S01–S09/Phase3 packet/readiness/current
+rules checked. Existing dirty unit exactly six review/status/lesson docs;no
+compiler/tests diff. All11 accepted hashes verified before commit. No semantic
+or architecture change. Review route same_context/weaker isolation,host execution,
+empty model IDs,no enabled large-change/numeric override;derive routing from
+actual full committed diff before final reporting,unknown owners remain gaps.
+
+Applied matching lessons:preserve Git AST/state/private consumer/import/guard
+contracts and accepted hashes;explicit external PYTHONPATH;focused separate
+from full Green;status synchronization before commit;final-SHA evidence outside
+tree. Live log already records review application;no new lesson/rule required.
+Included canonical spec/packet/source/test/verification rules;omitted Rust,
+other splits,providers,secrets. Usage/reasoning/estimate metrics unavailable,N/A;
+execution attribution:0589 final verification. No new reviewer role or product
+review pass inferred from tests. Previous cosmetic/dynamic/serialization limits
+retained. Whole base diff whitespace EOF warning not silently repaired.
+
+Changed Files:Phase3 packet,Issue,spec,WP0174,this trace,process-lessons-log only.
+Commit exact six paths on codex/liss-0589-classical-scalar-capture-phase0;
+then root/spec/all applicable actual CI sanity plus focused/inherited/adjacent/
+consumer/cold imports/identity/Git provenance/accepted hashes/routing rerun.
+Actual outcome pending at this record commit in
+`/private/tmp/liss-0589-final-verification.uUwcHJ/result.md` and per-run JSON/logs,
+including new tested SHA,clean before/after,cwd,commands,environment,UTC and exit.
+No later repository evidence edit intended;later commit invalidates this run.
+
+Current State:Issue review,WP active/not done;final results not yet accepted.
+Next Safe Action:complete actual-SHA checks,request `LISS-0589 最終レビュー結果の受入れ`.
+If failure occurs,retain exact IDs and request bounded disposition,no test fix
+or exclusions inferred. Blockers at commit:verification outcome pending;human
+final acceptance/delivery separate. No push/PR/merge authorization or execution.
+Recover from trace/spec/Issue/branch/diff and final external evidence,not chat
+memory. No Issue/WP done or process-review closure at this gate.

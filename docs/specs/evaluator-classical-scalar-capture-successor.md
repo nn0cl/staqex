@@ -8,7 +8,10 @@ Phase1 agent test review passed2026-10-14;human exact11 test artifacts accepted
 2026-10-14,review-packet/current hashes match. Phase2 Green/implementation
 explicitly approved2026-10-14;minimal move written,accepted tests unchanged.
 Scoped local commit/actual-SHA all-blocking revalidation explicitly approved
-2026-10-15;outcome pending at this record commit. No delivery or Phase3 permission.
+2026-10-15 and passed at clean28530388. Phase3 Refactor/review explicitly
+approved2026-10-15;agent review passed,no source/test changes needed. Final
+verification/review-record commit/actual-SHA rerun explicitly approved2026-10-15;
+outcome pending at this record commit. Final result acceptance/delivery separate.
 Owner: [LISS-0589](../issues/LISS-0589-evaluator-classical-scalar-capture-successor.md).
 Immutable source base: f14a332c8f8e6aa9e6bc7b01403f5f89da6b6044.
 
@@ -210,3 +213,24 @@ Accepted S01–S09 and11 test artifacts unchanged. All blocking and focused/
 consumer/adjacent checks will run after the final local commit;outcome pending
 at commit in `/private/tmp/liss-0589-sha-verification.nxLVoK/result.md`.
 Earlier commit-approval-pending notes historical. No Phase3/final/delivery approval.
+
+## Phase3 current evidence —2026-10-15
+
+Phase3 explicitly approved;[agent review passed](../collaboration/reviews/2026-10-15-liss-0589-phase3-review.md).
+S01–S09/accepted11 artifacts unchanged;no additional refactor justified.
+Fresh clean28530388 root2821 PASS346.51s,focused123/inherited418/adjacent30/
+consumer10/cold2/spec161/sanity10 PASS;exact Git method/facade/39 readonly/
+original carrier assertions PASS. No root exclusions. Review isolation
+same_context,weaker than separate_context;remaining limits disclosed in packet.
+Evidence:/private/tmp/liss-0589-phase3-review.V0fZDx/result.md.
+Current review records are uncommitted,not final-HEAD verification. Next request:
+final verification/review-record commit/actual-SHA all-blocking rerun approval.
+Earlier Phase3-permission-pending notes historical. No final or delivery authority.
+
+## Final verification gate —2026-10-15
+
+Human explicitly authorized review-record commit and actual-SHA all-blocking
+rerun. No accepted clause/test/source change. Pending-at-record-commit outcome:
+`/private/tmp/liss-0589-final-verification.uUwcHJ/result.md` and per-run JSON/logs.
+Next on success:human final result acceptance,not inferred from CI/tests.
+Earlier final-approval-pending notes historical. No delivery authorization.

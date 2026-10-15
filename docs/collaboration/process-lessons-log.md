@@ -83,6 +83,10 @@ Record meta-level patterns only. No session transcripts.
   from Git,construct distinct pre/post copied roots and validate their real
   guards before accepting setup evidence. Compiling an AST-only proposal is
   not executing it or proving later cold-import/serialization compatibility.
+  Reapplied in LISS-0589 Phase3:compare the installed sole algorithm and full
+  restored facade directly with immutable Git,exercise actual guard/copy
+  consumers and preserve accepted hashes. Re-run clean code-SHA blocking
+  checks before writing review records;later record commits need fresh runs.
 
 ## Lesson
 
