@@ -4,7 +4,7 @@
 
 - Local issue ID: LISS-0589
 - GitHub issue: none
-- Status: done — final results accepted; receipt commit/revalidation authorized,delivery pending
+- Status: done — PR615 merged4ff3e8e5; PR/main CI all3 SUCCESS
 - Phase: phase-3-refactor
 - Type: behavior-preserving responsibility extraction
 - Priority: WP-0174 rank6 remaining classical-state helper
@@ -12,9 +12,29 @@
 - Current planning size: M
 - Reclassification reason: none
 - Owner/agent: Codex desktop host
-- Related branch: `codex/liss-0589-classical-scalar-capture-phase0`
+- Related branch: `codex/liss-0589-classical-scalar-capture-phase0`; delivery records: `codex/liss-0589-delivery-closeout`
 
 ## Scope / dependencies
+
+Delivery2026-10-15 explicitly authorized. [PR615](https://github.com/nn0cl/staqex/pull/615)
+merged2026-10-15T07:25:49Z at4ff3e8e5d4c596a58142375675c3c843c0433367 after
+all3 PR CI jobs SUCCESS(run38696907811,head5830e46c,root2821/spec161 PASS).
+Exact verified head guard used;no admin/bypass. Entire merge tree matches verified
+5830e46c(exit0). Actual merge-result main CI38698691368 all3 SUCCESS:
+root2821 PASS694.22s,spec161/161 PASS,repository sanity PASS.
+Evidence:/private/tmp/liss-0589-delivery.9zAGR7/result.md.
+Older delivery-permission-pending notes historical. No source/test edits.
+Delivery-record local commit/actual-SHA all-blocking verification explicitly
+approved2026-10-15. Five docs only,base merged main4ff3e8e5;outcome pending at
+record commit in /private/tmp/liss-0589-delivery-closeout.VwjoyV/result.md.
+No new implementation scope;record push/PR/CI/merge requires separate approval.
+
+Delivery completion process review performed in the same context after actual
+PR/main CI,merged-head/tree/hash audit,status synchronization and document/
+test-lifecycle/coverage/whitespace checks. Typed authority,branch/PR discipline,
+CI-before-merge,non-bypass,head-versus-merge evidence and dirty-record limits
+checked. Existing lessons applied;no new unresolved process finding/template feedback.
+Process review: no operating-contract deviation or operational problem found.
 
 Latest2026-10-15:receipt-record commit/actual-SHA all-blocking revalidation
 explicitly approved (user's `ISS-0589` resolves to this immediately preceding
