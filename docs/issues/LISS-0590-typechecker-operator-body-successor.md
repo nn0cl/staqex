@@ -4,13 +4,14 @@
 
 - Local issue ID:LISS-0590
 - GitHub issue:none
-- Status:review — human final-result accepted;acceptance-record commit/reverification authorized,actual-SHA results external,delivery pending
+- Status:done — PR #617/main2ca7d4f4 delivered;local delivery-record commit/reverification authorized,actual-SHA evidence external
 - Phase:phase-3-refactor
 - Type:behavior-preserving body extraction
 - Priority:WP0175 first candidate,operator walk only
 - Initial/current planning size:L/L;reclassification:none
 - Owner:Codex host / Adjudicator
 - Branch:codex/liss-0590-typechecker-operator-phase0
+- Delivery-record branch:codex/liss-0590-delivery-records (from delivered main2ca7d4f4)
 - Specification:[O01–O10](../specs/typechecker-operator-body-successor.md)
 - Planning record:AIP-0590-001 (accepted2026-10-16)
 
@@ -93,7 +94,7 @@ Batch:N/A. No technology selection or new ADR accepted by agent judgment.
 The Phase1 execution gate above was explicitly approved2026-10-16. Current
 state supersedes the historical Phase0-only statements:Phase1 tests/scaffolding
 and exactly four approved carriers changed;production remains byte-unchanged.
-Current next gate after acceptance-record actual-SHA all-blocking PASS: **LISS-0590 push／PR作成・更新／CI確認・成功後のマージ承認**。
+Current next gate after delivery-record actual-SHA all-blocking PASS:delivery-record push/PR/CI/success-then-merge approval;feature delivered,no new implementation scope.
 Exact-test acceptance and Phase2 implementation approval remain separate.
 Process review:not yet,Issue is review/not done. Existing body-ownership,
 private-consumer,immutable-guard,live-state,typed-approval and final-SHA lessons
@@ -278,3 +279,65 @@ If any required check fails,report it;no code/test repair authorized here.
 Issue remains review/not done pending delivery. Next approval after all required
 PASS is the scoped push/PR/CI/success-then-merge gate above. No remote authority
 or new product review inferred from this local-save/revalidation approval.
+
+## Delivery —2026-10-16 (current)
+
+Explicit push/PR/CI/success-then-merge approval received and executed.
+[PR #617](https://github.com/nn0cl/staqex/pull/617),approved HEAD
+2a728d24dd86b961618e1b26bc90e9faddda3c38,baseb5c96f7e4c2a846f41ac8ad5d882f0cb987cd420.
+Merged2026-10-16T06:09:33Z into main at
+**2ca7d4f43d226142ea7f3121c69997b515f0be53** after all3PR CI jobs succeeded.
+Expected HEAD pinned;normal merge,no administrator bypass or branch deletion.
+
+- [PR CI38858172615](https://github.com/nn0cl/staqex/actions/runs/38858172615):
+  all3SUCCESS;root2938PASS825.61s,spec161/161;sanity11applicable checks success.
+- [Main CI38859632421](https://github.com/nn0cl/staqex/actions/runs/38859632421):
+  actual merge SHA,all3SUCCESS;root2938PASS549.23s,spec161/161;
+  sanity10checks success,PR-only traceability skipped as inapplicable on push.
+- Remote Ubuntu24.04.5/CPython3.12.15,main pytest9.1.1;distinct from local
+  macOS/Python3.12.6/pytest9.0.3. No pytest failures/errors/skips/exclusions in
+  observed summaries;spec aggregate skips unreported. No cross-environment
+  performance or exhaustive-coverage claim.
+- Git merge parents match base/approved HEAD;merge tree equals approved HEAD
+  tree ef916d19de4c6d926513d874a8648d7e44c804f8. Source/tests unchanged.
+- External `/private/tmp/liss-0590-delivery.amkGJx/delivery.json` and run/job logs
+  retain local/PR/merge evidence separately. Connector create403 recovered via
+  authorized CLI;no rule/permission bypass or corrective implementation.
+
+Issue delivered/done;parent WP0175 remains in_progress for separate residual
+scope,not silently started. These7Markdown closeout records are uncommitted;
+no additional commit/push/PR inferred. Future record save requires explicit
+approval and every blocking suite at its actual SHA. Existing semantic graph/
+custom-pickle/history-coverage limitations remain. Process review recorded below
+after status synchronization;not a second product review.
+
+Process review: no operating-contract deviation or operational problem found.
+Same-context completion check confirmed explicit phase/delivery approvals,
+accepted test provenance,actual-SHA/consumer/structure evidence,trace/routing,
+branch/CI/pinned-merge discipline and synchronized delivered status. The
+connector403 was recovered through the authorized CLI path,not a policy bypass
+or unresolved workflow blocker. No new reusable lesson/template feedback needed;
+existing final-SHA/status-drift guidance applied. Closeout metadata checks PASS
+(lifecycle,active-Red0,coverage,batch20,diff),source3/test16hashes unchanged.
+
+## Delivery-record local save / verification —2026-10-16 (current)
+
+Explicit **LISS-0590 配送記録コミット・実SHAで全blocking再検証承認** received.
+Only the existing7Markdown delivery/status records may be saved;no code/test/
+fixture or accepted O01–O10 changes. Delivered main2ca7d4f4 and previous local
+2a728d24 have identical trees. Preserve all dirty records on dedicated local
+branchcodex/liss-0590-delivery-records,created from delivered main;no upstream
+main push tracking. Original implementation branch/history remains intact.
+
+Prepared before commit:actual new clean SHA,environment,commands,times/counts/
+exits/hash/failure comparison will live externally at
+`/private/tmp/liss-0590-delivery-record-sha.PdUqXX/verification.json` and per-run
+logs. A planned path is not PASS. Rerun every root/spec/applicable actual sanity,
+focused/inherited/adjacent-consumer,audit,compileall and routing check at that
+actual SHA without exclusions. Required failure remains blocking;no repair
+implementation authorized. No repository edits after commit without reruns.
+
+Feature remains delivered/done;parentWP0175 in_progress. Next authority after
+required PASS:**LISS-0590 配送記録のpush／PR作成／CI確認・成功後のマージ承認**。
+That applies to record-only delivery,not another product acceptance or feature
+implementation. No push,PR or merge authorized/performed in this local step.

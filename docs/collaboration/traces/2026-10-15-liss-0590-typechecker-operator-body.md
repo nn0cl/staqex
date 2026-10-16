@@ -5,7 +5,7 @@
 - Date:2026-10-16 Asia/Tokyo (trace opened2026-10-15).
 - Explicit user Scope/Phase0 design-start approval:TypeChecker operator body
   extraction (leading typo interpreted from the unique preceding approval target).
-- Human final-result accepted2026-10-16 at c1b91533;acceptance-record save/revalidation explicitly approved. Actual new SHA/results external;next delivery approval after required PASS,no remote permission.
+- Delivered2026-10-16:PR617 HEAD2a728d24 merged main2ca7d4f4,PR/main CI all3SUCCESS. Local delivery-record save/reverification approved;actual new SHA/results external,no new implementation or remote permission.
 - Canonical Issue:LISS0590;parentWP0175 I01–I08 accepted;AIP0590-001 accepted2026-10-16,L.
 - Branch:codex/liss-0590-typechecker-operator-phase0.
 - Original source base:b5c96f7e4c2a846f41ac8ad5d882f0cb987cd420 (PR616 merged/mainCIpassed);current tested HEADc1b915331f7a0cdb0466c3ec88940dc57acf9c3e.
@@ -974,3 +974,127 @@ omitted:other bug repair,Rust/providers/secrets/history-wide audit/remote action
   Issue/spec/packet,branch/diff and actual external SHA record,not chat memory.
 - Stop at delivery gate per adjudicator-review/agent-handoff,not on inferred
   remote permission from local Green or prior final-result acceptance.
+
+## Authorized delivery / completion —2026-10-16 (current)
+
+Explicit **LISS-0590 push／PR作成・更新／CI確認・成功後のマージ承認** received.
+Fast Path delivery of exact verified HEAD2a728d24dd86b961618e1b26bc90e9faddda3c38.
+Design/trace/lessons skills applied;no source/test/accepted-clause changes.
+Entry clean/hash/all-blocking proof validated. Fetched mainb5c96f7e,exact3commits
+ahead/no divergence,no existing matching PR. Dedicated branch pushed,not main.
+GitHub connector PR creation403 recovered through authorized CLI;no credentials
+exposed,no policy/admin bypass. Created and attached
+[PR617](https://github.com/nn0cl/staqex/pull/617),main base/expected HEAD pinned.
+PR body records reviewed tests before implementation,typed approvals,accepted
+cohesion/guard boundaries,compatibility gaps and scoped AI context.
+
+[PR CI38858172615](https://github.com/nn0cl/staqex/actions/runs/38858172615)
+all3SUCCESS:root2938PASS825.61s,spec161/161,sanity11checks incl.PR traceability.
+Checkout used test merge450f0d8b7ff602b92dc78e5c8738c32b797eac2d;workflow head
+identifies approved2a728d24,not a claim that checkout used bare head.
+ci-gate.py freshly rechecked head/base/all3success/mergeable-clean immediately
+before normal `--merge --match-head-commit` operation. No branch deletion.
+
+Merged2026-10-16T06:09:33Z,actual main commit
+**2ca7d4f43d226142ea7f3121c69997b515f0be53**. Parents are exactb5c96f7e/2a728d24;
+tree ef916d19de4c6d926513d874a8648d7e44c804f8 equals verified HEAD tree.
+[Main CI38859632421](https://github.com/nn0cl/staqex/actions/runs/38859632421)
+at actual merge SHA also all3SUCCESS:root2938PASS549.23s,spec161/161,
+sanity10checks success;PR-only traceability skipped as inapplicable on push.
+Ubuntu24.04.5/CPython3.12.15,main pytest9.1.1;local macOS/Python3.12.6/
+pytest9.0.3 evidence remains separate. Observed pytest summaries no failures/
+errors/skips/exclusions;spec aggregate skips unreported. No new failure or
+performance conclusion inferred across differing hosts/dependency versions.
+
+External `/private/tmp/liss-0590-delivery.amkGJx/` retains entry.json,pr-ci.json,
+main-ci.json,per-job public logs/parsed counts,delivery.json and exact scripts.
+delivery-proof.py verifies local hashes/approved HEAD,merge parents/tree and
+actual remote check/summary counts. No post-delivery source or test changes.
+Scoped graph/custom-pickle/history-coverage gaps and accepted281-line cohesion
+disposition retained;no whole-source cleanup claim. No new architecture/ADR/
+provider/process-rule decision. L/L,AIP0590-001 unchanged;attempt1delivery only.
+Displayed model/reasoning/token metric/source/estimates/variance N/A(host
+unavailable). Included scoped artifacts/authority/actual CI/Git evidence;
+omitted other bugs/Rust/providers/secrets/full deletion history.
+
+### Delivery handoff
+
+- Current phase:delivered/done LISS0590;parent WP0175 in_progress.
+- Status synchronized in Issue/spec/Phase3 review/WP0175/WP0174/parent trace/
+  this trace,7Markdown records. No next candidate implementation started.
+- Actual tested local HEAD2a728d24 and remote merge2ca7d4f4 have separate proof;
+  local checkout stays on feature HEAD with these closeout docs dirty.
+- This task's approved remote delivery is achieved. No extra record commit,
+  record PR or subsequent merge performed. Next authority,if records are to
+  be saved:**LISS-0590 配送記録コミット・実SHAで全blocking再検証承認**。
+- Approval type:local process execution only;implementation allowed:no.
+  Post-review required:actual later record-SHA all-blocking and separate record
+  delivery authority. Batch:N/A. A future commit invalidates prior applicability.
+- Process-review skill runs after deterministic verification/status sync,
+  before completion reporting;not a duplicate product review. Existing status-
+  drift/final-SHA/private-consumer/typed-approval lessons applied,no new rule.
+- Resume from these artifacts/branch/diff/delivery evidence,not chat memory.
+
+Completion process-review executed in this same context after actual remote
+verification/status synchronization. No phase/approval/port/payload/branch/
+review-isolation or unresolved operational deviation found. The transport403
+was recovered through authorized CLI without scope/permission bypass;no new
+process rule/lesson/feedback request. Canonical no-deviation line recorded in
+Issue. Parent remains in_progress,not falsely closed by child completion.
+Post-closeout checks PASS:lifecycle,active-Red0,coverage ledger,batch20,diff;
+exact7Markdown records only,source3/accepted test16hashes unchanged.
+Evidence:external closeout-check.json. Current closeout records uncommitted,
+not a claim of a new tested SHA or an additional delivered commit.
+
+## Delivery-record commit / actual-SHA verification —2026-10-16 (current)
+
+Explicit **LISS-0590 配送記録コミット・実SHAで全blocking再検証承認** received.
+Fast Path bounded local save/revalidation only;design-intake/process-lessons/
+ai-work-trace skills applied. Preserve delivered feature/human acceptance,
+source/test hashes,typed authority,status sync and final-SHA evidence.
+No new process rule,ADR,dependency,implementation or duplicated product review.
+
+Recovered local feature HEAD2a728d24,origin/main2ca7d4f4,exact7dirtyMarkdown
+delivery records and empty index. Both trees equal ef916d19de4c6d926513d874a8648d7e44c804f8.
+Created dedicated **codex/liss-0590-delivery-records** from delivered main,
+preserving every dirty record;unset upstream-main tracking to prevent mistaken
+delivery. Current parent2ca7d4f43d226142ea7f3121c69997b515f0be53,original source
+baseb5c96f7e. No network operation/source/test changes in this turn.
+Seven-path cohort:Issue,spec,Phase3 review,WP0175,WP0174,parent trace and this
+trace. Precommit metadata/hash checks compare3production/16accepted artifacts
+against actual accepted evidence;all prior assertions/fixtures remain untouched.
+
+Prepared before commit:actual final record SHA,clean before/after,environment,
+commands,times,counts,exit codes and comparable failures will be retained at
+`/private/tmp/liss-0590-delivery-record-sha.PdUqXX/verification.json` and per-run
+JSON/out/err. A planned filename is not PASS. All declared root/spec/actual
+applicable CI sanity plus focused117/inherited162/adjacent-consumer90,
+compileall,Git-derived AST/raw facade/hash/factory-site audit and committed
+routing must pass without exclusions. No postcommit repository edits or
+evidence-only commits;results external so actual tested HEAD stays stable.
+Any required failure blocks;no corrective source/test changes authorized.
+
+Route:host deterministic execution;review.same_context/weaker,no enabled
+large-change override/modelIDs. Semantic module owners/full dynamic graph/
+custom serialization/history coverage gaps remain unassessed,not zero or
+downgraded. Approved281-line cohesion disposition/4416-line facade retained.
+L/L,AIP0590-001 unchanged;attempt1 delivery-record save/reverification only.
+Model/reasoning/token metric/source/estimates/variance N/A(host unavailable),
+not fabricated. Included scoped records/contracts/diff/hash/evidence/policies;
+omitted other bugs/Rust/providers/secrets/deletion-wide audit/remote operations.
+
+### Current handoff / next authority
+
+- Feature delivered/done;parent WP0175 in_progress;no next implementation.
+- Approved scope:local7-record commit and actual-SHA all-blocking only.
+- Implementation allowed:no. Post-review required:later record PR/main CI,
+  only after separate remote authority. Existing completion process-review
+  retained,not another product review or reopened human acceptance.
+- Next approval after every required PASS:
+  **LISS-0590 配送記録のpush／PR作成／CI確認・成功後のマージ承認**。
+- No push/PR/merge authorized or performed here. New record commit does not
+  mean that old PR617/main CI validated its metadata;new SHA requires its own
+  checks. Future rebase/merge invalidates applicability again.
+- Recover from this trace/Issue/spec/packet,new branch/diff and actual external
+  SHA evidence,not chat memory. Stop at remote gate per adjudicator-review/
+  agent-handoff instead of inferring permission from local Green.
