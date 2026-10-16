@@ -1,6 +1,7 @@
 # TypeChecker operator判定本体の分離 — accepted specification
 
-Status:Scope / Architecture Path Phase0 design-start approved2026-10-15.
+Status:delivered — PR617 merged main2ca7d4f4 on2026-10-16;PR/main CI all3SUCCESS.
+Phase history:Scope / Architecture Path Phase0 design-start approved2026-10-15.
 Dedicated O01–O10,limited four-carrier guard policy and Phase0 explicitly
 accepted by Adjudicator2026-10-16. Factory/alias/type boundary and281-line
 cohesion disposition accepted for this bounded move. Phase2 implementation
@@ -16,7 +17,8 @@ Phase3 Refactor/review subsequently explicitly approved2026-10-16. Final
 review-record commit/actual-SHA verification now explicitly approved2026-10-16.
 Human final-result acceptance subsequently received2026-10-16 for c1b91533.
 Acceptance-record commit/revalidation explicitly approved2026-10-16 for7Markdown
-records only. Other bug repair and delivery remain unapproved.
+records only. Delivery separately explicitly approved and executed2026-10-16.
+Other bug repair and any new implementation remain unapproved.
 
 ## Goal / non-goals
 
@@ -350,8 +352,20 @@ Acceptance-record commit/actual-SHA revalidation explicitly approved2026-10-16.
 Current actual acceptance-record SHA/results will live at
 `/private/tmp/liss-0590-accepted-sha.iLTcre/verification.json`;prepared precommit,
 not predeclared PASS. No accepted clause/source/test change.
-Next gate after required PASS:**LISS-0590 push／PR作成・更新／CI確認・成功後のマージ承認**。
-Remote delivery remains unapproved. No new implementation permission.
+That delivery gate was explicitly approved and executed2026-10-16:
+[PR617](https://github.com/nn0cl/staqex/pull/617),HEAD2a728d24,
+merged main2ca7d4f43d226142ea7f3121c69997b515f0be53 after3successful PR jobs.
+Actual merge-result main CI38859632421 also all3SUCCESS,root2938/spec161;
+merge tree equals approved HEAD. See Issue/Phase3 packet and external
+`/private/tmp/liss-0590-delivery.amkGJx/delivery.json` for scoped evidence.
+Current feature delivered;only local closeout records are uncommitted.
+Their local save/reverification explicitly approved2026-10-16 for7Markdown
+records on codex/liss-0590-delivery-records,from delivered main2ca7d4f4.
+Actual clean record SHA/results will live externally at
+`/private/tmp/liss-0590-delivery-record-sha.PdUqXX/verification.json`;prepared
+before commit,not predeclared PASS. No accepted clause/source/test changes.
+After required PASS,next record-only push/PR/CI/success-then-merge approval.
+No new implementation or further remote operation authorized here.
 Clause-to-node mapping,exact authored-byte fingerprint and provisional Red
 evidence live in the [representative trace](../collaboration/traces/2026-10-15-liss-0590-typechecker-operator-body.md).
 The O01–O10 contract is unchanged;Phase1 acceptance did not itself authorize

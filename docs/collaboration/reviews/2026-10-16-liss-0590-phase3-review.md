@@ -1,8 +1,10 @@
 # LISS-0590 Phase3 Refactor / review
 
 Status: **agent_pass — no blocking findings;human final-result accepted2026-10-16**.
-Final verification passed at record SHA c1b91533;acceptance-record save/revalidation
-now explicitly approved2026-10-16,actual results external;delivery pending.
+Final verification passed at record SHA c1b91533;acceptance-record SHA2a728d24
+passed all blocking. Delivered via PR617/main2ca7d4f4,PR/main CI all3SUCCESS;
+local delivery-record save/reverification explicitly approved2026-10-16,
+actual clean-SHA results external;no further remote permission.
 Phase3 execution explicitly approved2026-10-16.
 Final verification/review-record commit execution subsequently explicitly
 approved2026-10-16. This records permission,not acceptance of future results.
@@ -173,3 +175,36 @@ After every required PASS,next requested approval is **LISS-0590 push／PR作成
 (delivery approval). Implementation allowed:no. Post-review required:yes,actual
 PR CI/merge-result verification and delivery closeout remain separate. Batch:N/A.
 No remote operation authorized. Any required failure remains blocking.
+
+## Delivered —2026-10-16 (current)
+
+Explicit human delivery approval received. [PR617](https://github.com/nn0cl/staqex/pull/617),
+HEAD2a728d24,merged2026-10-16T06:09:33Z at
+2ca7d4f43d226142ea7f3121c69997b515f0be53 after all3PR jobs SUCCESS.
+PR CI38858172615:root2938PASS825.61s/spec161/161/sanity incl.PR traceability.
+Main CI38859632421 at actual merge SHA:all3SUCCESS,root2938PASS549.23s/
+spec161/161/sanity10checks,PR-only traceability N/A on push. Ubuntu24.04.5,
+Python3.12.15,main pytest9.1.1;local evidence above is a distinct environment.
+Merge tree equals reviewed HEAD;no source/test edits or assertion/exclusion changes.
+External `/private/tmp/liss-0590-delivery.amkGJx/delivery.json` and actual logs
+preserve head/PR-test-merge/main claims separately. No inferred full dynamic
+graph/custom-pickle/past-deletion guarantee. Phase3 same_context limits retained.
+
+Issue delivered/done;parent inventory still in_progress. Current7Markdown
+closeout edits are uncommitted,not a new tested SHA or silently delivered record
+PR. Next authority needed only for their local commit/reverification;no new
+feature scope. Completion process-review is same-context process check,not a
+second product review. No branch deletion or admin bypass used.
+
+## Delivery-record save / revalidation approval —2026-10-16 (current)
+
+Explicit local commit/actual-SHA all-blocking approval received for7Markdown
+delivery/status records. Dedicated branchcodex/liss-0590-delivery-records starts
+at delivered main2ca7d4f4,whose tree equals approved2a728d24. No source/test or
+accepted-contract changes. Prior human acceptance/delivery/process-review retained.
+Actual record SHA/results will live externally at
+`/private/tmp/liss-0590-delivery-record-sha.PdUqXX/verification.json`,prepared
+precommit without predeclaring PASS. Run every required check;failures block.
+Next approval after PASS:**LISS-0590 配送記録のpush／PR作成／CI確認・成功後のマージ承認**
+(record-only delivery). Implementation allowed:no. Post-review required:yes,
+later record PR/main CI. Batch:N/A. No new product review or remote action here.

@@ -256,3 +256,21 @@ bug-contract changes. Actual clean record SHA/results live externally at
 commit without predeclaring PASS. Next gate after all required PASS is delivery
 approval(push/PR/CI/success-then-merge),not another human result-acceptance loop.
 No remote authority inferred;parent in_progress,child review pending delivery.
+
+Child delivery explicitly approved and executed2026-10-16. PR617 HEAD2a728d24,
+merged main2ca7d4f43d226142ea7f3121c69997b515f0be53 after successful3-job PR CI.
+Actual merge main CI38859632421 also all3SUCCESS,root2938/spec161;tree equals
+approved HEAD. Child Issue done;parent remains in_progress for separate residual
+candidates. No bug contract accepted or next implementation started.
+Local7Markdown delivery-closeout records uncommitted;future save/reverification
+needs separate approval. Evidence in child Issue/Phase3 packet/representative
+trace and `/private/tmp/liss-0590-delivery.amkGJx/delivery.json`.
+
+Child delivery-record local commit/reverification explicitly approved2026-10-16.
+Only existing7Markdown records;no source/tests/inventory/bug contract changes.
+Dedicated codex/liss-0590-delivery-records from delivered main2ca7d4f4;dirty
+records preserved after tree equality check against prior approved HEAD.
+Actual record SHA/results external at
+`/private/tmp/liss-0590-delivery-record-sha.PdUqXX/verification.json`,not predeclared PASS.
+After required PASS,next record-only delivery permission. Child remains done,
+parent in_progress;no next implementation or further remote operation authorized.
