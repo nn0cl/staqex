@@ -1,6 +1,7 @@
 """P06/P07 four independent ownership gaps; P08 unaffected preservation."""
 
 import ast
+from tests.liss_0590_guard_support import readonly_bytes
 import hashlib
 import importlib
 import json
@@ -74,4 +75,4 @@ def test_p05_p08_consumers_behavior_tests_and_unrelated_owners_are_readonly():
     assert evidence["base"] == "b5ad7402c184a3a79440271e02dd423c53d8bc36"
     assert len(evidence["readonly_sha256"]) == 22
     for path, digest in evidence["readonly_sha256"].items():
-        assert hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == digest, path
+        assert hashlib.sha256(readonly_bytes(ROOT, path)).hexdigest() == digest, path

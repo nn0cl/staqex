@@ -269,6 +269,13 @@ Record meta-level patterns only. No session transcripts.
   values separate from unit metadata. Scoped mechanics fixtures and unchanged
   source regressions provide different evidence; neither implies every source
   plan reaches a private hook.
+  Reapplied in LISS-0590 Red review: a globally patched constructor can raise
+  inside an earlier conversion callback instead of the named failure boundary.
+  Require call-site/count or equivalent reachability evidence before treating
+  the passing injected-exception case as covered. Explicitly authorized bounded
+  correction now proves the named sites/counts and rejects earlier-callback and
+  no-failure controls;R1 closed in agent re-review. Human corrected-test acceptance
+  remains separate;this lesson does not authorize implementation.
 
 ## Lesson
 

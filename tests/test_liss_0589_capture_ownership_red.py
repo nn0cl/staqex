@@ -1,6 +1,7 @@
 """S07 expected ownership Red; S08 independent immutable Git preservation."""
 
 import ast
+from tests.liss_0590_guard_support import readonly_bytes
 import hashlib
 import importlib
 import json
@@ -84,7 +85,7 @@ def test_s08_all_39_readonly_sources_tests_and_fixtures():
     recorded = evidence()
     assert len(recorded['readonly_sha256']) == 39
     for path, expected in recorded['readonly_sha256'].items():
-        assert hashlib.sha256((capture.ROOT / path).read_bytes()).hexdigest() == expected, path
+        assert hashlib.sha256(readonly_bytes(capture.ROOT, path)).hexdigest() == expected, path
 
 
 @pytest.mark.parametrize('mutation', ['other-method', 'new-import', 'extra-state'])
