@@ -222,3 +222,20 @@ Child local commit/actual-SHA all-blocking rerun explicitly approved2026-10-16
 for the existing30-file cohort. Execution evidence is external per child Issue;
 current records do not predeclare PASS. Next Phase3 gate is conditional on all
 applicable blocking checks passing at the clean commit;no Phase3/remote approval.
+
+That child clean commit is6b6741f04ae135da1d88ea4dc6a008508a38609e,with actual
+root2938/spec161/sanity10PASS. Phase3 subsequently explicitly approved2026-10-16
+and same_context agent review passed with no source/test changes. Fresh blocking
+and focused/consumer checks pass at that same clean SHA;current child
+[Phase3 packet](../reviews/2026-10-16-liss-0590-phase3-review.md) and representative
+trace own exact evidence/remaining gaps. Parent inventory and bug scopes unchanged.
+Current review/navigation records are uncommitted,not final committed evidence.
+Next separate child permission:final verification/review-record commit/actual-SHA
+all-blocking rerun. Final human acceptance and remote delivery remain unapproved.
+
+Child final verification/review-record commit explicitly approved2026-10-16.
+Existing9Markdown records only;no production/test/inventory/bug contract changes.
+Actual record-commit SHA and all-blocking results are external at
+`/private/tmp/liss-0590-final.rZOcJU/verification.json`;prepared precommit,
+not predeclared PASS. After every required PASS,next human final-result acceptance;
+no push/PR/merge authority inferred. Parent remains in_progress,child review.

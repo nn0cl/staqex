@@ -276,6 +276,10 @@ Record meta-level patterns only. No session transcripts.
   correction now proves the named sites/counts and rejects earlier-callback and
   no-failure controls;R1 closed in agent re-review. Human corrected-test acceptance
   remains separate;this lesson does not authorize implementation.
+  Reapplied in LISS-0590 Phase3:independent profiling of all18accepted factory
+  exception cases observes the installed successor's real two call sites through
+  the new factory. Preserve accepted tests and exception/state timing;neither a
+  passing self-review nor clean code-SHA runs authorize final record commits.
 
 ## Lesson
 

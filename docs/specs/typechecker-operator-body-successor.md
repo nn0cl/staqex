@@ -4,13 +4,16 @@ Status:Scope / Architecture Path Phase0 design-start approved2026-10-15.
 Dedicated O01–O10,limited four-carrier guard policy and Phase0 explicitly
 accepted by Adjudicator2026-10-16. Factory/alias/type boundary and281-line
 cohesion disposition accepted for this bounded move. Phase2 implementation
-subsequently explicitly approved and performed2026-10-16;final-SHA gates pending.
+subsequently explicitly approved and performed2026-10-16;Phase3 agent review
+passed after fresh clean-SHA blocking verification. Final review-record SHA pending.
 Owner:[LISS-0590](../issues/LISS-0590-typechecker-operator-body-successor.md),
 under accepted [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
 Immutable source base:`b5c96f7e4c2a846f41ac8ad5d882f0cb987cd420`.
 Phase1 test/scaffolding/four-carrier execution explicitly approved2026-10-16;
-Phase2 implementation separately approved2026-10-16. Other bug repair,commit,
-Phase3 and delivery remain unapproved.
+Phase2 implementation and local commit/reverification separately approved2026-10-16.
+Phase3 Refactor/review subsequently explicitly approved2026-10-16. Final
+review-record commit/actual-SHA verification now explicitly approved2026-10-16.
+Other bug repair,human final-result acceptance and delivery remain unapproved.
 
 ## Goal / non-goals
 
@@ -326,7 +329,17 @@ Current clean-SHA execution evidence is external:
 `/private/tmp/liss-0590-sha.v0SnLA/verification.json`;this pre-commit record
 does not predeclare its result. After all applicable checks PASS,next approval:
 **LISS-0590 Phase 3 Refactor／review承認**。
-Phase3/final review and remote delivery remain separately unapproved.
+The Phase3 gate above was subsequently explicitly approved2026-10-16 and
+same_context agent review passed without code/test changes. Fresh clean SHA
+6b6741f04ae135da1d88ea4dc6a008508a38609e:focused117,inherited162,adjacent90,
+root2938,spec161,sanity10PASS. See [Phase3 review](../collaboration/reviews/2026-10-16-liss-0590-phase3-review.md)
+and `/private/tmp/liss-0590-review.DJ3Qb0/verification.json`.
+That final-verification/review-record-commit execution gate is now explicitly
+approved2026-10-16 for9Markdown records only. Current actual-SHA evidence will
+live at `/private/tmp/liss-0590-final.rZOcJU/verification.json`;this precommit
+record does not declare its result. No source/test/accepted-contract change.
+Next gate after all required clean-SHA PASS:**LISS-0590 最終レビュー結果の受入れ**。
+Human final-result acceptance and remote delivery remain separately unapproved.
 Clause-to-node mapping,exact authored-byte fingerprint and provisional Red
 evidence live in the [representative trace](../collaboration/traces/2026-10-15-liss-0590-typechecker-operator-body.md).
 The O01–O10 contract is unchanged;Phase1 acceptance did not itself authorize

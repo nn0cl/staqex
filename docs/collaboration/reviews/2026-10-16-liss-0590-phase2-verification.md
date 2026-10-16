@@ -1,5 +1,13 @@
 # LISS-0590 Phase2 verification (provisional dirty tree)
 
+Historical Phase2 evidence below. Subsequent local commit6b6741f0 passed all
+blocking checks;Phase3 was explicitly approved and agent review passed.
+Current entry point:[Phase3 review](2026-10-16-liss-0590-phase3-review.md).
+Review records remain uncommitted;final review-record SHA verification pending.
+Final review-record commit/reverification subsequently authorized2026-10-16;
+actual new SHA/results are external at `/private/tmp/liss-0590-final.rZOcJU/verification.json`.
+This permission record does not predeclare a result;Phase3 packet is current.
+
 Current local commit/actual-SHA revalidation authorized2026-10-16. The dirty-tree
 results below are historical baseline evidence. Actual commit,clean state and
 fresh per-suite results live in `/private/tmp/liss-0590-sha.v0SnLA/verification.json`

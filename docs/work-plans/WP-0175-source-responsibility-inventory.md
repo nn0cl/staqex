@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — LISS-0590 Phase2 local commit/reverification authorized;actual-SHA results external |
-| Phase | phase-2-green (LISS-0590 child,provisional);inventory remains accepted Phase0 |
+| Status | in_progress — LISS-0590 final review-record commit/reverification authorized;human final-result acceptance pending |
+| Phase | phase-3-refactor (LISS-0590 child);inventory remains accepted Phase0 |
 | Initial / current size | L / L; no reclassification |
 | Scope approval | Adjudicator approved whole-source residual-responsibility inventory / Phase 0 on2026-10-15 |
 | Phase 0 acceptance | I01–I08 explicitly accepted by Adjudicator on2026-10-15 |
@@ -11,7 +11,7 @@
 | Base | b5c96f7e4c2a846f41ac8ad5d882f0cb987cd420; PR616 merged/main CI all3 SUCCESS |
 | Related branch | codex/wp-0175-responsibility-inventory-phase0 |
 | Related | WP-0160 / WP-0174; accepted core decomposition specification |
-| Current Next Issue | [LISS-0590](../issues/LISS-0590-typechecker-operator-body-successor.md) local commit/reverification approved2026-10-16;after clean-SHA all-blocking PASS next Phase3 approval;no Phase3/remote work authorized |
+| Current Next Issue | [LISS-0590](../issues/LISS-0590-typechecker-operator-body-successor.md) final verification/review-record commit approved2026-10-16;next final-result acceptance after actual-SHA all-blocking PASS;no remote permission |
 
 ## Goal / scope
 
@@ -52,7 +52,7 @@ planning record、consumer/test inventoryを作る。既存LISS0546/0547のdone�
 
 | Issue | Status | Initial / current size | Planning record | Depends on | Branch |
 |---|---|---|---|---|---|
-| [LISS-0590](../issues/LISS-0590-typechecker-operator-body-successor.md) | review / phase-2-green;local commit/reverification approved2026-10-16,actual-SHA evidence external | L / L | AIP-0590-001 accepted2026-10-16 | WP0175 I01–I08 accepted;delivered mainb5c96f7e | codex/liss-0590-typechecker-operator-phase0 |
+| [LISS-0590](../issues/LISS-0590-typechecker-operator-body-successor.md) | review / phase-3-refactor;final record commit/reverification authorized2026-10-16,actual-SHA results external | L / L | AIP-0590-001 accepted2026-10-16 | WP0175 I01–I08 accepted;delivered mainb5c96f7e | codex/liss-0590-typechecker-operator-phase0 |
 
 優先候補と根拠の唯一の詳細表は棚卸し文書。TypeCheckerの281行operator walkは
 bounded設計の第一提案。582行check_unit全体移動、Ty再設計、unitarity pass統合は
@@ -146,8 +146,16 @@ Phase2 implementation separately approved/performed2026-10-16;accepted tests
 unchanged,focused passes;copy-smoke/source-clean/final-SHA gap remains.
 Local commit/actual-SHA rerun separately approved2026-10-16. Results outside
 the tree at the child Issue's verification.json path;no predeclared PASS.
-Next gate after all required PASS: **LISS-0590 Phase 3 Refactor／review承認**。
-Phase3/remote delivery remain unapproved. Both plan-owned bug records
+That clean-SHA gate passed at6b6741f04ae135da1d88ea4dc6a008508a38609e;
+Phase3 explicitly approved and agent review passed2026-10-16 without code/test edits.
+Fresh root2938/spec161/sanity10 and focused117/inherited162/adjacent90PASS.
+Current [Phase3 packet](../collaboration/reviews/2026-10-16-liss-0590-phase3-review.md)
+owns evidence/limitations;current records uncommitted,final record SHA pending.
+Final verification/review-record commit explicitly approved2026-10-16 for the
+existing9Markdown cohort. Actual new SHA/results live externally at
+`/private/tmp/liss-0590-final.rZOcJU/verification.json`,not predeclared PASS.
+Next gate after required PASS:**LISS-0590 最終レビュー結果の受入れ**。
+Final-result acceptance and remote delivery remain unapproved. Both plan-owned bug records
 remain proposed;their repair contracts/implementations were not accepted here.
 
 Process review:not yet;plan is in_progress with scoped follow-up,not done. No new process rule or lesson
