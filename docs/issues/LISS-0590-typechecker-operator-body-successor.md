@@ -4,7 +4,7 @@
 
 - Local issue ID:LISS-0590
 - GitHub issue:none
-- Status:review — final verification / review-record commit authorized;actual-SHA results external,human acceptance pending
+- Status:review — human final-result accepted;acceptance-record commit/reverification authorized,actual-SHA results external,delivery pending
 - Phase:phase-3-refactor
 - Type:behavior-preserving body extraction
 - Priority:WP0175 first candidate,operator walk only
@@ -93,7 +93,7 @@ Batch:N/A. No technology selection or new ADR accepted by agent judgment.
 The Phase1 execution gate above was explicitly approved2026-10-16. Current
 state supersedes the historical Phase0-only statements:Phase1 tests/scaffolding
 and exactly four approved carriers changed;production remains byte-unchanged.
-Current next gate after actual-SHA all-blocking PASS: **LISS-0590 最終レビュー結果の受入れ**。
+Current next gate after acceptance-record actual-SHA all-blocking PASS: **LISS-0590 push／PR作成・更新／CI確認・成功後のマージ承認**。
 Exact-test acceptance and Phase2 implementation approval remain separate.
 Process review:not yet,Issue is review/not done. Existing body-ownership,
 private-consumer,immutable-guard,live-state,typed-approval and final-SHA lessons
@@ -240,3 +240,41 @@ Issue review/not done. If every required check passes,next human decision is
 **LISS-0590 最終レビュー結果の受入れ**;otherwise report the blocking result.
 Final execution approval is not final-result acceptance or remote delivery
 permission. No push,PR,merge or completion process-review in this step.
+
+## Human final-result acceptance —2026-10-16 (current)
+
+Adjudicator explicitly accepted **LISS-0590 最終レビュー結果の受入れ**。
+Accepted artifact:record commitc1b915331f7a0cdb0466c3ec88940dc57acf9c3e,
+Phase3 agent_pass and actual-SHA final verification at
+`/private/tmp/liss-0590-final.rZOcJU/verification.json`.
+Root2938/spec161/sanity10PASS;focused117/inherited162/adjacent-consumer90PASS,
+compileall/Git-derived audit/routing PASS. No remaining local blocking failures.
+Same_context review and dynamic-graph/custom-pickle/historical-deletion gaps
+remain disclosed;acceptance does not assert exhaustive coverage or fix other bugs.
+
+This turn records the human decision only. No code/test/fixture/acceptance-clause
+change or new commit. Accepted16-artifact fingerprint12426ae6... and source hashes
+unchanged;metadata checks retained externally under
+`/private/tmp/liss-0590-acceptance.TG2yLI/`.
+Issue review/not done while acceptance-record save/revalidation and delivery
+remain pending. Next separate permission is the acceptance-record commit gate
+above;its actual SHA must rerun all blocking. No push/PR/merge authority inferred.
+Parent WP0175 inventory and two proposed bug scopes remain unchanged.
+
+## Acceptance-record save / revalidation approved —2026-10-16 (current)
+
+Explicit **LISS-0590 受入れ記録コミット・実SHAで全blocking再検証承認** received
+for the existing7Markdown acceptance/status records only. Source/tests/fixtures
+and accepted O01–O10 remain unchanged. Human acceptance at c1b91533 is retained;
+this is not a new implementation or repeated human acceptance request.
+
+Prepared before commit:actual new SHA,cleanliness,environment,commands,timing,
+counts,exit codes,hashes and comparable failure evidence will be retained at
+`/private/tmp/liss-0590-accepted-sha.iLTcre/verification.json` and per-run logs.
+A planned reference is not PASS. All root/spec/applicable actual CI sanity,
+focused/inherited/consumer-adjacent,audit,compileall and routing checks must pass
+without exclusions at that clean SHA. No repository edits after final commit.
+If any required check fails,report it;no code/test repair authorized here.
+Issue remains review/not done pending delivery. Next approval after all required
+PASS is the scoped push/PR/CI/success-then-merge gate above. No remote authority
+or new product review inferred from this local-save/revalidation approval.

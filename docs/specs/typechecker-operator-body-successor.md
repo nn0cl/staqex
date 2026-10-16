@@ -5,7 +5,8 @@ Dedicated O01–O10,limited four-carrier guard policy and Phase0 explicitly
 accepted by Adjudicator2026-10-16. Factory/alias/type boundary and281-line
 cohesion disposition accepted for this bounded move. Phase2 implementation
 subsequently explicitly approved and performed2026-10-16;Phase3 agent review
-passed after fresh clean-SHA blocking verification. Final review-record SHA pending.
+passed after fresh clean-SHA blocking verification. Final record SHA c1b91533
+passed all local blocking;human final-result acceptance received2026-10-16.
 Owner:[LISS-0590](../issues/LISS-0590-typechecker-operator-body-successor.md),
 under accepted [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
 Immutable source base:`b5c96f7e4c2a846f41ac8ad5d882f0cb987cd420`.
@@ -13,7 +14,9 @@ Phase1 test/scaffolding/four-carrier execution explicitly approved2026-10-16;
 Phase2 implementation and local commit/reverification separately approved2026-10-16.
 Phase3 Refactor/review subsequently explicitly approved2026-10-16. Final
 review-record commit/actual-SHA verification now explicitly approved2026-10-16.
-Other bug repair,human final-result acceptance and delivery remain unapproved.
+Human final-result acceptance subsequently received2026-10-16 for c1b91533.
+Acceptance-record commit/revalidation explicitly approved2026-10-16 for7Markdown
+records only. Other bug repair and delivery remain unapproved.
 
 ## Goal / non-goals
 
@@ -338,8 +341,17 @@ That final-verification/review-record-commit execution gate is now explicitly
 approved2026-10-16 for9Markdown records only. Current actual-SHA evidence will
 live at `/private/tmp/liss-0590-final.rZOcJU/verification.json`;this precommit
 record does not declare its result. No source/test/accepted-contract change.
-Next gate after all required clean-SHA PASS:**LISS-0590 最終レビュー結果の受入れ**。
-Human final-result acceptance and remote delivery remain separately unapproved.
+That actual clean record SHA is c1b915331f7a0cdb0466c3ec88940dc57acf9c3e:
+root2938/spec161/sanity10 and focused117/inherited162/adjacent90PASS;no exclusions.
+Human **LISS-0590 最終レビュー結果の受入れ** explicitly received2026-10-16.
+O01–O10 and accepted test bytes unchanged;this decision is not an exhaustive
+dynamic-graph/custom-serialization/past-deletion coverage claim.
+Acceptance-record commit/actual-SHA revalidation explicitly approved2026-10-16.
+Current actual acceptance-record SHA/results will live at
+`/private/tmp/liss-0590-accepted-sha.iLTcre/verification.json`;prepared precommit,
+not predeclared PASS. No accepted clause/source/test change.
+Next gate after required PASS:**LISS-0590 push／PR作成・更新／CI確認・成功後のマージ承認**。
+Remote delivery remains unapproved. No new implementation permission.
 Clause-to-node mapping,exact authored-byte fingerprint and provisional Red
 evidence live in the [representative trace](../collaboration/traces/2026-10-15-liss-0590-typechecker-operator-body.md).
 The O01–O10 contract is unchanged;Phase1 acceptance did not itself authorize

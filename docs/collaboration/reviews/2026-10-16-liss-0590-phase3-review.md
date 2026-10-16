@@ -1,7 +1,9 @@
 # LISS-0590 Phase3 Refactor / review
 
-Status: **agent_pass — no blocking findings**. Human final review/verification
-remains pending. Phase3 execution explicitly approved2026-10-16.
+Status: **agent_pass — no blocking findings;human final-result accepted2026-10-16**.
+Final verification passed at record SHA c1b91533;acceptance-record save/revalidation
+now explicitly approved2026-10-16,actual results external;delivery pending.
+Phase3 execution explicitly approved2026-10-16.
 Final verification/review-record commit execution subsequently explicitly
 approved2026-10-16. This records permission,not acceptance of future results.
 
@@ -143,3 +145,31 @@ Current phase:final verification execution,Issue review/not done. Next requested
 approval after all-blocking PASS:**LISS-0590 最終レビュー結果の受入れ**
 (phase/final-result acceptance). Implementation allowed:no. Post-review required:
 yes,human acceptance and separate delivery authority. Batch:N/A. No push/PR/merge.
+
+## Human final-result acceptance —2026-10-16 (current)
+
+Adjudicator explicitly accepted **LISS-0590 最終レビュー結果の受入れ** after
+actual clean SHA c1b915331f7a0cdb0466c3ec88940dc57acf9c3e passed root2938,
+spec161,sanity10,focused117,inherited162,adjacent-consumer90,compileall,audit
+and routing. Per-command evidence at `/private/tmp/liss-0590-final.rZOcJU/verification.json`.
+This is human acceptance of that result,not a new agent review or expanded
+coverage claim. Historical Phase3 evidence above remains tied to6b6741f0.
+
+Current phase:final-result accepted,acceptance metadata uncommitted;Issue
+review/not done. Only7Markdown status/acceptance records changed,no source/tests.
+Next requested approval:**LISS-0590 受入れ記録コミット・実SHAで全blocking再検証承認**。
+Approval type:phase/process execution. Implementation allowed:no. Post-review
+required:yes,actual acceptance-record SHA verification and separate delivery
+authority. Batch:N/A. No commit,push,PR or merge included in this acceptance.
+
+## Acceptance-record save / revalidation execution —2026-10-16 (current)
+
+Explicit approval received for local commit of7Markdown records and actual-SHA
+all-blocking rerun. Human final-result acceptance atc1b91533 and source/test bytes
+remain unchanged. Actual new clean SHA/outcomes will be retained externally in
+`/private/tmp/liss-0590-accepted-sha.iLTcre/verification.json`;prepared precommit,
+not predeclared PASS. No new product review,accepted-contract or isolation change.
+After every required PASS,next requested approval is **LISS-0590 push／PR作成・更新／CI確認・成功後のマージ承認**
+(delivery approval). Implementation allowed:no. Post-review required:yes,actual
+PR CI/merge-result verification and delivery closeout remain separate. Batch:N/A.
+No remote operation authorized. Any required failure remains blocking.

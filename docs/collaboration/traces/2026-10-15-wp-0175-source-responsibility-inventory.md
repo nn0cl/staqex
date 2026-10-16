@@ -239,3 +239,20 @@ Actual record-commit SHA and all-blocking results are external at
 `/private/tmp/liss-0590-final.rZOcJU/verification.json`;prepared precommit,
 not predeclared PASS. After every required PASS,next human final-result acceptance;
 no push/PR/merge authority inferred. Parent remains in_progress,child review.
+
+Child final-result acceptance explicitly received2026-10-16 for actual record
+SHA c1b915331f7a0cdb0466c3ec88940dc57acf9c3e and external final verification:
+root2938/spec161/sanity10 and focused117/inherited162/adjacent90PASS.
+Acceptance metadata only,no source/test/inventory/bug contract changes.
+Current next permission:acceptance-record commit/actual-SHA all-blocking rerun;
+no new commit or remote action inferred. Parent in_progress,child review while
+record save/revalidation/delivery remain pending. Human acceptance is recorded
+in child Issue/spec/Phase3 packet/representative trace,not inferred from CI.
+
+Child acceptance-record save/actual-SHA all-blocking revalidation explicitly
+approved2026-10-16. Existing7Markdown records only;no source/test/inventory or
+bug-contract changes. Actual clean record SHA/results live externally at
+`/private/tmp/liss-0590-accepted-sha.iLTcre/verification.json`,prepared before
+commit without predeclaring PASS. Next gate after all required PASS is delivery
+approval(push/PR/CI/success-then-merge),not another human result-acceptance loop.
+No remote authority inferred;parent in_progress,child review pending delivery.

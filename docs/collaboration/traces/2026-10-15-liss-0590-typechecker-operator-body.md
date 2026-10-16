@@ -5,10 +5,10 @@
 - Date:2026-10-16 Asia/Tokyo (trace opened2026-10-15).
 - Explicit user Scope/Phase0 design-start approval:TypeChecker operator body
   extraction (leading typo interpreted from the unique preceding approval target).
-- Phase3 agent_pass;final verification/review-record commit explicitly approved2026-10-16. Current actual-SHA results external;next human final-result acceptance,no remote permission.
+- Human final-result accepted2026-10-16 at c1b91533;acceptance-record save/revalidation explicitly approved. Actual new SHA/results external;next delivery approval after required PASS,no remote permission.
 - Canonical Issue:LISS0590;parentWP0175 I01–I08 accepted;AIP0590-001 accepted2026-10-16,L.
 - Branch:codex/liss-0590-typechecker-operator-phase0.
-- Original source base:b5c96f7e4c2a846f41ac8ad5d882f0cb987cd420 (PR616 merged/mainCIpassed);current tested HEAD6b6741f04ae135da1d88ea4dc6a008508a38609e.
+- Original source base:b5c96f7e4c2a846f41ac8ad5d882f0cb987cd420 (PR616 merged/mainCIpassed);current tested HEADc1b915331f7a0cdb0466c3ec88940dc57acf9c3e.
 - Five parent inventory docs already dirty at entry;preserved without stash,
   reset or commit. New dedicated branch carries those accepted artifacts.
 - Current:Phase2 implementation/accepted tests committed at6b6741f0;Phase3 source/test bytes unchanged,review/navigation records dirty. Earlier sections are dated history,not current permission.
@@ -872,3 +872,105 @@ callback bug repair,Rust/providers/secrets/full deletion history/remote actions.
 - Recover from this trace,Issue/spec/Phase3 packet,branch,actual external SHA
   evidence and Git status,not chat memory. Stop at the human gate per
   adjudicator-review/agent-handoff;do not infer acceptance from automation.
+
+## Human final-result acceptance —2026-10-16 (current)
+
+Explicit **LISS-0590 最終レビュー結果の受入れ** received for record commit
+c1b915331f7a0cdb0466c3ec88940dc57acf9c3e and its actual-SHA verification.
+Fast Path acceptance metadata only;design-intake/process-lessons/ai-work-trace
+skills applied. No new product review,rule,ADR,implementation or dependency.
+Recovered clean HEAD/branch and validated every final run exit0,identical tested
+SHA/clean before/after,all required counts and unchanged3source/16accepted test
+hashes against `/private/tmp/liss-0590-final.rZOcJU/verification.json`.
+
+Accepted final evidence:root2938PASS351.52s,spec161/161PASS,sanity10PASS;
+focused117PASS8.54s,inherited162PASS13.09s,adjacent-consumer90PASS1.12s.
+Compileall,Git-derived AST/raw facade/219readonly owners/factory-site audit and
+routing PASS. Root2026-10-16T05:32:37.890123Z–05:38:30.342949Z,wall352.45s.
+Python3.12.6/pytest9.0.3/NumPy2.4.6/PyYAML6.0.3,macOS27.0.1arm64,repo
+cwd/PYTHONPATH. Pytest errors/skips/exclusions0;spec aggregate skips unreported;
+PR-only traceability N/A locally. No new/remaining failures versus preceding
+clean source-SHA checks. Original4structural Reds/TSV refusal remain resolved.
+No new all-blocking run in this acceptance-only turn;prior evidence is immutable.
+
+Updated7Markdown records:Issue,spec,Phase3 packet,WP0175,WP0174,parent trace and
+this trace. No code/tests/fixtures/accepted O01–O10 edits;fingerprint12426ae6...
+unchanged. Acceptance entry/metadata checks external:
+`/private/tmp/liss-0590-acceptance.TG2yLI/`.
+Existing state/consumer/guard/status-sync/final-SHA/typed-approval lessons applied;
+no new reusable lesson beyond recorded guidance. L/L,AIP0590-001 unchanged;
+attempt1 acceptance-only. Model/reasoning/token metric/source/estimates/variance
+N/A(host unavailable),not estimated. No external provider/private data used.
+
+### Acceptance handoff / next review target
+
+- Current phase:human final-result accepted;Issue review/not done,WP in_progress.
+- Approval received:phase/final-result acceptance at exactc1b91533 only.
+- Included:canonical contract/Phase3 packet/final logs/source-test hashes and
+  scoped status records. Omitted:other bug repair,Rust/providers/secrets/full
+  deletion history and remote operations. Assumption:no runtime change.
+- Review isolation:same_context/weaker;implementation.host,empty modelIDs/no
+  enabled large-change override. Semantic graph/custom-pickle/coverage gaps
+  remain disclosed;acceptance does not manufacture exhaustive proof.
+- Next requested approval:**LISS-0590 受入れ記録コミット・実SHAで全blocking再検証承認**。
+- Approval type:phase/process execution. Approved scope this turn:record human
+  acceptance only. Implementation allowed:no. Post-review required:yes,later
+  record-SHA validation and separate delivery permission. Batch:N/A.
+- No commit,push,PR or merge this turn. Acceptance records are dirty metadata;
+  do not apply prior clean-SHA proof to a future record commit. Every blocking
+  suite must rerun at its actual SHA. Open decision:record-save/revalidation
+  authority,then remote delivery;no failing check waived.
+- Stop per adjudicator-review/agent-handoff. No completion process-review yet:
+  Issue/WP not done while record/delivery work remains. Resume from current
+  artifacts/branch/diff/external evidence,not chat memory.
+
+## Acceptance-record commit / actual-SHA revalidation —2026-10-16 (current)
+
+Explicit **LISS-0590 受入れ記録コミット・実SHAで全blocking再検証承認** received.
+Fast Path bounded local process execution. Design-intake/process-lessons/
+ai-work-trace skills applied:status synchronization,typed authority,immutable
+accepted artifacts and final-SHA evidence. No new rule,ADR,dependency or duplicate
+agent product review. Human final acceptance atc1b91533 is retained,not reopened.
+
+Entry HEADc1b915331f7a0cdb0466c3ec88940dc57acf9c3e,branch
+codex/liss-0590-typechecker-operator-phase0,exact7dirtyMarkdown records:
+Issue,spec,Phase3 review,WP0175,WP0174,parent trace and this representative trace.
+Index empty at entry;save only this cohort. Source3/accepted test16hashes match
+the accepted final verification;no code/tests/fixtures/accepted clauses change.
+
+Prepared before commit:actual new SHA,clean before/after,environment/commands/
+times/counts/exits/comparable failures will be retained at
+`/private/tmp/liss-0590-accepted-sha.iLTcre/verification.json` and per-run JSON/
+out/err. A planned filename is not PASS. Run every declared root/spec/applicable
+actual CI sanity plus focused117/inherited162/adjacent-consumer90,compileall,
+Git-derived AST/raw facade/hash/factory-site audit and actual committed routing.
+No exclusions or corrective implementation allowed;required failures block.
+Do not edit repository files or add evidence-only commits after saving;all new
+results stay external to preserve tested HEAD. Later rebase/merge invalidates
+applicability and needs its own verification.
+
+Host deterministic execution;review.same_context/weaker,implementation.host,
+empty modelIDs,no enabled large-change override. Semantic owners/full dynamic
+graph/custom serialization/past-deletion gaps retained,not zero or downgraded.
+Retain accepted281-line cohesion disposition and disclosed4416-line facade.
+L/L,AIP0590-001 unchanged;attempt1 acceptance-save/reverification only.
+Model/reasoning/token metric/source/estimates/variance N/A(host unavailable),
+not estimated. Included:scoped accepted artifacts/diff/hashes/policies/evidence;
+omitted:other bug repair,Rust/providers/secrets/history-wide audit/remote actions.
+
+### Current handoff / next requested authority
+
+- Phase:acceptance-record save/revalidation;Issue review/not done,WP in_progress.
+- Approved scope:local7-record commit and actual-SHA all-blocking rerun only.
+- Implementation allowed:no source/test changes. Post-review required:yes.
+- Next requested approval after every required PASS:
+  **LISS-0590 push／PR作成・更新／CI確認・成功後のマージ承認** (delivery approval).
+- Human acceptance is already received;do not ask for the same result again
+  solely because acceptance records were committed. Any new failure remains
+  blocking;do not repair or waive without appropriate authority.
+- No push/PR/merge performed or authorized here. Actual PR CI and merge-result
+  verification,then delivery closeout/process-review remain pending.
+- No completion process-review yet:Issue/WP not done. Recover from this section,
+  Issue/spec/packet,branch/diff and actual external SHA record,not chat memory.
+- Stop at delivery gate per adjudicator-review/agent-handoff,not on inferred
+  remote permission from local Green or prior final-result acceptance.
