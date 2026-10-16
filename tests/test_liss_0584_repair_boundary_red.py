@@ -1,6 +1,7 @@
 """R07 / approved F05 adoption: protect the untouched repair boundary."""
 
 import ast
+from tests.liss_0590_guard_support import restore_typechecker_tree
 import hashlib
 import json
 from pathlib import Path
@@ -55,6 +56,7 @@ def test_existing_f05_owner_and_readonly_dependencies_are_preserved():
 
 
 def unaffected_digest(tree):
+    tree = restore_typechecker_tree(tree, ROOT)
     cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "TypeChecker")
     functions = [n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == "_infer_binop"]
     assert len(functions) == 1

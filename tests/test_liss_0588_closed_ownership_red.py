@@ -1,6 +1,7 @@
 """C07 structural Red and C08 immutable unrelated ownership evidence."""
 
 import ast
+from tests.liss_0590_guard_support import readonly_bytes
 import hashlib
 import importlib
 import json
@@ -72,4 +73,4 @@ def test_c08_readonly_sources_adjacent_tests_and_prior_fixtures():
     assert evidence['base'] == 'a19cc974a4e0200d74ae012c9b76d2a8f4d18b0a'
     assert hashlib.sha256(closed.dump(closed.original_method()).encode()).hexdigest() == evidence['original_ast_sha256']
     for path, expected in evidence['readonly_sha256'].items():
-        assert hashlib.sha256((closed.ROOT / path).read_bytes()).hexdigest() == expected, path
+        assert hashlib.sha256(readonly_bytes(closed.ROOT, path)).hexdigest() == expected, path
