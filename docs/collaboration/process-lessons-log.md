@@ -7,6 +7,25 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-10-18
+- Class: raw-byte-guard-normalization
+- Pattern: a byte-preservation guard can hash re-encoded text after implicit
+  newline conversion and thereby accept unapproved raw changes even when its
+  AST and comment mutation controls pass.
+- What later design or implementation must do: keep raw evidence unchanged
+  through the inverse; normalize only explicitly accepted additions. Test
+  whole-file and mixed newline mutations on original and proposed shapes,
+  independently of AST-equivalence and runtime behavior checks. Never fix a
+  guard blind spot by regenerating historical hashes or weakening the boundary.
+- Source issue or work plan: LISS-0592 / WP-0175
+- Status: applied;human-authorized test-only correction preserves raw reads.
+  Persistent pre/post6-node negatives reject all newline mutations through both
+  inverse and actual readonly reader;independent Git-root probe confirms4
+  authorized reader positives/12 rejections. R1 closed in agent re-review;
+  human corrected-test acceptance and product repair remain separate gates.
+
+## Lesson
+
 - Date: 2026-10-13
 - Class: external-verification-import-environment
 - Pattern: running a verification script outside the repository can omit the

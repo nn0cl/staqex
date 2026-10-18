@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "missing-brace": "module demo.app {\n",
+    "valid": "module demo.app {\n exports visible;\n}\n",
+    "wrong-keyword": "wrong demo.app {}\n"
+  },
+  "observations": {
+    "access/missing-brace": {
+      "diagnostics": [
+        {
+          "code": "PARSE_ERROR",
+          "col": 1,
+          "line": 2,
+          "message": "module-info.sqx: expected RBRACE, got ``"
+        }
+      ],
+      "metadata": null,
+      "present": false
+    },
+    "access/valid": {
+      "diagnostics": [],
+      "metadata": {
+        "exports": [
+          [
+            "visible"
+          ]
+        ],
+        "name": [
+          "demo",
+          "app"
+        ],
+        "requires": [],
+        "span": {
+          "col": 1,
+          "line": 1
+        }
+      },
+      "present": true
+    },
+    "access/wrong-keyword": {
+      "diagnostics": [
+        {
+          "code": "PARSE_ERROR",
+          "col": 1,
+          "line": 1,
+          "message": "module-info.sqx: expected MODULE, got `wrong`"
+        }
+      ],
+      "metadata": null,
+      "present": false
+    },
+    "module/cardinality": {
+      "diagnostics": [
+        {
+          "code": "PARSE_ERROR",
+          "col": 11,
+          "line": 3,
+          "message": "sample.sqx: function result expression must be the final item in a block"
+        }
+      ],
+      "present": false
+    },
+    "module/missing-brace": {
+      "diagnostics": [
+        {
+          "code": "PARSE_ERROR",
+          "col": 1,
+          "line": 3,
+          "message": "sample.sqx: expected RBRACE, got ``"
+        }
+      ],
+      "present": false
+    },
+    "module/valid": {
+      "diagnostics": [],
+      "present": true
+    },
+    "pipeline/cardinality": {
+      "diagnostics": [
+        {
+          "code": "PARSE_ERROR",
+          "col": 11,
+          "line": 3,
+          "message": "function result expression must be the final item in a block"
+        }
+      ],
+      "local_ok": false,
+      "present": false
+    },
+    "pipeline/missing-brace": {
+      "diagnostics": [
+        {
+          "code": "PARSE_ERROR",
+          "col": 1,
+          "line": 3,
+          "message": "expected RBRACE, got ``"
+        }
+      ],
+      "local_ok": false,
+      "present": false
+    },
+    "pipeline/valid": {
+      "diagnostics": [
+        {
+          "blocking_scope": "finite-projection",
+          "code": "QSEM_FINITE_EVIDENCE_MISSING",
+          "message": "finite carrier evidence is required for Semantic lowering",
+          "phase": "quantum-semantic-lowering",
+          "severity": "advisory"
+        },
+        {
+          "blocking_scope": "finite-projection",
+          "code": "QSEM_APPROXIMATION_OBLIGATION_MISSING",
+          "message": "non-exact lowering requires an explicit approximation obligation",
+          "phase": "quantum-semantic-lowering",
+          "severity": "advisory"
+        }
+      ],
+      "local_ok": true,
+      "present": true
+    }
+  },
+  "parser_sha256": "53d80d0476b53c6b4966e5eea13bcfcc135d85bf6bf55a4dfc04239346e50199",
+  "programs": {
+    "cardinality": "package t\npub fn main() -> Unit {\n Operator H = [X]\n}\n",
+    "missing-brace": "package t\npub fn main() -> Unit {\n",
+    "valid": "package t\npub fn main() -> Unit {\n State q = |0>\n Measure q\n}\n"
+  },
+  "source_base": "22335a5768c17a41eb94682e7dd14d3e6df004bd"
+}

@@ -127,6 +127,21 @@ class ParseError(Exception):
         self.message = message
         self.code = code
 
+    def __reduce__(self):
+        """Preserve constructor inputs, independent args and instance state."""
+        return (
+            _restore_parse_error,
+            (type(self), self.message, self.line, self.col, self.args),
+            self.__dict__.copy(),
+        )
+
+
+def _restore_parse_error(error_type, message, line, col, args):
+    """Reconstruct a ParseError without changing its public constructor."""
+    error = error_type(message, line, col)
+    error.args = args
+    return error
+
 
 def _flatten_namespaces(decls: list) -> list:
     """Expand `namespace A.B { class C … }` → ClassDecl(namespace=[A,B], name=C)."""

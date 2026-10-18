@@ -274,3 +274,81 @@ Actual record SHA/results external at
 `/private/tmp/liss-0590-delivery-record-sha.PdUqXX/verification.json`,not predeclared PASS.
 After required PASS,next record-only delivery permission. Child remains done,
 parent in_progress;no next implementation or further remote operation authorized.
+
+## Next selected candidate —2026-10-16
+
+LISS0590 record SHAce0a8add passed all blocking and was separately authorized
+for delivery. PR618 merged22335a5768c17a41eb94682e7dd14d3e6df004bd,PR/main
+CI all3SUCCESS,each root2938/spec161. Evidence:
+`/private/tmp/liss-0590-record-delivery.Dgun3g/delivery.json`;old record-gate
+pending notes historical. No additional record-commit loop opened.
+
+Human now explicitly approved Parser operator式パース本体分離 Scope/Phase0
+design-start. New LISS0591/dedicated P01–P10 specification and representative
+[trace/handoff](2026-10-16-liss-0591-parser-operator-primary.md) own that proposal.
+Branchcodex/liss-0591-parser-operator-phase0 from actual main22335a57;
+body117,not full precedence grammar. Next gate:dedicated Issue/spec/limited
+three-carrier guard policy/Phase0 acceptance,then separate Phase1 execution.
+Parent stays in_progress;original inventory/TSV/priorities and plan-owned
+missing-callback bugs unchanged. No code/test/guard/commit/remote work approved.
+
+LISS0591 dedicated P01–P10,limited3-carrier guard policy and Phase0 subsequently
+explicitly accepted2026-10-16. Child Issue/spec/AIP/trace and parent navigation
+synchronized without changing clauses/source/tests. Next gate:separate Phase1
+Red test/scaffolding execution approval,not another design acceptance or
+implementation. Original inventory/TSV and both bug records unchanged.
+
+LISS0591 Phase1 test/limited-guard execution explicitly approved2026-10-16.
+Readiness check then exposed a P08 baseline/spec conflict before any test/
+guard authoring. Canonical mismatch/proposed disposition stays in child Issue;
+child now blocked,accepted clause text and original inventory unchanged.
+Next gate:bounded P08 correction-proposal approval and corrected-spec acceptance,
+not another general Phase1 approval or a serialization implementation.
+
+Human2026-10-17 requests actual repair/completion instead of preserving the
+known failure. Canonical repair transferred to LISS0592,proposed R01–R07 and
+its trace;0591 P08 success remains unchanged. Current parent next:repair
+spec/2-carrier/prerequisite-baseline policy acceptance.0591 remains blocked
+until reviewed repair and agreed fresh baseline;no phase skipping or other
+bug scope. Original6dirtydocs preserved,new3repair design docs only.
+
+0592 R01–R07,limited2-carrier guard policy,0591 dependency policy andPhase0
+explicitly accepted2026-10-17. Child Issue/spec/AIP/trace and parent navigation
+updated metadata only. Next gate:0592 Phase1 Red test/guard execution approval.
+
+Later2026-10-17:0592 Phase1 execution explicitly approved and tests/exact2-carrier
+plumbing authored. Dedicated72 expected failures/36 passes,inherited293 and
+adjacent39 pass;production unchanged,root/spec/all-sanity not_run. Current next
+gate:0592 Phase1 test review execution,then exact acceptance/separate Green.
+Details owned by0592 Issue/spec/trace. No0591 repaired-baseline acceptance or
+extraction resumption inferred;accepted P08 success retained.
+
+2026-10-18:0592 review executed under explicit authority;changes required(R1
+raw newline preservation gap). Next:R1 test-only correction/re-review approval,
+not acceptance/implementation. Fresh72 expected Red/36 pass,inherited293/
+adjacent39 pass cannot waive R1.0592 Issue/spec/packet/trace own detail;
+source/tests unchanged in review,0591 remains blocked on actual repair/handoff.
+
+Later2026-10-18:approved0592 R1 test-only correction/re-review executed;raw read
+and6 newline negatives added in exactly2 new test files. R1 agent review closed;
+114 nodes72 expected Red/42 pass,inherited293/adjacent39 pass. Next:human
+corrected-test acceptance,not Green. No production/fixture/hash/old-carrier
+change;0591 remains blocked pending actual repair/repaired-baseline handoff.
+
+Human0592 corrected-test acceptance explicitly received2026-10-18,cohort
+3d77b215…65029e/R1 re-review. Current next:separate0592 Phase2 implementation
+approval. Metadata-only synchronization,no source/tests/new runtime verification.
+0591 remains blocked until actual repair and agreed repaired-baseline handoff.
+
+Approved0592 Phase2 repair executed2026-10-18,only exact reducer/restorer in
+parser.py;accepted tests unchanged. Focused114/inherited293/adjacent39/spec161
+pass;root3052 pass. Copy smoke fails the same pre-implementation dirty-source gate.
+No all-blocking Green or commit/remote action. Next:local commit/actual-SHA
+all-blocking approval,then review/final;0591 waits for reviewed repaired baseline.
+
+2026-10-18:0592 local commit/actual-SHA revalidation authorized;this commit
+records authority BEFORE tests. Final actual SHA/results live in external
+sha592 records linked by0592 trace;do not infer future success. Next separate
+Phase3 approval if all blocking passes. No0591 resumption or remote authority.
+0591 remains blocked pending actual repair/new baseline;no P08 weakening,
+source/test/fixture changes or commit/remote permission.
