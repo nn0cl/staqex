@@ -184,7 +184,8 @@ Received: **LISS-0591 専用Issue/spec P01–P10・限定guard移行方針とPha
 on2026-10-16. Type:phase/design acceptance. Approved scope:operator-primary design.
 Phase1 execution approval received2026-10-16;paused at baseline P08 discrepancy.
 Previous failure-preservation proposal superseded by human repair direction2026-10-17.
-Next:0592 actual-SHA all-blocking/review/final gates,then0591 repaired-
+Next:0592 Phase3 agent review passed at clean342ea6cc;final-record/SHA and human
+final gates remain,then0591 repaired-
 baseline handoff acceptance. Implementation allowed:no for0591. Post-review
 required:yes,then resume bounded Phase1 execution under agreed baseline,followed by
 test review/exact acceptance,Phase2 implementation,Phase3,final verification and

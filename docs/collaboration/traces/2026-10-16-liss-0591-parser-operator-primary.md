@@ -9,6 +9,9 @@
 - Issue:LISS0591 blocked,parent WP0175,planning AIP-0591-001 accepted2026-10-16,L/L.
 - Current dependency2026-10-17:actual repair LISS0592 and repaired-baseline handoff;
   old failure-preservation proposal below is superseded,successful P08 retained.
+- Dependency update2026-10-18:0592 Phase3 agent review passed at clean342ea6cc;
+  final-record commit/SHA validation and human final gates pending. No0591
+  baseline/guard-composition acceptance or test/implementation resumption.
 - Branch:codex/liss-0591-parser-operator-phase0.
 - Base/HEAD:22335a5768c17a41eb94682e7dd14d3e6df004bd;initial tree clean.
 - Dependencies:core boundary/inventory accepted;0590 feature PR617 and record

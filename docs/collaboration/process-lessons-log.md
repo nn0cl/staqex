@@ -23,6 +23,10 @@ Record meta-level patterns only. No session transcripts.
   inverse and actual readonly reader;independent Git-root probe confirms4
   authorized reader positives/12 rejections. R1 closed in agent re-review;
   human corrected-test acceptance and product repair remain separate gates.
+  Reapplied in Phase3:independently compare installed raw/AST inverse with Git,
+  exercise real copied roots and retain accepted cohort bytes. Clean code-SHA
+  all-blocking/review success does not validate a later review-record commit;
+  rerun every blocking suite at that new SHA before final acceptance.
 
 ## Lesson
 
