@@ -9,7 +9,9 @@ Phase2 Green/implementation approved2026-10-18;exact repair implemented,
 focused Green. Local commit/actual-SHA all-blocking revalidation approved2026-10-18;
 clean342ea6cc all-blocking passed. Phase3 approved/executed2026-10-18;agent
 review passed without source/test edits. Review-record commit/actual-SHA rerun
-approved2026-10-18;outcomes external,not pre-claimed in verification target.
+approved2026-10-18;all blocking passed at2c1a3cae. Final result explicitly
+accepted2026-10-18. Acceptance-record commit/revalidation approved2026-10-18;
+results external to target commit. Delivery remains separately gated.
 Owner:[LISS-0592](../issues/LISS-0592-parseerror-serialization-repair.md).
 Parent:[WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
 Source base:22335a5768c17a41eb94682e7dd14d3e6df004bd.
@@ -128,7 +130,9 @@ Phase2 implementation explicitly approved2026-10-18;bounded repair executed.
 Local commit/actual-SHA revalidation explicitly approved2026-10-18.
 Phase3 explicitly approved/executed2026-10-18;agent review passed.
 Final verification/review-record commit/actual-SHA rerun approved2026-10-18.
-If all blocking passes,next:**LISS-0592 最終レビュー結果の受入れ**.
+Final result at2c1a3cae explicitly accepted2026-10-18.
+Acceptance-record commit/actual-SHA revalidation approved2026-10-18.
+Next:separate delivery approval only after actual-SHA all blocking passes.
 Implementation allowed:only approved repair,now written. Post-review required:
 yes,review-record commit/actual final-SHA all blocking,human final acceptance/delivery.
 Batch:N/A. No failure-preservation amendment to0591 P08 authorized or made.
@@ -258,3 +262,14 @@ Clean342ea6ccd41191c6b321f5fce705e2712f83ebd3 rerun:114 focused,293 inherited,
 checks pass;external p3-592 evidence in packet. R07 final-record SHA validation/
 human acceptance/0591 baseline handoff remain open. Current record edits are
 not a new verified final commit or remote CI.
+
+## Final-result acceptance —2026-10-18
+
+Human explicitly accepts **LISS-0592 最終レビュー結果の受入れ** for
+2c1a3caefb61eaf761b29fe48985c79af6d53068. Clean-SHA focused114/inherited293/
+adjacent39/root3052/spec161/all11 local sanity checks passed;0 failures/errors/
+skips/exclusions. Actual consumers/cold imports/copy/raw inverse/frozen artifacts
+pass. Detailed final592 evidence is linked by Issue/trace. This is acceptance
+of reviewed repair/evidence,not approval to commit these new records or deliver.
+Clauses/guard/dependency policy unchanged;0591 repaired-baseline composition
+still requires separate acceptance. No new source/test/fixture/hash changes.

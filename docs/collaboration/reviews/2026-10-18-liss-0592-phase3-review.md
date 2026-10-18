@@ -2,8 +2,9 @@
 
 Date:2026-10-18 Asia/Tokyo. Derived packet,not human final acceptance.
 Authority:explicit **LISS-0592 Phase 3 Refactor／review承認**.
-Current:agent review passed;record commit/actual-SHA verification approved2026-10-18.
-Results are external to this target commit;human final acceptance remains separate.
+Current:agent review passed;record commit2c1a3cae/all-blocking verified;human final
+result accepted2026-10-18. Acceptance-record commit/revalidation authorized;
+results external to target commit,delivery pending.
 
 ## Review packet
 
@@ -140,3 +141,21 @@ to Git afterward. Final commands/SHA/clean state/results live externally under
 `/private/tmp/liss-0591-phase0.8hzegU/final592-*-20261018.*` and
 `/private/tmp/liss-0592-final-20261018.KfWfNT/`.
 If all pass,next **LISS-0592 最終レビュー結果の受入れ**;not push or0591 resumption.
+
+## Human final-result acceptance —2026-10-18
+
+Received **LISS-0592 最終レビュー結果の受入れ** for actual clean
+2c1a3caefb61eaf761b29fe48985c79af6d53068. Focused114,inherited293,adjacent39,
+root3052,spec161 and11 local sanity checks pass;0 failures/errors/skips/exclusions.
+Full final metadata/results:`/private/tmp/liss-0591-phase0.8hzegU/final592-evidence-20261018.out`.
+Root/focused IDs/outcomes equal prior clean342ea6cc;new/resolved failures0/0.
+Old Red72 resolved. All source/test/fixture/guard/agreement hashes unchanged.
+Acceptance type:phase/final result;implementation allowed:no;post-review:yes;
+batch:N/A. No new commit/remote/0591 permission. Next requested:
+**LISS-0592 受入れ記録コミット・実SHAで全blocking再検証承認**.
+These new acceptance edits are dirty records,not a verified future commit.
+
+Acceptance-record commit/actual-SHA all-blocking explicitly approved2026-10-18.
+Actual SHA/results after commit:`/private/tmp/liss-0591-phase0.8hzegU/accepted592-evidence-20261018.out`.
+This pre-test record does not claim success. No subsequent record-only commit;
+if all pass,request separate push/PR/CI-success-then-merge approval. No0591 restart.

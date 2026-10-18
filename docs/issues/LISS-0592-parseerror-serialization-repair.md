@@ -4,7 +4,7 @@
 
 - Local issue ID:LISS-0592
 - GitHub issue:none;local planning
-- Status:review — Phase3 passed;final record commit/actual-SHA verification authorized,results external
+- Status:review — final accepted;acceptance-record commit/revalidation authorized,delivery pending
 - Phase:phase-3-refactor
 - Type:bug repair / prerequisite for0591
 - Priority:high;blocks requested operator-primary completion
@@ -39,7 +39,7 @@ explicit construction plus state/args preservation,not weaker P08 assertions.
   accepted0591 and current policies.
 - Omitted:other grammar/body moves,Rust/providers,secrets,full historical blobs.
 - Assumption:base-class standard reconstruction and pickleable extra state.
-- Open decision:human final-result acceptance after authorized record commit/actual-SHA verification;results external.
+- Open decision:delivery approval after authorized acceptance-record actual-SHA revalidation;final result accepted2026-10-18.
   R01–R07/exact2 carriers/dependency design accepted. Future repaired-SHA
   handoff acceptance still required.
 - Former0591 P08 failure-preservation proposal rejected by user's direction;
@@ -163,8 +163,30 @@ If all blocking passes,next:**LISS-0592 最終レビュー結果の受入れ**.
 Type:phase;implementation allowed:no new change;post-review:yes;batch:N/A.
 0591 waits for final repair gates and accepted baseline/guard-composition handoff.
 
-## Process review
+## Final-result acceptance —2026-10-18
 
-- Outcome:not yet;Phase3 review passed with clean code-SHA all-blocking Green;final-record SHA/human acceptance pending,not done.
+Received **LISS-0592 最終レビュー結果の受入れ**. Human accepts final result
+at2c1a3caefb61eaf761b29fe48985c79af6d53068,not an untested future commit.
+Clean-SHA macOS27.0.1 arm64/CPython3.12.6/pytest9.0.3:focused114,inherited293,
+adjacent39,root3052,spec161 and11 local sanity checks passed;0 failures/errors/
+skips/exclusions. Root/focused IDs unchanged versus clean342ea6cc,0 new/resolved
+failures;original Red72 resolved. Consumer/import/copy/raw/hash checks pass.
+Full commands/times/SHA/environment in external final592 evidence linked by
+the [trace](../collaboration/traces/2026-10-17-liss-0592-parseerror-repair.md).
+
+Approval type:phase/final-result acceptance. Approved scope:0592 reviewed repair
+and actual-SHA evidence. Implementation allowed:no. Post-review required:yes,
+acceptance-record final-SHA revalidation and separate delivery;batch:N/A.
+Same-context review/full dynamic-graph/remote-CI gaps unchanged. R01–R07,
+P01–P10,guard/dependency clauses/tests/fixtures/hashes unchanged. No0591 baseline
+handoff accepted or extraction resumed. No commit/push/PR/merge authorized here.
+Acceptance-record commit/actual-SHA revalidation explicitly approved2026-10-18.
+This record precedes commit/tests;actual SHA/results live in external accepted592
+evidence linked by trace. If all pass,next:push/PR/CI-success-then-merge approval.
+No future success or remote permission claimed here.
+
+## Process review / current disposition
+
+- Outcome:not yet;final result accepted at2c1a3cae;record delivery gates remain,Issue stays review/not done. Completion process review at closure.
 - New lesson:raw-byte-guard-normalization;baseline/typed authority/guard lessons applied.
 - Template feedback:none requested.

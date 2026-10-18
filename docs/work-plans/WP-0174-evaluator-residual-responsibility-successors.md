@@ -7,7 +7,7 @@
 | Parent | WP-0160 / core module decomposition |
 | Scope approval | Evaluator residual-responsibility Architecture Path Phase 0 investigation approved 2026-09-28 |
 | Completed candidate | LISS-0581 — coordinate liveness and Trace-Out successor; architecture accepted by ADR 0228 |
-| Current Next Issue | [WP-0175](WP-0175-source-responsibility-inventory.md):LISS-0592 final record commit/SHA verification authorized;external outcomes then human final acceptance if all pass.0591 waits for final gates/accepted baseline handoff,P08 retained. No remote authority |
+| Current Next Issue | [WP-0175](WP-0175-source-responsibility-inventory.md):LISS-0592 accepted-record commit/SHA rerun authorized;external outcomes then separate delivery/0591 baseline handoff. P08 retained,no remote authority |
 
 ## Goal
 

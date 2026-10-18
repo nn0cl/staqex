@@ -4,10 +4,10 @@
 
 - Date:2026-10-17 Asia/Tokyo.
 - User:complete properly,not a limited specification relaxation.
-- Phase:final record commit/actual-SHA all-blocking verification authorized;outcomes external,then human final-result acceptance.
+- Phase:acceptance-record commit/actual-SHA revalidation authorized;outcomes external,delivery approval separate.
 - Issue:0592 review;parent WP0175;dependent0591;planning AIP-0592-001 accepted2026-10-17,L/L.
 - Spec:docs/specs/parseerror-serialization-repair.md.
-- Branch:codex/liss-0592-parseerror-serialization-phase0,HEAD342ea6cc;records dirty after Phase3.
+- Branch:codex/liss-0592-parseerror-serialization-phase0,HEAD2c1a3cae;acceptance records dirty.
 - At Phase0,original0591 branch and new repair branch had same HEAD;existing6dirty
   design docs retained in the current shared checkout,no reset/stash/deletion.
 
@@ -931,3 +931,104 @@ Compare against clean342ea6cc Phase3 records;preserve all failed evidence.
 - Changed files:the same11 records enumerated by final592-precommit manifest;
   pending unit contains only approved Phase3 records and this approval boundary.
 - No push,PR,merge,Issue completion or0591 extraction performed/authorized.
+
+## Final-result acceptance / current handoff —2026-10-18
+
+Received **LISS-0592 最終レビュー結果の受入れ**. Type:phase/final-result
+acceptance,not commit/remote/0591 authority. Accepted actual SHA:
+2c1a3caefb61eaf761b29fe48985c79af6d53068,parent342ea6ccd41191c6b321f5fce705e2712f83ebd3.
+Read external final592 summary and clean Git state before recording acceptance;
+all12 declared verification records identify that SHA,clean before/after.
+macOS27.0.1 arm64/CPython3.12.6/pytest9.0.3,explicit repo PYTHONPATH;root
+UTC12:50:55–12:57:07. Focused114,inherited293,adjacent39,root3052,spec161,
+all11 local sanity checks pass;0 failures/errors/skips/exclusions. Consumer/
+cold import/copy/raw/hash checks pass. Root/focused node IDs/outcomes equal
+prior clean342ea6cc,new/resolved0/0;original Red72 resolved. Full commands/times/
+SHA/tree/environment in `/private/tmp/liss-0591-phase0.8hzegU/final592-*-20261018.*`;
+summary final592-evidence-20261018.out. No runtime suite rerun this acceptance
+metadata turn;prior results apply to accepted2c1a3cae,not dirty/new records.
+
+Feature Path acceptance recording;DESIGN CHECK emitted. Included:canonical
+repair/acceptance/evidence/review/status/navigation and relevant policies.
+Omitted:additional implementation/tests,other bugs,providers/Rust,secrets/full
+dynamic graph. Assumptions/guarantee and accepted R01–R07/P01–P10/guard/dependency
+text unchanged. Applied frozen-byte/status-sync/final-SHA lessons. No new review
+packet or process rule;no duplicate lesson. AIP-0592-001 L/L unchanged.
+Host/deterministic checks;review.same_context weaker,implementation.host,empty
+model IDs/no enabled override. Model/reasoning/token actual/source/metric/
+estimate range/midpoint/variance N/A,not exposed/calibrated. Scope0592 acceptance
+only,not another repair attempt. No live provider/network used.
+
+Acceptance follows ai-work-trace/status-sync;pending commit is intentionally
+separate. Structural/dynamic/custom serialization/old blob/remote-CI gaps in
+Phase3 packet remain explicit;human acceptance does not claim remote success.
+No Issue/WP marked done;completion process review remains a closure gate.
+
+### Review Target / adjudicator-review
+
+- Current phase:final accepted;acceptance-record commit/SHA gate pending.
+- Approved scope:0592 final result and evidence at2c1a3cae.
+- Requested:**LISS-0592 受入れ記録コミット・実SHAで全blocking再検証承認**.
+- Type:phase. Implementation allowed:no. Post-review required:yes,record commit
+  all-blocking then separately approved delivery/0591 baseline handoff. Batch:N/A.
+- What changed:acceptance metadata only;no assertions/hashes/exclusions changed.
+- Checklist:explicit SHA/acceptance/next authority,frozen agreement,dirty-record
+  versus tested clean commit distinction;no inferred remote or0591 authority.
+
+### Current State / agent-handoff
+
+- Completed:recorded human acceptance and synchronized Issue/spec/WP/review/
+  representative traces/dependent navigation. Source/tests/fixtures unchanged.
+- Changed10 Markdown paths:0592 Issue/spec/Phase3 packet/trace;WP0175/WP0174;
+  WP0175 trace;0591 Issue/spec/trace. No lesson/policy edits.
+- Context/routing/assumptions/open decisions:above. Current HEAD2c1a3cae;
+  dirty acceptance records. Next commit will require ALL blocking again.
+- Verification this turn:integrity audit before edits;after edits,record
+  agreement/hash/link/whitespace/lifecycle checks only. No new full Green claim.
+- Next safe action:obtain named record-commit/revalidation approval,commit exact
+  reviewed records,rerun all blocking at actual SHA and keep evidence outside Git.
+- Blocker:next typed human gate per adjudicator-review/agent-handoff. No code
+  blocker found. No commit,push,PR,merge,closure or0591 resumption this turn.
+
+## Accepted-record commit / revalidation authority —2026-10-18
+
+Received **LISS-0592 受入れ記録コミット・実SHAで全blocking再検証承認**.
+Feature Path local commit/revalidation only;DESIGN CHECK emitted. Recover
+accepted2c1a3caefb61eaf761b29fe48985c79af6d53068/clean final592 evidence and
+pending10 Markdown paths;verify exact manifest before committing. No source/
+test/fixture/carrier/hash or accepted-clause changes. AIP-0592-001 L/L unchanged.
+Read spec/readiness/verification/commit/trace/DoD policies and live lessons.
+Applied raw-byte/frozen-evidence,real copied-root/private-consumer,explicit
+PYTHONPATH/status-sync/final-SHA lessons. No new product review or policy.
+Host/deterministic tools;review.same_context weaker,implementation.host,empty
+model IDs,no enabled override. Model/reasoning/token actual/source/metric/
+estimate range/midpoint/variance N/A,not exposed/calibrated. Scope0592 record
+commit only,not another repair attempt. Included:accepted scope/10 records/
+test and source hashes/declared commands. Omitted:other bugs,Rust/providers,
+secrets/untrusted blobs,0591 implementation/full dynamic graph.
+
+This is written BEFORE commit/tests,not a success claim. Actual SHA/clean state,
+commands/environment/times/exit/counts/failure comparison live outside Git:
+`/private/tmp/liss-0591-phase0.8hzegU/accepted592-*-20261018.{json,out,err}`;
+scripts/manifests/JUnit/sanity copies:`/private/tmp/liss-0592-accepted-sha-20261018.Mx9Iqm/`.
+Summary:accepted592-evidence-20261018.out. Do not append outcome records/create
+another HEAD after validation. Compare with final592 clean2c1a3cae evidence.
+Required:focused,inherited,adjacent,root,spec,all CI sanity incl clean copy and
+traceability,lifecycle,compileall,consumer/copy/cold imports,newline probe,
+whole raw/AST inverse,frozen agreements/cohort and committed routing. No exclusions.
+
+### Review Target / handoff
+
+- Current phase:accepted-record local commit/actual-SHA revalidation authorized.
+- Approved scope:exact10 Markdown files plus revalidation;implementation:no.
+- Post-review:yes,delivery separately approved;batch:N/A. No Issue/WP done.
+- Next requested if all pass:**LISS-0592 push／PR作成・更新／CI確認・成功後のマージ承認**.
+  Type:delivery authorization,not implementation or0591 baseline acceptance.
+- Completed before target commit:human final acceptance and record/status sync.
+  Changed same10 Markdown paths listed in accepted592-precommit manifest.
+- Next safe action:commit exact manifested paths,run all blocking at actual
+  clean SHA,retain outside-tree evidence,request delivery approval and stop per
+  adjudicator-review/agent-handoff. On failure preserve/report exact gate.
+- Context/routing/assumptions/gaps:above/Phase3 packet,unchanged. Remote CI not
+  run;full dynamic graph/old blob/custom serializer guarantees not broadened.
+- No push/PR/merge/closure/0591 resumption authorized or performed in this gate.
