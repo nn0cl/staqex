@@ -44,7 +44,7 @@ def test_o07_original_facade_bytes_and_other_production_are_preserved():
     evidence = guard.baseline()
     assert hashlib.sha256(guard.readonly_bytes(guard.ROOT, guard.TYPECHECK)).hexdigest() == evidence["typecheck_sha256"]
     for path, expected in evidence["readonly_sha256"].items():
-        assert hashlib.sha256((guard.ROOT / path).read_bytes()).hexdigest() == expected, path
+        assert hashlib.sha256(guard.readonly_bytes(guard.ROOT, path)).hexdigest() == expected, path
     paths = {str(p.relative_to(guard.ROOT)) for p in (guard.ROOT / "compiler").rglob("*.py")}
     assert paths - set(evidence["production_paths"]) <= {guard.CONTEXT}
     assert set(evidence["production_paths"]) <= paths
