@@ -3,8 +3,9 @@
 Date:2026-10-18 Asia/Tokyo. Derived packet,not human final acceptance.
 Authority:explicit **LISS-0592 Phase 3 Refactor／review承認**.
 Current:agent review passed;record commit2c1a3cae/all-blocking verified;human final
-result accepted2026-10-18. Acceptance-record commit/revalidation authorized;
-results external to target commit,delivery pending.
+result accepted2026-10-18;accepted records verified at aab66f15. PR619 delivered
+main442ce6ff,PR/main CI all3 SUCCESS;delivery-record commit/revalidation approved
+2026-10-19. Actual results external to target commit;record PR still gated.
 
 ## Review packet
 
@@ -159,3 +160,22 @@ Acceptance-record commit/actual-SHA all-blocking explicitly approved2026-10-18.
 Actual SHA/results after commit:`/private/tmp/liss-0591-phase0.8hzegU/accepted592-evidence-20261018.out`.
 This pre-test record does not claim success. No subsequent record-only commit;
 if all pass,request separate push/PR/CI-success-then-merge approval. No0591 restart.
+
+## Delivery result —recorded2026-10-19
+
+Delivery explicitly approved2026-10-18. [PR619](https://github.com/nn0cl/staqex/pull/619)
+merged UTC2026-10-18T13:30:46Z into main442ce6ffd480d5c2f1c821cbc231f85930478b35.
+Exact tree equals tested aab66f15;no source/test/fixture changes in delivery.
+[PR CI](https://github.com/nn0cl/staqex/actions/runs/39130629379) and
+[main CI](https://github.com/nn0cl/staqex/actions/runs/39131869154) all3 jobs
+SUCCESS,each root3052/spec161. Main PR-only traceability step N/A;PR step passed.
+Earlier pending-human/delivery statements are historical phase boundaries.
+Same-context/full-dynamic/custom serialization/old-blob limits remain;remote
+PR/main CI are now assessed.0591 baseline composition/extraction not approved.
+Next gate:delivery-record commit/actual-SHA all-blocking approval. New closeout
+edits are uncommitted records,not a new verified final HEAD.
+
+Delivery-record commit/actual-SHA all-blocking approval received2026-10-19.
+This target record precedes tests;actual SHA/results live externally in
+`/private/tmp/liss-0591-phase0.8hzegU/recordsha592-evidence-20261019.out`.
+If all pass,next record push/PR/CI-success-then-merge approval;no0591 resumption.

@@ -4,14 +4,14 @@
 
 - Local issue ID:LISS-0592
 - GitHub issue:none;local planning
-- Status:review — final accepted;acceptance-record commit/revalidation authorized,delivery pending
+- Status:done — repair delivered PR619/main442ce6ff;delivery-record commit/revalidation authorized,results external
 - Phase:phase-3-refactor
 - Type:bug repair / prerequisite for0591
 - Priority:high;blocks requested operator-primary completion
 - Initial/current planning size:L/L
 - Reclassification reason:none
 - Owner/agent:Codex host / Adjudicator
-- Related branch:codex/liss-0592-parseerror-serialization-phase0
+- Related branch:codex/liss-0592-delivery-records (feature PR619 merged)
 - Source base:22335a5768c17a41eb94682e7dd14d3e6df004bd
 
 ## Summary / acceptance notes
@@ -39,7 +39,7 @@ explicit construction plus state/args preservation,not weaker P08 assertions.
   accepted0591 and current policies.
 - Omitted:other grammar/body moves,Rust/providers,secrets,full historical blobs.
 - Assumption:base-class standard reconstruction and pickleable extra state.
-- Open decision:delivery approval after authorized acceptance-record actual-SHA revalidation;final result accepted2026-10-18.
+- Open decision:record PR delivery approval after authorized commit/revalidation;0591 baseline/guard-composition acceptance remains separate.
   R01–R07/exact2 carriers/dependency design accepted. Future repaired-SHA
   handoff acceptance still required.
 - Former0591 P08 failure-preservation proposal rejected by user's direction;
@@ -187,6 +187,39 @@ No future success or remote permission claimed here.
 
 ## Process review / current disposition
 
-- Outcome:not yet;final result accepted at2c1a3cae;record delivery gates remain,Issue stays review/not done. Completion process review at closure.
+- Process review: no operating-contract deviation or operational problem found.
+- Scope:0592 delivery/closure;phase approvals,review routing,branch discipline,
+  status synchronization and verification checked in the same context after
+  delivery proof. Earlier R1 is fixed/re-reviewed/accepted with its existing
+  lesson;no new process finding or template feedback. Record commit still gated.
 - New lesson:raw-byte-guard-normalization;baseline/typed authority/guard lessons applied.
 - Template feedback:none requested.
+
+## Delivery closeout —2026-10-19 Asia/Tokyo
+
+Explicit push/PR/CI-success-then-merge approval received2026-10-18 and executed.
+[PR619](https://github.com/nn0cl/staqex/pull/619) merged after all3 PR checks
+SUCCESS. Approved head:aab66f15de703149dbaea547b45ba358f645c374;
+main merge:442ce6ffd480d5c2f1c821cbc231f85930478b35,
+UTC2026-10-18T13:30:46Z (JST2026-10-18 22:30:46).
+Parents:22335a5768c17a41eb94682e7dd14d3e6df004bd and approved head.
+Whole tree equals approved head:befddf87b8c22041755405701c94b703da906169.
+Normal merge commit,no admin/force/delete/rebase or unreviewed source change.
+
+[PR CI39130629379](https://github.com/nn0cl/staqex/actions/runs/39130629379)
+and [main CI39131869154](https://github.com/nn0cl/staqex/actions/runs/39131869154)
+each all3 jobs SUCCESS,root3052 passed/spec161/161. Main's PR-only traceability
+step is conditionally not applicable;it passed in PR CI,not a waived failure.
+Focused114/inherited293/adjacent39/11 local sanity at clean approved HEAD remain
+distinct local evidence;no fresh local whole-suite claim on dirty closeout docs.
+All R01–R07/P01–P10/guard/dependency clauses,tests/fixtures/source hashes unchanged.
+Repair baseline is available;0591 still waits for separately accepted baseline/
+guard composition. No0591 extraction or other bug work resumed.
+
+Closeout evidence:external delivery592-summary-20261019.out and delivery592
+PR/main logs/metadata linked in representative trace. Delivery records are now
+on codex/liss-0592-delivery-records at merge442ce6ff. Record commit/actual-SHA
+all-blocking revalidation explicitly approved2026-10-19. This pre-test record
+does not claim future success;actual SHA/results live in recordsha592 evidence
+linked by trace. If all pass,next:record push/PR/CI-success-then-merge approval.
+No record push/PR or0591 resumption authority inferred.
