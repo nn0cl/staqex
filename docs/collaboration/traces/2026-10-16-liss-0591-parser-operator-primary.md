@@ -4,13 +4,13 @@
 
 - Date:2026-10-16 Asia/Tokyo.
 - User:`Parser operator式パース本体分離のScope／Phase 0設計開始承認`.
-- Current phase:Phase1 execution approved;paused on P08 baseline/spec conflict before test authoring.
+- Current phase:Phase1 execution approved;paused pending repaired-baseline/guard-composition acceptance before test authoring.
 - Canonical spec:`docs/specs/parser-operator-primary-successor.md`,P01–P10 accepted2026-10-16.
 - Issue:LISS0591 blocked,parent WP0175,planning AIP-0591-001 accepted2026-10-16,L/L.
 - Current dependency2026-10-17:actual repair LISS0592 and repaired-baseline handoff;
   old failure-preservation proposal below is superseded,successful P08 retained.
-- Dependency update2026-10-18:0592 final result accepted at clean2c1a3cae;
-  acceptance-record commit/SHA validation and delivery gates pending. No0591
+- Dependency update2026-10-19:0592 delivered PR619/main442ce6ff,PR/main CI all3
+  SUCCESS;delivery-record closeout then repaired-baseline acceptance. No0591
   baseline/guard-composition acceptance or test/implementation resumption.
 - Branch:codex/liss-0591-parser-operator-phase0.
 - Base/HEAD:22335a5768c17a41eb94682e7dd14d3e6df004bd;initial tree clean.

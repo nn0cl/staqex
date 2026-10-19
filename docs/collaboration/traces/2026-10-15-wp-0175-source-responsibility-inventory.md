@@ -372,3 +372,10 @@ errors/skips/exclusions. Final592 summary owns full SHA/environment/commands.
 Current next:acceptance-record commit/actual-SHA all-blocking approval;delivery
 and0591 baseline/guard-composition acceptance remain separate. No source/test
 edit,commit or remote action;Issue stays review,not done.
+
+Delivery closeout recorded2026-10-19:approved0592 PR619 merged main442ce6ff
+after PR CI all3 SUCCESS;main CI all3 SUCCESS too,each root3052/spec161.
+Merge tree equals approved/tested aab66f15. Repair Issue done/delivered;
+delivery-record commit/actual-SHA revalidation next gate.0591 still waits for
+separately accepted repaired-baseline/guard composition;P01–P10 unchanged.
+Detailed evidence/process review/handoff owned by0592 Issue/trace;WP not done.

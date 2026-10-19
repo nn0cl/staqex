@@ -4,10 +4,10 @@
 
 - Date:2026-10-17 Asia/Tokyo.
 - User:complete properly,not a limited specification relaxation.
-- Phase:acceptance-record commit/actual-SHA revalidation authorized;outcomes external,delivery approval separate.
-- Issue:0592 review;parent WP0175;dependent0591;planning AIP-0592-001 accepted2026-10-17,L/L.
+- Phase:repair delivered PR619/main442ce6ff;delivery-record commit/actual-SHA revalidation authorized,results external.
+- Issue:0592 done/delivered;parent WP0175 active;dependent0591 blocked;planning AIP-0592-001 accepted2026-10-17,L/L.
 - Spec:docs/specs/parseerror-serialization-repair.md.
-- Branch:codex/liss-0592-parseerror-serialization-phase0,HEAD2c1a3cae;acceptance records dirty.
+- Branch:codex/liss-0592-delivery-records,HEAD442ce6ff;delivery records dirty.
 - At Phase0,original0591 branch and new repair branch had same HEAD;existing6dirty
   design docs retained in the current shared checkout,no reset/stash/deletion.
 
@@ -1032,3 +1032,115 @@ whole raw/AST inverse,frozen agreements/cohort and committed routing. No exclusi
 - Context/routing/assumptions/gaps:above/Phase3 packet,unchanged. Remote CI not
   run;full dynamic graph/old blob/custom serializer guarantees not broadened.
 - No push/PR/merge/closure/0591 resumption authorized or performed in this gate.
+
+## Delivery / closeout —2026-10-19 Asia/Tokyo,current
+
+Human explicitly approved **LISS-0592 push／PR作成・更新／CI確認・成功後のマージ承認**
+on2026-10-18;continued2026-10-19. Feature Path delivery only;DESIGN CHECK
+emitted. Recovered clean tested aab66f15de703149dbaea547b45ba358f645c374 and
+accepted592 full evidence. No implementation/test changes,new technology or
+0591 resumption. GitHub CLI normal network permissions used;initial sandbox
+network refusal resolved via scoped authorized escalation,not policy bypass.
+
+Pushed exact dedicated branch,created/attached [PR619](https://github.com/nn0cl/staqex/pull/619).
+Before merge,verified all3 CI checks SUCCESS,HEAD aab66f15,base/main22335a57,
+MERGEABLE/CLEAN and no review block;normal merge with exact --match-head-commit.
+No admin,force,branch deletion or rebase. Actual merge:
+442ce6ffd480d5c2f1c821cbc231f85930478b35,UTC2026-10-18T13:30:46Z/JST18th22:30:46.
+Parents22335a57/aab66f15;whole tree befddf87b8c22041755405701c94b703da906169
+equals approved HEAD. Fetched main and created dedicated delivery-record branch
+at that merge without reset/stash or dirty-work loss.
+
+### Verification / evidence
+
+[PR run39130629379](https://github.com/nn0cl/staqex/actions/runs/39130629379):
+all3 jobs SUCCESS;[main run39131869154](https://github.com/nn0cl/staqex/actions/runs/39131869154):
+all3 jobs SUCCESS. Each root3052 passed/spec161/161;test failures/skips/exclusions
+not introduced. Main PR-only traceability is conditional N/A,not a waived job;
+the actual PR check passed. Local focused114/inherited293/adjacent39/all11
+sanity/consumer/probe/compile/audit at approved HEAD remain separately scoped.
+No fresh local full-suite claim on newly dirty closeout records.
+Source hash9222a470…e08d16/cohort3d77b215…65029e unchanged. R01–R07/P01–P10/
+guard/dependency clauses untouched;repair baseline available,0591 handoff not
+yet accepted. Dynamic graph/custom serializers/old-blob limits unchanged;
+remote PR/main CI gap is now closed for these actual tested SHAs.
+
+Full command/UTC/environment/SHA/tree/exit/log evidence:
+`/private/tmp/liss-0591-phase0.8hzegU/delivery592-*-20261018.*` and
+delivery592-summary-20261019.{json,out,err}. Summary verifies both CI runs,
+parents/whole-tree equality and clean merge before records. Scripts/PR body:
+`/private/tmp/liss-0592-delivery-20261018.CXl1ls/`. These temp paths are not
+permanent artifacts;PR/main Actions links and core hashes/results retained here.
+
+### Process / handoff
+
+Applied frozen-evidence/private-consumer/status-sync/final-SHA lessons. No new
+review isolation or process rule;existing same_context is weaker,implementation
+host,empty model IDs/no enabled override. AIP0592-001 L/L unchanged. Model/
+reasoning display/token actual/metric/source/range/midpoint/variance N/A,not
+exposed/calibrated. Scope0592 delivery/closeout only,not another repair attempt.
+Included:approved specs/review/evidence,Git refs/PR/CI/logs and closeout policies.
+Omitted:other features/bugs,Rust/providers,secrets/untrusted blobs,0591 execution.
+Status synchronized in Issue/spec/WP/review/dependent navigation;process-review
+runs in this same context after verification/sync,not another product review.
+Completed process-review: no operating-contract deviation or operational problem
+found for0592 closure. Typed gates/routing/branch/trace/privacy/status/evidence
+checked;prior R1 already fixed and recorded,not an unresolved process waiver.
+Existing lessons applied;no new meta pattern/template feedback identified.
+
+- Completed:repair delivered;PR/main CI proven. Delivery records now dirty on
+  merge442ce6ff,new records not committed or pushed. No new runtime/test changes.
+- Changed10 Markdown paths:0592 Issue/spec/Phase3 packet/trace,WP0175/WP0174,
+  WP0175 trace,0591 Issue/spec/trace. WP/0591 not closed or resumed.
+- Requested:**LISS-0592 配送記録コミット・実SHAで全blocking再検証承認**.
+  Type:phase/record delivery gate. Implementation allowed:no. Post-review:yes,
+  actual record-SHA all blocking then separately approved record PR. Batch:N/A.
+- Next safe action:obtain named approval,commit reviewed records and rerun ALL
+  blocking at actual clean SHA;record-only commits do not inherit merge CI.
+- Blocker:next human gate per agent-handoff/adjudicator-review. No unresolved
+  repair/runtime blocker;0591 baseline/guard composition still separate.
+
+## Delivery-record commit / target verification —2026-10-19
+
+Received **LISS-0592 配送記録コミット・実SHAで全blocking再検証承認**.
+Feature Path local record commit/revalidation only;DESIGN CHECK emitted.
+Recover merge442ce6ffd480d5c2f1c821cbc231f85930478b35 on dedicated delivery-
+record branch and approved10 Markdown paths. Preserve source/tests/fixtures/
+carriers/hash authority,R01–R07/P01–P10/guard/dependency clauses. Prior completion
+process review remains recorded;no new closure/process change or implementation.
+
+Read spec/readiness/verification/commit/trace/DoD and applicable lesson policies.
+Apply frozen raw evidence/private-consumer/real copied roots/explicit PYTHONPATH/
+status-sync/final-SHA lessons. Host/deterministic checks;review.same_context
+weaker,implementation.host,empty model IDs/no enabled override. Re-measure actual
+committed diff including records,not facade only. AIP0592-001 L/L unchanged.
+Model/reasoning/token actual/source/metric/estimate range/midpoint/variance N/A,
+not exposed/calibrated. Scope0592 record commit only,not another repair attempt.
+Included:10 reviewed records,accepted source/test hashes,delivery/CI evidence
+and declared suite commands. Omitted:other bugs,Rust/providers,secrets/untrusted
+blobs/full dynamic graph,0591 implementation. No technology/ADR decision.
+
+Written BEFORE commit/tests,not a success claim. Manifest/audit/JUnit/sanity
+copies:`/private/tmp/liss-0592-record-sha-20261019.W1bkY7/`. Actual SHA/clean
+tree/environment/commands/times/exits/counts/comparison after commit:
+`/private/tmp/liss-0591-phase0.8hzegU/recordsha592-*-20261019.{json,out,err}`;
+summary recordsha592-evidence-20261019.out. No result append/extra record-only
+HEAD after tests. Earlier PR/main CI applies to earlier SHAs,not this commit.
+Run focused/inherited/adjacent/root/spec,all applicable CI sanity incl clean
+copy and committed traceability,lifecycle,compileall,real cold imports/copy,
+independent newline probe,frozen-cohort/source/clauses audit and routing.
+
+### Approval target / handoff
+
+- Current phase:delivery-record commit/actual-SHA revalidation authorized.
+- Approved scope:exact10 Markdown files plus all-blocking rerun;implementation:no.
+- Post-review:yes,record PR separately gated;batch:N/A.0591 not resumed.
+- Next requested if all pass:**LISS-0592 配送記録のpush／PR作成／CI確認・成功後のマージ承認**.
+  Type:record delivery authorization. No inferred remote/0591 permission.
+- Completed before commit:repair PR619 delivered/main CI proved,process-review
+  and status sync recorded;manifest limits commit to10 paths. No source/test edit.
+- Next safe action:commit exact manifested records,run all blocking on actual
+  clean SHA,retain outside-tree evidence,request record delivery and stop per
+  adjudicator-review/agent-handoff. On failure retain/report precise gate.
+- Context/routing/assumptions/gaps:above/Phase3 packet,unchanged. Record-branch
+  remote CI not yet run;main merge CI remains earlier,distinct evidence.

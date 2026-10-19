@@ -4,7 +4,7 @@
 
 - Local issue ID:LISS-0591
 - GitHub issue:none;local planning only
-- Status:blocked — actual serialization repair LISS-0592 prerequisite
+- Status:blocked — LISS-0592 delivered;repaired-baseline/guard-composition acceptance pending
 - Phase:phase-1-red (readiness probe only;tests not authored)
 - Type:refactor / behavior-preserving body migration
 - Priority:high,next selected WP0175 candidate
@@ -43,9 +43,9 @@ and separate Phase1 execution approval. That execution approval was received
 - Approval type:phase/design acceptance;approved scope:operator-primary design.
 - Implementation allowed:no;post-review required:yes;execution batch:N/A.
 - Phase1 execution separately approved2026-10-16;paused before authoring tests.
-- Next:LISS0592 final result accepted at2c1a3cae;acceptance-record/SHA and delivery gates pending;
-  0591 waits for full review and accepted repaired-baseline handoff.
-  Actual repair and repaired-baseline handoff still required;no failure waiver.
+- Next:LISS0592 repair delivered PR619/main442ce6ff,PR/main CI successful;
+  delivery-record closeout then separately accepted repaired-baseline handoff.
+  Actual repair is delivered;baseline/guard composition still required,no waiver.
 - No commit,push,PR,merge,bug repair or further candidate authority inferred.
 
 ## Context / design

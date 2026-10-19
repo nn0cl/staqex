@@ -11,7 +11,9 @@ clean342ea6cc all-blocking passed. Phase3 approved/executed2026-10-18;agent
 review passed without source/test edits. Review-record commit/actual-SHA rerun
 approved2026-10-18;all blocking passed at2c1a3cae. Final result explicitly
 accepted2026-10-18. Acceptance-record commit/revalidation approved2026-10-18;
-results external to target commit. Delivery remains separately gated.
+actual accepted HEAD aab66f15 passed all blocking. Delivery explicitly approved
+and PR619 merged/main442ce6ff;PR/main CI all3 SUCCESS. Delivery-record commit/
+actual-SHA revalidation approved2026-10-19;results external,record PR gated.
 Owner:[LISS-0592](../issues/LISS-0592-parseerror-serialization-repair.md).
 Parent:[WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
 Source base:22335a5768c17a41eb94682e7dd14d3e6df004bd.
@@ -132,7 +134,9 @@ Phase3 explicitly approved/executed2026-10-18;agent review passed.
 Final verification/review-record commit/actual-SHA rerun approved2026-10-18.
 Final result at2c1a3cae explicitly accepted2026-10-18.
 Acceptance-record commit/actual-SHA revalidation approved2026-10-18.
-Next:separate delivery approval only after actual-SHA all blocking passes.
+Delivery approved/executed;PR619/main442ce6ff CI successful. Delivery-record
+commit/revalidation approved2026-10-19;next record PR approval if all pass.
+0591 baseline composition remains separate.
 Implementation allowed:only approved repair,now written. Post-review required:
 yes,review-record commit/actual final-SHA all blocking,human final acceptance/delivery.
 Batch:N/A. No failure-preservation amendment to0591 P08 authorized or made.
@@ -273,3 +277,14 @@ pass. Detailed final592 evidence is linked by Issue/trace. This is acceptance
 of reviewed repair/evidence,not approval to commit these new records or deliver.
 Clauses/guard/dependency policy unchanged;0591 repaired-baseline composition
 still requires separate acceptance. No new source/test/fixture/hash changes.
+
+## Delivered repair / record closeout —2026-10-19
+
+[PR619](https://github.com/nn0cl/staqex/pull/619) merged after all PR checks
+passed. Merge442ce6ffd480d5c2f1c821cbc231f85930478b35 has the identical whole
+tree as accepted/tested aab66f15. PR39130629379/main39131869154 each all3 jobs
+SUCCESS,root3052/spec161. Main PR-only traceability is N/A;PR gate passed.
+R01–R07 behavior/guard/dependency contract unchanged. New repaired baseline is
+available;0591's source-base/guard composition still needs explicit acceptance.
+Scope completed:repair delivery,not0591 extraction. Closeout docs are dirty
+records awaiting separate commit/actual-SHA all-blocking revalidation.
