@@ -3,8 +3,17 @@
 Current2026-10-21: R2 final review/result human-accepted at clean71e09655;
 all blocking passed,no product/test changes in review/acceptance.
 [Phase3 packet](../collaboration/reviews/2026-10-21-liss-0591-r2-phase3-review.md).
-Acceptance-record commit/new actual-SHA verification authorized2026-10-21;
-outcome external below. Delivery remains gated.
+Acceptance-record5b62ab1a passed all local blocking;delivery authorized,PR621
+created. Delivery now blocked by31 root-CI Git-history failures;no merge.
+CI-history repair Scope/Phase0 design-start approved2026-10-21;
+[CI01–CI07 supplement](liss-0591-ci-history-repair.md) and Phase0 accepted2026-10-21.
+Phase1 execution separately approved/completed:shallow31FAIL/52PASS and
+history-only83PASS,same SHA/nodes/bytes. CI repair Red agent review passed;
+human Red acceptance received2026-10-21. Phase2 CI implementation separately
+approved/applied;local pytest/root/spec/audits pass provisionally,copy smoke
+blocked by uncommitted workflow. Local commit/final-SHA verification now
+authorized2026-10-21;actual result belongs to the linked CI supplement checkpoint;
+no all-blocking or remote Green. Accepted P/B/E unchanged.
 The chronological approval history below does not supersede this current gate.
 
 Historical status: P01–P10 accepted2026-10-16; supplemental B01–B10 / exact6-carrier
@@ -761,3 +770,18 @@ SHA/environment/timing/JUnit evidence:
 No tracked post-run edit without another full rerun;missing evidence requires
 revalidation. After success,next gate:push/PR/CI/successful-merge authorization.
 Implementation:no;post-review:yes;batch:N/A. No remote authority inferred.
+
+## Delivery blocker — CI checkout history (2026-10-21)
+
+PR621 HEAD5b62ab1a pushed after explicit delivery approval. CI39574222927:
+root31FAIL/3223PASS,sanity/specSUCCESS;PR remains open,not merged. All31
+failures occur before guard assertions,when git show cannot read pinned
+22335a57/dca93187 parser evidence. Kernel checkout fetch-depth1 confirmed
+in actual log;local full history had hidden this runner precondition gap.
+Temporary same-SHA shallow clone:31 same failures/52PASS;only fetching full
+history,without source/test changes,then83/83PASS. This is scoped diagnostic
+evidence,not a remote retry or permission to weaken Git-provenance checks.
+Detailed evidence:`/private/tmp/liss-0591-delivery-20261021.xNStH4/`.
+Proposed kernel-tests checkout fetch-depth0 needs explicit bounded design and
+phase approval;no workflow/source/test fix performed. P/B/E remain accepted.
+Next:**LISS-0591 CI履歴取得修正のScope／Phase 0設計開始承認**.

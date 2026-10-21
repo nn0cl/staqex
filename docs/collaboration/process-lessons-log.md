@@ -7,6 +7,25 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date:2026-10-21
+- Class:immutable-evidence-history-prerequisite
+- Pattern:tests that compare against immutable Git objects pass in a full
+  local checkout but fail in shallow CI before their behavioral assertions.
+- What later design or implementation must do:declare history availability
+  as an execution prerequisite;compare shallow/full-history at the same SHA,
+  raw bytes and node IDs. Preserve original evidence and failures instead of
+  weakening tests or replacing Git with snapshots. Distinguish this control
+  from actual event-checkout CI and all-blocking success.
+- Source issue or work plan:LISS-0591 / WP-0175;accepted CI01–CI07.
+- Status:applied in Phase1/review;83-node paired evidence and independent
+  raw-Git audit. Phase2 applies only the history input and preserves the
+  source-clean copy guard;uncommitted copy-smoke refusal is not bypassed.
+  Actual commit-SHA verification and remote CI remain separate gates.
+  Applied at authorized commit checkpoint:keep outcomes outside Git and rerun
+  every blocker after the commit instead of treating provisional passes as final.
+
+## Lesson
+
 - Date:2026-10-19
 - Class:readonly-inverse-artifact-existence
 - Pattern:a historical evidence inverse can correctly restore raw bytes yet

@@ -1,6 +1,8 @@
 # LISS-0591 R2 Phase3 Refactor / review
 
 Status: **agent_pass — no blocking findings;human final result accepted2026-10-21 at71e09655**.
+Delivery update:PR621 root CI31FAIL due shallow checkout;no merge. Prior local
+product review/result remains historical accepted evidence,not remote full Green.
 Phase3 explicitly authorized2026-10-21. No source/test edits during review.
 At Phase3 review,this packet and synchronized records were uncommitted.
 Final record commit/actual-SHA verification subsequently authorized2026-10-21.
@@ -165,3 +167,42 @@ this receipt. Missing evidence requires rerun. Human product acceptance at
 71e09655 stands;later record-SHA success does not imply remote permission.
 Next only after success:push/PR/CI/successful-merge authorization.
 Implementation:no;post-review:yes;batch:N/A. Issue/WP not done.
+
+## Delivery integration gap —2026-10-21
+
+Authorized push/PR created621 at5b62ab1a. Actual CI39574222927 root31FAIL/
+3223PASS;other2 jobsSUCCESS. Every failure is pinned Git evidence unavailable
+under fetch-depth1. The local/full-history verification did not exercise this
+CI checkout prerequisite. Independent clean same-SHA shallow clone reproduces
+all31 failing IDs;history fetch only makes83guard nodesPASS. No source/test
+change or remote rerun. Evidence:`/private/tmp/liss-0591-delivery-20261021.xNStH4/`.
+Disposition:delivery blocking;do not waive or merge. Candidate workflow
+fetch-depth0 repair requires Scope/Phase0 and applicable phase approvals.
+No claim of complete remote Green;accepted local product result unchanged.
+
+CI repair design update:Scope/Phase0 design-start approved2026-10-21.
+The [CI01–CI07 proposal](../../specs/liss-0591-ci-history-repair.md) preserves
+accepted tests and all P/B/E clauses. Acceptance and later phases remain gated;
+this addendum is status navigation,not a new Phase3 repair reviewer pass.
+Subsequently human accepted CI01–CI07/Phase0 on2026-10-21,including unchanged
+existing-test reuse. Phase1 execution remains pending;no workflow repair or
+new remote Green follows from this receipt.
+
+CI repair Phase1 execution subsequently authorized/completed:independent
+clean5b62ab1a clone reproduces same31 CI failures/52 passes,then history-only
+fetch gives same83 nodes allPASS with unchanged bytes. New evidence:
+`/private/tmp/liss-0591-ci-red-20261021.wGmeGn/result.json`. Red review/acceptance
+pending;no new reviewer pass,workflow edit,all-blocking Green or remote result.
+
+Subsequent CI repair [Red review](2026-10-21-liss-0591-ci-history-red-review.md)
+agent_pass;human Red acceptance pending. Original product Phase3 verdict is
+unchanged;CI repair Phase2 and remote CI remain unexecuted.
+Human CI repair Red acceptance subsequently received2026-10-21;Phase2
+implementation approval is the next gate. No workflow or remote result changed.
+
+Later CI Phase2 implementation approved/applied:only root-checkout full-history
+input. Dirty-tree root3254/scoped/spec/audits pass;copy smoke rejects
+uncommitted distributed workflow. Local commit/final-SHA rerun required;
+no updated PR/CI,all-blocking Green or merge claimed.
+Subsequent local CI-repair commit/actual-SHA all-blocking rerun authorized;
+outcome remains external until execution. Original product verdict unchanged.

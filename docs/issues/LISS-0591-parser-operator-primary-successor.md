@@ -4,8 +4,8 @@
 
 - Local issue ID:LISS-0591
 - GitHub issue:none;local planning only
-- Status:review — R2 final result human-accepted;acceptance-record commit/revalidation authorized
-- Phase:r2-acceptance-record-verification-authorized
+- Status:blocked — PR621 root CI lacks immutable Git history;accepted product unchanged
+- Phase:phase-2-green — local commit/actual-SHA verification authorized;outcome pending
 - Type:refactor / behavior-preserving body migration
 - Priority:high,next selected WP0175 candidate
 - Initial planning size:L
@@ -17,6 +17,22 @@
 - Original immutable base:22335a5768c17a41eb94682e7dd14d3e6df004bd
 
 ## Summary / historical initial acceptance notes
+
+Current CI repair scope/design-start approved2026-10-21 by continuation of
+the unique approval request. Human accepted the [CI01–CI07 supplement](../specs/liss-0591-ci-history-repair.md)
+and Phase0 on2026-10-21. Separately approved Phase1 execution reproduced
+31FAIL/52PASS in the clean shallow clone and83PASS after history-only fetch;
+same SHA/nodes/bytes. Authorized [Red review](../collaboration/reviews/2026-10-21-liss-0591-ci-history-red-review.md)
+agent_pass;human Red acceptance received2026-10-21. Phase2 implementation
+separately approved/applied:only root Checkout full-history input. Pytest/root/
+spec/audits pass provisionally;sanity copy smoke blocked by uncommitted workflow.
+Local commit/actual-SHA all-blocking verification authorized2026-10-21;
+outcome is external to avoid changing the tested SHA. Plan owner
+remains this Issue;no duplicate Issue. Bounded repair size S (one workflow
+input, established 83-node reproduction, no boundary change), while parent
+L/L and AIP-0591-001 remain unchanged. This is a new CI-repair design attempt,
+not a retry of the accepted Parser implementation. Workflow input applied,
+not committed or remotely verified;no all-blocking Green claim.
 
 Scope/Architecture Path Phase0 design-start explicitly approved2026-10-16.
 Dedicated Issue/spec P01–P10,limited3-carrier policy and Phase0 explicitly
@@ -60,7 +76,8 @@ and separate Phase1 execution approval. That execution approval was received
 - Received2026-10-21:final verification/review-record commit and actual-SHA all-blocking approval.
 - Received2026-10-21:human final-result acceptance at71e09655;ISS-0591 resolves to unique LISS-0591 target.
 - Received2026-10-21:acceptance-record commit/new actual-SHA all-blocking authorization.
-- Next:delivery authorization only after successful actual-SHA checkpoint evidence.
+- Received2026-10-21:push/PR/CI/successful-merge approval;PR621 created at5b62ab1a.
+- Next:CI-history repair Scope/Phase0 approval;no merge while root CI fails.
 - No commit,push,PR,merge,bug repair or further candidate authority inferred.
 
 ## Context / design
@@ -69,7 +86,7 @@ and separate Phase1 execution approval. That execution approval was received
   four manifest provenances,actual copy utilities,selected neighboring tests.
 - Omitted:unrelated grammar,Rust,provider/service choice,secrets,history-wide audit.
 - Assumptions:mechanical algorithm move,callbacks remain on live Parser.
-- Open decisions:actual-SHA acceptance-record verification and later delivery
+- Open decisions:CI-history repair design/phase approvals before resumed delivery
   approvals;return to design if another protected path must change.
   Historical P08 discrepancy resolved by0592 and
   accepted B01–B10;successful P08 retained.
@@ -404,6 +421,26 @@ approved. Only5 related records;no product/test edit. Actual outcome lives in
 asserts no success. No tracked result edits after runs;missing evidence requires
 rerun. If all pass,next:push/PR/CI/successful-merge approval. Implementation:no;
 post-review:yes;batch:N/A. No remote permission. Issue remains review,not done.
+
+## Delivery failure / CI-history diagnosis —2026-10-21
+
+Human approved push/PR/CI/successful merge;truncated final 承 resolves to the
+unique approval target. Push and [PR621](https://github.com/nn0cl/staqex/pull/621)
+created at verified5b62ab1a74261c32bf2c9314ef9ff0b9b0d7e5d2. PR root CI:
+31 FAIL/3223 PASS;sanity/spec SUCCESS. No merge. All31 failures are git show
+exit128 for pinned22335a57/dca93187 parser evidence. Checkout log explicitly
+fetch-depth1/--depth=1;kernel-tests Checkout has no history override.
+Independent same-SHA temporary shallow clone reproduces same31 node failures
+(52 PASS);git fetch --unshallow only,without file/test changes,makes all83
+guard nodes PASS. This proves the scoped history-precondition mismatch,not a
+new product-behavior defect or remote-CI Green. Local full3254 PASS remains
+its own earlier macOS evidence;CI used Python3.12.15 versus local3.12.6.
+Evidence:`/private/tmp/liss-0591-delivery-20261021.xNStH4/`,especially
+failed-logs.out,root-job-log.out,history-reproduction.json and both JUnits.
+Candidate repair:kernel-tests checkout fetch-depth0;NOT implemented/approved.
+Next:**LISS-0591 CI履歴取得修正のScope／Phase 0設計開始承認**.
+No source/test/workflow edit,commit,rerun or merge authority inferred from
+diagnosis/continue. Related records now dirty;tested remoteHEAD unchanged.
 
 ## References
 

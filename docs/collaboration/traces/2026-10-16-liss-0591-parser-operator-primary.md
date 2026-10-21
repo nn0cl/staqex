@@ -1,6 +1,9 @@
 # AI Work Trace / Handoff — LISS-0591
 
-Current2026-10-21:R2 final result human-accepted at71e09655;acceptance-record checkpoint authorized.
+Current2026-10-21:PR621 open at5b62ab1a;delivery blocked on31 CI Git-history failures;
+CI repair Phase2 authorized/applied;local tests pass provisionally,copy smoke
+blocked by uncommitted workflow;local commit/actual-SHA rerun now authorized,
+outcome pending in external checkpoint record.
 Branch:codex/liss-0591-repaired-baseline;reviewed cleanSHA26da7f29.
 Current reviewer packet:[Phase3](../reviews/2026-10-21-liss-0591-r2-phase3-review.md).
 Earlier Request/current-state sections below are chronological history.
@@ -1643,3 +1646,292 @@ postcommit result are stored externally. No post-run source/record edits planned
   process completion review remains for eventual authorized closeout.
 - Blockers:none at checkpoint;report actual failures without bypass. DoD/handoff
   checked;no source repair,new process rule,Git push,PR or merge permitted.
+
+## Delivery attempt / current blocked handoff —2026-10-21
+
+- User:**LISS-0591 R2 push／PR作成・更新／CI確認・成功後のマージ承**;
+  unique truncated approval target interpreted as approved. Later 続けて
+  continues diagnosis,not CI implementation approval. Feature delivery scope.
+- Completed:verified clean5b62ab1a accepted checkpoint,non-force push,created
+  PR621/attached artifact. main remaineddca93187. No source/test/record commit,
+  rebase,force push,admin bypass or merge. PR remoteHEAD remains5b62ab1a.
+- CI39574222927:Repository sanitySUCCESS,Spec verificationSUCCESS;Kernel root
+  suitesFAIL,31failed/3223passed956.99s. CI Python3.12.15/Linux differs from
+  local3.12.6/macOS. All31 node failures are git show128 for pinned22335a57/
+  dca93187 parser evidence;actual checkout fetch-depth1/--depth=1 confirmed.
+- Reproduction:temporary clean same-SHA shallow clone,83guard nodes31FAIL/
+  52PASS with exactly same CI failure IDs. Fetch history only then83PASS0FAIL;
+  no files/assertions changed. Scoped environment-precondition proof,not CI
+  success or full-root rerun. Temporary clone retained for evidence,no deletions.
+- Evidence:`/private/tmp/liss-0591-delivery-20261021.xNStH4/`:push/create-pr/pr-ci
+  metadata;failed-state/failed-logs/root-job-log;history-reproduction.json,
+  shallow.xml/history_restored.xml. PR:https://github.com/nn0cl/staqex/pull/621.
+- Changed records only:Issue,spec,WP0175,Phase3 review,this trace,now dirty.
+  Earlier cleanSHA evidence remains attributed to its actual tree. No workflow
+  repair,test relaxation or new issue/ADR silently introduced.
+- Included:accepted artifact evidence,actual remotePR/CI logs,workflow checkout,
+  same-SHA shallow/full paired diagnostics. Omitted:unrelated grammar,Rust,
+  providers,secrets/external AI. Assumption confirmed:history availability is
+  the common31-failure precondition,not proof of every untested environment.
+- Route:host Git/GitHub/deterministic diagnostics,same_context/weaker existing
+  review,empty modelIDs. AIP0591-001 L/L unchanged. AI attribution:this delivery
+  and diagnostic attempt;model/reasoning/usage/estimates/metric/variance N/A.
+- Blocker:root CI failed;no merge. Candidate fix:kernel-tests Checkout
+  fetch-depth0,not applied. Next safe action/request:
+  **LISS-0591 CI履歴取得修正のScope／Phase 0設計開始承認**.
+  Type:scope/design only;implementation:no;post-review:yes;batch:N/A.
+  Dedicated bounded spec/test/implementation gates must precede workflow edits.
+  Existing delivery authority does not permit changing accepted tests or
+  bypassing failingCI. Issue blocked/WP in_progress,not done.
+
+## CI history repair Phase0 proposal / current handoff —2026-10-21
+
+- User:続けて,following the unique **LISS-0591 CI履歴取得修正のScope／Phase 0設計開始承認**
+  request. Accepted as scope/design-start only;not supplement acceptance or
+  implementation approval. Architecture Path Phase0,post-review:yes,batch:N/A.
+- Agreement target:[CI01–CI07 proposal](../../specs/liss-0591-ci-history-repair.md).
+  Canonical bug planning stays in Issue0591;parent L/L,AIP0591-001 unchanged.
+  Bounded repair S:one CI checkout input,existing accepted reproduction,no
+  architectural/security/dependency change. No new issue or duplicate trace.
+- Evidence recovered:actual PR621 remains open HEAD5b62ab1a,rootCI FAILURE,
+  sanity/spec SUCCESS. Prior paired diagnostics at the same clean SHA:
+  shallow83 nodes31FAIL/52PASS;history-only83PASS. These are prior evidence,
+  not a fresh Phase1 execution or current full Green. Existing record producer
+  overwrote its same-named JSON with launch metadata;use preserved
+  history-reproduction.out and paired XML for node results,JSON for metadata.
+- Design:only kernel-tests Checkout fetch-depth0;keep action/default ref,
+  permissions/triggers/commands/exclusions and every source/test/fixture byte.
+  Official actions/checkout usage checked2026-10-21. Full-history transfer cost
+  accepted as a proposal tradeoff;fixed finite depth is not a durable bound.
+- Phase1 proposal:reuse unchanged accepted83-node regression in a temporary
+  clean same-SHA shallow clone and history-only control. No new test path or
+  modification to immutable test inventories;no phase skipped. Human test
+  review/acceptance precedes Phase2 even without new test authoring.
+- Included:current Issue/spec/WP/review/trace,CI workflow and guard consumers,
+  diagnostic stdout/XML/producer,official checkout usage,relevant rules/lessons.
+  Omitted:providers,secrets,external AI,unrelated compiler source,horizon edits.
+- Applied lessons:raw-byte guards remain immutable;explicit external
+  PYTHONPATH in later reproductions;final-SHA evidence separate from receipt
+  commits;status synchronized across Issue/spec/WP/review/trace. No new agent
+  review packet or completion process review;Issue not done. No policy change.
+- Route:host design/deterministic checks;review.same_context/weaker,
+  implementation.host setting not permission;modelIDs empty,no enabled
+  large-change override. Model/reasoning/tokens/metric/source/estimates/variance
+  N/A:not exposed/calibrated. Attribution:this CI repair Phase0 design only.
+- Changed cohort:the five existing dirty delivery records retained and updated,
+  plus the new CI repair supplement. No executable,test,fixture,index or remote
+  changes. Branch codex/liss-0591-repaired-baseline;HEAD5b62ab1a unchanged.
+- Verification plan:document lifecycle,active-Red lifecycle,coverage ledger,
+  related relative links,exact six-document scope,unchanged workflow/compiler/
+  tests versus HEAD;check changed-line whitespace without claiming the old
+  immutable E03 fixture passes whole-PR whitespace. Runtime/root not_run for
+  this Phase0;actual deterministic outcomes remain tool evidence.
+- Next safe action/request:**LISS-0591 CI履歴取得修復仕様 CI01–CI07 と Phase 0 acceptance**.
+  Type:design/phase acceptance,implementation:no,post-review:yes,batch:N/A.
+  After acceptance request separate Phase1 execution. No commit/push/PR/merge
+  or full-root Green inferred. Blocker:original rootCI failure and human gates.
+
+## CI repair Phase0 human acceptance / current handoff —2026-10-21
+
+- User:**LISS-0591 CI履歴取得修復仕様 CI01–CI07 と Phase 0 acceptance**.
+  Type:design/phase acceptance. Accepts unchanged CI01–CI07 and existing83-node
+  Red reuse/no-guard-change strategy. Phase1 execution and workflow
+  implementation allowed:no;post-review:yes;batch:N/A.
+- Completed:receipt and status synchronization across the same6 documents:
+  Issue,CI supplement,original spec,WP0175,Phase3 navigation and this trace.
+  Preserve earlier dirty delivery/design changes;no commit/index/remote edits.
+- Included:accepted proposal,current records and status/raw-byte/final-SHA/
+  external-PYTHONPATH lessons. Omitted:runtime execution,providers,secrets,
+  unrelated source/horizon changes. No new assumption or architecture decision.
+- Route:host deterministic receipt;review.same_context/weaker,
+  implementation.host not permission,empty modelIDs,no enabled override.
+  Parent L/L/AIP0591-001 and bounded repair S unchanged. Model/reasoning/
+  tokens/estimates/metric/source/variance N/A:not exposed/calibrated.
+  Attribution:acceptance metadata only,not a new repair execution attempt.
+- Verification:check document/lifecycle/coverage/link/scope consistency,
+  unchanged CI01–CI07 table/scenarios and unchanged workflow/compiler/tests.
+  No fresh runtime/root/CI execution;old failure and paired diagnostic results
+  remain prior evidence,not current Green. No new review packet/process rule.
+- Next safe action/request:**LISS-0591 CI修復 Phase 1 Red（既存83テストの浅いclone再現・履歴取得対照）の実行承認**.
+  Type:phase execution;implementation:no;post-review:yes. Then human Red
+  review/acceptance before any Phase2. Original rootCI and phase gates remain
+  blockers;Issue blocked/WP in_progress,not done. No commit/push/merge authority.
+
+## CI repair Phase1 Red execution / current handoff —2026-10-21
+
+- User:**LISS-0591 CI修復 Phase 1 Red（既存83テストの浅いclone再現・履歴取得対照）の実行承認**.
+  Type:phase execution. Feature Path Phase1 only,implementation:no,
+  post-review:yes,batch:N/A. Readiness and accepted CI01–CI07 recovered.
+- Executed a new independent clean temporary depth-one clone at frozen
+  5b62ab1a74261c32bf2c9314ef9ff0b9b0d7e5d2. Source branch's dirty documents
+  were not copied. Shallow83 nodes52PASS/31expectedFAIL;fetch history only,
+  same83nodes83PASS. Errors/skips/exclusions0;identical node IDs and original
+  CI31failure IDs confirmed. Both historical parser objects unavailable in
+  shallow clone/readable after fetch;both runs clean,HEAD and raw manifest equal.
+- Evidence:`/private/tmp/liss-0591-ci-red-20261021.wGmeGn/`:result.json distinct
+  from commands.json,external run_phase1.py,tracked raw manifest,paired JUnits,
+  all commands/stdout/stderr/times/exits. Explicit PYTHONPATH to actual clone.
+  macOS27.0.1arm64,Python3.12.6,pytest9.0.3;exact metadata in result.json.
+- Scope:CI02/03/04 reproduction evidence,not CI01/05 workflow repair,CI06
+  all-blocking or CI07 remote delivery. No new test/fixture/guard/workflow/source
+  edit,commit,rebase,push or remote rerun. Local history control success is not
+  Phase2 implementation or full Green. Actual CI remains prior failure.
+- Changed:the same6 Markdown receipt/status/spec/trace files;existing dirty
+  delivery records preserved. External runner/evidence are not repository code.
+  No instruction/policy change,new packet or new Issue. ParentL/L/AIP0591-001
+  and repairS unchanged;this is first authorized CI repair Phase1 execution.
+- Included:accepted supplement,readiness/process,existing tests/diagnostics,
+  relevant raw/PYTHONPATH/final-SHA/status lessons. Omitted:unrelated source,
+  horizon,providers,secrets/external AI. No new assumptions/open architecture.
+- Routing:host deterministic execution;review.same_context/weaker,host
+  implementation not permission;empty modelIDs,no enabled override. Model/
+  reasoning/tokens/metric/source/estimates/variance N/A:not exposed/calibrated.
+  Attribution:this Phase1 paired execution only. No product repair reattempt.
+- Next:**LISS-0591 CI修復 Phase 1 Red テストレビュー実施承認**.
+  Type:review execution,implementation:no,post-review:yes. Human Red acceptance
+  must precede separately approved Phase2. Blockers:review/phase gates and
+  original failingCI. Issue blocked/WP in_progress,not done. DoD/handoff checked;
+  final document/scope checks follow without a full-root verification claim.
+
+## CI repair Phase1 Red reviewer pass / current handoff —2026-10-21
+
+- User:**LISS-0591 CI修復 Phase 1 Red テストレビュー実施承認**.
+  Type:review execution,Feature Path Phase1. Implementation:no,post-review:yes,
+  batch:N/A. same-context-review role switch applied;no implementation while reviewing.
+- Packet:[Red review](../reviews/2026-10-21-liss-0591-ci-history-red-review.md).
+  Verdict:agent_pass,no blocking finding in Red scope;not human acceptance.
+- Independently parsed paired JUnits/commands and original CI log;exact83 unique
+  IDs and31 failure IDs match,all31 git show128. Git archive independent of
+  runner manifest validates925 raw compiler/test/workflow paths in clone and
+  current checkout. Named mutation/deletion/newline/export/carrier controls
+  remain unchanged. Fresh reviewer restored-history run83PASS42.54s,
+  zero failures/errors/skips,no command exclusions;no new shallow run claimed.
+- Source SHA5b62ab1a,clean verification clone;primary dirty docs only.
+  macOS27.0.1arm64,Python3.12.6,pytest9.0.3. Evidence at existing external
+  Phase1 directory:new review-history-restored.xml,review_audit.py and
+  review-audit.json;original records retained. Runtime/root/spec/all-sanity
+  beyond scoped checks not_run for review;no current all-blocking/remote Green.
+- CI02/03/04 Red evidence complete;CI01/05 implementation and CI06/07 future
+  verification/delivery remain gated. Original rootCI failure is not waived.
+- Routing:effective same_context/weaker,empty modelIDs,host implementation not
+  permission,no enabled large-change setting. review-change base=head5b62
+  reports committed0diff and dirty unknown;not a total dirty-size claim.
+  No new source/structure body;existing WP0175 gaps unchanged.
+- Changed:prior6 Markdown records plus this new review packet and lessons log.
+  Added reusable immutable-evidence-history-prerequisite lesson reflecting
+  accepted CI01–CI07;no rule change. Existing raw/PYTHONPATH/final-SHA lessons
+  applied. ParentL/L/AIP0591-001 and repairS unchanged;no code-fix reattempt.
+- Included:actual specs/tests/runner/XML/commands/Git objects/CI log,review
+  rules and lessons. Omitted:unrelated source,horizon,providers,secrets/external AI.
+  No new architecture decision. Model/reasoning/tokens/estimates/metric/source/
+  variance N/A:not exposed/calibrated;attribution:this Red review only.
+- Next:**LISS-0591 CI修復 Phase 1 Red テストレビュー／acceptance承認**.
+  Type:human result acceptance;implementation:no;post-review:yes. Phase2 needs
+  separate approval. Blockers:human gates and original CI failure. No commit,
+  push,remote rerun,merge or done transition. Final doc checks follow.
+
+## CI repair Red human acceptance / current handoff —2026-10-21
+
+- User:**LISS-0591 CI修復 Phase 1 Red テストレビュー／acceptance承認**.
+  Type:human review/result acceptance. Accepts the named Red packet and existing
+  83-node evidence unchanged. Phase2 implementation allowed:no;post-review:yes;
+  batch:N/A. No later approval inferred.
+- Completed:receipt/status synchronization across Issue,CI supplement,original
+  spec,WP0175,both related review records and this trace. Existing dirty
+  records/lessons retained;no new review packet,policy,source/test/workflow,
+  index,commit or remote change. Issue blocked/WP in_progress,not done.
+- Evidence remains attributed to clean source5b62ab1a and exact prior runs;
+  shallow52PASS/31FAIL,history-control83PASS,reviewer83PASS. Not rerun for this
+  receipt,no new all-blocking or remote Green. External evidence/limitations
+  remain as recorded in the accepted Red packet.
+- Included:accepted packet/spec,related records and status/history/raw-byte/
+  final-SHA lessons. Omitted:runtime execution,unrelated source,horizon,
+  providers,secrets/external AI. No open architecture decision.
+- Route:host deterministic metadata;same_context/weaker review setting,
+  implementation.host not permission,empty modelIDs,no enabled override.
+  ParentL/L/AIP0591-001 and repairS unchanged. Model/reasoning/tokens/metric/
+  source/estimates/variance N/A:not exposed/calibrated;attribution:receipt only.
+- Verification:document lifecycle,active-Red,coverage,related links and exact
+  Markdown scope;accepted table/scenario digest and executable paths unchanged.
+  No new runtime/root/CI run. This receipt does not close the original CI failure.
+- Next:**LISS-0591 CI修復 Phase 2 Green／implementation承認**.
+  Type:phase execution/implementation,bounded to accepted root-checkout
+  full-history input;post-review:yes. Not granted yet. No commit/push/merge
+  authorized by this acceptance. Blockers:Phase2 gate and original failedCI.
+
+## CI repair Phase2 implementation / current blocked handoff —2026-10-21
+
+- User:**LISS-0591 CI修復 Phase 2 Green／implementation承認**. Feature Path,
+  phase/implementation authority limited to accepted two-line root Checkout
+  full-history input. Implementation applied;post-review:yes,batch:N/A.
+- Readiness satisfied:accepted CI01–CI07 and human Red acceptance,existing
+  tests/placement/routing/verification recovered. No new architecture,
+  dependency,permission/ref/security decision. Raw and parsed YAML confirm
+  only with/fetch-depth0 changes;all source/test/fixture/PBE bytes unchanged.
+- Actual provisional HEAD5b62ab1a plus dirty workflow/docs,macOS27.0.1arm64,
+  Python3.12.6,pytest9.0.3. Explicit root PYTHONPATH;all commands/times/exits/
+  dirty states/JUnits in `/private/tmp/liss-0591-ci-green-20261021.TJw1Ua/`.
+  result.json and per-command records are distinct;old evidence untouched.
+- Focused202 (consumer smoke included),repair114,inherited428,adjacent42,
+  root3254 allPASS,zero failures/errors/skips/exclusions,same prior local IDs.
+  Spec161/161PASS,compile and independent Git raw/cohort/export/alias/factory
+  auditPASS. Both pinned Git objects readable,local checkout not shallow.
+- Sanity10/11PASS;copy smoke exit1:`Uncommitted distributed source:
+  .github/workflows/ci.yml. Commit it before distribution.` Existing guard
+  retained,no test weakening or alternative distribution bypass. Aggregate
+  verify.py exits1;separate summarize.py preserves environment_blocked/not_green
+  and all original failed logs. This is expected commit prerequisite,not a
+  newly discovered Parser regression or another code-fix attempt.
+- New executable scope:.github/workflows/ci.yml only;prior8 dirty Markdown
+  records synchronized/retained. No tracked test/source/dependency/fixture edit.
+  External audit reuses prior independent Git audit with clean-tree assertion
+  narrowed explicitly to unchanged compiler/tests;no accepted test was changed.
+  Sanity reuses actual workflow commands,redirects evidence paths/retains temp
+  data;commit-range trace check remains committed evidence,dirty trace inspected
+  separately. No clean-SHA/remote completion claim from dirty runs.
+- Routing:host implementation/checks,same_context/weaker review setting,
+  empty modelIDs,no enabled override. Existing Parser structure/graph gaps
+  WP0175-owned,no new body/split. ParentL/L/AIP0591-001 and bounded repairS
+  unchanged;commit prerequisite is environmental,not implementation rework.
+- Included:accepted spec/Red packet,workflow,prior suite argv/evidence and
+  raw/cohort audits,rules/lessons. Omitted:unrelated source,horizon,providers,
+  secrets/external AI. Applied history/raw/PYTHONPATH/final-SHA/status lessons.
+  Model/reasoning/tokens/estimates/metric/source/variance N/A:not exposed or
+  calibrated;attribution:this bounded CI implementation/provisional run only.
+- Next:**LISS-0591 CI修復 ローカルコミット／実SHAで全blocking再検証承認**.
+  Type:bounded local commit plus verification;implementation:no further edits;
+  post-review:yes. Commit the workflow and related8 Markdown records,then
+  rerun every declared blocking check at actual cleanSHA. No commit authority
+  inferred from Phase2. Remote CI/PR621 update and merge stay separately gated.
+  Issue blocked/WP in_progress,not done;no process closeout yet. Final scoped
+  document checks follow;actual failure is not waived or called full Green.
+
+## CI repair approved local commit / actual-SHA checkpoint —2026-10-21
+
+- User:**LISS-0591 CI修復 ローカルコミット／実SHAで全blocking再検証承認**.
+  Type:bounded local commit/verification,Feature Path Phase2 checkpoint.
+  Implementation:no further edits;post-review:yes;batch:N/A. No remote authority.
+- Commit cohort:workflow plus the8 related Markdown records already listed.
+  All earlier delivery/repair records retained. Source/tests/fixtures/cohort/
+  PBE and CI01–CI07 table/scenarios frozen;exact two-line root-checkout input.
+  Check staged exact paths/whitespace before committing on existing Issue branch.
+- After commit:require clean actualSHA throughout focused/consumer,repair,
+  inherited,adjacent,root,spec,11 actual sanity,compile,Git raw/cohort/export,
+  checkpoint/link/YAML/scope audit and effective routing. Compare prior local
+  node IDs,report current copy-smoke result separately;never suppress its guard.
+- External outcome:`/private/tmp/liss-0591-ci-sha-20261021.j6wKf9/result.json`,
+  per-command logs/metadata/JUnits. This pre-run checkpoint claims no future
+  success. Do not edit tracked results after runs;new HEAD needs another rerun.
+  Missing evidence requires rerun,not inference. Prior failed dirty run retained.
+- Included:accepted spec/Red/result,scope/rules/prior commands/actual workflow,
+  history/raw/PYTHONPATH/final-SHA/status lessons. Omitted:unrelated source,
+  horizon,providers,secrets/external AI. No new assumption/architecture decision.
+- Route:host Git/checks,review.same_context/weaker,implementation.host not
+  broader authority;empty modelIDs,no enabled override. Existing structure gaps
+  unchanged. ParentL/L/AIP0591-001,repairS unchanged;commit-precondition rerun,
+  not another product code-fix attempt. Model/reasoning/tokens/metric/source/
+  estimates/variance N/A:not exposed/calibrated;attribution:this checkpoint only.
+- Next safe action after all checks pass:**LISS-0591 CI修復 Phase 3 Refactor／review承認**.
+  Type:phase/review execution;implementation:no additional repair inferred;
+  post-review:yes. If any check fails,report blocker instead. No push/PR621
+  update,remote rerun,merge,done transition or process closeout authorized.
