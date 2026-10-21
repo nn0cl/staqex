@@ -26,6 +26,9 @@ def dependency_root(destination):
         target = destination / path
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(repair.ROOT / path, target)
+    from tests.liss_0591_guard_support import copy_parser_dependencies, make_shape
+    copy_parser_dependencies(repair.ROOT, destination)
+    make_shape(destination, False, origin=repair.ROOT)
     return destination
 
 
