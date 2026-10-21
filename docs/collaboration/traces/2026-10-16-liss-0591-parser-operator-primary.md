@@ -1,6 +1,6 @@
 # AI Work Trace / Handoff — LISS-0591
 
-Current2026-10-21:R2 Phase3 agent_pass;final record commit/verification authorized.
+Current2026-10-21:R2 final result human-accepted at71e09655;acceptance-record checkpoint authorized.
 Branch:codex/liss-0591-repaired-baseline;reviewed cleanSHA26da7f29.
 Current reviewer packet:[Phase3](../reviews/2026-10-21-liss-0591-r2-phase3-review.md).
 Earlier Request/current-state sections below are chronological history.
@@ -1585,3 +1585,61 @@ postcommit result are stored externally. No post-run source/record edits planned
 - Blockers:none at checkpoint;actual verification may expose failures,which
   must be reported rather than bypassed. No done transition/process completion
   claim,push,PR or merge under this authority. DoD checked before final response.
+
+## Human final-result acceptance / current handoff —2026-10-21
+
+- User:**ISS-0591 R2 最終レビュー結果の受入れ**. Resolve to LISS-0591,the
+  unique immediately preceding target;not another issue. Type:human final
+  review/result acceptance only. Feature Path acceptance record,not execution.
+- Accepted:clean71e0965540f0409d6a867f972c177a245a482c76,Phase3 reviewer packet,
+  final verification and explicit E03/structure/dependency limitations.
+- Evidence:`/private/tmp/liss-0591-final-20261021.mCidKl/result.json` verified
+  against actual HEAD and clean tree before edits:focused202,repair114,
+  inherited428,adjacent42,root3254,spec161,sanity11 PASS;pytest0 failures/errors/
+  skips/exclusions,same preceding node IDs. macOS27.0.1arm64/Python3.12.6/
+  pytest9.0.3. Old external pending-human flag remains immutable pre-receipt history.
+- Changes:Issue,spec,WP0175,Phase3 review and this trace only. No source/test/
+  fixture/cohort/clause edit,Git commit or remote operation. Runtime not rerun;
+  new dirty records are not clean-SHA completion evidence. Existing lessons
+  on typed gates,status synchronization and actual final-SHA verification applied.
+- Included:canonical artifacts,final evidence,prior-review/approval boundary.
+  Omitted:unrelated grammar,Rust,providers,secrets/external AI. Assumption:
+  concise ISS spelling identifies sole pending LISS0591 result,not wider scope.
+- Route:host records,review.same_context/weaker,implementation.host setting
+  not permission;empty modelIDs. AIP0591-001 L/L unchanged. Model/reasoning/
+  usage/estimates/metric/source/variance N/A:not exposed/calibrated.
+- Next safe action:request **LISS-0591 R2 受入れ記録コミット・実SHAで全blocking再検証承認**.
+  Type:bounded local acceptance-record commit/verification;implementation:no;
+  post-review:yes;batch:N/A. Later delivery requires separate authorization.
+- Blockers:none for receipt;record commit/revalidation gates remain. Issue
+  stays review,WP in_progress,not done. Completion process review not triggered
+  until eventual closeout. DoD/handoff checked;no new process policy or lesson.
+
+## Approved acceptance-record checkpoint / current handoff —2026-10-21
+
+- User:**LISS-0591 R2 受入れ記録コミット・実SHAで全blocking再検証承認**.
+  Type:bounded local acceptance-record commit/verification;Feature Path.
+- Scope:commit5 related records (Issue,spec,WP0175,Phase3 review,this trace),
+  then verify new actualSHA. No source/test/fixture/clause/cohort changes.
+  Prior accepted product/reviewSHA71e09655 remains historical evidence.
+- Completed at checkpoint:approval receipt,intake,scope/status synchronization,
+  prior evidence recovery. This pre-run record does not assert future success.
+- Verification:root/focused/repair/inherited/adjacent/spec/all applicable actual
+  sanity,compile,Git/raw/cohort/export/scope audits and committed routing;
+  compare prior node IDs. Record cleanSHA,environment,argv,UTC times,exits/counts.
+- External outcome:`/private/tmp/liss-0591-accepted-20261021.WUeVn4/result.json`
+  plus per-command logs/JUnits. No tracked post-run edits;later commit requires
+  another full rerun. Missing temporary evidence requires repeat verification.
+- Included:5 records,canonical clauses,prior accepted evidence and real suites.
+  Omitted:unrelated features,Rust,providers,secrets/external AI. Applied lessons:
+  exact finalSHA verification,typed gates,status/export/raw evidence preservation.
+- Routing:host verification,same_context/weaker existing review,empty modelIDs;
+  no enabled large-change override. AIP0591-001 L/L unchanged. AI attribution:
+  this checkpoint only;model/reasoning/usage/estimates/metric/source/variance
+  N/A:not exposed/calibrated. Existing structure/dynamic graph gaps retained.
+- Next safe action:if all checks pass,request push/PR/CI/successful-merge
+  authorization. No further record-acceptance loop or remote permission inferred.
+  Implementation:no;post-review:yes;batch:N/A. Issue review/WP in_progress,not done;
+  process completion review remains for eventual authorized closeout.
+- Blockers:none at checkpoint;report actual failures without bypass. DoD/handoff
+  checked;no source repair,new process rule,Git push,PR or merge permitted.

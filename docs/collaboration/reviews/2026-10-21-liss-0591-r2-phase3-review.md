@@ -1,6 +1,6 @@
 # LISS-0591 R2 Phase3 Refactor / review
 
-Status: **agent_pass — no blocking findings;human final acceptance pending**.
+Status: **agent_pass — no blocking findings;human final result accepted2026-10-21 at71e09655**.
 Phase3 explicitly authorized2026-10-21. No source/test edits during review.
 At Phase3 review,this packet and synchronized records were uncommitted.
 Final record commit/actual-SHA verification subsequently authorized2026-10-21.
@@ -142,3 +142,26 @@ After success request **LISS-0591 R2 最終レビュー結果の受入れ**;type
 final-result acceptance. Implementation allowed:no;post-review:yes;batch:N/A.
 No delivery permission;Issue/WP remain open. Any later tracked edit requires
 another final-SHA all-blocking run;expired external evidence requires revalidation.
+
+## Human final-result acceptance / current gate —2026-10-21
+
+Received **ISS-0591 R2 最終レビュー結果の受入れ**;unique target LISS-0591.
+Human accepts this review and final clean-SHA71e0965540f0409d6a867f972c177a245a482c76
+verification:focused202,repair114,inherited428,adjacent42,root3254,spec161,
+sanity11 PASS. Authoritative final evidence remains external
+`/private/tmp/liss-0591-final-20261021.mCidKl/result.json`;its pre-acceptance
+pending flag is historical,not rewritten. Source/tests/clauses unchanged.
+This acceptance receipt is uncommitted;not new final-SHA evidence. Next:
+**LISS-0591 R2 受入れ記録コミット・実SHAで全blocking再検証承認**.
+Type:bounded local record commit/verification;implementation allowed:no;
+post-review:yes;batch:N/A. No commit/delivery authority or done transition.
+
+## Acceptance-record verification authorization —2026-10-21
+
+Bounded5-record commit and actual-SHA all-blocking verification explicitly
+authorized. No source/test changes. Result is written after commit to
+`/private/tmp/liss-0591-accepted-20261021.WUeVn4/result.json`;not predicted by
+this receipt. Missing evidence requires rerun. Human product acceptance at
+71e09655 stands;later record-SHA success does not imply remote permission.
+Next only after success:push/PR/CI/successful-merge authorization.
+Implementation:no;post-review:yes;batch:N/A. Issue/WP not done.

@@ -4,8 +4,8 @@
 
 - Local issue ID:LISS-0591
 - GitHub issue:none;local planning only
-- Status:review — R2 Phase3 agent_pass;final verification authorized,human acceptance pending
-- Phase:r2-final-verification-authorized
+- Status:review — R2 final result human-accepted;acceptance-record commit/revalidation authorized
+- Phase:r2-acceptance-record-verification-authorized
 - Type:refactor / behavior-preserving body migration
 - Priority:high,next selected WP0175 candidate
 - Initial planning size:L
@@ -58,7 +58,9 @@ and separate Phase1 execution approval. That execution approval was received
 - Received2026-10-21:local commit/actual-SHA all-blocking verification approval.
 - Received2026-10-21:R2 Phase3 review approval/execution;agent_pass,no code/test edits.
 - Received2026-10-21:final verification/review-record commit and actual-SHA all-blocking approval.
-- Next:human final-result acceptance only after successful external actual-SHA record.
+- Received2026-10-21:human final-result acceptance at71e09655;ISS-0591 resolves to unique LISS-0591 target.
+- Received2026-10-21:acceptance-record commit/new actual-SHA all-blocking authorization.
+- Next:delivery authorization only after successful actual-SHA checkpoint evidence.
 - No commit,push,PR,merge,bug repair or further candidate authority inferred.
 
 ## Context / design
@@ -67,7 +69,7 @@ and separate Phase1 execution approval. That execution approval was received
   four manifest provenances,actual copy utilities,selected neighboring tests.
 - Omitted:unrelated grammar,Rust,provider/service choice,secrets,history-wide audit.
 - Assumptions:mechanical algorithm move,callbacks remain on live Parser.
-- Open decisions:human final-result acceptance after actual-SHA verification
+- Open decisions:actual-SHA acceptance-record verification and later delivery
   approvals;return to design if another protected path must change.
   Historical P08 discrepancy resolved by0592 and
   accepted B01–B10;successful P08 retained.
@@ -378,6 +380,31 @@ Next conditional target:**LISS-0591 R2 最終レビュー結果の受入れ**.
 Type:human final-result acceptance;implementation allowed:no;post-review:yes;
 batch:N/A. Issue not done;no push/PR/merge authority inferred.
 
+## Human final-result acceptance —2026-10-21
+
+Received **ISS-0591 R2 最終レビュー結果の受入れ**. Resolve ISS-0591 to
+LISS-0591,the unique immediately preceding approval target. Type:human final
+review/result acceptance,not execution or delivery approval. Accepted SHA:
+`71e0965540f0409d6a867f972c177a245a482c76`;Phase3 packet and final external
+`/private/tmp/liss-0591-final-20261021.mCidKl/result.json` verified against HEAD.
+Focused202,repair114,inherited428,adjacent42,root3254,spec161,sanity11 PASS;
+pytest0 failures/errors/skips/exclusions,same Phase3 node IDs. Existing E03
+pinned-fixture whitespace disposition and recorded structure/dynamic-graph
+limits retained. Product/tests/fixtures/accepted cohort unchanged.
+This receipt changes records only;no runtime rerun or new clean-SHA claim.
+Next:**LISS-0591 R2 受入れ記録コミット・実SHAで全blocking再検証承認**.
+Implementation allowed:no;post-review:yes;batch:N/A. No commit,push,PR or merge
+permission inferred. Remain review until record checkpoint/closeout;not done.
+
+## Acceptance-record checkpoint approval —2026-10-21
+
+Explicit bounded acceptance-record commit/all-blocking actual-SHA verification
+approved. Only5 related records;no product/test edit. Actual outcome lives in
+`/private/tmp/liss-0591-accepted-20261021.WUeVn4/result.json`;this pre-run receipt
+asserts no success. No tracked result edits after runs;missing evidence requires
+rerun. If all pass,next:push/PR/CI/successful-merge approval. Implementation:no;
+post-review:yes;batch:N/A. No remote permission. Issue remains review,not done.
+
 ## References
 
 - [Accepted core decomposition](../specs/staqex-core-module-decomposition.md).
@@ -386,7 +413,7 @@ batch:N/A. Issue not done;no push/PR/merge authority inferred.
 
 ## Process review
 
-- Outcome:not yet;Phase3 product review passed,final verification/acceptance pending,not done.
+- Outcome:not yet;final result human-accepted,acceptance-record checkpoint/closeout pending,not done.
 - Lesson written:no new rule;existing ownership/private consumer/guard/typed
   approval/real-site/quantitative lessons applied in design.
 - Template-feedback path:none requested.

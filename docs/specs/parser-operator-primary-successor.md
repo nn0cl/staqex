@@ -1,9 +1,10 @@
 # Parser operator-primary本体分離 — accepted specification
 
-Current2026-10-21: R2 Phase3 explicitly approved and agent review passed at
-clean26da7f29;no product/test changes. [Phase3 packet](../collaboration/reviews/2026-10-21-liss-0591-r2-phase3-review.md).
-Final review-record commit/actual-SHA verification authorized2026-10-21;
-outcomes external below,human final-result acceptance pending.
+Current2026-10-21: R2 final review/result human-accepted at clean71e09655;
+all blocking passed,no product/test changes in review/acceptance.
+[Phase3 packet](../collaboration/reviews/2026-10-21-liss-0591-r2-phase3-review.md).
+Acceptance-record commit/new actual-SHA verification authorized2026-10-21;
+outcome external below. Delivery remains gated.
 The chronological approval history below does not supersede this current gate.
 
 Historical status: P01–P10 accepted2026-10-16; supplemental B01–B10 / exact6-carrier
@@ -733,3 +734,30 @@ result:`/private/tmp/liss-0591-final-20261021.mCidKl/result.json`,with per-comma
 logs/JUnits. Missing evidence requires rerun. No tracked post-run edits without
 another full rerun. Next only after success:human **LISS-0591 R2 最終レビュー結果の受入れ**.
 Implementation allowed:no;post-review:yes;batch:N/A. No push/PR/merge permission.
+
+## Human final-result acceptance —2026-10-21
+
+Human **ISS-0591 R2 最終レビュー結果の受入れ** resolves to the unique
+LISS-0591 target. Accepts final review/result at clean
+`71e0965540f0409d6a867f972c177a245a482c76`,not future record-SHA verification
+or delivery. External `/private/tmp/liss-0591-final-20261021.mCidKl/result.json`
+confirms focused202/repair114/inherited428/adjacent42/root3254/spec161/sanity11
+PASS,pytest0 failures/errors/skips/exclusions,same Phase3 IDs. Accepted22-artifact
+467971d6…0bb9 and P/B/E clauses unchanged;E03 fixed-evidence whitespace and
+documented residual structure/dependency limitations remain explicit.
+Records only updated;runtime not rerun for this receipt. Next:
+**LISS-0591 R2 受入れ記録コミット・実SHAで全blocking再検証承認**.
+Type:bounded local acceptance-record commit/verification. Implementation:no;
+post-review:yes;batch:N/A. No commit,push/PR/merge permission inferred.
+
+## Acceptance-record checkpoint authorization —2026-10-21
+
+Received **LISS-0591 R2 受入れ記録コミット・実SHAで全blocking再検証承認**.
+Commit only5 related acceptance/status records,then rerun all declared blocking
+suites at the new actual SHA. Product/test/fixture/clause/cohort bytes frozen.
+This pre-run receipt claims no future success. Actual result and full command/
+SHA/environment/timing/JUnit evidence:
+`/private/tmp/liss-0591-accepted-20261021.WUeVn4/result.json`.
+No tracked post-run edit without another full rerun;missing evidence requires
+revalidation. After success,next gate:push/PR/CI/successful-merge authorization.
+Implementation:no;post-review:yes;batch:N/A. No remote authority inferred.
