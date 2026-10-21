@@ -83,6 +83,12 @@ Issue remains blocked for delivery/WP in_progress,not done.
 Next requested approval:**LISS-0591 CI修復 final verification／レビュー記録コミット・実SHAで全blocking再検証承認**.
 Type:bounded local record commit/final verification;implementation:no further
 repair;post-review:yes. Subsequently granted2026-10-21;execution outcome
-external,pending. After success request human final-result acceptance.
-No push/PR621 update/remote rerun/merge.
+external. Clean bc754065 subsequently passed all blocking;human
+**LISS-0591 CI修復 最終レビュー結果の受入れ** received2026-10-21.
+This accepts the packet/result,not another receipt SHA or remote CI success.
+Next:**LISS-0591 CI修復 受入れ記録コミット・実SHAで全blocking再検証承認**.
+Type:bounded local receipt commit/verification;implementation:no;
+post-review:yes. Subsequently granted2026-10-21;external outcome pending.
+After all-blocking success request delivery authorization,no extra acceptance
+loop. No push/PR621 update/remote rerun/merge yet authorized.
 Representative [trace/handoff](../traces/2026-10-16-liss-0591-parser-operator-primary.md).

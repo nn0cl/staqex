@@ -7,9 +7,10 @@ separately approved and completed on 2026-10-21; Red agent review passed,
 human Red review/acceptance received on 2026-10-21. Phase 2 implementation
 separately approved and applied: root-checkout full-history input only.
 Local commit df5e6062 and all-blocking verification passed2026-10-21,including
-copy smoke. Authorized Phase3 review agent_pass;review records are uncommitted
-and final-record commit/verification is authorized2026-10-21,outcome pending.
-Delivery remains separately gated;the receipt below does not predict success.
+copy smoke. Phase3 review agent_pass;final-record commit bc754065 passed all
+local blocking and the Adjudicator accepted the final review/result2026-10-21.
+Acceptance-record commit/reverification authorized2026-10-21,outcome pending;
+delivery remains separately gated. No further product/result acceptance loop.
 
 Owner: [LISS-0591](../issues/LISS-0591-parser-operator-primary-successor.md).
 Parent: [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
@@ -196,3 +197,32 @@ blocking suite/check at the new clean SHA. Result belongs outside Git:
 logs/JUnits/metadata. No tracked post-run edit;any later commit needs another
 full rerun. After success request human final-result acceptance;otherwise
 report the actual failure. No push,PR update,remote rerun or merge permission.
+
+## Human final-result acceptance — 2026-10-21
+
+Received **LISS-0591 CI修復 最終レビュー結果の受入れ**. Type:human final
+review/result acceptance of clean `bc7540654461a841ee8ad6346c76738dc44e70f8`,
+Phase3 packet and final evidence. Verified actual SHA/clean tree and all11
+command receipts before receipt edits:focused202/consumer21(included),repair114,
+inherited428,adjacent42,root3254,spec161/161,sanity11/11,compile/raw/cohort/
+export/checkpoint/routing PASS;pytest0failures/errors/skips/exclusions.
+
+Evidence remains the final-checkpoint result above (macOS27.0.1arm64,
+Python3.12.6,pytest9.0.3),not rewritten as new execution. This acceptance does
+not cover a later receipt SHA or actual remote CI. Only acceptance metadata
+changed;no runtime rerun or executable/test/clause edit. Next:separately
+authorized acceptance-record commit and all-blocking rerun at its actual SHA.
+No commit,push,PR621 update,CI rerun or merge authorized by this receipt.
+
+## Approved acceptance-record checkpoint — 2026-10-21
+
+Human **LISS-0591 CI修復 受入れ記録コミット・実SHAで全blocking再検証承認**
+received. Commit only six related receipt Markdown records,then run every
+declared blocker at its actual clean SHA. Workflow/source/tests/fixtures/
+accepted clauses unchanged;prior bc754065 result remains historical evidence.
+Outcome:`/private/tmp/liss-0591-ci-accepted-20261021.Uujhd0/result.json`,with
+per-command metadata/stdout/stderr/JUnits. This pre-run record predicts no
+success. No tracked post-run edit;later SHA requires another full rerun.
+If all checks pass,next is push/PR update/CI/successful-merge authorization;
+otherwise report actual failure. No further record-acceptance loop. No remote
+authority or additional implementation inferred from this local checkpoint.

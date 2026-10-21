@@ -5,7 +5,7 @@
 - Local issue ID:LISS-0591
 - GitHub issue:none;local planning only
 - Status:blocked — PR621 root CI lacks immutable Git history;accepted product unchanged
-- Phase:phase-3-refactor — final record commit/verification authorized;outcome pending
+- Phase:phase-3-refactor — receipt commit/actual-SHA rerun authorized;outcome pending
 - Type:refactor / behavior-preserving body migration
 - Priority:high,next selected WP0175 candidate
 - Initial planning size:L
@@ -27,14 +27,15 @@ agent_pass;human Red acceptance received2026-10-21. Phase2 implementation
 separately approved/applied:only root Checkout full-history input. Local commit
 df5e6062 passed all blocking,including root3254 and copy smoke11/11 sanity.
 Authorized [CI Phase3 review](../collaboration/reviews/2026-10-21-liss-0591-ci-history-phase3-review.md)
-agent_pass;final-record commit/actual-SHA verification now authorized,
-outcome external and pending. Human final acceptance/delivery remain gated. Plan owner
+agent_pass;final-record bc754065 passed all blocking and human final-result
+acceptance received2026-10-21. Acceptance-record commit/actual-SHA rerun
+authorized2026-10-21;external outcome pending,delivery separately gated. Plan owner
 remains this Issue;no duplicate Issue. Bounded repair size S (one workflow
 input, established 83-node reproduction, no boundary change), while parent
 L/L and AIP-0591-001 remain unchanged. This is a new CI-repair design attempt,
 not a retry of the accepted Parser implementation. Workflow input applied,
-committed/local all-blocking verified;remote CI not rerun. New review records
-are not covered by clean-df5e6062 completion evidence.
+committed/local all-blocking verified through clean bc754065;remote CI not
+rerun. New receipt records are not clean-bc754065 completion evidence.
 
 Scope/Architecture Path Phase0 design-start explicitly approved2026-10-16.
 Dedicated Issue/spec P01–P10,limited3-carrier policy and Phase0 explicitly

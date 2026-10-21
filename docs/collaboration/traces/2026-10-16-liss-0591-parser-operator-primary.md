@@ -2,8 +2,9 @@
 
 Current2026-10-21:PR621 open at5b62ab1a;delivery blocked on31 CI Git-history failures;
 CI repair df5e6062 all local blocking PASS;authorized Phase3 review agent_pass.
-Final-review record commit/actual-SHA verification authorized;outcome external
-and pending. Human final acceptance and delivery remain separately gated.
+Final-review bc754065 all local blocking PASS;human CI final-result acceptance
+received. Receipt commit/actual-SHA rerun authorized,outcome external/pending;
+remote delivery remains gated.
 Branch:codex/liss-0591-repaired-baseline;reviewed cleanSHA26da7f29.
 Current reviewer packet:[Phase3](../reviews/2026-10-21-liss-0591-r2-phase3-review.md).
 Earlier Request/current-state sections below are chronological history.
@@ -2007,3 +2008,65 @@ postcommit result are stored externally. No post-run source/record edits planned
   Type:human final-result acceptance;implementation:no;post-review:yes.
   If failure,report actual blocker. No push/PR621 update/CI rerun/merge or done
   transition authorized. Issue blocked/WP in_progress;process closeout deferred.
+
+## CI repair human final-result acceptance / current handoff —2026-10-21
+
+- User:**LISS-0591 CI修復 最終レビュー結果の受入れ**. Type:human final
+  review/result acceptance only. Accepts clean bc7540654461a841ee8ad6346c76738dc44e70f8,
+  CI Phase3 packet and final evidence with stated remote/structure limitations.
+  Implementation:no;post-review:yes;batch:N/A. No future SHA/delivery acceptance.
+- Evidence recovered before edits:actual clean HEAD equals result testedSHA,
+  all11 command receipts exit0,same SHA,clean before/after. Focused202/consumer21
+  included,repair114,inherited428,adjacent42,root3254,spec161/161,sanity11/11,
+  compile/raw/cohort/export/checkpoint/routing PASS,pytest0failures/errors/
+  skips/exclusions. Environment macOS27.0.1arm64/Python3.12.6/pytest9.0.3.
+  `/private/tmp/liss-0591-ci-final-20261021.fUCBbu/result.json` remains immutable
+  execution evidence,not a newly run test or receipt-SHA verification.
+- Changed6 records only:Issue,CI supplement,original spec,WP0175,CI Phase3
+  packet and this trace. No source/test/workflow/fixture/clause/index/commit
+  or remote edits. Prior reviewed records/lessons unchanged. Issue blocked,
+  WP in_progress,not done;completion process review not triggered.
+- Included:accepted packet/spec/final evidence and related metadata,typed
+  gates/status/history/final-SHA lessons. Omitted:runtime execution,new review,
+  unrelated source,horizon,providers,secrets/external AI. No open architecture.
+- Route:host metadata checks,review.same_context/weaker,implementation.host
+  not permission,empty modelIDs,no enabled override. ParentL/L/AIP0591-001,
+  repairS unchanged. Model/reasoning/tokens/estimates/metric/source/variance
+  N/A:not exposed/calibrated;attribution:receipt only,not a repair attempt.
+- Verification:scoped lifecycle/coverage/link/whitespace/scope and frozen
+  CI/PBE clause checks;no fresh runtime/root/CI run. New dirty receipt records
+  do not inherit clean-bc754065 completion evidence. Existing remote failure
+  remains until actual authorized PR CI. No new lesson/policy/reviewer pass.
+- Next:**LISS-0591 CI修復 受入れ記録コミット・実SHAで全blocking再検証承認**.
+  Type:bounded local receipt commit/verification;implementation:no additional
+  repair;post-review:yes. Not granted. No push/PR update/CI rerun/merge authority.
+  Blockers:receipt-SHA verification and remote delivery gates. Final doc checks follow.
+
+## CI repair approved acceptance-record checkpoint —2026-10-21
+
+- User:**LISS-0591 CI修復 受入れ記録コミット・実SHAで全blocking再検証承認**.
+  Type:bounded local receipt commit/verification,Feature Path checkpoint;
+  implementation:no further repair;post-review:yes;batch:N/A. No remote authority.
+- Commit exactly6 existing receipt records:Issue,CI supplement,original spec,
+  WP0175,CI Phase3 packet,this trace. Freeze workflow/source/tests/fixtures/
+  clauses/cohort. Preserve human acceptance of cleanbc754065 and prior evidence.
+- Rerun focused/consumer,repair,inherited,adjacent,root,spec,11actual sanity,
+  compile,independent raw/cohort/export/checkpoint/link/YAML/routing checks
+  at new actual cleanSHA;compare counts/node IDs and failures. No source-clean
+  or exclusion bypass. No tracked post-run receipt edit or result-only commit.
+- External outcome:`/private/tmp/liss-0591-ci-accepted-20261021.Uujhd0/result.json`
+  plus per-command metadata/logs/JUnits. This checkpoint does not predict
+  success. New HEAD needs full rerun;missing evidence requires repetition.
+- Included:accepted final packet/spec/result,6-record diff,verification rules,
+  prior exact commands/history/raw/PYTHONPATH/final-SHA/status lessons.
+  Omitted:unrelated source,horizon,providers,secrets/external AI. No new
+  assumption/architecture decision or agent-review packet/process-rule change.
+- Route:host Git/checks,same_context/weaker review setting,empty modelIDs,no
+  enabled override. ParentL/L/AIP0591-001,repairS unchanged;receipt SHA rerun,
+  not a code-fix reattempt. Model/reasoning/tokens/estimates/metric/source/
+  variance N/A:not exposed/calibrated;attribution:this checkpoint only.
+- Next after all checks pass:**LISS-0591 CI修復 push／PR更新／CI確認・成功後のマージ承認**.
+  Type:remote delivery;implementation:no new repair;post-review:yes.
+  No extra result/receipt acceptance loop. If checks fail,report actual blocker.
+  No remote operation/merge/done transition authorized now. Issue blocked,
+  WP in_progress;completion process review remains for authorized closeout.
