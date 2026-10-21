@@ -7,6 +7,28 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date:2026-10-19
+- Class:readonly-inverse-artifact-existence
+- Pattern:a historical evidence inverse can correctly restore raw bytes yet
+  synthesize a missing requested file from its snapshot when an intentionally
+  partial raw-root allowance is reused as a named-file reader. Cached Git path
+  inventories do not prove that a tracked working-tree file still exists.
+- What later design or implementation must do:distinguish parser-only/raw
+  projection input from explicit artifact reads;require the requested artifact
+  to exist before returning normalized evidence. Pair intact/deleted controls
+  on original and extracted shapes and exercise each real reader separately.
+  Do not treat one inherited reader's rejection as proof of all new readers.
+- Source issue or work plan:LISS-0591 / WP-0175;Phase1 review R1.
+- Status:applied;human-authorized test-only correction/re-review adds named
+  artifact existence check and8 persistent paired controls across2 readers,
+  repair pre/post and extraction pre/post. Same independent reviewer input
+  operations now retain4 positives/reject4 deletions;historical parser-only
+  projection remains valid. R1 closed in agent re-review;human corrected-test
+  acceptance remains separate. No source change,fixture/hash regeneration or
+  failure waiver follows from this lesson.
+
+## Lesson
+
 - Date: 2026-10-18
 - Class: raw-byte-guard-normalization
 - Pattern: a byte-preservation guard can hash re-encoded text after implicit
@@ -487,7 +509,12 @@ Record meta-level patterns only. No session transcripts.
   every non-underscore module name in Python), then preserve intentional
   retirement as a separately approved migration.
 - Source issue or work plan (adopter's own ID, if any): LISS-0543 / WP-0160
-- Status: applied
+- Status: applied. Reapplied in LISS-0591 R2 test review:strict declared exports
+  and actual wildcard/object identity must agree with the original manifest;
+  raw module wiring must preserve that contract as well as syntax/EOF. Validate
+  exact serialization using independent Git-built positive and negative roots
+  before accepting test scaffolding;never infer protection from setup-blocked
+  mutations or treat temporary evidence availability as a permanent guarantee.
 
 ## Lesson
 
