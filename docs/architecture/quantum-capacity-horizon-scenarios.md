@@ -5,6 +5,11 @@
 **Draft architecture stress envelope. No delivery forecast or implementation
 permission.**
 
+Calendar-scenario amendment: 2026-10-21, requested by the Adjudicator.
+The earliest challenge case is BQ-0 in 2028; the ambitious planning-center
+band is 2029–2030. These are planning assumptions, not delivery predictions,
+probability estimates, or a change to the proposed ADR's approval status.
+
 This document deliberately accepts an optimistic viewpoint. It uses the
 historical facility-computer-to-personal-computer curve for scale pressure, but
 does **not** reuse its 35-year social-adoption delay. The quantum timeline begins
@@ -62,9 +67,10 @@ an adoption schedule.
 
 ## 2. Breakthrough-relative projection method
 
-IBM's stated 2029 Starling goal—200 logical qubits and 100 million logical
-gates—is evidence that modular error-corrected systems are being planned. It
-does **not** start the household-adoption clock.
+BQ-0 is vendor- and modality-independent. Apollo and Starling are evidence
+points, not prerequisites: another company or architecture may satisfy the
+same useful-computing conditions first. A product launch, physical-qubit
+count, or logical-memory result alone does **not** start the adoption clock.
 
 The clock starts at `BQ-0`, the first publicly reproducible **useful quantum
 computing breakthrough** satisfying all of:
@@ -85,6 +91,69 @@ BQ-0 reference system
   logical carriers: 1e3–1e4
   sustainable logical operations per useful job: 1e10–1e12
 ```
+
+These arithmetic reference values are not minimum qualification thresholds.
+A smaller system can establish BQ-0 if it meets every useful-computing
+condition above on an important workload. Conversely, reaching either
+reference count does not establish BQ-0 without that evidence.
+
+### 2.1 Evidence refresh and what moves (2026-10-21)
+
+The following are dated first-party claims or goals, not joint achievements
+of one composite machine. Their sources are listed in section 7.
+
+| Evidence | Implication for this scenario | What it does not establish |
+|---|---|---|
+| IonQ, September 8: integrated Superion 256 QPUs fabricated and first ions trapped; customer deliveries planned for 2027 | Manufacturing and deployment are concrete preparation milestones | 256 working logical qubits, useful fault-tolerant computation, or BQ-0 |
+| IonQ: 256 and 10K generations developed in parallel; CMOS-based fault tolerance targeted in a 2027 laboratory setting and manufacturable commercial form in 2028 | Include a 2028 early challenge case and prepare logical/physical and hybrid execution contracts before hardware arrival | Independent useful-workload verification or a guaranteed 2028 breakthrough |
+| Quantinuum, October 19: Helios memory-error suppression with code distance; Apollo targeted for 2029 | Refresh the old 2030 Apollo research reference to the current 2029 company goal; track gates and complete computations separately from memory | A million arbitrary error-free gates or BQ-0 from memory fidelity alone |
+| IBM, March roadmap: Starling targeted for client access in 2029, with 200 logical qubits and 100 million gates | Retain as a separate competing route, not the earliest possible BQ-0 date | A reason every other vendor must wait for 2029 |
+
+Manufacturing acceleration, lower error rates, and hybrid integration address
+different bottlenecks. Do not multiply their improvements into a fabricated
+logical-performance result or count the same manufacturing acceleration again
+in the post-BQ growth assumption.
+
+### 2.2 Calendar scenarios, not a forecast
+
+The calendar assumptions below implement the requested ambitious outlook.
+2028 is the earliest challenge case selected for preparedness, not a proven
+physical lower bound; 2027 or earlier is not declared impossible. The sources
+do not justify assigning a probability to any of these cases.
+
+| Scenario | Assumed BQ-0 | QP-1, BQ+3–5 | QP-2 and its QS-2 world, BQ+7–10 |
+|---|---|---|---|
+| Earliest challenge | 2028 | 2031–2033 | 2035–2038 |
+| Ambitious planning center | 2029–2030 | 2032–2035 | 2036–2040 |
+| Later qualification | 2031 or later | Recompute from actual BQ-0 +3–5 | Recompute from actual BQ-0 +7–10 |
+
+Ranges spanning two possible BQ-0 years are unions, not the trajectory of
+one machine. For example, BQ-0 in 2029 gives QP-1 in 2032–2034 and QP-2 in
+2036–2039; BQ-0 in 2030 gives 2033–2035 and 2037–2040 respectively.
+QS-2 is an architectural stress load in the assumed QP-2 world, not a
+separately demonstrated facility-delivery forecast.
+
+| Calendar preparation line | Staqex design obligation, not implementation permission |
+|---|---|
+| 2026–2027 | Preserve meaning, conformance and bounded current-machine witnesses while preparing provider-neutral capability and resource evidence |
+| 2027–2028 | Prepare physical/logical resource distinction, hybrid CPU/GPU/QPU execution boundaries, and contracts for backends owning QEC/decoding |
+| 2028 | Be ready for an early BQ-0 claim; require all qualification evidence before starting the clock |
+| 2029–2030 | Planning-center BQ-0 band; support reproducible useful-workload comparisons and stable scientific workflows |
+| 2031–2035 | QP-1 window across early/center cases; personal/research-lab accelerator workflows under the unchanged section 3 envelope |
+| 2035–2040 | QP-2 window across early/center cases; also stress QS-2 partitioning, exact counts and compositional evidence |
+
+If BQ-0 is later, dependent windows move with it; they are not fixed promises.
+Readiness work may start earlier without claiming delivered hardware, selecting
+a vendor/SDK, reopening completed work, or skipping per-feature approval.
+Retain the post-BQ 12–18-month doubling assumption below, QP-1/QP-2 offsets,
+power envelopes, failure criteria and capacity ranges in section 3.
+Household cost, power and maintainability require their own evidence; a
+data-center rack or foundry improvement does not prove household feasibility.
+
+The previous document did not fix a calendar year for BQ-0. The conversational
+old-center estimate of 2031 was retrospective, not a historical baseline.
+This amendment therefore makes no measured claim of an exact one-year or
+two-year acceleration.
 
 The 79-year average above hides the semiconductor industry's fastest period.
 Moore's original 1965 projection expected annual component-count doubling for
@@ -274,6 +343,11 @@ They do not emulate the hardware. They verify that:
 - TOP500, [LineShine 2026
   results](https://www.top500.org/news/lineshine-debuts-no-1-top500-enters-new-global-exascale-era/).
 - IBM, [Quantum 2030 roadmap](https://www.ibm.com/roadmaps/quantum/2030/).
+- IonQ, [Superion product-line announcement, September 8, 2026](https://www.ionq.com/news/ionq-launches-superion-product-line-industry-leading-upgradeable-platform-designed-to-scale-manufacturable-fault-tolerant-quantum-computing).
+- Quantinuum, [Helios QEC results and Apollo goal, October 19, 2026](https://www.quantinuum.com/blog/quantinuum-closes-in-on-one-million-error-free-operations).
+
+The 2026 sources inform section 2.1; the BQ-0 calendar cases in section 2.2
+are Staqex scenario assumptions, not dates forecast or endorsed by those vendors.
 
 ## 8. Interpretation limits
 
@@ -290,3 +364,7 @@ They do not emulate the hardware. They verify that:
 - The language has no minimum or maximum machine encoded from these profiles.
 - Failure envelopes are simplified union-bound design pressures, not complete
   fault-tolerance analyses.
+- The earliest challenge year is not an impossibility boundary; the planning
+  center is not a probability-weighted forecast.
+- Calendar updates do not promote synthetic future profiles to current device
+  capabilities or change existing implementation/technology approval gates.
