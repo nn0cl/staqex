@@ -12,3 +12,132 @@ def parse_operator_expression(
 ) -> Any:
     """Delegate operator parsing without a second token cursor."""
     return context._legacy_parse_operator_expression(*args, **kwargs)
+
+from ..ast_nodes import OpAttr, OpCall, OpHop, OpIndexed, OpLit, OpPauli, OpVar
+from ..tokens import TokenKind
+from .operator_context import OperatorParseContext
+
+__all__ = [
+    "Any",
+    "ParserContext",
+    "annotations",
+    "parse_operator_expression",
+]
+
+def _legacy_parse_operator_expression(self: OperatorParseContext):
+    sp = self._span()
+    if self._match(TokenKind.LPAREN):
+        expr = self._op_expression()
+        self._expect(TokenKind.RPAREN)
+        return expr
+    if self._check(TokenKind.KET):
+        # LISS-0430: `|x><x|` (bound-variable projector) inside a
+        # Sigma body over a Set domain -- reuses the same
+        # `_ket_or_outer` desugaring the general expression grammar
+        # already uses (ADR 0169: matching ket/bra labels ->
+        # `projector(Var(...))`), previously unreachable from the
+        # Operator-DSL's own body grammar at all.
+        tok = self._advance()
+        return self._ket_or_outer(tok, sp)
+    if self._match(TokenKind.LBRACKET):
+        # LISS-0073 Slice F: OpDSL `[A, B]` → commutator (expression Call).
+        items = self._comma_op_expr_items(TokenKind.RBRACKET)
+        if len(items) != 2:
+            raise self._operator_parse_error(
+                "commutator brackets `[A, B]` require exactly two operands",
+                sp.line,
+                sp.col,
+            )
+        return self._algebra_call("commutator", items, sp)
+    if self._match(TokenKind.LBRACE):
+        items = self._comma_op_expr_items(TokenKind.RBRACE)
+        if len(items) != 2:
+            raise self._operator_parse_error(
+                "anticommutator braces `{A, B}` require exactly two operands",
+                sp.line,
+                sp.col,
+            )
+        return self._algebra_call("anticommutator", items, sp)
+    if self._match(TokenKind.INT):
+        tok = self._prev
+        assert tok is not None
+        return OpLit(value=float(tok.literal), span=sp)
+    if self._match(TokenKind.FLOAT):
+        tok = self._prev
+        assert tok is not None
+        return OpLit(value=float(tok.literal), span=sp)
+    tok = self._peek()
+    if tok.kind == TokenKind.IDENT:
+        name = tok.lexeme
+        self._advance()
+        if name in {"Sigma", "Pi", "ForAll", "Min"}:
+            return self._op_binder(name, sp)
+        if name in {"N", "Q", "P"}:
+            # LISS-0227: parse as OpVar so a local `Operator P = …; return P`
+            # shadows the ADR 0049 Fock atom. Unbound P/Q/N still resolve to
+            # OpNumber / OpQuadrature in hamiltonian._resolve_var.
+            base = OpVar(name=name, span=sp)
+            while self._match(TokenKind.DOT):
+                field = self._expect(TokenKind.IDENT)
+                base = OpAttr(obj=base, name=field.lexeme, span=sp)
+            while self._match(TokenKind.LBRACKET):
+                index = self._op_expression()
+                self._expect(TokenKind.RBRACKET)
+                base = OpIndexed(base=base, index=index, span=sp)
+            return base
+        if name == "hop":
+            # hop(i, j) → |i⟩⟨j| on discrete site / Fock-label basis.
+            # Any reserved name parsed here that can be immediately
+            # followed by `(` must stay listed in
+            # _OPERATOR_DSL_RESERVED_ATOMS (LISS-0051), or an
+            # `Operator` bind's factory-call heuristic will shadow it.
+            self._expect(TokenKind.LPAREN)
+            i_tok = self._expect(TokenKind.INT)
+            self._expect(TokenKind.COMMA)
+            j_tok = self._expect(TokenKind.INT)
+            self._expect(TokenKind.RPAREN)
+            return OpHop(i=int(i_tok.literal), j=int(j_tok.literal), span=sp)
+        if name in {"I", "X", "Y", "Z"}:
+            # Pauli atom with an optional site, e.g. `Z(0)`. Listed in
+            # _OPERATOR_DSL_RESERVED_ATOMS (LISS-0051) so an `Operator`
+            # bind's factory-call heuristic never shadows it.
+            site = None
+            if self._match(TokenKind.LPAREN):
+                args: list = []
+                if not self._check(TokenKind.RPAREN):
+                    args.append(self._op_expression())
+                    while self._match(TokenKind.COMMA):
+                        args.append(self._op_expression())
+                self._expect(TokenKind.RPAREN)
+                # A declaration named like an atom is handled by the
+                # generic expression path in `_type_first_bind`; this
+                # marker is only used for unresolved operator syntax.
+                return OpCall(name=name, args=args, span=sp)
+            base = OpPauli(kind=name.upper(), site=site, span=sp)
+        else:
+            if self._match(TokenKind.LPAREN):
+                args: list = []
+                if not self._check(TokenKind.RPAREN):
+                    args.append(self._op_expression())
+                    while self._match(TokenKind.COMMA):
+                        args.append(self._op_expression())
+                self._expect(TokenKind.RPAREN)
+                return OpCall(name=name, args=args, span=sp)
+            base = OpVar(name=name, span=sp)
+            while self._match(TokenKind.DOT):
+                field = self._expect(TokenKind.IDENT)
+                base = OpAttr(obj=base, name=field.lexeme, span=sp)
+            # LISS-0144: allow chained `a[i][j][k][l]`
+            while self._match(TokenKind.LBRACKET):
+                index = self._op_expression()
+                self._expect(TokenKind.RBRACKET)
+                base = OpIndexed(base=base, index=index, span=sp)
+            return base
+        if self._match(TokenKind.LBRACKET):
+            index = self._op_expression()
+            self._expect(TokenKind.RBRACKET)
+            return OpIndexed(base=base, index=index, span=sp)
+        return base
+    raise self._operator_parse_error(
+        f"expected operator expression, got `{tok.lexeme}`", tok.line, tok.col
+    )
