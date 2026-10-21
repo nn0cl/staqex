@@ -50,6 +50,9 @@ def copy_guarded_dependencies(origin, destination):
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((origin / capture_path).read_bytes())
 
+    from tests.liss_0591_guard_support import copy_parser_dependencies
+    copy_parser_dependencies(origin, destination)
+
 
 @pytest.fixture(name="guarded")
 def guarded_tree(tmp_path, monkeypatch):

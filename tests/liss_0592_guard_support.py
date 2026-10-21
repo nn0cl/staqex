@@ -63,7 +63,8 @@ def repaired(data):
 
 def original_parser_bytes(directory):
     """Only the two approved additions normalize; every other byte stays live."""
-    text = (Path(directory) / PARSER).read_bytes().decode("utf-8")
+    from tests.liss_0591_guard_support import parser_bytes
+    text = parser_bytes(directory).decode("utf-8")
     tree = ast.parse(text)
     owner, reducers, restorers = nodes(tree)
     if reducers or restorers:
@@ -120,4 +121,5 @@ def carrier_after(path):
 
 def assert_carriers():
     for path in baseline()["carriers"]:
-        assert (ROOT / path).read_bytes() == carrier_after(path), path
+        from tests.liss_0591_guard_support import historical_test_bytes
+        assert historical_test_bytes(ROOT, path) == carrier_after(path), path

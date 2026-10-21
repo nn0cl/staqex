@@ -167,6 +167,9 @@ def readonly_bytes(directory, path):
     if path == "compiler/staqex/parser.py":
         from tests.liss_0592_guard_support import original_parser_bytes
         return original_parser_bytes(directory)
+    if path == "compiler/staqex/parsing/operators.py":
+        from tests.liss_0591_guard_support import readonly_bytes as primary_bytes
+        return primary_bytes(directory, path)
     if path == TYPECHECK:
         text = data.decode()
         tree = ast.parse(text)
@@ -234,4 +237,6 @@ def make_shape(destination, extracted, origin=ROOT):
     assert installed(ast.parse((destination / TYPECHECK).read_text())) == extracted
     assert (destination / CONTEXT).is_file() == extracted
     assert readonly_bytes(destination, TYPECHECK) == original.encode()
+    from tests.liss_0591_guard_support import copy_parser_dependencies
+    copy_parser_dependencies(origin, destination)
     return destination

@@ -7,6 +7,52 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date:2026-10-21
+- Class:immutable-evidence-history-prerequisite
+- Pattern:tests that compare against immutable Git objects pass in a full
+  local checkout but fail in shallow CI before their behavioral assertions.
+- What later design or implementation must do:declare history availability
+  as an execution prerequisite;compare shallow/full-history at the same SHA,
+  raw bytes and node IDs. Preserve original evidence and failures instead of
+  weakening tests or replacing Git with snapshots. Distinguish this control
+  from actual event-checkout CI and all-blocking success.
+- Source issue or work plan:LISS-0591 / WP-0175;accepted CI01–CI07.
+- Status:applied in Phase1/review;83-node paired evidence and independent
+  raw-Git audit. Phase2 applies only the history input and preserves the
+  source-clean copy guard;uncommitted copy-smoke refusal is not bypassed.
+  Actual commit-SHA verification and remote CI remain separate gates.
+  Applied at authorized commit checkpoint:keep outcomes outside Git and rerun
+  every blocker after the commit instead of treating provisional passes as final.
+  Reapplied in CI Phase3:verify same-SHA command/JUnit receipts and exact
+  workflow preservation with ref/permission/depth/command mutation controls;
+  a passing local checkout never substitutes for actual event-checkout CI.
+  Reapplied at final-review commit:freeze code/tests,rerun all blockers at the
+  new actual SHA,and retain receipts externally instead of adding a result commit.
+
+## Lesson
+
+- Date:2026-10-19
+- Class:readonly-inverse-artifact-existence
+- Pattern:a historical evidence inverse can correctly restore raw bytes yet
+  synthesize a missing requested file from its snapshot when an intentionally
+  partial raw-root allowance is reused as a named-file reader. Cached Git path
+  inventories do not prove that a tracked working-tree file still exists.
+- What later design or implementation must do:distinguish parser-only/raw
+  projection input from explicit artifact reads;require the requested artifact
+  to exist before returning normalized evidence. Pair intact/deleted controls
+  on original and extracted shapes and exercise each real reader separately.
+  Do not treat one inherited reader's rejection as proof of all new readers.
+- Source issue or work plan:LISS-0591 / WP-0175;Phase1 review R1.
+- Status:applied;human-authorized test-only correction/re-review adds named
+  artifact existence check and8 persistent paired controls across2 readers,
+  repair pre/post and extraction pre/post. Same independent reviewer input
+  operations now retain4 positives/reject4 deletions;historical parser-only
+  projection remains valid. R1 closed in agent re-review;human corrected-test
+  acceptance remains separate. No source change,fixture/hash regeneration or
+  failure waiver follows from this lesson.
+
+## Lesson
+
 - Date: 2026-10-18
 - Class: raw-byte-guard-normalization
 - Pattern: a byte-preservation guard can hash re-encoded text after implicit
@@ -487,7 +533,19 @@ Record meta-level patterns only. No session transcripts.
   every non-underscore module name in Python), then preserve intentional
   retirement as a separately approved migration.
 - Source issue or work plan (adopter's own ID, if any): LISS-0543 / WP-0160
-- Status: applied
+- Status: applied. Reapplied in LISS-0591 R2 test review:strict declared exports
+  and actual wildcard/object identity must agree with the original manifest;
+  raw module wiring must preserve that contract as well as syntax/EOF. Validate
+  exact serialization using independent Git-built positive and negative roots
+  before accepting test scaffolding;never infer protection from setup-blocked
+  mutations or treat temporary evidence availability as a permanent guarantee.
+  Reapplied in LISS-0591 R2 Phase3:verify installed declared/wildcard identities,
+  whole Git-derived owner/facade bytes and actual consumer imports independently
+  of the migration guard. Keep same-context product review weaker than human
+  acceptance;later review-record commits require fresh actual-SHA all-blocking.
+  Preserve original raw-evidence whitespace when explicitly required by the
+  accepted contract,and disclose the exact generic-check finding rather than
+  claiming a blanket clean diff or trimming immutable evidence.
 
 ## Lesson
 

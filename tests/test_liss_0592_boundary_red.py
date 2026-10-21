@@ -3,6 +3,7 @@
 import ast
 import importlib
 import subprocess
+from tests import liss_0591_guard_support as primary
 
 from tests import liss_0592_guard_support as guard
 
@@ -18,20 +19,21 @@ def test_r06_original_parser_and_other_production_are_frozen():
     assert record["base"] == "22335a5768c17a41eb94682e7dd14d3e6df004bd"
     assert guard.sha(guard.original_parser_bytes(guard.ROOT)) == record["parser_sha256"]
     for path, expected in record["readonly_sha256"].items():
-        assert guard.sha((guard.ROOT / path).read_bytes()) == expected, path
+        assert guard.sha(primary.readonly_bytes(guard.ROOT, path)) == expected, path
     actual = set(subprocess.check_output(
         ["git", "ls-files", "--cached", "--others", "--exclude-standard", "compiler"],
         cwd=guard.ROOT, text=True,
     ).splitlines())
-    assert actual == set(record["production_paths"])
+    assert primary.production_paths(guard.ROOT, actual) == set(record["production_paths"])
 
 
 def test_r06_only_two_reviewed_carrier_substitutions_and_old_tests_unchanged():
     guard.assert_carriers()
     paths = subprocess.check_output(["git", "ls-files", "tests"], cwd=guard.ROOT, text=True).splitlines()
+    paths = primary.historical_test_paths(paths)
     retained = [p for p in paths if p not in guard.baseline()["carriers"]
                 and "/liss_0592/" not in p and "liss_0592_" not in p]
-    fingerprint = "\n".join(path + ":" + guard.sha((guard.ROOT / path).read_bytes()) for path in retained)
+    fingerprint = "\n".join(path + ":" + guard.sha(primary.historical_test_bytes(guard.ROOT, path)) for path in retained)
     assert guard.sha(fingerprint.encode()) == guard.baseline()["protected_tests_fingerprint"]
 
 

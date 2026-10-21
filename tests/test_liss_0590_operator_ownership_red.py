@@ -3,6 +3,7 @@
 import ast
 import hashlib
 import importlib
+from tests.liss_0591_guard_support import parser_context_paths
 
 from compiler.staqex.typecheck import TypeChecker, Ty
 from tests import liss_0590_guard_support as guard
@@ -46,7 +47,7 @@ def test_o07_original_facade_bytes_and_other_production_are_preserved():
     for path, expected in evidence["readonly_sha256"].items():
         assert hashlib.sha256(guard.readonly_bytes(guard.ROOT, path)).hexdigest() == expected, path
     paths = {str(p.relative_to(guard.ROOT)) for p in (guard.ROOT / "compiler").rglob("*.py")}
-    assert paths - set(evidence["production_paths"]) <= {guard.CONTEXT}
+    assert paths - set(evidence["production_paths"]) <= {guard.CONTEXT} | parser_context_paths(guard.ROOT)
     assert set(evidence["production_paths"]) <= paths
 
 
