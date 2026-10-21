@@ -515,6 +515,13 @@ Record meta-level patterns only. No session transcripts.
   exact serialization using independent Git-built positive and negative roots
   before accepting test scaffolding;never infer protection from setup-blocked
   mutations or treat temporary evidence availability as a permanent guarantee.
+  Reapplied in LISS-0591 R2 Phase3:verify installed declared/wildcard identities,
+  whole Git-derived owner/facade bytes and actual consumer imports independently
+  of the migration guard. Keep same-context product review weaker than human
+  acceptance;later review-record commits require fresh actual-SHA all-blocking.
+  Preserve original raw-evidence whitespace when explicitly required by the
+  accepted contract,and disclose the exact generic-check finding rather than
+  claiming a blanket clean diff or trimming immutable evidence.
 
 ## Lesson
 

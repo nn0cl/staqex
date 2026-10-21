@@ -4,8 +4,8 @@
 
 - Local issue ID:LISS-0591
 - GitHub issue:none;local planning only
-- Status:review — R2 local checkpoint;actual-SHA evidence required for Phase3 gate
-- Phase:r2-phase-2-local-checkpoint-phase-3-gated
+- Status:review — R2 Phase3 agent_pass;final verification authorized,human acceptance pending
+- Phase:r2-final-verification-authorized
 - Type:refactor / behavior-preserving body migration
 - Priority:high,next selected WP0175 candidate
 - Initial planning size:L
@@ -56,7 +56,9 @@ and separate Phase1 execution approval. That execution approval was received
 - Received2026-10-21:R2 human exact-cohort test acceptance467971d6…0bb9.
 - Received2026-10-21:R2 Phase2 implementation approval;E02/E03 correction applied.
 - Received2026-10-21:local commit/actual-SHA all-blocking verification approval.
-- Next:Phase3 review approval only after successful actual-SHA evidence;R1 closed.
+- Received2026-10-21:R2 Phase3 review approval/execution;agent_pass,no code/test edits.
+- Received2026-10-21:final verification/review-record commit and actual-SHA all-blocking approval.
+- Next:human final-result acceptance only after successful external actual-SHA record.
 - No commit,push,PR,merge,bug repair or further candidate authority inferred.
 
 ## Context / design
@@ -65,7 +67,7 @@ and separate Phase1 execution approval. That execution approval was received
   four manifest provenances,actual copy utilities,selected neighboring tests.
 - Omitted:unrelated grammar,Rust,provider/service choice,secrets,history-wide audit.
 - Assumptions:mechanical algorithm move,callbacks remain on live Parser.
-- Open decisions:Phase3 review permission after actual-SHA verification,then final review
+- Open decisions:human final-result acceptance after actual-SHA verification
   approvals;return to design if another protected path must change.
   Historical P08 discrepancy resolved by0592 and
   accepted B01–B10;successful P08 retained.
@@ -349,6 +351,33 @@ another final-SHA all-blocking run. Next,only if all pass:
 **LISS-0591 R2 Phase3 Refactor／review承認**. Type:phase/review execution,
 implementation allowed:no new scope;post-review:yes;batch:N/A. Issue not done.
 
+## R2 Phase3 review —2026-10-21
+
+Explicit Phase3 Refactor/review approval executed at clean26da7f2948020e6f579a2af1b3c27d7a648ea565.
+Agent pass,no blocking findings and no production/test/fixture edits. Fresh
+focused202,repair114,inherited428,adjacent42,root3254,spec161 and sanity11 PASS;
+same preceding actual-SHA node IDs,no failures/errors/skips/exclusions in pytest.
+Independent Git-derived owner/full-facade inverse/protocol/cohort audit PASS.
+Generic feature diff whitespace exits2 only for immutable original-primary.txt:118
+under E03;all other whitespace clean. Parser residual class3392 remains WP0175-owned.
+[Phase3 packet](../collaboration/reviews/2026-10-21-liss-0591-r2-phase3-review.md)
+owns detailed commands,evidence,findings,limitations and next gate.
+Records are now dirty,not final committed evidence. Next:explicit
+**LISS-0591 R2 final verification／レビュー記録コミット・実SHAで全blocking再検証承認**.
+No further implementation/test edit,commit or remote permission inferred.
+Post-review:yes;batch:N/A. Human final-result acceptance remains separate.
+
+## Final verification approval receipt —2026-10-21
+
+Review-record commit and actual-SHA all-blocking execution explicitly authorized.
+Only6 related records may be committed;source/tests remain frozen. Outcomes at
+`/private/tmp/liss-0591-final-20261021.mCidKl/result.json`;this pre-run receipt
+is not proof of success. Full commands/SHA/environment/timing/JUnits external;
+missing evidence requires rerun. No later tracked edit without revalidation.
+Next conditional target:**LISS-0591 R2 最終レビュー結果の受入れ**.
+Type:human final-result acceptance;implementation allowed:no;post-review:yes;
+batch:N/A. Issue not done;no push/PR/merge authority inferred.
+
 ## References
 
 - [Accepted core decomposition](../specs/staqex-core-module-decomposition.md).
@@ -357,7 +386,7 @@ implementation allowed:no new scope;post-review:yes;batch:N/A. Issue not done.
 
 ## Process review
 
-- Outcome:not yet;issue blocked during Phase2 verification,not done.
+- Outcome:not yet;Phase3 product review passed,final verification/acceptance pending,not done.
 - Lesson written:no new rule;existing ownership/private consumer/guard/typed
   approval/real-site/quantitative lessons applied in design.
 - Template-feedback path:none requested.

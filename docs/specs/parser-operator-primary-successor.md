@@ -1,6 +1,12 @@
 # Parser operator-primary本体分離 — accepted specification
 
-Status: P01–P10 accepted2026-10-16; supplemental B01–B10 / exact6-carrier
+Current2026-10-21: R2 Phase3 explicitly approved and agent review passed at
+clean26da7f29;no product/test changes. [Phase3 packet](../collaboration/reviews/2026-10-21-liss-0591-r2-phase3-review.md).
+Final review-record commit/actual-SHA verification authorized2026-10-21;
+outcomes external below,human final-result acceptance pending.
+The chronological approval history below does not supersede this current gate.
+
+Historical status: P01–P10 accepted2026-10-16; supplemental B01–B10 / exact6-carrier
 policy and Phase0 accepted2026-10-19. Resumed Phase1 executed2026-10-19;
 R1 corrected/re-reviewed and closed;179 nodes:4 expected structural Red /
 175 PASS. Human corrected-test acceptance received2026-10-19;
@@ -693,3 +699,37 @@ After a successful all-blocking record:request
 Implementation allowed:no further edits;post-review:yes;batch:N/A. Final reviewer
 pass/human acceptance and delivery remain separate. Issue stays open at the
 Phase2/Phase3 review gate;not done or remotely delivered by this checkpoint.
+
+## R2 Phase3 review disposition —2026-10-21
+
+Received **LISS-0591 R2 Phase3 Refactor／review承認**. Feature Path reviewer
+execution only;same_context/weaker. Agent pass,no new blocking findings.
+No source/test/fixture/6-carrier/acceptance-clause changes. Accepted22-artifact
+467971d6…0bb9 retained. Git-derived owner bytes/full facade inverse and narrow
+declaration context independently audited without importing migration guard.
+Fresh clean26da7f2948020e6f579a2af1b3c27d7a648ea565:focused202,repair114,
+inherited428,adjacent42,root3254,spec161/161,sanity11/11 PASS. Same comparable
+node IDs,pytest0 failures/errors/skips/exclusions. Export/EOF/error/consumer/
+cold-import/serialization/guard controls pass;E03 immutable fixture whitespace
+finding remains separately disclosed,not a whole-diff exit0 claim.
+Detailed [review packet](../collaboration/reviews/2026-10-21-liss-0591-r2-phase3-review.md)
+and external verification preserve environment,argv/times,findings and gaps.
+Other grammar remains Parser-owned,class3392 with WP0175 next-family revisit.
+These later review records are uncommitted and need final actual-SHA rerun.
+Next:**LISS-0591 R2 final verification／レビュー記録コミット・実SHAで全blocking再検証承認**.
+Type:phase/final-verification plus bounded local record commit. Implementation
+allowed:no further source/test changes;post-review:yes;batch:N/A. No human
+final acceptance,push/PR/merge authority inferred;Issue/WP remain open.
+
+## Approved final verification checkpoint —2026-10-21
+
+Received **LISS-0591 R2 final verification／レビュー記録コミット・実SHAで全blocking再検証承認**.
+Type:phase/final verification and bounded local record commit. Commit only the
+6 related review/status/lesson records;no product/test/fixture changes. Then
+rerun focused,repair,inherited,adjacent,root,spec,all applicable sanity,compile,
+Git/raw/cohort/export audits and actual committed routing at that final SHA.
+This receipt precedes execution and asserts no future success. Authoritative
+result:`/private/tmp/liss-0591-final-20261021.mCidKl/result.json`,with per-command
+logs/JUnits. Missing evidence requires rerun. No tracked post-run edits without
+another full rerun. Next only after success:human **LISS-0591 R2 最終レビュー結果の受入れ**.
+Implementation allowed:no;post-review:yes;batch:N/A. No push/PR/merge permission.
