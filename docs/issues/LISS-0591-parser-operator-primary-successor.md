@@ -5,7 +5,7 @@
 - Local issue ID:LISS-0591
 - GitHub issue:none;local planning only
 - Status:blocked — PR621 root CI lacks immutable Git history;accepted product unchanged
-- Phase:phase-2-green — local commit/actual-SHA verification authorized;outcome pending
+- Phase:phase-3-refactor — final record commit/verification authorized;outcome pending
 - Type:refactor / behavior-preserving body migration
 - Priority:high,next selected WP0175 candidate
 - Initial planning size:L
@@ -24,15 +24,17 @@ and Phase0 on2026-10-21. Separately approved Phase1 execution reproduced
 31FAIL/52PASS in the clean shallow clone and83PASS after history-only fetch;
 same SHA/nodes/bytes. Authorized [Red review](../collaboration/reviews/2026-10-21-liss-0591-ci-history-red-review.md)
 agent_pass;human Red acceptance received2026-10-21. Phase2 implementation
-separately approved/applied:only root Checkout full-history input. Pytest/root/
-spec/audits pass provisionally;sanity copy smoke blocked by uncommitted workflow.
-Local commit/actual-SHA all-blocking verification authorized2026-10-21;
-outcome is external to avoid changing the tested SHA. Plan owner
+separately approved/applied:only root Checkout full-history input. Local commit
+df5e6062 passed all blocking,including root3254 and copy smoke11/11 sanity.
+Authorized [CI Phase3 review](../collaboration/reviews/2026-10-21-liss-0591-ci-history-phase3-review.md)
+agent_pass;final-record commit/actual-SHA verification now authorized,
+outcome external and pending. Human final acceptance/delivery remain gated. Plan owner
 remains this Issue;no duplicate Issue. Bounded repair size S (one workflow
 input, established 83-node reproduction, no boundary change), while parent
 L/L and AIP-0591-001 remain unchanged. This is a new CI-repair design attempt,
 not a retry of the accepted Parser implementation. Workflow input applied,
-not committed or remotely verified;no all-blocking Green claim.
+committed/local all-blocking verified;remote CI not rerun. New review records
+are not covered by clean-df5e6062 completion evidence.
 
 Scope/Architecture Path Phase0 design-start explicitly approved2026-10-16.
 Dedicated Issue/spec P01–P10,limited3-carrier policy and Phase0 explicitly

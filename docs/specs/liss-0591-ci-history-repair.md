@@ -6,9 +6,10 @@ includes the existing-test/no-guard-change strategy. Phase 1 execution was
 separately approved and completed on 2026-10-21; Red agent review passed,
 human Red review/acceptance received on 2026-10-21. Phase 2 implementation
 separately approved and applied: root-checkout full-history input only.
-Verification is provisional and blocked by the uncommitted-distribution guard;
-local commit/final-SHA verification authorized2026-10-21 and pending execution;
-delivery remains separately gated. This receipt does not pre-claim success.
+Local commit df5e6062 and all-blocking verification passed2026-10-21,including
+copy smoke. Authorized Phase3 review agent_pass;review records are uncommitted
+and final-record commit/verification is authorized2026-10-21,outcome pending.
+Delivery remains separately gated;the receipt below does not predict success.
 
 Owner: [LISS-0591](../issues/LISS-0591-parser-operator-primary-successor.md).
 Parent: [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
@@ -70,12 +71,11 @@ ADR is proposed.
 
 Current: Phase 0 accepted; separately authorized Phase 1 execution completed,
 agent review passed and human Red acceptance received. Phase 2 execution and
-implementation approved/applied;local commit/final-SHA verification authorized,
-outcome pending in the external record below.
-The accepted CI01–CI07 include the
-existing-test/no-guard-change strategy. Separate Red review/acceptance,
-Phase 2 implementation, Phase 3 and final verification
-approvals remain required. No new test authoring is proposed: an already
+implementation approved/applied;local actual-SHA verification passed atdf5e6062.
+Phase3 review separately approved/executed,agent_pass. The accepted CI01–CI07
+include the existing-test/no-guard-change strategy. Final review-record commit/
+verification,human final acceptance and delivery approvals remain required.
+No new test authoring is proposed: an already
 accepted test reproduces the defect (local-issue-planning exception for
 existing regression coverage, not a phase exemption).
 
@@ -104,9 +104,9 @@ no new exclusions. CI remains the Linux checkout integration acceptance.
 Prior diagnostics: `/private/tmp/liss-0591-delivery-20261021.xNStH4/`, notably
 `history-reproduction.out`, paired JUnits, `failed-logs.out` and command
 metadata. If missing or superseded, repeat rather than infer the outcome.
-Current local source HEAD is `5b62ab1a`, with five pre-existing dirty delivery
-records retained. Main's separate horizon PR622 does not repair PR621 and
-is not silently merged/rebased into this proposal.
+Original CI-failing source HEAD was `5b62ab1a`;its five dirty delivery records
+were retained in repair commit `df5e6062`. Main's separate horizon PR622 does
+not repair PR621 and is not silently merged/rebased into this work.
 
 No architecture or technology decision is open. Human decisions remaining:
 each subsequent phase. A discrepancy in
@@ -170,3 +170,29 @@ Phase3 reviewer pass or remote delivery permitted. Authoritative outcome:
 logs and JUnits. No tracked post-run result edit;another commit requires a
 new full rerun. After success request Phase3 Refactor/review approval;otherwise
 report the actual failure without bypass. Earlier blocked result stays history.
+
+## Phase 3 review outcome — 2026-10-21
+
+The authorized commit checkpoint completed:clean df5e6062 passed focused202,
+consumer21(included),repair114,inherited428,adjacent42,root3254,spec161/161,
+sanity11/11 and compile/raw/cohort/export/checkpoint/routing audits. No pytest
+failure/error/skip/exclusion,same prior local node IDs. Original copy-smoke
+refusal resolved by committing,not guard modification. Evidence remains at the
+checkpoint path above;the remote CI result is unchanged/unverified.
+
+Authorized [Phase3 review](../collaboration/reviews/2026-10-21-liss-0591-ci-history-phase3-review.md)
+agent_pass. Fresh guard83PASS and independent1positive/8negative YAML controls,
+plus recorded full-blocking evidence audit. No source/test/workflow edits.
+These new review/status records are uncommitted;next is final verification/
+record commit and full rerun at its actual SHA after separate approval.
+
+## Approved final verification checkpoint — 2026-10-21
+
+Received **LISS-0591 CI修復 final verification／レビュー記録コミット・実SHAで全blocking再検証承認**.
+Commit only the nine related review/status/lesson Markdown records,without
+changing executable/test/fixture/clause bytes. Then rerun every declared
+blocking suite/check at the new clean SHA. Result belongs outside Git:
+`/private/tmp/liss-0591-ci-final-20261021.fUCBbu/result.json` plus per-command
+logs/JUnits/metadata. No tracked post-run edit;any later commit needs another
+full rerun. After success request human final-result acceptance;otherwise
+report the actual failure. No push,PR update,remote rerun or merge permission.

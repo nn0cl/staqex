@@ -87,3 +87,10 @@ guard. Next approval is bounded local commit/actual-SHA all-blocking rerun,
 not a new Red acceptance or a claim of completed Phase2/full Green.
 That bounded local commit/actual-SHA verification is now authorized2026-10-21;
 result stays external in the CI supplement's checkpoint. No future pass implied.
+
+Actual clean-df5e6062 all-blocking verification subsequently passed,copy smoke
+included. Authorized [CI Phase3 review](2026-10-21-liss-0591-ci-history-phase3-review.md)
+agent_pass;final-review record commit/revalidation remains gated. Red verdict
+and accepted tests unchanged;no remote CI success claimed.
+Final review-record commit/actual-SHA verification subsequently authorized;
+result remains external to keep tested SHA fixed. Human final acceptance pending.

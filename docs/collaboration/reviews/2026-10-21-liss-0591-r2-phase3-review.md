@@ -206,3 +206,10 @@ uncommitted distributed workflow. Local commit/final-SHA rerun required;
 no updated PR/CI,all-blocking Green or merge claimed.
 Subsequent local CI-repair commit/actual-SHA all-blocking rerun authorized;
 outcome remains external until execution. Original product verdict unchanged.
+
+CI repair clean-df5e6062 local all-blocking PASS subsequently confirmed;
+copy smoke succeeds without guard changes. Dedicated [CI Phase3 packet](2026-10-21-liss-0591-ci-history-phase3-review.md)
+agent_pass;new record-SHA and remote delivery gates remain. No original
+product-test or Phase3 verdict change.
+CI final review-record commit/actual-SHA verification subsequently authorized;
+no future execution success or remote permission inferred by this receipt.

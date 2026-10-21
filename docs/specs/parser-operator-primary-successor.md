@@ -10,10 +10,10 @@ CI-history repair Scope/Phase0 design-start approved2026-10-21;
 Phase1 execution separately approved/completed:shallow31FAIL/52PASS and
 history-only83PASS,same SHA/nodes/bytes. CI repair Red agent review passed;
 human Red acceptance received2026-10-21. Phase2 CI implementation separately
-approved/applied;local pytest/root/spec/audits pass provisionally,copy smoke
-blocked by uncommitted workflow. Local commit/final-SHA verification now
-authorized2026-10-21;actual result belongs to the linked CI supplement checkpoint;
-no all-blocking or remote Green. Accepted P/B/E unchanged.
+approved/applied;clean repair commitdf5e6062 passed all local blocking,including
+copy smoke. CI Phase3 review agent_pass;uncommitted review records require final
+record-SHA verification,now authorized2026-10-21 with external outcome pending.
+No remote Green. Accepted P/B/E unchanged.
 The chronological approval history below does not supersede this current gate.
 
 Historical status: P01–P10 accepted2026-10-16; supplemental B01–B10 / exact6-carrier

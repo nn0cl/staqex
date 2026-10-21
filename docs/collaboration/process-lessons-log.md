@@ -23,6 +23,11 @@ Record meta-level patterns only. No session transcripts.
   Actual commit-SHA verification and remote CI remain separate gates.
   Applied at authorized commit checkpoint:keep outcomes outside Git and rerun
   every blocker after the commit instead of treating provisional passes as final.
+  Reapplied in CI Phase3:verify same-SHA command/JUnit receipts and exact
+  workflow preservation with ref/permission/depth/command mutation controls;
+  a passing local checkout never substitutes for actual event-checkout CI.
+  Reapplied at final-review commit:freeze code/tests,rerun all blockers at the
+  new actual SHA,and retain receipts externally instead of adding a result commit.
 
 ## Lesson
 
