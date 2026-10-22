@@ -1,10 +1,9 @@
 # AI Work Trace / Handoff — LISS-0591
 
-Current2026-10-21:PR621 open at5b62ab1a;delivery blocked on31 CI Git-history failures;
-CI repair df5e6062 all local blocking PASS;authorized Phase3 review agent_pass.
-Final-review bc754065 all local blocking PASS;human CI final-result acceptance
-received. Receipt commit/actual-SHA rerun authorized,outcome external/pending;
-remote delivery remains gated.
+Current2026-10-22 JST:LISS0591 delivered PR621/mainb9f86298;PR and main CI
+all3SUCCESS,root3254PASS each. Human-accepted product/CI repair delivered;
+closeout-record commit/push/PR/CI/successful merge separately authorized2026-10-22
+JST;execution receipts external/pending,no new feature started.
 Branch:codex/liss-0591-repaired-baseline;reviewed cleanSHA26da7f29.
 Current reviewer packet:[Phase3](../reviews/2026-10-21-liss-0591-r2-phase3-review.md).
 Earlier Request/current-state sections below are chronological history.
@@ -2070,3 +2069,82 @@ postcommit result are stored externally. No post-run source/record edits planned
   No extra result/receipt acceptance loop. If checks fail,report actual blocker.
   No remote operation/merge/done transition authorized now. Issue blocked,
   WP in_progress;completion process review remains for authorized closeout.
+
+## Authorized delivery / closure evidence —2026-10-22 JST
+
+- User:**LISS-0591 CI修復 push／PR更新／CI確認・成功後のマージ承認**,
+  then 続けて. Type:delivery;no new implementation. Verified clean local
+  cd10c261/all11 blocking receipts,non-force pushed existing branch,updated
+  and attached PR621. Remote37-path feature diff equals locally verified scope;
+  no new review requests,conflict,admin bypass,force push or rebase.
+- PR CI39591463535 all3SUCCESS,root3254PASS;actual logs fetch-depth0 and
+  checkout29897a1065f97a8241c65315c4733b6e923cbf7a. Test-merge parents
+  c14a78163eb7aa5d0001fe133d0b3c10986277dd andcd10c261. API base field was
+  stale dca93187;actual merge candidate parents confirmed latest main instead
+  of inferring it from that field. Latest main rechecked before merge.
+- Normal match-head merge at2026-10-21T14:50:34Z:actual commit
+  b9f862981fea89b68d3d45eb77cd552dadd95b48. Parents equal tested candidate;
+  exact tree aa775e2113313ece1defb6b3463df1210116c754. Main ref verified.
+  Separate horizon changes preserved. Actual-main CI39620414430 all3SUCCESS,
+  root3254PASS,checkout b9f86298. Prior31 history failures resolved without
+  test/fixture/assertion/exclusion changes. PR and main runtime claims separate.
+- Evidence:`/private/tmp/liss-0591-ci-delivery-20261021.tbcLLA/delivery.json`,
+  API receipts,parent/tree evidence,PR/main job logs/watch metadata. Actual
+  remote root totals available;no remote JUnit IDs emitted. Exact local
+  node-ID comparison remains in accepted-record evidence. If temporary
+  evidence absent,refetch remote logs/repeat verification,not infer success.
+- Closing records:Issue done;specs/CI Phase3/original R2 packet/trace synchronized;
+  WP0175 remains in_progress,next candidate not selected/authorized. WP0174
+  obsolete current-next annotation changed to current WP0175 navigation.
+  Existing history lesson reapplied. No new architecture/policy/source/test/
+  workflow edits. Local closeout Markdown is uncommitted,not another verified
+  SHA or authorized closeout PR. No new runtime test after these metadata edits.
+- Route:host Git/CLI/checks;existing same_context/weaker review route,empty
+  modelIDs,no enabled override. ParentL/L/AIP0591-001,repairS unchanged.
+  Model/reasoning/tokens/estimates/metric/source/variance N/A:not exposed or
+  calibrated;attribution:delivery only. Included approved records/live PR/CI/
+  refs/logs;omitted unrelated code,providers,secrets/external AI.
+- Completion process review follows status sync in this context;known history
+  prerequisite gap already dispositioned by accepted CI01–CI07 and existing
+  lesson. No future family task,record commit/push or cleanup silently started.
+
+Completion process review (same context,after verified delivery/status sync):
+known history-prerequisite disposition closed by accepted repair plus PR/main
+CI;existing history/final-SHA/status lessons applied. Parent navigation updated
+within delivery bookkeeping. No additional deviation/unresolved operational
+problem or new feedback decision. No separate product re-review. Final local
+doc checks pass without claiming a new clean runtime SHA for dirty records.
+Next safe action:report delivery;closeout-record commit/delivery needs separate
+user direction. No new candidate execution or cleanup authorized.
+
+## Closeout-record delivery authorization —2026-10-22 JST
+
+- User:コミットしてプッシュしてマージ. Scope:the nine closeout Markdown
+  documents only;no new source/test/workflow/acceptance clause or policy change.
+  Fast Path mechanical delivery,no new AT-TDD phase or architecture decision.
+- Branch:codex/liss-0591-delivery-records,from verified mainb9f86298. Original
+  product PR621 already merged. No next candidate selected or authorized.
+- Applied skills:design-intake,process-lessons,ai-work-trace. Existing
+  history/final-SHA/status lessons require preserving historical receipts,
+  synchronizing current navigation and rerunning all declared blockers after
+  the final record commit. Product split lessons already closed by accepted
+  product evidence;no new extraction or guard migration is in this scope.
+- Routing:host Git/CLI,existing same_context settings;no required new product
+  review packet. Included nine documents,prior receipts,actual main/PR/CI;
+  omitted unrelated code,providers,private payloads. No external AI input.
+- Verification:exact nine-Markdown diff against main;workflow/compiler/tests
+  unchanged;frozen CI/P/B/E clauses,relative links and whitespace. Then fresh
+  focused202/consumer smoke,repair114,inherited428,adjacent42,root3254,spec161,
+  repository sanity11,compile/raw Git audit/routing/checkpoint at committed SHA.
+  Compare node IDs/failures with prior accepted local evidence. PR CI must
+  pass at current main integration before normal SHA-matched merge;verify
+  actual merge parents/tree and actual-main CI separately.
+- Evidence directory:/private/tmp/liss-0591-records-20261022.DlsPnu/.
+  Receipts/results stay outside Git;no follow-up result commit or acceptance
+  loop planned. This paragraph records authorization/plan,not future success.
+  Previous local/uncommitted statements above describe the prior checkpoint.
+  Source-clean checks must not be bypassed;on failure retain evidence/report.
+- Existing completion process review remains applicable;no new done transition
+  or operating-contract change. Model/reasoning/tokens:N/A,not exposed;
+  attribution:record delivery only. Next safe action:authorized commit,
+  actual-SHA verification,then push/PR/CI/merge only on success.

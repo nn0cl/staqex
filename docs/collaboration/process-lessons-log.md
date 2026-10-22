@@ -28,6 +28,8 @@ Record meta-level patterns only. No session transcripts.
   a passing local checkout never substitutes for actual event-checkout CI.
   Reapplied at final-review commit:freeze code/tests,rerun all blockers at the
   new actual SHA,and retain receipts externally instead of adding a result commit.
+  Reapplied at delivery:distinguish PR head,event merge checkout and actual
+  main SHA;compare real merge parents/tree and verify main CI separately.
 
 ## Lesson
 

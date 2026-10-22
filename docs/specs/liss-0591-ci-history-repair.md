@@ -9,8 +9,10 @@ separately approved and applied: root-checkout full-history input only.
 Local commit df5e6062 and all-blocking verification passed2026-10-21,including
 copy smoke. Phase3 review agent_pass;final-record commit bc754065 passed all
 local blocking and the Adjudicator accepted the final review/result2026-10-21.
-Acceptance-record commit/reverification authorized2026-10-21,outcome pending;
-delivery remains separately gated. No further product/result acceptance loop.
+Acceptance-record cd10c261 passed all local blockers;explicitly authorized
+delivery completed via PR621/main b9f86298. PR and main CI each all3SUCCESS,
+root3254PASS. Verified2026-10-22 JST;closeout-record delivery separately
+authorized,with fresh actual-SHA checks and CI required before merge.
 
 Owner: [LISS-0591](../issues/LISS-0591-parser-operator-primary-successor.md).
 Parent: [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
@@ -75,7 +77,10 @@ agent review passed and human Red acceptance received. Phase 2 execution and
 implementation approved/applied;local actual-SHA verification passed atdf5e6062.
 Phase3 review separately approved/executed,agent_pass. The accepted CI01–CI07
 include the existing-test/no-guard-change strategy. Final review-record commit/
-verification,human final acceptance and delivery approvals remain required.
+verification,human final acceptance and delivery were separately authorized
+and completed. PR621 and actual-main CI succeeded;no further CI repair gate
+remains. Closeout-record commit/push/PR/CI/successful merge separately
+authorized2026-10-22 JST;no additional implementation authorized.
 No new test authoring is proposed: an already
 accepted test reproduces the defect (local-issue-planning exception for
 existing regression coverage, not a phase exemption).
@@ -226,3 +231,21 @@ success. No tracked post-run edit;later SHA requires another full rerun.
 If all checks pass,next is push/PR update/CI/successful-merge authorization;
 otherwise report actual failure. No further record-acceptance loop. No remote
 authority or additional implementation inferred from this local checkpoint.
+
+## Delivered / closure evidence — 2026-10-22 JST
+
+Human authorized push/PR update/CI/successful merge,then continued the same
+delivery. Non-force push of clean cd10c261,PR621 description update,all3
+PR CI39591463535 SUCCESS. Root logs show fetch-depth0 and3254PASS;actual CI
+checkout29897a10 has parents c14a7816 andcd10c261. Normal SHA-matched merge
+created b9f86298 with those same parents and tree aa775e21…c754. No admin
+bypass,rebase,force push or test change. Actual-main CI39620414430 subsequently
+all3SUCCESS,root3254PASS,checkout b9f86298. Old31 history failures resolved.
+Logs/metadata/parent-tree checks:`/private/tmp/liss-0591-ci-delivery-20261021.tbcLLA/`.
+PR:[621](https://github.com/nn0cl/staqex/pull/621). Exact local node-ID evidence
+remains at the accepted-record checkpoint;remote logs emit counts,not JUnit IDs.
+
+No extra source refactor or next-family implementation. Existing Parser size/
+dynamic-graph limits remain WP0175-owned. Closeout changes only Markdown,
+not the tested implementation tree;uncommitted records are not a new verified
+SHA or automatically authorized record PR.

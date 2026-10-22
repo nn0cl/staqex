@@ -1,6 +1,11 @@
 # Parser operator-primary本体分離 — accepted specification
 
-Current2026-10-21: R2 final review/result human-accepted at clean71e09655;
+Current2026-10-22 JST:delivered PR621/mainb9f86298;PR and main CI all3SUCCESS,
+root3254PASS;CI01–CI07 repair delivered without test weakening. Closeout-record
+delivery separately authorized2026-10-22 JST;accepted P/B/E unchanged.
+See [CI delivery](liss-0591-ci-history-repair.md).
+
+Historical pre-delivery checkpoint2026-10-21: R2 final review/result human-accepted at clean71e09655;
 all blocking passed,no product/test changes in review/acceptance.
 [Phase3 packet](../collaboration/reviews/2026-10-21-liss-0591-r2-phase3-review.md).
 Acceptance-record5b62ab1a passed all local blocking;delivery authorized,PR621
