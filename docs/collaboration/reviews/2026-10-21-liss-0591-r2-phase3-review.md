@@ -1,8 +1,9 @@
 # LISS-0591 R2 Phase3 Refactor / review
 
 Status: **agent_pass — no blocking findings;human final result accepted2026-10-21 at71e09655**.
-Delivery update:PR621 root CI31FAIL due shallow checkout;no merge. Prior local
-product review/result remains historical accepted evidence,not remote full Green.
+Delivery update2026-10-22 JST:CI history repair delivered,PR621 merged to
+mainb9f86298;PR and main CI all3SUCCESS,root3254PASS each. Prior failed run
+remains historical evidence;see the CI supplement/trace for actual delivery.
 Phase3 explicitly authorized2026-10-21. No source/test edits during review.
 At Phase3 review,this packet and synchronized records were uncommitted.
 Final record commit/actual-SHA verification subsequently authorized2026-10-21.

@@ -4,8 +4,8 @@
 
 - Local issue ID:LISS-0591
 - GitHub issue:none;local planning only
-- Status:blocked — PR621 root CI lacks immutable Git history;accepted product unchanged
-- Phase:phase-3-refactor — receipt commit/actual-SHA rerun authorized;outcome pending
+- Status:done — PR621 merged;PR and main CI all3 SUCCESS
+- Phase:phase-3-refactor — delivered;closeout-record commit/push/PR/CI/successful merge authorized2026-10-22 JST
 - Type:refactor / behavior-preserving body migration
 - Priority:high,next selected WP0175 candidate
 - Initial planning size:L
@@ -17,6 +17,27 @@
 - Original immutable base:22335a5768c17a41eb94682e7dd14d3e6df004bd
 
 ## Summary / historical initial acceptance notes
+
+Current delivery verified2026-10-22 JST:PR621 merged at
+`b9f862981fea89b68d3d45eb77cd552dadd95b48` (2026-10-21T14:50:34Z).
+Human-authorized head `cd10c261122640afd0a5bfed782e0d20f43812cb` passed every
+local blocker;PR CI39591463535 and actual-main CI39620414430 each all3SUCCESS,
+root3254PASS. Actual merge parents/tree equal the tested merge candidate,
+preserving the separate horizon change. No test/fixture/assertion relaxation.
+Delivery evidence:`/private/tmp/liss-0591-ci-delivery-20261021.tbcLLA/delivery.json`.
+Closeout-record delivery authorized2026-10-22 JST;actual-SHA checks and remote
+CI results remain external until executed. No new feature started.
+Earlier approval/gate paragraphs below are historical,not open work.
+
+Completion process review2026-10-22 JST (same context,after verification/status
+sync):the previously disclosed local/CI history prerequisite gap was explicitly
+dispositioned through accepted CI01–CI07,implemented without test weakening
+and verified by PR/main CI. Existing history/final-SHA/status lessons applied,
+including parent current-next navigation. No additional operating-contract
+deviation or unresolved operational problem found;no new upstream feedback
+requested. Phase/implementation/acceptance/delivery gates stayed distinct;
+branch/PR,payload and routing boundaries preserved. This is process closure,
+not another product review or automatic authorization to commit closeout records.
 
 Current CI repair scope/design-start approved2026-10-21 by continuation of
 the unique approval request. Human accepted the [CI01–CI07 supplement](../specs/liss-0591-ci-history-repair.md)
