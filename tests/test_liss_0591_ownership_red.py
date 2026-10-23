@@ -76,7 +76,7 @@ def test_p10_unrelated_production_and_all_six_carriers_keep_frozen_bytes():
     assert guard.sha(guard.parser_bytes(guard.ROOT)) == guard.baseline()["parser_sha256"]
     assert guard.readonly_bytes(guard.ROOT, guard.OPERATORS) == guard.evidence("original-operators.txt")
     for path, expected in guard.baseline()["readonly_sha256"].items():
-        assert guard.sha((guard.ROOT / path).read_bytes()) == expected, path
+        assert guard.sha(guard.readonly_bytes(guard.ROOT, path)) == expected, path
     paths = set(subprocess.check_output(['git', 'ls-files', '--cached', '--others', '--exclude-standard', 'compiler'], cwd=guard.ROOT, text=True).splitlines())
     guard.production_paths(guard.ROOT, paths)
     guard.assert_carriers()
@@ -84,11 +84,5 @@ def test_p10_unrelated_production_and_all_six_carriers_keep_frozen_bytes():
 
 
 def test_b06_pure_inverse_has_no_project_import_or_executable_proposal():
-    tree = ast.parse((guard.ROOT / "tests/liss_0591_guard_support.py").read_bytes())
-    for node in ast.walk(tree):
-        if isinstance(node, ast.ImportFrom):
-            assert node.level == 0 and not node.module.startswith(("tests", "compiler"))
-        if isinstance(node, ast.Import):
-            assert all(not n.name.startswith(("tests", "compiler")) for n in node.names)
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
-            assert node.func.id not in {"exec", "eval", "compile"}
+    from tests.liss_0593_guard_support import assert_inverse_closure
+    assert_inverse_closure(guard.ROOT)

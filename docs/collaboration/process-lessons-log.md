@@ -273,7 +273,25 @@ Record meta-level patterns only. No session transcripts.
 - Source issue or work plan: LISS-0579 / WP-0172
 - Status: applied in the bounded Phase 1 contract correction and accepted test
   review; reapplied in LISS-0581 Phase 0 acceptance, Phase 1 Red design, and
-  accepted Phase 1 test review; carry forward to later acceptance inventories
+  accepted Phase 1 test review; carry forward to later acceptance inventories.
+  Reapplied in LISS-0593 Red review:an ordered sequence mutation is not evidence
+  for independent nested field changes. Enumerate serialized leaf fields and
+  map each to a collected case;external one-off probes establish reachability,
+  not persistent acceptance coverage. Preserve the accepted spec and request
+  bounded test correction rather than silently declaring the inventory covered.
+  Authorized correction reapplies this with collected leaf-field cases and
+  distinguishable mixed-order inputs. Re-review must prove both intact success
+  and rejection of boundary-specific counterexamples,then preserve the exact
+  corrected cohort for the separate human acceptance decision.
+  Reapply during guard composition to every inherited consumer,not just raw
+  readers and frozen loops:exception message assertions and synthetic inventory
+  fixtures can still fail after valid byte projection. Preserve their intended
+  protection,report changed failure IDs and seek explicit supplement approval
+  before editing the accepted inverse or extending the carrier boundary.
+  Applied in the 0593 supplement review:map every accepted G clause to a
+  collected case,prove intact controls before injected failures,compare all
+  prior root IDs and classify only the named five new Reds plus two inherited
+  blockers. Same-context review remains weaker than separate-context review.
 
 ## Lesson
 
