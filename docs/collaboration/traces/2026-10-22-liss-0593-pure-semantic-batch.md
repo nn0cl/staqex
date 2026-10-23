@@ -818,7 +818,23 @@ human acceptance,not self-accepted or full Green.
 - The user authorized the local commit, push, PR creation/update, CI
   verification, and merge after CI succeeds. The approved scope is this
   LISS-0593 Phase3/refinement and synchronized records; no unrelated changes.
-- Authorization does not waive actual-SHA all-blocking verification, required
-  review/check status, or CI. At authorization, no commit or remote mutation
-  had yet occurred. Next: commit the reviewed set, verify the resulting SHA,
-  then push/open PR and wait for all required checks before merge.
+- Authorization did not waive actual-SHA all-blocking verification, required
+  review/check status, or CI. The reviewed set was committed at
+  `6b8f0091b905ed023971876cf3e11a64222cb9e8`; actual-SHA focused335/335,
+  inherited433/433, adjacent28/28, root3589/3589, spec161/161, compileall,
+  source-clean template-copy smoke, CI-style copy smoke and applicable local
+  sanity checks passed. Environment: CPython3.12.6, pytest9.0.3, numpy2.4.6,
+  PyYAML6.0.3, Darwin27.0.0 arm64; zero failures/errors/skips/exclusions.
+- Pushed and opened [PR #624](https://github.com/nn0cl/staqex/pull/624).
+  Repository sanity, kernel root suites and spec verification all succeeded.
+  GitHub connector merge returned 403, so the authorized merge was completed
+  in the authenticated browser after visually confirming all checks passed
+  and no merge conflicts. PR #624 is merged/closed into `main` as
+  `e7387a53`; the browser reported three successful merge checks and automatic
+  deletion of the feature branch.
+- Completion process review: no operating-contract deviation or unresolved
+  operational problem found. Issue and WP-0175 status were synchronized to
+  done/delivered; WP-0175 remains in progress and assigns no successor issue.
+  The next candidate is the accepted inventory's Unitarity判定family (priority
+  4), which still requires a separate explicit scope/Phase 0 and dedicated
+  issue/spec before any Red work.

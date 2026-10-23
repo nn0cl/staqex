@@ -2,8 +2,8 @@
 
 - Local issue ID: LISS-0593
 - GitHub issue: none; local planning
-- Status: review
-- Phase: final dirty-tree verification run; test suites pass, but required source-clean copy smoke is blocked by uncommitted distributed spec; clean committed-SHA verification pending
+- Status: done — PR #624 merged to main as `e7387a53`; PR checks and main merge checks passed
+- Phase: Phase 3 Refactor and final verification complete; committed SHA `6b8f0091b905ed023971876cf3e11a64222cb9e8` passed all blocking local checks; delivery completed 2026-10-23 JST
 - Type: behavior-preserving refactor; bounded-batch proposal
 - Priority: first proposed low-state-coupling batch under WP-0175
 - Initial / current planning size: L / L; no reclassification
@@ -197,6 +197,24 @@ At that checkpoint the next decision was acceptance of the dedicated
 Issue/spec F01–F10, bounded three-carrier guard proposal and Phase0, followed
 by separately authorized Phase1 Red. Those gates are historical and have since
 been completed as recorded above.
+
+## Completion / delivery —2026-10-23 JST
+
+- Reviewed Phase3/refinement and synchronized records were committed as
+  `6b8f0091b905ed023971876cf3e11a64222cb9e8` and delivered in
+  [PR #624](https://github.com/nn0cl/staqex/pull/624). The PR was merged after
+  all three required checks succeeded; merge commit `e7387a53` is on `main`.
+- Actual-SHA verification at the committed head: focused335/335,
+  inherited433/433, adjacent28/28, root3,589/3,589, spec161/161; compileall,
+  source-clean template-copy smoke, CI-style copy smoke, and applicable
+  repository sanity checks passed. Zero failures, errors, skips, or exclusions.
+  Environment and receipts are recorded in the trace and PR description.
+- The PR's repository-sanity, kernel-root-suite, and spec-verification checks
+  all succeeded; the merge page also reported three successful merge checks.
+- Process review: no operating-contract deviation or unresolved operational
+  problem found. The GitHub connector denied write access, so the already
+  authorized merge was completed in the authenticated browser after confirming
+  all checks; the PR visibly reached merged/closed state.
 
 ## AI planning record — AIP-0593-001
 
