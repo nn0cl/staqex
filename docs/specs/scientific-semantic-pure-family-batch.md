@@ -25,14 +25,19 @@ Adjudicator explicitly accepted the reviewed supplement Phase1 Red cohort
 `cb85f98ae0752650b6dac5ff494ee6967586c74c58395ca3b3a24a0a78b8851c` on
 2026-10-23 JST. Agent review packet:
 [LISS-0593 supplement review](../collaboration/reviews/2026-10-23-liss-0593-supplement-phase1-review.md).
-This is Phase1 test acceptance only;repair Green/implementation remains
-unauthorized pending separate approval. Phase2 implementation subsequently
-approved and applied to the two named guard helpers. Focused335,inherited433,
-adjacent28,root3589,spec161 and compileall pass. Repository sanity has one
-source-clean copy-smoke failure because this dedicated spec remains uncommitted;
-therefore no full all-blocking Green claim. Evidence:
-`/private/tmp/liss-0593-phase2-20261023-result.json`.
-Accepted F01–F10 clauses are unchanged;no failure waiver or Phase3 authority.
+At that checkpoint this was Phase1 test acceptance only, not implementation
+approval. Phase2 implementation was subsequently approved and applied to the
+two named guard helpers. Commit `ebde7eb210c2a3d458a4b7fb013c44e1ac387044`
+then passed focused335,inherited433,adjacent28,root3589,spec161,compileall,
+source-clean and applicable repository sanity checks;the root retained all
+3506 prior IDs plus83 accepted supplement IDs. Phase3 subsequently made a
+bounded readability-only change in `tests/liss_0593_guard_support.py` and
+passed the same focused/inherited/adjacent/root suites on the dirty tree at
+that HEAD;review packet:
+[Phase3 review](../collaboration/reviews/2026-10-23-liss-0593-phase3-review.md).
+The Phase3 change is not yet committed,so no final committed-Phase3 verification
+is claimed. Accepted F01–F10/G01–G09 clauses remain unchanged;no failure waiver
+or delivery authority is inferred.
 Owner: [LISS-0593](../issues/LISS-0593-scientific-semantic-pure-family-batch.md).
 Parent: [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
 Baseline: `103fba434ab01db5534981bd5784d833a457b222`, 2026-10-22 JST.

@@ -3,7 +3,7 @@
 - Local issue ID: LISS-0593
 - GitHub issue: none; local planning
 - Status: review
-- Phase: Phase2 implementation complete; source-clean/full-blocking verification pending
+- Phase: final dirty-tree verification run; test suites pass, but required source-clean copy smoke is blocked by uncommitted distributed spec; clean committed-SHA verification pending
 - Type: behavior-preserving refactor; bounded-batch proposal
 - Priority: first proposed low-state-coupling batch under WP-0175
 - Initial / current planning size: L / L; no reclassification
@@ -122,6 +122,70 @@ verification is claimed. Evidence:
 
 Issue remains review/not done. Next request: **LISS-0593 ローカルコミット／実SHAで全blocking再検証承認**.
 No commit,Phase3,PR,push or merge was performed/authorized by this Phase2 gate.
+
+## Phase2 local commit / actual-SHA verification —2026-10-23 JST
+
+Adjudicator authorized the local commit and actual-SHA all-blocking rerun.
+Commit `ebde7eb210c2a3d458a4b7fb013c44e1ac387044` is the tested Phase2 code
+SHA. Focused335, inherited433, adjacent28, root3589, spec161, compileall,
+source-clean template copy, CI-style template-copy smoke, and applicable local
+sanity checks passed. All prior3506 root IDs were retained and83 accepted
+supplement IDs added; errors/skips/exclusions0. The working tree was clean.
+The raw evidence fixture `tests/fixtures/liss_0593/source-fingerprint.txt`
+retains its intentional frozen trailing blank line; no fixture bytes were
+normalized. Receipts are under `/private/tmp/liss-0593-final-ebde7eb2-*.xml`.
+
+## Phase3 Refactor / same-context review —2026-10-23 JST
+
+Adjudicator authorized Phase3 Refactor/review. The readability-only change is
+limited to `tests/liss_0593_guard_support.py`: common exact dispatch generation
+is expressed once, and `historical_carrier_bytes` names the requested artifact
+and allowed shapes explicitly. No accepted test, assertion, fixture, exclusion,
+or production module changed. A first candidate that reformatted the pinned
+0591 carrier was rejected by G05 and reverted; the accepted raw shape remains
+unchanged.
+
+The same-context reviewer pass is recorded in the
+[Phase3 review packet](../collaboration/reviews/2026-10-23-liss-0593-phase3-review.md).
+On the dirty tree at HEAD `ebde7eb210c2a3d458a4b7fb013c44e1ac387044`, final
+focused335/inherited433/adjacent28/root3589 all passed, spec161 passed,
+compileall and applicable local checks passed, errors/skips/exclusions0. The
+root test IDs exactly match the Phase2 committed root; no failure changed.
+The Phase3 helper edit remains uncommitted. Review-change module ownership for
+the overall feature remains unknown because no source module map/budget is
+configured; this is reported as a measurement gap, not a zero-risk claim.
+## Final verification —2026-10-23 JST
+
+Adjudicator authorized final verification. Ran against dirty tree at HEAD
+`ebde7eb210c2a3d458a4b7fb013c44e1ac387044` (no commit or delivery action).
+Environment: CPython3.12.6, pytest9.0.3, numpy2.4.6, PyYAML6.0.3,
+Darwin27.0.0 arm64. Focused335/335, inherited433/433, adjacent28/28,
+root3589/3589, spec161/161 passed; compileall passed. All four JUnit
+cohorts have zero failures/errors/skips; IDs and statuses exactly match their
+Phase3/Phase2 comparison receipts, with no additions, removals, or changed
+outcomes. Receipts:
+`/private/tmp/liss-0593-final-phase3-{focused,inherited,adjacent,root}.xml`.
+
+Repository checks passed: required docs89/89, ADRs10/10, batch review records
+20/20, document lifecycle1, coverage ledger, active-Red lifecycle0, refactor
+baseline3/3, shell syntax, compileall, and `git diff --check`; conflict-marker
+search found no matches. The CI-equivalent template-copy smoke exited1 because
+`docs/specs/scientific-semantic-pure-family-batch.md` is an uncommitted
+distributed source. This blocker is not waived. Runtime and local checks pass,
+but final all-blocking Green is **not established**.
+
+Working tree remains dirty with the Phase3 helper and review/trace/issue/spec/
+WP/process-lesson records. Helper SHA256:
+`ab57c9f4ff5076d3eac4fdc634ef4497e66e8f5459a557391ab97d9b3f1c0fce`.
+Uncommitted evidence is provisional. Next gate is separate local-commit and
+actual-SHA all-blocking verification approval; no commit, push, PR, or merge
+was authorized or performed here. Status remains review/not done.
+
+Follow-up authorization: the user explicitly authorized committing this
+reviewed Phase3/record set, then pushing, opening/updating a PR, verifying CI,
+and merging only after CI succeeds. This does not waive the fresh actual-SHA
+blocking rerun. Delivery is in progress; issue remains review/not done until
+the required checks, merge, and status synchronization are complete.
 
 The following was the pre-supplement planning checkpoint (historical). The
 product bodies are independent of shared mutable state. Guard composition

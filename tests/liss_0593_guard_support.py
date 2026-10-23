@@ -113,17 +113,17 @@ def new_test_paths():
 def carrier_after(path):
     """Exact three-carrier proposal; never applied to the working-tree carriers here."""
     data = evidence(path)
+    dispatch = (
+        "    if path in " + repr(SOURCES) + ":\n"
+        "        from tests.liss_0593_guard_support import readonly_bytes as semantic_bytes\n"
+        "        return semantic_bytes(directory, path)\n"
+    ).encode()
+
     if path == CARRIERS[0]:
         anchor = b"    data = (directory / path).read_bytes()\n"
-        dispatch = ("    if path in " + repr(SOURCES) + ":\n"
-                    "        from tests.liss_0593_guard_support import readonly_bytes as semantic_bytes\n"
-                    "        return semantic_bytes(directory, path)\n").encode()
         return replace_once(data, anchor, anchor + dispatch)
     if path == CARRIERS[1]:
         anchor = b"def readonly_bytes(directory, path):\n"
-        dispatch = ("    if path in " + repr(SOURCES) + ":\n"
-                    "        from tests.liss_0593_guard_support import readonly_bytes as semantic_bytes\n"
-                    "        return semantic_bytes(directory, path)\n").encode()
         data = replace_once(data, anchor, anchor + dispatch)
         data = replace_once(data, b"import ast\n", b"import ast\n" +
                             b"from tests.liss_0593_guard_support import NEW_TESTS as _semantic_tests, NEW_FIXTURES as _semantic_fixtures\n")
@@ -153,12 +153,15 @@ def carrier_after(path):
 
 
 def historical_carrier_bytes(directory, path, data, *, rejection_message="unauthorized carrier edit"):
-    assert (Path(directory) / path).read_bytes() == data, "requested carrier missing/changed"
-    if path in CARRIERS:
-        original = evidence(path)
-        assert data in (original, carrier_after(path)), rejection_message
-        return original
-    return data
+    requested = Path(directory) / path
+    assert requested.read_bytes() == data, "requested carrier missing/changed"
+    if path not in CARRIERS:
+        return data
+
+    original = evidence(path)
+    allowed_shapes = (original, carrier_after(path))
+    assert data in allowed_shapes, rejection_message
+    return original
 
 
 def assert_inverse_closure(directory):

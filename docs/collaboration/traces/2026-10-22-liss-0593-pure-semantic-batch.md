@@ -688,7 +688,7 @@ human acceptance,not self-accepted or full Green.
   request was separate Phase2 Green/implementation approval. No commit,push,PR,
   merge or batch execution was authorized by test acceptance.
 
-## Guard-consumer supplement Phase2 implementation —2026-10-23 JST (current)
+## Guard-consumer supplement Phase2 implementation —2026-10-23 JST (historical)
 
 - Adjudicator separately approved `LISS-0593 guard-consumer補足 Phase2
   Green／implementation approval`. Readiness and design intake were completed;
@@ -727,3 +727,98 @@ human acceptance,not self-accepted or full Green.
   approval for `LISS-0593 ローカルコミット／実SHAで全blocking再検証`; only
   after that can source-clean copy smoke and all blocking suites run against
   the committed actual SHA.
+
+## Phase2 local commit / actual-SHA verification —2026-10-23 JST (historical)
+
+- Adjudicator authorized the local commit and actual-SHA all-blocking rerun.
+  Commit `ebde7eb210c2a3d458a4b7fb013c44e1ac387044` is the Phase2 verification
+  SHA; tree was clean. Focused335,inherited433,adjacent28,root3589,spec161,
+  compileall and applicable repository sanity passed. Full source-clean check
+  and CI-style copy/configure smoke passed. Required documents89/89,ADRs10/10,
+  batch review records20/20,document register1,active-Red entries0 and
+  refactor baseline3/3 passed. Root preserves all3506 prior IDs plus83;
+  errors/skips/exclusions0. CPython3.12.6/pytest9.0.3/numpy2.4.6/PyYAML6.0.3,
+  macOS27.0.1arm64. JUnit receipts:
+  `/private/tmp/liss-0593-final-ebde7eb2-{focused,inherited,adjacent,root}.xml`.
+- The exact raw evidence file `tests/fixtures/liss_0593/source-fingerprint.txt`
+  has one intentional frozen trailing blank line that `git diff --check`
+  flags when added. It was retained byte-exact; all other staged paths passed
+  whitespace checking. No remote action or Phase3/final approval occurred.
+
+## Phase3 Refactor / same-context review —2026-10-23 JST (current)
+
+- Adjudicator authorized Phase3 Refactor/review. Design intake and readiness
+  were checked; applied lessons: `raw-byte-guard-normalization`,
+  `readonly-inverse-artifact-existence`, `immutable-evidence-history-prerequisite`,
+  and inherited-consumer/test-ID preservation. No existing assertion, fixture,
+  exclusion, or production file was edited.
+- A first readability candidate reformatted the installed 0591 carrier and
+  changed its exact expected raw projection; G05 caught one failure. That
+  candidate was reverted completely. The final 15-addition/12-deletion diff
+  is only `tests/liss_0593_guard_support.py`: factor the identical dispatch
+  bytes once and make `historical_carrier_bytes`'s requested file and accepted
+  shapes explicit. G05 and all other tests pass; accepted carrier bytes remain
+  unchanged.
+- Reviewer switched roles and re-read spec, helpers, test bodies, trace,
+  verification policy and JUnit receipts from disk. Review packet:
+  [Phase3 review](../reviews/2026-10-23-liss-0593-phase3-review.md).
+  Same-context review passed for the bounded refactor; this is weaker than
+  separate-context. Reviewer empathy: keep exact historical source contracts
+  visible and readable without weakening them. Finding on the unchanged long
+  0591 carrier generation is dispositioned out-of-scope because the accepted
+  G05 raw projection pins its exact bytes.
+- Dirty-tree verification at HEAD
+  `ebde7eb210c2a3d458a4b7fb013c44e1ac387044`, CPython3.12.6/pytest9.0.3,
+  numpy2.4.6/PyYAML6.0.3,macOS27.0.1arm64: focused335/335,
+  inherited433/433,adjacent28/28,root3589/3589,spec161/161 pass; compileall
+  and local lifecycle/baseline checks pass. Errors/skips/exclusions0. Root IDs
+  match the Phase2 actual-SHA run exactly; no failures introduced/resolved.
+  Current helper SHA256:
+  `ab57c9f4ff5076d3eac4fdc634ef4497e66e8f5459a557391ab97d9b3f1c0fce`.
+- Structure disposition: the changed helper is185 lines and its largest
+  function spans40 lines. The repository has no configured numeric
+  `[source_structure]` budget or module-owner map; `review-change.py` reports
+  unknown ownership for the overall feature, and only accepts commit refs, so
+  it cannot measure this dirty delta. The one-file diff and function spans
+  were measured directly; aggregate owner metrics remain unknown, not zero.
+- No commit, push, PR, merge, or final verification occurred. Next separate
+  gate: **LISS-0593 final verification approval**.
+
+## Final verification —2026-10-23 JST
+
+- Adjudicator authorized final verification only. Operating path: Feature Path,
+  final verification. Included accepted F/G specification, Phase3 helper,
+  review packet, Issue/WP, verification policy, routing and process lessons;
+  did not use chat history as sole evidence. Route: deterministic host tests;
+  same-context review already passed. No additional product change.
+- Tested dirty tree at HEAD
+  `ebde7eb210c2a3d458a4b7fb013c44e1ac387044`; CPython3.12.6, pytest9.0.3,
+  numpy2.4.6, PyYAML6.0.3, Darwin27.0.0 arm64. Focused335/335, inherited
+  433/433, adjacent28/28, root3589/3589, spec161/161; compileall PASS.
+  Root elapsed470.74s. Four JUnit cohorts have 0 failures/errors/skips and
+  exactly match Phase3/Phase2 receipts by node ID and outcome; no IDs added,
+  removed or changed. Receipts:
+  `/private/tmp/liss-0593-final-phase3-{focused,inherited,adjacent,root}.xml`.
+- Local repository checks PASS: required docs89, ADRs10, batch review records20,
+  document lifecycle1, coverage ledger, active-Red0, refactor baseline3,
+  shell syntax, compileall, whitespace; conflict-marker search had no matches.
+  CI-equivalent source-clean template-copy smoke FAILS (exit1) because the
+  distributed spec `docs/specs/scientific-semantic-pure-family-batch.md` is
+  uncommitted. This is an explicit blocker, not a waiver. Runtime tests pass,
+  but full all-blocking Green is not established.
+- Helper SHA256 remains
+  `ab57c9f4ff5076d3eac4fdc634ef4497e66e8f5459a557391ab97d9b3f1c0fce`;
+  tree still has the Phase3 helper and record changes uncommitted. Evidence is
+  provisional and is not tied to a final clean commit SHA. No commit, push, PR,
+  or merge occurred. Next decision required: separately approve local commit
+  plus actual-SHA rerun of all blockers; keep all final gates open until then.
+
+## Delivery authorization —2026-10-23 JST
+
+- The user authorized the local commit, push, PR creation/update, CI
+  verification, and merge after CI succeeds. The approved scope is this
+  LISS-0593 Phase3/refinement and synchronized records; no unrelated changes.
+- Authorization does not waive actual-SHA all-blocking verification, required
+  review/check status, or CI. At authorization, no commit or remote mutation
+  had yet occurred. Next: commit the reviewed set, verify the resulting SHA,
+  then push/open PR and wait for all required checks before merge.

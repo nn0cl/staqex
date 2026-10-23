@@ -74,7 +74,11 @@ Record meta-level patterns only. No session transcripts.
   Reapplied in Phase3:independently compare installed raw/AST inverse with Git,
   exercise real copied roots and retain accepted cohort bytes. Clean code-SHA
   all-blocking/review success does not validate a later review-record commit;
-  rerun every blocking suite at that new SHA before final acceptance.
+  rerun every blocking suite at that new SHA before final acceptance. Reapplied
+  in LISS-0593 Phase3: G05 rejected an attempted carrier reformat because its
+  exact raw projection changed; revert the candidate and refactor only code
+  whose observable projected bytes remain unchanged. Do not adjust the accepted
+  assertion or fixture to accommodate formatting.
 
 ## Lesson
 
