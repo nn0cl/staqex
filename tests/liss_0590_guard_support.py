@@ -164,6 +164,9 @@ def restore_typechecker_tree(tree, directory=ROOT):
 
 def readonly_bytes(directory, path):
     data = (directory / path).read_bytes()
+    if path in ('compiler/staqex/scientific_semantic/legacy.py', 'compiler/staqex/scientific_semantic/fingerprint.py', 'compiler/staqex/scientific_semantic/builder.py'):
+        from tests.liss_0593_guard_support import readonly_bytes as semantic_bytes
+        return semantic_bytes(directory, path)
     if path == "compiler/staqex/parser.py":
         from tests.liss_0592_guard_support import original_parser_bytes
         return original_parser_bytes(directory)

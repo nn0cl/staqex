@@ -1,6 +1,7 @@
 """P09/B03: exact raw evidence projections; AST-only shapes are never imported."""
 
 import ast
+from tests.liss_0593_guard_support import NEW_TESTS as _semantic_tests, NEW_FIXTURES as _semantic_fixtures
 import copy
 import hashlib
 import json
@@ -64,6 +65,10 @@ NEW_TESTS = {
 NEW_FIXTURES = {"tests/fixtures/liss_0591/" + name for name in
                 ["baseline.json", "original-primary.txt", "original-operators.txt",
                  *("carrier-%d.txt" % i for i in range(6)), "behavior.json"]}
+
+
+NEW_TESTS = NEW_TESTS | _semantic_tests
+NEW_FIXTURES = NEW_FIXTURES | _semantic_fixtures
 
 
 def sha(data):
@@ -152,6 +157,9 @@ def parser_bytes(directory):
 
 
 def readonly_bytes(directory, path):
+    if path in ('compiler/staqex/scientific_semantic/legacy.py', 'compiler/staqex/scientific_semantic/fingerprint.py', 'compiler/staqex/scientific_semantic/builder.py'):
+        from tests.liss_0593_guard_support import readonly_bytes as semantic_bytes
+        return semantic_bytes(directory, path)
     if path == PARSER:
         return parser_bytes(directory)
     if path == OPERATORS:
@@ -223,6 +231,8 @@ def replace_once(text, old, new):
 
 def historical_test_bytes(directory, path):
     data = (Path(directory) / path).read_bytes()
+    from tests.liss_0593_guard_support import historical_carrier_bytes
+    data = historical_carrier_bytes(directory, path, data, rejection_message='unapproved carrier change')
     if path in baseline()["carriers"]:
         original = evidence(baseline()["carriers"][path])
         assert data in (original, carrier_after(path)), "unapproved carrier change"
@@ -234,13 +244,15 @@ def historical_test_paths(paths):
     actual = set(subprocess.check_output(['git', 'ls-files', '--cached', '--others', '--exclude-standard', 'tests'], cwd=ROOT, text=True).splitlines())
     old = set(baseline()["test_paths"])
     assert old <= actual, "original test deleted"
-    assert actual - old == NEW_TESTS | NEW_FIXTURES, "unexpected/missing new test path"
+    from tests.liss_0593_guard_support import new_test_paths
+    assert actual - old == NEW_TESTS | NEW_FIXTURES | new_test_paths(), "unexpected/missing new test path"
     return [p for p in paths if p in old]
 
 
 def assert_carriers(directory=ROOT):
     for path in baseline()["carriers"]:
-        assert (Path(directory) / path).read_bytes() == carrier_after(path), path
+        from tests.liss_0593_guard_support import historical_carrier_bytes
+        assert historical_carrier_bytes(directory, path, (Path(directory) / path).read_bytes()) == carrier_after(path), path
 
 
 def make_shape(destination, extracted, origin=ROOT):

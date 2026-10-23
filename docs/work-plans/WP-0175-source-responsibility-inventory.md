@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — LISS-0590/0592/0591 delivered;remaining candidate selection separate |
-| Phase | LISS-0591 delivered PR621;next candidate Scope/design not started |
+| Status | in_progress — LISS-0593 dirty-tree suites pass; source-clean copy smoke blocks full all-blocking Green |
+| Phase | final dirty-tree verification at ebde7eb2: focused335,inherited433,adjacent28,root3589,spec161/compileall pass; template-copy smoke rejects uncommitted distributed spec; actual-SHA rerun pending |
 | Initial / current size | L / L; no reclassification |
 | Scope approval | Adjudicator approved whole-source residual-responsibility inventory / Phase 0 on2026-10-15 |
 | Phase 0 acceptance | I01–I08 explicitly accepted by Adjudicator on2026-10-15 |
@@ -11,7 +11,7 @@
 | Base | b5c96f7e4c2a846f41ac8ad5d882f0cb987cd420; PR616 merged/main CI all3 SUCCESS |
 | Related branch | codex/wp-0175-responsibility-inventory-phase0 |
 | Related | WP-0160 / WP-0174; accepted core decomposition specification |
-| Current Next Issue | No new issue selected/authorized;next candidate needs separate Scope/design. [LISS-0591](../issues/LISS-0591-parser-operator-primary-successor.md) delivered PR621/mainb9f86298,PR/main CI all3SUCCESS. Closeout-record commit/push/PR/CI/successful merge separately authorized2026-10-22 JST |
+| Current Next Issue | [LISS-0593](../issues/LISS-0593-scientific-semantic-pure-family-batch.md): local commit authorized; run actual-SHA blockers, then push/PR/CI and merge only after success |
 
 ## Goal / scope
 
@@ -55,6 +55,7 @@ planning record、consumer/test inventoryを作る。既存LISS0546/0547のdone�
 | [LISS-0590](../issues/LISS-0590-typechecker-operator-body-successor.md) | done / delivered;feature PR617 and records PR618/main22335a57,PR/main CI successful | L / L | AIP-0590-001 accepted2026-10-16 | WP0175 I01–I08 accepted;delivered mainb5c96f7e | codex/liss-0590-delivery-records (merged) |
 | [LISS-0591](../issues/LISS-0591-parser-operator-primary-successor.md) | done / PR621 merged;PR/main CI SUCCESS | L / L | AIP-0591-001 accepted2026-10-16;B/R2 supplements accepted2026-10-19 |accepted product/CI01–CI07 delivered;mainb9f86298,root3254PASS | codex/liss-0591-repaired-baseline (merged) |
 | [LISS-0592](../issues/LISS-0592-parseerror-serialization-repair.md) | done / repair PR619 and records PR620/main dca93187 delivered;PR/main CI all3 SUCCESS | L / L | AIP-0592-001 accepted2026-10-17 | existing ParseError/guard baseline,no dependency on0591 extraction | codex/liss-0592-delivery-records (merged) |
+| [LISS-0593](../issues/LISS-0593-scientific-semantic-pure-family-batch.md) | review / dirty-tree suites pass; source-clean copy smoke blocks full Green; actual-SHA verification pending | L / L | AIP-0593-001 accepted2026-10-22;G01–G09 accepted2026-10-23 | Phase2 commit ebde7eb2 passed;Phase3 helper reviewed;current dirty verification receipts in trace | codex/liss-0593-pure-semantic-batch-design |
 
 Human2026-10-17 requests actual repair,not preserving the serialization failure.
 0592 now owns repair contract;0591 remains blocked on0592 and later agreed
