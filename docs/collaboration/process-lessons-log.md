@@ -735,6 +735,23 @@ Record meta-level patterns only. No session transcripts.
 
 ## Lesson
 
+- Date: 2026-10-26
+- Class: copied-root-inventory-isolation
+- Pattern: a copied-root test can appear to verify real Git membership while a
+  monkeypatch on the shared `subprocess` module silently substitutes a
+  synthetic listing for the root command.
+- What later design or implementation must do: capture or otherwise isolate
+  the real Git inventory runner before installing synthetic command patches;
+  scope synthetic inventory patches to the narrow assertion and restore the
+  runner before real consumers execute. When an exact downstream path is added,
+  update only the synthetic expected inventory and prove physical artifact
+  existence and source shape independently.
+- Source issue or work plan: LISS-0594 / WP-0175
+- Status: applied in the supplementary Phase 1 copied-root tests; reviewer
+  correction re-ran the same consumer setup through the retained real runner.
+
+## Lesson
+
 - Date: 2026-09-23
 - Class: decomposition-source-ownership
 - Pattern: a facade test can pass before extraction when it inspects only the

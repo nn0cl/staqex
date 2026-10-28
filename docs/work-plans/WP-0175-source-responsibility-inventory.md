@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — LISS-0593 completed and delivered by PR #624; next decomposition candidate awaits explicit scope/Phase 0 authorization |
-| Phase | LISS-0593 done: actual committed-SHA verification passed; PR #624 merged as e7387a53 with all required checks successful |
+| Status | in_progress — LISS-0593 completed and delivered by PR #624; LISS-0594 GU compatibility supplement Phase 3 review and dirty-tree final verification passed locally; commit/actual-SHA verification pending |
+| Phase | LISS-0594 GU compatibility supplement local final verification passed; main unitarity decomposition remains Phase 1 Red and unimplemented |
 | Initial / current size | L / L; no reclassification |
 | Scope approval | Adjudicator approved whole-source residual-responsibility inventory / Phase 0 on2026-10-15 |
 | Phase 0 acceptance | I01–I08 explicitly accepted by Adjudicator on2026-10-15 |
@@ -11,7 +11,7 @@
 | Base | b5c96f7e4c2a846f41ac8ad5d882f0cb987cd420; PR616 merged/main CI all3 SUCCESS |
 | Related branch | codex/wp-0175-responsibility-inventory-phase0 |
 | Related | WP-0160 / WP-0174; accepted core decomposition specification |
-| Current Next Issue | None assigned. Next inventory candidate is Unitarity判定family (priority 4 in the accepted inventory); requires a new explicit scope/Phase 0 decision and dedicated issue/spec before Red |
+| Current Next Issue | [LISS-0594](../issues/LISS-0594-unitarity-check-family-separation.md) — GU supplement dirty-tree final verification passed; request local-commit/actual-SHA approval |
 
 ## Goal / scope
 
@@ -27,6 +27,12 @@ Rust実装、provider選定、公開契約廃止、過去の全削除の回帰�
 Scope/design-startに続き棚卸し結果I01–I08とPhase0を明示受入れ済み。
 棚卸し承認自体は候補や修復のScope/spec/実装承認ではない。その後2026-10-15に
 TypeChecker operator判定本体分離のScope/Phase0設計開始だけを別途明示承認。
+LISS-0593 closeout後、ユーザーの「続けて」を次候補のPhase0調査・設計に限定して解釈し、
+LISS-0594 Unitarity familyの専用Issue/spec U01–U10は2026-10-23にPhase0 acceptanceを受領。
+Phase1 Red test-only executionを2026-10-25に別途承認。新規cohortは1 structural Red、23 focused/consumer PASS。
+追加test pathが0591/0592/0593の6 exact-path guard testsをfailさせるため停止中。既存guard改変・実装・commit・push/PR/mergeは未承認。
+補足のScope／Phase0設計開始とGU01–GU09 acceptanceを2026-10-26に受領。同日別途Phase1 Red実行承認を受け、受入テストを作成。2026-10-27に修正版Phase1 Redを再acceptanceし、別途承認済みPhase2ではexact singleton support pathのみを実装。
+2026-10-28のPhase3 Refactor／reviewではGU補足のreviewを通過。main checkerの分割は未実施。最終verificationは別承認待ちで、コミット・remote deliveryは未承認。
 
 ## Phase 0 acceptance notes (accepted I01–I08,2026-10-15)
 

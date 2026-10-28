@@ -147,7 +147,7 @@ def test_b08_production_path_projection_rejects_unexpected_additions(tmp_path, e
 
 def test_b08_closed_new_test_inventory_rejects_extra_or_missing_paths(monkeypatch):
     old = set(guard.baseline()["test_paths"])
-    actual = old | guard.NEW_TESTS | guard.NEW_FIXTURES
+    actual = old | guard.NEW_TESTS | guard.NEW_FIXTURES | {"tests/test_liss_0594_unitarity_family_red.py"}
     def listing(*args, **kwargs):
         return '\n'.join(sorted(actual)) + '\n'
     monkeypatch.setattr(guard.subprocess, "check_output", listing)
