@@ -2,7 +2,7 @@
 
 - Local issue ID: LISS-0594
 - GitHub issue: none; local planning
-- Status: in_progress — GU compatibility supplement Phase 3 review and dirty-tree final verification passed locally; commit/actual-SHA verification pending
+- Status: in_progress — GU compatibility supplement passed final verification at commit `638c8956f8f1ff2d8808ef2cba68e66bd18a5922`; main decomposition remains Phase 1 Red
 - Phase: Phase 1 Red
 - Type: behavior-preserving source decomposition
 - Priority: WP-0175 candidate 4; ordering is inventory guidance, not an implementation commitment
@@ -378,3 +378,23 @@ implementation, commit, or remote delivery.
 - Limitation: no commit was authorized or made, so no immutable final SHA is
   verified. Next gate is separate local-commit/actual-SHA approval and a fresh
   all-blocking rerun. This does not authorize push, PR or merge.
+
+## Guard compatibility supplement — committed-SHA verification (2026-10-28)
+
+- Approval: Adjudicator approved local commit and actual-SHA all-blocking
+  revalidation on 2026-10-28.
+- Commit: `638c8956f8f1ff2d8808ef2cba68e66bd18a5922`, clean worktree at test
+  time; macOS arm64, CPython 3.12.6, pytest 9.0.3.
+- Focused LISS-0594 plus LISS-0411/0436/0376: 29 passed / 1 intended
+  main-source structural Red. Inherited LISS-0591/0593: 319 passed. Root
+  blocking pytest with the declared LISS-0594 active-Red exclusion: 3,589
+  passed / 0 failed. Spec verification: 161/161.
+- Repository sanity: required documents/ADRs (99), shell syntax, lifecycle,
+  coverage ledger, execution-batch records (20), baseline (3 cases), Python
+  syntax, diff checks and template-copy smoke passed. PR-only traceability is
+  not applicable without a PR.
+- Result: GU compatibility supplement passed all declared local blocking
+  checks at this commit. Main unitarity decomposition remains unimplemented;
+  its Phase 1 structural Red is still active. No new failures were found.
+- This is a local verification record only; it does not authorize push, PR,
+  merge, or acceptance of the main-source decomposition.

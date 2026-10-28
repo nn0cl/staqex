@@ -5,9 +5,9 @@
 - Date: 2026-10-26 Asia/Tokyo
 - User request: approved Scope / Phase 0 design-start for the compatibility
   supplement blocking the LISS-0594 Red cohort.
-- Current state: GU compatibility supplement Phase 3 review and dirty-tree
-  final verification passed locally on 2026-10-28; immutable commit-SHA
-  verification remains pending. The main decomposition is still Phase 1 Red.
+- Current state: GU compatibility supplement Phase 3 review and committed-SHA
+  final verification passed locally on `638c8956f8f1ff2d8808ef2cba68e66bd18a5922`;
+  the main decomposition is still Phase 1 Red.
 - Canonical issue: [LISS-0594](../../issues/LISS-0594-unitarity-check-family-separation.md)
 - Canonical specification: [GU01–GU09 acceptance](../../specs/unitarity-check-family-separation.md#guard-compatibility-supplement--phase-0-accepted-gu01gu09)
 - Parent: [WP-0175](../../work-plans/WP-0175-source-responsibility-inventory.md)
@@ -223,3 +223,21 @@
 - Limitation/next: no commit was authorized or made, so final immutable-SHA
   verification remains pending. Next requires separate local-commit/actual-SHA
   approval and then a fresh all-blocking rerun. No remote delivery approval.
+
+## Attempt 8 — committed-SHA all-blocking revalidation
+
+- Approval: Adjudicator explicitly approved local commit and actual-SHA
+  all-blocking revalidation on 2026-10-28.
+- Commit tested: `638c8956f8f1ff2d8808ef2cba68e66bd18a5922`, clean at test time;
+  macOS arm64, CPython 3.12.6, pytest 9.0.3.
+- Results: focused LISS-0594 plus LISS-0411/0436/0376: 29 passed / 1 expected
+  main-source structural Red; inherited LISS-0591/0593: 319 passed; root
+  blocking pytest: 3,589 passed / 0 failed with exact lifecycle-declared
+  exclusion; spec verification: 161/161. Repository sanity passed, including
+  99 required docs/ADRs, shell syntax, lifecycle, coverage, execution-batch
+  (20), baseline (3), Python syntax, diff and template-copy smoke. PR-only
+  traceability is inapplicable without a PR.
+- Result: GU compatibility supplement passed all blocking local checks at this
+  commit. The main unitarity split remains unimplemented and its expected
+  structural Red remains active.
+- This commit is local only; no push, PR or merge is authorized by this gate.

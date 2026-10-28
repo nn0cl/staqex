@@ -97,9 +97,9 @@
   root suite, spec verification, and lifecycle checks against the latest
   working-tree contents. No production or test source changed after the Phase 3
   review; only review/status documentation changed.
-- **Tested state:** HEAD `93a2548ae168a70a3c3340bf79533de95828dc39`, dirty
-  working tree; macOS arm64, CPython 3.12.6, pytest 9.0.3.
-- **Results:** focused LISS-0594 plus LISS-0411/0436/0376: 29 passed and the
+- **Initial dirty-tree results:** HEAD `93a2548ae168a70a3c3340bf79533de95828dc39`,
+  dirty working tree; macOS arm64, CPython 3.12.6, pytest 9.0.3. Focused
+  LISS-0594 plus LISS-0411/0436/0376: 29 passed and the
   single expected main-source structural Red; inherited LISS-0591/0593:
   319 passed; root pytest with the declared LISS-0594 Active-Red exclusion:
   3,589 passed / 0 failed; spec verification 161/161. Test lifecycle,
@@ -108,10 +108,17 @@
 - **Disposition:** GU compatibility supplement local final verification
   passed. No new or unresolved failures appeared in the CI-compatible
   environment. The structural Red remains active for the main decomposition.
-- **Evidence limitation:** no commit was authorized or made. This is not
-  evidence tied to a clean immutable SHA. A separate local-commit/actual-SHA
-  gate and a fresh all-blocking rerun remain before final acceptance or remote
-  delivery. PR-only traceability is not applicable without a PR.
+- **Committed-SHA revalidation:** after separate approval, commit
+  `638c8956f8f1ff2d8808ef2cba68e66bd18a5922` was tested with a clean worktree.
+  Focused 29 passed / 1 expected structural Red; inherited 319 passed; root
+  blocking pytest 3,589 passed / 0 failed; spec 161/161. Required documents
+  and ADRs (99), shell syntax, repository lifecycle/coverage, execution-batch
+  (20), baseline (3 cases), Python syntax, diff checks and template-copy smoke
+  passed. Environment: macOS arm64, CPython 3.12.6, pytest 9.0.3.
+- **Remaining limits:** PR-only contract-traceability is not applicable
+  without a PR. The template-copy smoke initially refused the dirty checkout
+  because the untracked spec is a distributed source; it passed in a temporary
+  clean clone and was repeated at the committed SHA above.
 
 ## Evidence links
 

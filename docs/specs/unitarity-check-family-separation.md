@@ -2,8 +2,8 @@
 
 Status: Phase 0 accepted; corrected GU01–GU09 Phase 1 Red cohort re-accepted
 2026-10-27; exact support-path Phase 2 Green locally verified; GU supplement
-Phase 3 review and dirty-tree final verification passed locally on 2026-10-28;
-commit/actual-SHA verification remains pending. The main unitarity checker
+Phase 3 review and committed-SHA final verification passed locally on
+`638c8956f8f1ff2d8808ef2cba68e66bd18a5922`. The main unitarity checker
 decomposition remains unimplemented.
 Owner: [LISS-0594](../issues/LISS-0594-unitarity-check-family-separation.md).
 Parent: [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
@@ -137,11 +137,11 @@ Status: GU01–GU09 accepted by the Adjudicator on 2026-10-26. Owner remains
   through the existing test-path composition used by LISS-0591/0592/0593
   guard consumers, without changing any historic membership or evidence.
 - Phase 0 decision: GU01–GU09 accepted 2026-10-26.
-- Current phase: GU compatibility supplement Phase 3 review and dirty-tree
-  final verification passed locally 2026-10-28. Main unitarity decomposition
-  remains unimplemented in Phase 1 Red.
-- Next phase: local commit/actual-SHA verification after separate Adjudicator
-  approval; commit and remote delivery are not yet authorized.
+- Current phase: GU compatibility supplement Phase 3 review and committed-SHA
+  final verification passed locally on `638c8956f8f1ff2d8808ef2cba68e66bd18a5922`.
+  Main unitarity decomposition remains unimplemented in Phase 1 Red.
+- Next gate: Adjudicator accepts the GU supplement final-verification result.
+  Main-source implementation and remote delivery remain separately gated.
 - Implementation allowed: prior Phase 2 authorization was exercised for the
   exact singleton support change; it does not authorize main-source changes.
 - Included: exact path declaration, `new_test_paths()` composition,
