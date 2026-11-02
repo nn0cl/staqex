@@ -2,7 +2,7 @@
 
 - Local issue ID: LISS-0594
 - GitHub issue: none; local planning
-- Status: in_progress — GU compatibility supplement passed final verification at commit `638c8956f8f1ff2d8808ef2cba68e66bd18a5922`; main decomposition remains Phase 1 Red
+- Status: in_progress — GU compatibility supplement final review result accepted; main decomposition remains Phase 1 Red
 - Phase: Phase 1 Red
 - Type: behavior-preserving source decomposition
 - Priority: WP-0175 candidate 4; ordering is inventory guidance, not an implementation commitment
@@ -398,3 +398,18 @@ implementation, commit, or remote delivery.
   its Phase 1 structural Red is still active. No new failures were found.
 - This is a local verification record only; it does not authorize push, PR,
   merge, or acceptance of the main-source decomposition.
+
+## Guard compatibility supplement — final review result accepted (2026-11-02)
+
+- Approval: Adjudicator explicitly accepted the final review result on
+  2026-11-02. Accepted scope is GU01–GU09 compatibility supplement only.
+- Accepted evidence: committed-SHA verification at
+  `2907cf452fac4c7811b35d6ee0c25eb0ddc6cc11`; focused compatibility and
+  adjacent suites, inherited consumer suites, full blocking pytest with the
+  lifecycle-declared active-Red exclusion, spec/lifecycle/coverage and
+  repository sanity checks passed as recorded in the linked Phase 3 review.
+- The intentional main-source structural Red remains open. This acceptance
+  does not accept or implement the main `unitarity_check.py` decomposition.
+- Next gate: separate approval to commit this acceptance/status record and
+  rerun all blocking checks at the resulting actual SHA. No push, PR, or merge
+  is authorized.
