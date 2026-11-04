@@ -5,7 +5,9 @@ Status: Phase 0 accepted; corrected GU01–GU09 Phase 1 Red cohort re-accepted
 Phase 3 review and committed-SHA final verification passed locally on
 `2907cf452fac4c7811b35d6ee0c25eb0ddc6cc11`; the GU supplement final review
 result and its acceptance-record verification at
-`3ab970ad84c5d4637f7734c114ccf2afaaec4735` were accepted on 2026-11-02. The
+`3ab970ad84c5d4637f7734c114ccf2afaaec4735` were accepted on 2026-11-02; the
+verification-record result at
+`d152534d5bcd59100d0026aecff1d899bea60434` was accepted on 2026-11-04. The
 main unitarity checker decomposition remains unimplemented.
 Owner: [LISS-0594](../issues/LISS-0594-unitarity-check-family-separation.md).
 Parent: [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
