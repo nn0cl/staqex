@@ -30,5 +30,6 @@ issue = "LISS-0594"
 test = "tests/test_liss_0594_unitarity_family_red.py"
 phase = "Phase 1 Red"
 owner = "Codex host / Adjudicator"
-review_by = "2026-11-08"
+# Adjudicator approved the renewed review deadline on 2026-11-16.
+review_by = "2026-11-20"
 review_condition = "Adjudicator accepts the test cohort and observed baseline Red before Phase 2"
