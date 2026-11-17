@@ -9,8 +9,10 @@ result and its acceptance-record verification at
 verification-record result at
 `d152534d5bcd59100d0026aecff1d899bea60434` was accepted on 2026-11-04; the
 subsequent verification at
-`eb4d23030d78ab354da9d307ad0514d6770ad8fd` was also accepted on 2026-11-04.
-The main unitarity checker decomposition remains unimplemented.
+`eb4d23030d78ab354da9d307ad0514d6770ad8fd` was also accepted on 2026-11-04;
+the Active-Red deadline renewal verification at
+`5f1111f4181ab83ddecd871f6d9f032aa1cc0e30` was accepted on 2026-11-16. The
+main unitarity checker decomposition remains unimplemented.
 Owner: [LISS-0594](../issues/LISS-0594-unitarity-check-family-separation.md).
 Parent: [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
 Base observed: `93a2548ae168a70a3c3340bf79533de95828dc39` (local `main`, 2026-10-23).

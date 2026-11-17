@@ -13,7 +13,8 @@
 - `python3.12 scripts/check-test-lifecycle.py` passed: `ACTIVE_RED_LIFECYCLE_OK entries=1`.
 - `python3.12 scripts/check-test-lifecycle.py --pytest-ignore-args` emitted the exact single-module exclusion for LISS-0594.
 - `git diff --check` passed.
-- Before this date update, commit `756c1d4cf245e755e7fe3e1c0badc90b806ee884` passed root pytest 3,589/3,589 with the declared exclusion, focused tests 29 passed plus the accepted structural Red, inherited consumers 319/319, spec verification 161/161, and other repository sanity checks. Its lifecycle check failed because the deadline had expired; those results are not final-SHA evidence for the date renewal.
+- The deadline renewal was committed as `5f1111f4181ab83ddecd871f6d9f032aa1cc0e30`; final-SHA verification passed lifecycle, root pytest 3,589/3,589 with the declared exclusion, focused tests 29 passed plus the accepted structural Red, inherited consumers 319/319, spec verification 161/161, and repository sanity checks.
+- The Adjudicator accepted that final-SHA verification result on 2026-11-16.
 
 ## Changed Files
 
@@ -25,15 +26,15 @@
 - Included: active-Red registry and lifecycle checker behavior, prior verification results at `756c1d4`.
 - Omitted: source implementation details unrelated to LISS-0594's still-open structural Red.
 - Assumptions: the accepted exact LISS-0594 test module and Phase 1 Red remain unchanged.
-- Open decisions: none for the deadline value; the next commit and all-blocking revalidation still require explicit approval.
+- Open decisions: the result-acceptance record needs separate commit approval and another final-SHA blocking rerun.
 - Review isolation: same_context per repository routing.
 - Implementation isolation: host; no implementation work is authorized or in scope.
 - Requested model identifiers: empty / capability class.
 
 ## Next Safe Action
 
-- After the Adjudicator approves committing the deadline renewal and rerunning blocking checks, commit the manifest and handoff updates, then rerun every blocking check at that commit SHA. Confirm lifecycle passes and compare root/focused/consumer/spec results with the previous comparable environment.
+- After the Adjudicator approves committing this result-acceptance record and rerunning blocking checks, verify the new SHA and rerun every blocking suite.
 
 ## Blockers
 
-- The current worktree change is uncommitted. The previous final-SHA verification cannot be called fully blocking because the lifecycle check expired at that time. No push, PR, or merge is authorized.
+- The current result-acceptance record is uncommitted. No push, PR, or merge is authorized.
