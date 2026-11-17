@@ -16,6 +16,7 @@
 - The deadline renewal was committed as `5f1111f4181ab83ddecd871f6d9f032aa1cc0e30`; final-SHA verification passed lifecycle, root pytest 3,589/3,589 with the declared exclusion, focused tests 29 passed plus the accepted structural Red, inherited consumers 319/319, spec verification 161/161, and repository sanity checks.
 - The Adjudicator accepted that final-SHA verification result on 2026-11-16.
 - The acceptance record was committed and verified at `b93361dcb7d94f5dfcde6332ac919744e41ae39b`; all blocking checks passed again, including Active-Red lifecycle. The Adjudicator accepted that result on 2026-11-17.
+- The verification-result acceptance record was committed and verified at `49bdc21faee237a0ec4e592fed38941470e03a08`; all blocking checks passed again. The Adjudicator accepted that result on 2026-11-17.
 
 ## Changed Files
 
