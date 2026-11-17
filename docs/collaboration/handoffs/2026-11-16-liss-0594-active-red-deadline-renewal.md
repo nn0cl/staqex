@@ -15,6 +15,7 @@
 - `git diff --check` passed.
 - The deadline renewal was committed as `5f1111f4181ab83ddecd871f6d9f032aa1cc0e30`; final-SHA verification passed lifecycle, root pytest 3,589/3,589 with the declared exclusion, focused tests 29 passed plus the accepted structural Red, inherited consumers 319/319, spec verification 161/161, and repository sanity checks.
 - The Adjudicator accepted that final-SHA verification result on 2026-11-16.
+- The acceptance record was committed and verified at `b93361dcb7d94f5dfcde6332ac919744e41ae39b`; all blocking checks passed again, including Active-Red lifecycle. The Adjudicator accepted that result on 2026-11-17.
 
 ## Changed Files
 
@@ -26,14 +27,14 @@
 - Included: active-Red registry and lifecycle checker behavior, prior verification results at `756c1d4`.
 - Omitted: source implementation details unrelated to LISS-0594's still-open structural Red.
 - Assumptions: the accepted exact LISS-0594 test module and Phase 1 Red remain unchanged.
-- Open decisions: the result-acceptance record needs separate commit approval and another final-SHA blocking rerun.
+- Open decisions: the latest result-acceptance record needs separate commit approval and another final-SHA blocking rerun.
 - Review isolation: same_context per repository routing.
 - Implementation isolation: host; no implementation work is authorized or in scope.
 - Requested model identifiers: empty / capability class.
 
 ## Next Safe Action
 
-- After the Adjudicator approves committing this result-acceptance record and rerunning blocking checks, verify the new SHA and rerun every blocking suite.
+- After the Adjudicator approves committing this latest result-acceptance record and rerunning blocking checks, verify the new SHA and rerun every blocking suite.
 
 ## Blockers
 

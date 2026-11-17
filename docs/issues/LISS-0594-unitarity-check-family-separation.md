@@ -2,7 +2,7 @@
 
 - Local issue ID: LISS-0594
 - GitHub issue: none; local planning
-- Status: in_progress — GU supplement verification after Active-Red deadline renewal accepted; main decomposition remains Phase 1 Red
+- Status: in_progress — GU supplement final verification after Active-Red deadline renewal accepted; main decomposition remains Phase 1 Red
 - Phase: Phase 1 Red
 - Type: behavior-preserving source decomposition
 - Priority: WP-0175 candidate 4; ordering is inventory guidance, not an implementation commitment
@@ -445,6 +445,26 @@ implementation, commit, or remote delivery.
 - Scope remains GU01–GU09 and its verification record. Main
   `unitarity_check.py` decomposition remains unimplemented; its Phase 1
   structural Red remains active. No comparable-environment new failure was
+  observed.
+- Next gate: separate approval to commit this acceptance/status record and
+  rerun blocking checks at the resulting actual SHA. No push, PR, or merge is
+  authorized.
+
+## Active-Red renewal acceptance-record SHA verification accepted (2026-11-17)
+
+- Approval: Adjudicator accepted the committed-SHA verification result on
+  2026-11-17.
+- Tested commit: `b93361dcb7d94f5dfcde6332ac919744e41ae39b`, clean worktree;
+  macOS arm64, CPython 3.12.6, pytest 9.0.3.
+- Results accepted: Active-Red lifecycle passed with the renewed
+  `review_by = 2026-11-20`; root blocking pytest 3,589 passed; inherited
+  LISS-0591/0593 consumers 319 passed; focused LISS-0594 plus adjacent tests
+  29 passed with the known main-source structural Red; spec verification
+  161/161; document lifecycle, coverage, baseline, execution-batch,
+  required-file/ADR and template-copy checks passed.
+- Scope is still the GU compatibility supplement and its records. Main
+  `unitarity_check.py` decomposition remains unimplemented; its Phase 1
+  structural Red remains active. No new comparable-environment failure was
   observed.
 - Next gate: separate approval to commit this acceptance/status record and
   rerun blocking checks at the resulting actual SHA. No push, PR, or merge is
