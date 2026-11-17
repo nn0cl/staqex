@@ -17,8 +17,10 @@ acceptance-record verification at
 verification-record SHA result at
 `49bdc21faee237a0ec4e592fed38941470e03a08` was also accepted on 2026-11-17;
 the subsequent verification at
-`8a364e95a46d07b7913a1b16b18cc2ebd5aa0170` was accepted on 2026-11-17. The
-main unitarity checker decomposition remains unimplemented.
+`8a364e95a46d07b7913a1b16b18cc2ebd5aa0170` was accepted on 2026-11-17; the
+acceptance-record verification at
+`fa1cc39cf63a44e7a5f32bcc0d394773f1dce5e2` was also accepted on 2026-11-17.
+The main unitarity checker decomposition remains unimplemented.
 Owner: [LISS-0594](../issues/LISS-0594-unitarity-check-family-separation.md).
 Parent: [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
 Base observed: `93a2548ae168a70a3c3340bf79533de95828dc39` (local `main`, 2026-10-23).

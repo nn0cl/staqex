@@ -2,7 +2,7 @@
 
 - Local issue ID: LISS-0594
 - GitHub issue: none; local planning
-- Status: in_progress — GU supplement final verification result accepted after Active-Red deadline renewal; main decomposition remains Phase 1 Red
+- Status: in_progress — GU supplement committed-SHA verification accepted after Active-Red deadline renewal; main decomposition remains Phase 1 Red
 - Phase: Phase 1 Red
 - Type: behavior-preserving source decomposition
 - Priority: WP-0175 candidate 4; ordering is inventory guidance, not an implementation commitment
@@ -446,6 +446,24 @@ implementation, commit, or remote delivery.
   `unitarity_check.py` decomposition remains unimplemented; its Phase 1
   structural Red remains active. No comparable-environment new failure was
   observed.
+- Next gate: separate approval to commit this acceptance/status record and
+  rerun blocking checks at the resulting actual SHA. No push, PR, or merge is
+  authorized.
+
+## Acceptance-record committed-SHA verification accepted (2026-11-17)
+
+- Approval: Adjudicator accepted the verification result on 2026-11-17.
+- Tested commit: `fa1cc39cf63a44e7a5f32bcc0d394773f1dce5e2`, clean worktree;
+  macOS arm64, CPython 3.12.6, pytest 9.0.3.
+- Results accepted: Active-Red lifecycle passed with `review_by =
+  2026-11-20`; root blocking pytest 3,589 passed; inherited LISS-0591/0593
+  consumers 319 passed; focused LISS-0594 plus adjacent tests 29 passed with
+  the known main-source structural Red; spec verification 161/161; document
+  lifecycle, coverage, baseline, execution-batch, required-file/ADR and
+  template-copy checks passed.
+- No new comparable-environment failure was observed. The main
+  `unitarity_check.py` decomposition remains unimplemented and its Phase 1
+  structural Red remains active.
 - Next gate: separate approval to commit this acceptance/status record and
   rerun blocking checks at the resulting actual SHA. No push, PR, or merge is
   authorized.
