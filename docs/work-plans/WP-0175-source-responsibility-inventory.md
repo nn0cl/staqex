@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — LISS-0593 completed and delivered by PR #624; LISS-0594 GU supplement verification accepted through `75d24931` on 2026-11-18 |
-| Phase | LISS-0594 GU supplement verification accepted at `75d24931324be40a571d70f7d48978cbb65e28fd`; main unitarity decomposition remains Phase 1 Red and unimplemented |
+| Status | in_progress — LISS-0593 completed and delivered by PR #624; LISS-0594 GU supplement verification accepted through `c3e79ab5` on 2026-11-18 |
+| Phase | LISS-0594 GU supplement verification accepted at `c3e79ab549b13b666b031bd92508026a3d0bba40`; main unitarity decomposition remains Phase 1 Red and unimplemented |
 | Initial / current size | L / L; no reclassification |
 | Scope approval | Adjudicator approved whole-source residual-responsibility inventory / Phase 0 on2026-10-15 |
 | Phase 0 acceptance | I01–I08 explicitly accepted by Adjudicator on2026-10-15 |
@@ -11,7 +11,7 @@
 | Base | b5c96f7e4c2a846f41ac8ad5d882f0cb987cd420; PR616 merged/main CI all3 SUCCESS |
 | Related branch | codex/wp-0175-responsibility-inventory-phase0 |
 | Related | WP-0160 / WP-0174; accepted core decomposition specification |
-| Current Next Issue | [LISS-0594](../issues/LISS-0594-unitarity-check-family-separation.md) — acceptance-record verification accepted; await separate approval to commit this record and rerun blocking checks at its actual SHA |
+| Current Next Issue | [LISS-0594](../issues/LISS-0594-unitarity-check-family-separation.md) — verification-result SHA accepted; await separate approval to commit this acceptance record and rerun blocking checks at its actual SHA |
 
 ## Goal / scope
 
