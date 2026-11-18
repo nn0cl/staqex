@@ -22,6 +22,7 @@
 - The subsequent result-acceptance record was committed and verified at `8973aa4874c8a7617cec4c71e22331a6c5030c7f`; all blocking checks passed again. The Adjudicator accepted that result on 2026-11-18.
 - The next result-acceptance record was committed and verified at `75d24931324be40a571d70f7d48978cbb65e28fd`; all blocking checks passed again. The Adjudicator accepted that result on 2026-11-18.
 - The following acceptance record was committed and verified at `c3e79ab549b13b666b031bd92508026a3d0bba40`; all blocking checks passed again. The Adjudicator accepted that result on 2026-11-18.
+- The latest acceptance record was committed at `a544e2a96e791f45a8b1165b775a94a1985ea9bc`; all blocking checks passed again, including the expected main-source structural Red in the focused suite. The Adjudicator accepted that result on 2026-11-18.
 
 ## Changed Files
 
@@ -33,14 +34,14 @@
 - Included: active-Red registry and lifecycle checker behavior, prior verification results at `756c1d4`.
 - Omitted: source implementation details unrelated to LISS-0594's still-open structural Red.
 - Assumptions: the accepted exact LISS-0594 test module and Phase 1 Red remain unchanged.
-- Open decisions: the latest result-acceptance record needs separate commit approval and another final-SHA blocking rerun.
+- Open decisions: commit the accepted verification-result record and rerun blocking checks at its new SHA.
 - Review isolation: same_context per repository routing.
 - Implementation isolation: host; no implementation work is authorized or in scope.
 - Requested model identifiers: empty / capability class.
 
 ## Next Safe Action
 
-- After the Adjudicator approves committing this latest result-acceptance record and rerunning blocking checks, verify the new SHA and rerun every blocking suite.
+- After accepting the verification-result record, run all blocking suites at the resulting SHA.
 
 ## Blockers
 

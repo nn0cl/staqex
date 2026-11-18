@@ -2,7 +2,7 @@
 
 - Local issue ID: LISS-0594
 - GitHub issue: none; local planning
-- Status: in_progress — GU supplement verification after Active-Red renewal accepted through `c3e79ab5`; main decomposition remains Phase 1 Red
+- Status: in_progress — GU supplement verification after Active-Red renewal accepted through `a544e2a9`; main decomposition remains Phase 1 Red
 - Phase: Phase 1 Red
 - Type: behavior-preserving source decomposition
 - Priority: WP-0175 candidate 4; ordering is inventory guidance, not an implementation commitment
@@ -467,6 +467,28 @@ implementation, commit, or remote delivery.
 - Next gate: separate approval to commit this acceptance/status record and
   rerun blocking checks at the resulting actual SHA. No push, PR, or merge is
   authorized.
+
+## Active-Red renewal acceptance-record SHA verification (2026-11-18)
+
+- Tested commit: `a544e2a96e791f45a8b1165b775a94a1985ea9bc`; clean worktree at
+  test time; macOS 27.2 arm64, CPython 3.12.6, pytest 9.0.3.
+- Focused LISS-0594 plus LISS-0411/0436/0376: 29 passed / 1 expected
+  main-source structural Red. Inherited LISS-0591/0593 consumers: 319 passed.
+  Root blocking pytest with the declared LISS-0594 active-Red exclusion:
+  3,589 passed / 0 failed. Spec verification: 161/161 passed.
+- Repository sanity passed: active-Red lifecycle, 20 execution-batch records,
+  document lifecycle, coverage ledger, three behavior-preservation baseline
+  cases, shell syntax, 89 required documents, 10 required ADRs, conflict-marker
+  scan, template-copy/configure smoke, and `git diff --check`.
+- A broader exploratory selection of LISS-0591/0593-prefixed tests also
+  completed with 566 passed and the same single expected LISS-0594 structural
+  Red. No other failure was observed.
+- Acceptance: Adjudicator accepted this verification result on 2026-11-18.
+- Result: all declared blocking checks passed at this SHA; the known
+  `unitarity_check.py` structural Red remains the accepted Phase 1 target, and
+  the main decomposition remains unimplemented. Next gate: commit this
+  acceptance record and rerun all blocking checks at its actual SHA. No push,
+  PR, or merge is authorized.
 
 ## Active-Red renewal acceptance-record verification accepted (2026-11-18)
 
