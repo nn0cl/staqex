@@ -23,6 +23,7 @@
 - The next result-acceptance record was committed and verified at `75d24931324be40a571d70f7d48978cbb65e28fd`; all blocking checks passed again. The Adjudicator accepted that result on 2026-11-18.
 - The following acceptance record was committed and verified at `c3e79ab549b13b666b031bd92508026a3d0bba40`; all blocking checks passed again. The Adjudicator accepted that result on 2026-11-18.
 - The latest acceptance record was committed at `a544e2a96e791f45a8b1165b775a94a1985ea9bc`; all blocking checks passed again, including the expected main-source structural Red in the focused suite. The Adjudicator accepted that result on 2026-11-18.
+- The accepted verification-result record was committed at `eb13dae2ae0d44856835c9c75c6bd20f8c6da0a0`; all blocking checks passed again, including the expected main-source structural Red. The Adjudicator accepted that result on 2026-11-18.
 
 ## Changed Files
 

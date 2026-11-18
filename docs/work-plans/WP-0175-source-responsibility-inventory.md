@@ -2,8 +2,8 @@
 
 | Field | Value |
 |---|---|
-| Status | in_progress — LISS-0593 completed and delivered by PR #624; LISS-0594 verification accepted through `a544e2a9` on 2026-11-18 |
-| Phase | LISS-0594 GU supplement verification accepted at `a544e2a96e791f45a8b1165b775a94a1985ea9bc`; main unitarity decomposition remains Phase 1 Red and unimplemented |
+| Status | in_progress — LISS-0593 completed and delivered by PR #624; LISS-0594 verification accepted through `eb13dae2` on 2026-11-18 |
+| Phase | LISS-0594 GU supplement verification accepted at `eb13dae2ae0d44856835c9c75c6bd20f8c6da0a0`; main unitarity decomposition remains Phase 1 Red and unimplemented |
 | Initial / current size | L / L; no reclassification |
 | Scope approval | Adjudicator approved whole-source residual-responsibility inventory / Phase 0 on2026-10-15 |
 | Phase 0 acceptance | I01–I08 explicitly accepted by Adjudicator on2026-10-15 |
