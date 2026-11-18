@@ -31,6 +31,9 @@ passed all blocking verification and was accepted on 2026-11-18.
 The verification-result acceptance commit
 `eb13dae2ae0d44856835c9c75c6bd20f8c6da0a0` passed all blocking verification
 and was accepted on 2026-11-18.
+The subsequent acceptance-record commit
+`e322afea74675e800dc24048caa7101dbf927258` passed all blocking verification
+and was accepted on 2026-11-18.
 The subsequent acceptance commit
 `cc124bb3a8b25426a2a4747df116cb3085079bed` passed all blocking verification
 and was accepted on 2026-11-18.
