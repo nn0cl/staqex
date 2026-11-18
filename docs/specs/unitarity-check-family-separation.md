@@ -21,7 +21,9 @@ the subsequent verification at
 acceptance-record verification at
 `fa1cc39cf63a44e7a5f32bcc0d394773f1dce5e2` was also accepted on 2026-11-17;
 the subsequent verification at
-`8973aa4874c8a7617cec4c71e22331a6c5030c7f` was accepted on 2026-11-18. The
+`8973aa4874c8a7617cec4c71e22331a6c5030c7f` was accepted on 2026-11-18; the
+subsequent verification at
+`75d24931324be40a571d70f7d48978cbb65e28fd` was accepted on 2026-11-18. The
 main unitarity checker decomposition remains unimplemented.
 Owner: [LISS-0594](../issues/LISS-0594-unitarity-check-family-separation.md).
 Parent: [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
