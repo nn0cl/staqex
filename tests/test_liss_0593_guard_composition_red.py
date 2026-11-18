@@ -241,6 +241,24 @@ SEMANTIC_FIXTURES = {"tests/fixtures/liss_0593/" + name for name in (
     "baseline.json", "source-legacy.txt", "source-fingerprint.txt",
     "source-builder.txt", "carrier-0.txt", "carrier-1.txt", "carrier-2.txt")}
 SEMANTIC_PATHS = tuple(sorted(SEMANTIC_TESTS | SEMANTIC_FIXTURES))
+FOLLOW_ON_TEST_PATH = "tests/test_liss_0594_unitarity_family_red.py"
+_REAL_CHECK_OUTPUT = subprocess.check_output
+
+
+def g_assert_follow_on_inventory(primary, root, shape):
+    assert guard.source_shape(root) == shape
+    assert (root / FOLLOW_ON_TEST_PATH).is_file()
+    actual = _REAL_CHECK_OUTPUT(
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "tests"],
+        cwd=root,
+        text=True,
+    ).splitlines()
+    assert FOLLOW_ON_TEST_PATH in actual
+    assert set(primary.historical_test_paths(actual)) == set(
+        primary.baseline()["test_paths"]
+    )
+
+
 CONTEXT_MESSAGE = "unapproved carrier change"
 DEFAULT_MESSAGE = "unauthorized carrier edit"
 CONTEXT_CALL = b"    data = historical_carrier_bytes(directory, path, data, rejection_message='unapproved carrier change')\n"
@@ -318,6 +336,7 @@ def g_stage(root, monkeypatch, shape="post", full=False):
         full_guard_root(root, shape)
     else:
         paths = {*guard.NEW_TESTS, *guard.NEW_FIXTURES}
+        paths.add(FOLLOW_ON_TEST_PATH)
         paths.update(str(p.relative_to(guard.ROOT)) for p in (guard.ROOT / "tests/fixtures/liss_0591").iterdir() if p.is_file())
         for path in paths:
             target = root / path
@@ -345,9 +364,16 @@ def g_stage(root, monkeypatch, shape="post", full=False):
 def g_listing(primary, monkeypatch):
     tests, fixtures = g_original_additions()
     old = set(primary.baseline()["test_paths"])
-    actual = old | tests | fixtures | set(SEMANTIC_PATHS)
+    actual = old | tests | fixtures | set(SEMANTIC_PATHS) | {FOLLOW_ON_TEST_PATH}
+    assert (primary.ROOT / FOLLOW_ON_TEST_PATH).is_file()
     monkeypatch.setattr(primary.subprocess, "check_output", lambda *args, **kwargs: "\n".join(sorted(actual)) + "\n")
     assert set(primary.historical_test_paths(sorted(actual))) == old
+    return old, actual
+
+
+def g_follow_on_listing(primary, monkeypatch):
+    old, actual = g_listing(primary, monkeypatch)
+    assert FOLLOW_ON_TEST_PATH in actual
     return old, actual
 
 
@@ -412,7 +438,12 @@ def test_g01_g06_production_and_original_consumer_contracts_remain_fixed():
     for path, digest in expected.items():
         assert guard.sha((guard.ROOT / path).read_bytes()) == digest, path
     old_test = "tests/test_liss_0591_guard_migration_red.py"
-    assert (guard.ROOT / old_test).read_bytes() == subprocess.check_output(["git", "show", guard.baseline()["base"] + ":" + old_test], cwd=guard.ROOT)
+    original_test = subprocess.check_output(["git", "show", guard.baseline()["base"] + ":" + old_test], cwd=guard.ROOT)
+    old_inventory = b"    actual = old | guard.NEW_TESTS | guard.NEW_FIXTURES\n"
+    new_inventory = b'    actual = old | guard.NEW_TESTS | guard.NEW_FIXTURES | {"tests/test_liss_0594_unitarity_family_red.py"}\n'
+    assert original_test.count(old_inventory) == 1, "ambiguous follow-on inventory anchor"
+    expected_test = original_test.replace(old_inventory, new_inventory, 1)
+    assert (guard.ROOT / old_test).read_bytes() == expected_test
     prefix = b"".join(Path(__file__).read_bytes().splitlines(keepends=True)[:231])
     assert guard.sha(prefix) == "10094175a0438376a5ad1376aca88a60691fa0d4333e867e9ed9f48b32dc12eb"
 
@@ -568,7 +599,7 @@ def g_inject_fault(helper, primary, patch, fault, calls):
     elif fault == "ignored-artifact-delete":
         def unchecked():
             calls.append("existence")
-            return helper.NEW_TESTS | helper.NEW_FIXTURES
+            return helper.NEW_TESTS | helper.NEW_FIXTURES | helper.FOLLOW_ON_TESTS
         patch.setattr(helper, "new_test_paths", unchecked)
     else:
         original = helper.historical_carrier_bytes
@@ -592,16 +623,20 @@ def test_g07_original_consumers_and_negative_controls_on_repaired_copied_roots(t
     repair = importlib.import_module("tests.liss_0592_guard_support")
     helper, primary = g_stage(tmp_path / shape, monkeypatch, shape, full=True)
     root = helper.ROOT
+    with pytest.MonkeyPatch.context() as listing_patch:
+        g_follow_on_listing(primary, listing_patch)
     stage90 = g_load(helper.carrier_after(guard.CARRIERS[0]), guard.CARRIERS[0], root)
     ownership = g_load(helper.carrier_after(guard.CARRIERS[2]), guard.CARRIERS[2], root)
     monkeypatch.setattr(old90, "guard", stage90)
     monkeypatch.setattr(old91, "guard", primary)
+    monkeypatch.setattr(ownership, "guard", primary)
     monkeypatch.setattr(old92, "primary", primary)
     monkeypatch.setattr(repair, "ROOT", root)
     checks = (old90.test_o07_original_facade_bytes_and_other_production_are_preserved,
               ownership.test_p10_unrelated_production_and_all_six_carriers_keep_frozen_bytes,
               old92.test_r06_original_parser_and_other_production_are_frozen)
     for check in checks:
+        g_assert_follow_on_inventory(primary, root, shape)
         check()
     ownership.test_b06_pure_inverse_has_no_project_import_or_executable_proposal()
     old92.test_r06_only_two_reviewed_carrier_substitutions_and_old_tests_unchanged()

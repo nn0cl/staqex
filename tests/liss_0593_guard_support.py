@@ -28,6 +28,7 @@ NEW_TESTS = {
     "tests/test_liss_0593_pure_families_red.py",
     "tests/test_liss_0593_guard_composition_red.py",
 }
+FOLLOW_ON_TESTS = {"tests/test_liss_0594_unitarity_family_red.py"}
 NEW_FIXTURES = {"tests/fixtures/liss_0593/" + name for name in (
     "baseline.json", "source-legacy.txt", "source-fingerprint.txt",
     "source-builder.txt", "carrier-0.txt", "carrier-1.txt", "carrier-2.txt",
@@ -105,8 +106,8 @@ def readonly_bytes(directory, path):
 
 
 def new_test_paths():
-    paths = NEW_TESTS | NEW_FIXTURES
-    assert all((ROOT / p).is_file() for p in paths), "0593 test artifact missing"
+    paths = NEW_TESTS | NEW_FIXTURES | FOLLOW_ON_TESTS
+    assert all((ROOT / p).is_file() for p in paths), "composed test artifact missing"
     return paths
 
 

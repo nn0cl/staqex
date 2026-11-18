@@ -22,3 +22,14 @@ version = 1
 
 # LISS-0583 approved Phase 2: all four structural nodes pass unchanged.
 # Active-Red retired; original F05 arithmetic also passes without exclusion.
+
+# LISS-0594 Phase 1 Red is authorized; keep its structural node out of the
+# ordinary blocking suite until the Adjudicator accepts the reviewed cohort.
+[[active_red]]
+issue = "LISS-0594"
+test = "tests/test_liss_0594_unitarity_family_red.py"
+phase = "Phase 1 Red"
+owner = "Codex host / Adjudicator"
+# Adjudicator approved the renewed review deadline on 2026-11-16.
+review_by = "2026-11-20"
+review_condition = "Adjudicator accepts the test cohort and observed baseline Red before Phase 2"
