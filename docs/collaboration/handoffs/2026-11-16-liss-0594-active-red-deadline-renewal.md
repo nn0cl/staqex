@@ -27,6 +27,7 @@
 - The acceptance record was committed at `cc124bb3a8b25426a2a4747df116cb3085079bed`; all blocking checks passed again, including the expected main-source structural Red. The Adjudicator accepted this result on 2026-11-18.
 - The acceptance record was committed at `251e94127450a1312062dd17eb7936781a6dc3df`; all blocking checks passed again, including the expected main-source structural Red. The Adjudicator accepted that result on 2026-11-18.
 - The acceptance record was committed at `e322afea74675e800dc24048caa7101dbf927258`; all blocking checks passed again, including the expected main-source structural Red. The Adjudicator accepted this result on 2026-11-18.
+- Delivery-candidate commit `4707820c4c55d97b69354b6257797e725061e1bc` passed all blocking checks on 2026-11-18. The user authorized push, PR, and merge; run final blocking checks after committing its result record.
 
 ## Changed Files
 
@@ -38,15 +39,15 @@
 - Included: active-Red registry and lifecycle checker behavior, prior verification results at `756c1d4`.
 - Omitted: source implementation details unrelated to LISS-0594's still-open structural Red.
 - Assumptions: the accepted exact LISS-0594 test module and Phase 1 Red remain unchanged.
-- Open decisions: commit the accepted verification-result record and rerun blocking checks at its new SHA.
+- Open decisions: final result-record SHA verification, then push/PR/CI/merge.
 - Review isolation: same_context per repository routing.
 - Implementation isolation: host; no implementation work is authorized or in scope.
 - Requested model identifiers: empty / capability class.
 
 ## Next Safe Action
 
-- After accepting the verification-result record, run all blocking suites at the resulting SHA.
+- Rerun all blocking suites on the committed delivery-result record, then push, create/update PR, verify CI, and merge as authorized.
 
 ## Blockers
 
-- The current result-acceptance record is uncommitted. No push, PR, or merge is authorized.
+- The delivery-result record is uncommitted; no push before final-SHA blocking verification.

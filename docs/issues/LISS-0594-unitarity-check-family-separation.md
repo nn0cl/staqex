@@ -544,6 +544,23 @@ implementation, commit, or remote delivery.
   2026-11-18. Next gate: commit this acceptance record and rerun all blocking
   checks at its actual SHA. No push, PR, or merge is authorized.
 
+## Delivery-candidate verification (2026-11-18)
+
+- Tested commit: `4707820c4c55d97b69354b6257797e725061e1bc`; clean worktree at
+  test time; macOS 27.2 arm64, CPython 3.12.6, pytest 9.0.3.
+- Focused LISS-0594 plus LISS-0411/0436/0376: 29 passed / 1 expected
+  main-source structural Red. Inherited LISS-0591/0593 consumers: 319 passed.
+  Root blocking pytest with the declared LISS-0594 active-Red exclusion:
+  3,589 passed / 0 failed. Spec verification: 161/161 passed.
+- Repository sanity passed: active-Red lifecycle, 20 execution-batch records,
+  document lifecycle, coverage ledger, three behavior-preservation baseline
+  cases, shell syntax, 89 required documents, 10 required ADRs, conflict-marker
+  scan, template-copy/configure smoke, and `git diff --check`.
+- The known structural Red matches the accepted Phase 1 target; no other
+  blocking failure occurred. The main unitarity decomposition remains
+  unimplemented. User authorized push, PR, and merge on 2026-11-18. Awaiting
+  verification of the result-record commit SHA before delivery.
+
 ## Earlier verification-result acceptance-record SHA verification (2026-11-18)
 
 - Tested commit: `cc124bb3a8b25426a2a4747df116cb3085079bed`; clean worktree at

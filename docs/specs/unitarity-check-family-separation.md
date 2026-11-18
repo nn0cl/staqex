@@ -34,6 +34,9 @@ and was accepted on 2026-11-18.
 The subsequent acceptance-record commit
 `e322afea74675e800dc24048caa7101dbf927258` passed all blocking verification
 and was accepted on 2026-11-18.
+The local delivery-candidate commit
+`4707820c4c55d97b69354b6257797e725061e1bc` passed all blocking verification
+on 2026-11-18; its result record awaits the final commit-SHA rerun.
 The subsequent acceptance commit
 `cc124bb3a8b25426a2a4747df116cb3085079bed` passed all blocking verification
 and was accepted on 2026-11-18.
