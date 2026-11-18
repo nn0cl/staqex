@@ -34,6 +34,9 @@ and was accepted on 2026-11-18.
 The subsequent acceptance commit
 `cc124bb3a8b25426a2a4747df116cb3085079bed` passed all blocking verification
 and was accepted on 2026-11-18.
+The subsequent acceptance-record commit
+`251e94127450a1312062dd17eb7936781a6dc3df` passed all blocking verification
+and was accepted on 2026-11-18.
 The main unitarity checker decomposition remains unimplemented.
 Owner: [LISS-0594](../issues/LISS-0594-unitarity-check-family-separation.md).
 Parent: [WP-0175](../work-plans/WP-0175-source-responsibility-inventory.md).
